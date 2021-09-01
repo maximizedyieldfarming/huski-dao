@@ -2,7 +2,10 @@ import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box, Table } from '@pancakeswap/uikit'
+import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
+import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
+import { useStakeBalanceData, useStakeData } from 'state/stake/hooks'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -199,41 +202,53 @@ const CustomPage = styled(Page)`
   max-width: none;
 `
 
+const StyledRow = styled(Tr)`
+  th,
+  td {
+    padding: 1rem;
+  }
+`
+
 const Stake: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
 
-  const { data: farmData } = useFarms()
-  console.log({ farmData })
+  const { stakeData } = useStakeData()
+  const { stakeBalanceData } = useStakeBalanceData()
 
-  const [firstToken, ...rest] = farmData
+  const stakingData = stakeData.map((value, index) => {
+    return { ...value, huskyDaily: stakeBalanceData[index] }
+  })
+
+  console.log({ stakingData })
 
   return (
     <CustomPage>
       <SingleTableWrapper>
         <Title>Lending Positions</Title>
         <Flex width="100%" borderBottom="1px solid #ccc">
-          <FakeTable>
-            <FakeTableHeader>
-              <span>Currency</span>
-              <span>APY</span>
-              <span>hToken</span>
-              <span>Asset Value</span>
-            </FakeTableHeader>
-            <FakeTableRow>
-              <span>{firstToken.lpSymbol}</span>
-              <span>{}</span>
-              <span>{}</span>
-              <span>{}</span>
-              <span>{}</span>
-              <span>{}</span>
-              <ActionCell>
-                <StyledButton>Deposit</StyledButton>
-                <StyledButton>Withdraw</StyledButton>
-              </ActionCell>
-            </FakeTableRow>
-          </FakeTable>
+          <Table>
+            <Thead>
+              <StyledRow>
+                <Th>Currency</Th>
+                <Th>APY</Th>
+                <Th>hToken</Th>
+                <Th>Asset Value</Th>
+              </StyledRow>
+            </Thead>
+            <Tbody>
+              <StyledRow>
+                <Td>{stakingData[0]?.name}</Td>
+                <Td>{}</Td>
+                <Td>{}</Td>
+                <Td>
+                  <StyledButton>Deposit</StyledButton>
+                  <StyledButton>Withdraw</StyledButton>
+                </Td>
+              </StyledRow>
+            </Tbody>
+          </Table>
           <ImageContainer>
             <img src={husky2} alt="" />
           </ImageContainer>
@@ -277,27 +292,29 @@ const Stake: React.FC = () => {
         />
       </Flex>
 
-      <TableWrapper>
-        <FakeTable>
-          <FakeTableHeader>
-            <span>Currency</span>
-            <span>APR</span>
-            <span>Total Supply</span>
-            <span>Action</span>
-          </FakeTableHeader>
-          {rest.map((token) => (
-            <FakeTableRow key={token.pid}>
-              <span>{token?.lpSymbol}</span>
-              <span>{token?.pid}</span>
-              <span>{token?.pid}</span>
-              <ActionCell>
+      <Table>
+        <Thead>
+          <StyledRow>
+            <Th>Currency</Th>
+            <Th>APR</Th>
+            <Th>Total Supply</Th>
+            <Th>Action</Th>
+          </StyledRow>
+        </Thead>
+        <Tbody>
+          {stakingData.map((token) => (
+            <StyledRow>
+              <Td>{token?.name}</Td>
+              <Td>{token?.stakeAPR}</Td>
+              <Td>{token?.stakeValue}</Td>
+              <Td>
                 <StyledButton>Deposit</StyledButton>
                 <StyledButton>Withdraw</StyledButton>
-              </ActionCell>
-            </FakeTableRow>
+              </Td>
+            </StyledRow>
           ))}
-        </FakeTable>
-      </TableWrapper>
+        </Tbody>
+      </Table>
     </CustomPage>
   )
 }
