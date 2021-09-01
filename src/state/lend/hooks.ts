@@ -5,13 +5,12 @@ import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { getBalanceAmount } from 'utils/formatBalance'
-import { getPoolInfo, getPoolInfo1, getSumLendData, getStakeValue, getStakeApr } from 'utils/vaultService'
+import { getPoolInfo, getSumLendData, getStakeValue, getStakeApr } from 'utils/vaultService'
 import { farmsConfig } from 'config/constants'
 import useRefresh from 'hooks/useRefresh'
 import { getPoolHuskyDaily } from 'utils/fairLaunchService'
-import { State, Farm, FarmsState } from '../types'
 import mainnet from '../../mainnet.json'
-import { sumLendingPoolData, sumTokenData } from '../utils'
+import { sumTokenData } from '../utils'
 
 
 // use this
@@ -36,38 +35,22 @@ export const useLendData = () => {
   return { lendData }
 }
 
-export const useLendTotalSupply = async () => {
-  // const [lendTotalSupply, setLendTotalSupply] = useState([])
-  // useEffect(() => {
-  //   const lendTSData = mainnet.Vaults.map((pool) => {
-  //     const lendTS = async () => {
-  //       const totalToken = await getSumLendData(pool);
-  //       return totalToken;
-  //     };
-  //     return lendTS();
-  //   });
-
-  //   Promise.all(lendTSData)
-  //     .then((values) => {
-  //       console.info(values);
-  //       // const returndata =  sumTokenData(values)
-  //       setLendTotalSupply(values)
-  //     })
-  //     .catch((error) => console.error('error', error));
-  // }, [setLendTotalSupply])
-  // return { lendTotalSupply }
-
-  const tokenData = mainnet.Vaults.map((pool) => {
-    const totalTokenData = async () => {
-      const totalToken = await getSumLendData(pool);
-      return totalToken;
-    };
-    return totalTokenData();
-  });
-  Promise.all(tokenData)
-    .then((values) => {
-      return sumTokenData(values)
-    })
-    .catch((error) => console.error('error', error));
-
+export const useLendTotalSupply = () => {
+  const [lendTotalSupply, setLendTotalSupply] = useState('')
+  useEffect(() => {
+    const lendTSData = mainnet.Vaults.map((pool) => {
+      const lendTS = async () => {
+        const totalToken = await getSumLendData(pool);
+        return totalToken;
+      };
+      return lendTS();
+    });
+    Promise.all(lendTSData)
+      .then((values) => {
+        const returndata = sumTokenData(values)
+        setLendTotalSupply(returndata)
+      })
+      .catch((error) => console.error('error', error));
+  }, [setLendTotalSupply])
+  return lendTotalSupply
 }

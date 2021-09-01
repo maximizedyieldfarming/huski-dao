@@ -8,7 +8,7 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { useLendData } from 'state/lend/hooks'
+import { useLendData, useLendTotalSupply } from 'state/lend/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -203,10 +203,11 @@ const Lend: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
-
-  // loadBloackchainData()
   const { lendData } = useLendData()
-  console.info({ lendData })
+  const lendTotalSupply = useLendTotalSupply()
+  console.log({ 'lendData': lendData, 'lendTotalSupply': lendTotalSupply });
+
+  
   return (
     <CustomPage>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">

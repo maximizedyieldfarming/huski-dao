@@ -55,11 +55,3 @@ export const useStakeBalanceData = () => {
   return { stakeBalanceData }
 }
 
-
-
-export const getStakeData = () => {
-
-  // return stakedata;
-
-}
-

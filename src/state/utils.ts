@@ -193,7 +193,6 @@ export const sumLendingPoolData = (url, lendingData, loading, lendingPoolData, d
           .map((pool) => parseFloat(formatBigNumber(pool[data]).replace(/\,/g, '')))
           .reduce((cur, acc) => cur + acc)
           .toLocaleString()
-          console.info('finalResult--',finalResult);
     return finalResult;
 };
 
