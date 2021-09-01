@@ -4,6 +4,8 @@ import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
+import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -125,7 +127,20 @@ const FakeTableRow = styled.div`
     border-bottom: 1px solid #ccc;
   }
 `
+
+const StyledRow = styled(Tr)`
+  th,
+  td {
+    padding: 1rem;
+  }
+`
+
 const FakeTableHeader = styled(FakeTableRow)`
+  justify-content: stretch;
+  > span {
+    flex: 1;
+  }
+
   &:not(:last-child) {
     border-bottom: none;
   }
@@ -205,9 +220,9 @@ const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { lendData } = useLendData()
   const lendTotalSupply = useLendTotalSupply()
-  console.log({ 'lendData': lendData, 'lendTotalSupply': lendTotalSupply });
+  console.log({ lendData })
+  console.log({ lendTotalSupply })
 
-  
   return (
     <CustomPage>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
@@ -220,7 +235,7 @@ const Lend: React.FC = () => {
           </ImageContainer>
           <StyledBox>
             <span>Total Supply</span>
-            <span>$1234567890</span>
+            <span>${lendTotalSupply}</span>
           </StyledBox>
           <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
             <img src={bone1} alt="" />
@@ -230,28 +245,31 @@ const Lend: React.FC = () => {
 
       <SingleTableWrapper>
         <Title>Lending Positions</Title>
-        <FakeTable>
-          <FakeTableHeader>
-            <span>Currency</span>
-            <span>APY</span>
-            <span>Deposit</span>
-            <span>Yield</span>
-            <span>hToken</span>
-            <span>Action</span>
-          </FakeTableHeader>
-          <FakeTableRow>
-            <span>{lendData[0]?.name}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <ActionCell>
-              <StyledButton>Deposit</StyledButton>
-              <StyledButton>Withdraw</StyledButton>
-            </ActionCell>
-          </FakeTableRow>
-        </FakeTable>
+        <Table>
+          <Thead>
+            <StyledRow>
+              <Th>Currency</Th>
+              <Th>APY</Th>
+              <Th>Deposit</Th>
+              <Th>Yield</Th>
+              <Th>hToken</Th>
+              <Th>Action</Th>
+            </StyledRow>
+          </Thead>
+          <Tbody>
+            <StyledRow>
+              <Td>{lendData[0]?.name}</Td>
+              <Td>{}</Td>
+              <Td>{}</Td>
+              <Td>{}</Td>
+              <Td>{}</Td>
+              <Td>
+                <StyledButton>Deposit</StyledButton>
+                <StyledButton>Withdraw</StyledButton>
+              </Td>
+            </StyledRow>
+          </Tbody>
+        </Table>
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
@@ -284,33 +302,35 @@ const Lend: React.FC = () => {
         />
       </Flex>
 
-      <TableWrapper>
-        <FakeTable>
-          <FakeTableHeader>
-            <span>Currency</span>
-            <span>APR</span>
-            <span>Total Supply</span>
-            <span>Total Borrowed</span>
-            <span>Utilization Rate</span>
-            <span>Balance</span>
-            <span>Action</span>
-          </FakeTableHeader>
+      <Table>
+        <Thead>
+          <StyledRow>
+            <Th>Currency</Th>
+            <Th>APR</Th>
+            <Th>Total Supply</Th>
+            <Th>Total Borrowed</Th>
+            <Th>Utilizaton Rate</Th>
+            <Th>Balance</Th>
+            <Th>Action</Th>
+          </StyledRow>
+        </Thead>
+        <Tbody>
           {lendData.map((token) => (
-            <FakeTableRow key={lendData.indexOf(token)}>
-              <span>{token?.name}</span>
-              <span>{token?.landApr}</span>
-              <span>{token?.totalDeposit}</span>
-              <span>{token?.totalBorrowed}</span>
-              <span>{token?.capitalUtilizationRate}</span>
-              <span>{token?.exchangeRate}</span>
-              <ActionCell>
+            <StyledRow key={lendData.indexOf(token)}>
+              <Td>{token?.name}</Td>
+              <Td>{token?.landApr}</Td>
+              <Td>{token?.totalDeposit}</Td>
+              <Td>{token?.totalBorrowed}</Td>
+              <Td>{token?.capitalUtilizationRate}</Td>
+              <Td>{token?.exchangeRate}</Td>
+              <Td>
                 <StyledButton>Deposit</StyledButton>
                 <StyledButton>Withdraw</StyledButton>
-              </ActionCell>
-            </FakeTableRow>
+              </Td>
+            </StyledRow>
           ))}
-        </FakeTable>
-      </TableWrapper>
+        </Tbody>
+      </Table>
     </CustomPage>
   )
 }
