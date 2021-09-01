@@ -205,7 +205,5 @@ export const sumTokenData = (data) => {
             .map((pool) => parseFloat(formatBigNumber(pool).replace(/\,/g, '')))
             .reduce((cur, acc) => cur + acc)
             .toLocaleString()
-      console.info('finalResult',finalResult);
       return finalResult;
-
   };
