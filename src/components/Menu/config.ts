@@ -35,16 +35,39 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     icon: 'PoolIcon',
     href: '/lend',
   },
-  // {
-  //   label: t('Stake'),
-  //   icon: 'TicketIcon',
-  //   href: '/stake',
-  // },
-  // {
-  //   label: t('Lock'),
-  //   icon: 'NftIcon',
-  //   href: '/lock',
-  // },
+  {
+    label: t('Stake'),
+    icon: 'TicketIcon',
+    href: '/stake',
+  },
+  {
+    label: t('Lock'),
+    icon: 'NftIcon',
+    href: '/lock',
+  },
+  {
+    label: t('Levarage Farms'),
+    icon: 'NftIcon',
+    href: '/levarage',
+  },
+   {
+    label: t('NFT Warriors'),
+    icon: 'TradeIcon',
+    items: [
+      {
+        label: t('Invite/Invited'),
+        href: '/invite',
+      },
+      {
+        label: t('Warrior ID'),
+        href: '/warriorid',
+      },
+      {
+        label: t('NFT Market'),
+        href: '/nftmarket',
+      },
+    ],
+  },
   // {
   //   label: t('Team Battle'),
   //   icon: 'TeamBattleIcon',

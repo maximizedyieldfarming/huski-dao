@@ -128,7 +128,6 @@ export const getStakeData = () => {
   
   const stakedata1 = getpoolHuskyDaily()
 
-
   // console.info(stakedata);console.info(stakedata1);
 
   return stakedata;

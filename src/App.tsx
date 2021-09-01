@@ -32,11 +32,11 @@ const Home = lazy(() => import('./views/Home'))
 const Farms = lazy(() => import('./views/Farms'))
 const FarmAuction = lazy(() => import('./views/FarmAuction'))
 const Lend = lazy(() => import('./views/Lend'))
-// const Stake = lazy(() => import('./views/Stake'))
+const Stake = lazy(() => import('./views/Stake'))
 const NotFound = lazy(() => import('./views/NotFound'))
-// const Lock = lazy(() => import('./views/Lock'))
-// const Teams = lazy(() => import('./views/Teams'))
-// const Team = lazy(() => import('./views/Teams/Team'))
+const Lock = lazy(() => import('./views/Lock'))
+const Levarage = lazy(() => import('./views/Levarage'))
+const WarriorId = lazy(() => import('./views/WarriorID'))
 // const Profile = lazy(() => import('./views/Profile'))
 // const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
 // const Predictions = lazy(() => import('./views/Predictions'))
@@ -80,12 +80,18 @@ const App: React.FC = () => {
             <Route path="/lend">
               <Lend />
             </Route>
-            {/* <Route path="/stake">
+            <Route path="/stake">
               <Stake />
             </Route>
             <Route path="/lock">
               <Lock />
-            </Route> */}
+            </Route>
+            <Route path="/levarage">
+              <Levarage />
+            </Route>
+            <Route path="/warriorid">
+              <WarriorId />
+            </Route>
             {/* <Route path="/pools">
               <Pools />
             </Route> 

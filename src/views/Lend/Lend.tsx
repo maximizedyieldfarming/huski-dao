@@ -22,7 +22,6 @@ import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 
-
 const ControlContainer = styled.div`
   display: flex;
   width: 100%;
