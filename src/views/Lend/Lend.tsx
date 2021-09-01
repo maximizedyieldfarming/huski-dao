@@ -1,13 +1,20 @@
 import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
+import { useFarms } from 'state/farms/hooks'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
+import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box, Table } from '@pancakeswap/uikit'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { loadBloackchainData, usePriceCakeBusd, usesumLendingPoolData, loadStakeData, getpoolHuskyDaily } from 'state/lend/hooks'
+import {
+  loadBloackchainData,
+  usePriceCakeBusd,
+  usesumLendingPoolData,
+  loadStakeData,
+  getpoolHuskyDaily,
+} from 'state/lend/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -21,7 +28,10 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
-
+import husky from './assets/husky@1x.png'
+import husky2 from './assets/husky2.png'
+import bone1 from './assets/bone1-1x.png'
+import bone2 from './assets/bone2-1x.png'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -107,11 +117,99 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   return null
 }
 
+// styled components
+const FakeTable = styled.div`
+  background-color: #fff;
+  border-radius: 1rem;
+`
+
+const FakeTableRow = styled.div`
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  &:not(:last-child) {
+    border-bottom: 1px solid #ccc;
+  }
+`
+const FakeTableHeader = styled(FakeTableRow)`
+  &:not(:last-child) {
+    border-bottom: none;
+  }
+`
+
+const TableWrapper = styled.div`
+  background-color: #fff;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  padding: 10px;
+`
+
+const SingleTableWrapper = styled(TableWrapper)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem 2rem;
+  > div:first-child {
+    flex-basis: 20%;
+  }
+  > div:nth-child(2) {
+    flex-grow: 1;
+  }
+`
+
+const ActionCell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`
+
+const ImageContainer = styled.figure``
+
+const StyledBox = styled(Box)`
+  background-color: #fff;
+  color: #9615e7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  padding: 10px;
+  span:last-child {
+    font-size: 2rem;
+  }
+`
+
+const Title = styled.div`
+  color: #9615e7;
+  font-size: 36px;
+`
+
+const StyledButton = styled(Button)`
+  padding: 0.75rem 2rem;
+  font-size: 14px;
+  font-weight: 400;
+  height: auto;
+  box-shadow: none;
+`
+const StyledFlex = styled(Flex)`
+  flex-direction: row;
+  position: relative;
+  background-color: #fff;
+  padding: 5px 2rem;
+`
+
+const CustomPage = styled(Page)`
+  display: flex;
+  flex-direction: column;
+  margin-left: 5%;
+  margin-right: 5%;
+  max-width: none;
+`
+
 const Lend: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
- 
 
   loadBloackchainData()
   loadStakeData()
@@ -119,27 +217,116 @@ const Lend: React.FC = () => {
   // usePriceCakeBusd();
   // usesumLendingPoolData();
 
+  // MOCK DATA
+  const { data: farmData } = useFarms()
+  console.log({ farmData })
+
+  const [firstToken, ...rest] = farmData
 
   return (
-    <>
-      <PageHeader>
-        <Heading as="h1" scale="xxl" color="secondary" mb="24px">
-          {t('Lend')}
-        </Heading>
-        <Heading scale="lg" color="text">
-          {t('Stake LP tokens to earn.')}
-        </Heading>
-        <NavLink exact activeClassName="active" to="/farms/auction" id="lottery-pot-banner">
-          <Button p="0" variant="text">
-            <Text color="primary" bold fontSize="16px" mr="4px">
-              {t('Community Auctions')}
-            </Text>
-            <ArrowForwardIcon color="primary" />
-          </Button>
-        </NavLink>
-      </PageHeader>
-      
-    </>
+    <CustomPage>
+      <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
+        <ImageContainer>
+          <img src={husky} alt="" />
+        </ImageContainer>
+        <StyledFlex flexDirection="row" borderRadius="20px">
+          <ImageContainer style={{ position: 'absolute', left: '-35px' }}>
+            <img src={bone2} alt="" />
+          </ImageContainer>
+          <StyledBox>
+            <span>Total Supply</span>
+            <span>$1234567890</span>
+          </StyledBox>
+          <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
+            <img src={bone1} alt="" />
+          </ImageContainer>
+        </StyledFlex>
+      </Flex>
+
+      <SingleTableWrapper>
+        <Title>Lending Positions</Title>
+        <FakeTable>
+          <FakeTableHeader>
+            <span>Currency</span>
+            <span>APY</span>
+            <span>Deposit</span>
+            <span>Yield</span>
+            <span>hToken</span>
+            <span>Action</span>
+          </FakeTableHeader>
+          <FakeTableRow>
+            <span>{firstToken.lpSymbol}</span>
+            <span>{}</span>
+            <span>{}</span>
+            <span>{}</span>
+            <span>{}</span>
+            <span>{}</span>
+            <ActionCell>
+              <StyledButton>Deposit</StyledButton>
+              <StyledButton>Withdraw</StyledButton>
+            </ActionCell>
+          </FakeTableRow>
+        </FakeTable>
+        <ImageContainer>
+          <img src={husky2} alt="" />
+        </ImageContainer>
+      </SingleTableWrapper>
+
+      <Flex alignSelf="flex-end">
+        <Select
+          options={[
+            {
+              label: 'Anual Income',
+              value: 'anual_income',
+            },
+            {
+              label: 'APR',
+              value: 'apr',
+            },
+            {
+              label: 'Multiplier',
+              value: 'multiplier',
+            },
+            {
+              label: 'Earned',
+              value: 'earned',
+            },
+            {
+              label: 'Liquidity',
+              value: 'liquidity',
+            },
+          ]}
+        />
+      </Flex>
+
+      <TableWrapper>
+        <FakeTable>
+          <FakeTableHeader>
+            <span>Currency</span>
+            <span>APR</span>
+            <span>Total Supply</span>
+            <span>Total Borrowed</span>
+            <span>Utilization Rate</span>
+            <span>Balance</span>
+            <span>Action</span>
+          </FakeTableHeader>
+          {rest.map((token) => (
+            <FakeTableRow key={token.pid}>
+              <span>{token?.lpSymbol}</span>
+              <span>{token?.pid}</span>
+              <span>{token?.pid}</span>
+              <span>{token?.pid}</span>
+              <span>{token?.pid}</span>
+              <span>{token?.pid}</span>
+              <ActionCell>
+                <StyledButton>Deposit</StyledButton>
+                <StyledButton>Withdraw</StyledButton>
+              </ActionCell>
+            </FakeTableRow>
+          ))}
+        </FakeTable>
+      </TableWrapper>
+    </CustomPage>
   )
 }
 

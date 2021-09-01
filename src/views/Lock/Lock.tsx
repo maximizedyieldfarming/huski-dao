@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
+import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -21,7 +21,7 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
-
+import huskyIcon from './assets/avatar1x.png'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -107,36 +107,80 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   return null
 }
 
+// styled components
+const StyledBox = styled(Box)`
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 20px;
+  flex: 1;
+`
+const Container = styled(Box)`
+  background-color: #fff;
+  border-radius: 20px;
+  border-top: 3px solid #9615e7;
+  padding: 1rem;
+  color: #9615e7;
+`
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #9615e7;
+`
+
 const Farms: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
- 
-
-  
-
-
 
   return (
-    <>
-      <PageHeader>
-        <Heading as="h1" scale="xxl" color="secondary" mb="24px">
-          {t('Farms')}
-        </Heading>
-        <Heading scale="lg" color="text">
-          {t('Stake LP tokens to earn.')}
-        </Heading>
-        <NavLink exact activeClassName="active" to="/farms/auction" id="lottery-pot-banner">
-          <Button p="0" variant="text">
-            <Text color="primary" bold fontSize="16px" mr="4px">
-              {t('Community Auctions')}
+    <Page>
+      <Flex style={{ gap: '1rem' }}>
+        <StyledBox>
+          <Flex justifyContent="space-between">
+            <Text color="#9615E7">Husky Total Supply</Text>
+            <Text color="#9615E7" fontSize="30px" fontWeight="bold">
+              123456789
             </Text>
-            <ArrowForwardIcon color="primary" />
-          </Button>
-        </NavLink>
-      </PageHeader>
-    
-    </>
+          </Flex>
+        </StyledBox>
+        <StyledBox>
+          <Flex justifyContent="space-between">
+            <Text color="#9615E7">Husky TVL</Text>
+            <Text color="#9615E7" fontSize="30px" fontWeight="bold">
+              123456789
+            </Text>
+          </Flex>
+        </StyledBox>
+      </Flex>
+      <Container>
+        <Header>
+          <Text color="#9615E7">Huski Lock</Text>
+          <Flex alignItems="center">
+            <Text color="#9615E7">APY</Text>
+            <Text color="#FB646B" fontSize="30px">
+              236
+            </Text>
+          </Flex>
+        </Header>
+        <Flex>
+          <Box style={{ flex: '1' }}>
+            <Box>
+              <Text color="#9617e7">Totall Volume Locked</Text>
+              <Text color="#FC9B02">1774</Text>
+            </Box>
+          </Box>
+          <Box style={{ flex: '1' }}>
+            <Box>
+              <Text color="#9617e7">Totall Volume Locked</Text>
+              <Text color="#FC9B02">1774</Text>
+            </Box>
+          </Box>
+        </Flex>
+      </Container>
+    </Page>
   )
 }
 
