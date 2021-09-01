@@ -7,7 +7,7 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { loadBloackchainData, usePriceCakeBusd, usesumLendingPoolData, loadStakeData, getpoolHuskyDaily } from 'state/lend/hooks'
+import { loadBloackchainData, useLendData, useStakeData, usePriceCakeBusd, usesumLendingPoolData, loadStakeData, getStakeData, getpoolHuskyDaily } from 'state/lend/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -113,9 +113,15 @@ const Lend: React.FC = () => {
   const { t } = useTranslation()
  
 
-  loadBloackchainData()
-  loadStakeData()
-  getpoolHuskyDaily()
+  // loadBloackchainData()
+  const { lendData } = useLendData()
+  // console.info('112333',lendData);
+  const { stakeData } = useStakeData()
+  console.info('112333',stakeData);
+  
+  // loadStakeData()
+  // getStakeData()
+  // getpoolHuskyDaily()
   // usePriceCakeBusd();
   // usesumLendingPoolData();
 

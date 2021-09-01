@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useCallback, useState  } from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
@@ -19,7 +19,8 @@ import { sumLendingPoolData, sumTokenData } from '../utils'
  * 252 = BUSD-BNB LP
  */
 
-export const loadBloackchainData =  () => {
+ export const loadBloackchainData =  () => {
+
   const lendingData = mainnet.Vaults.map((pool) => {
     const loadLendingData = async () => {
       const dataPool = await getPoolInfo(pool);
@@ -30,10 +31,62 @@ export const loadBloackchainData =  () => {
   });
   Promise.all(lendingData)
     .then((values) => {
-      // console.info(values);
+      console.info(values);
       return values;
     })
-    .catch((error) => console.error('error', error));
+    .catch((error) => console.error('error', error));    
+
+  // const loadLendingData = async () => {
+  //     const dataPool = await getPoolInfo1(mainnet.Vaults);
+  //     console.info('datapool',dataPool);
+  //     return dataPool;
+  //   };
+  //   return loadLendingData();
+
+}
+
+
+// use this
+export const useLendData =  () => {
+  const [lendData, setLendData] = useState([])
+  useEffect(() => {
+    const lendingData = mainnet.Vaults.map((pool) => {
+      const loadLendingData = async () => {
+        const dataPool = await getPoolInfo(pool);
+        dataPool.name = dataPool.name.replace('Interest Bearing ', '');
+        return dataPool;
+      };
+      return loadLendingData();
+    });
+
+    Promise.all(lendingData)
+    .then((values) => {
+      setLendData(values)
+    })
+    .catch((error) => console.error('error', error)); 
+  }, [setLendData])
+  return { lendData }
+}
+
+export const useStakeData = () => {
+  const [stakeData, setStakeData] = useState([])
+  useEffect(() => {
+    const data = mainnet.Vaults.map((pool) => {
+      const sData = async () => {
+        const { name } = pool;
+        const stakeValue = await getStakeValue(pool);
+        const stakeAPR = await getStakeApr(pool);
+        return { name, stakeValue, stakeAPR };
+      };
+      return sData();
+    });
+    Promise.all(data)
+      .then((values) => {
+        setStakeData(values)
+      })
+      .catch((error) => console.error('error', error));
+  }, [setStakeData])
+  return { stakeData }
 }
 
 export const loadStakeData = async () => {
@@ -69,6 +122,19 @@ export const getpoolHuskyDaily = async () => {
     })
     .catch((error) => console.error('error', error));
 }
+
+export const getStakeData = () => {
+  const stakedata = loadStakeData()
+  
+  const stakedata1 = getpoolHuskyDaily()
+
+
+  // console.info(stakedata);console.info(stakedata1);
+
+  return stakedata;
+}
+
+
 
 export const usesumLendingPoolData = async () => {
   const tokenData = mainnet.Vaults.map((pool) => {

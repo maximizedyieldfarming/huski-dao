@@ -56,8 +56,10 @@ export async function getLandRate(param: any) {
 export async function getPoolInfo1(param: any) {
   const poolAddresses = param.map((pool) => {
     const vault =  getWeb3VaultContract(pool.address)
+    // const name = await vault.methods.name().call();
     return vault;
   });
+  return poolAddresses;
 }
 
 export async function getPoolInfo(param: any) {
