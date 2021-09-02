@@ -113,36 +113,21 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 }
 
 // styled components
-const FakeTable = styled.div`
-  background-color: #fff;
-  border-radius: 1rem;
-`
-
-const FakeTableRow = styled.div`
-  padding: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  &:not(:last-child) {
-    border-bottom: 1px solid #ccc;
-  }
-`
 
 const StyledRow = styled(Tr)`
+  &:not(:last-child) {
+    border-bottom: 1px solid #9604e11a;
+  }
   th,
   td {
-    padding: 1rem;
-  }
-`
-
-const FakeTableHeader = styled(FakeTableRow)`
-  justify-content: stretch;
-  > span {
-    flex: 1;
-  }
-
-  &:not(:last-child) {
-    border-bottom: none;
+    padding: 0.5rem;
+    vertical-align: middle;
+    font-weight: 400;
+    //word-wrap: break-word;
+    &:not(:first-child) {
+      word-break: break-word;
+      text-align: center;
+    }
   }
 `
 
@@ -164,8 +149,10 @@ const SingleTableWrapper = styled(TableWrapper)`
   > div:nth-child(2) {
     flex-grow: 1;
   }
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
 `
-
 const ActionCell = styled.div`
   display: flex;
   flex-direction: column;
@@ -193,11 +180,12 @@ const Title = styled.div`
 `
 
 const StyledButton = styled(Button)`
-  padding: 0.75rem 2rem;
+  padding: 0.75rem;
   font-size: 14px;
   font-weight: 400;
   height: auto;
   box-shadow: none;
+  word-break: initial;
 `
 const StyledFlex = styled(Flex)`
   flex-direction: row;
@@ -213,6 +201,10 @@ const CustomPage = styled(Page)`
   margin-right: 5%;
   max-width: none;
 `
+const CellWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 const Lend: React.FC = () => {
   const { path } = useRouteMatch()
@@ -222,6 +214,11 @@ const Lend: React.FC = () => {
   const lendTotalSupply = useLendTotalSupply()
   console.log({ lendData })
   console.log({ lendTotalSupply })
+
+  const utilizationRateToPercentage = (utilRate) => {
+    const value = utilRate * 100
+    return `${value.toFixed(2)}%`
+  }
 
   return (
     <CustomPage>
@@ -264,8 +261,10 @@ const Lend: React.FC = () => {
               <Td>{}</Td>
               <Td>{}</Td>
               <Td>
-                <StyledButton>Deposit</StyledButton>
-                <StyledButton>Withdraw</StyledButton>
+                <ActionCell>
+                  <StyledButton>Deposit</StyledButton>
+                  <StyledButton>Withdraw</StyledButton>
+                </ActionCell>
               </Td>
             </StyledRow>
           </Tbody>
@@ -302,35 +301,44 @@ const Lend: React.FC = () => {
         />
       </Flex>
 
-      <Table>
-        <Thead>
-          <StyledRow>
-            <Th>Currency</Th>
-            <Th>APR</Th>
-            <Th>Total Supply</Th>
-            <Th>Total Borrowed</Th>
-            <Th>Utilizaton Rate</Th>
-            <Th>Balance</Th>
-            <Th>Action</Th>
-          </StyledRow>
-        </Thead>
-        <Tbody>
-          {lendData.map((token) => (
-            <StyledRow key={lendData.indexOf(token)}>
-              <Td>{token?.name}</Td>
-              <Td>{token?.landApr}</Td>
-              <Td>{token?.totalDeposit}</Td>
-              <Td>{token?.totalBorrowed}</Td>
-              <Td>{token?.capitalUtilizationRate}</Td>
-              <Td>{token?.exchangeRate}</Td>
-              <Td>
-                <StyledButton>Deposit</StyledButton>
-                <StyledButton>Withdraw</StyledButton>
-              </Td>
+      {/*
+NOTE: a small table behaves properly but a bigger one doesn't
+it doesn't resize properly
+SOLUTION: tweak word breaking and maybe media queries
+ */}
+      <TableWrapper>
+        <Table>
+          <Thead>
+            <StyledRow>
+              <Th>Currency</Th>
+              <Th>APR</Th>
+              <Th>Total Supply</Th>
+              <Th>Total Borrowed</Th>
+              <Th>Utilizaton Rate</Th>
+              <Th>Balance</Th>
+              <Th>Action</Th>
             </StyledRow>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {lendData.map((token) => (
+              <StyledRow key={lendData.indexOf(token)}>
+                <Td>{token?.name}</Td>
+                <Td>{token?.landApr}</Td>
+                <Td>{token?.totalDeposit}</Td>
+                <Td>{token?.totalBorrowed}</Td>
+                <Td>{utilizationRateToPercentage(token?.capitalUtilizationRate)}</Td>
+                <Td>{token?.exchangeRate}</Td>
+                <Td>
+                  <ActionCell>
+                    <StyledButton>Deposit</StyledButton>
+                    <StyledButton>Withdraw</StyledButton>
+                  </ActionCell>
+                </Td>
+              </StyledRow>
+            ))}
+          </Tbody>
+        </Table>
+      </TableWrapper>
     </CustomPage>
   )
 }
