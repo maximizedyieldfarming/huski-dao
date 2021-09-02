@@ -7,7 +7,7 @@ const farms: FarmConfig[] = [
    */
   {
     pid: 0,
-    lpSymbol: 'CAKE',
+    lpSymbol: 'CAKE0000',
     lpAddresses: {
       97: '0x9C21123D94b93361a29B2C2EFB3d5CD8B17e0A9e',
       56: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
@@ -17,7 +17,7 @@ const farms: FarmConfig[] = [
   },
   {
     pid: 251,
-    lpSymbol: 'CAKE-BNB LP',
+    lpSymbol: 'CAKE-BNB9999 LP',
     lpAddresses: {
       97: '0x3ed8936cAFDF85cfDBa29Fbe5940A5b0524824F4',
       56: '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0',
@@ -145,7 +145,7 @@ const farms: FarmConfig[] = [
   },
   {
     pid: 443,
-    lpSymbol: 'BTT-BUSD LP',
+    lpSymbol: 'BTT6789-BUSD LP',
     lpAddresses: {
       97: '',
       56: '0xdcfbb12ded3fea12d2a078bc6324131cd14bf835',
@@ -240,7 +240,7 @@ const farms: FarmConfig[] = [
   },
   {
     pid: 367,
-    lpSymbol: 'BTT-BNB LP',
+    lpSymbol: 'BTT111111-BNB LP',
     lpAddresses: {
       97: '',
       56: '0x946696344e7d4346b223e1cf77035a76690d6a73',

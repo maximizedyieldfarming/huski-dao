@@ -61,11 +61,11 @@ export const USDC = new Token(
 
 const tokens = {
   bnb: {
-    symbol: 'BNB',
+    symbol: 'BNB6666',
     projectLink: 'https://www.binance.com/',
   },
   cake: {
-    symbol: 'CAKE',
+    symbol: 'CAKE3456',
     address: {
       56: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
       97: '0xa35062141Fa33BCA92Ce69FeD37D0E8908868AAe',
@@ -1433,7 +1433,7 @@ const tokens = {
     projectLink: 'https://lympo.io/lmt/',
   },
   btt: {
-    symbol: 'BTT',
+    symbol: 'BTT22222',
     address: {
       56: '0x8595F9dA7b868b1822194fAEd312235E43007b49',
       97: '',
