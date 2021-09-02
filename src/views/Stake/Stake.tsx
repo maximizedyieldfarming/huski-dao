@@ -10,7 +10,7 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-
+import shortenExponentValues from 'utils/shortenExponentValeus'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -113,26 +113,6 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 }
 
 // styled components
-const FakeTable = styled.div`
-  background-color: #fff;
-  border-radius: 1rem;
-  flex-grow: 1;
-`
-
-const FakeTableRow = styled.div`
-  padding: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  &:not(:last-child) {
-    border-bottom: 1px solid #ccc;
-  }
-`
-const FakeTableHeader = styled(FakeTableRow)`
-  &:not(:last-child) {
-    border-bottom: none;
-  }
-`
 
 const TableWrapper = styled.div`
   background-color: #fff;
@@ -151,6 +131,12 @@ const SingleTableWrapper = styled(TableWrapper)`
   > div:nth-child(2) {
     flex-grow: 1;
   }
+  figure {
+    display: none;
+    @media (min-width: 1024px) {
+      display: block;
+    }
+  }
 `
 
 const ActionCell = styled.div`
@@ -161,37 +147,21 @@ const ActionCell = styled.div`
 
 const ImageContainer = styled.figure``
 
-const StyledBox = styled(Box)`
-  background-color: #fff;
+const Title = styled.div`
   color: #9615e7;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 20px;
-  padding: 10px;
-  span:last-child {
-    font-size: 2rem;
+  font-size: 30px;
+  border-bottom: 1px solid #ccc;
+  @media screen and (min-width: 1024px) {
+    font-size: 36px;
   }
 `
 
-const Title = styled.div`
-  color: #9615e7;
-  font-size: 36px;
-  border-bottom: 1px solid #ccc;
-`
-
 const StyledButton = styled(Button)`
-  padding: 0.75rem 2rem;
+  padding: 0.75rem;
   font-size: 14px;
   font-weight: 400;
   height: auto;
   box-shadow: none;
-`
-const StyledFlex = styled(Flex)`
-  flex-direction: row;
-  position: relative;
-  background-color: #fff;
-  padding: 5px 2rem;
 `
 
 const CustomPage = styled(Page)`
@@ -202,10 +172,42 @@ const CustomPage = styled(Page)`
   max-width: none;
 `
 
-const StyledRow = styled(Tr)`
-  th,
-  td {
-    padding: 1rem;
+const StyledTable = styled(Table)`
+  tr {
+    @media screen and (max-width: 40rem) {
+      border-top: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-bottom: 1px solid #000 !important;
+      &:last-child {
+        border-bottom: none !important;
+      }
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #9604e11a;
+    }
+
+    th,
+    td {
+      padding: 0.5rem;
+      vertical-align: middle;
+      font-weight: 400;
+      &:not(:first-child) {
+        word-break: break-word;
+        text-align: center;
+      }
+      @media screen and (max-width: 40rem) {
+        &.pivoted {
+          &:not(:last-child) {
+            border-bottom: 1px solid #9604e11a !important;
+          }
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      }
+    }
   }
 `
 
@@ -228,27 +230,31 @@ const Stake: React.FC = () => {
       <SingleTableWrapper>
         <Title>Lending Positions</Title>
         <Flex width="100%" borderBottom="1px solid #ccc">
-          <Table>
+          <StyledTable style={{ border: 'none' }}>
             <Thead>
-              <StyledRow>
+              <Tr>
                 <Th>Currency</Th>
                 <Th>APY</Th>
                 <Th>hToken</Th>
                 <Th>Asset Value</Th>
-              </StyledRow>
+                <Th>Action</Th>
+              </Tr>
             </Thead>
             <Tbody>
-              <StyledRow>
+              <Tr>
                 <Td>{stakingData[0]?.name}</Td>
                 <Td>{}</Td>
                 <Td>{}</Td>
+                <Td>{}</Td>
                 <Td>
-                  <StyledButton>Deposit</StyledButton>
-                  <StyledButton>Withdraw</StyledButton>
+                  <ActionCell>
+                    <StyledButton>Deposit</StyledButton>
+                    <StyledButton>Withdraw</StyledButton>
+                  </ActionCell>
                 </Td>
-              </StyledRow>
+              </Tr>
             </Tbody>
-          </Table>
+          </StyledTable>
           <ImageContainer>
             <img src={husky2} alt="" />
           </ImageContainer>
@@ -260,7 +266,9 @@ const Stake: React.FC = () => {
             </ImageContainer>{' '}
             <span>Huski Rewards</span>
           </Flex>
-          <span style={{ color: '#9615E7', fontSize: '30px' }}>826.23</span>
+          <Text as="span" style={{ color: '#9615E7', fontSize: '30px' }}>
+            826.23
+          </Text>
           <StyledButton>Claim</StyledButton>
         </Flex>
       </SingleTableWrapper>
@@ -291,30 +299,33 @@ const Stake: React.FC = () => {
           ]}
         />
       </Flex>
-
-      <Table>
-        <Thead>
-          <StyledRow>
-            <Th>Currency</Th>
-            <Th>APR</Th>
-            <Th>Total Supply</Th>
-            <Th>Action</Th>
-          </StyledRow>
-        </Thead>
-        <Tbody>
-          {stakingData.map((token) => (
-            <StyledRow>
-              <Td>{token?.name}</Td>
-              <Td>{token?.stakeAPR}</Td>
-              <Td>{token?.stakeValue}</Td>
-              <Td>
-                <StyledButton>Deposit</StyledButton>
-                <StyledButton>Withdraw</StyledButton>
-              </Td>
-            </StyledRow>
-          ))}
-        </Tbody>
-      </Table>
+      <TableWrapper>
+        <StyledTable>
+          <Thead>
+            <Tr>
+              <Th>Currency</Th>
+              <Th>APR</Th>
+              <Th>Total Supply</Th>
+              <Th>Action</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {stakingData.map((token) => (
+              <Tr>
+                <Td>{token?.name}</Td>
+                <Td>{token?.stakeAPR}</Td>
+                <Td>{shortenExponentValues(token?.stakeValue)}</Td>
+                <Td>
+                  <ActionCell>
+                    <StyledButton>Deposit</StyledButton>
+                    <StyledButton>Withdraw</StyledButton>
+                  </ActionCell>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </StyledTable>
+      </TableWrapper>
     </CustomPage>
   )
 }

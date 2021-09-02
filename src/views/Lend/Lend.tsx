@@ -7,6 +7,7 @@ import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, 
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
 // eslint-disable-next-line import/no-unresolved
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
+import shortenExponentValues from 'utils/shortenExponentValeus'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -115,19 +116,41 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 
 // styled components
 
-const StyledRow = styled(Tr)`
-  &:not(:last-child) {
-    border-bottom: 1px solid #9604e11a;
-  }
-  th,
-  td {
-    padding: 0.5rem;
-    vertical-align: middle;
-    font-weight: 400;
-    //word-wrap: break-word;
-    &:not(:first-child) {
-      word-break: break-word;
-      text-align: center;
+const StyledTable = styled(Table)`
+  tr {
+    @media screen and (max-width: 40rem) {
+      border-top: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-bottom: 1px solid #000 !important;
+      &:last-child {
+        border-bottom: none !important;
+      }
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #9604e11a;
+    }
+
+    th,
+    td {
+      padding: 0.5rem;
+      vertical-align: middle;
+      font-weight: 400;
+      &:not(:first-child) {
+        word-break: break-word;
+        text-align: center;
+      }
+      @media screen and (max-width: 40rem) {
+        &.pivoted {
+          &:not(:last-child) {
+            border-bottom: 1px solid #9604e11a !important;
+          }
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      }
     }
   }
 `
@@ -202,10 +225,6 @@ const CustomPage = styled(Page)`
   margin-right: 5%;
   max-width: none;
 `
-const CellWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`
 
 const Lend: React.FC = () => {
   const { path } = useRouteMatch()
@@ -243,19 +262,19 @@ const Lend: React.FC = () => {
 
       <SingleTableWrapper>
         <Title>Lending Positions</Title>
-        <Table>
+        <StyledTable>
           <Thead>
-            <StyledRow>
+            <Tr>
               <Th>Currency</Th>
               <Th>APY</Th>
               <Th>Deposit</Th>
               <Th>Yield</Th>
               <Th>hToken</Th>
               <Th>Action</Th>
-            </StyledRow>
+            </Tr>
           </Thead>
           <Tbody>
-            <StyledRow>
+            <Tr>
               <Td>{lendData[0]?.name}</Td>
               <Td>{}</Td>
               <Td>{}</Td>
@@ -267,9 +286,9 @@ const Lend: React.FC = () => {
                   <StyledButton>Withdraw</StyledButton>
                 </ActionCell>
               </Td>
-            </StyledRow>
+            </Tr>
           </Tbody>
-        </Table>
+        </StyledTable>
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
@@ -308,9 +327,9 @@ it doesn't resize properly
 SOLUTION: tweak word breaking and maybe media queries
  */}
       <TableWrapper>
-        <Table>
+        <StyledTable>
           <Thead>
-            <StyledRow>
+            <Tr>
               <Th>Currency</Th>
               <Th>APR</Th>
               <Th>Total Supply</Th>
@@ -318,27 +337,27 @@ SOLUTION: tweak word breaking and maybe media queries
               <Th>Utilizaton Rate</Th>
               <Th>Balance</Th>
               <Th>Action</Th>
-            </StyledRow>
+            </Tr>
           </Thead>
           <Tbody>
             {lendData.map((token) => (
-              <StyledRow key={lendData.indexOf(token)}>
+              <Tr key={lendData.indexOf(token)}>
                 <Td>{token?.name}</Td>
-                <Td>{token?.landApr}</Td>
-                <Td>{token?.totalDeposit}</Td>
-                <Td>{token?.totalBorrowed}</Td>
+                <Td>{(token?.landApr).toFixed(3)}</Td>
+                <Td>{shortenExponentValues(token?.totalDeposit)}</Td>
+                <Td>{shortenExponentValues(token?.totalBorrowed)}</Td>
                 <Td>{utilizationRateToPercentage(token?.capitalUtilizationRate)}</Td>
-                <Td>{token?.exchangeRate}</Td>
+                <Td>{(token?.exchangeRate).toFixed(3)}</Td>
                 <Td>
                   <ActionCell>
                     <StyledButton>Deposit</StyledButton>
                     <StyledButton>Withdraw</StyledButton>
                   </ActionCell>
                 </Td>
-              </StyledRow>
+              </Tr>
             ))}
           </Tbody>
-        </Table>
+        </StyledTable>
       </TableWrapper>
     </CustomPage>
   )
