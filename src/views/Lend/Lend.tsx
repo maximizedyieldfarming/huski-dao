@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
+// eslint-disable-next-line import/no-unresolved
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
