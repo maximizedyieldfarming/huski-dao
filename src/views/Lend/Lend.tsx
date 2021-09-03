@@ -335,7 +335,7 @@ SOLUTION: tweak word breaking and maybe media queries
           <Thead>
             <Tr>
               <Th />
-              <Th>APR</Th>
+              <Th>APY</Th>
               <Th>Total Supply</Th>
               <Th>Total Borrowed</Th>
               <Th>Utilizaton Rate</Th>
