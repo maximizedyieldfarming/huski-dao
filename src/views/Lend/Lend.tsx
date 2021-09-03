@@ -7,7 +7,6 @@ import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, 
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
 // eslint-disable-next-line import/no-unresolved
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
-import shortenExponentValues from 'utils/shortenExponentValeus'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -349,8 +348,8 @@ SOLUTION: tweak word breaking and maybe media queries
               <Tr key={lendData.indexOf(token)}>
                 <Td>{token?.name}</Td>
                 <Td>{(token?.landApr).toFixed(3)}</Td>
-                <Td>{shortenExponentValues(token?.totalDeposit)}</Td>
-                <Td>{shortenExponentValues(token?.totalBorrowed)}</Td>
+                <Td>{new BigNumber(token?.totalDeposit).toExponential(3)}</Td>
+                <Td>{new BigNumber(token?.totalBorrowed).toExponential(3)}</Td>
                 <Td>{utilizationRateToPercentage(token?.capitalUtilizationRate)}</Td>
                 <Td>{(token?.exchangeRate).toFixed(3)}</Td>
                 <Td>

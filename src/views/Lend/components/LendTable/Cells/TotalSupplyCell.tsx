@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import shortenExponentValues from 'utils/shortenExponentValeus'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -24,7 +23,7 @@ const TotalSupplyCell = ({ tokenData }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Supply
         </Text>
-        <Text>{shortenExponentValues(totalDeposit)}</Text>
+        <Text>{new BigNumber(totalDeposit).toExponential(3)}</Text>
       </CellContent>
     </StyledCell>
   )

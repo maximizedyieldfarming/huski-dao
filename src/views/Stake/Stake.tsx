@@ -10,7 +10,6 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import shortenExponentValues from 'utils/shortenExponentValeus'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -314,7 +313,7 @@ const Stake: React.FC = () => {
               <Tr>
                 <Td>{token?.name}</Td>
                 <Td>{token?.stakeAPR}</Td>
-                <Td>{shortenExponentValues(token?.stakeValue)}</Td>
+                <Td>{new BigNumber(token?.stakeValue).toExponential(3)}</Td>
                 <Td>
                   <ActionCell>
                     <StyledButton>Deposit</StyledButton>
