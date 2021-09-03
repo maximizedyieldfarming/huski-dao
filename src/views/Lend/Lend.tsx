@@ -29,6 +29,7 @@ import husky from './assets/husky@1x.png'
 import husky2 from './assets/husky2.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
+import LendTable from './components/LendTable/LendTable'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -163,6 +164,7 @@ const TableWrapper = styled.div`
 `
 
 const SingleTableWrapper = styled(TableWrapper)`
+  margin: 1rem 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -200,7 +202,8 @@ const StyledBox = styled(Box)`
 
 const Title = styled.div`
   color: #9615e7;
-  font-size: 36px;
+  font-size: 1.5rem;
+  font-weight: bold;
 `
 
 const StyledButton = styled(Button)`
@@ -260,17 +263,17 @@ const Lend: React.FC = () => {
         </StyledFlex>
       </Flex>
 
+      <Title>Lending Positions</Title>
       <SingleTableWrapper>
-        <Title>Lending Positions</Title>
         <StyledTable>
           <Thead>
             <Tr>
-              <Th>Currency</Th>
+              <Th />
               <Th>APY</Th>
               <Th>Deposit</Th>
               <Th>Yield</Th>
               <Th>hToken</Th>
-              <Th>Action</Th>
+              <Th />
             </Tr>
           </Thead>
           <Tbody>
@@ -326,17 +329,19 @@ NOTE: a small table behaves properly but a bigger one doesn't
 it doesn't resize properly
 SOLUTION: tweak word breaking and maybe media queries
  */}
+      <LendTable lendData={lendData} />
+
       <TableWrapper>
         <StyledTable>
           <Thead>
             <Tr>
-              <Th>Currency</Th>
+              <Th />
               <Th>APR</Th>
               <Th>Total Supply</Th>
               <Th>Total Borrowed</Th>
               <Th>Utilizaton Rate</Th>
               <Th>Balance</Th>
-              <Th>Action</Th>
+              <Th />
             </Tr>
           </Thead>
           <Tbody>
