@@ -1,3 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-param-reassign */
 import Web3 from 'web3';
 import getDomain from '../utils/env';
 
@@ -9,6 +12,8 @@ export const fetchTokenIdFromList = async (tokenZeroSymbol, tokenOneSymbol) => {
   // from the token symbol. Example: while we use symbols like cake for the pancake token, coingecko wants to be fed with
   // their token id for cake which is called pancakeswap-token.
   const tokenSymbolCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/list`;
+
+ 
   const listRaw = await fetch(tokenSymbolCoinGeckoApi);
   const list = await listRaw.json();
 
@@ -16,121 +21,123 @@ export const fetchTokenIdFromList = async (tokenZeroSymbol, tokenOneSymbol) => {
   // tokenZeroSymbol, tokenOneSymbol
   // eslint-disable-next-line @typescript-eslint/no-shadow
   const getCoinGeckoTokenIds = (tokenZeroSymbol) => {
-    const tokenId = list.filter(token => {
+    const tokenId = list.filter((token:any) => {
       if (tokenZeroSymbol.toLowerCase() === token.symbol){
         return token.id
       }
-      return false// 临时加的
     })
+    // console.info('tokenId', tokenId)
     return tokenId
   }
 
+
+  // return getCoinGeckoTokenIds();
   const tokenId = getCoinGeckoTokenIds(tokenZeroSymbol)
   console.log('tokenId', tokenId)
 }
 
 // this function is in test. Now working on moving the data to the farm page
-// export const fetchTokenPrice = async (tokenZeroSymbol, tokenOneSymbol) => {
-//   // THIS SHIT IS JUST TEMPORARY!!!!!
-//   if (tokenZeroSymbol === 'cake') {
-//     tokenZeroSymbol = 'pancakeswap-token';
-//   } else if (tokenZeroSymbol === 'btcb') {
-//     tokenZeroSymbol = 'binance-bitcoin';
-//   } else if (tokenZeroSymbol === 'eth') {
-//     tokenZeroSymbol = 'ethereum';
-//   } else if (tokenZeroSymbol === 'dot') {
-//     tokenZeroSymbol = 'polkadot';
-//   } else if (tokenZeroSymbol === 'bnb') {
-//     tokenZeroSymbol = 'binancecoin';
-//   } else if (tokenZeroSymbol === 'alpaca') {
-//     tokenZeroSymbol = 'alpaca-finance';
-//   } else if (tokenZeroSymbol === 'usdt') {
-//     tokenZeroSymbol = 'tether';
-//   } else if (tokenZeroSymbol === 'busd') {
-//     tokenZeroSymbol = 'binance-usd';
-//   } else if (tokenZeroSymbol === 'beth') {
-//     tokenZeroSymbol = 'binance-eth';
-//   } else if (tokenZeroSymbol === 'xvs') {
-//     tokenZeroSymbol = 'venus';
-//   } else if (tokenZeroSymbol === 'link') {
-//     tokenZeroSymbol = 'chainlink';
-//   } else if (tokenZeroSymbol === 'yfi') {
-//     tokenZeroSymbol = 'yearn-finance';
-//   } else if (tokenZeroSymbol === 'usdc') {
-//     tokenZeroSymbol = 'usd-coin';
-//   } else if (tokenZeroSymbol === 'ust') {
-//     tokenZeroSymbol = 'wrapped-ust';
-//   } else if (tokenZeroSymbol === 'comp') {
-//     tokenZeroSymbol = 'compound-coin';
-//   } else if (tokenZeroSymbol === 'itam') {
-//     tokenZeroSymbol = 'itam-games';
-//   } else if (tokenZeroSymbol === 'bmxx') {
-//     tokenZeroSymbol = 'multiplier-bsc';
-//   } else if (tokenZeroSymbol === 'bor') {
-//     tokenZeroSymbol = 'boringdao-[old]';
-//   } else if (tokenZeroSymbol === 'bry') {
-//     tokenZeroSymbol = 'berry-data';
-//   } else if (tokenZeroSymbol === 'uni') {
-//     tokenZeroSymbol = 'uniswap';
-//   } else if (tokenZeroSymbol === 'comp') {
-//     tokenZeroSymbol = 'compound-governance-token';
-//   }
+export const fetchTokenPrice = async (tokenZeroSymbol, tokenOneSymbol) => {
+  // THIS SHIT IS JUST TEMPORARY!!!!!
+  if (tokenZeroSymbol === 'cake') {
+    tokenZeroSymbol = 'pancakeswap-token';
+  } else if (tokenZeroSymbol === 'btcb') {
+    tokenZeroSymbol = 'binance-bitcoin';
+  } else if (tokenZeroSymbol === 'eth') {
+    tokenZeroSymbol = 'ethereum';
+  } else if (tokenZeroSymbol === 'dot') {
+    tokenZeroSymbol = 'polkadot';
+  } else if (tokenZeroSymbol === 'bnb') {
+    tokenZeroSymbol = 'binancecoin';
+  } else if (tokenZeroSymbol === 'alpaca') {
+    tokenZeroSymbol = 'alpaca-finance';
+  } else if (tokenZeroSymbol === 'usdt') {
+    tokenZeroSymbol = 'tether';
+  } else if (tokenZeroSymbol === 'busd') {
+    tokenZeroSymbol = 'binance-usd';
+  } else if (tokenZeroSymbol === 'beth') {
+    tokenZeroSymbol = 'binance-eth';
+  } else if (tokenZeroSymbol === 'xvs') {
+    tokenZeroSymbol = 'venus';
+  } else if (tokenZeroSymbol === 'link') {
+    tokenZeroSymbol = 'chainlink';
+  } else if (tokenZeroSymbol === 'yfi') {
+    tokenZeroSymbol = 'yearn-finance';
+  } else if (tokenZeroSymbol === 'usdc') {
+    tokenZeroSymbol = 'usd-coin';
+  } else if (tokenZeroSymbol === 'ust') {
+    tokenZeroSymbol = 'wrapped-ust';
+  } else if (tokenZeroSymbol === 'comp') {
+    tokenZeroSymbol = 'compound-coin';
+  } else if (tokenZeroSymbol === 'itam') {
+    tokenZeroSymbol = 'itam-games';
+  } else if (tokenZeroSymbol === 'bmxx') {
+    tokenZeroSymbol = 'multiplier-bsc';
+  } else if (tokenZeroSymbol === 'bor') {
+    tokenZeroSymbol = 'boringdao-[old]';
+  } else if (tokenZeroSymbol === 'bry') {
+    tokenZeroSymbol = 'berry-data';
+  } else if (tokenZeroSymbol === 'uni') {
+    tokenZeroSymbol = 'uniswap';
+  } else if (tokenZeroSymbol === 'comp') {
+    tokenZeroSymbol = 'compound-governance-token';
+  }
 
-//   if (tokenOneSymbol === 'cake') {
-//     tokenOneSymbol = 'pancakeswap-token';
-//   } else if (tokenOneSymbol === 'btcb') {
-//     tokenOneSymbol = 'binance-bitcoin';
-//   } else if (tokenOneSymbol === 'eth') {
-//     tokenOneSymbol = 'ethereum';
-//   } else if (tokenOneSymbol === 'dot') {
-//     tokenOneSymbol = 'polkadot';
-//   } else if (tokenOneSymbol === 'bnb') {
-//     tokenOneSymbol = 'binancecoin';
-//   } else if (tokenOneSymbol === 'alpaca') {
-//     tokenOneSymbol = 'alpaca-finance';
-//   } else if (tokenOneSymbol === 'usdt') {
-//     tokenOneSymbol = 'tether';
-//   } else if (tokenOneSymbol === 'busd') {
-//     tokenOneSymbol = 'binance-usd';
-//   } else if (tokenOneSymbol === 'beth') {
-//     tokenOneSymbol = 'binance-eth';
-//   } else if (tokenOneSymbol === 'xvs') {
-//     tokenOneSymbol = 'venus';
-//   } else if (tokenOneSymbol === 'link') {
-//     tokenOneSymbol = 'chainlink';
-//   } else if (tokenOneSymbol === 'yfi') {
-//     tokenOneSymbol = 'yearn-finance';
-//   } else if (tokenOneSymbol === 'usdc') {
-//     tokenOneSymbol = 'usd-coin';
-//   } else if (tokenOneSymbol === 'ust') {
-//     tokenOneSymbol = 'wrapped-ust';
-//   } else if (tokenOneSymbol === 'comp') {
-//     tokenOneSymbol = 'compound-coin';
-//   } else if (tokenOneSymbol === 'itam') {
-//     tokenOneSymbol = 'itam-games';
-//   } else if (tokenOneSymbol === 'bmxx') {
-//     tokenOneSymbol = 'multiplier-bsc';
-//   } else if (tokenOneSymbol === 'bor') {
-//     tokenOneSymbol = 'boringdao-[old]';
-//   } else if (tokenOneSymbol === 'bry') {
-//     tokenOneSymbol = 'berry-data';
-//   }else if (tokenOneSymbol === 'uni') {
-//     tokenOneSymbol = 'uniswap';
-//   }else if (tokenOneSymbol === 'comp') {
-//     tokenOneSymbol = 'compound-governance-token';
-//   }
+  if (tokenOneSymbol === 'cake') {
+    tokenOneSymbol = 'pancakeswap-token';
+  } else if (tokenOneSymbol === 'btcb') {
+    tokenOneSymbol = 'binance-bitcoin';
+  } else if (tokenOneSymbol === 'eth') {
+    tokenOneSymbol = 'ethereum';
+  } else if (tokenOneSymbol === 'dot') {
+    tokenOneSymbol = 'polkadot';
+  } else if (tokenOneSymbol === 'bnb') {
+    tokenOneSymbol = 'binancecoin';
+  } else if (tokenOneSymbol === 'alpaca') {
+    tokenOneSymbol = 'alpaca-finance';
+  } else if (tokenOneSymbol === 'usdt') {
+    tokenOneSymbol = 'tether';
+  } else if (tokenOneSymbol === 'busd') {
+    tokenOneSymbol = 'binance-usd';
+  } else if (tokenOneSymbol === 'beth') {
+    tokenOneSymbol = 'binance-eth';
+  } else if (tokenOneSymbol === 'xvs') {
+    tokenOneSymbol = 'venus';
+  } else if (tokenOneSymbol === 'link') {
+    tokenOneSymbol = 'chainlink';
+  } else if (tokenOneSymbol === 'yfi') {
+    tokenOneSymbol = 'yearn-finance';
+  } else if (tokenOneSymbol === 'usdc') {
+    tokenOneSymbol = 'usd-coin';
+  } else if (tokenOneSymbol === 'ust') {
+    tokenOneSymbol = 'wrapped-ust';
+  } else if (tokenOneSymbol === 'comp') {
+    tokenOneSymbol = 'compound-coin';
+  } else if (tokenOneSymbol === 'itam') {
+    tokenOneSymbol = 'itam-games';
+  } else if (tokenOneSymbol === 'bmxx') {
+    tokenOneSymbol = 'multiplier-bsc';
+  } else if (tokenOneSymbol === 'bor') {
+    tokenOneSymbol = 'boringdao-[old]';
+  } else if (tokenOneSymbol === 'bry') {
+    tokenOneSymbol = 'berry-data';
+  }else if (tokenOneSymbol === 'uni') {
+    tokenOneSymbol = 'uniswap';
+  }else if (tokenOneSymbol === 'comp') {
+    tokenOneSymbol = 'compound-governance-token';
+  }
 
   // to consider there is a limit to the number of request to coingecko. If we call the list and filter for tokens to find
   // the id needed to feed the price token api we will make 2 api call per user instead of 1
-//   const tokenPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenZeroSymbol}%2C${tokenOneSymbol}&vs_currencies=usd`;
-//   const res = await fetch(tokenPriceCoinGeckoApi);
-//   const data = await res.json();
-//   // because CoinGecko is so dumb to return the tokens prices not in order of token symbol requested we need to make sure token zero is token <zero></zero>
-//   const priceTokenZero = data[tokenZeroSymbol];
-//   const priceTokenOne = data[tokenOneSymbol];
+  const tokenPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenZeroSymbol}%2C${tokenOneSymbol}&vs_currencies=usd`;
+  const res = await fetch(tokenPriceCoinGeckoApi);
+  const data = await res.json();
+  // because CoinGecko is so dumb to return the tokens prices not in order of token symbol requested we need to make sure token zero is token <zero></zero>
+  const priceTokenZero = data[tokenZeroSymbol];
+  const priceTokenOne = data[tokenOneSymbol];
 
-//   return [priceTokenZero, priceTokenOne];
-// };
+  return [priceTokenZero, priceTokenOne];
+};
 
 export const fetchCakePrice = async () => {
   const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=pancakeswap-token&vs_currencies=usd`;

@@ -1,12 +1,14 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { useFarms } from 'state/farms/hooks'
+import { useFarmsData } from 'state/levarage/hooks'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'
 import husky2 from './assets/husky2.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
+
 
 const FakeTable = styled.div`
   background-color: #fff;
@@ -111,7 +113,9 @@ const CustomPage = styled(Page)`
 
 const Levarage: React.FC = () => {
   const { data: farmData } = useFarms()
-  console.log({ farmData })
+
+  const { farmsData } = useFarmsData()
+  console.info('farmsData ---true',farmsData)
   const [isActivePos, setActive] = useState(true)
 
   const [firstToken, ...rest] = farmData

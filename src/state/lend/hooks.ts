@@ -8,10 +8,8 @@ import { getBalanceAmount } from 'utils/formatBalance'
 import { getPoolInfo, getSumLendData, getStakeValue, getStakeApr } from 'utils/vaultService'
 import { farmsConfig } from 'config/constants'
 import useRefresh from 'hooks/useRefresh'
-import { getPoolHuskyDaily } from 'utils/fairLaunchService'
 import mainnet from '../../mainnet.json'
 import { sumTokenData } from '../utils'
-
 
 // use this
 export const useLendData = () => {

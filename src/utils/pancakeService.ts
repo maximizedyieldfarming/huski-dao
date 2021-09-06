@@ -20,6 +20,8 @@ export async function getYieldFarmAPR(param: any) {
 
     const yieldFarmAPR = emissionCakePerYear.div(tvl);
 
+    // console.log(`getYieldFarmAPR: ${  yieldFarmAPR.toNumber()}`);
+
     // const masterChef2 = new ethers.Contract(getPancakeMasterChef(), MasterChefABI, provider);
     // console.log("ethers getYieldFarmAPR: ", masterChef2.cakePerBlock());
     return yieldFarmAPR.toNumber();

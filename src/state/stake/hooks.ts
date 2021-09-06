@@ -5,13 +5,10 @@ import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { getBalanceAmount } from 'utils/formatBalance'
-import { getPoolInfo, getPoolInfo1, getSumLendData, getStakeValue, getStakeApr } from 'utils/vaultService'
-import { farmsConfig } from 'config/constants'
+import {  getStakeValue, getStakeApr } from 'utils/vaultService'
 import useRefresh from 'hooks/useRefresh'
 import { getPoolHuskyDaily } from 'utils/fairLaunchService'
-import { State, Farm, FarmsState } from '../types'
 import mainnet from '../../mainnet.json'
-import { sumLendingPoolData, sumTokenData } from '../utils'
 
 
 // use this

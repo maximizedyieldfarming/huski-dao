@@ -42,7 +42,6 @@ export const fetchFarmsPublicDataAsync = createAsyncThunk<Farm[], number[]>(
     const farmsWithoutHelperLps = farmsWithPrices.filter((farm: Farm) => {
       return farm.pid || farm.pid === 0
     })
-
     return farmsWithoutHelperLps
   },
 )

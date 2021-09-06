@@ -112,7 +112,6 @@ export async function getPoolInfo(param: any) {
 }
 
 export async function getStakeApr(param: any) {
-  // console.info('pa',param);
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
 
   const totalSupply = parseInt(await vault.methods.totalSupply().call());
