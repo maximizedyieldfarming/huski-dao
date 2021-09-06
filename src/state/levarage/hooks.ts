@@ -14,7 +14,7 @@ import { fetchTokenIdFromList, fetchTokenPrice, fetchCakePrice, formatPercentage
 
 export const useFarmsData = () => {
 
-  // const [cakePrice, setCakePrice] = useState();
+  const [cakePrice, setCakePrice] = useState();
   const [farmsData, setFarmsData] = useState([]);
   useEffect(() => {
     const cleanPools = mainnet.Exchanges.Pancakeswap.LpTokens.filter((lpPool: any) => {
@@ -55,9 +55,12 @@ export const useFarmsData = () => {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         });
-        const cakePrice = await fetchCakePrice();
 
-        console.info('121212',cakePrice );
+        const getCakePrice = async () => {
+          const cakePrice1 = await fetchCakePrice();
+          setCakePrice(cakePrice1);
+        };
+        getCakePrice();
         // create the object with pId, cakeprice and tvl
         if (cakePrice) {
           const param = { pId: lpPool.pId, cakePrice, tvl: totalTvlNumber };
@@ -71,11 +74,10 @@ export const useFarmsData = () => {
     });
     Promise.all(farmPools)
       .then((values) => {
-        console.info('values----', values);
         setFarmsData(values)
       })
       .catch((error) => console.error('error', error));
-  }, [setFarmsData])
+  }, [cakePrice, setFarmsData])
   return { farmsData }
 
 }
