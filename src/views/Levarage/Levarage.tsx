@@ -8,7 +8,7 @@ import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'
 import husky2 from './assets/husky2.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
-
+import LevarageTable from './components/LevarageTable/LevarageTable'
 
 const FakeTable = styled.div`
   background-color: #fff;
@@ -116,13 +116,14 @@ const CustomPage = styled(Page)`
 `
 
 const Levarage: React.FC = () => {
-  const { data: farmData } = useFarms()
+  // const { data: farmData } = useFarms()
 
   const { farmsData } = useFarmsData()
-  console.info('farmsData ---true',farmsData)
+  console.info('farmsData ---true', farmsData)
+  // console.table(farmsData)
   const [isActivePos, setActive] = useState(true)
 
-  const [firstToken, ...rest] = farmData
+  // const [firstToken, ...rest] = farmData
 
   return (
     <CustomPage>
@@ -171,7 +172,7 @@ const Levarage: React.FC = () => {
             <span> </span>
           </FakeTableHeader>
           <FakeTableRow>
-            <span>{firstToken.lpSymbol}</span>
+            <span>{farmsData[0]?.lpSymbol}</span>
             <span>{}</span>
             <span>{}</span>
             <span>{}</span>
@@ -217,8 +218,8 @@ const Levarage: React.FC = () => {
           ]}
         />
       </Flex>
-
-      <TableWrapper>
+      <LevarageTable levarageData={farmsData} />
+      {/*  <TableWrapper>
         <FakeTable>
           <FakeTableHeader>
             <span>Currency</span>
@@ -229,7 +230,7 @@ const Levarage: React.FC = () => {
             <span>Balance</span>
             <span>Action</span>
           </FakeTableHeader>
-          {rest.map((token) => (
+          {farmsData.map((token) => (
             <FakeTableRow key={token.pid}>
               <span>{token?.lpSymbol}</span>
               <span>{token?.pid}</span>
@@ -244,7 +245,7 @@ const Levarage: React.FC = () => {
             </FakeTableRow>
           ))}
         </FakeTable>
-      </TableWrapper>
+      </TableWrapper> */}
     </CustomPage>
   )
 }
