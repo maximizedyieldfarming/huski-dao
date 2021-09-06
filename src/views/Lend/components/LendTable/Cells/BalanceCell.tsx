@@ -14,16 +14,15 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const BalanceCell = ({ tokenData }) => {
+const BalanceCell = ({ balance }) => {
   const { isMobile } = useMatchBreakpoints()
-  const { exchangeRate } = tokenData
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Balance
         </Text>
-        <Text>{exchangeRate.toFixed(3)}</Text>
+        <Text>{balance.toFixed(3)}</Text>
       </CellContent>
     </StyledCell>
   )

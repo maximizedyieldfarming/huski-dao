@@ -14,16 +14,15 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const ApyCell = ({ tokenData }) => {
+const ApyCell = ({ apr }) => {
   const { isMobile } = useMatchBreakpoints()
-  const { landApr } = tokenData
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Apy
         </Text>
-        <Text>{(landApr).toFixed(3)}</Text>
+        <Text>{apr.toFixed(3)}</Text>
       </CellContent>
     </StyledCell>
   )

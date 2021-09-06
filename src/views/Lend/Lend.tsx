@@ -237,11 +237,11 @@ const Lend: React.FC = () => {
   console.log({ lendData })
   console.log({ lendTotalSupply })
 
-  const utilizationRateToPercentage = (utilRate) => {
+  /* const utilizationRateToPercentage = (utilRate) => {
     const value = utilRate * 100
     return `${value.toFixed(2)}%`
   }
-
+ */
   return (
     <CustomPage>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
@@ -330,7 +330,7 @@ SOLUTION: tweak word breaking and maybe media queries
  */}
       <LendTable lendData={lendData} />
 
-      <TableWrapper>
+      {/* <TableWrapper>
         <StyledTable>
           <Thead>
             <Tr>
@@ -362,7 +362,7 @@ SOLUTION: tweak word breaking and maybe media queries
             ))}
           </Tbody>
         </StyledTable>
-      </TableWrapper>
+      </TableWrapper> */}
     </CustomPage>
   )
 }

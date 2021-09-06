@@ -14,21 +14,20 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const UtilRateCell = ({ tokenData }) => {
-  const utilizationRateToPercentage = (utilRate) => {
-    const value = utilRate * 100
+const UtilRateCell = ({ utilRate }) => {
+  const utilizationRateToPercentage = (rate) => {
+    const value = rate * 100
     return `${value.toFixed(2)}%`
   }
 
   const { isMobile } = useMatchBreakpoints()
-  const { capitalUtilizationRate } = tokenData
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Utilization Rate
         </Text>
-        <Text>{utilizationRateToPercentage(capitalUtilizationRate)}</Text>
+        <Text>{utilizationRateToPercentage(utilRate)}</Text>
       </CellContent>
     </StyledCell>
   )

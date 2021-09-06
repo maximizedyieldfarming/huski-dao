@@ -19,12 +19,9 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const NameCell = ({ tokenData }) => {
-  console.log('pool in pools/poolstable/cells/namecelss', tokenData)
+const NameCell = ({ name }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
-
-  const { name } = tokenData
 
   return (
     <StyledCell role="cell">

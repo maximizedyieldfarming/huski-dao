@@ -14,16 +14,15 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalBorrowedCell = ({ tokenData }) => {
+const TotalBorrowedCell = ({ borrowed }) => {
   const { isMobile } = useMatchBreakpoints()
-  const { totalBorrowed } = tokenData
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Borrowed
         </Text>
-        <Text>{new BigNumber(totalBorrowed).toExponential(3)}</Text>
+        <Text>{new BigNumber(borrowed).toExponential(3)}</Text>
       </CellContent>
     </StyledCell>
   )

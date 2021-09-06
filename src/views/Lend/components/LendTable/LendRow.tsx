@@ -26,15 +26,17 @@ const LendRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
+  const { name, landApr, totalDeposit, totalBorrowed, capitalUtilizationRate, exchangeRate } = tokenData
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <NameCell tokenData={tokenData} />
-        <ApyCell tokenData={tokenData} />
-        {isDesktop && <TotalSupplyCell tokenData={tokenData} />}
-        {isDesktop && <TotalBorrowedCell tokenData={tokenData} />}
-        {isDesktop && <UtilRateCell tokenData={tokenData} />}
-        <BalanceCell tokenData={tokenData} />
+        <NameCell name={name} />
+        <ApyCell apr={landApr} />
+        {isDesktop && <TotalSupplyCell supply={totalDeposit} />}
+        {isDesktop && <TotalBorrowedCell borrowed={totalBorrowed} />}
+        {isDesktop && <UtilRateCell utilRate={capitalUtilizationRate} />}
+        <BalanceCell balance={exchangeRate} />
         {isDesktop && <ActionCell />}
       </StyledRow>
     </>

@@ -14,16 +14,15 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalSupplyCell = ({ tokenData }) => {
+const TotalSupplyCell = ({ supply }) => {
   const { isMobile } = useMatchBreakpoints()
-  const { totalDeposit } = tokenData
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Supply
         </Text>
-        <Text>{new BigNumber(totalDeposit).toExponential(3)}</Text>
+        <Text>{new BigNumber(supply).toExponential(3)}</Text>
       </CellContent>
     </StyledCell>
   )
