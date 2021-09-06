@@ -234,14 +234,7 @@ const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { lendData } = useLendData()
   const lendTotalSupply = useLendTotalSupply()
-  console.log({ lendData })
-  console.log({ lendTotalSupply })
 
-  /* const utilizationRateToPercentage = (utilRate) => {
-    const value = utilRate * 100
-    return `${value.toFixed(2)}%`
-  }
- */
   return (
     <CustomPage>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
@@ -323,46 +316,7 @@ const Lend: React.FC = () => {
         />
       </Flex>
 
-      {/*
-NOTE: a small table behaves properly but a bigger one doesn't
-it doesn't resize properly
-SOLUTION: tweak word breaking and maybe media queries
- */}
       <LendTable lendData={lendData} />
-
-      {/* <TableWrapper>
-        <StyledTable>
-          <Thead>
-            <Tr>
-              <Th />
-              <Th>APY</Th>
-              <Th>Total Supply</Th>
-              <Th>Total Borrowed</Th>
-              <Th>Utilizaton Rate</Th>
-              <Th>Balance</Th>
-              <Th />
-            </Tr>
-          </Thead>
-          <Tbody>
-            {lendData.map((token) => (
-              <Tr key={lendData.indexOf(token)}>
-                <Td>{token?.name}</Td>
-                <Td>{(token?.landApr).toFixed(3)}</Td>
-                <Td>{new BigNumber(token?.totalDeposit).toExponential(3)}</Td>
-                <Td>{new BigNumber(token?.totalBorrowed).toExponential(3)}</Td>
-                <Td>{utilizationRateToPercentage(token?.capitalUtilizationRate)}</Td>
-                <Td>{(token?.exchangeRate).toFixed(3)}</Td>
-                <Td>
-                  <ActionCell>
-                    <StyledButton>Deposit</StyledButton>
-                    <StyledButton>Withdraw</StyledButton>
-                  </ActionCell>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </StyledTable>
-      </TableWrapper> */}
     </CustomPage>
   )
 }
