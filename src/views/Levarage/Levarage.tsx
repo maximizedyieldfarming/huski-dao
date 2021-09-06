@@ -18,9 +18,13 @@ const FakeTable = styled.div`
 
 const FakeTableRow = styled.div`
   padding: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  align-items: center;
+  // display: flex;
+  // flex-direction: row;
+  // justify-content: space-between;
   &:not(:last-child) {
     border-bottom: 1px solid #ccc;
   }
@@ -155,17 +159,21 @@ const Levarage: React.FC = () => {
       <SingleTableWrapper>
         <FakeTable>
           <FakeTableHeader>
-            <span>Position Value</span>
-            <span>Debt Value</span>
-            <span>Equity Value</span>
+            <span>#</span>
+            <span>Pool</span>
+            <span>Position</span>
+            <span>Debt</span>
+            <span>Equity</span>
             <span>APY</span>
             <span>Debt Ratio</span>
-            <span>Liquidation Ratio</span>
-            <span>Risk Factor</span>
-            <span>Action</span>
+            <span>Liquidation Threshold</span>
+            <span>Safety Buffer</span>
+            <span> </span>
           </FakeTableHeader>
           <FakeTableRow>
             <span>{firstToken.lpSymbol}</span>
+            <span>{}</span>
+            <span>{}</span>
             <span>{}</span>
             <span>{}</span>
             <span>{}</span>

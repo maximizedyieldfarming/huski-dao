@@ -7,7 +7,6 @@ import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, 
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
 // eslint-disable-next-line import/no-unresolved
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
-import shortenExponentValues from 'utils/shortenExponentValeus'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -29,6 +28,7 @@ import husky from './assets/husky@1x.png'
 import husky2 from './assets/husky2.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
+import LendTable from './components/LendTable/LendTable'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -163,6 +163,7 @@ const TableWrapper = styled.div`
 `
 
 const SingleTableWrapper = styled(TableWrapper)`
+  margin: 1rem 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -200,7 +201,8 @@ const StyledBox = styled(Box)`
 
 const Title = styled.div`
   color: #9615e7;
-  font-size: 36px;
+  font-size: 1.5rem;
+  font-weight: bold;
 `
 
 const StyledButton = styled(Button)`
@@ -235,11 +237,11 @@ const Lend: React.FC = () => {
   console.log({ lendData })
   console.log({ lendTotalSupply })
 
-  const utilizationRateToPercentage = (utilRate) => {
+  /* const utilizationRateToPercentage = (utilRate) => {
     const value = utilRate * 100
     return `${value.toFixed(2)}%`
   }
-
+ */
   return (
     <CustomPage>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
@@ -260,17 +262,17 @@ const Lend: React.FC = () => {
         </StyledFlex>
       </Flex>
 
+      <Title>Lending Positions</Title>
       <SingleTableWrapper>
-        <Title>Lending Positions</Title>
         <StyledTable>
           <Thead>
             <Tr>
-              <Th>Currency</Th>
+              <Th />
               <Th>APY</Th>
               <Th>Deposit</Th>
               <Th>Yield</Th>
               <Th>hToken</Th>
-              <Th>Action</Th>
+              <Th />
             </Tr>
           </Thead>
           <Tbody>
@@ -326,17 +328,19 @@ NOTE: a small table behaves properly but a bigger one doesn't
 it doesn't resize properly
 SOLUTION: tweak word breaking and maybe media queries
  */}
-      <TableWrapper>
+      <LendTable lendData={lendData} />
+
+      {/* <TableWrapper>
         <StyledTable>
           <Thead>
             <Tr>
-              <Th>Currency</Th>
-              <Th>APR</Th>
+              <Th />
+              <Th>APY</Th>
               <Th>Total Supply</Th>
               <Th>Total Borrowed</Th>
               <Th>Utilizaton Rate</Th>
               <Th>Balance</Th>
-              <Th>Action</Th>
+              <Th />
             </Tr>
           </Thead>
           <Tbody>
@@ -344,8 +348,8 @@ SOLUTION: tweak word breaking and maybe media queries
               <Tr key={lendData.indexOf(token)}>
                 <Td>{token?.name}</Td>
                 <Td>{(token?.landApr).toFixed(3)}</Td>
-                <Td>{shortenExponentValues(token?.totalDeposit)}</Td>
-                <Td>{shortenExponentValues(token?.totalBorrowed)}</Td>
+                <Td>{new BigNumber(token?.totalDeposit).toExponential(3)}</Td>
+                <Td>{new BigNumber(token?.totalBorrowed).toExponential(3)}</Td>
                 <Td>{utilizationRateToPercentage(token?.capitalUtilizationRate)}</Td>
                 <Td>{(token?.exchangeRate).toFixed(3)}</Td>
                 <Td>
@@ -358,7 +362,7 @@ SOLUTION: tweak word breaking and maybe media queries
             ))}
           </Tbody>
         </StyledTable>
-      </TableWrapper>
+      </TableWrapper> */}
     </CustomPage>
   )
 }

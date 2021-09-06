@@ -10,7 +10,6 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import shortenExponentValues from 'utils/shortenExponentValeus'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -27,6 +26,7 @@ import Loading from 'components/Loading'
 import { useFarms } from 'state/farms/hooks'
 import husky2 from './assets/husky2.png'
 import huskyIcon from './assets/avatar1x.png'
+import StakeTable from './components/StakeTable/StakeTable'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -299,7 +299,10 @@ const Stake: React.FC = () => {
           ]}
         />
       </Flex>
-      <TableWrapper>
+
+      <StakeTable stakeData={stakingData} />
+
+      {/* <TableWrapper>
         <StyledTable>
           <Thead>
             <Tr>
@@ -314,7 +317,7 @@ const Stake: React.FC = () => {
               <Tr>
                 <Td>{token?.name}</Td>
                 <Td>{token?.stakeAPR}</Td>
-                <Td>{shortenExponentValues(token?.stakeValue)}</Td>
+                <Td>{new BigNumber(token?.stakeValue).toExponential(3)}</Td>
                 <Td>
                   <ActionCell>
                     <StyledButton>Deposit</StyledButton>
@@ -325,7 +328,7 @@ const Stake: React.FC = () => {
             ))}
           </Tbody>
         </StyledTable>
-      </TableWrapper>
+      </TableWrapper> */}
     </CustomPage>
   )
 }
