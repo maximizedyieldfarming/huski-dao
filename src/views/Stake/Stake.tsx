@@ -26,6 +26,7 @@ import Loading from 'components/Loading'
 import { useFarms } from 'state/farms/hooks'
 import husky2 from './assets/husky2.png'
 import huskyIcon from './assets/avatar1x.png'
+import StakeTable from './components/StakeTable/StakeTable'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -298,7 +299,10 @@ const Stake: React.FC = () => {
           ]}
         />
       </Flex>
-      <TableWrapper>
+
+      <StakeTable stakeData={stakingData} />
+
+      {/* <TableWrapper>
         <StyledTable>
           <Thead>
             <Tr>
@@ -324,7 +328,7 @@ const Stake: React.FC = () => {
             ))}
           </Tbody>
         </StyledTable>
-      </TableWrapper>
+      </TableWrapper> */}
     </CustomPage>
   )
 }
