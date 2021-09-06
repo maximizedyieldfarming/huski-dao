@@ -228,7 +228,7 @@ const Stake: React.FC = () => {
   return (
     <CustomPage>
       <SingleTableWrapper>
-        <Title>Lending Positions</Title>
+        <Title>Positions</Title>
         <Flex width="100%" borderBottom="1px solid #ccc">
           <StyledTable style={{ border: 'none' }}>
             <Thead>

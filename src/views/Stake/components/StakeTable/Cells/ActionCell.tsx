@@ -10,7 +10,10 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 0 0 120px;
+    flex: 1 0 120px;
+  }
+  > div {
+    gap: 5px;
   }
 `
 const StyledButton = styled(Button)`
