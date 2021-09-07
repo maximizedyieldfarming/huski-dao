@@ -9,10 +9,12 @@ import medalRwdsIcon from './assets/medalRewards.png'
 import totalRwdsIcon from './assets/totalRewards.png'
 import containingIcon from './assets/containing@1x.png'
 import WarriorTable from './components/WarriorTable/WarriorTable'
+import bone1 from './assets/bone1-1x.png'
+import bone2 from './assets/bone2-1x.png'
 
 const WarriorCard = styled(Box)`
   flex: 1;
-  background: #fff;
+  background-color: #fff;
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
   display: flex;
@@ -23,10 +25,26 @@ const WarriorCard = styled(Box)`
   div {
     color: #9615e7;
   }
-  > div {
+  > ${Flex} {
     padding: 1rem;
     flex-direction: column;
     justify-content: space-between;
+    &:first-child {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        background-image: url(${bone2});
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: auto;
+        opacity: 0.25;
+      }
+    }
     &:last-child {
       background: linear-gradient(125deg, #3ed3dd 0%, #1cc3ce 100%);
       border-radius: 20px;
@@ -53,8 +71,22 @@ const StatsCard = styled(Box)`
       flex-flow: row wrap;
       justify-content: space-between;
       align-content: space-between;
-      >div{
+      position: relative;
+      ${Text}{
       text-align:center;
+      }
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        background-image: url(${bone2});
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: auto;
+        opacity: 0.25;
       }
     }
     &:last-child{
@@ -69,6 +101,20 @@ const StatsCard = styled(Box)`
           align-items: center;
           justify-content: center;
         }
+      }
+ position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        background-image: url(${bone1});
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: auto;
+        opacity: 0.25;
       }
     }
     }
