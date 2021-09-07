@@ -2,19 +2,44 @@ import { Box, Button, Flex, Link, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import React from 'react'
 import styled from 'styled-components'
+import warrior from './assets/warrior@1x.png'
+import frndsInvIcon from './assets/friendsInvited@1x.png'
+import medalCollIcon from './assets/medalCollected@1x.png'
+import medalRwdsIcon from './assets/medalRewards.png'
+import totalRwdsIcon from './assets/totalRewards.png'
+import containingIcon from './assets/containing@1x.png'
+import WarriorTable from './components/WarriorTable/WarriorTable'
 
 const WarriorCard = styled(Box)`
-  background: linear-gradient(125deg, #3ed3dd 0%, #1cc3ce 100%);
+  flex: 1;
+  background: #fff;
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
-  width: 594px;
-  height: 330px;
-  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
   padding: 1rem;
   margin-right: 1rem;
+  div {
+    color: #9615e7;
+  }
+  > div {
+    padding: 1rem;
+    flex-direction: column;
+    justify-content: space-between;
+    &:last-child {
+      background: linear-gradient(125deg, #3ed3dd 0%, #1cc3ce 100%);
+      border-radius: 20px;
+      padding: 10px;
+      position: relative;
+    }
+  }
 `
 
 const StatsCard = styled(Box)`
+  flex: 1.5;
+  border-radius: 20px;
+  box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   background: #fff;
   display: flex;
   padding: 1rem;
@@ -23,25 +48,28 @@ const StatsCard = styled(Box)`
   }
   > div {
     flex: 1;
-    padding: 0 1rem;
+    padding: 1rem;
     &:first-child {
-      border-right: 1px solid #9615E780; 
       flex-flow: row wrap;
       justify-content: space-between;
-      > div:nth-last-child(-n + 2) {
-        align-self: flex-end;
+      align-content: space-between;
+      >div{
+      text-align:center;
       }
     }
     &:last-child{
+      background: #EDF8FD;
+      border-radius: 20px;
       flex-flow: row wrap;
       justify-content: space-between;
-      > div:nth-child(2) {
-       align-self: flex-end;
-       order: 3;
-     }
-     >div:last-child {
-       align-self: center;
-     } 
+      >div{
+        flex-direction: column;
+        justify-content: space-between;
+        &:last-child {
+          align-items: center;
+          justify-content: center;
+        }
+      }
     }
     }
   }
@@ -57,80 +85,134 @@ const ClaimButton = styled(Button)`
 
 const StyledLink = styled(Link)`
   background-color: #f7931a;
-  padding: 1rem;
-  border-radius: 10px 4px 4px 10px;
-  margin-right: -1.2rem;
+  padding: 7px;
+  border-radius: 17px 6px 6px 17px;
+  position: absolute;
+  right: -20px;
+  bottom: 0;
 `
+// MOCK DATA
+const rewardsData = [
+  {
+    tier: 'tier 1',
+    total: '100',
+    available: '20',
+    totalRewardsDistributed: '100US + 100BNB',
+    rewardsPerWarrior: '1BUSD + 1BNB',
+  },
+  {
+    tier: 'tier 2',
+    total: '100',
+    available: '20',
+    totalRewardsDistributed: '100US + 100BNB',
+    rewardsPerWarrior: '1BUSD + 1BNB',
+  },
+  {
+    tier: 'tier 3',
+    total: '100',
+    available: '20',
+    totalRewardsDistributed: '100US + 100BNB',
+    rewardsPerWarrior: '1BUSD + 1BNB',
+  },
+  {
+    tier: 'tier 4',
+    total: '100',
+    available: '20',
+    totalRewardsDistributed: '100US + 100BNB',
+    rewardsPerWarrior: '1BUSD + 1BNB',
+  },
+  {
+    tier: 'tier 5',
+    total: '100',
+    available: '20',
+    totalRewardsDistributed: '100US + 100BNB',
+    rewardsPerWarrior: '1BUSD + 1BNB',
+  },
+]
 
 const WarriorID: React.FC = () => {
   return (
     <Page>
-      <Flex justifyContent="space-between">
+      <Flex justifyContent="space-between" marginBottom="2%">
         <WarriorCard>
-          <Flex justifyContent="space-between" height="100%">
-            <Flex flexDirection="column" justifyContent="space-around">
-              <Box>
-                <Text color="#fff" fontSize="18px">
-                  Huski:
-                </Text>
-                <Text color="#fff" fontSize="48px">
-                  0.00
-                </Text>
-              </Box>
-              <Box>
-                <Text color="#fff" fontSize="18px">
-                  Medals:
-                </Text>
-                <Text color="#fff" fontSize="48px">
-                  0.00
-                </Text>
-              </Box>
-            </Flex>
-
-            <Flex flexDirection="column" justifyContent="space-around">
-              <Text color="#fff" fontSize="24px">
-                Rank 5
+          <Flex>
+            <Box>
+              <Text fontSize="18px">Containing:</Text>
+              <Text fontSize="36px">
+                <img src={containingIcon} alt="" /> 0.00
               </Text>
-              <StyledLink href="#" color="#fff" style={{ alignSelf: 'flex-end' }}>
-                View Details
-              </StyledLink>
-            </Flex>
+            </Box>
+            <Box>
+              <Text fontSize="18px">Medals:</Text>
+              <Text fontSize="36px">
+                <img src={medalRwdsIcon} alt="" /> 0.00
+              </Text>
+            </Box>
+          </Flex>
+
+          <Flex flexDirection="column">
+            <Text as="span" color="#fff" fontSize="18px" fontWeight="bold" textAlign="center">
+              Tier 5
+            </Text>
+            <figure>
+              <img src={warrior} alt="" width="226" height="263" />
+            </figure>
+            <StyledLink href="#" color="#fff" style={{ alignSelf: 'flex-end' }}>
+              View Details
+            </StyledLink>
           </Flex>
         </WarriorCard>
+
         <StatsCard>
           <Flex>
             <Box>
               <Text>Total Rewards</Text>
-              <Text fontSize="36px">0.00</Text>
+              <Text fontSize="36px">
+                {' '}
+                <img src={totalRwdsIcon} alt="" /> 0.00
+              </Text>
             </Box>
             <Box>
               <Text>Medals Collected</Text>
-              <Text fontSize="36px">0.00</Text>
+              <Text fontSize="36px">
+                <img src={medalCollIcon} alt="" /> 0.00
+              </Text>
             </Box>
             <Box>
               <Text>Medal Rewards</Text>
-              <Text fontSize="36px">0.00</Text>
+              <Text fontSize="36px">
+                <img src={medalRwdsIcon} alt="" /> 0.00
+              </Text>
             </Box>
             <Box>
               <Text>Friends Invited</Text>
-              <Text fontSize="36px">0.00</Text>
+              <Text fontSize="36px">
+                <img src={frndsInvIcon} alt="" /> 0.00
+              </Text>
             </Box>
           </Flex>
+
           <Flex>
-            <Box>
-              <Text>BUSD Rewards</Text>
-              <Text fontSize="36px">0.00</Text>
-            </Box>
-            <Box>
-              <Text>BNB Rewards</Text>
-              <Text fontSize="36px">0.00</Text>
-            </Box>
-            <Box>
-              <ClaimButton>Claim</ClaimButton>
-            </Box>
+            <Flex>
+              <Box>
+                <Text>BUSD Rewards</Text>
+                <Text fontSize="36px">0.00</Text>
+              </Box>
+              <Box>
+                <Text>BNB Rewards</Text>
+                <Text fontSize="36px">0.00</Text>
+              </Box>
+            </Flex>
+            <Flex>
+              <Box>
+                <ClaimButton>Claim</ClaimButton>
+              </Box>
+            </Flex>
           </Flex>
         </StatsCard>
       </Flex>
+
+      <WarriorTable rewardsData={rewardsData} />
     </Page>
   )
 }
