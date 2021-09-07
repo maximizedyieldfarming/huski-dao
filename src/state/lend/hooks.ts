@@ -5,11 +5,10 @@ import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { getBalanceAmount } from 'utils/formatBalance'
-import { getPoolInfo, getSumLendData, getStakeValue, getStakeApr } from 'utils/vaultService'
-import { farmsConfig } from 'config/constants'
+import { getPoolInfo, getSumLendData } from 'utils/vaultService'
 import useRefresh from 'hooks/useRefresh'
 import mainnet from '../../mainnet.json'
-import { sumTokenData } from '../utils'
+import { sumTokenData, formatBigNumber } from '../utils'
 
 // use this
 export const useLendData = () => {
@@ -19,6 +18,8 @@ export const useLendData = () => {
       const loadLendingData = async () => {
         const dataPool = await getPoolInfo(pool);
         dataPool.name = dataPool.name.replace('Interest Bearing ', '');
+        dataPool.totalDeposit = formatBigNumber(dataPool.totalDeposit);
+        dataPool.totalBorrowed = formatBigNumber(dataPool.totalBorrowed);
         return dataPool;
       };
       return loadLendingData();

@@ -38,103 +38,47 @@ export const fetchTokenIdFromList = async (tokenZeroSymbol, tokenOneSymbol) => {
 
 // this function is in test. Now working on moving the data to the farm page
 export const fetchTokenPrice = async (tokenZeroSymbol, tokenOneSymbol) => {
-  // THIS SHIT IS JUST TEMPORARY!!!!!
-  if (tokenZeroSymbol === 'cake') {
-    tokenZeroSymbol = 'pancakeswap-token';
-  } else if (tokenZeroSymbol === 'btcb') {
-    tokenZeroSymbol = 'binance-bitcoin';
-  } else if (tokenZeroSymbol === 'eth') {
-    tokenZeroSymbol = 'ethereum';
-  } else if (tokenZeroSymbol === 'dot') {
-    tokenZeroSymbol = 'polkadot';
-  } else if (tokenZeroSymbol === 'bnb') {
-    tokenZeroSymbol = 'binancecoin';
-  } else if (tokenZeroSymbol === 'alpaca') {
-    tokenZeroSymbol = 'alpaca-finance';
-  } else if (tokenZeroSymbol === 'usdt') {
-    tokenZeroSymbol = 'tether';
-  } else if (tokenZeroSymbol === 'busd') {
-    tokenZeroSymbol = 'binance-usd';
-  } else if (tokenZeroSymbol === 'beth') {
-    tokenZeroSymbol = 'binance-eth';
-  } else if (tokenZeroSymbol === 'xvs') {
-    tokenZeroSymbol = 'venus';
-  } else if (tokenZeroSymbol === 'link') {
-    tokenZeroSymbol = 'chainlink';
-  } else if (tokenZeroSymbol === 'yfi') {
-    tokenZeroSymbol = 'yearn-finance';
-  } else if (tokenZeroSymbol === 'usdc') {
-    tokenZeroSymbol = 'usd-coin';
-  } else if (tokenZeroSymbol === 'ust') {
-    tokenZeroSymbol = 'wrapped-ust';
-  } else if (tokenZeroSymbol === 'comp') {
-    tokenZeroSymbol = 'compound-coin';
-  } else if (tokenZeroSymbol === 'itam') {
-    tokenZeroSymbol = 'itam-games';
-  } else if (tokenZeroSymbol === 'bmxx') {
-    tokenZeroSymbol = 'multiplier-bsc';
-  } else if (tokenZeroSymbol === 'bor') {
-    tokenZeroSymbol = 'boringdao-[old]';
-  } else if (tokenZeroSymbol === 'bry') {
-    tokenZeroSymbol = 'berry-data';
-  } else if (tokenZeroSymbol === 'uni') {
-    tokenZeroSymbol = 'uniswap';
-  } else if (tokenZeroSymbol === 'comp') {
-    tokenZeroSymbol = 'compound-governance-token';
-  }
 
-  if (tokenOneSymbol === 'cake') {
-    tokenOneSymbol = 'pancakeswap-token';
-  } else if (tokenOneSymbol === 'btcb') {
-    tokenOneSymbol = 'binance-bitcoin';
-  } else if (tokenOneSymbol === 'eth') {
-    tokenOneSymbol = 'ethereum';
-  } else if (tokenOneSymbol === 'dot') {
-    tokenOneSymbol = 'polkadot';
-  } else if (tokenOneSymbol === 'bnb') {
-    tokenOneSymbol = 'binancecoin';
-  } else if (tokenOneSymbol === 'alpaca') {
-    tokenOneSymbol = 'alpaca-finance';
-  } else if (tokenOneSymbol === 'usdt') {
-    tokenOneSymbol = 'tether';
-  } else if (tokenOneSymbol === 'busd') {
-    tokenOneSymbol = 'binance-usd';
-  } else if (tokenOneSymbol === 'beth') {
-    tokenOneSymbol = 'binance-eth';
-  } else if (tokenOneSymbol === 'xvs') {
-    tokenOneSymbol = 'venus';
-  } else if (tokenOneSymbol === 'link') {
-    tokenOneSymbol = 'chainlink';
-  } else if (tokenOneSymbol === 'yfi') {
-    tokenOneSymbol = 'yearn-finance';
-  } else if (tokenOneSymbol === 'usdc') {
-    tokenOneSymbol = 'usd-coin';
-  } else if (tokenOneSymbol === 'ust') {
-    tokenOneSymbol = 'wrapped-ust';
-  } else if (tokenOneSymbol === 'comp') {
-    tokenOneSymbol = 'compound-coin';
-  } else if (tokenOneSymbol === 'itam') {
-    tokenOneSymbol = 'itam-games';
-  } else if (tokenOneSymbol === 'bmxx') {
-    tokenOneSymbol = 'multiplier-bsc';
-  } else if (tokenOneSymbol === 'bor') {
-    tokenOneSymbol = 'boringdao-[old]';
-  } else if (tokenOneSymbol === 'bry') {
-    tokenOneSymbol = 'berry-data';
-  }else if (tokenOneSymbol === 'uni') {
-    tokenOneSymbol = 'uniswap';
-  }else if (tokenOneSymbol === 'comp') {
-    tokenOneSymbol = 'compound-governance-token';
+  const enumsSymbol = {
+    'cake': 'pancakeswap-token',
+    'btcb': 'binance-bitcoin',
+    'eth': 'ethereum',
+    'dot': 'polkadot',
+    'bnb': 'binancecoin',
+    'alpaca': 'alpaca-finance',
+    'usdt': 'tether',
+    'busd': 'binance-usd',
+    'beth': 'binance-eth',
+    'xvs': 'venus',
+    'link': 'chainlink',
+    'yfi': 'yearn-finance',
+    'usdc': 'usd-coin',
+    'ust': 'wrapped-ust',
+    'comp': 'compound-coin',
+    'itam': 'itam-games',
+    'bmxx': 'multiplier-bsc',
+    'bor': 'boringdao-[old]',
+    'bry': 'berry-data',
+    'uni': 'uniswap',
+    'default': ''
+    // 'comp': 'compound-governance-token'
   }
-
+  let tokenZeroSymbol1 = enumsSymbol[tokenZeroSymbol];
+  let tokenOneSymbol1 = enumsSymbol[tokenOneSymbol];
+  if (!tokenZeroSymbol1) {
+    tokenZeroSymbol1 = tokenZeroSymbol;
+  }
+  if (!tokenOneSymbol1) {
+    tokenOneSymbol1 = tokenOneSymbol;
+  }
   // to consider there is a limit to the number of request to coingecko. If we call the list and filter for tokens to find
   // the id needed to feed the price token api we will make 2 api call per user instead of 1
-  const tokenPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenZeroSymbol}%2C${tokenOneSymbol}&vs_currencies=usd`;
+  const tokenPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenZeroSymbol1}%2C${tokenOneSymbol1}&vs_currencies=usd`;
   const res = await fetch(tokenPriceCoinGeckoApi);
   const data = await res.json();
   // because CoinGecko is so dumb to return the tokens prices not in order of token symbol requested we need to make sure token zero is token <zero></zero>
-  const priceTokenZero = data[tokenZeroSymbol];
-  const priceTokenOne = data[tokenOneSymbol];
+  const priceTokenZero = data[tokenZeroSymbol1];
+  const priceTokenOne = data[tokenOneSymbol1];
 
   return [priceTokenZero, priceTokenOne];
 };
@@ -173,7 +117,7 @@ export const renderPairsAvatars = (pair, n, Icons) => {
   return n === 1 ? Icons[pair1] : Icons[pair2];
 };
 
-export const formatBigNumber = (value) => {
+export const formatBigNumber = (value: any) => {
   return parseInt(web3.utils.fromWei(BigInt(value).toString())).toLocaleString(
     'en-US'
     // {

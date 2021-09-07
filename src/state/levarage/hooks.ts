@@ -23,7 +23,6 @@ export const useFarmsData = () => {
         return lpPool;
       }
     });
-
     const farmPools = cleanPools.map((lpPool: any) => {
       const processPools = async () => {
         // get the 2 token symbols

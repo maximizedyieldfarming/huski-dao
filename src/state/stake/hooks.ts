@@ -9,7 +9,7 @@ import {  getStakeValue, getStakeApr } from 'utils/vaultService'
 import useRefresh from 'hooks/useRefresh'
 import { getPoolHuskyDaily } from 'utils/fairLaunchService'
 import mainnet from '../../mainnet.json'
-
+import { formatBigNumber } from '../utils'
 
 // use this
 export const useStakeData = () => {
@@ -17,8 +17,9 @@ export const useStakeData = () => {
   useEffect(() => {
     const data = mainnet.Vaults.map((pool) => {
       const sData = async () => {
-        const { name } = pool;
-        const stakeValue = await getStakeValue(pool);
+        const name = pool.name.replace('Interest Bearing ', '');
+        let stakeValue = await getStakeValue(pool);
+        stakeValue = formatBigNumber(stakeValue);
         const stakeAPR = await getStakeApr(pool);
         return { name, stakeValue, stakeAPR };
       };
