@@ -25,10 +25,11 @@ import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 import husky from './assets/husky@1x.png'
-import husky2 from './assets/husky2.png'
+import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
+import TopTable from './components/TopTable/TopTable'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -160,24 +161,22 @@ const TableWrapper = styled.div`
   margin-bottom: 2rem;
   border-radius: 20px;
   padding: 10px;
-`
-
-const SingleTableWrapper = styled(TableWrapper)`
   margin: 1rem 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 1rem 2rem;
   > div:first-child {
-    flex-basis: 20%;
+    flex-grow: 1;
   }
   > div:nth-child(2) {
-    flex-grow: 1;
+    flex-basis: 20%;
   }
   @media (max-width: 1024px) {
     flex-direction: column;
   }
 `
+
 const ActionCell = styled.div`
   display: flex;
   flex-direction: column;
@@ -220,23 +219,16 @@ const StyledFlex = styled(Flex)`
   padding: 5px 2rem;
 `
 
-const CustomPage = styled(Page)`
-  display: flex;
-  flex-direction: column;
-  margin-left: 5%;
-  margin-right: 5%;
-  max-width: none;
-`
-
 const Lend: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { lendData } = useLendData()
+  console.log('lend data 0 index', lendData?.[0])
   const lendTotalSupply = useLendTotalSupply()
 
   return (
-    <CustomPage>
+    <Page>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
         <ImageContainer>
           <img src={husky} alt="" />
@@ -256,8 +248,9 @@ const Lend: React.FC = () => {
       </Flex>
 
       <Title>Lending Positions</Title>
-      <SingleTableWrapper>
-        <StyledTable>
+      <TableWrapper>
+        <TopTable data={lendData} />
+        {/*  <StyledTable>
           <Thead>
             <Tr>
               <Th />
@@ -283,11 +276,11 @@ const Lend: React.FC = () => {
               </Td>
             </Tr>
           </Tbody>
-        </StyledTable>
+        </StyledTable> */}
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
-      </SingleTableWrapper>
+      </TableWrapper>
 
       <Flex alignSelf="flex-end">
         <Select
@@ -317,7 +310,7 @@ const Lend: React.FC = () => {
       </Flex>
 
       <LendTable lendData={lendData} />
-    </CustomPage>
+    </Page>
   )
 }
 
