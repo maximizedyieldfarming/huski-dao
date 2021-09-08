@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Link, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Image, Link, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import React from 'react'
 import styled from 'styled-components'
@@ -25,6 +25,7 @@ const WarriorCard = styled(Box)`
   div {
     color: #9615e7;
   }
+
   > ${Flex} {
     padding: 1rem;
     flex-direction: column;
@@ -64,7 +65,7 @@ const StatsCard = styled(Box)`
   div {
     color: #9615e7;
   }
-  > div {
+  > ${Flex} {
     flex: 1;
     padding: 1rem;
     &:first-child {
@@ -94,7 +95,8 @@ const StatsCard = styled(Box)`
       border-radius: 20px;
       flex-flow: row wrap;
       justify-content: space-between;
-      >div{
+      position: relative;
+      >${Flex}{
         flex-direction: column;
         justify-content: space-between;
         &:last-child {
@@ -102,7 +104,6 @@ const StatsCard = styled(Box)`
           justify-content: center;
         }
       }
- position: relative;
       &::before {
         content: '';
         position: absolute;

@@ -17,6 +17,7 @@ export const CellContent = styled(Flex)`
   max-height: 40px;
   ${Text} {
     line-height: 1;
+    text-align: center;
   }
 `
 
