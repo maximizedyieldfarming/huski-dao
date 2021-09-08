@@ -5,62 +5,31 @@ import { useFarmsData } from 'state/levarage/hooks'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'
-import husky2 from './assets/husky2.png'
+import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LevarageTable from './components/LevarageTable/LevarageTable'
-
-const FakeTable = styled.div`
-  background-color: #fff;
-  border-radius: 1rem;
-  flex: 1 auto;
-`
-
-const FakeTableRow = styled.div`
-  padding: 15px;
-
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  align-items: center;
-  // display: flex;
-  // flex-direction: row;
-  // justify-content: space-between;
-  &:not(:last-child) {
-    border-bottom: 1px solid #ccc;
-  }
-`
-const FakeTableHeader = styled(FakeTableRow)`
-  &:not(:last-child) {
-    border-bottom: none;
-  }
-`
+import TopTable from './components/TopTable/TopTable'
 
 const TableWrapper = styled.div`
   background-color: #fff;
   margin-bottom: 2rem;
   border-radius: 20px;
   padding: 10px;
-`
-
-const SingleTableWrapper = styled(TableWrapper)`
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 1rem 2rem;
   > div:first-child {
-    flex-basis: 20%;
-  }
-  > div:nth-child(2) {
     flex-grow: 1;
   }
+  > figure {
+    display: none;
+    ${({ theme }) => theme.mediaQueries.xxl} {
+      display: block;
+    }
+  }
 `
-
-const ActionCell = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
 const ImageContainer = styled.figure``
 
 const StyledBox = styled(Box)`
@@ -157,40 +126,12 @@ const Levarage: React.FC = () => {
         </Flex>
       </Flex>
 
-      <SingleTableWrapper>
-        <FakeTable>
-          <FakeTableHeader>
-            <span>#</span>
-            <span>Pool</span>
-            <span>Position</span>
-            <span>Debt</span>
-            <span>Equity</span>
-            <span>APY</span>
-            <span>Debt Ratio</span>
-            <span>Liquidation Threshold</span>
-            <span>Safety Buffer</span>
-            <span> </span>
-          </FakeTableHeader>
-          <FakeTableRow>
-            <span>{farmsData[0]?.lpSymbol}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <span>{}</span>
-            <ActionCell>
-              <ActionButton>Adjust Position</ActionButton>
-              <ActionButton>Close Position</ActionButton>
-            </ActionCell>
-          </FakeTableRow>
-        </FakeTable>
+      <TableWrapper>
+        <TopTable data={farmsData} isActivePos={isActivePos} />
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
-      </SingleTableWrapper>
+      </TableWrapper>
 
       <Flex alignSelf="flex-end">
         <Select
@@ -219,33 +160,6 @@ const Levarage: React.FC = () => {
         />
       </Flex>
       <LevarageTable levarageData={farmsData} />
-      {/*  <TableWrapper>
-        <FakeTable>
-          <FakeTableHeader>
-            <span>Currency</span>
-            <span>APR</span>
-            <span>Total Supply</span>
-            <span>Total Borrowed</span>
-            <span>Utilization Rate</span>
-            <span>Balance</span>
-            <span>Action</span>
-          </FakeTableHeader>
-          {farmsData.map((token) => (
-            <FakeTableRow key={token.pid}>
-              <span>{token?.lpSymbol}</span>
-              <span>{token?.pid}</span>
-              <span>{token?.pid}</span>
-              <span>{token?.pid}</span>
-              <span>{token?.pid}</span>
-              <span>{token?.pid}</span>
-              <ActionCell>
-                <ActionButton>Deposit</ActionButton>
-                <ActionButton>Withdraw</ActionButton>
-              </ActionCell>
-            </FakeTableRow>
-          ))}
-        </FakeTable>
-      </TableWrapper> */}
     </CustomPage>
   )
 }
