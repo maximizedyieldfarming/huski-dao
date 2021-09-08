@@ -27,6 +27,7 @@ import { useFarms } from 'state/farms/hooks'
 import husky2 from './assets/husky2.png'
 import huskyIcon from './assets/avatar1x.png'
 import StakeTable from './components/StakeTable/StakeTable'
+import TopTable from './components/TopTable/TopTable'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -125,15 +126,14 @@ const SingleTableWrapper = styled(TableWrapper)`
   display: flex;
   flex-direction: column;
   padding: 1rem 2rem;
-  > div:first-child {
-    flex-basis: 20%;
-  }
-  > div:nth-child(2) {
-    flex-grow: 1;
+  > ${Flex} {
+    > div {
+      flex: 1;
+    }
   }
   figure {
     display: none;
-    @media (min-width: 1024px) {
+    ${({ theme }) => theme.mediaQueries.xl} {
       display: block;
     }
   }
@@ -224,52 +224,36 @@ const Stake: React.FC = () => {
   })
 
   console.log({ stakingData })
-
+  console.log({ stakeBalanceData })
   return (
     <CustomPage>
       <SingleTableWrapper>
         <Title>Positions</Title>
-        <Flex width="100%" borderBottom="1px solid #ccc">
-          <StyledTable style={{ border: 'none' }}>
-            <Thead>
-              <Tr>
-                <Th>Currency</Th>
-                <Th>APY</Th>
-                <Th>hToken</Th>
-                <Th>Asset Value</Th>
-                <Th>Action</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>{stakingData[0]?.name}</Td>
-                <Td>{}</Td>
-                <Td>{}</Td>
-                <Td>{}</Td>
-                <Td>
-                  <ActionCell>
-                    <StyledButton>Deposit</StyledButton>
-                    <StyledButton>Withdraw</StyledButton>
-                  </ActionCell>
-                </Td>
-              </Tr>
-            </Tbody>
-          </StyledTable>
+        <Flex width="100%" alignItems="center">
+          <Box>
+            <TopTable data={stakingData} />
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              padding="10px 8px 0 32px"
+              borderTop="1px solid #ccc"
+            >
+              <Flex alignItems="center">
+                <ImageContainer>
+                  <img src={huskyIcon} alt="" />
+                </ImageContainer>
+                <Text>Huski Rewards</Text>
+              </Flex>
+              <Text as="span" style={{ color: '#9615E7', fontSize: '30px' }}>
+                826.23
+              </Text>
+              <StyledButton>Claim</StyledButton>
+            </Flex>
+          </Box>
+
           <ImageContainer>
             <img src={husky2} alt="" />
           </ImageContainer>
-        </Flex>
-        <Flex justifyContent="space-between" paddingTop="1rem">
-          <Flex alignItems="center">
-            <ImageContainer>
-              <img src={huskyIcon} alt="" />
-            </ImageContainer>{' '}
-            <span>Huski Rewards</span>
-          </Flex>
-          <Text as="span" style={{ color: '#9615E7', fontSize: '30px' }}>
-            826.23
-          </Text>
-          <StyledButton>Claim</StyledButton>
         </Flex>
       </SingleTableWrapper>
 
