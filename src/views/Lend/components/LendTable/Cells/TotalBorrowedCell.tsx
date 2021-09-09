@@ -22,7 +22,7 @@ const TotalBorrowedCell = ({ borrowed }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Borrowed
         </Text>
-        <Text>{new BigNumber(borrowed).toExponential(3)}</Text>
+        <Text>{borrowed}</Text>
       </CellContent>
     </StyledCell>
   )
