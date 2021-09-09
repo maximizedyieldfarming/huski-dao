@@ -19,7 +19,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const NameCell = ({ name }) => {
+const NameCell = ({ name, exchangeRate }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
@@ -27,6 +27,10 @@ const NameCell = ({ name }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text bold={!isMobile} small={isMobile}>
+          {name}
+        </Text>
+        <Text fontSize="14px" color="secondary">
+          1 ib{name} = {exchangeRate.toFixed(4)}
           {name}
         </Text>
       </CellContent>

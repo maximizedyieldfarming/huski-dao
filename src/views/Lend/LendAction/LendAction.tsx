@@ -18,9 +18,6 @@ const StyledPage = styled(Page)`
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  > ${Text} {
-    text-transform: capitalize;
-  }
 `
 const TabPanel = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
@@ -74,7 +71,7 @@ const LendAction = () => {
 
   return (
     <StyledPage>
-      <Text fontSize="36px">
+      <Text fontSize="36px" textTransform="capitalize">
         {action} {id}
       </Text>
       <TabPanel>

@@ -31,12 +31,12 @@ const LendRow = ({ tokenData }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <NameCell name={name} />
+        <NameCell name={name} exchangeRate={exchangeRate} />
         <ApyCell apr={landApr} />
         {isDesktop && <TotalSupplyCell supply={totalDeposit} />}
         {isDesktop && <TotalBorrowedCell borrowed={totalBorrowed} />}
         {isDesktop && <UtilRateCell utilRate={capitalUtilizationRate} />}
-        <BalanceCell balance={exchangeRate} />
+        <BalanceCell balance="" />
         {isDesktop && <ActionCell name={name} />}
       </StyledRow>
     </>

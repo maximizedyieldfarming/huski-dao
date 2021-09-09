@@ -22,7 +22,7 @@ const BalanceCell = ({ balance }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Balance
         </Text>
-        <Text>{balance.toFixed(3)}</Text>
+        <Text>{balance}</Text>
       </CellContent>
     </StyledCell>
   )
