@@ -12,7 +12,7 @@ import LevarageTable from './components/LevarageTable/LevarageTable'
 import TopTable from './components/TopTable/TopTable'
 
 const TableWrapper = styled.div`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.card.background};
   margin-bottom: 2rem;
   border-radius: 20px;
   padding: 10px;
@@ -33,7 +33,6 @@ const TableWrapper = styled.div`
 const ImageContainer = styled.figure``
 
 const StyledBox = styled(Box)`
-  background-color: #fff;
   color: #9615e7;
   display: flex;
   flex-direction: column;
@@ -59,7 +58,7 @@ const ActionButton = styled(Button)`
   box-shadow: none;
 `
 const PositionsButton = styled(ActionButton)`
-  background-color: ${(props) => (props.isActive === 'true' ? '#9615E7' : '#fff')};
+  background-color: ${(props) => (props.isActive === 'true' ? '#9615E7' : ({ theme }) => theme.card.background)};
   border: 1px solid #9615e7;
   color: ${(props) => (props.isActive === 'true' ? '#fff' : '#9615E7')};
   font-size: 20px;
@@ -72,7 +71,7 @@ const PositionsButton = styled(ActionButton)`
 const StyledFlex = styled(Flex)`
   flex-direction: row;
   position: relative;
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.card.background};
   padding: 5px 2rem;
 `
 

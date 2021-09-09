@@ -40,17 +40,17 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     icon: 'TicketIcon',
     href: '/stake',
   },
-  {
+  /* {
     label: t('Lock'),
     icon: 'NftIcon',
     href: '/lock',
-  },
+  }, */
   {
     label: t('Levarage Farms'),
     icon: 'NftIcon',
     href: '/levarage',
   },
-   {
+  /*  {
     label: t('NFT Warriors'),
     icon: 'TradeIcon',
     items: [
@@ -67,7 +67,7 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
         href: '/nftmarket',
       },
     ],
-  },
+  }, */
   // {
   //   label: t('Team Battle'),
   //   icon: 'TeamBattleIcon',

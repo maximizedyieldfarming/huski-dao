@@ -116,7 +116,7 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 // styled components
 
 const TableWrapper = styled.div`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.card.background};
   margin-bottom: 2rem;
   border-radius: 20px;
   padding: 10px;

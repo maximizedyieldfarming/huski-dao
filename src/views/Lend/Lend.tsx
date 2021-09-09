@@ -116,48 +116,8 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 }
 
 // styled components
-
-const StyledTable = styled(Table)`
-  tr {
-    @media screen and (max-width: 40rem) {
-      border-top: 0 !important;
-      border-left: 0 !important;
-      border-right: 0 !important;
-      border-bottom: 1px solid #000 !important;
-      &:last-child {
-        border-bottom: none !important;
-      }
-    }
-
-    &:not(:last-child) {
-      border-bottom: 1px solid #9604e11a;
-    }
-
-    th,
-    td {
-      padding: 0.5rem;
-      vertical-align: middle;
-      font-weight: 400;
-      &:not(:first-child) {
-        word-break: break-word;
-        text-align: center;
-      }
-      @media screen and (max-width: 40rem) {
-        &.pivoted {
-          &:not(:last-child) {
-            border-bottom: 1px solid #9604e11a !important;
-          }
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-      }
-    }
-  }
-`
-
 const TableWrapper = styled.div`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.card.background};
   margin-bottom: 2rem;
   border-radius: 20px;
   padding: 10px;
@@ -186,7 +146,6 @@ const ActionCell = styled.div`
 const ImageContainer = styled.figure``
 
 const StyledBox = styled(Box)`
-  background-color: #fff;
   color: #9615e7;
   display: flex;
   flex-direction: column;
@@ -215,7 +174,7 @@ const StyledButton = styled(Button)`
 const StyledFlex = styled(Flex)`
   flex-direction: row;
   position: relative;
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.card.background};
   padding: 5px 2rem;
 `
 
