@@ -22,7 +22,7 @@ const TotalSupplyCell = ({ supply }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Supply
         </Text>
-        <Text>{new BigNumber(supply).toExponential(3)}</Text>
+        <Text>{supply}</Text>
       </CellContent>
     </StyledCell>
   )

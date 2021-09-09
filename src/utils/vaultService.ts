@@ -69,9 +69,9 @@ export async function getPoolInfo(param: any) {
   const name = await vault.methods.name().call();
   const symbol = await vault.methods.symbol().call();
   const totalSupply = parseInt(await vault.methods.totalSupply().call());
-  const totalToken = parseInt(await vault.methods.totalToken().call());
+  const totalToken:any = parseInt(await vault.methods.totalToken().call());
   const vaultDebtShare = parseInt(await vault.methods.vaultDebtShare().call());
-  const vaultDebtVal = parseInt(await vault.methods.vaultDebtVal().call());
+  const vaultDebtVal:any = parseInt(await vault.methods.vaultDebtVal().call());
   const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
 
   let landRate = 0;
