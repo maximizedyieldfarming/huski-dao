@@ -31,7 +31,7 @@ const StakeRow = ({ tokenData }) => {
         <CurrencyCell name={name} />
         <AprCell apr={stakeAPR} />
         {isDesktop && <TotalSupplyCell supply={stakeValue} />}
-        {isDesktop && <ActionCell />}
+        {isDesktop && <ActionCell name={name} />}
       </StyledRow>
     </>
   )

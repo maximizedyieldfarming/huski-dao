@@ -35,6 +35,7 @@ const Home = lazy(() => import('./views/Home'))
 const Lend = lazy(() => import('./views/Lend'))
 const LendAction = lazy(() => import('views/Lend/LendAction/LendAction'))
 const Stake = lazy(() => import('./views/Stake'))
+const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
 const Levarage = lazy(() => import('./views/Levarage'))
@@ -87,9 +88,11 @@ const App: React.FC = () => {
             </Route>
             <Route path="/lend/:action/:id" component={LendAction} />
 
-            <Route path="/stake">
+            <Route exact path="/stake">
               <Stake />
             </Route>
+            <Route path="/stake/:action/:id" component={StakeAction} />
+
             <Route path="/lock">
               <Lock />
             </Route>

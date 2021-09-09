@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
@@ -15,6 +16,14 @@ const StyledCell = styled(BaseCell)`
   > div {
     gap: 5px;
   }
+  a {
+    padding: 0.75rem;
+    font-size: 14px;
+    font-weight: 400;
+    height: auto;
+    box-shadow: none;
+    word-break: initial;
+  }
 `
 const StyledButton = styled(Button)`
   padding: 0.75rem;
@@ -25,14 +34,18 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = () => {
+const ActionCell = ({ name }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <StyledButton>Deposit</StyledButton>
-        <StyledButton>Withdraw</StyledButton>
+        <Button as={Link} to={`stake/deposit/${name}`}>
+          Deposit
+        </Button>
+        <Button as={Link} to={`stake/withdraw/${name}`}>
+          Withdraw
+        </Button>
       </CellContent>
     </StyledCell>
   )
