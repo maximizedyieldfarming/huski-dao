@@ -4,7 +4,7 @@ import React from 'react'
 const Deposit = () => {
   return (
     <div>
-      <Text>depoposit</Text>
+      <Text>deposit</Text>
     </div>
   )
 }

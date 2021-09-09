@@ -89,17 +89,17 @@ const LendAction = () => {
         <Body>
           <Flex justifyContent="space-between">
             <Box>
-              <Text>Amount</Text>
+              <Text fontWeight="bold">Amount</Text>
               <Text>1234</Text>
             </Box>
             <Box>
-              <Text>Balance</Text>
-              <Text>1234</Text>
+              <Text fontWeight="bold">Balance: 123 {id}</Text>
+              <Text>{id} | MAX</Text>
             </Box>
           </Flex>
-          <Flex>
+          <Flex justifyContent="space-between">
             <Text>1234</Text>
-            <Text>coin</Text>
+            <Text>{id}</Text>
           </Flex>
           {isDeposit ? <Deposit /> : <Withdraw />}
           <Flex flexDirection="column">
