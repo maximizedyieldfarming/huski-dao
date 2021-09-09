@@ -37,7 +37,7 @@ const LendRow = ({ tokenData }) => {
         {isDesktop && <TotalBorrowedCell borrowed={totalBorrowed} />}
         {isDesktop && <UtilRateCell utilRate={capitalUtilizationRate} />}
         <BalanceCell balance={exchangeRate} />
-        {isDesktop && <ActionCell />}
+        {isDesktop && <ActionCell name={name} />}
       </StyledRow>
     </>
   )

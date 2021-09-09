@@ -209,33 +209,7 @@ const Lend: React.FC = () => {
       <Title>Lending Positions</Title>
       <TableWrapper>
         <TopTable data={lendData} />
-        {/*  <StyledTable>
-          <Thead>
-            <Tr>
-              <Th />
-              <Th>APY</Th>
-              <Th>Deposit</Th>
-              <Th>Yield</Th>
-              <Th>hToken</Th>
-              <Th />
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>{lendData[0]?.name}</Td>
-              <Td>{}</Td>
-              <Td>{}</Td>
-              <Td>{}</Td>
-              <Td>{}</Td>
-              <Td>
-                <ActionCell>
-                  <StyledButton>Deposit</StyledButton>
-                  <StyledButton>Withdraw</StyledButton>
-                </ActionCell>
-              </Td>
-            </Tr>
-          </Tbody>
-        </StyledTable> */}
+       
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>

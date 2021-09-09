@@ -1,6 +1,7 @@
 import React, { lazy } from 'react'
 import { Router, Redirect, Route, Switch } from 'react-router-dom'
 import { ResetCSS } from '@pancakeswap/uikit'
+import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { usePollBlockNumber } from 'state/block/hooks'
@@ -32,6 +33,7 @@ const Home = lazy(() => import('./views/Home'))
 // const Farms = lazy(() => import('./views/Farms'))
 // const FarmAuction = lazy(() => import('./views/FarmAuction'))
 const Lend = lazy(() => import('./views/Lend'))
+const LendAction = lazy(() => import('views/Lend/LendAction/LendAction'))
 const Stake = lazy(() => import('./views/Stake'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
@@ -60,6 +62,9 @@ const App: React.FC = () => {
   useFetchProfile()
   usePollCoreFarmData()
 
+  const web3React = useWeb3React()
+  console.log(web3React)
+
   return (
     <Router history={history}>
       <ResetCSS />
@@ -77,9 +82,11 @@ const App: React.FC = () => {
             {/* <Route path="/farms">
               <Farms />
             </Route> */}
-            <Route path="/lend">
+            <Route exact path="/lend">
               <Lend />
             </Route>
+            <Route path="/lend/:action/:id" component={LendAction} />
+
             <Route path="/stake">
               <Stake />
             </Route>
