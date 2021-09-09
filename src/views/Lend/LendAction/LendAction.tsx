@@ -65,13 +65,12 @@ const Body = styled(Flex)`
 `
 
 const LendAction = () => {
-  const [isDeposit, setIsDeposit] = useState(true)
+  const { action, id } = useParams<RouteParams>()
+  const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
   const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
-
-  const { action, id } = useParams<RouteParams>()
 
   return (
     <StyledPage>
