@@ -58,7 +58,7 @@ const TableRow = ({ data, isActivePos }) => {
           ) : (
             <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
           ))}
-        {isDesktop && isActivePos && <ActionCell />}
+        {isDesktop && isActivePos && <ActionCell name={data[0]?.name} />}
       </StyledRow>
     </>
   )
