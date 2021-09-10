@@ -66,6 +66,31 @@ export interface FarmConfig {
   }
 }
 
+export interface LevarageFarmConfig {
+  pid: number
+  lpSymbol: string
+  lpAddresses: Address
+  token: Token
+  quoteToken: Token
+  multiplier?: string
+  isCommunity?: boolean
+  dual?: {
+    rewardPerBlock: number
+    earnLabel: string
+    endBlock: number
+  }
+
+  vaultAddress: Address
+  workerAddress: Address
+  workerConfig: Address
+  strategies: {
+    addAllBaseToken: Address
+    liquidate: Address
+    addTwoSidesOptimal: Address
+    withdrawMinimizeTrading: Address
+  }
+}
+
 export interface PoolConfig {
   sousId: number
   earningToken: Token
