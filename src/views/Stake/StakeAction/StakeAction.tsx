@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
@@ -39,7 +40,7 @@ const Header = styled(Flex)`
   border-radius: 20px 0 20px 0;
 `
 
-const HeaderTabs = styled.div<Props>`
+const HeaderTabs = styled(Link)<Props>`
   flex: 1;
   border-top: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.card.background)};
   padding: 1rem;
@@ -80,10 +81,10 @@ const StakeAction = () => {
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit}>
+          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/stake/deposit/${id}`} replace>
             <Text>Deposit</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit}>
+          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/stake/withdraw/${id}`} replace>
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>

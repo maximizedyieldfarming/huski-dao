@@ -40,10 +40,10 @@ const ActionCell = ({ name }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`lend/deposit/${name}`}>
+        <Button as={Link} to={`/lend/deposit/${name}`}>
           Deposit
         </Button>
-        <Button as={Link} to={`lend/withdraw/${name}`}>
+        <Button as={Link} to={`/lend/withdraw/${name}`}>
           Withdraw
         </Button>
       </CellContent>
