@@ -35,7 +35,7 @@ const TableRow = ({ data, isActivePos }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={data[0]?.name} />
+        <PoolCell pool={data[0]?.lpSymbol} />
         {isXxl && <PositionCell position={data[0]?.totalDeposit} />}
         {isXxl && <DebtCell debt={data[0]?.totalBorrowed} />}
         {isXxl &&
@@ -58,7 +58,7 @@ const TableRow = ({ data, isActivePos }) => {
           ) : (
             <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
           ))}
-        {isDesktop && isActivePos && <ActionCell name={data[0]?.name} />}
+        {isDesktop && isActivePos && <ActionCell name={data[0]?.lpSymbol} />}
       </StyledRow>
     </>
   )
