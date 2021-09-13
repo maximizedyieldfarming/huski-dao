@@ -183,7 +183,7 @@ const Lend: React.FC = () => {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { lendData } = useLendData()
-  console.log('lend data 0 index', lendData?.[0])
+  // console.log('lend data 0 index', lendData?.[0])
   const lendTotalSupply = useLendTotalSupply()
 
   return (

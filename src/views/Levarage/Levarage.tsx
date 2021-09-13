@@ -1,6 +1,6 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
-import { useFarms } from 'state/farms/hooks'
+// import { useFarms } from 'state/levarage/hooks'
 import { useFarmsData } from 'state/levarage/hooks'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
@@ -84,7 +84,6 @@ const CustomPage = styled(Page)`
 `
 
 const Levarage: React.FC = () => {
-  // const { data: farmData } = useFarms()
 
   const { farmsData } = useFarmsData()
   console.info('farmsData ---true', farmsData)
