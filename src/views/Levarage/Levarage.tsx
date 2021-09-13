@@ -87,7 +87,7 @@ const Levarage: React.FC = () => {
   // const { data: farmsData } = useFarms()
   // console.info('useFarms', useFarms())
 
-  const {  data: farmsData } = useLevarageFarms()
+  const { data: farmsData } = useLevarageFarms()
   console.info('useLevarageFarms：', useLevarageFarms())
   // console.table(farmsData)
   const [isActivePos, setActive] = useState(true)
