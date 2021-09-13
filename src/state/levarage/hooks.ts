@@ -11,9 +11,9 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import useRefresh from 'hooks/useRefresh'
 import { levarageFarmsConfig } from 'config/constants'
 import { tokensBegin, getYieldFarmAPR } from 'utils/pancakeService';
-import { fetchFarmsPublicDataAsync, fetchFarmUserDataAsync, nonArchivedFarms } from '.'
+import { fetchLevarageFarmsPublicDataAsync, fetchLevarageFarmUserDataAsync, nonArchivedFarms } from '.'
 import { fetchTokenPrice, fetchCakePrice, formatPercentage } from '../utils'
-import { State, Farm, FarmsState } from '../types'
+import { State, LevarageFarm, LevarageFarmsState } from '../types'
 import mainnet from '../../mainnet.json'
 
 
@@ -25,7 +25,7 @@ export const usePollFarmsPublicData = (includeArchive = false) => {
     const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
-    dispatch(fetchFarmsPublicDataAsync(pids))
+    dispatch(fetchLevarageFarmsPublicDataAsync(pids))
   }, [includeArchive, dispatch, slowRefresh])
 }
 
@@ -38,10 +38,10 @@ export const usePollFarmsWithUserData = (includeArchive = false) => {
     const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
-    dispatch(fetchFarmsPublicDataAsync(pids))
+    dispatch(fetchLevarageFarmsPublicDataAsync(pids))
 
     if (account) {
-      dispatch(fetchFarmUserDataAsync({ account, pids }))
+      dispatch(fetchLevarageFarmUserDataAsync({ account, pids }))
     }
   }, [includeArchive, dispatch, slowRefresh, account])
 }
@@ -56,22 +56,22 @@ export const usePollCoreFarmData = () => {
   const { fastRefresh } = useRefresh()
 
   useEffect(() => {
-    dispatch(fetchFarmsPublicDataAsync([251, 252]))
+    dispatch(fetchLevarageFarmsPublicDataAsync([251, 252]))
   }, [dispatch, fastRefresh])
 }
 
-export const useFarms = (): FarmsState => {
-  const farms = useSelector((state: State) => state.farms)
+export const useLevarageFarms = (): LevarageFarmsState => {
+  const farms = useSelector((state: State) => state.levarage)
   return farms
 }
 
-export const useFarmFromPid = (pid): Farm => {
-  const farm = useSelector((state: State) => state.farms.data.find((f) => f.pid === pid))
+export const useFarmFromPid = (pid): LevarageFarm => {
+  const farm = useSelector((state: State) => state.levarage.data.find((f) => f.pid === pid))
   return farm
 }
 
-export const useFarmFromLpSymbol = (lpSymbol: string): Farm => {
-  const farm = useSelector((state: State) => state.farms.data.find((f) => f.lpSymbol === lpSymbol))
+export const useFarmFromLpSymbol = (lpSymbol: string): LevarageFarm => {
+  const farm = useSelector((state: State) => state.levarage.data.find((f) => f.lpSymbol === lpSymbol))
   return farm
 }
 
@@ -95,17 +95,18 @@ export const useBusdPriceFromPid = (pid: number): BigNumber => {
 export const useLpTokenPrice = (symbol: string) => {
   const farm = useFarmFromLpSymbol(symbol)
   const farmTokenPriceInUsd = useBusdPriceFromPid(farm.pid)
-  let lpTokenPrice = BIG_ZERO
+  const lpTokenPrice = BIG_ZERO
+  // let lpTokenPrice = BIG_ZERO
 
-  if (farm.lpTotalSupply && farm.lpTotalInQuoteToken) {
-    // Total value of base token in LP
-    const valueOfBaseTokenInFarm = farmTokenPriceInUsd.times(farm.tokenAmountTotal)
-    // Double it to get overall value in LP
-    const overallValueOfAllTokensInFarm = valueOfBaseTokenInFarm.times(2)
-    // Divide total value of all tokens, by the number of LP tokens
-    const totalLpTokens = getBalanceAmount(new BigNumber(farm.lpTotalSupply))
-    lpTokenPrice = overallValueOfAllTokensInFarm.div(totalLpTokens)
-  }
+  // if (farm.lpTotalSupply && farm.lpTotalInQuoteToken) {
+  //   // Total value of base token in LP
+  //   const valueOfBaseTokenInFarm = farmTokenPriceInUsd.times(farm.tokenAmountTotal)
+  //   // Double it to get overall value in LP
+  //   const overallValueOfAllTokensInFarm = valueOfBaseTokenInFarm.times(2)
+  //   // Divide total value of all tokens, by the number of LP tokens
+  //   const totalLpTokens = getBalanceAmount(new BigNumber(farm.lpTotalSupply))
+  //   lpTokenPrice = overallValueOfAllTokensInFarm.div(totalLpTokens)
+  // }
 
   return lpTokenPrice
 }

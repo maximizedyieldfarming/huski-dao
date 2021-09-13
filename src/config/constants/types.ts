@@ -80,6 +80,7 @@ export interface LevarageFarmConfig {
     endBlock: number
   }
 
+  levarage: number
   vaultAddress: Address
   workerAddress: Address
   workerConfig: Address
