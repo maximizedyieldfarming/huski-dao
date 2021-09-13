@@ -172,45 +172,6 @@ const CustomPage = styled(Page)`
   max-width: none;
 `
 
-const StyledTable = styled(Table)`
-  tr {
-    @media screen and (max-width: 40rem) {
-      border-top: 0 !important;
-      border-left: 0 !important;
-      border-right: 0 !important;
-      border-bottom: 1px solid #000 !important;
-      &:last-child {
-        border-bottom: none !important;
-      }
-    }
-
-    &:not(:last-child) {
-      border-bottom: 1px solid #9604e11a;
-    }
-
-    th,
-    td {
-      padding: 0.5rem;
-      vertical-align: middle;
-      font-weight: 400;
-      &:not(:first-child) {
-        word-break: break-word;
-        text-align: center;
-      }
-      @media screen and (max-width: 40rem) {
-        &.pivoted {
-          &:not(:last-child) {
-            border-bottom: 1px solid #9604e11a !important;
-          }
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-      }
-    }
-  }
-`
-
 const Stake: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
@@ -223,6 +184,7 @@ const Stake: React.FC = () => {
     return { ...value, huskyDaily: stakeBalanceData[index] }
   })
 
+  console.log('useStakeData', useStakeData())
   console.log({ stakingData })
   console.log({ stakeBalanceData })
   return (
@@ -286,33 +248,7 @@ const Stake: React.FC = () => {
 
       <StakeTable stakeData={stakingData} />
 
-      {/* <TableWrapper>
-        <StyledTable>
-          <Thead>
-            <Tr>
-              <Th>Currency</Th>
-              <Th>APR</Th>
-              <Th>Total Supply</Th>
-              <Th>Action</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {stakingData.map((token) => (
-              <Tr>
-                <Td>{token?.name}</Td>
-                <Td>{token?.stakeAPR}</Td>
-                <Td>{new BigNumber(token?.stakeValue).toExponential(3)}</Td>
-                <Td>
-                  <ActionCell>
-                    <StyledButton>Deposit</StyledButton>
-                    <StyledButton>Withdraw</StyledButton>
-                  </ActionCell>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </StyledTable>
-      </TableWrapper> */}
+    
     </CustomPage>
   )
 }
