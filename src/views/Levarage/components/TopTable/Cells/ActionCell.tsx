@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
@@ -25,14 +26,18 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = () => {
+const ActionCell = ({ name }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <StyledButton>Deposit</StyledButton>
-        <StyledButton>Withdraw</StyledButton>
+        <Button as={Link} to={`/levarage/adjustposition/${name}`}>
+          Adjust Position
+        </Button>
+        <Button as={Link} to={`/levarage/closeposition/${name}`}>
+          Close Position
+        </Button>
       </CellContent>
     </StyledCell>
   )

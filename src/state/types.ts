@@ -2,7 +2,7 @@ import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from '@reduxjs/toolkit'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { CampaignType, FarmConfig, LotteryStatus, LotteryTicket, Nft, PoolConfig, Team } from 'config/constants/types'
+import { CampaignType, FarmConfig, LevarageFarmConfig, LotteryStatus, LotteryTicket, Nft, PoolConfig, Team } from 'config/constants/types'
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>
 
@@ -39,6 +39,19 @@ export interface Farm extends FarmConfig {
   }
 }
 
+export interface LevarageFarm extends LevarageFarmConfig {
+  tokenReserve?: SerializedBigNumber
+  quoteTokenReserve?: SerializedBigNumber
+  poolWeight?: SerializedBigNumber
+  userData?: {
+    allowance: string
+    tokenBalance: string
+    stakedBalance: string
+    earnings: string
+  }
+}
+
+
 export interface Pool extends PoolConfig {
   totalStaked?: BigNumber
   stakingLimit?: BigNumber
@@ -73,6 +86,12 @@ export interface Profile {
 
 export interface FarmsState {
   data: Farm[]
+  loadArchivedFarmsData: boolean
+  userDataLoaded: boolean
+}
+
+export interface LevarageFarmsState {
+  data: LevarageFarm[]
   loadArchivedFarmsData: boolean
   userDataLoaded: boolean
 }
@@ -496,6 +515,7 @@ export interface State {
   achievements: AchievementState
   block: BlockState
   farms: FarmsState
+  levarage: LevarageFarmsState
   pools: PoolsState
   predictions: PredictionsState
   profile: ProfileState

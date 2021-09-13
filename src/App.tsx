@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { usePollBlockNumber } from 'state/block/hooks'
-import { usePollCoreFarmData } from 'state/farms/hooks'
+import { usePollCoreFarmData } from 'state/levarage/hooks'
 import { useFetchProfile } from 'state/profile/hooks'
 import { DatePickerPortal } from 'components/DatePicker'
 import GlobalStyle from './style/Global'
@@ -39,6 +39,8 @@ const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
 const Levarage = lazy(() => import('./views/Levarage'))
+const ClosePosition = lazy(() => import('views/Levarage/ClosePosition/ClosePosition'))
+const AdjustPosition = lazy(() => import('views/Levarage/AdjustPosition/AdjustPosition'))
 const WarriorId = lazy(() => import('./views/WarriorID'))
 // const Profile = lazy(() => import('./views/Profile'))
 // const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
@@ -96,9 +98,13 @@ const App: React.FC = () => {
             <Route path="/lock">
               <Lock />
             </Route>
-            <Route path="/levarage">
+
+            <Route exact path="/levarage">
               <Levarage />
             </Route>
+            <Route path="/levarage/closeposition/:id" component={ClosePosition} />
+            <Route path="/levarage/adjustposition/:id" component={AdjustPosition} />
+
             <Route path="/warriorid">
               <WarriorId />
             </Route>
