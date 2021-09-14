@@ -4,8 +4,14 @@ import { useParams } from 'react-router'
 import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
+import useTokenBalance from 'hooks/useTokenBalance'
+import { getFullDisplayBalance } from 'utils/formatBalance'
+import { useTranslation } from 'contexts/Localization'
+import { deposit, withdraw } from 'utils/vaultService'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
+// import { Input as NumericalInput } from '../index'
 
 interface Props {
   active: boolean
@@ -63,6 +69,21 @@ const Body = styled(Flex)`
 `
 
 const LendAction = () => {
+  const { t } = useTranslation()
+  const { account } = useWeb3React()
+  const { balance } = useTokenBalance(account)
+  console.info('bbbalance',balance);
+  
+  const handleDeposit = () => {
+    deposit(account, 0.002)
+  }
+  const handleConfirm = () => {
+    console.info('lalalla');
+    withdraw(account, 11)
+  }
+
+
+  // const { balance: userCurrencyBalance } = useTokenBalance(getAddress(ifo.currency.address))
   const { action, id } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -91,7 +112,7 @@ const LendAction = () => {
               <Text>1234</Text>
             </Box>
             <Box>
-              <Text fontWeight="bold">Balance: 123 {id}</Text>
+              <Text fontWeight="bold">Balance: {getFullDisplayBalance(balance, 18, 3)}{id}</Text>
               <Text>{id} | MAX</Text>
             </Box>
           </Flex>
@@ -101,8 +122,12 @@ const LendAction = () => {
           </Flex>
           {isDeposit ? <Deposit /> : <Withdraw />}
           <Flex flexDirection="column">
-            {isDeposit && <Button>Approve</Button>}
+            {isDeposit && <Button >Approve</Button>}
             <Button>Claim</Button>
+            <Button onClick={handleDeposit}>{t('Deposit')}</Button>
+            <Button onClick={handleConfirm}>
+            {t('Confirm')}
+          </Button>
           </Flex>
         </Body>
       </TabPanel>
