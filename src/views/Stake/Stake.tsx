@@ -2,6 +2,10 @@ import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
+import useTokenBalance from 'hooks/useTokenBalance'
+import { useCakeVaultContract } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
@@ -222,6 +226,25 @@ const Stake: React.FC = () => {
   const stakingData = stakeData.map((value, index) => {
     return { ...value, huskyDaily: stakeBalanceData[index] }
   })
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const { toastError, toastSuccess } = useToast()
+  const cakeVaultContract = useCakeVaultContract()
+  const handleConfirmClick = async () => {
+    // setPendingTx(true)
+    try {
+      const tx = await callWithGasPrice(cakeVaultContract, 'harvest', undefined, { gasLimit: 300000 })
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
+        // setPendingTx(false)
+        // onDismiss()
+      }
+    } catch (error) {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      // setPendingTx(false)
+    }
+  }
+
 
   console.log({ stakingData })
   console.log({ stakeBalanceData })
@@ -247,7 +270,7 @@ const Stake: React.FC = () => {
               <Text as="span" style={{ color: '#9615E7', fontSize: '30px' }}>
                 826.23
               </Text>
-              <StyledButton>Claim</StyledButton>
+              <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
             </Flex>
           </Box>
 
