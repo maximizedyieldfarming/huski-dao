@@ -84,16 +84,12 @@ const CustomPage = styled(Page)`
 `
 
 const Levarage: React.FC = () => {
-  // const { data: farmsData } = useFarms()
-  // console.info('useFarms', useFarms())
-
   const {  data: farmsData } = useLevarageFarms()
-  console.info('useLevarageFarms：', useLevarageFarms())
-  // console.table(farmsData)
   const [isActivePos, setActive] = useState(true)
 
-  // const [firstToken, ...rest] = farmData
-
+  console.info('useLevarageFarms：', useLevarageFarms())
+  usePollLevarageFarmsWithUserData()
+  
   return (
     <CustomPage>
       <Flex justifyContent="space-between">
