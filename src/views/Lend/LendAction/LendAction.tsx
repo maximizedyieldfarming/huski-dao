@@ -9,6 +9,7 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import { getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
 import { deposit, withdraw } from 'utils/vaultService'
+import BigNumber from 'bignumber.js'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 // import { Input as NumericalInput } from '../index'
@@ -68,6 +69,10 @@ const Body = styled(Flex)`
   gap: 1rem;
 `
 
+const ButtonGroup = styled(Flex)`
+  gap: 10px;
+`
+
 const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
@@ -94,6 +99,9 @@ const LendAction = () => {
   const [amount, setAmount] = useState(0)
 
   const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
+
+  console.log(typeof amount)
+  console.log(typeof getFullDisplayBalance(balance, 18, 3))
 
   return (
     <StyledPage>
@@ -124,21 +132,35 @@ const LendAction = () => {
               <Text>{token} | MAX</Text>
             </Box>
           </Flex>
-          <Flex justifyContent="space-between">
-            <Text>{amount}</Text>
-            <Text>{token}</Text>
-          </Flex>
-          {isDeposit ? <Deposit /> : <Withdraw />}
-          <Flex flexDirection="column">
-            {isDeposit && (
+          <Box>
+            <Text textAlign="center">Assets Received</Text>
+            <Flex justifyContent="space-between">
+              <Text>{amount}</Text>
+              <Text>{token}</Text>
+            </Flex>
+          </Box>
+          {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
+          <ButtonGroup flexDirection="column">
+            {/*      {isDeposit && (
               <Button as={Link} to={`/lend/deposit/${token}/approve`}>
                 Approve
               </Button>
-            )}
-            <Button>Claim</Button>
-            <Button onClick={handleDeposit}>{t('Deposit')}/Approve</Button>
-            <Button onClick={handleConfirm}>{t('Confirm')}</Button>
-          </Flex>
+            )} */}
+            <Button disabled={!account}>Claim</Button>
+            <Button
+              onClick={handleDeposit}
+              disabled={
+                !account
+                  ? true
+                  : new BigNumber(amount).isGreaterThan(new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber())
+              }
+            >
+              {t('Deposit')}/Approve
+            </Button>
+            <Button onClick={handleConfirm} disabled={!account}>
+              {t('Confirm')}
+            </Button>
+          </ButtonGroup>
         </Body>
       </TabPanel>
       <Balance>
