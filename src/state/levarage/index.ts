@@ -27,8 +27,8 @@ export const nonArchivedFarms = levarageFarmsConfig.filter(({ pid }) => !isArchi
 
 // Async thunks
 export const fetchLevarageFarmsPublicDataAsync = 
-// createAsyncThunk<LevarageFarm[], number[]>(
-//   'levarage/fetchLevarageFarmsPublicDataAsync',
+createAsyncThunk<LevarageFarm[], number[]>(
+  'levarage/fetchLevarageFarmsPublicDataAsync',
   async (pids) => {
     const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
 
@@ -42,8 +42,8 @@ export const fetchLevarageFarmsPublicDataAsync =
     })
     return farmsWithoutHelperLps
   }
-//   ,
-// )
+  ,
+)
 
 interface LevarageFarmUserDataResponse {
   pid: number
@@ -54,8 +54,8 @@ interface LevarageFarmUserDataResponse {
 }
 
 export const fetchLevarageFarmUserDataAsync = 
-// createAsyncThunk<LevarageFarmUserDataResponse[], { account: string; pids: number[] }>(
-//   'levarage/fetchLevarageFarmUserDataAsync',
+createAsyncThunk<LevarageFarmUserDataResponse[], { account: string; pids: number[] }>(
+  'levarage/fetchLevarageFarmUserDataAsync',
   async ({ account, pids }) => {
     const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
     const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
@@ -74,8 +74,8 @@ export const fetchLevarageFarmUserDataAsync =
       }
     })
   }
-//   ,
-// )
+  ,
+)
 
 export const levarageSlice = createSlice({
   name: 'levarage',
@@ -88,22 +88,22 @@ export const levarageSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Update farms with live data
-    // builder.addCase(fetchLevarageFarmsPublicDataAsync.fulfilled, (state, action) => {
-    //   state.data = state.data.map((farm) => {
-    //     const liveFarmData = action.payload.find((farmData) => farmData.pid === farm.pid)
-    //     return { ...farm, ...liveFarmData }
-    //   })
-    // })
+    builder.addCase(fetchLevarageFarmsPublicDataAsync.fulfilled, (state, action) => {
+      state.data = state.data.map((farm) => {
+        const liveFarmData = action.payload.find((farmData) => farmData.pid === farm.pid)
+        return { ...farm, ...liveFarmData }
+      })
+    })
 
     // Update farms with user data
-    // builder.addCase(fetchLevarageFarmUserDataAsync.fulfilled, (state, action) => {
-    //   action.payload.forEach((userDataEl) => {
-    //     const { pid } = userDataEl
-    //     const index = state.data.findIndex((farm) => farm.pid === pid)
-    //     state.data[index] = { ...state.data[index], userData: userDataEl }
-    //   })
-    //   state.userDataLoaded = true
-    // })
+    builder.addCase(fetchLevarageFarmUserDataAsync.fulfilled, (state, action) => {
+      action.payload.forEach((userDataEl) => {
+        const { pid } = userDataEl
+        const index = state.data.findIndex((farm) => farm.pid === pid)
+        state.data[index] = { ...state.data[index], userData: userDataEl }
+      })
+      state.userDataLoaded = true
+    })
   },
 })
 

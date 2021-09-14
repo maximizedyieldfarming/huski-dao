@@ -17,8 +17,8 @@ export const usePollLevarageFarmsPublicData = (includeArchive = true) => {
     const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
-    // dispatch(fetchLevarageFarmsPublicDataAsync(pids))
-    fetchLevarageFarmsPublicDataAsync(pids)
+    dispatch(fetchLevarageFarmsPublicDataAsync(pids))
+    // fetchLevarageFarmsPublicDataAsync(pids)
   }, [includeArchive, dispatch, slowRefresh])
 }
 
@@ -32,12 +32,12 @@ export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
     const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
-    // dispatch(fetchLevarageFarmsPublicDataAsync(pids))
-    fetchLevarageFarmsPublicDataAsync(pids)
+    dispatch(fetchLevarageFarmsPublicDataAsync(pids))
+    // fetchLevarageFarmsPublicDataAsync(pids)
     console.log("levarage account: ", account)
 
     if (account) {
-      // dispatch(fetchLevarageFarmUserDataAsync({ account, pids }))
+      dispatch(fetchLevarageFarmUserDataAsync({ account, pids }))
       // fetchLevarageFarmUserDataAsync({ account, pids })
     }
   }, [includeArchive, dispatch, slowRefresh, account])
