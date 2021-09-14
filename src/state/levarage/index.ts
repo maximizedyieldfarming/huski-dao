@@ -26,23 +26,26 @@ const initialState: LevarageFarmsState = { data: noAccountFarmConfig, loadArchiv
 export const nonArchivedFarms = levarageFarmsConfig.filter(({ pid }) => !isArchivedPid(pid))
 
 // Async thunks
-export const fetchLevarageFarmsPublicDataAsync = createAsyncThunk<LevarageFarm[], number[]>(
-  'levarage/fetchLevarageFarmsPublicDataAsync',
+export const fetchLevarageFarmsPublicDataAsync = 
+// createAsyncThunk<LevarageFarm[], number[]>(
+//   'levarage/fetchLevarageFarmsPublicDataAsync',
   async (pids) => {
     const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
 
     const farms = await fetchFarms(farmsToFetch)
     const farmsWithPrices = await fetchFarmsPrices(farms)
 
+    console.log("levarage: ", "fetchLevarageFarmsPublicDataAsync")
     // Filter out price helper LP config farms
     const farmsWithoutHelperLps = farmsWithPrices.filter((farm: LevarageFarm) => {
       return farm.pid || farm.pid === 0
     })
     return farmsWithoutHelperLps
-  },
-)
+  }
+//   ,
+// )
 
-interface FarmUserDataResponse {
+interface LevarageFarmUserDataResponse {
   pid: number
   allowance: string
   tokenBalance: string
@@ -50,8 +53,9 @@ interface FarmUserDataResponse {
   earnings: string
 }
 
-export const fetchLevarageFarmUserDataAsync = createAsyncThunk<FarmUserDataResponse[], { account: string; pids: number[] }>(
-  'levarage/fetchLevarageFarmUserDataAsync',
+export const fetchLevarageFarmUserDataAsync = 
+// createAsyncThunk<LevarageFarmUserDataResponse[], { account: string; pids: number[] }>(
+//   'levarage/fetchLevarageFarmUserDataAsync',
   async ({ account, pids }) => {
     const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
     const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
@@ -59,6 +63,7 @@ export const fetchLevarageFarmUserDataAsync = createAsyncThunk<FarmUserDataRespo
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
 
+    console.log("levarage: ", "fetchLevarageFarmUserDataAsync")
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
         pid: farmsToFetch[index].pid,
@@ -68,11 +73,12 @@ export const fetchLevarageFarmUserDataAsync = createAsyncThunk<FarmUserDataRespo
         earnings: userFarmEarnings[index],
       }
     })
-  },
-)
+  }
+//   ,
+// )
 
 export const levarageSlice = createSlice({
-  name: 'Levarage',
+  name: 'levarage',
   initialState,
   reducers: {
     setLoadArchivedFarmsData: (state, action) => {
@@ -82,22 +88,22 @@ export const levarageSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Update farms with live data
-    builder.addCase(fetchLevarageFarmsPublicDataAsync.fulfilled, (state, action) => {
-      state.data = state.data.map((farm) => {
-        const liveFarmData = action.payload.find((farmData) => farmData.pid === farm.pid)
-        return { ...farm, ...liveFarmData }
-      })
-    })
+    // builder.addCase(fetchLevarageFarmsPublicDataAsync.fulfilled, (state, action) => {
+    //   state.data = state.data.map((farm) => {
+    //     const liveFarmData = action.payload.find((farmData) => farmData.pid === farm.pid)
+    //     return { ...farm, ...liveFarmData }
+    //   })
+    // })
 
     // Update farms with user data
-    builder.addCase(fetchLevarageFarmUserDataAsync.fulfilled, (state, action) => {
-      action.payload.forEach((userDataEl) => {
-        const { pid } = userDataEl
-        const index = state.data.findIndex((farm) => farm.pid === pid)
-        state.data[index] = { ...state.data[index], userData: userDataEl }
-      })
-      state.userDataLoaded = true
-    })
+    // builder.addCase(fetchLevarageFarmUserDataAsync.fulfilled, (state, action) => {
+    //   action.payload.forEach((userDataEl) => {
+    //     const { pid } = userDataEl
+    //     const index = state.data.findIndex((farm) => farm.pid === pid)
+    //     state.data[index] = { ...state.data[index], userData: userDataEl }
+    //   })
+    //   state.userDataLoaded = true
+    // })
   },
 })
 
