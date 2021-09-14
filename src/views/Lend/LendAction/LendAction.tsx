@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -18,7 +18,7 @@ interface Props {
 }
 interface RouteParams {
   action: string
-  id: string
+  token: string
 }
 
 const StyledPage = styled(Page)`
@@ -72,36 +72,40 @@ const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { balance } = useTokenBalance(account)
-  console.info('bbbalance',balance);
-  
+  console.info('bbbalance', balance)
+
   const handleDeposit = () => {
     deposit(account, 0.002)
   }
   const handleConfirm = () => {
-    console.info('lalalla');
+    console.info('lalalla')
     withdraw(account, 11)
   }
 
-
   // const { balance: userCurrencyBalance } = useTokenBalance(getAddress(ifo.currency.address))
-  const { action, id } = useParams<RouteParams>()
+
+  const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
   const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
+  const [amount, setAmount] = useState(0)
+
+  const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
+
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {id}
+        {action} {token}
       </Text>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/lend/deposit/${id}`} replace>
+          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/lend/deposit/${token}`} replace>
             <Text>Deposit</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/lend/withdraw/${id}`} replace>
+          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/lend/withdraw/${token}`} replace>
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
@@ -109,31 +113,37 @@ const LendAction = () => {
           <Flex justifyContent="space-between">
             <Box>
               <Text fontWeight="bold">Amount</Text>
-              <Text>1234</Text>
+              <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
             </Box>
             <Box>
-              <Text fontWeight="bold">Balance: {getFullDisplayBalance(balance, 18, 3)}{id}</Text>
-              <Text>{id} | MAX</Text>
+              <Text fontWeight="bold">
+                Balance: {getFullDisplayBalance(balance, 18, 3)}
+                {token}
+              </Text>
+
+              <Text>{token} | MAX</Text>
             </Box>
           </Flex>
           <Flex justifyContent="space-between">
-            <Text>1234</Text>
-            <Text>{id}</Text>
+            <Text>{amount}</Text>
+            <Text>{token}</Text>
           </Flex>
           {isDeposit ? <Deposit /> : <Withdraw />}
           <Flex flexDirection="column">
-            {isDeposit && <Button >Approve</Button>}
+            {isDeposit && (
+              <Button as={Link} to={`/lend/deposit/${token}/approve`}>
+                Approve
+              </Button>
+            )}
             <Button>Claim</Button>
-            <Button onClick={handleDeposit}>{t('Deposit')}</Button>
-            <Button onClick={handleConfirm}>
-            {t('Confirm')}
-          </Button>
+            <Button onClick={handleDeposit}>{t('Deposit')}/Approve</Button>
+            <Button onClick={handleConfirm}>{t('Confirm')}</Button>
           </Flex>
         </Body>
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>1234</Text>
+        <Text>{getFullDisplayBalance(balance, 18, 3)}</Text>
       </Balance>
       <Box>
         <Text>

@@ -34,6 +34,7 @@ const Home = lazy(() => import('./views/Home'))
 // const FarmAuction = lazy(() => import('./views/FarmAuction'))
 const Lend = lazy(() => import('./views/Lend'))
 const LendAction = lazy(() => import('views/Lend/LendAction/LendAction'))
+const Approve = lazy(() => import('views/Lend/Approve/Approve'))
 const Stake = lazy(() => import('./views/Stake'))
 const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
@@ -88,12 +89,13 @@ const App: React.FC = () => {
             <Route exact path="/lend">
               <Lend />
             </Route>
-            <Route path="/lend/:action/:id" component={LendAction} />
+            <Route exact path="/lend/:action/:token" component={LendAction} />
+            <Route exact path="/lend/deposit/:token/approve" component={Approve} />
 
             <Route exact path="/stake">
               <Stake />
             </Route>
-            <Route path="/stake/:action/:id" component={StakeAction} />
+            <Route exact path="/stake/:action/:token" component={StakeAction} />
 
             <Route path="/lock">
               <Lock />
@@ -102,8 +104,8 @@ const App: React.FC = () => {
             <Route exact path="/levarage">
               <Levarage />
             </Route>
-            <Route path="/levarage/closeposition/:id" component={ClosePosition} />
-            <Route path="/levarage/adjustposition/:id" component={AdjustPosition} />
+            <Route exact path="/levarage/closeposition/:token" component={ClosePosition} />
+            <Route exact path="/levarage/adjustposition/:token" component={AdjustPosition} />
 
             <Route path="/warriorid">
               <WarriorId />
