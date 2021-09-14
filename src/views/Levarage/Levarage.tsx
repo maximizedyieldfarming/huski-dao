@@ -1,7 +1,7 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { useFarms } from 'state/farms/hooks'
-import { useLevarageFarms, usePollFarmsWithUserData } from 'state/levarage/hooks'
+import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'

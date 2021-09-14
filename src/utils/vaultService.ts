@@ -19,24 +19,17 @@ const mathematics3 = 13;
 
 const web3 = new Web3(getDomain());
 
-
-
 export async function getBalanceOf(param: any) {
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
-
   const balance = await vault.methods.balanceOf(param.userAddress).call();
-
   return balance;
 }
-
 
 export async function getSumLendData(param: any) {
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
   const totalToken = parseInt(await vault.methods.totalToken().call());
-  // console.info('--totalToken--',totalToken);
   return totalToken;
 }
-
 
 export async function getLandRate(param: any) {
   const vault = getWeb3VaultContract(param.vaultAddress); // new web3.eth.Contract(VaultABI, param.address);
@@ -68,6 +61,14 @@ export async function getPoolInfo1(param: any) {
 
 }
 
+export async function getHuskyPrice() {
+  const huskyPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=alpaca-finance&vs_currencies=usd`;
+  const res = await fetch(huskyPriceCoinGeckoApi);
+  const huskyPrice = await res.json();
+  const price = huskyPrice['alpaca-finance'].usd;
+  return price;
+}
+
 export async function getPoolInfo(param: any) {
 
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
@@ -90,15 +91,15 @@ export async function getPoolInfo(param: any) {
   }
   const landApr = landRate * 0.9 * utilization;
   // const totalLpTokens:any = getBalanceAmount(new BigNumber(totalSupply))
-  const cakePriceCoinGeckoApi1 = `https://api.coingecko.com/api/v3/simple/price?ids=alpaca-finance&vs_currencies=usd`;
-  const res = await fetch(cakePriceCoinGeckoApi1);
-  const huskyPrice = await res.json();
+  // const cakePriceCoinGeckoApi1 = `https://api.coingecko.com/api/v3/simple/price?ids=alpaca-finance&vs_currencies=usd`;
+  // const res = await fetch(cakePriceCoinGeckoApi1);
+  const huskyPrice:any = await getHuskyPrice()// await res.json();
   const poolAlpacaPerBlock = await getPoolHuskyPerBlock(param)
 
   const binancecoinprice = `https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd`;
   const res2 = await fetch(binancecoinprice);
   const bnbprice = await res2.json();
- const stakeApr = BLOCKS_PER_YEAR.times(poolAlpacaPerBlock * huskyPrice['alpaca-finance'].usd).div(
+ const stakeApr = BLOCKS_PER_YEAR.times(poolAlpacaPerBlock * huskyPrice).div(
     (bnbprice.binancecoin.usd * totalToken * totalToken) / totalSupply
   );
   // const stakeApr = BLOCKS_PER_YEAR.times(param.husky * param.huskyPrice).div(
