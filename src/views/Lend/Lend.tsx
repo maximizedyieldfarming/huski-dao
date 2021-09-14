@@ -24,6 +24,12 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
+import useTokenBalance from 'hooks/useTokenBalance'
+import { getAddress } from 'utils/addressHelpers'
+import { deposit } from 'utils/vaultService'
+import { Field } from '../../state/mint/actions'
+import { ROUTER_ADDRESS } from '../../config/constants'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import husky from './assets/husky@1x.png'
 import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
@@ -182,10 +188,9 @@ const Lend: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
+  const { account } = useWeb3React()
   const { lendData } = useLendData()
-  // console.log('lend data 0 index', lendData?.[0])
   const lendTotalSupply = useLendTotalSupply()
-
   return (
     <Page>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">

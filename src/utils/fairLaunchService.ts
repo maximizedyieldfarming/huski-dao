@@ -8,8 +8,7 @@ export async function getPoolHuskyPerBlock(param: any) {
 
     const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
     const totalAllocPoint = await fairLaunch.methods.totalAllocPoint().call();
-    const poolInfo = await fairLaunch.methods.poolInfo(param.pId).call();
-
+    const poolInfo = await fairLaunch.methods.poolInfo('11').call();
     const poolAlpacaPerBlock = alpacaPerBlock * poolInfo.allocPoint / totalAllocPoint;
     return poolAlpacaPerBlock;
 }
