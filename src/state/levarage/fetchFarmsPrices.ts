@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import Tokens from 'config/constants/tokens'
 import { BIG_ONE, BIG_ZERO } from 'utils/bigNumber'
 import { filterFarmsByQuoteToken } from 'utils/farmsPriceHelpers'
 import { LevarageFarm } from 'state/types'
@@ -72,10 +73,20 @@ const getFarmQuoteTokenPrice = (farm: LevarageFarm, quoteTokenFarm: LevarageFarm
 
   return BIG_ZERO
 }
+const fetchAllPrices = async (tokens) => {
+  const coingeckoIds = tokens.map((token) => {
+    return token.coingeckoId
+  })
+  console.log(coingeckoIds)
+  const tokensPriceCoinGecko = `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoIds}&vs_currencies=usd&per_page=200`;
+  const res = await fetch(tokensPriceCoinGecko);
+  const data = await res.json();
+
+  return data
+}
 
 const fetchFarmsPrices = async (farms) => {
-  const bnbBusdFarm = farms.find((farm: LevarageFarm) => farm.pid === 252)
-  const bnbPriceBusd = bnbBusdFarm.tokenPriceVsQuote ? BIG_ONE.div(bnbBusdFarm.tokenPriceVsQuote) : BIG_ZERO
+  // const coingeckoPrices = fetchAllPrices(Tokens)
 
   const farmsWithPrices = farms.map((farm) => {
     // const quoteTokenFarm = getFarmFromTokenSymbol(farms, farm.quoteToken.symbol)
@@ -83,10 +94,11 @@ const fetchFarmsPrices = async (farms) => {
     // const quoteTokenPrice = getFarmQuoteTokenPrice(farm, quoteTokenFarm, bnbPriceBusd)
     // const token = { ...farm.token, busdPrice: baseTokenPrice.toJSON() }
     // const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
-    const token = { ...farm.token, busdPrice: 0 }
-    const quoteToken = { ...farm.quoteToken, busdPrice: 0 }
+    const token = { ...farm.token, busdPrice: 1 }
+    const quoteToken = { ...farm.quoteToken, busdPrice: 11 }
     return { ...farm, token, quoteToken }
   })
+  console.log("levarage: ", farmsWithPrices)
 
   return farmsWithPrices
 }

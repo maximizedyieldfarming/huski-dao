@@ -6,12 +6,16 @@ import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useTokenBalance from 'hooks/useTokenBalance'
+import { useCakeVaultContract } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
 import { deposit, withdraw } from 'utils/vaultService'
 import BigNumber from 'bignumber.js'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
+
 // import { Input as NumericalInput } from '../index'
 
 interface Props {
@@ -78,13 +82,32 @@ const LendAction = () => {
   const { account } = useWeb3React()
   const { balance } = useTokenBalance(account)
   console.info('bbbalance', balance)
-
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const { toastError, toastSuccess } = useToast()
+  const cakeVaultContract = useCakeVaultContract()
+  console.info('cakeVaultContract---', cakeVaultContract)
   const handleDeposit = () => {
     deposit(account, 0.002)
   }
   const handleConfirm = () => {
     console.info('lalalla')
     withdraw(account, 11)
+  }
+
+  const handleConfirmClick = async () => {
+    // setPendingTx(true)
+    try {
+      const tx = await callWithGasPrice(cakeVaultContract, 'harvest', undefined, { gasLimit: 300000 })
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
+        // setPendingTx(false)
+        // onDismiss()
+      }
+    } catch (error) {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      // setPendingTx(false)
+    }
   }
 
   // const { balance: userCurrencyBalance } = useTokenBalance(getAddress(ifo.currency.address))
@@ -146,7 +169,9 @@ const LendAction = () => {
                 Approve
               </Button>
             )} */}
-            <Button disabled={!account}>Claim</Button>
+            <Button onClick={handleConfirmClick} disabled={!account}>
+              Claim
+            </Button>
             <Button
               onClick={handleDeposit}
               disabled={

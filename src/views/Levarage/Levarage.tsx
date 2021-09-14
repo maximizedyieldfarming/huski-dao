@@ -1,7 +1,7 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { useFarms } from 'state/farms/hooks'
-import { useLevarageFarms, usePollFarmsWithUserData } from 'state/levarage/hooks'
+import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'
@@ -84,16 +84,12 @@ const CustomPage = styled(Page)`
 `
 
 const Levarage: React.FC = () => {
-  // const { data: farmsData } = useFarms()
-  // console.info('useFarms', useFarms())
-
-  const { data: farmsData } = useLevarageFarms()
-  console.info('useLevarageFarms：', useLevarageFarms())
-  // console.table(farmsData)
+  const {  data: farmsData } = useLevarageFarms()
   const [isActivePos, setActive] = useState(true)
 
-  // const [firstToken, ...rest] = farmData
-
+  console.info('useLevarageFarms：', useLevarageFarms())
+  usePollLevarageFarmsWithUserData()
+  
   return (
     <CustomPage>
       <Flex justifyContent="space-between">

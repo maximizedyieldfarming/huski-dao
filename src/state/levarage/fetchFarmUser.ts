@@ -9,7 +9,7 @@ import { LevarageFarmConfig } from 'config/constants/types'
 export const fetchFarmUserAllowances = async (account: string, farmsToFetch: LevarageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
     const baseTokenAddress = getAddress(farm.token.address)
-    return { address: baseTokenAddress, name: 'allowance', params: [account, farm.vaultAddress] }
+    return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.vaultAddress)] }
   })
 
   const rawVaultAllowances = await multicall(erc20ABI, calls)

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import masterchefABI from 'config/abi/masterchef.json'
-import erc20 from 'config/abi/erc20.json'
+import lpTokenABI from 'config/abi/lpToken.json'
+import fairLaunchABI from 'config/abi/fairLaunch.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import { getFairLaunch } from 'utils/env'
@@ -23,14 +24,15 @@ const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
       name: 'getReserves',
     },
   ]
+  console.log(lpAddress)
 
   const [lpTotalReserves] =
-    await multicall(erc20, calls)
+    await multicall(lpTokenABI, calls)
 
   // Only make masterchef calls if farm has pid
   const [info, totalAllocPoint] =
     pid || pid === 0
-      ? await multicall(masterchefABI, [
+      ? await multicall(fairLaunchABI, [
           {
             address: getFairLaunch(),
             name: 'poolInfo',

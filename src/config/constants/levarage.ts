@@ -3,7 +3,7 @@ import { LevarageFarmConfig } from './types'
 
 const levarageFarms: LevarageFarmConfig[] = [
   {
-    pid: 251,
+    pid: 1,
     lpSymbol: 'CAKE-BNB9999 LP',
     lpAddresses: {
       97: '0x3ed8936cAFDF85cfDBa29Fbe5940A5b0524824F4',
@@ -45,7 +45,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 264,
+    pid: 1,
     lpSymbol: 'USDT-BNB LP',
     lpAddresses: {
       97: '',
@@ -87,7 +87,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 262,
+    pid: 1,
     lpSymbol: 'BTCB-BNB LP',
     lpAddresses: {
       97: '',
@@ -129,7 +129,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 261,
+    pid: 1,
     lpSymbol: 'ETH-BNB LP',
     lpAddresses: {
       97: '',
@@ -171,7 +171,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 258,
+    pid: 3,
     lpSymbol: 'USDT-BUSD LP',
     lpAddresses: {
       97: '',

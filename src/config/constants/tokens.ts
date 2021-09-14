@@ -72,6 +72,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://pancakeswap.finance/',
+    coingeckoId: 'pancakeswap-token',
   },
   pha: {
     symbol: 'PHA',
@@ -684,6 +685,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://pancakeswap.finance/',
+    coingeckoId: 'binancecoin',
   },
   blink: {
     symbol: 'BLINK',
@@ -855,6 +857,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://www.paxos.com/busd/',
+    coingeckoId: 'binance-usd',
   },
   eth: {
     symbol: 'ETH',
@@ -864,6 +867,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://ethereum.org/en/',
+    coingeckoId: 'binance-eth',
   },
   beth: {
     symbol: 'BETH',
@@ -990,6 +994,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://tether.to/',
+    coingeckoId: 'tether',
   },
   btcb: {
     symbol: 'BTCB',
@@ -999,6 +1004,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://bitcoin.org/',
+    coingeckoId: 'binance-bitcoin',
   },
   xrp: {
     symbol: 'XRP',

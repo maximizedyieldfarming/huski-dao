@@ -18,7 +18,7 @@ export async function getPoolHuskyDaily(param: any) {
 
     const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
     const totalAllocPoint = await fairLaunch.methods.totalAllocPoint().call();
-    const poolInfo = await fairLaunch.methods.poolInfo(param.id).call();
+    const poolInfo = await fairLaunch.methods.poolInfo('11').call();
 
     const poolHuskyDaily = alpacaPerBlock * poolInfo.allocPoint * 24 * 60 * 60 / 3 / totalAllocPoint; // 24*60*60/3：24小时出块数量
     return poolHuskyDaily;
