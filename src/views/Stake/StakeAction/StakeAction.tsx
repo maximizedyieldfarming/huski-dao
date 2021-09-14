@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
@@ -12,7 +13,7 @@ interface Props {
 }
 interface RouteParams {
   action: string
-  id: string
+  token: string
 }
 
 const StyledPage = styled(Page)`
@@ -42,7 +43,8 @@ const Header = styled(Flex)`
 
 const HeaderTabs = styled(Link)<Props>`
   flex: 1;
-  border-top: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.card.background)};
+  background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
+  border-top: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
   padding: 1rem;
   cursor: pointer;
   background-color: y;
@@ -52,8 +54,6 @@ const HeaderTabs = styled(Link)<Props>`
   &:last-child {
     border-top-right-radius: 20px;
   }
-  // background-color: ${(props) => (props.active ? '#fff' : '#E9E9E9')};
-  // border-top: 1px solid ${(props) => (props.active ? '#9615e7' : '#E9E9E9')};
 `
 
 const Body = styled(Flex)`
@@ -61,30 +61,37 @@ const Body = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
 `
+const ButtonGroup = styled(Flex)`
+  gap: 10px;
+`
 
 const StakeAction = () => {
-  const { action, id } = useParams<RouteParams>()
+  const { account } = useWeb3React()
+  const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
   const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
+  const [amount, setAmount] = useState(0)
+
+  const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {id}
+        {action} {token}
       </Text>
       <Bubble>
         <Text>Staked</Text>
-        <Text>1234 {id}</Text>
+        <Text>1234 {token}</Text>
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/stake/deposit/${id}`} replace>
+          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/stake/deposit/${token}`} replace>
             <Text>Deposit</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/stake/withdraw/${id}`} replace>
+          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/stake/withdraw/${token}`} replace>
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
@@ -92,22 +99,19 @@ const StakeAction = () => {
           <Flex justifyContent="space-between">
             <Box>
               <Text fontWeight="bold">Amount</Text>
-              <Text>1234</Text>
+              <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
             </Box>
             <Box>
-              <Text fontWeight="bold">Balance: 123 {id}</Text>
-              <Text>{id} | MAX</Text>
+              <Text fontWeight="bold">Balance: 123 {token}</Text>
+              <Text>{token} | MAX</Text>
             </Box>
           </Flex>
-          <Flex justifyContent="space-between">
-            <Text>1234</Text>
-            <Text>{id}</Text>
-          </Flex>
-          {isDeposit ? <Deposit /> : <Withdraw />}
-          <Flex flexDirection="column">
-            {isDeposit && <Button>Authorize</Button>}
-            <Button>Claim</Button>
-          </Flex>
+
+          {/*  {isDeposit ? <Deposit /> : <Withdraw />} */}
+          <ButtonGroup flexDirection="column">
+            {isDeposit && <Button disabled={!account}>Authorize</Button>}
+            <Button disabled={!account}>Claim</Button>
+          </ButtonGroup>
         </Body>
       </TabPanel>
     </StyledPage>

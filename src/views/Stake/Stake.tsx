@@ -206,7 +206,6 @@ const Stake: React.FC = () => {
     }
   }
 
-
   console.log('useStakeData', useStakeData())
   console.log({ stakingData })
   console.log({ stakeBalanceData })
@@ -229,8 +228,8 @@ const Stake: React.FC = () => {
                 </ImageContainer>
                 <Text>Huski Rewards</Text>
               </Flex>
-              <Text as="span" style={{ color: '#9615E7', fontSize: '30px' }}>
-                826.23
+              <Text as="span" fontSize="30px">
+                1234
               </Text>
               <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
             </Flex>
@@ -270,8 +269,6 @@ const Stake: React.FC = () => {
       </Flex>
 
       <StakeTable stakeData={stakingData} />
-
-    
     </CustomPage>
   )
 }
