@@ -9,8 +9,8 @@ const levarageFarms: LevarageFarmConfig[] = [
       97: '0x3ed8936cAFDF85cfDBa29Fbe5940A5b0524824F4',
       56: '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0',
     },
-    token: tokens.cake,
-    quoteToken: tokens.wbnb,
+    token: tokens.wbnb,
+    quoteToken: tokens.cake,
 
     levarage: 3,
     vaultAddress: {
@@ -51,8 +51,8 @@ const levarageFarms: LevarageFarmConfig[] = [
       97: '',
       56: '0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE',
     },
-    token: tokens.usdt,
-    quoteToken: tokens.wbnb,
+    token: tokens.wbnb,
+    quoteToken: tokens.usdt,
 
     levarage: 3,
     vaultAddress: {
@@ -93,8 +93,8 @@ const levarageFarms: LevarageFarmConfig[] = [
       97: '',
       56: '0x61EB789d75A95CAa3fF50ed7E47b96c132fEc082',
     },
-    token: tokens.btcb,
-    quoteToken: tokens.wbnb,
+    token: tokens.wbnb,
+    quoteToken: tokens.btcb,
 
     levarage: 3,
     vaultAddress: {
@@ -135,8 +135,8 @@ const levarageFarms: LevarageFarmConfig[] = [
       97: '',
       56: '0x74E4716E431f45807DCF19f284c7aA99F18a4fbc',
     },
-    token: tokens.eth,
-    quoteToken: tokens.wbnb,
+    token: tokens.wbnb,
+    quoteToken: tokens.eth,
 
     levarage: 3,
     vaultAddress: {
@@ -177,8 +177,8 @@ const levarageFarms: LevarageFarmConfig[] = [
       97: '',
       56: '0x7EFaEf62fDdCCa950418312c6C91Aef321375A00',
     },
-    token: tokens.usdt,
-    quoteToken: tokens.busd,
+    token: tokens.busd,
+    quoteToken: tokens.usdt,
 
     levarage: 6,
     vaultAddress: {
