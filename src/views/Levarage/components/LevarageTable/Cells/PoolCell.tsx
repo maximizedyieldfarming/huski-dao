@@ -19,13 +19,14 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const PoolCell = ({ pool }) => {
+const PoolCell = ({ pool, quoteToken, token }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
+        <TokenPairImage primaryToken={quoteToken} secondaryToken={token} width={40} height={40} mr="8px" />
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Pool
         </Text>

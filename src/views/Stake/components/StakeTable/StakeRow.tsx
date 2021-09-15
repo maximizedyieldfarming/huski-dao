@@ -28,7 +28,7 @@ const StakeRow = ({ tokenData }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <CurrencyCell name={name} />
+        <CurrencyCell token={tokenData} />
         <AprCell apr={stakeAPR} />
         {isDesktop && <TotalSupplyCell supply={stakeValue} />}
         {isDesktop && <ActionCell name={name} />}

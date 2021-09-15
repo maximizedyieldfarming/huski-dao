@@ -24,12 +24,12 @@ const LevarageRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { lpSymbol, tvl, levarage, reserveTokenOne } = tokenData
+  const { lpSymbol, tvl, levarage, reserveTokenOne, quoteToken, token } = tokenData
 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={lpSymbol} />
+        <PoolCell pool={lpSymbol} quoteToken={quoteToken} token={token} />
         <ApyCell apy={reserveTokenOne} />
         {isDesktop && <TvlCell tvl={tvl} />}
         {isDesktop && <LevarageCell levarage={levarage} />}

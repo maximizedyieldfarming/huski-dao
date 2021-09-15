@@ -11,7 +11,7 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { useLendData, useLendTotalSupply, useLevarageFarms, usePollLevarageFarmsWithUserData  } from 'state/lend/hooks'
+import { useLendData, useLendTotalSupply, useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/lend/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -190,6 +190,7 @@ const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { lendData } = useLendData()
+  console.log({ lendData })
   const lendTotalSupply = useLendTotalSupply()
   console.info('lend---farm---', useLevarageFarms())
   usePollLevarageFarmsWithUserData()
@@ -216,7 +217,7 @@ const Lend: React.FC = () => {
       <Title>Lending Positions</Title>
       <TableWrapper>
         <TopTable data={lendData} />
-       
+
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
@@ -255,5 +256,3 @@ const Lend: React.FC = () => {
 }
 
 export default Lend
-
-// TODO: CREATE a proper table components/elements (创建一个合适的表格组件/元素)
