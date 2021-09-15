@@ -11,7 +11,7 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { useLendData, useLendTotalSupply } from 'state/lend/hooks'
+import { useLendData, useLendTotalSupply, useLevarageFarms, usePollLevarageFarmsWithUserData  } from 'state/lend/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -191,6 +191,8 @@ const Lend: React.FC = () => {
   const { account } = useWeb3React()
   const { lendData } = useLendData()
   const lendTotalSupply = useLendTotalSupply()
+  console.info('lend---farm---', useLevarageFarms())
+  usePollLevarageFarmsWithUserData()
   return (
     <Page>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
