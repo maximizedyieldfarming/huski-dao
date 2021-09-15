@@ -34,7 +34,7 @@ const Home = lazy(() => import('./views/Home'))
 // const FarmAuction = lazy(() => import('./views/FarmAuction'))
 const Lend = lazy(() => import('./views/Lend'))
 const LendAction = lazy(() => import('views/Lend/LendAction/LendAction'))
-const Approve = lazy(() => import('views/Lend/Approve/Approve'))
+// const Approve = lazy(() => import('views/Lend/Approve/Approve'))
 const Stake = lazy(() => import('./views/Stake'))
 const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
@@ -90,7 +90,7 @@ const App: React.FC = () => {
               <Lend />
             </Route>
             <Route exact path="/lend/:action/:token" component={LendAction} />
-            <Route exact path="/lend/deposit/:token/approve" component={Approve} />
+            {/* <Route exact path="/lend/deposit/:token/approve" component={Approve} /> */}
 
             <Route exact path="/stake">
               <Stake />

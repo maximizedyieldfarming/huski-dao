@@ -66,6 +66,58 @@ export interface FarmConfig {
   }
 }
 
+export interface LendConfig {
+  name: string
+  symbol: string
+  address: Address
+  debtToken: string
+  config: string
+  tripleSlopeModel: string
+  StrategyAddTwoSidesOptimal: string
+  pid: number
+  lpSymbol?: string
+  lpAddresses?: Address
+  token?: Token
+  quoteToken?: Token
+  multiplier?: string
+  isCommunity?: boolean
+  dual?: {
+    rewardPerBlock: number
+    earnLabel: string
+    endBlock: number
+  }
+
+
+  // workers: [
+  //   {
+  //       name: string
+  //       address: string
+  //       config: string
+  //       pId: number
+  //       lp: string
+  //       stakingLpAt: string
+  //       strategies: {
+  //           StrategyAddAllBaseToken: string
+  //           StrategyLiquidate: string
+  //           StrategyAddTwoSidesOptimal: string
+  //           StrategyWithdrawMinimizeTrading: string
+  //       }
+  //   }
+  // ]
+
+  levarage?: number
+  vaultAddress?: Address
+  workerAddress?: Address
+  workerConfig?: Address
+  strategies?: {
+    addAllBaseToken: Address
+    liquidate: Address
+    addTwoSidesOptimal: Address
+    withdrawMinimizeTrading: Address
+  }
+}
+
+
 export interface LevarageFarmConfig {
   pid: number
   lpSymbol: string
