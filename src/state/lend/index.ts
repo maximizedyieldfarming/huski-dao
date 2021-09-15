@@ -48,7 +48,7 @@
 
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import levarageFarmsConfig from 'config/constants/lend'
+import lendConfig from 'config/constants/lend'
 import isArchivedPid from 'utils/farmHelpers'
 import fetchFarms from './fetchLend'
 import fetchFarmsPrices from './fetchLendPrices'
@@ -60,7 +60,7 @@ import {
 } from './fetchLendUser'
 import { LendState, LendFarm } from '../types'
 
-const noAccountFarmConfig = levarageFarmsConfig.map((farm) => ({
+const noAccountFarmConfig = lendConfig.map((farm) => ({
   ...farm,
   userData: {
     allowance: '0',
@@ -72,14 +72,14 @@ const noAccountFarmConfig = levarageFarmsConfig.map((farm) => ({
 
 const initialState: LendState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false }
 
-export const nonArchivedFarms = levarageFarmsConfig.filter(({ pid }) => !isArchivedPid(pid))
+export const nonArchivedFarms = lendConfig.filter(({ pid }) => !isArchivedPid(pid))
 
 // Async thunks
 export const fetchLendPublicDataAsync = 
 createAsyncThunk<LendFarm[], number[]>(
   'lend/fetchLendPublicDataAsync',
   async (pids) => {
-    const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
+    const farmsToFetch = lendConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
 
     const farms = await fetchFarms(farmsToFetch)
     const farmsWithPrices = await fetchFarmsPrices(farms)
@@ -105,14 +105,14 @@ export const fetchLendUserDataAsync =
 createAsyncThunk<LevarageFarmUserDataResponse[], { account: string; pids: number[] }>(
   'lend/fetchLendUserDataAsync',
   async ({ account, pids }) => {
-    console.info('account',account);console.info('pids',pids);
-    const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
+    // console.info('account',account);console.info('pids',pids);
+    const farmsToFetch = lendConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
     const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
 
-    console.log("lend99999: ", "fetchLendUserDataAsync")
+    console.log("lend99999: ", farmsToFetch)
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
         pid: farmsToFetch[index].pid,

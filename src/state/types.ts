@@ -49,6 +49,13 @@ export interface LevarageFarm extends LevarageFarmConfig {
     stakedBalance: string
     earnings: string
   }
+  lendInfo?: {
+    name: string
+    symbol: string
+    totalSupply: SerializedBigNumber
+    totalToken: SerializedBigNumber,
+    vaultDebtVal: SerializedBigNumber
+  }
 }
 
 export interface LendFarm extends LendConfig {

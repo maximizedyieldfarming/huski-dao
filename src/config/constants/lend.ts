@@ -1,7 +1,7 @@
 import tokens from './tokens'
 import { LendConfig } from './types'
 
-const levarageFarms: LendConfig[] = [
+const lendConfig: LendConfig[] = [
   {
     name: 'BNB',
     symbol: "ibWBNB",
@@ -82,4 +82,4 @@ const levarageFarms: LendConfig[] = [
   }
 ]
 
-export default levarageFarms
+export default lendConfig

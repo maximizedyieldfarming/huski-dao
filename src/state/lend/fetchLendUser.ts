@@ -7,7 +7,6 @@ import { getFairLaunch } from 'utils/env'
 import { LendConfig } from 'config/constants/types'
 
 export const fetchFarmUserAllowances = async (account: string, farmsToFetch: LendConfig[]) => {
-  console.info('111111');
   const calls = farmsToFetch.map((farm) => {
     const baseTokenAddress = getAddress(farm.token.address)
     return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.address)] }

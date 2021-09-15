@@ -9,7 +9,7 @@ import { getPoolInfo, getSumLendData } from 'utils/vaultService'
 import { getBep20Contract, getCakeContract } from 'utils/contractHelpers'
 import { getCakeAddress } from 'utils/addressHelpers'
 import useRefresh from 'hooks/useRefresh'
-import { levarageFarmsConfig } from 'config/constants'
+import { lendConfig } from 'config/constants'
 import mainnet from '../../mainnet.json'
 import { sumTokenData, formatBigNumber } from '../utils'
 import { fetchLendPublicDataAsync, fetchLendUserDataAsync, nonArchivedFarms } from '.'
@@ -104,7 +104,7 @@ export const usePollLevarageFarmsPublicData = (includeArchive = true) => {
   const { slowRefresh } = useRefresh()
 
   useEffect(() => {
-    const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
+    const farmsToFetch = includeArchive ? lendConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
     dispatch(fetchLendPublicDataAsync(pids))
@@ -116,19 +116,15 @@ export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
   const dispatch = useAppDispatch()
   const { slowRefresh } = useRefresh()
   const { account } = useWeb3React()
-  console.log("1234567890: ", "usePollLevarageFarmsWithUserData")
+  console.log("includeArchive: 1", includeArchive)
 
   useEffect(() => {
-    const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
+    const farmsToFetch = includeArchive ? lendConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
-
+    console.log({"includeArchive: ": farmsToFetch, 'pids': pids})
     dispatch(fetchLendPublicDataAsync(pids))
-    // fetchLendPublicDataAsync(pids)
-    console.log("zhelli account: ", account)
-
     if (account) {
       dispatch(fetchLendUserDataAsync({ account, pids }))
-      // fetchLendUserDataAsync({ account, pids })
     }
   }, [includeArchive, dispatch, slowRefresh, account])
 }
