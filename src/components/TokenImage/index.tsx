@@ -20,7 +20,6 @@ const getImageUrlFromTokenPair = (token: Token) => {
 }
 
 const getImageUrlFromToken = (name) => {
-  console.log({ name })
   // const address = getAddress(token.symbol === 'BNB' ? tokens.wbnb.address : token.address)
   return `/images/tokens/${name.replace(' ', '')}.png`
 }
