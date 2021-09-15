@@ -12,6 +12,7 @@ export interface Token {
   decimals?: number
   projectLink?: string
   busdPrice?: string
+  coingeckoId?: string
 }
 
 export enum PoolIds {

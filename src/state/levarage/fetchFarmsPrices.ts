@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import Tokens from 'config/constants/tokens'
+import farmTokens from 'config/constants/farmTokens'
 import { BIG_ONE, BIG_ZERO } from 'utils/bigNumber'
 import { filterFarmsByQuoteToken } from 'utils/farmsPriceHelpers'
 import { LevarageFarm } from 'state/types'
@@ -10,95 +10,44 @@ import { LevarageFarm } from 'state/types'
 //   return filteredFarm
 // }
 
-const getFarmBaseTokenPrice = (farm: LevarageFarm, quoteTokenFarm: LevarageFarm, bnbPriceBusd: BigNumber): BigNumber => {
-  // const hasTokenPriceVsQuote = Boolean(farm.tokenPriceVsQuote)
-  const hasTokenPriceVsQuote = Boolean(true)
-
-  // if (farm.quoteToken.symbol === 'BUSD') {
-  //   return hasTokenPriceVsQuote ? new BigNumber(farm.tokenPriceVsQuote) : BIG_ZERO
-  // }
-
-  // if (farm.quoteToken.symbol === 'wBNB') {
-  //   return hasTokenPriceVsQuote ? bnbPriceBusd.times(farm.tokenPriceVsQuote) : BIG_ZERO
-  // }
-
-  // We can only calculate profits without a quoteTokenFarm for BUSD/BNB farms
-  if (!quoteTokenFarm) {
-    return BIG_ZERO
-  }
-
-  // Possible alternative farm quoteTokens:
-  // UST (i.e. MIR-UST), pBTC (i.e. PNT-pBTC), BTCB (i.e. bBADGER-BTCB), ETH (i.e. SUSHI-ETH)
-  // If the farm's quote token isn't BUSD or wBNB, we then use the quote token, of the original farm's quote token
-  // i.e. for farm PNT - pBTC we use the pBTC farm's quote token - BNB, (pBTC - BNB)
-  // from the BNB - pBTC price, we can calculate the PNT - BUSD price
-  // if (quoteTokenFarm.quoteToken.symbol === 'wBNB') {
-  //   const quoteTokenInBusd = bnbPriceBusd.times(quoteTokenFarm.tokenPriceVsQuote)
-  //   return hasTokenPriceVsQuote && quoteTokenInBusd
-  //     ? new BigNumber(farm.tokenPriceVsQuote).times(quoteTokenInBusd)
-  //     : BIG_ZERO
-  // }
-
-  // if (quoteTokenFarm.quoteToken.symbol === 'BUSD') {
-  //   const quoteTokenInBusd = quoteTokenFarm.tokenPriceVsQuote
-  //   return hasTokenPriceVsQuote && quoteTokenInBusd
-  //     ? new BigNumber(farm.tokenPriceVsQuote).times(quoteTokenInBusd)
-  //     : BIG_ZERO
-  // }
-
-  // Catch in case token does not have immediate or once-removed BUSD/wBNB quoteToken
-  return BIG_ZERO
-}
-
-const getFarmQuoteTokenPrice = (farm: LevarageFarm, quoteTokenFarm: LevarageFarm, bnbPriceBusd: BigNumber): BigNumber => {
-  if (farm.quoteToken.symbol === 'BUSD') {
-    return BIG_ONE
-  }
-
-  if (farm.quoteToken.symbol === 'wBNB') {
-    return bnbPriceBusd
-  }
-
-  if (!quoteTokenFarm) {
-    return BIG_ZERO
-  }
-
-  // if (quoteTokenFarm.quoteToken.symbol === 'wBNB') {
-  //   return quoteTokenFarm.tokenPriceVsQuote ? bnbPriceBusd.times(quoteTokenFarm.tokenPriceVsQuote) : BIG_ZERO
-  // }
-
-  // if (quoteTokenFarm.quoteToken.symbol === 'BUSD') {
-  //   return quoteTokenFarm.tokenPriceVsQuote ? new BigNumber(quoteTokenFarm.tokenPriceVsQuote) : BIG_ZERO
-  // }
-
-  return BIG_ZERO
-}
-const fetchAllPrices = async (tokens) => {
-  const coingeckoIds = tokens.map((token) => {
-    return token.coingeckoId
+const getFarmBaseTokenPrice = (farm: LevarageFarm, coingeckoPrices: any): BigNumber => {
+  let baseTokenPrice = BIG_ZERO
+  coingeckoPrices.forEach(coingeckoPrice => {
+    if (coingeckoPrice.id === farm.token.coingeckoId) {
+      baseTokenPrice = new BigNumber(coingeckoPrice.current_price)
+    }
   })
-  console.log(coingeckoIds)
-  const tokensPriceCoinGecko = `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoIds}&vs_currencies=usd&per_page=200`;
-  const res = await fetch(tokensPriceCoinGecko);
-  const data = await res.json();
 
-  return data
+  return baseTokenPrice
+}
+
+const getFarmQuoteTokenPrice = (farm: LevarageFarm, coingeckoPrices: any): BigNumber => {
+  let quoteTokenPrice = BIG_ZERO
+  coingeckoPrices.forEach(coingeckoPrice => {
+    if (coingeckoPrice.id === farm.quoteToken.coingeckoId) {
+      quoteTokenPrice = new BigNumber(coingeckoPrice.current_price)
+    }
+  })
+
+  return quoteTokenPrice
 }
 
 const fetchFarmsPrices = async (farms) => {
-  // const coingeckoPrices = fetchAllPrices(Tokens)
+  const coingeckoIds = farmTokens.map((token) => {
+    return token.coingeckoId
+  })
+  const tokensPriceCoinGecko = `https://api.coingecko.com/api/v3/coins/markets?ids=${coingeckoIds}&vs_currency=usd&per_page=200`;
+  const res = await fetch(tokensPriceCoinGecko);
+  const coingeckoPrices = await res.json();
 
   const farmsWithPrices = farms.map((farm) => {
-    // const quoteTokenFarm = getFarmFromTokenSymbol(farms, farm.quoteToken.symbol)
-    // const baseTokenPrice = getFarmBaseTokenPrice(farm, quoteTokenFarm, bnbPriceBusd)
-    // const quoteTokenPrice = getFarmQuoteTokenPrice(farm, quoteTokenFarm, bnbPriceBusd)
-    // const token = { ...farm.token, busdPrice: baseTokenPrice.toJSON() }
-    // const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
-    const token = { ...farm.token, busdPrice: 1 }
-    const quoteToken = { ...farm.quoteToken, busdPrice: 11 }
+    const baseTokenPrice = getFarmBaseTokenPrice(farm, coingeckoPrices)
+    const quoteTokenPrice = getFarmQuoteTokenPrice(farm, coingeckoPrices)
+    const token = { ...farm.token, busdPrice: baseTokenPrice.toJSON() }
+    const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
     return { ...farm, token, quoteToken }
   })
-  console.log("levarage: ", farmsWithPrices)
+  console.log("levarage farmsWithPrices: ", farmsWithPrices)
 
   return farmsWithPrices
 }

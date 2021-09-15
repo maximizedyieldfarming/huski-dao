@@ -53,18 +53,16 @@ const Header = styled(Flex)`
 
 const HeaderTabs = styled(Link)<Props>`
   flex: 1;
-  border-top: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.card.background)};
+  background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
+  border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
   padding: 1rem;
   cursor: pointer;
-  background-color: y;
   &:first-child {
     border-top-left-radius: 20px;
   }
   &:last-child {
     border-top-right-radius: 20px;
   }
-  // background-color: ${(props) => (props.active ? '#fff' : '#E9E9E9')};
-  // border-top: 1px solid ${(props) => (props.active ? '#9615e7' : '#E9E9E9')};
 `
 
 const Body = styled(Flex)`
@@ -80,6 +78,7 @@ const ButtonGroup = styled(Flex)`
 const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
+  console.log({ account })
   const { balance } = useTokenBalance(account)
   console.info('bbbalance', balance)
   const { callWithGasPrice } = useCallWithGasPrice()
