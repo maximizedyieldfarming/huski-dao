@@ -82,6 +82,7 @@ export interface LevarageFarmConfig {
   }
 
   levarage: number
+  poolId: number
   vaultAddress: Address
   workerAddress: Address
   workerConfig: Address

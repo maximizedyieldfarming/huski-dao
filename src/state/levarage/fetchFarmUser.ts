@@ -43,7 +43,7 @@ export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch:
     return {
       address: fairLaunchAddress,
       name: 'userInfo',
-      params: [farm.pid, account],
+      params: [farm.poolId, account],
     }
   })
 
@@ -61,7 +61,7 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Levar
     return {
       address: fairLaunchAddress,
       name: 'pendingAlpaca',
-      params: [farm.pid, account],
+      params: [farm.poolId, account],
     }
   })
 

@@ -16,7 +16,7 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
-  const { pid, lpAddresses, token, quoteToken } = farm
+  const { poolId, lpAddresses, token, quoteToken } = farm
   const lpAddress = getAddress(lpAddresses)
   const calls = [
     {
@@ -31,12 +31,12 @@ const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
 
   // Only make masterchef calls if farm has pid
   const [info, totalAllocPoint] =
-    pid || pid === 0
+  poolId || poolId === 0
       ? await multicall(fairLaunchABI, [
           {
             address: getFairLaunch(),
             name: 'poolInfo',
-            params: [pid],
+            params: [poolId],
           },
           {
             address: getFairLaunch(),

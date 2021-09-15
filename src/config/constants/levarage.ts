@@ -3,7 +3,7 @@ import { LevarageFarmConfig } from './types'
 
 const levarageFarms: LevarageFarmConfig[] = [
   {
-    pid: 1,
+    pid: 251,
     lpSymbol: 'CAKE-BNB9999 LP',
     lpAddresses: {
       97: '0x3ed8936cAFDF85cfDBa29Fbe5940A5b0524824F4',
@@ -13,6 +13,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     quoteToken: tokens.cake,
 
     levarage: 3,
+    poolId: 1,
     vaultAddress: {
       97: '',
       56: '0xd7D069493685A581d27824Fc46EdA46B7EfC0063',
@@ -45,7 +46,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 1,
+    pid: 264,
     lpSymbol: 'USDT-BNB LP',
     lpAddresses: {
       97: '',
@@ -55,6 +56,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     quoteToken: tokens.usdt,
 
     levarage: 3,
+    poolId: 1,
     vaultAddress: {
       97: '',
       56: '0xd7D069493685A581d27824Fc46EdA46B7EfC0063',
@@ -87,7 +89,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 1,
+    pid: 262,
     lpSymbol: 'BTCB-BNB LP',
     lpAddresses: {
       97: '',
@@ -97,6 +99,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     quoteToken: tokens.btcb,
 
     levarage: 3,
+    poolId: 1,
     vaultAddress: {
       97: '',
       56: '0xd7D069493685A581d27824Fc46EdA46B7EfC0063',
@@ -129,7 +132,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 1,
+    pid: 261,
     lpSymbol: 'ETH-BNB LP',
     lpAddresses: {
       97: '',
@@ -139,6 +142,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     quoteToken: tokens.eth,
 
     levarage: 3,
+    poolId: 1,
     vaultAddress: {
       97: '',
       56: '0xd7D069493685A581d27824Fc46EdA46B7EfC0063',
@@ -171,7 +175,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     }
   },
   {
-    pid: 3,
+    pid: 258,
     lpSymbol: 'USDT-BUSD LP',
     lpAddresses: {
       97: '',
@@ -181,6 +185,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     quoteToken: tokens.usdt,
 
     levarage: 6,
+    poolId: 3,
     vaultAddress: {
       97: '',
       56: '0x7C9e73d4C71dae564d41F78d56439bB4ba87592f',
