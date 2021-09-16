@@ -11,7 +11,8 @@ import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { useLendData, useLendTotalSupply, useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/lend/hooks'
+import { useLendData, useLendTotalSupply } from 'state/lend/hooks'
+import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -36,6 +37,7 @@ import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
 import TopTable from './components/TopTable/TopTable'
+import { getAprData, getCakeVaultEarnings } from './helpers'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -192,7 +194,10 @@ const Lend: React.FC = () => {
   const { lendData } = useLendData()
   console.log({ lendData })
   const lendTotalSupply = useLendTotalSupply()
-  console.info('lend---farm---', useLevarageFarms())
+
+  const { data: farmsData } = useLevarageFarms()
+  console.log({ 'farm 数据':farmsData })
+  getAprData(farmsData[0]);
   usePollLevarageFarmsWithUserData()
   return (
     <Page>

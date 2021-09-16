@@ -69,6 +69,29 @@ export async function getHuskyPrice() {
   return price;
 }
 
+export async function getLendApy(totalSupply, totalToken, vaultDebtVal, busdPrice) {
+  const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
+  let landRate = 0;
+  if (utilization < 0.5) {
+    landRate = mathematics1 * utilization;
+  } else if (utilization > 0.9) {
+    landRate = mathematics3 * utilization - 11.5;
+  } else {
+    landRate = mathematics2 * utilization + 0.2;
+  }
+  const landApr = landRate * 0.9 * utilization;
+  const huskyPrice: any = await getHuskyPrice()
+  const poolAlpacaPerBlock = await getPoolHuskyPerBlock()
+  const stakeApr = BLOCKS_PER_YEAR.times(poolAlpacaPerBlock * huskyPrice).div(
+    (busdPrice * totalToken * totalToken) / totalSupply
+  );
+  const totalApr = BigNumber.sum(landApr, stakeApr);
+
+  // eslint-disable-next-line no-restricted-properties
+  const apy = Math.pow(1 + totalApr.toNumber() / 365, 365) - 1;
+  return apy;
+}
+
 export async function getPoolInfo(param: any) {
 
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
@@ -79,7 +102,7 @@ export async function getPoolInfo(param: any) {
   const vaultDebtShare = parseInt(await vault.methods.vaultDebtShare().call());
   const vaultDebtVal:any = parseInt(await vault.methods.vaultDebtVal().call());
   const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
-// console.info('vault',vault);
+// console.log({name,symbol,totalSupply,totalToken,vaultDebtVal});
   let landRate = 0;
   // Interest=m∗utilization+b
   if (utilization < 0.5) {
@@ -94,7 +117,7 @@ export async function getPoolInfo(param: any) {
   // const cakePriceCoinGeckoApi1 = `https://api.coingecko.com/api/v3/simple/price?ids=alpaca-finance&vs_currencies=usd`;
   // const res = await fetch(cakePriceCoinGeckoApi1);
   const huskyPrice:any = await getHuskyPrice()// await res.json();
-  const poolAlpacaPerBlock = await getPoolHuskyPerBlock(param)
+  const poolAlpacaPerBlock = await getPoolHuskyPerBlock()
 
   const binancecoinprice = `https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd`;
   const res2 = await fetch(binancecoinprice);

@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { getFairLaunchContract, getWeb3FairLaunchContract } from './contractHelper';
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from './config';
 
-export async function getPoolHuskyPerBlock(param: any) {
+export async function getPoolHuskyPerBlock() {
     const fairLaunch = getWeb3FairLaunchContract();
 
     const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
