@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody, Flex, Text, CardRibbon } from '@pancakeswap/uikit'
+import { CardBody, Flex, Text, CardRibbon, Skeleton, Button } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import styled from 'styled-components'
 import ExpandableSectionButton from 'components/ExpandableSectionButton'
@@ -25,7 +26,12 @@ const LendCard = ({ token }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
 
-  const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate } = token
+  const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, balance } = token
+
+  const utilizationRateToPercentage = (rate) => {
+    const value = rate * 100
+    return `${value.toFixed(2)}%`
+  }
 
   return (
     <StyledCard>
@@ -38,16 +44,22 @@ const LendCard = ({ token }) => {
       />
       <CardBody>
         <AprRow apy={apy} />
-        <Flex mt="24px" flexDirection="column">
+        <Flex mt="24px" justifyContent="space-between">
           {account ? (
             /*  <CardActions pool={pool} stakedBalance={stakedBalance} /> */
             { account }
           ) : (
             <>
-              <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
+              {/*  <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
                 {t('Start earning')}
               </Text>
-              <ConnectWalletButton />
+              <ConnectWalletButton /> */}
+              <Button as={Link} to={`/lend/deposit/${name}`}>
+                Deposit
+              </Button>
+              <Button as={Link} to={`/lend/withdraw/${name}`}>
+                Withdraw
+              </Button>
             </>
           )}
         </Flex>
@@ -70,17 +82,25 @@ const LendCard = ({ token }) => {
           <>
             <Flex justifyContent="space-between">
               <Text>Total Supply: </Text>
-              <Text>{totalDeposit}</Text>
+              {totalDeposit ? <Text> {totalDeposit}</Text> : <Skeleton width="80px" height="16px" />}
             </Flex>
 
             <Flex justifyContent="space-between">
               <Text>Total Borrowed: </Text>
-              <Text>{totalBorrowed}</Text>
+              {totalBorrowed ? <Text>{totalBorrowed}</Text> : <Skeleton width="80px" height="16px" />}
             </Flex>
 
             <Flex justifyContent="space-between">
               <Text>Utilization Rate: </Text>
-              <Text>{capitalUtilizationRate}</Text>
+              {capitalUtilizationRate ? (
+                <Text>{utilizationRateToPercentage(capitalUtilizationRate)}</Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text>Balance: </Text>
+              {balance ? <Text>{}</Text> : <Skeleton width="80px" height="16px" />}
             </Flex>
           </>
         )}

@@ -3,7 +3,7 @@ import { CardHeader, Heading, Text, Flex } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { Token } from 'config/constants/types'
-import { TokenPairImage } from 'components/TokenImage'
+import { TokenImage } from 'components/TokenImage'
 // import CakeVaultTokenPairImage from '../CakeVaultCard/CakeVaultTokenPairImage'
 
 const Wrapper = styled(CardHeader)`
@@ -42,6 +42,7 @@ const StyledCardHeader = ({ name }) => {
   return (
     <Wrapper>
       <Flex alignItems="center" justifyContent="space-between">
+        <TokenImage token={name.toLowerCase()} width={40} height={40} />
         <Flex flexDirection="column">
           <Heading color="body" scale="lg">
             {name}

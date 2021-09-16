@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, TooltipText, IconButton, useModal, CalculateIcon, Skeleton, useTooltip } from '@pancakeswap/uikit'
+import { Flex, TooltipText, IconButton, useModal, CalculateIcon, Skeleton, useTooltip, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Balance from 'components/Balance'
 import RoiCalculatorModal from 'components/RoiCalculatorModal'
@@ -12,7 +12,9 @@ import { BIG_ZERO } from 'utils/bigNumber'
 
 const ApyLabelContainer = styled(Flex)`
   cursor: pointer;
-
+  ${Flex} {
+    flex: 1;
+  }
   &:hover {
     opacity: 0.5;
   }
@@ -54,6 +56,7 @@ const AprRow = ({ apy }) => {
     <Flex alignItems="center" justifyContent="space-between">
       {/*   {tooltipVisible && tooltip}
       <TooltipText ref={targetRef}>{isAutoVault ? `${t('APY')}:` : `${t('APR')}:`}</TooltipText> */}
+      <Text>APY:</Text>
       {!apy ? (
         <Skeleton width="82px" height="32px" />
       ) : (
@@ -69,7 +72,7 @@ const AprRow = ({ apy }) => {
           <IconButton variant="text" scale="sm">
             <CalculateIcon color="textSubtle" width="18px" />
           </IconButton> */}
-          {apy}
+          {apy.toFixed(4)}
         </ApyLabelContainer>
       )}
     </Flex>
