@@ -3,11 +3,9 @@ import { useFarms } from 'state/farms/hooks'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
-// eslint-disable-next-line import/no-unresolved
-import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
-import { ChainId } from '@pancakeswap/sdk'
+import { ChainId, Currency } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
@@ -29,6 +27,7 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { deposit } from 'utils/vaultService'
 import { Field } from '../../state/mint/actions'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { ROUTER_ADDRESS } from '../../config/constants'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import husky from './assets/husky@1x.png'
@@ -37,7 +36,7 @@ import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
 import TopTable from './components/TopTable/TopTable'
-import { getAprData, getCakeVaultEarnings } from './helpers'
+import { getAprData } from './helpers'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 import LendCard from './components/LendCard/LendCard'
 
@@ -198,10 +197,17 @@ const Lend: React.FC = () => {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const { lendData } = useLendData()
-  console.log({ lendData })
-  const lendTotalSupply = useLendTotalSupply()
+  // const { account } = useActiveWeb3React()
+const currency: Currency = {
+  decimals:18,
+  name:'BNB',
+  symbol: 'BNB'
+}
+  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
+  const { lendData } = useLendData()
+  console.log({ lendData, 'A':selectedCurrencyBalance  })
+  const lendTotalSupply = useLendTotalSupply()
   const { data: farmsData } = useLevarageFarms()
   console.log({ 'farm 数据':farmsData })
   getAprData(farmsData[0]);

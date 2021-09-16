@@ -57,30 +57,4 @@ export const getAprData = async(farm: LevarageFarm) => {
   return apr;
 }
 
-export const getCakeVaultEarnings = (
-  account: string,
-  cakeAtLastUserAction: BigNumber,
-  userShares: BigNumber,
-  pricePerFullShare: BigNumber,
-  earningTokenPrice: number,
-) => {
-  const hasAutoEarnings =
-    account && cakeAtLastUserAction && cakeAtLastUserAction.gt(0) && userShares && userShares.gt(0)
-  const { cakeAsBigNumber } = convertSharesToCake(userShares, pricePerFullShare)
-  const autoCakeProfit = cakeAsBigNumber.minus(cakeAtLastUserAction)
-  const autoCakeToDisplay = autoCakeProfit.gte(0) ? getBalanceNumber(autoCakeProfit, 18) : 0
 
-  const autoUsdProfit = autoCakeProfit.times(earningTokenPrice)
-  const autoUsdToDisplay = autoUsdProfit.gte(0) ? getBalanceNumber(autoUsdProfit, 18) : 0
-  return { hasAutoEarnings, autoCakeToDisplay, autoUsdToDisplay }
-}
-
-export const getPoolBlockInfo = (pool: Pool, currentBlock: number) => {
-  const { startBlock, endBlock, isFinished } = pool
-  const shouldShowBlockCountdown = Boolean(!isFinished && startBlock && endBlock)
-  const blocksUntilStart = Math.max(startBlock - currentBlock, 0)
-  const blocksRemaining = Math.max(endBlock - currentBlock, 0)
-  const hasPoolStarted = blocksUntilStart === 0 && blocksRemaining > 0
-  const blocksToDisplay = hasPoolStarted ? blocksRemaining : blocksUntilStart
-  return { shouldShowBlockCountdown, blocksUntilStart, blocksRemaining, hasPoolStarted, blocksToDisplay }
-}
