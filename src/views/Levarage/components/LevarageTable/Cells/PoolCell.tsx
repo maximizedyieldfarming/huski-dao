@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Flex, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
@@ -17,6 +17,9 @@ const StyledCell = styled(BaseCell)`
     flex: 1 0 150px;
     padding-left: 32px;
   }
+  ${CellContent} {
+    flex: 1;
+  }
 `
 
 const PoolCell = ({ pool, quoteToken, token }) => {
@@ -26,13 +29,22 @@ const PoolCell = ({ pool, quoteToken, token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <TokenPairImage primaryToken={quoteToken} secondaryToken={token} width={40} height={40} mr="8px" />
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+        <Flex>
+          <TokenPairImage
+            variant="inverted"
+            primaryToken={quoteToken}
+            secondaryToken={token}
+            width={40}
+            height={40}
+            mr="8px"
+          />
+          {/*   <Text fontSize="12px" color="textSubtle" textAlign="left">
           Pool
-        </Text>
-        <Text bold={!isMobile} small={isMobile}>
-          {pool}
-        </Text>
+        </Text> */}
+          <Text bold={!isMobile} small={isMobile}>
+            {pool}
+          </Text>
+        </Flex>
       </CellContent>
     </StyledCell>
   )

@@ -42,7 +42,7 @@ const StyledCardHeader = ({ name, quoteToken, token }) => {
   return (
     <Wrapper>
       <Flex alignItems="center" justifyContent="space-between">
-        <TokenPairImage primaryToken={quoteToken} secondaryToken={token} width={40} height={40} />
+        <TokenPairImage variant="inverted" primaryToken={quoteToken} secondaryToken={token} width={40} height={40} />
         <Flex flexDirection="column">
           <Heading color="body" scale="lg">
             {name}
