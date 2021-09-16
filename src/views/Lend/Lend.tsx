@@ -38,6 +38,8 @@ import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
 import TopTable from './components/TopTable/TopTable'
 import { getAprData, getCakeVaultEarnings } from './helpers'
+import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
+import LendCard from './components/LendCard/LendCard'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -186,7 +188,12 @@ const StyledFlex = styled(Flex)`
   padding: 5px 2rem;
 `
 
+const CardLayout = styled(FlexLayout)`
+  justify-content: center;
+`
+
 const Lend: React.FC = () => {
+  const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
@@ -199,6 +206,15 @@ const Lend: React.FC = () => {
   console.log({ 'farm 数据':farmsData })
   getAprData(farmsData[0]);
   usePollLevarageFarmsWithUserData()
+
+  const cardLayout = (
+    <CardLayout>
+      {lendData.map((token) => (
+        <LendCard token={token} />
+      ))}
+    </CardLayout>
+  )
+
   return (
     <Page>
       <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
@@ -229,6 +245,7 @@ const Lend: React.FC = () => {
       </TableWrapper>
 
       <Flex alignSelf="flex-end">
+        <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
         <Select
           options={[
             {
@@ -254,8 +271,7 @@ const Lend: React.FC = () => {
           ]}
         />
       </Flex>
-
-      <LendTable lendData={lendData} />
+      {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={lendData} />}
     </Page>
   )
 }
