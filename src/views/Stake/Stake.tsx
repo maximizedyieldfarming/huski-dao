@@ -32,6 +32,9 @@ import husky2 from './assets/husky2.png'
 import huskyIcon from './assets/avatar1x.png'
 import StakeTable from './components/StakeTable/StakeTable'
 import TopTable from './components/TopTable/TopTable'
+import StakeCard from './components/StakeCard/StakeCard'
+
+import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -168,15 +171,11 @@ const StyledButton = styled(Button)`
   box-shadow: none;
 `
 
-const CustomPage = styled(Page)`
-  display: flex;
-  flex-direction: column;
-  margin-left: 5%;
-  margin-right: 5%;
-  max-width: none;
+const CardLayout = styled(FlexLayout)`
+  justify-content: center;
 `
-
 const Stake: React.FC = () => {
+  const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
@@ -205,12 +204,18 @@ const Stake: React.FC = () => {
       // setPendingTx(false)
     }
   }
-
+  const cardLayout = (
+    <CardLayout>
+      {stakingData.map((token) => (
+        <StakeCard token={token} />
+      ))}
+    </CardLayout>
+  )
   console.log('useStakeData', useStakeData())
   console.log({ stakingData })
   console.log({ stakeBalanceData })
   return (
-    <CustomPage>
+    <Page>
       <SingleTableWrapper>
         <Title>Positions</Title>
         <Flex width="100%" alignItems="center">
@@ -242,6 +247,7 @@ const Stake: React.FC = () => {
       </SingleTableWrapper>
 
       <Flex alignSelf="flex-end">
+        <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
         <Select
           options={[
             {
@@ -268,8 +274,8 @@ const Stake: React.FC = () => {
         />
       </Flex>
 
-      <StakeTable stakeData={stakingData} />
-    </CustomPage>
+      {viewMode === ViewMode.CARD ? cardLayout : <StakeTable stakeData={stakingData} />}
+    </Page>
   )
 }
 
