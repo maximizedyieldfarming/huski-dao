@@ -1,8 +1,10 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
+import usePersistState from 'hooks/usePersistState'
 import { useFarms } from 'state/farms/hooks'
 import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
 import styled from 'styled-components'
+import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'
 import husky2 from './assets/husky2@1x.png'
@@ -10,6 +12,8 @@ import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LevarageTable from './components/LevarageTable/LevarageTable'
 import TopTable from './components/TopTable/TopTable'
+import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
+import LevarageCard from './components/LevarageCard/LevarageCard'
 
 const TableWrapper = styled.div`
   background-color: ${({ theme }) => theme.card.background};
@@ -75,15 +79,12 @@ const StyledFlex = styled(Flex)`
   padding: 5px 2rem;
 `
 
-const CustomPage = styled(Page)`
-  display: flex;
-  flex-direction: column;
-  margin-left: 5%;
-  margin-right: 5%;
-  max-width: none;
+const CardLayout = styled(FlexLayout)`
+  justify-content: center;
 `
 
 const Levarage: React.FC = () => {
+  const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
   const { data: farmsData } = useLevarageFarms()
   const [isActivePos, setActive] = useState(true)
 
@@ -91,8 +92,16 @@ const Levarage: React.FC = () => {
   usePollLevarageFarmsWithUserData()
   console.info('usePollLevarageFarmsWithUserData：', usePollLevarageFarmsWithUserData())
 
+  const cardLayout = (
+    <CardLayout>
+      {farmsData.map((token) => (
+        <LevarageCard tokenData={token} />
+      ))}
+    </CardLayout>
+  )
+
   return (
-    <CustomPage>
+    <Page>
       <Flex justifyContent="space-between">
         <Flex alignSelf="flex-end" style={{ gap: '1rem' }}>
           <PositionsButton isActive={isActivePos ? 'true' : 'false'} onClick={() => setActive(true)}>
@@ -131,6 +140,7 @@ const Levarage: React.FC = () => {
       </TableWrapper>
 
       <Flex alignSelf="flex-end">
+        <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
         <Select
           options={[
             {
@@ -156,8 +166,8 @@ const Levarage: React.FC = () => {
           ]}
         />
       </Flex>
-      <LevarageTable levarageData={farmsData} />
-    </CustomPage>
+      {viewMode === ViewMode.CARD ? cardLayout : <LevarageTable levarageData={farmsData} />}
+    </Page>
   )
 }
 
