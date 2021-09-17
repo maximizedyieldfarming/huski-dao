@@ -26,7 +26,7 @@ export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
   const dispatch = useAppDispatch()
   const { slowRefresh } = useRefresh()
   const { account } = useWeb3React()
-  console.log("levarage: ", "usePollLevarageFarmsWithUserData")
+  // console.log("levarage: ", "usePollLevarageFarmsWithUserData")
 
   useEffect(() => {
     const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
@@ -34,7 +34,7 @@ export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
 
     dispatch(fetchLevarageFarmsPublicDataAsync(pids))
     // fetchLevarageFarmsPublicDataAsync(pids)
-    console.log("levarage account: ", account)
+    // console.log("levarage account: ", account)
 
     if (account) {
       dispatch(fetchLevarageFarmUserDataAsync({ account, pids }))
@@ -51,7 +51,7 @@ export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
 export const usePollCoreLevarageFarmData = () => {
   const dispatch = useAppDispatch()
   const { fastRefresh } = useRefresh()
-  console.log("levarage: ", "usePollCoreLevarageFarmData")
+  // console.log("levarage: ", "usePollCoreLevarageFarmData")
 
   useEffect(() => {
     dispatch(fetchLevarageFarmsPublicDataAsync([251, 252]))

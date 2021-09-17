@@ -9,7 +9,7 @@ import { ChainId, Currency } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { useLendData, useLendTotalSupply } from 'state/lend/hooks'
+import {  useLendTotalSupply } from 'state/lend/hooks'
 import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
@@ -23,6 +23,11 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
+import ERC20_INTERFACE from 'config/abi/erc20'
+import { useAllTokens } from 'hooks/Tokens'
+import { useMulticallContract } from 'hooks/useContract'
+import { isAddress } from 'utils'
+import { useSingleContractMultipleData, useMultipleContractSingleData } from 'state/multicall/hooks'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { deposit } from 'utils/vaultService'
@@ -198,24 +203,14 @@ const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   // const { account } = useActiveWeb3React()
-const currency: Currency = {
-  decimals:18,
-  name:'BNB',
-  symbol: 'BNB'
-}
-  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-
-  const { lendData } = useLendData()
-  console.log({ lendData, 'A':selectedCurrencyBalance  })
   const lendTotalSupply = useLendTotalSupply()
   const { data: farmsData } = useLevarageFarms()
-  console.log({ 'farm 数据':farmsData })
-  getAprData(farmsData[0]);
+  console.log({ 'farm 数据':farmsData})
   usePollLevarageFarmsWithUserData()
 
   const cardLayout = (
     <CardLayout>
-      {lendData.map((token) => (
+      {farmsData.map((token) => (
         <LendCard token={token} />
       ))}
     </CardLayout>
@@ -243,7 +238,7 @@ const currency: Currency = {
 
       <Title>Lending Positions</Title>
       <TableWrapper>
-        <TopTable data={lendData} />
+        <TopTable data={farmsData} />
 
         <ImageContainer>
           <img src={husky2} alt="" />
@@ -277,7 +272,7 @@ const currency: Currency = {
           ]}
         />
       </Flex>
-      {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={lendData} />}
+      {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={farmsData} />}
     </Page>
   )
 }

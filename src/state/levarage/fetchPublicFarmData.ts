@@ -22,7 +22,7 @@ type PublicFarmData = {
 const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
   const { poolId, lpAddresses, token, quoteToken, vaultAddress } = farm
   const lpAddress = getAddress(lpAddresses)
-  const lpAddress1 = getAddress(vaultAddress)
+  const vaultAddresses = getAddress(vaultAddress)
   const calls = [
     {
       address: lpAddress,
@@ -35,15 +35,15 @@ const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
       {
-        address: lpAddress1,
+        address: vaultAddresses,
         name: 'totalSupply',
       },
       {
-        address: lpAddress1,
+        address: vaultAddresses,
         name: 'totalToken',
       },
       {
-        address: lpAddress1,
+        address: vaultAddresses,
         name: 'vaultDebtVal',
       },
     ])

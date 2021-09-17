@@ -104,7 +104,7 @@ export async function getPoolInfo(param: any) {
     landRate = mathematics2 * utilization + 0.2;
   }
   const landApr = landRate * 0.9 * utilization;
-  const huskyPrice:any = await getHuskyPrice()
+  const huskyPrice:any = 1.04;// await getHuskyPrice()
   const poolAlpacaPerBlock = await getPoolHuskyPerBlock()
   const binancecoinprice = `https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd`;
   const res2 = await fetch(binancecoinprice);
