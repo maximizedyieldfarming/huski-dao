@@ -37,9 +37,8 @@ const StyledPage = styled(Page)`
 const AdjustPosition = (props) => {
   console.log('props to adjust position...', props)
   const [levarage, setLevarage] = useState(0)
-  const [radio, setRadio] = useState('one')
-  const [incDecRadio, setIncDecRadio] = useState(true)
-  console.log({ incDecRadio })
+  // const [incDecRadio, setIncDecRadio] = useState(true)
+  // console.log({ incDecRadio })
 
   const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
@@ -48,12 +47,12 @@ const AdjustPosition = (props) => {
     console.log(value)
     setRadio(value)
   }
-  const handleChangeIncDecRadio = (e) => {
+  /*  const handleChangeIncDecRadio = (e) => {
     console.info('fired')
     const { value } = e.target
     console.log(value)
     setIncDecRadio(!value)
-  }
+  } */
   const {
     location: {
       state: { tokenData },
@@ -64,6 +63,7 @@ const AdjustPosition = (props) => {
   const tokenName = tokenData?.token?.symbol
   console.log({ quoteTokenName })
   console.log({ tokenName })
+  const [radio, setRadio] = useState(quoteTokenName)
 
   return (
     <StyledPage>
@@ -102,7 +102,7 @@ const AdjustPosition = (props) => {
             </Box>
             <Box>
               <Flex alignItems="center">
-                <Radio name="md" onChange={handleChangeIncDecRadio} checked={incDecRadio} />
+                <Radio name="levarage" checked />
                 <Text>Increase or decrease leverage</Text>
               </Flex>
 
@@ -126,11 +126,11 @@ const AdjustPosition = (props) => {
           <Flex>
             <Flex alignItems="center" marginRight="10px">
               <Text>{quoteTokenName}</Text>
-              <Radio name="md" value="one" onChange={handleChange} checked={radio === 'one'} />
+              <Radio name="token" value={quoteTokenName} onChange={handleChange} checked={radio === quoteTokenName} />
             </Flex>
             <Flex alignItems="center">
               <Text>{tokenName}</Text>
-              <Radio name="md" value="two" onChange={handleChange} checked={radio === 'two'} />
+              <Radio name="token" value={tokenName} onChange={handleChange} checked={radio === tokenName} />
             </Flex>
           </Flex>
         </Box>
