@@ -9,7 +9,7 @@ import { ChainId, Currency } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import { useLendData, useLendTotalSupply } from 'state/lend/hooks'
+import {  useLendTotalSupply } from 'state/lend/hooks'
 import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
@@ -203,8 +203,6 @@ const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   // const { account } = useActiveWeb3React()
-
-  // const { lendData } = useLendData()
   const lendTotalSupply = useLendTotalSupply()
   const { data: farmsData } = useLevarageFarms()
   console.log({ 'farm 数据':farmsData})
