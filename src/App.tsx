@@ -34,7 +34,6 @@ const Home = lazy(() => import('./views/Home'))
 // const FarmAuction = lazy(() => import('./views/FarmAuction'))
 const Lend = lazy(() => import('./views/Lend'))
 const LendAction = lazy(() => import('views/Lend/LendAction/LendAction'))
-// const Approve = lazy(() => import('views/Lend/Approve/Approve'))
 const Stake = lazy(() => import('./views/Stake'))
 const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
@@ -67,7 +66,7 @@ const App: React.FC = () => {
   // usePollCoreFarmData()
 
   const web3React = useWeb3React()
-  // console.log(web3React)
+  console.log({ web3React })
 
   return (
     <Router history={history}>
@@ -90,7 +89,6 @@ const App: React.FC = () => {
               <Lend />
             </Route>
             <Route exact path="/lend/:action/:token" component={LendAction} />
-            {/* <Route exact path="/lend/deposit/:token/approve" component={Approve} /> */}
 
             <Route exact path="/stake">
               <Stake />
@@ -105,7 +103,7 @@ const App: React.FC = () => {
               <Levarage />
             </Route>
             <Route exact path="/levarage/closeposition/:token" component={ClosePosition} />
-            <Route exact path="/levarage/adjustposition/:token" component={AdjustPosition} />
+            <Route exact path="/levarage/farm/:token" component={AdjustPosition} />
 
             <Route path="/warriorid">
               <WarriorId />

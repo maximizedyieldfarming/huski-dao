@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Radio, Slider, Text } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import image from './assets/huskyBalloon.png'
+
+interface RouteParams {
+  token: string
+}
 
 const StyledBox = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
@@ -35,6 +40,7 @@ const AdjustPosition = () => {
   const [incDecRadio, setIncDecRadio] = useState(true)
   console.log({ incDecRadio })
 
+  const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
     console.info('fired')
     const { value } = e.target
@@ -51,7 +57,7 @@ const AdjustPosition = () => {
   return (
     <StyledPage>
       <Text fontWeight="bold" style={{ alignSelf: 'center' }}>
-        Adjust Position
+        Adjust Position {token}
       </Text>
       <StyledBox>
         <Text as="span">Collateral</Text>
