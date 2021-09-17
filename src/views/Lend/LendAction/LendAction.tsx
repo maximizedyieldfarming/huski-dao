@@ -75,7 +75,7 @@ const ButtonGroup = styled(Flex)`
   gap: 10px;
 `
 
-const LendAction = () => {
+const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   console.log({ account })
@@ -111,6 +111,15 @@ const LendAction = () => {
 
   // const { balance: userCurrencyBalance } = useTokenBalance(getAddress(ifo.currency.address))
 
+  console.log('lendAction props...', props)
+  const {
+    location: {
+      state: { exchangeRate, allowance },
+    },
+  } = props
+
+  console.log({ exchangeRate })
+  console.log({ allowance })
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -118,12 +127,16 @@ const LendAction = () => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const [amount, setAmount] = useState(0)
+  const [ibTokenValue, setIbTokenValue] = useState(0)
 
-  const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
+  const handleAmountChange = (e) => {
+    const value = e.target.value ? e.target.value : 0
+    const ibTokenAmount = value / exchangeRate
+    setIbTokenValue(ibTokenAmount)
+  }
 
-  console.log(typeof amount)
-  console.log(typeof getFullDisplayBalance(balance, 18, 3))
+  console.log('type of amount', typeof ibTokenValue)
+  console.log('type of balance', typeof getFullDisplayBalance(balance, 18, 3))
 
   return (
     <StyledPage>
@@ -132,10 +145,20 @@ const LendAction = () => {
       </Text>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/lend/deposit/${token}`} replace>
+          <HeaderTabs
+            onClick={handleDepositClick}
+            active={isDeposit}
+            to={{ pathname: `/lend/deposit/${token}`, state: { exchangeRate } }}
+            replace
+          >
             <Text>Deposit</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/lend/withdraw/${token}`} replace>
+          <HeaderTabs
+            onClick={handleWithdrawClick}
+            active={!isDeposit}
+            to={{ pathname: `/lend/withdraw/${token}`, state: { exchangeRate } }}
+            replace
+          >
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
@@ -143,7 +166,7 @@ const LendAction = () => {
           <Flex justifyContent="space-between">
             <Box>
               <Text fontWeight="bold">Amount</Text>
-              <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
+              <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" />
             </Box>
             <Box>
               <Text fontWeight="bold">
@@ -157,8 +180,8 @@ const LendAction = () => {
           <Box>
             <Text textAlign="center">Assets Received</Text>
             <Flex justifyContent="space-between">
-              <Text>{amount}</Text>
-              <Text>{token}</Text>
+              <Text>{ibTokenValue}</Text>
+              <Text>ib{token}</Text>
             </Flex>
           </Box>
           {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
@@ -168,19 +191,25 @@ const LendAction = () => {
                 Approve
               </Button>
             )} */}
-            <Button onClick={handleConfirmClick} disabled={!account}>
+            {/* <Button onClick={handleConfirmClick} disabled={!account}>
               Claim
-            </Button>
-            <Button
-              onClick={handleDeposit}
-              disabled={
-                !account
-                  ? true
-                  : new BigNumber(amount).isGreaterThan(new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber())
-              }
-            >
-              {t('Deposit')}/Approve
-            </Button>
+            </Button> */}
+            {allowance === '0' ? (
+              <Button>Approve</Button>
+            ) : (
+              <Button
+                onClick={handleDeposit}
+                disabled={
+                  !account
+                    ? true
+                    : new BigNumber(ibTokenValue).isGreaterThan(
+                        new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber(),
+                      )
+                }
+              >
+                {t('Deposit')}
+              </Button>
+            )}
             <Button onClick={handleConfirm} disabled={!account}>
               {t('Confirm')}
             </Button>

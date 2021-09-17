@@ -26,13 +26,13 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({name}) => {
+const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/levarage/farm/${name}`}>
+        <Button as={Link} to={{ pathname: `/levarage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}>
           Farm
         </Button>
       </CellContent>
