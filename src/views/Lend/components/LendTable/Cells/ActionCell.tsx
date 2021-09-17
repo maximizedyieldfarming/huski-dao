@@ -42,10 +42,18 @@ const ActionCell = ({ token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={{ pathname: `/lend/deposit/${name}`, state: { excRate: exchangeRate } }}>
+        <Button
+          as={Link}
+          to={{ pathname: `/lend/deposit/${name}`, state: { excRate: exchangeRate } }}
+          disabled={!exchangeRate}
+        >
           Deposit
         </Button>
-        <Button as={Link} to={{ pathname: `/lend/withdraw/${name}`, state: { excRate: exchangeRate } }}>
+        <Button
+          as={Link}
+          to={{ pathname: `/lend/withdraw/${name}`, state: { excRate: exchangeRate } }}
+          disabled={!exchangeRate}
+        >
           Withdraw
         </Button>
       </CellContent>
