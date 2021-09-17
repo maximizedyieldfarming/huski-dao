@@ -28,11 +28,11 @@ const LendRow = ({ tokenData }) => {
   }
 
   const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply, totalToken, vaultDebtVal, token ,userData} = tokenData
-console.info('tokenData',tokenData);
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        {/* <NameCell token={tokenData} /> */}
+        <NameCell token={tokenData} />
         {/* <ApyCell apy={getAprData(tokenData)} /> */}
         {isDesktop && <TotalSupplyCell supply={parseInt(totalToken)} />}
         {isDesktop && <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />}

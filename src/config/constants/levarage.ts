@@ -217,6 +217,50 @@ const levarageFarms: LevarageFarmConfig[] = [
       },
     }
   },
+  {
+    pid: 362,
+    lpSymbol: 'ALPACA-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x7752e1fa9f3a2e860856458517008558deb989e3',
+    },
+    token: tokens.alpaca,
+    quoteToken: tokens.busd,
+
+    levarage: 6,
+    poolId: 3,
+    vaultAddress: {
+      97: '',
+      56: '0x7C9e73d4C71dae564d41F78d56439bB4ba87592f',
+    },
+    workerAddress: {
+      97: '',
+      56: '0xC5954CA8988988362f60498d5aDEc67BA466492B',
+    },
+    workerConfig: {
+      97: '',
+      56: '0xADaBC5FC5da42c85A84e66096460C769a151A8F8',
+    },
+    strategies: {
+      addAllBaseToken: {
+        97: '',
+        56: '0x4c7a420142ec69c7Df5c6C673D862b9E030743bf',
+      },
+      liquidate: {
+        97: '',
+        56: '0x9Da5D593d08B062063F81913a08e04594F84d438',
+      },
+      addTwoSidesOptimal: {
+        97: '',
+        56: '0x3fC149995021f1d7AEc54D015Dad3c7Abc952bf0',
+      },
+      withdrawMinimizeTrading: {
+        97: '',
+        56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
+      },
+    }
+  },
+  
 ]
 
 export default levarageFarms
