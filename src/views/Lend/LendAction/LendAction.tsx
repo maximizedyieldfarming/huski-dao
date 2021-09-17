@@ -130,9 +130,11 @@ const LendAction = (props) => {
   const [ibTokenValue, setIbTokenValue] = useState(0)
 
   const handleAmountChange = (e) => {
-    const value = e.target.value ? e.target.value : 0
+    const value = e.target.value ? parseFloat(e.target.value) : 0
+    console.log('type of value', typeof value)
+    console.log('type of exchangeRate', typeof exchangeRate)
     const ibTokenAmount = value / exchangeRate
-    setIbTokenValue(ibTokenAmount)
+    setIbTokenValue(parseFloat(ibTokenAmount.toFixed(2))) // parseFloat because toFixed returns a string and was causing troubles with the state
   }
 
   console.log('type of amount', typeof ibTokenValue)
