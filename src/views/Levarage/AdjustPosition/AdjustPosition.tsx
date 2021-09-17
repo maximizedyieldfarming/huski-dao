@@ -34,7 +34,8 @@ const StyledPage = styled(Page)`
   gap: 2rem;
 `
 
-const AdjustPosition = () => {
+const AdjustPosition = (props) => {
+  console.log('props to adjust position...', props)
   const [levarage, setLevarage] = useState(0)
   const [radio, setRadio] = useState('one')
   const [incDecRadio, setIncDecRadio] = useState(true)
@@ -53,6 +54,16 @@ const AdjustPosition = () => {
     console.log(value)
     setIncDecRadio(!value)
   }
+  const {
+    location: {
+      state: { tokenData },
+    },
+  } = props
+  console.log('adjustPosition tokenData', tokenData)
+  const quoteTokenName = tokenData?.quoteToken?.symbol
+  const tokenName = tokenData?.token?.symbol
+  console.log({ quoteTokenName })
+  console.log({ tokenName })
 
   return (
     <StyledPage>
@@ -67,7 +78,7 @@ const AdjustPosition = () => {
               <Text as="span">Balance</Text>
               <Flex>
                 <Text>1234</Text>
-                <Text>coin</Text>
+                <Text>{quoteTokenName}</Text>
               </Flex>
               <Flex justifyContent="space-around">
                 <Button variant="secondary">25%</Button>
@@ -80,7 +91,7 @@ const AdjustPosition = () => {
               <Text as="span">Balance</Text>
               <Flex>
                 <Text>1234</Text>
-                <Text>coin</Text>
+                <Text>{tokenName}</Text>
               </Flex>
               <Flex justifyContent="space-around">
                 <Button variant="secondary">25%</Button>
@@ -114,11 +125,11 @@ const AdjustPosition = () => {
           <Text>Which asset would you like to borrow? </Text>
           <Flex>
             <Flex alignItems="center" marginRight="10px">
-              <Text>Coin1</Text>
+              <Text>{quoteTokenName}</Text>
               <Radio name="md" value="one" onChange={handleChange} checked={radio === 'one'} />
             </Flex>
             <Flex alignItems="center">
-              <Text>Coin2</Text>
+              <Text>{tokenName}</Text>
               <Radio name="md" value="two" onChange={handleChange} checked={radio === 'two'} />
             </Flex>
           </Flex>
@@ -172,7 +183,7 @@ const AdjustPosition = () => {
           <Box>
             <Text>APR</Text>
             <Text color="secondary">
-              Yields Farm APR + Trading Fess APR + Huski Rewards APR + Borrowing Interest APR
+              Yields Farm APR + Trading Fess APR + Huski Rewards APR - Borrowing Interest APR
             </Text>
           </Box>
           <Text>1234</Text>

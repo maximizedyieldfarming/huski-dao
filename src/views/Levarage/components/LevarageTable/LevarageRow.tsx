@@ -33,7 +33,7 @@ const LevarageRow = ({ tokenData }) => {
         <ApyCell apy={reserveTokenOne} />
         {isDesktop && <TvlCell tvl={tvl} />}
         {isDesktop && <LevarageCell levarage={levarage} />}
-        {isDesktop && <ActionCell name={lpSymbol} />}
+        {isDesktop && <ActionCell token={tokenData} />}
       </StyledRow>
     </>
   )
