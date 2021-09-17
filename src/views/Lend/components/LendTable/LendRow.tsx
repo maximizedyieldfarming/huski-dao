@@ -26,7 +26,7 @@ const LendRow = ({ tokenData }) => {
 
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
-  
+
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
