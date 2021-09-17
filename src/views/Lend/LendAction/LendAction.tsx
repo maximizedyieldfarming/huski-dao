@@ -75,7 +75,7 @@ const ButtonGroup = styled(Flex)`
   gap: 10px;
 `
 
-const LendAction = () => {
+const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   console.log({ account })
@@ -111,6 +111,13 @@ const LendAction = () => {
 
   // const { balance: userCurrencyBalance } = useTokenBalance(getAddress(ifo.currency.address))
 
+  console.log('lendAction props...', props)
+  const {
+    location: {
+      state: { excRate },
+    },
+  } = props
+  console.log('exchange rate is', excRate)
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -122,8 +129,8 @@ const LendAction = () => {
 
   const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
 
-  console.log(typeof amount)
-  console.log(typeof getFullDisplayBalance(balance, 18, 3))
+  console.log('type of amount', typeof amount)
+  console.log('type of balance', typeof getFullDisplayBalance(balance, 18, 3))
 
   return (
     <StyledPage>
@@ -158,7 +165,7 @@ const LendAction = () => {
             <Text textAlign="center">Assets Received</Text>
             <Flex justifyContent="space-between">
               <Text>{amount}</Text>
-              <Text>{token}</Text>
+              <Text>ib{token}</Text>
             </Flex>
           </Box>
           {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}

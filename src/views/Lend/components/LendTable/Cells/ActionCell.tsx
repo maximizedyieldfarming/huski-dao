@@ -34,16 +34,16 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ name }) => {
+const ActionCell = ({ name, exchangeRate }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/lend/deposit/${name}`}>
+        <Button as={Link} to={{ pathname: `/lend/deposit/${name}`, state: { excRate: exchangeRate } }}>
           Deposit
         </Button>
-        <Button as={Link} to={`/lend/withdraw/${name}`}>
+        <Button as={Link} to={{ pathname: `/lend/withdraw/${name}`, state: { excRate: exchangeRate } }}>
           Withdraw
         </Button>
       </CellContent>
