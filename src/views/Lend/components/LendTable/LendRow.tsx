@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
+import { useHuskyPrice, useHuskyPerBlock } from 'state/levarage/hooks'
 import NameCell from './Cells/NameCell'
 import { getAprData } from '../../helpers'
 import UtilRateCell from './Cells/UtilRateCell'
@@ -23,17 +24,21 @@ const LendRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
 
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
-
-  const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply, totalToken, vaultDebtVal, token ,userData} = tokenData
-
+// name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply,
+  const { totalToken, vaultDebtVal, token ,userData} = tokenData
+  const aa = getAprData(tokenData, huskyPrice, huskyPerBlock)
+  console.info('aa',aa);
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
-        {/* <ApyCell apy={getAprData(tokenData)} /> */}
+        <ApyCell apy={getAprData(tokenData, huskyPrice, huskyPerBlock)} />
         {isDesktop && <TotalSupplyCell supply={parseInt(totalToken)} />}
         {isDesktop && <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />}
         {isDesktop && <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0 } />}

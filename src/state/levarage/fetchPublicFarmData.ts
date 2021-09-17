@@ -17,6 +17,7 @@ type PublicFarmData = {
   quoteTokenReserve: SerializedBigNumber
   poolWeight: SerializedBigNumber
   multiplier: string
+  pooPerBlock: number
 }
 
 const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
@@ -49,13 +50,17 @@ const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
     ])
 
   // Only make masterchef calls if farm has pid
-  const [info, totalAllocPoint] =
+  const [info, alpacaPerBlock, totalAllocPoint] =
   poolId || poolId === 0
       ? await multicall(fairLaunchABI, [
           {
             address: getFairLaunch(),
             name: 'poolInfo',
             params: [poolId],
+          },
+          {
+            address: getFairLaunch(),
+            name: 'alpacaPerBlock',
           },
           {
             address: getFairLaunch(),
@@ -66,6 +71,7 @@ const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
+  const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
 
   return {
     totalSupply: totalSupply[0]._hex,
@@ -75,6 +81,7 @@ const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
     quoteTokenReserve: lpTotalReserves._reserve1.toJSON(),
     poolWeight: poolWeight.toJSON(),
     multiplier: `${allocPoint.div(100).toString()}XqQ`,
+    pooPerBlock,
   }
 }
 

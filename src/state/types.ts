@@ -52,6 +52,7 @@ export interface LevarageFarm extends LevarageFarmConfig {
   totalSupply?: SerializedBigNumber
   totalToken?: SerializedBigNumber,
   vaultDebtVal?: SerializedBigNumber
+  pooPerBlock?: number
 }
 
 export interface LendFarm extends LendConfig {

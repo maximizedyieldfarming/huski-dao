@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
@@ -178,3 +178,20 @@ export const useLpTokenPrice = (symbol: string) => {
   // return { farmsData }
 
 // }
+export const useHuskyPrice = (): BigNumber => {
+  const huskyFarm = useFarmFromPid(362)
+  const huskyPriceAsString = huskyFarm.quoteToken.busdPrice
+
+  const huskyPrice = useMemo(() => {
+    return new BigNumber(huskyPriceAsString)
+  }, [huskyPriceAsString])
+
+  return huskyPrice
+}
+
+export const useHuskyPerBlock = (): number => {
+  const huskyFarm = useFarmFromPid(362)
+  const huskyPerBlock = huskyFarm.pooPerBlock
+  return huskyPerBlock
+}
+

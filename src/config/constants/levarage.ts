@@ -219,7 +219,7 @@ const levarageFarms: LevarageFarmConfig[] = [
   },
   {
     pid: 362,
-    lpSymbol: 'ALPACA-BUSD LP',
+    lpSymbol: 'BUSD-ALPACA LP',
     lpAddresses: {
       97: '',
       56: '0x7752e1fa9f3a2e860856458517008558deb989e3',
@@ -228,7 +228,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     quoteToken: tokens.busd,
 
     levarage: 6,
-    poolId: 3,
+    poolId: 11,
     vaultAddress: {
       97: '',
       56: '0x7C9e73d4C71dae564d41F78d56439bB4ba87592f',

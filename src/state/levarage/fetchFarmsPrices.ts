@@ -47,7 +47,7 @@ const fetchFarmsPrices = async (farms) => {
     const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
     return { ...farm, token, quoteToken }
   })
-  console.log("levarage farmsWithPrices: ", farmsWithPrices)
+  // console.log("levarage farmsWithPrices----------: ", farmsWithPrices)
 
   return farmsWithPrices
 }

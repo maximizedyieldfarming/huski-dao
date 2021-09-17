@@ -52,6 +52,16 @@ const farmTokens: Token[] = [
     projectLink: 'https://tether.to/',
     coingeckoId: 'tether',
   },
+  {
+    symbol: 'ALPACA11111',
+    address: {
+      56: '0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F',
+      97: '',
+    },
+    decimals: 18,
+    projectLink: 'https://www.alpacafinance.org/',
+    coingeckoId: 'alpaca-finance',
+  },
 ]
 
 export default farmTokens

@@ -1419,6 +1419,7 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://www.alpacafinance.org/',
+    coingeckoId: 'alpaca-finance',
   },
   dfd: {
     symbol: 'DFD',
