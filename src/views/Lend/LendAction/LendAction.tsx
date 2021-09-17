@@ -84,12 +84,10 @@ const LendAction = (props) => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
-  console.info('cakeVaultContract---', cakeVaultContract)
   const handleDeposit = () => {
     deposit(account, 0.002)
   }
   const handleConfirm = () => {
-    console.info('lalalla')
     withdraw(account, 11)
   }
 

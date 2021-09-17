@@ -32,8 +32,6 @@ const LendRow = ({ tokenData }) => {
   }
 // name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply,
   const { totalToken, vaultDebtVal, token ,userData} = tokenData
-  const aa = getAprData(tokenData, huskyPrice, huskyPerBlock)
-  console.info('aa',aa);
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>

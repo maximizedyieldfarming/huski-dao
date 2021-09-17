@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { useFarms } from 'state/farms/hooks'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
@@ -206,11 +207,16 @@ const Lend: React.FC = () => {
   const lendTotalSupply = useLendTotalSupply()
   const { data: farmsData } = useLevarageFarms()
   console.log({ 'farm 数据':farmsData})
-  usePollLevarageFarmsWithUserData()
+  const hash = {};
+  const lendData = farmsData.reduce((cur, next) => {
+    hash[next.poolId] ? "" : hash[next.poolId] = true && cur.push(next);
+    return cur;
+  }, [])
 
+  usePollLevarageFarmsWithUserData()
   const cardLayout = (
     <CardLayout>
-      {farmsData.map((token) => (
+      {lendData.map((token) => (
         <LendCard token={token} />
       ))}
     </CardLayout>
@@ -238,7 +244,7 @@ const Lend: React.FC = () => {
 
       <Title>Lending Positions</Title>
       <TableWrapper>
-        <TopTable data={farmsData} />
+        <TopTable data={lendData} />
 
         <ImageContainer>
           <img src={husky2} alt="" />
@@ -272,7 +278,7 @@ const Lend: React.FC = () => {
           ]}
         />
       </Flex>
-      {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={farmsData} />}
+      {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={lendData} />}
     </Page>
   )
 }

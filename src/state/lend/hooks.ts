@@ -10,30 +10,6 @@ import useRefresh from 'hooks/useRefresh'
 import mainnet from '../../mainnet.json'
 import { sumTokenData, formatBigNumber } from '../utils'
 
-// use this
-// export const useLendData = () => {
-//   const [lendData, setLendData] = useState([])
-
-//   useEffect(() => {
-//     const lendingData = mainnet.Vaults.map((pool) => {
-//       const loadLendingData = async () => {
-//         const dataPool = await getPoolInfo(pool);
-//         dataPool.name = dataPool.name.replace('Interest Bearing ', '');
-//         dataPool.totalDeposit = formatBigNumber(dataPool.totalDeposit);
-//         dataPool.totalBorrowed = formatBigNumber(dataPool.totalBorrowed);
-//         return dataPool;
-//       };
-//       return loadLendingData();
-//     });
-
-//     Promise.all(lendingData)
-//       .then((values) => {
-//         setLendData(values)
-//       })
-//       .catch((error) => console.error('error', error));
-//   }, [setLendData])
-//   return { lendData }
-// }
 
 export const useLendTotalSupply = () => {
   const [lendTotalSupply, setLendTotalSupply] = useState('')

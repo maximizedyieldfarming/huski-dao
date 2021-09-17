@@ -63,6 +63,13 @@ export const useLevarageFarms = (): LevarageFarmsState => {
   return farms
 }
 
+export const useLends = (): LevarageFarmsState => {
+  const farms = useSelector((state: State) => state.levarage)
+
+  
+  return farms
+}
+
 export const useFarmFromPid = (pid): LevarageFarm => {
   const farm = useSelector((state: State) => state.levarage.data.find((f) => f.pid === pid))
   return farm
