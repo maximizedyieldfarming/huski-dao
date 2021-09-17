@@ -36,9 +36,9 @@ const LendRow = ({ tokenData }) => {
         {/* <ApyCell apy={getAprData(tokenData)} /> */}
         {isDesktop && <TotalSupplyCell supply={parseInt(totalToken)} />}
         {isDesktop && <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />}
-        {isDesktop && <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0 } />}
+        {isDesktop && <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />}
         <BalanceCell balance={userData.tokenBalance} />
-        {isDesktop && <ActionCell name={token.symbol} exchangeRate={exchangeRate} />}
+        {isDesktop && <ActionCell token={tokenData} />}
       </StyledRow>
     </>
   )

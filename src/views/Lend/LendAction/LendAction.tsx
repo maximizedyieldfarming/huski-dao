@@ -117,6 +117,7 @@ const LendAction = (props) => {
       state: { excRate },
     },
   } = props
+
   console.log('exchange rate is', excRate)
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
@@ -125,11 +126,15 @@ const LendAction = (props) => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const [amount, setAmount] = useState(0)
+  const [ibTokenValue, setIbTokenValue] = useState(0)
 
-  const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
+  const handleAmountChange = (e) => {
+    const value = e.target.value ? e.target.value : 0
+    const ibTokenAmount = value / excRate
+    setIbTokenValue(ibTokenAmount)
+  }
 
-  console.log('type of amount', typeof amount)
+  console.log('type of amount', typeof ibTokenValue)
   console.log('type of balance', typeof getFullDisplayBalance(balance, 18, 3))
 
   return (
@@ -139,10 +144,20 @@ const LendAction = (props) => {
       </Text>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/lend/deposit/${token}`} replace>
+          <HeaderTabs
+            onClick={handleDepositClick}
+            active={isDeposit}
+            to={{ pathname: `/lend/deposit/${token}`, state: { excRate } }}
+            replace
+          >
             <Text>Deposit</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/lend/withdraw/${token}`} replace>
+          <HeaderTabs
+            onClick={handleWithdrawClick}
+            active={!isDeposit}
+            to={{ pathname: `/lend/withdraw/${token}`, state: { excRate } }}
+            replace
+          >
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
@@ -150,7 +165,7 @@ const LendAction = (props) => {
           <Flex justifyContent="space-between">
             <Box>
               <Text fontWeight="bold">Amount</Text>
-              <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
+              <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" />
             </Box>
             <Box>
               <Text fontWeight="bold">
@@ -164,7 +179,7 @@ const LendAction = (props) => {
           <Box>
             <Text textAlign="center">Assets Received</Text>
             <Flex justifyContent="space-between">
-              <Text>{amount}</Text>
+              <Text>{ibTokenValue}</Text>
               <Text>ib{token}</Text>
             </Flex>
           </Box>
@@ -175,18 +190,20 @@ const LendAction = (props) => {
                 Approve
               </Button>
             )} */}
-            <Button onClick={handleConfirmClick} disabled={!account}>
+            {/* <Button onClick={handleConfirmClick} disabled={!account}>
               Claim
-            </Button>
+            </Button> */}
             <Button
               onClick={handleDeposit}
               disabled={
                 !account
                   ? true
-                  : new BigNumber(amount).isGreaterThan(new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber())
+                  : new BigNumber(ibTokenValue).isGreaterThan(
+                      new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber(),
+                    )
               }
             >
-              {t('Deposit')}/Approve
+              {t('Deposit')}
             </Button>
             <Button onClick={handleConfirm} disabled={!account}>
               {t('Confirm')}

@@ -34,9 +34,11 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ name, exchangeRate }) => {
+const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
 
+  const name = token?.token?.symbol
+  const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
   return (
     <StyledCell role="cell">
       <CellContent>
