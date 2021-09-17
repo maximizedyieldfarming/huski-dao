@@ -53,7 +53,7 @@ const MANUAL_POOL_AUTO_COMPOUND_FREQUENCY = 0
 export const getAprData = async(farm: LevarageFarm) => {
   const { totalToken, totalSupply, vaultDebtVal, token } = farm
     const apr = await getLendApy(parseInt(totalToken), parseInt(totalSupply), parseInt(vaultDebtVal), token.busdPrice)
-    console.info('apr', apr );
+    // console.info('apr', apr );
   return apr;
 }
 

@@ -22,7 +22,7 @@ const ApyCell = ({ apy }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Apy
         </Text>
-        {apy ? <Text>{apy.toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
+        {apy ? <Text>{apy}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

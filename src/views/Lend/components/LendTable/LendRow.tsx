@@ -3,6 +3,7 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import NameCell from './Cells/NameCell'
+import { getAprData } from '../../helpers'
 import UtilRateCell from './Cells/UtilRateCell'
 import ApyCell from './Cells/ApyCell'
 import TotalSupplyCell from './Cells/TotalSupplyCell'
@@ -26,18 +27,18 @@ const LendRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate } = tokenData
-
+  const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply, totalToken, vaultDebtVal, token ,userData} = tokenData
+console.info('tokenData',tokenData);
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <NameCell token={tokenData} />
-        <ApyCell apy={apy} />
-        {isDesktop && <TotalSupplyCell supply={totalDeposit} />}
-        {isDesktop && <TotalBorrowedCell borrowed={totalBorrowed} />}
-        {isDesktop && <UtilRateCell utilRate={capitalUtilizationRate} />}
-        <BalanceCell balance="" />
-        {isDesktop && <ActionCell name={name} />}
+        {/* <NameCell token={tokenData} /> */}
+        {/* <ApyCell apy={getAprData(tokenData)} /> */}
+        {isDesktop && <TotalSupplyCell supply={parseInt(totalToken)} />}
+        {isDesktop && <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />}
+        {isDesktop && <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0 } />}
+        <BalanceCell balance={userData.tokenBalance} />
+        {isDesktop && <ActionCell name={token.symbol} />}
       </StyledRow>
     </>
   )
