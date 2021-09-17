@@ -114,11 +114,12 @@ const LendAction = (props) => {
   console.log('lendAction props...', props)
   const {
     location: {
-      state: { excRate },
+      state: { exchangeRate, allowance },
     },
   } = props
 
-  console.log('exchange rate is', excRate)
+  console.log({ exchangeRate })
+  console.log({ allowance })
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -130,7 +131,7 @@ const LendAction = (props) => {
 
   const handleAmountChange = (e) => {
     const value = e.target.value ? e.target.value : 0
-    const ibTokenAmount = value / excRate
+    const ibTokenAmount = value / exchangeRate
     setIbTokenValue(ibTokenAmount)
   }
 
@@ -147,7 +148,7 @@ const LendAction = (props) => {
           <HeaderTabs
             onClick={handleDepositClick}
             active={isDeposit}
-            to={{ pathname: `/lend/deposit/${token}`, state: { excRate } }}
+            to={{ pathname: `/lend/deposit/${token}`, state: { exchangeRate } }}
             replace
           >
             <Text>Deposit</Text>
@@ -155,7 +156,7 @@ const LendAction = (props) => {
           <HeaderTabs
             onClick={handleWithdrawClick}
             active={!isDeposit}
-            to={{ pathname: `/lend/withdraw/${token}`, state: { excRate } }}
+            to={{ pathname: `/lend/withdraw/${token}`, state: { exchangeRate } }}
             replace
           >
             <Text>Withdraw</Text>
@@ -193,18 +194,22 @@ const LendAction = (props) => {
             {/* <Button onClick={handleConfirmClick} disabled={!account}>
               Claim
             </Button> */}
-            <Button
-              onClick={handleDeposit}
-              disabled={
-                !account
-                  ? true
-                  : new BigNumber(ibTokenValue).isGreaterThan(
-                      new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber(),
-                    )
-              }
-            >
-              {t('Deposit')}
-            </Button>
+            {allowance === '0' ? (
+              <Button>Approve</Button>
+            ) : (
+              <Button
+                onClick={handleDeposit}
+                disabled={
+                  !account
+                    ? true
+                    : new BigNumber(ibTokenValue).isGreaterThan(
+                        new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber(),
+                      )
+                }
+              >
+                {t('Deposit')}
+              </Button>
+            )}
             <Button onClick={handleConfirm} disabled={!account}>
               {t('Confirm')}
             </Button>

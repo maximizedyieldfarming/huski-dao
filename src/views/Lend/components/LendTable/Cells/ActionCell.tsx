@@ -39,19 +39,23 @@ const ActionCell = ({ token }) => {
 
   const name = token?.token?.symbol
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
+  const {
+    userData: { allowance },
+  } = token
+  console.log({ allowance })
   return (
     <StyledCell role="cell">
       <CellContent>
         <Button
           as={Link}
-          to={{ pathname: `/lend/deposit/${name}`, state: { excRate: exchangeRate } }}
+          to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, allowance } }}
           disabled={!exchangeRate}
         >
           Deposit
         </Button>
         <Button
           as={Link}
-          to={{ pathname: `/lend/withdraw/${name}`, state: { excRate: exchangeRate } }}
+          to={{ pathname: `/lend/withdraw/${name}`, state: { exchangeRate, allowance } }}
           disabled={!exchangeRate}
         >
           Withdraw

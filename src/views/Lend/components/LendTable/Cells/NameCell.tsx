@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Flex, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Flex, Skeleton, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
@@ -22,7 +22,7 @@ const StyledCell = styled(BaseCell)`
 const NameCell = ({ token }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
-  const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply);
+  const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
 
   return (
     <StyledCell role="cell">
@@ -36,10 +36,14 @@ const NameCell = ({ token }) => {
             {token?.token.symbol}
           </Text>
         </Flex>
-        <Text fontSize="14px" color="secondary">
-          1 ib{token?.token.symbol} = {exchangeRate.toFixed(4)}
-          {token?.token.symbol}
-        </Text>
+        {exchangeRate ? (
+          <Text fontSize="14px" color="secondary">
+            1 ib{token?.token.symbol} = {exchangeRate.toFixed(4)}
+            {token?.token.symbol}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )
