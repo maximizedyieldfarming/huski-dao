@@ -26,7 +26,7 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({name}) => {
+const ActionCell = ({ name }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
