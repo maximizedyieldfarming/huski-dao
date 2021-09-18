@@ -116,8 +116,6 @@ const LendAction = (props) => {
     },
   } = props
 
-  console.log({ exchangeRate })
-  console.log({ allowance })
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 

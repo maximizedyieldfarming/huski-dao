@@ -32,10 +32,10 @@ const ActionCell = ({ name }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/levarage/adjustposition/${name}`}>
+        <Button as={Link} to={`/leverage/adjustposition/${name}`}>
           Adjust Position
         </Button>
-        <Button as={Link} to={`/levarage/closeposition/${name}`}>
+        <Button as={Link} to={`/leverage/closeposition/${name}`}>
           Close Position
         </Button>
       </CellContent>

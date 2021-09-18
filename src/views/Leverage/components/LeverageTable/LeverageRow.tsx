@@ -5,7 +5,7 @@ import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
-import LevarageCell from './Cells/LevarageCell'
+import LeverageCell from './Cells/LeverageCell'
 import TvlCell from './Cells/TvlCell'
 
 const StyledRow = styled.div`
@@ -14,7 +14,7 @@ const StyledRow = styled.div`
   //cursor: pointer;
 `
 
-const LevarageRow = ({ tokenData }) => {
+const LeverageRow = ({ tokenData }) => {
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
@@ -24,7 +24,7 @@ const LevarageRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { lpSymbol, tvl, levarage, reserveTokenOne, quoteToken, token } = tokenData
+  const { lpSymbol, tvl, leverage, reserveTokenOne, quoteToken, token } = tokenData
 
   return (
     <>
@@ -32,11 +32,11 @@ const LevarageRow = ({ tokenData }) => {
         <PoolCell pool={lpSymbol} quoteToken={quoteToken} token={token} />
         <ApyCell apy={reserveTokenOne} />
         {isDesktop && <TvlCell tvl={tvl} />}
-        {isDesktop && <LevarageCell levarage={levarage} />}
+        {isDesktop && <LeverageCell leverage={leverage} />}
         {isDesktop && <ActionCell token={tokenData} />}
       </StyledRow>
     </>
   )
 }
 
-export default LevarageRow
+export default LeverageRow

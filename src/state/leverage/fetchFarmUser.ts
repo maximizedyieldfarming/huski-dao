@@ -4,9 +4,9 @@ import fairLaunchABI from 'config/abi/fairLaunch.json'
 import multicall from 'utils/multicall'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { getFairLaunch } from 'utils/env'
-import { LevarageFarmConfig } from 'config/constants/types'
+import { LeverageFarmConfig } from 'config/constants/types'
 
-export const fetchFarmUserAllowances = async (account: string, farmsToFetch: LevarageFarmConfig[]) => {
+export const fetchFarmUserAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
     const baseTokenAddress = getAddress(farm.token.address)
     return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.vaultAddress)] }
@@ -19,7 +19,7 @@ export const fetchFarmUserAllowances = async (account: string, farmsToFetch: Lev
   return parsedVaultAllowances
 }
 
-export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: LevarageFarmConfig[]) => {
+export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
     const vaultContractAddress = getAddress(farm.vaultAddress)
     return {
@@ -36,7 +36,7 @@ export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: 
   return parsedTokenBalances
 }
 
-export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch: LevarageFarmConfig[]) => {
+export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const fairLaunchAddress = getFairLaunch()
 
   const calls = farmsToFetch.map((farm) => {
@@ -54,7 +54,7 @@ export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch:
   return parsedStakedBalances
 }
 
-export const fetchFarmUserEarnings = async (account: string, farmsToFetch: LevarageFarmConfig[]) => {
+export const fetchFarmUserEarnings = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const fairLaunchAddress = getFairLaunch()
 
   const calls = farmsToFetch.map((farm) => {

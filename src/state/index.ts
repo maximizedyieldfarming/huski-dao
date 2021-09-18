@@ -2,7 +2,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
 import farmsReducer from './farms'
-import levarageReducer from './levarage'
+import leverageReducer from './leverage'
 import lendReducer from './lend'
 import poolsReducer from './pools'
 import predictionsReducer from './predictions'
@@ -30,7 +30,7 @@ const store = configureStore({
     achievements: achievementsReducer,
     block: blockReducer,
     farms: farmsReducer,
-    levarage: levarageReducer,
+    leverage: leverageReducer,
     lend: lendReducer,
     pools: poolsReducer,
     predictions: predictionsReducer,

@@ -1,7 +1,7 @@
 import tokens from './tokens'
-import { LevarageFarmConfig } from './types'
+import { LeverageFarmConfig } from './types'
 
-const levarageFarms: LevarageFarmConfig[] = [
+const leverageFarms: LeverageFarmConfig[] = [
   {
     pid: 251,
     lpSymbol: 'CAKE-BNB9999 LP',
@@ -12,7 +12,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     token: tokens.wbnb,
     quoteToken: tokens.cake,
 
-    levarage: 3,
+    leverage: 3,
     poolId: 1,
     vaultAddress: {
       97: '',
@@ -55,7 +55,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     token: tokens.wbnb,
     quoteToken: tokens.usdt,
 
-    levarage: 3,
+    leverage: 3,
     poolId: 1,
     vaultAddress: {
       97: '',
@@ -98,7 +98,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     token: tokens.wbnb,
     quoteToken: tokens.btcb,
 
-    levarage: 3,
+    leverage: 3,
     poolId: 1,
     vaultAddress: {
       97: '',
@@ -141,7 +141,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     token: tokens.wbnb,
     quoteToken: tokens.eth,
 
-    levarage: 3,
+    leverage: 3,
     poolId: 1,
     vaultAddress: {
       97: '',
@@ -184,7 +184,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     token: tokens.busd,
     quoteToken: tokens.usdt,
 
-    levarage: 6,
+    leverage: 6,
     poolId: 3,
     vaultAddress: {
       97: '',
@@ -227,7 +227,7 @@ const levarageFarms: LevarageFarmConfig[] = [
     token: tokens.alpaca,
     quoteToken: tokens.busd,
 
-    levarage: 6,
+    leverage: 6,
     poolId: 11,
     vaultAddress: {
       97: '',
@@ -263,4 +263,4 @@ const levarageFarms: LevarageFarmConfig[] = [
   
 ]
 
-export default levarageFarms
+export default leverageFarms

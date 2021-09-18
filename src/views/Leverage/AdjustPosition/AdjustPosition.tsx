@@ -36,7 +36,7 @@ const StyledPage = styled(Page)`
 
 const AdjustPosition = (props) => {
   console.log('props to adjust position...', props)
-  const [levarage, setLevarage] = useState(0)
+  const [leverage, setLeverage] = useState(0)
   // const [incDecRadio, setIncDecRadio] = useState(true)
   // console.log({ incDecRadio })
 
@@ -102,7 +102,7 @@ const AdjustPosition = (props) => {
             </Box>
             <Box>
               <Flex alignItems="center">
-                <Radio name="levarage" checked />
+                <Radio name="leverage" checked />
                 <Text>Increase or decrease leverage</Text>
               </Flex>
 
@@ -110,10 +110,10 @@ const AdjustPosition = (props) => {
               <Slider
                 min={1.0}
                 max={3.0}
-                name="levarage"
+                name="leverage"
                 step={0.5}
-                value={levarage}
-                onValueChanged={(sliderPercent) => setLevarage(sliderPercent)}
+                value={leverage}
+                onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
               />
             </Box>
           </Box>
@@ -151,7 +151,7 @@ const AdjustPosition = (props) => {
           <Text>1234</Text>
         </Flex>
         <Flex>
-          <Text>Levarage (ratio)</Text>
+          <Text>Leverage (ratio)</Text>
           <Text>1234</Text>
         </Flex>
         <Box>
@@ -159,10 +159,10 @@ const AdjustPosition = (props) => {
           <Slider
             min={1.0}
             max={3.0}
-            name="levarage"
+            name="leverage"
             step={0.5}
-            value={levarage}
-            onValueChanged={(sliderPercent) => setLevarage(sliderPercent)}
+            value={leverage}
+            onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
           />
         </Box>
       </StyledBox>

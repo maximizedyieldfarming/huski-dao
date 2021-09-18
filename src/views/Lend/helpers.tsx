@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-properties */
 import BigNumber from 'bignumber.js'
-import { LevarageFarm } from 'state/types'
+import { LeverageFarm } from 'state/types'
 import { getBalanceNumber, getFullDisplayBalance, getDecimalAmount } from 'utils/formatBalance'
 import { BLOCKS_PER_YEAR, DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config';
 
@@ -8,7 +8,7 @@ const mathematics1 = 0.4; // Less than 50% utilization
 const mathematics2 = 0; // Between 50% and 90%
 const mathematics3 = 13;
 
-export const getAprData = (farm: LevarageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
+export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
   const { totalToken, totalSupply, vaultDebtVal, token } = farm
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = cakePriceBusd;

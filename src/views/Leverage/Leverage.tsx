@@ -1,19 +1,18 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import usePersistState from 'hooks/usePersistState'
-import { useFarms } from 'state/farms/hooks'
-import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
-import { Box, Button, Flex, Table, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
-import LevarageTable from './components/LevarageTable/LevarageTable'
+import LeverageTable from './components/LeverageTable/LeverageTable'
 import TopTable from './components/TopTable/TopTable'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
-import LevarageCard from './components/LevarageCard/LevarageCard'
+import LeverageCard from './components/LeverageCard/LeverageCard'
 
 const TableWrapper = styled.div`
   background-color: ${({ theme }) => theme.card.background};
@@ -83,19 +82,19 @@ const CardLayout = styled(FlexLayout)`
   justify-content: center;
 `
 
-const Levarage: React.FC = () => {
+const Leverage: React.FC = () => {
   const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
-  const { data: farmsData } = useLevarageFarms()
+  const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
 
-  console.info('useLevarageFarms：', useLevarageFarms())
-  usePollLevarageFarmsWithUserData()
-  console.info('usePollLevarageFarmsWithUserData：', usePollLevarageFarmsWithUserData())
+  console.info('useLeverageFarms：', useLeverageFarms())
+  usePollLeverageFarmsWithUserData()
+  console.info('usePollLeverageFarmsWithUserData：', usePollLeverageFarmsWithUserData())
 
   const cardLayout = (
     <CardLayout>
       {farmsData.map((token) => (
-        <LevarageCard tokenData={token} />
+        <LeverageCard tokenData={token} />
       ))}
     </CardLayout>
   )
@@ -166,9 +165,9 @@ const Levarage: React.FC = () => {
           ]}
         />
       </Flex>
-      {viewMode === ViewMode.CARD ? cardLayout : <LevarageTable levarageData={farmsData} />}
+      {viewMode === ViewMode.CARD ? cardLayout : <LeverageTable leverageData={farmsData} />}
     </Page>
   )
 }
 
-export default Levarage
+export default Leverage

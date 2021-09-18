@@ -1,5 +1,5 @@
 export { fetchFarmsPublicDataAsync, fetchFarmUserDataAsync } from './farms'
-export { fetchLevarageFarmsPublicDataAsync, fetchLevarageFarmUserDataAsync } from './levarage'
+export { fetchLeverageFarmsPublicDataAsync, fetchLeverageFarmUserDataAsync } from './leverage'
 export {
   fetchPoolsPublicDataAsync,
   fetchPoolsUserDataAsync,

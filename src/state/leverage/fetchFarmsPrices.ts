@@ -2,15 +2,15 @@ import BigNumber from 'bignumber.js'
 import farmTokens from 'config/constants/farmTokens'
 import { BIG_ONE, BIG_ZERO } from 'utils/bigNumber'
 import { filterFarmsByQuoteToken } from 'utils/farmsPriceHelpers'
-import { LevarageFarm } from 'state/types'
+import { LeverageFarm } from 'state/types'
 
-// const getFarmFromTokenSymbol = (farms: LevarageFarm[], tokenSymbol: string, preferredQuoteTokens?: string[]): LevarageFarm => {
+// const getFarmFromTokenSymbol = (farms: LeverageFarm[], tokenSymbol: string, preferredQuoteTokens?: string[]): LeverageFarm => {
 //   const farmsWithTokenSymbol = farms.filter((farm) => farm.token.symbol === tokenSymbol)
 //   const filteredFarm = filterFarmsByQuoteToken(farmsWithTokenSymbol, preferredQuoteTokens)
 //   return filteredFarm
 // }
 
-const getFarmBaseTokenPrice = (farm: LevarageFarm, coingeckoPrices: any): BigNumber => {
+const getFarmBaseTokenPrice = (farm: LeverageFarm, coingeckoPrices: any): BigNumber => {
   let baseTokenPrice = BIG_ZERO
   coingeckoPrices.forEach(coingeckoPrice => {
     if (coingeckoPrice.id === farm.token.coingeckoId) {
@@ -21,7 +21,7 @@ const getFarmBaseTokenPrice = (farm: LevarageFarm, coingeckoPrices: any): BigNum
   return baseTokenPrice
 }
 
-const getFarmQuoteTokenPrice = (farm: LevarageFarm, coingeckoPrices: any): BigNumber => {
+const getFarmQuoteTokenPrice = (farm: LeverageFarm, coingeckoPrices: any): BigNumber => {
   let quoteTokenPrice = BIG_ZERO
   coingeckoPrices.forEach(coingeckoPrice => {
     if (coingeckoPrice.id === farm.quoteToken.coingeckoId) {
@@ -47,7 +47,7 @@ const fetchFarmsPrices = async (farms) => {
     const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
     return { ...farm, token, quoteToken }
   })
-  // console.log("levarage farmsWithPrices----------: ", farmsWithPrices)
+  // console.log("leverage farmsWithPrices----------: ", farmsWithPrices)
 
   return farmsWithPrices
 }

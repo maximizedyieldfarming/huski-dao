@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Button, ChevronUpIcon } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
-import LevarageRow from './LevarageRow'
+import LeverageRow from './LeverageRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
@@ -28,7 +28,7 @@ const ScrollButtonContainer = styled.div`
   padding-bottom: 5px;
 `
 
-const LevarageTable = ({ levarageData }) => {
+const LeverageTable = ({ leverageData }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
@@ -38,8 +38,8 @@ const LevarageTable = ({ levarageData }) => {
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-        {levarageData.map((token) => (
-          <LevarageRow tokenData={token} />
+        {leverageData.map((token) => (
+          <LeverageRow tokenData={token} />
         ))}
         <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
@@ -52,4 +52,4 @@ const LevarageTable = ({ levarageData }) => {
   )
 }
 
-export default LevarageTable
+export default LeverageTable

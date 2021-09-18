@@ -32,7 +32,7 @@ const ActionCell = ({ token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={{ pathname: `/levarage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}>
+        <Button as={Link} to={{ pathname: `/leverage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}>
           Farm
         </Button>
       </CellContent>

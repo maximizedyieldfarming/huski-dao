@@ -7,7 +7,7 @@ import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import { getFairLaunch } from 'utils/env'
 import multicall from 'utils/multicall'
-import { LevarageFarm, SerializedBigNumber } from '../types'
+import { LeverageFarm, SerializedBigNumber } from '../types'
 
 type PublicFarmData = {
   totalSupply: SerializedBigNumber
@@ -20,7 +20,7 @@ type PublicFarmData = {
   pooPerBlock: number
 }
 
-const fetchFarm = async (farm: LevarageFarm): Promise<PublicFarmData> => {
+const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const { poolId, lpAddresses, token, quoteToken, vaultAddress } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)

@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { usePollBlockNumber } from 'state/block/hooks'
-// import { usePollCoreFarmData } from 'state/levarage/hooks'
+// import { usePollCoreFarmData } from 'state/leverage/hooks'
 import { useFetchProfile } from 'state/profile/hooks'
 import { DatePickerPortal } from 'components/DatePicker'
 import GlobalStyle from './style/Global'
@@ -38,9 +38,9 @@ const Stake = lazy(() => import('./views/Stake'))
 const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
-const Levarage = lazy(() => import('./views/Levarage'))
-const ClosePosition = lazy(() => import('views/Levarage/ClosePosition/ClosePosition'))
-const AdjustPosition = lazy(() => import('views/Levarage/AdjustPosition/AdjustPosition'))
+const Leverage = lazy(() => import('./views/Leverage'))
+const ClosePosition = lazy(() => import('views/Leverage/ClosePosition/ClosePosition'))
+const AdjustPosition = lazy(() => import('views/Leverage/AdjustPosition/AdjustPosition'))
 const WarriorId = lazy(() => import('./views/WarriorID'))
 // const Profile = lazy(() => import('./views/Profile'))
 // const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
@@ -99,11 +99,11 @@ const App: React.FC = () => {
               <Lock />
             </Route>
 
-            <Route exact path="/levarage">
-              <Levarage />
+            <Route exact path="/leverage">
+              <Leverage />
             </Route>
-            <Route exact path="/levarage/closeposition/:token" component={ClosePosition} />
-            <Route exact path="/levarage/farm/:token" component={AdjustPosition} />
+            <Route exact path="/leverage/closeposition/:token" component={ClosePosition} />
+            <Route exact path="/leverage/farm/:token" component={AdjustPosition} />
 
             <Route path="/warriorid">
               <WarriorId />

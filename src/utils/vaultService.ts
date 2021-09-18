@@ -45,15 +45,6 @@ export async function getLandRate(param: any) {
   return landRate;
 }
 
-export async function getPoolInfo1(param: any) {
-  const poolAddresses = param.map((pool) => {
-    const vault =  getWeb3VaultContract(pool.address)
-    // const name = await vault.methods.name().call();
-    return vault;
-  });
-  return poolAddresses;
-
-}
 
 export async function getHuskyPrice() {
   const huskyPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=alpaca-finance&vs_currencies=usd`;
@@ -84,60 +75,6 @@ export async function getLendApy(totalSupply, totalToken, vaultDebtVal, busdPric
   return apy;
 }
 
-export async function getPoolInfo(param: any) {
-
-  const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
-  const name = await vault.methods.name().call();
-  const symbol = await vault.methods.symbol().call();
-  const totalSupply = parseInt(await vault.methods.totalSupply().call());
-  const totalToken:any = parseInt(await vault.methods.totalToken().call());
-  const vaultDebtShare = parseInt(await vault.methods.vaultDebtShare().call());
-  const vaultDebtVal:any = parseInt(await vault.methods.vaultDebtVal().call());
-  const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
-  let landRate = 0;
-  // Interest=m∗utilization+b
-  if (utilization < 0.5) {
-    landRate = mathematics1 * utilization;
-  } else if (utilization > 0.9) {
-    landRate = mathematics3 * utilization - 11.5;
-  } else {
-    landRate = mathematics2 * utilization + 0.2;
-  }
-  const landApr = landRate * 0.9 * utilization;
-  const huskyPrice:any = 1.04;// await getHuskyPrice()
-  const poolAlpacaPerBlock = await getPoolHuskyPerBlock()
-  const binancecoinprice = `https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd`;
-  const res2 = await fetch(binancecoinprice);
-  const bnbprice = await res2.json();
- const stakeApr = BLOCKS_PER_YEAR.times(poolAlpacaPerBlock * huskyPrice).div(
-    (bnbprice.binancecoin.usd * totalToken * totalToken) / totalSupply
-  );
-  // const stakeApr = BLOCKS_PER_YEAR.times(param.husky * param.huskyPrice).div(
-  //   (param.baseTokenPrice * totalToken * totalToken) / totalSupply
-  // );
-  //   const totalApr = landApr + stakeApr;
-  const totalApr = BigNumber.sum(landApr, stakeApr);
-  const data = {
-    name,
-    symbol,
-    totalBorrowed: vaultDebtVal,
-    totalDeposit: totalToken,
-    capitalUtilizationRate: utilization,
-    landApr,
-    stakeApr: stakeApr.toNumber(),
-    totalApr,
-    apy: Math.pow(1 + totalApr.toNumber() / 365, 365) - 1,
-    exchangeRate: totalToken / totalSupply,
-  };
-
-  // console.log('totalDeposit: ', parseInt(web3.utils.fromWei(BigInt(data.totalBorrowed).toString())).toLocaleString({
-  //   minimumFractionDigits: 2,
-  //   maximumFractionDigits: 2
-  // }));
-
-  return data;
-}
-
 export async function getStakeApr(param: any) {
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
 
@@ -147,7 +84,6 @@ export async function getStakeApr(param: any) {
   const stakeApr = BLOCKS_PER_YEAR.times(param.husky * param.huskyPrice).div(
     (param.baseTokenPrice * totalToken * totalToken) / totalSupply
   );
-  // console.log('getStakeApr: ' + stakeApr.toNumber());
 
   return stakeApr.toNumber();
 }

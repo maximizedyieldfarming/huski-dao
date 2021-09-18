@@ -21,12 +21,12 @@ const ExpandingWrapper = styled.div`
   overflow: hidden;
 `
 
-const LevarageCard = ({ tokenData }) => {
+const LeverageCard = ({ tokenData }) => {
   const [showExpandableSection, setShowExpandableSection] = useState(false)
   const { account } = useWeb3React()
   const { t } = useTranslation()
 
-  const { lpSymbol, tvl, levarage, reserveTokenOne, quoteToken, token } = tokenData
+  const { lpSymbol, tvl, leverage, reserveTokenOne, quoteToken, token } = tokenData
 
   const utilizationRateToPercentage = (rate) => {
     const value = rate * 100
@@ -84,8 +84,8 @@ const LevarageCard = ({ tokenData }) => {
             </Flex>
 
             <Flex justifyContent="space-between">
-              <Text>Levarage: </Text>
-              {levarage ? <Text>{levarage}</Text> : <Skeleton width="80px" height="16px" />}
+              <Text>Leverage: </Text>
+              {leverage ? <Text>{leverage}</Text> : <Skeleton width="80px" height="16px" />}
             </Flex>
           </>
         )}
@@ -95,4 +95,4 @@ const LevarageCard = ({ tokenData }) => {
   )
 }
 
-export default LevarageCard
+export default LeverageCard

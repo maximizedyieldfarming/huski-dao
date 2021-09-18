@@ -4,41 +4,41 @@ import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { levarageFarmsConfig } from 'config/constants'
+import { leverageFarmsConfig } from 'config/constants'
 import useRefresh from 'hooks/useRefresh'
-import { fetchLevarageFarmsPublicDataAsync, fetchLevarageFarmUserDataAsync, nonArchivedFarms } from '.'
-import { State, LevarageFarm, LevarageFarmsState } from '../types'
+import { fetchLeverageFarmsPublicDataAsync, fetchLeverageFarmUserDataAsync, nonArchivedFarms } from '.'
+import { State, LeverageFarm, LeverageFarmsState } from '../types'
 
-export const usePollLevarageFarmsPublicData = (includeArchive = true) => {
+export const usePollLeverageFarmsPublicData = (includeArchive = true) => {
   const dispatch = useAppDispatch()
   const { slowRefresh } = useRefresh()
 
   useEffect(() => {
-    const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
+    const farmsToFetch = includeArchive ? leverageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
-    dispatch(fetchLevarageFarmsPublicDataAsync(pids))
-    // fetchLevarageFarmsPublicDataAsync(pids)
+    dispatch(fetchLeverageFarmsPublicDataAsync(pids))
+    // fetchLeverageFarmsPublicDataAsync(pids)
   }, [includeArchive, dispatch, slowRefresh])
 }
 
-export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
+export const usePollLeverageFarmsWithUserData = (includeArchive = true) => {
   const dispatch = useAppDispatch()
   const { slowRefresh } = useRefresh()
   const { account } = useWeb3React()
-  // console.log("levarage: ", "usePollLevarageFarmsWithUserData")
+  // console.log("leverage: ", "usePollLeverageFarmsWithUserData")
 
   useEffect(() => {
-    const farmsToFetch = includeArchive ? levarageFarmsConfig : nonArchivedFarms
+    const farmsToFetch = includeArchive ? leverageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
-    dispatch(fetchLevarageFarmsPublicDataAsync(pids))
-    // fetchLevarageFarmsPublicDataAsync(pids)
-    // console.log("levarage account: ", account)
+    dispatch(fetchLeverageFarmsPublicDataAsync(pids))
+    // fetchLeverageFarmsPublicDataAsync(pids)
+    // console.log("leverage account: ", account)
 
     if (account) {
-      dispatch(fetchLevarageFarmUserDataAsync({ account, pids }))
-      // fetchLevarageFarmUserDataAsync({ account, pids })
+      dispatch(fetchLeverageFarmUserDataAsync({ account, pids }))
+      // fetchLeverageFarmUserDataAsync({ account, pids })
     }
   }, [includeArchive, dispatch, slowRefresh, account])
 }
@@ -48,35 +48,35 @@ export const usePollLevarageFarmsWithUserData = (includeArchive = true) => {
  * 251 = CAKE-BNB LP
  * 252 = BUSD-BNB LP
  */
-export const usePollCoreLevarageFarmData = () => {
+export const usePollCoreLeverageFarmData = () => {
   const dispatch = useAppDispatch()
   const { fastRefresh } = useRefresh()
-  // console.log("levarage: ", "usePollCoreLevarageFarmData")
+  // console.log("leverage: ", "usePollCoreLeverageFarmData")
 
   useEffect(() => {
-    dispatch(fetchLevarageFarmsPublicDataAsync([251, 252]))
+    dispatch(fetchLeverageFarmsPublicDataAsync([251, 252]))
   }, [dispatch, fastRefresh])
 }
 
-export const useLevarageFarms = (): LevarageFarmsState => {
-  const farms = useSelector((state: State) => state.levarage)
+export const useLeverageFarms = (): LeverageFarmsState => {
+  const farms = useSelector((state: State) => state.leverage)
   return farms
 }
 
-export const useLends = (): LevarageFarmsState => {
-  const farms = useSelector((state: State) => state.levarage)
+export const useLends = (): LeverageFarmsState => {
+  const farms = useSelector((state: State) => state.leverage)
 
   
   return farms
 }
 
-export const useFarmFromPid = (pid): LevarageFarm => {
-  const farm = useSelector((state: State) => state.levarage.data.find((f) => f.pid === pid))
+export const useFarmFromPid = (pid): LeverageFarm => {
+  const farm = useSelector((state: State) => state.leverage.data.find((f) => f.pid === pid))
   return farm
 }
 
-export const useFarmFromLpSymbol = (lpSymbol: string): LevarageFarm => {
-  const farm = useSelector((state: State) => state.levarage.data.find((f) => f.lpSymbol === lpSymbol))
+export const useFarmFromLpSymbol = (lpSymbol: string): LeverageFarm => {
+  const farm = useSelector((state: State) => state.leverage.data.find((f) => f.lpSymbol === lpSymbol))
   return farm
 }
 

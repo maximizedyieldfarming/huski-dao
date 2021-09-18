@@ -46,9 +46,9 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     href: '/lock',
   }, */
   {
-    label: t('Levarage Farms'),
+    label: t('Leverage Farms'),
     icon: 'NftIcon',
-    href: '/levarage',
+    href: '/leverage',
   },
   /*  {
     label: t('NFT Warriors'),

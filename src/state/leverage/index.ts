@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import levarageFarmsConfig from 'config/constants/levarage'
+import leverageFarmsConfig from 'config/constants/leverage'
 import isArchivedPid from 'utils/farmHelpers'
 import fetchFarms from './fetchFarms'
 import fetchFarmsPrices from './fetchFarmsPrices'
@@ -9,9 +9,9 @@ import {
   fetchFarmUserTokenBalances,
   fetchFarmUserStakedBalances,
 } from './fetchFarmUser'
-import { LevarageFarmsState, LevarageFarm } from '../types'
+import { LeverageFarmsState, LeverageFarm } from '../types'
 
-const noAccountFarmConfig = levarageFarmsConfig.map((farm) => ({
+const noAccountFarmConfig = leverageFarmsConfig.map((farm) => ({
   ...farm,
   userData: {
     allowance: '0',
@@ -21,23 +21,23 @@ const noAccountFarmConfig = levarageFarmsConfig.map((farm) => ({
   },
 }))
 
-const initialState: LevarageFarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false }
+const initialState: LeverageFarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false }
 
-export const nonArchivedFarms = levarageFarmsConfig.filter(({ pid }) => !isArchivedPid(pid))
+export const nonArchivedFarms = leverageFarmsConfig.filter(({ pid }) => !isArchivedPid(pid))
 
 // Async thunks
-export const fetchLevarageFarmsPublicDataAsync = 
-createAsyncThunk<LevarageFarm[], number[]>(
-  'levarage/fetchLevarageFarmsPublicDataAsync',
+export const fetchLeverageFarmsPublicDataAsync = 
+createAsyncThunk<LeverageFarm[], number[]>(
+  'leverage/fetchLeverageFarmsPublicDataAsync',
   async (pids) => {
-    const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
+    const farmsToFetch = leverageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
 
     const farms = await fetchFarms(farmsToFetch)
     const farmsWithPrices = await fetchFarmsPrices(farms)
 
-    console.log("levarage: ", "fetchLevarageFarmsPublicDataAsync")
+    console.log("leverage: ", "fetchLeverageFarmsPublicDataAsync")
     // Filter out price helper LP config farms
-    const farmsWithoutHelperLps = farmsWithPrices.filter((farm: LevarageFarm) => {
+    const farmsWithoutHelperLps = farmsWithPrices.filter((farm: LeverageFarm) => {
       return farm.pid || farm.pid === 0
     })
     return farmsWithoutHelperLps
@@ -45,7 +45,7 @@ createAsyncThunk<LevarageFarm[], number[]>(
   ,
 )
 
-interface LevarageFarmUserDataResponse {
+interface LeverageFarmUserDataResponse {
   pid: number
   allowance: string
   tokenBalance: string
@@ -53,17 +53,17 @@ interface LevarageFarmUserDataResponse {
   earnings: string
 }
 
-export const fetchLevarageFarmUserDataAsync = 
-createAsyncThunk<LevarageFarmUserDataResponse[], { account: string; pids: number[] }>(
-  'levarage/fetchLevarageFarmUserDataAsync',
+export const fetchLeverageFarmUserDataAsync = 
+createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number[] }>(
+  'leverage/fetchLeverageFarmUserDataAsync',
   async ({ account, pids }) => {
-    const farmsToFetch = levarageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
+    const farmsToFetch = leverageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
     const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
 
-    console.log("levarage: ", "fetchLevarageFarmUserDataAsync")
+    console.log("leverage: ", "fetchLeverageFarmUserDataAsync")
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
         pid: farmsToFetch[index].pid,
@@ -77,8 +77,8 @@ createAsyncThunk<LevarageFarmUserDataResponse[], { account: string; pids: number
   ,
 )
 
-export const levarageSlice = createSlice({
-  name: 'levarage',
+export const leverageSlice = createSlice({
+  name: 'leverage',
   initialState,
   reducers: {
     setLoadArchivedFarmsData: (state, action) => {
@@ -88,7 +88,7 @@ export const levarageSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Update farms with live data
-    builder.addCase(fetchLevarageFarmsPublicDataAsync.fulfilled, (state, action) => {
+    builder.addCase(fetchLeverageFarmsPublicDataAsync.fulfilled, (state, action) => {
       state.data = state.data.map((farm) => {
         const liveFarmData = action.payload.find((farmData) => farmData.pid === farm.pid)
         return { ...farm, ...liveFarmData }
@@ -96,7 +96,7 @@ export const levarageSlice = createSlice({
     })
 
     // Update farms with user data
-    builder.addCase(fetchLevarageFarmUserDataAsync.fulfilled, (state, action) => {
+    builder.addCase(fetchLeverageFarmUserDataAsync.fulfilled, (state, action) => {
       action.payload.forEach((userDataEl) => {
         const { pid } = userDataEl
         const index = state.data.findIndex((farm) => farm.pid === pid)
@@ -108,6 +108,6 @@ export const levarageSlice = createSlice({
 })
 
 // Actions
-export const { setLoadArchivedFarmsData } = levarageSlice.actions
+export const { setLoadArchivedFarmsData } = leverageSlice.actions
 
-export default levarageSlice.reducer
+export default leverageSlice.reducer

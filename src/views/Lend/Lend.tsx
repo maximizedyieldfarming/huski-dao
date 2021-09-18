@@ -11,7 +11,7 @@ import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import {  useLendTotalSupply } from 'state/lend/hooks'
-import { useLevarageFarms, usePollLevarageFarmsWithUserData } from 'state/levarage/hooks'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -205,7 +205,7 @@ const Lend: React.FC = () => {
   const { account } = useWeb3React()
   // const { account } = useActiveWeb3React()
   const lendTotalSupply = useLendTotalSupply()
-  const { data: farmsData } = useLevarageFarms()
+  const { data: farmsData } = useLeverageFarms()
   console.log({ 'farm 数据':farmsData})
   const hash = {};
   const lendData = farmsData.reduce((cur, next) => {
@@ -213,7 +213,7 @@ const Lend: React.FC = () => {
     return cur;
   }, [])
 
-  usePollLevarageFarmsWithUserData()
+  usePollLeverageFarmsWithUserData()
   const cardLayout = (
     <CardLayout>
       {lendData.map((token) => (

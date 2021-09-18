@@ -14,18 +14,18 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const LevarageCell = ({ levarage }) => {
+const LeverageCell = ({ leverage }) => {
   const { isMobile } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Levarage
+          Leverage
         </Text>
-        <Text>{levarage}</Text>
+        <Text>{leverage}</Text>
       </CellContent>
     </StyledCell>
   )
 }
 
-export default LevarageCell
+export default LeverageCell

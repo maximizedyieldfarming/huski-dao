@@ -106,7 +106,7 @@ export interface LendConfig {
   //   }
   // ]
 
-  levarage?: number
+  leverage?: number
   vaultAddress?: Address
   workerAddress?: Address
   workerConfig?: Address
@@ -119,7 +119,7 @@ export interface LendConfig {
 }
 
 
-export interface LevarageFarmConfig {
+export interface LeverageFarmConfig {
   pid: number
   lpSymbol: string
   lpAddresses: Address
@@ -133,7 +133,7 @@ export interface LevarageFarmConfig {
     endBlock: number
   }
 
-  levarage: number
+  leverage: number
   poolId: number
   vaultAddress: Address
   workerAddress: Address
