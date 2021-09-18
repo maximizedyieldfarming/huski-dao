@@ -3,7 +3,7 @@ import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
 import farmsReducer from './farms'
 import leverageReducer from './leverage'
-import lendReducer from './lend'
+import stakeReducer from './stake'
 import poolsReducer from './pools'
 import predictionsReducer from './predictions'
 import profileReducer from './profile'
@@ -31,7 +31,7 @@ const store = configureStore({
     block: blockReducer,
     farms: farmsReducer,
     leverage: leverageReducer,
-    lend: lendReducer,
+    stake: stakeReducer,
     pools: poolsReducer,
     predictions: predictionsReducer,
     profile: profileReducer,

@@ -39,7 +39,7 @@ export const useStakeBalanceData = () => {
   useEffect(() => {
     const data = mainnet.FairLaunch.pools.map((pool) => {
       const sData = async () => {
-        const huskyDaily = await getPoolHuskyDaily(pool);
+        const huskyDaily = await getPoolHuskyDaily(pool.id);
         return huskyDaily;
       };
       return sData();

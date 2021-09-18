@@ -538,7 +538,7 @@ export interface State {
   block: BlockState
   farms: FarmsState
   leverage: LeverageFarmsState
-  lend: StakeState
+  stake: StakeState
   pools: PoolsState
   predictions: PredictionsState
   profile: ProfileState
