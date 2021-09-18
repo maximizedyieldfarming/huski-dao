@@ -13,12 +13,12 @@ import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from './config';
 //     return poolAlpacaPerBlock;
 // }
 
-export async function getPoolHuskyDaily(param: any) {
+export async function getPoolHuskyDaily(pId) {
     const fairLaunch = getWeb3FairLaunchContract();
 
     const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
     const totalAllocPoint = await fairLaunch.methods.totalAllocPoint().call();
-    const poolInfo = await fairLaunch.methods.poolInfo(param.pid).call();
+    const poolInfo = await fairLaunch.methods.poolInfo(pId).call();
 
     const poolHuskyDaily = alpacaPerBlock * poolInfo.allocPoint * 24 * 60 * 60 / 3 / totalAllocPoint; // 24*60*60/3：24小时出块数量
     return poolHuskyDaily;
