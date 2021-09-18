@@ -12,6 +12,7 @@ const StyledPage = styled(Container)`
   padding-top: 16px;
   padding-bottom: 16px;
   display: flex;
+  gap: 2rem;
   flex-direction: column;
   margin-left: 2%;
   margin-right: 2%;

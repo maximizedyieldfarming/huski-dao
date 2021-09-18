@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Radio, Slider, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Radio, Slider, Text, Skeleton } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import image from './assets/huskyBalloon.png'
 
@@ -23,7 +23,7 @@ const StyledBox = styled(Box)`
     }
   }
   > ${Flex} {
-    div:first-child {
+    > div:first-child {
       flex: 1;
     }
   }
@@ -37,9 +37,9 @@ const StyledPage = styled(Page)`
 const AdjustPosition = (props) => {
   console.log('props to adjust position...', props)
   const [leverage, setLeverage] = useState(0)
-  // const [incDecRadio, setIncDecRadio] = useState(true)
-  // console.log({ incDecRadio })
-
+  /*   const [incDecRadio, setIncDecRadio] = useState(true)
+  console.log({ incDecRadio })
+ */
   const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
     console.info('fired')
@@ -49,9 +49,10 @@ const AdjustPosition = (props) => {
   }
   /*  const handleChangeIncDecRadio = (e) => {
     console.info('fired')
+    console.log({ e })
     const { value } = e.target
-    console.log(value)
-    setIncDecRadio(!value)
+    console.log({ value })
+    setIncDecRadio(value === 'on')
   } */
   const {
     location: {
@@ -68,16 +69,20 @@ const AdjustPosition = (props) => {
   return (
     <StyledPage>
       <Text fontWeight="bold" style={{ alignSelf: 'center' }}>
-        Adjust Position {token}
+        Farming {token} Pools
       </Text>
       <StyledBox>
         <Text as="span">Collateral</Text>
         <Flex>
-          <Box>
+          <Flex flexDirection="column" justifyContent="space-between">
             <Box>
               <Text as="span">Balance</Text>
-              <Flex>
-                <Text>1234</Text>
+              <Flex justifyContent="space-between">
+                {tokenData?.user?.balance ? (
+                  <Text>{tokenData?.user?.balance}</Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
                 <Text>{quoteTokenName}</Text>
               </Flex>
               <Flex justifyContent="space-around">
@@ -89,8 +94,12 @@ const AdjustPosition = (props) => {
             </Box>
             <Box>
               <Text as="span">Balance</Text>
-              <Flex>
-                <Text>1234</Text>
+              <Flex justifyContent="space-between">
+                {tokenData?.user?.balance ? (
+                  <Text>{tokenData?.user?.balance}</Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
                 <Text>{tokenName}</Text>
               </Flex>
               <Flex justifyContent="space-around">
@@ -116,7 +125,7 @@ const AdjustPosition = (props) => {
                 onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
               />
             </Box>
-          </Box>
+          </Flex>
           <Box>
             <img src={image} alt="" />
           </Box>
@@ -144,15 +153,15 @@ const AdjustPosition = (props) => {
       <StyledBox>
         <Flex>
           <Text>Debt Assets Borrowed</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Updated Debt</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Leverage (ratio)</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Box>
           {' '}
@@ -169,15 +178,15 @@ const AdjustPosition = (props) => {
       <StyledBox>
         <Flex>
           <Text>Trading Fees APR(7 DAYS average)</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Huski Rewards APR</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Borrowing Interest APR</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Box>
@@ -186,29 +195,29 @@ const AdjustPosition = (props) => {
               Yields Farm APR + Trading Fess APR + Huski Rewards APR - Borrowing Interest APR
             </Text>
           </Box>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>APY</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
       </StyledBox>
       <StyledBox>
         <Flex>
           <Text>Assets Supplied</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Assets Borrowed</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text> Price Impact and Trading Fees</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Updated Total Assets</Text>
-          <Text>1234</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
       </StyledBox>
       <Flex alignSelf="center">
