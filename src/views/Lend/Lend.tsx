@@ -5,12 +5,23 @@ import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
+import {
+  Image,
+  Heading,
+  RowType,
+  Toggle,
+  Text,
+  Button,
+  ArrowForwardIcon,
+  Flex,
+  Box,
+  Skeleton,
+} from '@pancakeswap/uikit'
 import { ChainId, Currency } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-import {  useLendTotalSupply } from 'state/lend/hooks'
+import { useLendTotalSupply } from 'state/lend/hooks'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
@@ -206,11 +217,11 @@ const Lend: React.FC = () => {
   // const { account } = useActiveWeb3React()
   const lendTotalSupply = useLendTotalSupply()
   const { data: farmsData } = useLeverageFarms()
-  console.log({ 'farm 数据':farmsData})
-  const hash = {};
+  console.log({ 'farm 数据': farmsData })
+  const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
-    hash[next.poolId] ? "" : hash[next.poolId] = true && cur.push(next);
-    return cur;
+    hash[next.poolId] ? '' : (hash[next.poolId] = true && cur.push(next))
+    return cur
   }, [])
 
   usePollLeverageFarmsWithUserData()
@@ -233,15 +244,19 @@ const Lend: React.FC = () => {
             <img src={bone2} alt="" />
           </ImageContainer>
           <StyledBox>
-            <span>Total Supply</span>
-            <span>${lendTotalSupply}</span>
+            <Text>Total Supply</Text>
+            {lendTotalSupply ? (
+              <Text fontSize="30px">${lendTotalSupply}</Text>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
           </StyledBox>
           <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
             <img src={bone1} alt="" />
           </ImageContainer>
         </StyledFlex>
       </Flex>
-
+      {/* 
       <Title>Lending Positions</Title>
       <TableWrapper>
         <TopTable data={lendData} />
@@ -249,7 +264,7 @@ const Lend: React.FC = () => {
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
-      </TableWrapper>
+      </TableWrapper> */}
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />

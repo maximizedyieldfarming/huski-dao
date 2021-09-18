@@ -51,29 +51,6 @@ const TableWrapper = styled.div`
   padding: 10px;
 `
 
-const SingleTableWrapper = styled(TableWrapper)`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 2rem;
-  > ${Flex} {
-    > div {
-      flex: 1;
-    }
-  }
-  figure {
-    display: none;
-    ${({ theme }) => theme.mediaQueries.xl} {
-      display: block;
-    }
-  }
-`
-
-const ActionCell = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
 const ImageContainer = styled.figure``
 
 const Title = styled.div`
@@ -91,6 +68,13 @@ const StyledButton = styled(Button)`
   font-weight: 400;
   height: auto;
   box-shadow: none;
+`
+const ClaimBubble = styled(Flex)`
+  gap: 2rem;
+  background-color: ${({ theme }) => theme.card.background};
+  border-radius: 20px;
+  padding: 1rem;
+  width: fit-content;
 `
 
 const CardLayout = styled(FlexLayout)`
@@ -138,35 +122,30 @@ const Stake: React.FC = () => {
   console.log({ stakeBalanceData })
   return (
     <Page>
-      <SingleTableWrapper>
+      {/*  <SingleTableWrapper>
         <Title>Positions</Title>
         <Flex width="100%" alignItems="center">
           <Box>
             <TopTable data={stakingData} />
-            <Flex
-              justifyContent="space-between"
-              alignItems="center"
-              padding="10px 8px 0 32px"
-              borderTop="1px solid #ccc"
-            >
-              <Flex alignItems="center">
-                <ImageContainer>
-                  <img src={huskyIcon} alt="" />
-                </ImageContainer>
-                <Text>Huski Rewards</Text>
-              </Flex>
-              <Text as="span" fontSize="30px">
-                1234
-              </Text>
-              <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
-            </Flex>
           </Box>
 
           <ImageContainer>
             <img src={husky2} alt="" />
           </ImageContainer>
+        </Flex> 
+      </SingleTableWrapper> */}
+      <ClaimBubble alignItems="center" alignSelf="flex-end" padding="10px 8px 0 32px">
+        <Flex alignItems="center">
+          <ImageContainer>
+            <img src={huskyIcon} alt="" />
+          </ImageContainer>
+          <Text>Huski Rewards</Text>
         </Flex>
-      </SingleTableWrapper>
+        <Text as="span" fontSize="30px">
+          1234
+        </Text>
+        <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
+      </ClaimBubble>
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
