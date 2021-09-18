@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { Image, Text, Button, Flex, Box } from '@pancakeswap/uikit'
+import { Image, Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
 import { useStakeBalanceData, useStakeData } from 'state/stake/hooks'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
@@ -141,9 +141,7 @@ const Stake: React.FC = () => {
           </ImageContainer>
           <Text>Huski Rewards</Text>
         </Flex>
-        <Text as="span" fontSize="30px">
-          1234
-        </Text>
+        <Skeleton width="80px" height="16px" />
         <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
       </ClaimBubble>
 

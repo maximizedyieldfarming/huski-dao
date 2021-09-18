@@ -5,7 +5,7 @@ import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/levera
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
@@ -118,9 +118,8 @@ const Leverage: React.FC = () => {
             <StyledBox>
               <span>Husky Token Rewards</span>
               <Flex alignItems="center" style={{ gap: '10px' }}>
-                <Text color="#9615E7" fontSize="30px">
-                  169.73
-                </Text>
+                <Skeleton width="80px" height="16px" />
+
                 <ActionButton>Claim</ActionButton>
               </Flex>
             </StyledBox>
