@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js/bignumber';
 import Web3 from 'web3';
 import { getVaultContract, getWeb3VaultContract } from './contractHelper';
-import { getPoolHuskyPerBlock } from './fairLaunchService'
 import { BLOCKS_PER_YEAR, DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from './config';
 import getDomain, { getFairLaunch } from './env'; // Between 90% and 100%
 
@@ -43,36 +42,6 @@ export async function getLandRate(param: any) {
   }
 
   return landRate;
-}
-
-
-export async function getHuskyPrice() {
-  const huskyPriceCoinGeckoApi = `https://api.coingecko.com/api/v3/simple/price?ids=alpaca-finance&vs_currencies=usd`;
-  const res = await fetch(huskyPriceCoinGeckoApi);
-  const huskyPrice = await res.json();
-  const price = huskyPrice['alpaca-finance'].usd;
-  return price;
-}
-
-export async function getLendApy(totalSupply, totalToken, vaultDebtVal, busdPrice) {
-  const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
-  let landRate = 0;
-  if (utilization < 0.5) {
-    landRate = mathematics1 * utilization;
-  } else if (utilization > 0.9) {
-    landRate = mathematics3 * utilization - 11.5;
-  } else {
-    landRate = mathematics2 * utilization + 0.2;
-  }
-  const landApr = landRate * 0.9 * utilization;
-  const huskyPrice: any = await getHuskyPrice()
-  const poolAlpacaPerBlock = await getPoolHuskyPerBlock()
-  const stakeApr = BLOCKS_PER_YEAR.times(poolAlpacaPerBlock * huskyPrice).div(
-    (busdPrice * totalToken * totalToken) / totalSupply
-  );
-  const totalApr = BigNumber.sum(landApr, stakeApr);
-  const apy = Math.pow(1 + totalApr.toNumber() / 365, 365) - 1;
-  return apy;
 }
 
 export async function getStakeApr(param: any) {

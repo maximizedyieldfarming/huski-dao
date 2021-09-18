@@ -3,22 +3,22 @@ import BigNumber from 'bignumber.js'
 import { getFairLaunchContract, getWeb3FairLaunchContract } from './contractHelper';
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from './config';
 
-export async function getPoolHuskyPerBlock() {
-    const fairLaunch = getWeb3FairLaunchContract();
+// export async function getPoolHuskyPerBlock() {
+//     const fairLaunch = getWeb3FairLaunchContract();
 
-    const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
-    const totalAllocPoint = await fairLaunch.methods.totalAllocPoint().call();
-    const poolInfo = await fairLaunch.methods.poolInfo('11').call();
-    const poolAlpacaPerBlock = alpacaPerBlock * poolInfo.allocPoint / totalAllocPoint;
-    return poolAlpacaPerBlock;
-}
+//     const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
+//     const totalAllocPoint = await fairLaunch.methods.totalAllocPoint().call();
+//     const poolInfo = await fairLaunch.methods.poolInfo(param.pid).call();
+//     const poolAlpacaPerBlock = alpacaPerBlock * poolInfo.allocPoint / totalAllocPoint;
+//     return poolAlpacaPerBlock;
+// }
 
 export async function getPoolHuskyDaily(param: any) {
     const fairLaunch = getWeb3FairLaunchContract();
 
     const alpacaPerBlock = await fairLaunch.methods.alpacaPerBlock().call();
     const totalAllocPoint = await fairLaunch.methods.totalAllocPoint().call();
-    const poolInfo = await fairLaunch.methods.poolInfo('11').call();
+    const poolInfo = await fairLaunch.methods.poolInfo(param.pid).call();
 
     const poolHuskyDaily = alpacaPerBlock * poolInfo.allocPoint * 24 * 60 * 60 / 3 / totalAllocPoint; // 24*60*60/3：24小时出块数量
     return poolHuskyDaily;

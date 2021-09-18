@@ -67,7 +67,7 @@ export interface FarmConfig {
   }
 }
 
-export interface LendConfig {
+export interface StakeConfig {
   name: string
   symbol: string
   address: Address

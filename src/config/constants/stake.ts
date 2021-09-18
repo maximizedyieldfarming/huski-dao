@@ -1,7 +1,7 @@
 import tokens from './tokens'
-import { LendConfig } from './types'
+import { StakeConfig } from './types'
 
-const lendConfig: LendConfig[] = [
+const stakeConfig: StakeConfig[] = [
   {
     name: 'BNB',
     symbol: "ibWBNB",
@@ -82,4 +82,4 @@ const lendConfig: LendConfig[] = [
   }
 ]
 
-export default lendConfig
+export default stakeConfig

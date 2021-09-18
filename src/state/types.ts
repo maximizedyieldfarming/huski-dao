@@ -2,7 +2,7 @@ import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from '@reduxjs/toolkit'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { CampaignType, FarmConfig, LeverageFarmConfig, LendConfig, LotteryStatus, LotteryTicket, Nft, PoolConfig, Team } from 'config/constants/types'
+import { CampaignType, FarmConfig, LeverageFarmConfig, StakeConfig, LotteryStatus, LotteryTicket, Nft, PoolConfig, Team } from 'config/constants/types'
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>
 
@@ -55,7 +55,7 @@ export interface LeverageFarm extends LeverageFarmConfig {
   pooPerBlock?: number
 }
 
-export interface LendFarm extends LendConfig {
+export interface Stake extends StakeConfig {
   tokenReserve?: SerializedBigNumber
   quoteTokenReserve?: SerializedBigNumber
   poolWeight?: SerializedBigNumber
@@ -112,8 +112,8 @@ export interface LeverageFarmsState {
 }
 
 
-export interface LendState {
-  data: LendFarm[]
+export interface StakeState {
+  data: Stake[]
   loadArchivedFarmsData: boolean
   userDataLoaded: boolean
 }
@@ -538,7 +538,7 @@ export interface State {
   block: BlockState
   farms: FarmsState
   leverage: LeverageFarmsState
-  lend: LendState
+  lend: StakeState
   pools: PoolsState
   predictions: PredictionsState
   profile: ProfileState
