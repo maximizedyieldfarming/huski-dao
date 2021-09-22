@@ -27,11 +27,11 @@ export const usePollLeverageFarmsPublicData = (includeArchive = true) => {
   }, [includeArchive, dispatch, slowRefresh])
 }
 
-export const usePollLeverageFarmsWithUserData = (includeArchive = true) => {
+export const useStakeWithUserData = (includeArchive = true) => {
   const dispatch = useAppDispatch()
   const { slowRefresh } = useRefresh()
   const { account } = useWeb3React()
-  // console.log("stake999: ", "usePollLeverageFarmsWithUserData")
+  // console.log("stake999: ", "useStakeWithUserData")
 
   useEffect(() => {
     const farmsToFetch = includeArchive ? stakeConfig : nonArchivedFarms
@@ -90,45 +90,63 @@ export const useFarmUser = (pid) => {
   }
 }
 
-// use this
-export const useStakeData = () => {
-  const [stakeData, setStakeData] = useState([])
-  useEffect(() => {
-    const data = mainnet.Vaults.map((pool) => {
-      const sData = async () => {
-        const name = pool.name.replace('Interest Bearing ', '');
-        let stakeValue:any = await getStakeValue(pool);
-        stakeValue = formatBigNumber(stakeValue);
-        const stakeAPR = await getStakeApr(pool);
-        return { name, stakeValue, stakeAPR };
-      };
-      return sData();
-    });
-    Promise.all(data)
-      .then((values) => {
-        setStakeData(values)
-      })
-      .catch((error) => console.error('error', error));
-  }, [setStakeData])
-  return { stakeData }
+export const useHuskyPrice = (): BigNumber => {
+  const huskyFarm = useFarmFromPid(254)
+  const huskyPriceAsString = huskyFarm.token.busdPrice
+
+  const huskyPrice = useMemo(() => {
+    return new BigNumber(huskyPriceAsString)
+  }, [huskyPriceAsString])
+
+  return huskyPrice
 }
 
-export const useStakeBalanceData = () => {
-  const [stakeBalanceData, setStakeBalanceData] = useState([])
-  useEffect(() => {
-    const data = mainnet.FairLaunch.pools.map((pool) => {
-      const sData = async () => {
-        const huskyDaily = await getPoolHuskyDaily(pool.id);
-        return huskyDaily;
-      };
-      return sData();
-    });
-    Promise.all(data)
-      .then((values) => {
-        setStakeBalanceData(values)
-      })
-      .catch((error) => console.error('error', error));
-  }, [setStakeBalanceData])
-  return { stakeBalanceData }
+export const useHuskyPerBlock = (): number => {
+  const huskyFarm = useFarmFromPid(254)
+  const huskyPerBlock = huskyFarm.pooPerBlock
+  return huskyPerBlock
 }
+
+
+// use this
+// export const useStakeData = () => {
+//   const [stakeData, setStakeData] = useState([])
+//   useEffect(() => {
+//     const data = mainnet.Vaults.map((pool) => {
+//       const sData = async () => {
+//         const name = pool.name.replace('Interest Bearing ', '');
+//         let stakeValue:any = await getStakeValue(pool);
+//         stakeValue = formatBigNumber(stakeValue);
+//         const stakeAPR = await getStakeApr(pool);
+//         return { name, stakeValue, stakeAPR };
+//       };
+//       return sData();
+//     });
+//     Promise.all(data)
+//       .then((values) => {
+//         setStakeData(values)
+//       })
+//       .catch((error) => console.error('error', error));
+//   }, [setStakeData])
+//   return { stakeData }
+// }
+
+// export const useStakeBalanceData = () => {
+//   const [stakeBalanceData, setStakeBalanceData] = useState([])
+//   useEffect(() => {
+//     const data = mainnet.FairLaunch.pools.map((pool) => {
+//       const sData = async () => {
+//         const huskyDaily = await getPoolHuskyDaily(pool.id);
+//         return huskyDaily;
+//       };
+//       return sData();
+//     });
+//     Promise.all(data)
+//       .then((values) => {
+//         setStakeBalanceData(values)
+//       })
+//       .catch((error) => console.error('error', error));
+//   }, [setStakeBalanceData])
+//   return { stakeBalanceData }
+// }
 
