@@ -5,10 +5,14 @@ import { useWeb3React } from '@web3-react/core'
 import { CardBody, Flex, Text, CardRibbon, Skeleton, Button } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import styled from 'styled-components'
+
 import ExpandableSectionButton from 'components/ExpandableSectionButton'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
+import { formatBigNumber } from 'state/utils'
+import { useHuskyPrice, useHuskyPerBlock } from 'state/leverage/hooks'
+import { getAprData } from '../../helpers'
 import AprRow from './AprRow'
 import { StyledCard } from './StyledCard'
 import CardFooter from './CardFooter'
@@ -26,7 +30,9 @@ const LendCard = ({ token }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
 
-  const { name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, balance } = token
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const { name, totalToken, vaultDebtVal, userData } = token
 
   const utilizationRateToPercentage = (rate) => {
     const value = rate * 100
@@ -36,14 +42,14 @@ const LendCard = ({ token }) => {
   return (
     <StyledCard>
       <StyledCardHeader
-        name={name}
+        token={token}
         /* isStaking={accountHasStakedBalance}
         earningToken={earningToken}
         stakingToken={stakingToken}
         isFinished={isFinished && sousId !== 0} */
       />
       <CardBody>
-        <AprRow apy={apy} />
+        <AprRow apy={getAprData(token, huskyPrice, huskyPerBlock)} />
         <Flex mt="24px" justifyContent="space-between">
           {account ? (
             /*  <CardActions pool={pool} stakedBalance={stakedBalance} /> */
@@ -82,25 +88,33 @@ const LendCard = ({ token }) => {
           <>
             <Flex justifyContent="space-between">
               <Text>Total Supply: </Text>
-              {totalDeposit ? <Text> {totalDeposit}</Text> : <Skeleton width="80px" height="16px" />}
+              {totalToken ? (
+                <Text> {formatBigNumber(parseInt(totalToken))}</Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
             </Flex>
 
             <Flex justifyContent="space-between">
               <Text>Total Borrowed: </Text>
-              {totalBorrowed ? <Text>{totalBorrowed}</Text> : <Skeleton width="80px" height="16px" />}
+              {vaultDebtVal ? (
+                <Text>{formatBigNumber(parseInt(vaultDebtVal))}</Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
             </Flex>
 
             <Flex justifyContent="space-between">
               <Text>Utilization Rate: </Text>
-              {capitalUtilizationRate ? (
-                <Text>{utilizationRateToPercentage(capitalUtilizationRate)}</Text>
+              {totalToken && vaultDebtVal ? (
+                <Text>{totalToken > 0 ? utilizationRateToPercentage(vaultDebtVal / totalToken) : 0}</Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
               )}
             </Flex>
             <Flex justifyContent="space-between">
               <Text>Balance: </Text>
-              {balance ? <Text>{}</Text> : <Skeleton width="80px" height="16px" />}
+              {userData.tokenBalance ? <Text>{userData.tokenBalance}</Text> : <Skeleton width="80px" height="16px" />}
             </Flex>
           </>
         )}

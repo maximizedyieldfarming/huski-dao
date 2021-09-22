@@ -36,7 +36,7 @@ const StakeCard = ({ token }) => {
   return (
     <StyledCard>
       <StyledCardHeader
-        name={name}
+        token={token}
         /* isStaking={accountHasStakedBalance}
         earningToken={earningToken}
         stakingToken={stakingToken}

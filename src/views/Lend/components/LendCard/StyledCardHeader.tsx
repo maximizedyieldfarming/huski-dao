@@ -11,7 +11,7 @@ const Wrapper = styled(CardHeader)`
   border-radius: ${({ theme }) => `${theme.radii.card} ${theme.radii.card} 0 0`};
 `
 
-const StyledCardHeader = ({ name }) => {
+const StyledCardHeader = ({ token }) => {
   const { t } = useTranslation()
   /*  const isCakePool = earningToken.symbol === 'CAKE' && stakingToken.symbol === 'CAKE'
   const background = isStaking ? 'bubblegum' : 'cardHeader'
@@ -42,10 +42,10 @@ const StyledCardHeader = ({ name }) => {
   return (
     <Wrapper>
       <Flex alignItems="center" justifyContent="space-between">
-        <TokenImage token={name.toLowerCase()} width={40} height={40} />
+        <TokenImage token={token?.token} width={40} height={40} />
         <Flex flexDirection="column">
           <Heading color="body" scale="lg">
-            {name}
+            {token?.token?.symbol}
           </Heading>
           {/*   <Text color="textSubtle">{getSubHeading()}</Text> */}
         </Flex>
