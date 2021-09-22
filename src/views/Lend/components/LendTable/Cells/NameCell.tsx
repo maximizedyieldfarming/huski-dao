@@ -31,7 +31,7 @@ const NameCell = ({ token }) => {
           {/* REMINDER: getting the icons using the token names is only provisory
           should be changed to using token address when that data is available
           */}
-          <TokenImage token={token?.token.symbol.toLowerCase()} width={40} height={40} mr="8px" />
+          <TokenImage token={token?.token} width={40} height={40} mr="8px" />
           <Text bold={!isMobile} small={isMobile}>
             {token?.token.symbol}
           </Text>

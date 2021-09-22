@@ -29,7 +29,7 @@ const CurrencyCell = ({ token }) => {
           should be changed to using token address when that data is available
           */}
 
-        <TokenImage token={token.name.toLowerCase()} width={40} height={40} mr="8px" />
+        <TokenImage token={token?.token} width={40} height={40} mr="8px" />
         <Text bold={!isMobile} small={isMobile}>
           {token.name}
         </Text>
