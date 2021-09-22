@@ -24,21 +24,19 @@ const StakeRow = ({ tokenData }) => {
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
 
-  const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
-
-  const { name, stakeValue } = tokenData
+  const { name, totalSupply } = tokenData
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <CurrencyCell token={tokenData} />
         <AprCell apy={getStakeApy(tokenData, huskyPrice, huskyPerBlock)}  />
-        <TotalSupplyCell supply={stakeValue} />
+        <TotalSupplyCell supply={parseInt(totalSupply)} />
         <ActionCell name={name} />
       </StyledRow>
     </>
