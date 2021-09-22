@@ -28,14 +28,14 @@ const StakeRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { name, stakeAPR, stakeValue } = tokenData
+  const { name, stakeAPR, totalToken } = tokenData
 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <CurrencyCell token={tokenData} />
         <AprCell apr={stakeAPR} />
-        <TotalSupplyCell supply={stakeValue} />
+        <TotalSupplyCell supply={parseInt(totalToken)} />
         <ActionCell name={name} />
       </StyledRow>
     </>
