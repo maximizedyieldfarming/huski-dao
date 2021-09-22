@@ -6,7 +6,7 @@ import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { Image, Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
-import { useStakeBalanceData, useStakeData } from 'state/stake/hooks'
+import { useStakeBalanceData, useStakeData, usePollLeverageFarmsWithUserData, useStakes } from 'state/stake/hooks'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -85,6 +85,9 @@ const Stake: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
+  const { data: farmsData } = useStakes()
+  console.log({ ' 数据': farmsData })
+  usePollLeverageFarmsWithUserData()
 
   const { stakeData } = useStakeData()
   const { stakeBalanceData } = useStakeBalanceData()
@@ -117,9 +120,9 @@ const Stake: React.FC = () => {
       ))}
     </CardLayout>
   )
-  console.log('useStakeData', useStakeData())
-  console.log({ stakingData })
-  console.log({ stakeBalanceData })
+  // console.log('useStakeData', useStakeData())
+  // console.log({ stakingData })
+  // console.log({ stakeBalanceData })
   return (
     <Page>
       {/*  <SingleTableWrapper>

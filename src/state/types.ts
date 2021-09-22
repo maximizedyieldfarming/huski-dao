@@ -65,6 +65,10 @@ export interface Stake extends StakeConfig {
     stakedBalance: string
     earnings: string
   }
+  totalSupply?: SerializedBigNumber
+  totalToken?: SerializedBigNumber,
+  vaultDebtVal?: SerializedBigNumber
+  pooPerBlock?: number
 }
 
 export interface Pool extends PoolConfig {

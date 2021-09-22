@@ -8,8 +8,87 @@ import { getBalanceAmount } from 'utils/formatBalance'
 import {  getStakeValue, getStakeApr } from 'utils/vaultService'
 import useRefresh from 'hooks/useRefresh'
 import { getPoolHuskyDaily } from 'utils/fairLaunchService'
+import { stakeConfig } from 'config/constants'
 import mainnet from '../../mainnet.json'
 import { formatBigNumber } from '../utils'
+import { fetchStakePublicDataAsync, fetchStakeUserDataAsync, nonArchivedFarms } from '.'
+import { State, Stake, StakeState } from '../types'
+
+export const usePollLeverageFarmsPublicData = (includeArchive = true) => {
+  const dispatch = useAppDispatch()
+  const { slowRefresh } = useRefresh()
+
+  useEffect(() => {
+    const farmsToFetch = includeArchive ? stakeConfig : nonArchivedFarms
+    const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
+
+    dispatch(fetchStakePublicDataAsync(pids))
+    // fetchStakePublicDataAsync(pids)
+  }, [includeArchive, dispatch, slowRefresh])
+}
+
+export const usePollLeverageFarmsWithUserData = (includeArchive = true) => {
+  const dispatch = useAppDispatch()
+  const { slowRefresh } = useRefresh()
+  const { account } = useWeb3React()
+  // console.log("stake999: ", "usePollLeverageFarmsWithUserData")
+
+  useEffect(() => {
+    const farmsToFetch = includeArchive ? stakeConfig : nonArchivedFarms
+    const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
+
+    dispatch(fetchStakePublicDataAsync(pids))
+
+    if (account) {
+      dispatch(fetchStakeUserDataAsync({ account, pids }))
+    }
+  }, [includeArchive, dispatch, slowRefresh, account])
+}
+
+/**
+ * Fetches the "core" farm data used globally
+ * 251 = CAKE-BNB LP
+ * 252 = BUSD-BNB LP
+ */
+export const usePollCoreLeverageFarmData = () => {
+  const dispatch = useAppDispatch()
+  const { fastRefresh } = useRefresh()
+
+  useEffect(() => {
+    dispatch(fetchStakePublicDataAsync([251, 252]))
+  }, [dispatch, fastRefresh])
+}
+
+export const useStakes = (): StakeState => {
+  const farms = useSelector((state: State) => state.stake)
+  return farms
+}
+
+export const useLends = (): StakeState => {
+  const farms = useSelector((state: State) => state.stake)
+  return farms
+}
+
+export const useFarmFromPid = (pid): Stake => {
+  const farm = useSelector((state: State) => state.stake.data.find((f) => f.pid === pid))
+  return farm
+}
+
+export const useFarmFromLpSymbol = (lpSymbol: string): Stake => {
+  const farm = useSelector((state: State) => state.stake.data.find((f) => f.lpSymbol === lpSymbol))
+  return farm
+}
+
+export const useFarmUser = (pid) => {
+  const farm = useFarmFromPid(pid)
+
+  return {
+    allowance: farm.userData ? new BigNumber(farm.userData.allowance) : BIG_ZERO,
+    tokenBalance: farm.userData ? new BigNumber(farm.userData.tokenBalance) : BIG_ZERO,
+    stakedBalance: farm.userData ? new BigNumber(farm.userData.stakedBalance) : BIG_ZERO,
+    earnings: farm.userData ? new BigNumber(farm.userData.earnings) : BIG_ZERO,
+  }
+}
 
 // use this
 export const useStakeData = () => {

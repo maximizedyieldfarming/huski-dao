@@ -70,12 +70,7 @@ export interface FarmConfig {
 export interface StakeConfig {
   name: string
   symbol: string
-  address: Address
-  debtToken: string
-  config: string
-  tripleSlopeModel: string
-  StrategyAddTwoSidesOptimal: string
-  pid: number
+  pid?: number
   lpSymbol?: string
   lpAddresses?: Address
   token?: Token
@@ -87,27 +82,12 @@ export interface StakeConfig {
     earnLabel: string
     endBlock: number
   }
+  poolId: number
+  vaultAddress: Address
+  fairLaunchAddress?: Address
 
-
-  // workers: [
-  //   {
-  //       name: string
-  //       address: string
-  //       config: string
-  //       pId: number
-  //       lp: string
-  //       stakingLpAt: string
-  //       strategies: {
-  //           StrategyAddAllBaseToken: string
-  //           StrategyLiquidate: string
-  //           StrategyAddTwoSidesOptimal: string
-  //           StrategyWithdrawMinimizeTrading: string
-  //       }
-  //   }
-  // ]
 
   leverage?: number
-  vaultAddress?: Address
   workerAddress?: Address
   workerConfig?: Address
   strategies?: {
@@ -116,6 +96,8 @@ export interface StakeConfig {
     addTwoSidesOptimal: Address
     withdrawMinimizeTrading: Address
   }
+
+
 }
 
 
