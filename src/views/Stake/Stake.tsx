@@ -6,7 +6,7 @@ import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { Image, Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
-import { useStakeBalanceData, useStakeData, usePollLeverageFarmsWithUserData, useStakes } from 'state/stake/hooks'
+import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -87,14 +87,14 @@ const Stake: React.FC = () => {
   const { t } = useTranslation()
   const { data: farmsData } = useStakes()
   console.log({ ' 数据': farmsData })
-  usePollLeverageFarmsWithUserData()
+  useStakeWithUserData()
 
-  const { stakeData } = useStakeData()
-  const { stakeBalanceData } = useStakeBalanceData()
+  // const { stakeData } = useStakeData()
+  // const { stakeBalanceData } = useStakeBalanceData()
 
-  const stakingData = stakeData.map((value, index) => {
-    return { ...value, huskyDaily: stakeBalanceData[index] }
-  })
+  // const stakingData = stakeData.map((value, index) => {
+  //   return { ...value, huskyDaily: stakeBalanceData[index] }
+  // })
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
