@@ -47,19 +47,19 @@ const LeverageCard = ({ tokenData }) => {
       <CardBody>
         <AprRow apy="" />
         <Flex mt="24px" justifyContent="space-between">
-          {account ? (
-            /*  <CardActions pool={pool} stakedBalance={stakedBalance} /> */
+          {/*   {account ? (
+             <CardActions pool={pool} stakedBalance={stakedBalance} /> 
             { account }
           ) : (
             <>
-              {/*  <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
+                <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
                 {t('Start earning')}
               </Text>
-              <ConnectWalletButton /> */}
-              <Button>Deposit</Button>
-              <Button>Withdraw</Button>
+              <ConnectWalletButton /> 
             </>
-          )}
+          )} */}
+          <Button>Deposit</Button>
+          <Button>Withdraw</Button>
         </Flex>
       </CardBody>
 
