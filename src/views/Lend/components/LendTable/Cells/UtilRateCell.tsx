@@ -12,6 +12,14 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
+  ${CellContent} {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    ${({ theme }) => theme.mediaQueries.md} {
+      flex-direction: column;
+    }
+  }
 `
 
 const UtilRateCell = ({ utilRate }) => {
@@ -27,11 +35,7 @@ const UtilRateCell = ({ utilRate }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Utilization Rate
         </Text>
-        {utilRate ? (
-          <Text>{utilizationRateToPercentage(utilRate)}</Text>
-        ) : (
-          <Skeleton width="80px" height="16px" />
-        )}
+        {utilRate ? <Text>{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

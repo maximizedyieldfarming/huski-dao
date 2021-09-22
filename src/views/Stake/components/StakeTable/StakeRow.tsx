@@ -11,6 +11,10 @@ import CurrencyCell from './Cells/CurrencyCell'
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+  }
   //cursor: pointer;
 `
 
@@ -31,8 +35,8 @@ const StakeRow = ({ tokenData }) => {
       <StyledRow role="row" onClick={toggleExpanded}>
         <CurrencyCell token={tokenData} />
         <AprCell apr={stakeAPR} />
-        {isDesktop && <TotalSupplyCell supply={stakeValue} />}
-        {isDesktop && <ActionCell name={name} />}
+        <TotalSupplyCell supply={stakeValue} />
+        <ActionCell name={name} />
       </StyledRow>
     </>
   )

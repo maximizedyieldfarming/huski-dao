@@ -29,7 +29,7 @@ const PoolCell = ({ pool, quoteToken, token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex>
+        <Flex alignItems="center">
           <TokenPairImage
             variant="inverted"
             primaryToken={quoteToken}

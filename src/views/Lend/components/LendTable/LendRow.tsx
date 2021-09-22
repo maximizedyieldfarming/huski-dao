@@ -15,6 +15,10 @@ import ActionCell from './Cells/ActionCell'
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+  }
   //cursor: pointer;
 `
 
@@ -30,18 +34,18 @@ const LendRow = ({ tokenData }) => {
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
-// name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply,
-  const { totalToken, vaultDebtVal, token ,userData} = tokenData
+  // name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply,
+  const { totalToken, vaultDebtVal, token, userData } = tokenData
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
         <ApyCell apy={getAprData(tokenData, huskyPrice, huskyPerBlock)} />
-        {isDesktop && <TotalSupplyCell supply={parseInt(totalToken)} />}
-        {isDesktop && <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />}
-        {isDesktop && <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />}
+        <TotalSupplyCell supply={parseInt(totalToken)} />
+        <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />
+        <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
         <BalanceCell balance={userData.tokenBalance} />
-        {isDesktop && <ActionCell token={tokenData} />}
+        <ActionCell token={tokenData} />
       </StyledRow>
     </>
   )

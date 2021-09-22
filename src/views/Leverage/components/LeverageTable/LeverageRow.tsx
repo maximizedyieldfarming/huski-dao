@@ -11,6 +11,11 @@ import TvlCell from './Cells/TvlCell'
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+  }
+
   //cursor: pointer;
 `
 
@@ -31,9 +36,9 @@ const LeverageRow = ({ tokenData }) => {
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={lpSymbol} quoteToken={quoteToken} token={token} />
         <ApyCell apy={reserveTokenOne} />
-        {isDesktop && <TvlCell tvl={tvl} />}
-        {isDesktop && <LeverageCell leverage={leverage} />}
-        {isDesktop && <ActionCell token={tokenData} />}
+        <TvlCell tvl={tvl} />
+        <LeverageCell leverage={leverage} />
+        <ActionCell token={tokenData} />
       </StyledRow>
     </>
   )
