@@ -5,6 +5,7 @@ import { Text, useMatchBreakpoints, Skeleton } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
+import { formatBigNumber } from 'state/utils'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -30,7 +31,7 @@ const TotalSupplyCell = ({ supply }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Supply
         </Text>
-        {supply ? <Text>{supply}</Text> : <Skeleton width="80px" height="16px" />}
+        {supply ? <Text>{formatBigNumber(supply)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )
