@@ -25,13 +25,9 @@ const CurrencyCell = ({ token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        {/* REMINDER: getting the icons using the token names is only provisory
-          should be changed to using token address when that data is available
-          */}
-
         <TokenImage token={token?.token} width={40} height={40} mr="8px" />
         <Text bold={!isMobile} small={isMobile}>
-          {token.name}
+          {token.symbol}
         </Text>
       </CellContent>
     </StyledCell>
