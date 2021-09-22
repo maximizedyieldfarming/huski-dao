@@ -62,6 +62,16 @@ const farmTokens: Token[] = [
     projectLink: 'https://www.alpacafinance.org/',
     coingeckoId: 'alpaca-finance',
   },
+  {
+    symbol: 'BUSD',
+    address: {
+      56: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+      97: '',
+    },
+    decimals: 18,
+    projectLink: 'https://www.paxos.com/busd/',
+    coingeckoId: 'binance-usd',
+  },
 ]
 
 export default farmTokens
