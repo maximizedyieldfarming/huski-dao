@@ -115,7 +115,7 @@ const Stake: React.FC = () => {
   }
   const cardLayout = (
     <CardLayout>
-      {stakingData.map((token) => (
+      {farmsData.map((token) => (
         <StakeCard token={token} />
       ))}
     </CardLayout>
@@ -176,7 +176,7 @@ const Stake: React.FC = () => {
         />
       </Flex>
 
-      {viewMode === ViewMode.CARD ? cardLayout : <StakeTable stakeData={stakingData} />}
+      {viewMode === ViewMode.CARD ? cardLayout : <StakeTable stakeData={farmsData} />}
     </Page>
   )
 }
