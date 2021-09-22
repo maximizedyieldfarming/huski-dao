@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { getStakeApr } from '../../helpers'
+import { useHuskyPrice, useHuskyPerBlock } from 'state/leverage/hooks'
+import { getStakeApy } from '../../helpers'
 import AprCell from './Cells/AprCell'
 import ActionCell from './Cells/ActionCell'
 import TotalSupplyCell from './Cells/TotalSupplyCell'
@@ -28,13 +29,15 @@ const StakeRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { name, stakeAPR, stakeValue } = tokenData
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
 
+  const { name, stakeValue } = tokenData
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <CurrencyCell token={tokenData} />
-        <AprCell apr={stakeAPR} />
+        <AprCell apy={getStakeApy(tokenData, huskyPrice, huskyPerBlock)}  />
         <TotalSupplyCell supply={stakeValue} />
         <ActionCell name={name} />
       </StyledRow>

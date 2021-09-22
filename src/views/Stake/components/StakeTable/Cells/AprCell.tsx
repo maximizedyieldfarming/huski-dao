@@ -21,16 +21,21 @@ const StyledCell = styled(BaseCell)`
     }
   }
 `
-const AprCell = ({ apr }) => {
+const AprCell = ({ apy }) => {
   const { isMobile } = useMatchBreakpoints()
+
+  const apyCell = (e) => {
+    const value = e * 100
+    return `${value.toFixed(2)}%`
+  }
 
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Apr
+          Apy
         </Text>
-        {apr && apr.gte(0) ? <Text>{apr}</Text> : <Skeleton width="80px" height="16px" />}
+        {apy ? <Text>{apyCell(apy)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )
