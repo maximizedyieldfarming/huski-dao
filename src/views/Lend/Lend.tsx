@@ -228,7 +228,7 @@ const Lend: React.FC = () => {
   const cardLayout = (
     <CardLayout>
       {lendData.map((token) => (
-        <LendCard token={token} />
+        <LendCard token={token} key={token?.pid} />
       ))}
     </CardLayout>
   )

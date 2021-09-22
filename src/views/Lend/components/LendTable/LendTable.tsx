@@ -38,7 +38,7 @@ const LendTable = ({ lendData }) => {
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {lendData.map((token) => (
-          <LendRow tokenData={token} />
+          <LendRow tokenData={token} key={token?.pid} />
         ))}
         <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>

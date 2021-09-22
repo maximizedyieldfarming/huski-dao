@@ -94,7 +94,7 @@ const Leverage: React.FC = () => {
   const cardLayout = (
     <CardLayout>
       {farmsData.map((token) => (
-        <LeverageCard tokenData={token} />
+        <LeverageCard tokenData={token} key={token?.pid} />
       ))}
     </CardLayout>
   )

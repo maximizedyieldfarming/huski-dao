@@ -39,7 +39,7 @@ const LeverageTable = ({ leverageData }) => {
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {leverageData.map((token) => (
-          <LeverageRow tokenData={token} />
+          <LeverageRow tokenData={token} key={token?.pid} />
         ))}
         <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>

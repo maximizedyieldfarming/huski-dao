@@ -28,10 +28,8 @@ const ScrollButtonContainer = styled.div`
   padding-bottom: 5px;
 `
 
-
-
-const StakeTable = ({stakeData}) => {
-   const tableWrapperEl = useRef<HTMLDivElement>(null)
+const StakeTable = ({ stakeData }) => {
+  const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
       behavior: 'smooth',
@@ -41,7 +39,7 @@ const StakeTable = ({stakeData}) => {
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {stakeData.map((token) => (
-          <StakeRow tokenData={token} />
+          <StakeRow tokenData={token} key={token?.pid} />
         ))}
         <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>

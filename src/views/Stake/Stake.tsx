@@ -116,7 +116,7 @@ const Stake: React.FC = () => {
   const cardLayout = (
     <CardLayout>
       {farmsData.map((token) => (
-        <StakeCard token={token} />
+        <StakeCard token={token} key={token?.pid} />
       ))}
     </CardLayout>
   )
