@@ -34,7 +34,7 @@ const StyledPage = styled(Page)`
   gap: 2rem;
 `
 
-const AdjustPosition = (props) => {
+const Farm = (props) => {
   console.log('props to adjust position...', props)
   const [leverage, setLeverage] = useState(0)
   /*   const [incDecRadio, setIncDecRadio] = useState(true)
@@ -69,7 +69,7 @@ const AdjustPosition = (props) => {
   return (
     <StyledPage>
       <Text fontWeight="bold" style={{ alignSelf: 'center' }}>
-        Adjust Position {token}
+        Farming {token} Pools
       </Text>
       <StyledBox>
         <Text as="span">Collateral</Text>
@@ -150,58 +150,18 @@ const AdjustPosition = (props) => {
           </Text>
         </Box>
       </StyledBox>
+
       <StyledBox>
-        <Flex>
-          <Text>Debt Assets Borrowed</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Flex>
-          <Text>Updated Debt</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Flex>
-          <Text>Leverage (ratio)</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Box>
-          {' '}
-          <Slider
-            min={1.0}
-            max={3.0}
-            name="leverage"
-            step={0.5}
-            value={leverage}
-            onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
-          />
-        </Box>
+        <Slider
+          min={1.0}
+          max={3.0}
+          name="range"
+          step={0.5}
+          value={leverage}
+          onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
+        />
       </StyledBox>
-      <StyledBox>
-        <Flex>
-          <Text>Trading Fees APR(7 DAYS average)</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Flex>
-          <Text>Huski Rewards APR</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Flex>
-          <Text>Borrowing Interest APR</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Flex>
-          <Box>
-            <Text>APR</Text>
-            <Text color="secondary">
-              Yields Farm APR + Trading Fess APR + Huski Rewards APR - Borrowing Interest APR
-            </Text>
-          </Box>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-        <Flex>
-          <Text>APY</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
-      </StyledBox>
+
       <StyledBox>
         <Flex>
           <Text>Assets Supplied</Text>
@@ -216,15 +176,20 @@ const AdjustPosition = (props) => {
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
-          <Text>Updated Total Assets</Text>
+          <Text>Position Value</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+        </Flex>
+        <Flex>
+          <Text>APR</Text>
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
       </StyledBox>
-      <Flex alignSelf="center">
-        <Button>Adjust Position</Button>
+      <Flex justifyContent="space-evenly">
+        <Button>Authorize</Button>
+        <Button>3x Farm</Button>
       </Flex>
     </StyledPage>
   )
 }
 
-export default AdjustPosition
+export default Farm

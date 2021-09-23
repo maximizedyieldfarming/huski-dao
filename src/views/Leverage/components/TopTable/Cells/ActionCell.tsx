@@ -26,16 +26,16 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ name }) => {
+const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/leverage/adjustposition/${name}`}>
+        <Button as={Link} to={{ pathname: `/leverage/adjustPosition/${token?.lpSymbol}`, state: { tokenData: token } }}>
           Adjust Position
         </Button>
-        <Button as={Link} to={`/leverage/closeposition/${name}`}>
+        <Button as={Link} to={`/leverage/closeposition/${token?.lpSymbol}`}>
           Close Position
         </Button>
       </CellContent>

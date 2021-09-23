@@ -17,10 +17,8 @@ import { getPancakeProfileAddress, getPancakeVaultAddress } from 'utils/addressH
 import { getVaultContract, getWeb3VaultContract } from 'utils/contractHelper';
 import { BLOCKS_PER_YEAR, DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config';
 import BigNumber from 'bignumber.js'
-import Deposit from './components/Deposit'
-import Withdraw from './components/Withdraw'
-
-// import { Input as NumericalInput } from '../index'
+// import Deposit from './components/Deposit'
+// import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -180,8 +178,16 @@ console.info('cakeVaultContract',cakeVaultContract);
     setIbTokenValue(parseFloat(ibTokenAmount.toFixed(2))) // parseFloat because toFixed returns a string and was causing troubles with the state
   }
 
+  // const [inputValue, setInputValue] = useState(3)
+
+  const setAmountToMax = (e) => {
+    setIbTokenValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
+    // setInputValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
+  }
+
+  const displayBalance = getFullDisplayBalance(balance, 18, 3)
   console.log('type of amount', typeof ibTokenValue)
-  console.log('type of balance', typeof getFullDisplayBalance(balance, 18, 3))
+  console.log({ displayBalance })
 
   return (
     <StyledPage>
@@ -215,11 +221,16 @@ console.info('cakeVaultContract',cakeVaultContract);
             </Box>
             <Box>
               <Text fontWeight="bold">
-                Balance: {getFullDisplayBalance(balance, 18, 3)}
+                Balance: {displayBalance}
                 {token}
               </Text>
 
-              <Text>{token} | MAX</Text>
+              <Flex>
+                <Text>{token} | </Text>
+                <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+                  MAX
+                </Button>
+              </Flex>
             </Box>
           </Flex>
           <Box>
@@ -245,11 +256,7 @@ console.info('cakeVaultContract',cakeVaultContract);
               <Button
                 onClick={handleDeposit}
                 disabled={
-                  !account
-                    ? true
-                    : new BigNumber(ibTokenValue).isGreaterThan(
-                        new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber(),
-                      )
+                  !account ? true : new BigNumber(ibTokenValue).isGreaterThan(new BigNumber(displayBalance).toNumber())
                 }
               >
                 {t('Deposit')}
@@ -263,7 +270,7 @@ console.info('cakeVaultContract',cakeVaultContract);
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{getFullDisplayBalance(balance, 18, 3)}</Text>
+        <Text>{displayBalance}</Text>
       </Balance>
       <Box>
         <Text>

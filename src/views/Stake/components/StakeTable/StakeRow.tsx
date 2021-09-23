@@ -37,7 +37,7 @@ const StakeRow = ({ tokenData }) => {
         <CurrencyCell token={tokenData} />
         <AprCell apy={getStakeApy(tokenData, huskyPrice, huskyPerBlock)}  />
         <TotalSupplyCell supply={parseInt(totalSupply)} />
-        <ActionCell name={name} />
+        <ActionCell token={tokenData} />
       </StyledRow>
     </>
   )
