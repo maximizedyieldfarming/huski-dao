@@ -73,7 +73,7 @@ const StakeAction = () => {
   const { balance } = useTokenBalance(account)
   console.info('bbbalance', balance)
   const { action, token } = useParams<RouteParams>()
-  const [isDeposit, setIsDeposit] = useState(action === 'deposit')
+  const [isDeposit, setIsDeposit] = useState(action === 'stake')
 
   const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
 
@@ -105,8 +105,8 @@ const StakeAction = () => {
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/stake/deposit/${token}`} replace>
-            <Text>Deposit</Text>
+          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/stake/stake/${token}`} replace>
+            <Text>Stake</Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/stake/withdraw/${token}`} replace>
             <Text>Withdraw</Text>

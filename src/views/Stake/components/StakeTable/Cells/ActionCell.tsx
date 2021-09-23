@@ -42,8 +42,8 @@ const ActionCell = ({ token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/stake/deposit/${token?.symbol}`} disabled={!account}>
-          Deposit
+        <Button as={Link} to={`/stake/stake/${token?.symbol}`} disabled={!account}>
+          Stake
         </Button>
         <Button as={Link} to={`/stake/withdraw/${token?.symbol}`} disabled={!account}>
           Withdraw
