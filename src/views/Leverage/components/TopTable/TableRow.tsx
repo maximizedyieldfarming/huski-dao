@@ -23,8 +23,9 @@ const StyledRow = styled.div`
 `
 
 const ScrollContainer = styled.div`
-  overflow-x: scroll;
+  overflow-x: auto;
   display: flex;
+  flex: 1;
 `
 
 const TableRow = ({ data, isActivePos }) => {

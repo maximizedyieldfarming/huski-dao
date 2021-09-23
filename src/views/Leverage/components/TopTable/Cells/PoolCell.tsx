@@ -10,18 +10,17 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 5;
+  // flex: 1;
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    // flex: 1 0 150px;
     padding-left: 32px;
   }
 `
 
-
-const PoolCell = ({pool}) => {
-   const { t } = useTranslation()
+const PoolCell = ({ pool }) => {
+  const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
   return (
