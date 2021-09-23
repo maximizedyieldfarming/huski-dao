@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useHuskyPrice, useHuskyPerBlock } from 'state/leverage/hooks'
-import { getHuskyRewards } from '../../helpers'
+import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
+import { getHuskyRewards, getYieldFarming } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
@@ -28,7 +28,7 @@ const LeverageRow = ({ tokenData }) => {
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
-
+  const cakePrice = useCakePrice()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
@@ -37,7 +37,7 @@ const LeverageRow = ({ tokenData }) => {
 
 
   getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
-
+  getYieldFarming(tokenData, cakePrice)
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>

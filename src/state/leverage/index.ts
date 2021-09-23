@@ -63,7 +63,7 @@ createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
 
-    console.log("leverage: ", "fetchLeverageFarmUserDataAsync")
+    // console.log("leverage: ", "fetchLeverageFarmUserDataAsync")
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
         pid: farmsToFetch[index].pid,

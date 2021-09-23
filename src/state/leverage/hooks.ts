@@ -196,6 +196,17 @@ export const useHuskyPrice = (): BigNumber => {
   return huskyPrice
 }
 
+export const useCakePrice = (): BigNumber => {
+  const cakeFarm = useFarmFromPid(251)
+  const cakePriceAsString = cakeFarm.quoteToken.busdPrice
+
+  const cakePrice = useMemo(() => {
+    return new BigNumber(cakePriceAsString)
+  }, [cakePriceAsString])
+
+  return cakePrice
+}
+
 export const useHuskyPerBlock = (): number => {
   const huskyFarm = useFarmFromPid(362)
   const huskyPerBlock = huskyFarm.pooPerBlock

@@ -87,9 +87,9 @@ const Leverage: React.FC = () => {
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
 
-  console.info('useLeverageFarms：', useLeverageFarms())
+  // console.info('useLeverageFarms：', useLeverageFarms())
   usePollLeverageFarmsWithUserData()
-  console.info('usePollLeverageFarmsWithUserData：', usePollLeverageFarmsWithUserData())
+  // console.info('usePollLeverageFarmsWithUserData：', usePollLeverageFarmsWithUserData())
 
   const cardLayout = (
     <CardLayout>
