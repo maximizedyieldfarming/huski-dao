@@ -13,10 +13,8 @@ import { getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
 import { deposit, withdraw } from 'utils/vaultService'
 import BigNumber from 'bignumber.js'
-import Deposit from './components/Deposit'
-import Withdraw from './components/Withdraw'
-
-// import { Input as NumericalInput } from '../index'
+// import Deposit from './components/Deposit'
+// import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -133,8 +131,16 @@ const LendAction = (props) => {
     setIbTokenValue(parseFloat(ibTokenAmount.toFixed(2))) // parseFloat because toFixed returns a string and was causing troubles with the state
   }
 
+  // const [inputValue, setInputValue] = useState(3)
+
+  const setAmountToMax = (e) => {
+    setIbTokenValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
+    // setInputValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
+  }
+
+  const displayBalance = getFullDisplayBalance(balance, 18, 3)
   console.log('type of amount', typeof ibTokenValue)
-  console.log('type of balance', typeof getFullDisplayBalance(balance, 18, 3))
+  console.log({ displayBalance })
 
   return (
     <StyledPage>
@@ -168,11 +174,16 @@ const LendAction = (props) => {
             </Box>
             <Box>
               <Text fontWeight="bold">
-                Balance: {getFullDisplayBalance(balance, 18, 3)}
+                Balance: {displayBalance}
                 {token}
               </Text>
 
-              <Text>{token} | MAX</Text>
+              <Flex>
+                <Text>{token} | </Text>
+                <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+                  MAX
+                </Button>
+              </Flex>
             </Box>
           </Flex>
           <Box>
@@ -198,11 +209,7 @@ const LendAction = (props) => {
               <Button
                 onClick={handleDeposit}
                 disabled={
-                  !account
-                    ? true
-                    : new BigNumber(ibTokenValue).isGreaterThan(
-                        new BigNumber(getFullDisplayBalance(balance, 18, 3)).toNumber(),
-                      )
+                  !account ? true : new BigNumber(ibTokenValue).isGreaterThan(new BigNumber(displayBalance).toNumber())
                 }
               >
                 {t('Deposit')}
@@ -216,7 +223,7 @@ const LendAction = (props) => {
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{getFullDisplayBalance(balance, 18, 3)}</Text>
+        <Text>{displayBalance}</Text>
       </Balance>
       <Box>
         <Text>

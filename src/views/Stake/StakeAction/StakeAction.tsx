@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
+import useTokenBalance from 'hooks/useTokenBalance'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import Deposit from './components/Deposit'
-import Withdraw from './components/Withdraw'
+import { getFullDisplayBalance } from 'utils/formatBalance'
+// import Deposit from './components/Deposit'
+// import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -67,6 +69,9 @@ const ButtonGroup = styled(Flex)`
 
 const StakeAction = () => {
   const { account } = useWeb3React()
+  console.log({ account })
+  const { balance } = useTokenBalance(account)
+  console.info('bbbalance', balance)
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -76,7 +81,17 @@ const StakeAction = () => {
 
   const [amount, setAmount] = useState(0)
 
-  const handleAmountChange = (e) => setAmount(e.target.value ? e.target.value : 0)
+  const handleAmountChange = (e) => {
+    const value = e.target.value ? parseFloat(e.target.value) : 0
+    setAmount(value)
+  }
+
+  const setAmountToMax = (e) => {
+    setAmount(parseFloat(getFullDisplayBalance(balance, 18, 3)))
+  }
+
+  const displayBalance = getFullDisplayBalance(balance, 18, 3)
+
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
@@ -84,7 +99,9 @@ const StakeAction = () => {
       </Text>
       <Bubble>
         <Text>Staked</Text>
-        <Text>1234 {token}</Text>
+        <Text>
+          {displayBalance} {token}
+        </Text>
       </Bubble>
       <TabPanel>
         <Header>
@@ -102,8 +119,15 @@ const StakeAction = () => {
               <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
             </Box>
             <Box>
-              <Text fontWeight="bold">Balance: 123 {token}</Text>
-              <Text>{token} | MAX</Text>
+              <Text fontWeight="bold">
+                Balance: {displayBalance} {token}
+              </Text>
+              <Flex>
+                <Text>{token} | </Text>
+                <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+                  MAX
+                </Button>
+              </Flex>
             </Box>
           </Flex>
 
