@@ -34,16 +34,16 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ name }) => {
+const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/stake/deposit/${name}`}>
+        <Button as={Link} to={`/stake/deposit/${token?.symbol}`}>
           Deposit
         </Button>
-        <Button as={Link} to={`/stake/withdraw/${name}`}>
+        <Button as={Link} to={`/stake/withdraw/${token?.symbol}`}>
           Withdraw
         </Button>
       </CellContent>
