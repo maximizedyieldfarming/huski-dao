@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
@@ -36,14 +37,15 @@ const StyledButton = styled(Button)`
 
 const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { account } = useWeb3React()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button as={Link} to={`/stake/deposit/${token?.symbol}`}>
+        <Button as={Link} to={`/stake/deposit/${token?.symbol}`} disabled={!account}>
           Deposit
         </Button>
-        <Button as={Link} to={`/stake/withdraw/${token?.symbol}`}>
+        <Button as={Link} to={`/stake/withdraw/${token?.symbol}`} disabled={!account}>
           Withdraw
         </Button>
       </CellContent>

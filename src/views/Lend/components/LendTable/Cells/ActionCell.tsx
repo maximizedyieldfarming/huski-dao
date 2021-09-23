@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
@@ -36,6 +37,7 @@ const StyledButton = styled(Button)`
 
 const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { account } = useWeb3React()
 
   const name = token?.token?.symbol
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
@@ -49,14 +51,14 @@ const ActionCell = ({ token }) => {
         <Button
           as={Link}
           to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, allowance } }}
-          disabled={!exchangeRate}
+          disabled={!exchangeRate || !account}
         >
           Deposit
         </Button>
         <Button
           as={Link}
           to={{ pathname: `/lend/withdraw/${name}`, state: { exchangeRate, allowance } }}
-          disabled={!exchangeRate}
+          disabled={!exchangeRate || !account}
         >
           Withdraw
         </Button>
