@@ -93,7 +93,7 @@ const LendAction = (props) => {
   const handleConfirm = () => {
     withdraw(account, 11)
   }
-console.info('cakeVaultContract',cakeVaultContract);
+// console.info('cakeVaultContract',cakeVaultContract);
 
   const handleApprove2 = async () => {
     const tx = await callWithGasPrice(cakeContract, 'approve', [cakeVaultContract.address, ethers.constants.MaxUint256])
@@ -172,8 +172,8 @@ console.info('cakeVaultContract',cakeVaultContract);
 
   const handleAmountChange = (e) => {
     const value = e.target.value ? parseFloat(e.target.value) : 0
-    console.log('type of value', typeof value)
-    console.log('type of exchangeRate', typeof exchangeRate)
+    // console.log('type of value', typeof value)
+    // console.log('type of exchangeRate', typeof exchangeRate)
     const ibTokenAmount = value / exchangeRate
     setIbTokenValue(parseFloat(ibTokenAmount.toFixed(2))) // parseFloat because toFixed returns a string and was causing troubles with the state
   }
@@ -186,8 +186,8 @@ console.info('cakeVaultContract',cakeVaultContract);
   }
 
   const displayBalance = getFullDisplayBalance(balance, 18, 3)
-  console.log('type of amount', typeof ibTokenValue)
-  console.log({ displayBalance })
+  // console.log('type of amount', typeof ibTokenValue)
+  // console.log({ displayBalance })
 
   return (
     <StyledPage>

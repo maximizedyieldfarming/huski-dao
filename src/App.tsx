@@ -67,7 +67,7 @@ const App: React.FC = () => {
   // usePollCoreFarmData()
 
   const web3React = useWeb3React()
-  console.log({ web3React })
+  // console.log({ web3React })
 
   return (
     <Router history={history}>

@@ -30,7 +30,7 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerB
   );
   const totalApr = BigNumber.sum(landApr, stakeApr);
   const apy = Math.pow(1 + totalApr.toNumber() / 365, 365) - 1;
-  // console.log({apy,landApr, stakeApr,totalApr });
+
   return apy;
 }
 
