@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Button, Flex } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -35,9 +35,10 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const RewardsCell = () => {
+const RewardsCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
+  const reward = parseFloat(token?.userData?.earnings).toFixed(2)
 
   return (
     <StyledCell role="cell">
@@ -45,7 +46,12 @@ const RewardsCell = () => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total HUSKI Rewards
         </Text>
-        <Button disabled={!account}>Claim</Button>
+        <Flex alignItems="center" style={{ gap: '10px' }}>
+          <Text fontSize="3">{reward}</Text>
+          <Button disabled={!account || Number(reward) === 0} scale="sm">
+            Claim
+          </Button>
+        </Flex>
       </CellContent>
     </StyledCell>
   )
