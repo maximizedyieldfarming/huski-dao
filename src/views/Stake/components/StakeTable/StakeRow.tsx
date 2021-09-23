@@ -8,6 +8,7 @@ import AprCell from './Cells/AprCell'
 import ActionCell from './Cells/ActionCell'
 import TotalSupplyCell from './Cells/TotalSupplyCell'
 import CurrencyCell from './Cells/CurrencyCell'
+import RewardsCell from './Cells/RewardsCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -38,6 +39,7 @@ const StakeRow = ({ tokenData }) => {
         <AprCell apy={getStakeApy(tokenData, huskyPrice, huskyPerBlock)}  />
         <TotalSupplyCell supply={parseInt(totalSupply)} />
         <ActionCell token={tokenData} />
+        <RewardsCell />
       </StyledRow>
     </>
   )
