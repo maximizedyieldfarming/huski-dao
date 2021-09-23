@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { getBalanceAmount } from 'utils/formatBalance'
 import { getSumLendData } from 'utils/vaultService'
+import { getYieldFarmAPR } from 'utils/pancakeService'
 import useRefresh from 'hooks/useRefresh'
 import mainnet from '../../mainnet.json'
 import { sumTokenData, formatBigNumber } from '../utils'
@@ -17,6 +18,7 @@ export const useLendTotalSupply = () => {
     const lendTSData = mainnet.Vaults.map((pool) => {
       const lendTS = async () => {
         const totalToken = await getSumLendData(pool);
+        const totalToken1 = await getYieldFarmAPR(pool);
         return totalToken;
       };
       return lendTS();

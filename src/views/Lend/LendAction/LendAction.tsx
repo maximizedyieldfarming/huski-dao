@@ -5,13 +5,17 @@ import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
+import { ethers, Contract } from 'ethers'
 import useTokenBalance from 'hooks/useTokenBalance'
-import { useCakeVaultContract } from 'hooks/useContract'
+import { useCakeVaultContract, useCake } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
-import { deposit, withdraw } from 'utils/vaultService'
+import { deposit, withdraw, approve } from 'utils/vaultService'
+import { getPancakeProfileAddress, getPancakeVaultAddress } from 'utils/addressHelpers'
+import { getVaultContract, getWeb3VaultContract } from 'utils/contractHelper';
+import { BLOCKS_PER_YEAR, DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config';
 import BigNumber from 'bignumber.js'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
@@ -79,8 +83,9 @@ const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   console.log({ account })
+  const cakeContract = useCake()
   const { balance } = useTokenBalance(account)
-  console.info('bbbalance', balance)
+  // console.info('bbbalance', balance)
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
@@ -89,6 +94,48 @@ const LendAction = (props) => {
   }
   const handleConfirm = () => {
     withdraw(account, 11)
+  }
+console.info('cakeVaultContract',cakeVaultContract);
+
+  const handleApprove2 = async () => {
+    const tx = await callWithGasPrice(cakeContract, 'approve', [cakeVaultContract.address, ethers.constants.MaxUint256])
+    // setRequestedApproval(true)
+    const receipt = await tx.wait()
+    if (receipt.status) {
+      toastSuccess(t('Contract Enabled'), t('You can now stake in the %symbol% vault!', { symbol: 'CAKE' }))
+      // setLastUpdated()
+      // setRequestedApproval(false)
+    } else {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      // setRequestedApproval(false)
+    }
+  }
+
+  const handleApprove = async () => {
+    const tx = await cakeContract.approve(getPancakeProfileAddress(), '1')
+    // setIsApproving(true)
+    const receipt = await tx.wait()
+    if (receipt.status) {
+      // goToChange()
+    } else {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      // setIsApproving(false)
+    }
+  }
+
+  const handleApprove1 = async () => {
+
+  
+    // // getPancakeProfileAddress   getPancakeVaultAddress
+    // const tx = await cakeContract.approve(getPancakeProfileAddress(), '-1')
+    // // setIsApproving(true)
+    // const receipt = await tx.wait()
+    // if (receipt.status) {
+    //   // goToChange()
+    // } else {
+    //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    //   // setIsApproving(false)
+    // }
   }
 
   const handleConfirmClick = async () => {
@@ -112,7 +159,7 @@ const LendAction = (props) => {
   console.log('lendAction props...', props)
   const {
     location: {
-      state: { exchangeRate, allowance },
+      state: { exchangeRate, allowance, tokenData },
     },
   } = props
 
@@ -193,7 +240,7 @@ const LendAction = (props) => {
               Claim
             </Button> */}
             {allowance === '0' ? (
-              <Button>Approve</Button>
+              <Button onClick={handleApprove}>Approve</Button>
             ) : (
               <Button
                 onClick={handleDeposit}

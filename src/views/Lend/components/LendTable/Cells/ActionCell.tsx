@@ -36,7 +36,7 @@ const StyledButton = styled(Button)`
 
 const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
-
+  const tokenData = token
   const name = token?.token?.symbol
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
   const {
@@ -48,7 +48,7 @@ const ActionCell = ({ token }) => {
       <CellContent>
         <Button
           as={Link}
-          to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, allowance } }}
+          to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, allowance, tokenData } }}
           disabled={!exchangeRate}
         >
           Deposit
