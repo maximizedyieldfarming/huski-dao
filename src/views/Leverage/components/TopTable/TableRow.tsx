@@ -64,7 +64,7 @@ const TableRow = ({ data, isActivePos }) => {
             ) : (
               <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
             ))}
-          {isDesktop && isActivePos && <ActionCell name={data[0]?.lpSymbol} />}
+          {isDesktop && isActivePos && <ActionCell token={data[0]} />}
         </ScrollContainer>
       </StyledRow>
     </>

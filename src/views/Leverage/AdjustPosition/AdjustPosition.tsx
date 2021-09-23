@@ -69,7 +69,7 @@ const AdjustPosition = (props) => {
   return (
     <StyledPage>
       <Text fontWeight="bold" style={{ alignSelf: 'center' }}>
-        Farming {token} Pools
+        Adjust Position {token}
       </Text>
       <StyledBox>
         <Text as="span">Collateral</Text>
