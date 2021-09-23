@@ -36,8 +36,8 @@ const LeverageRow = ({ tokenData }) => {
   const { lpSymbol, tvl, leverage, reserveTokenOne, quoteToken, token } = tokenData
 
 
-  const aa = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
-console.info('aaaaa',aa);
+  getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
