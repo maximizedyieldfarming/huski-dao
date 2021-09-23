@@ -41,7 +41,7 @@ const LeverageRow = ({ tokenData }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={lpSymbol} quoteToken={quoteToken} token={token} />
+        <PoolCell pool={lpSymbol.replace(' LP', '')} quoteToken={quoteToken} token={token} />
         <ApyCell apy={reserveTokenOne} />
         <TvlCell tvl={tvl} />
         <LeverageCell leverage={leverage} />
