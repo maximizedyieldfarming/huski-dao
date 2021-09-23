@@ -12,7 +12,7 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerB
   const { totalToken, totalSupply, vaultDebtVal, token } = farm
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
-  const poolAlpacaPerBlock = pooPerBlock;
+  const poolHuskyPerBlock = pooPerBlock;
 
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
   let landRate = 0;
@@ -25,12 +25,12 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerB
   }
 
   const landApr = landRate * 0.9 * utilization;
-  const stakeApr = BLOCKS_PER_YEAR.times(poolAlpacaPerBlock * huskyPrice).div(
+  const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div(
     (busdTokenPrice * parseInt(totalToken) * parseInt(totalToken)) / parseInt(totalSupply)
   );
   const totalApr = BigNumber.sum(landApr, stakeApr);
   const apy = Math.pow(1 + totalApr.toNumber() / 365, 365) - 1;
-  // console.log({apy,landApr, stakeApr,totalApr });
+
   return apy;
 }
 

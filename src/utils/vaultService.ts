@@ -93,6 +93,16 @@ export const withdraw = async (address, amount) => {
   return receipt.status;
 };
 
+
+export const approve = async (address, amount) => {
+  const vault = getVaultContract(address);
+  const value = new BigNumber(amount).times(DEFAULT_TOKEN_DECIMAL).toString();
+
+  const tx = await vault.approve(value, options);
+  const receipt = await tx.wait();
+  return receipt.status;
+};
+
 export const farm = async (address, pid, worker, amount, loan, maxReturn, param: any) => {
   const vault = getVaultContract(address);
   const abiCoder = new ethers.utils.AbiCoder();
