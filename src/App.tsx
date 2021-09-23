@@ -41,6 +41,7 @@ const Lock = lazy(() => import('./views/Lock'))
 const Leverage = lazy(() => import('./views/Leverage'))
 const ClosePosition = lazy(() => import('views/Leverage/ClosePosition/ClosePosition'))
 const AdjustPosition = lazy(() => import('views/Leverage/AdjustPosition/AdjustPosition'))
+const Farm = lazy(() => import('views/Leverage/Farm/Farm'))
 const WarriorId = lazy(() => import('./views/WarriorID'))
 // const Profile = lazy(() => import('./views/Profile'))
 // const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
@@ -103,7 +104,8 @@ const App: React.FC = () => {
               <Leverage />
             </Route>
             <Route exact path="/leverage/closeposition/:token" component={ClosePosition} />
-            <Route exact path="/leverage/farm/:token" component={AdjustPosition} />
+            <Route exact path="/leverage/adjustPosition/:token" component={AdjustPosition} />
+            <Route exact path="/leverage/farm/:token" component={Farm} />
 
             <Route path="/warriorid">
               <WarriorId />
