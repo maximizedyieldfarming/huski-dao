@@ -86,14 +86,13 @@ const LendAction = (props) => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
-  const lpAddress = getAddress(tokenData.token.address)
-  const approveContract = useERC20(lpAddress)
+  const tokenAddress = getAddress(tokenData.token.address)
+  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const approveContract = useERC20(tokenAddress)
   const handleApprove = async () => {
-    const tx = await approveContract.approve(approveContract.address, ethers.constants.MaxUint256)
+    const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
     // setIsApproving(true)
     const receipt = await tx.wait()
-    console.info('tx',tx);
-    console.info('receipt',receipt);
     if (receipt.status) {
       // goToChange()
     } else {
@@ -103,7 +102,7 @@ const LendAction = (props) => {
   }
 
   const handleDeposit = () => {
-    deposit(lpAddress, 0.002)
+    deposit(tokenAddress, 0.002)
   }
   const handleConfirm = () => {
     withdraw(account, 11)
