@@ -36,10 +36,10 @@ const StakeRow = ({ tokenData }) => {
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <CurrencyCell token={tokenData} />
-        <AprCell apy={getStakeApy(tokenData, huskyPrice, huskyPerBlock)}  />
+        <AprCell apy={getStakeApy(tokenData, huskyPrice, huskyPerBlock)} />
         <TotalSupplyCell supply={parseInt(totalSupply)} />
         <ActionCell token={tokenData} />
-        <RewardsCell />
+        <RewardsCell token={tokenData} />
       </StyledRow>
     </>
   )
