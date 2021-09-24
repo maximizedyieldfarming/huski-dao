@@ -7,6 +7,7 @@ import { Text, useMatchBreakpoints, Button, Flex, Skeleton } from '@pancakeswap/
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
+import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -38,7 +39,9 @@ const StyledCell = styled(BaseCell)`
 const RewardsCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
-  const reward = parseFloat(token?.userData?.earnings).toFixed(2)
+  const reward = new BigNumber(parseFloat(token?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toFixed(3)
+  // const stakedBalance = new BigNumber(parseFloat(token?.userData?.stakedBalance)).div(DEFAULT_TOKEN_DECIMAL).toFixed(3)
+  // console.log({ stakedBalance })
 
   return (
     <StyledCell role="cell">
