@@ -38,26 +38,23 @@ const StyledButton = styled(Button)`
 const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
-  const tokenData = token
+  // const tokenData = token
   const name = token?.token?.symbol
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
-  const {
-    userData: { allowance },
-  } = token
-  // console.log({ allowance })
+
   return (
     <StyledCell role="cell">
       <CellContent>
         <Button
           as={Link}
-          to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, allowance, tokenData } }}
+          to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, token } }}
           disabled={!exchangeRate || !account}
         >
           Deposit
         </Button>
         <Button
           as={Link}
-          to={{ pathname: `/lend/withdraw/${name}`, state: { exchangeRate, allowance } }}
+          to={{ pathname: `/lend/withdraw/${name}`, state: { exchangeRate, token } }}
           disabled={!exchangeRate || !account}
         >
           Withdraw

@@ -80,9 +80,15 @@ const LendAction = (props) => {
   console.log('lendAction props...', props)
   const {
     location: {
-      state: { exchangeRate, allowance, tokenData },
+      state: { exchangeRate: excRate, token: data },
     },
   } = props
+
+  const [tokenData, setTokenData] = useState(data)
+  const [allowance, setAllowance] = useState(tokenData?.userData?.allowance)
+  const [exchangeRate, setExchangeRate] = useState(excRate)
+  console.log({ tokenData })
+
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
