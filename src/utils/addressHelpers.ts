@@ -26,10 +26,6 @@ export const getLotteryV2Address = () => {
 export const getPancakeProfileAddress = () => {
   return getAddress(addresses.pancakeProfile)
 }
-export const getPancakeVaultAddress = () => {
-  return getAddress(addresses.pancakeVaultAddress)
-}
-
 export const getPancakeRabbitsAddress = () => {
   return getAddress(addresses.pancakeRabbits)
 }
