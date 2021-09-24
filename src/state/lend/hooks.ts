@@ -18,7 +18,6 @@ export const useLendTotalSupply = () => {
     const lendTSData = mainnet.Vaults.map((pool) => {
       const lendTS = async () => {
         const totalToken = await getSumLendData(pool);
-        const totalToken1 = await getYieldFarmAPR(pool);
         return totalToken;
       };
       return lendTS();
