@@ -20,7 +20,7 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, po
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
   const { tokenReserve, quoteTokenReserve, poolWeight, quoteToken, token, lpTotalInQuoteToken } = farm
 
-  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(token.busdPrice)
+  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteToken.busdPrice)
   const poolWeightBigNumber: any =new BigNumber(poolWeight)
 
   // const reserve0: any = parseInt(tokenReserve);
