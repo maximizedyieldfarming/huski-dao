@@ -69,9 +69,7 @@ const ButtonGroup = styled(Flex)`
 
 const StakeAction = () => {
   const { account } = useWeb3React()
-  console.log({ account })
   const { balance } = useTokenBalance(account)
-  console.info('bbbalance', balance)
   const { action, token } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'stake')
 
