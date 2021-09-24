@@ -7,16 +7,14 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { ethers, Contract } from 'ethers'
 import useTokenBalance from 'hooks/useTokenBalance'
-import { useCakeVaultContract, useCake, useERC20 } from 'hooks/useContract'
+import { useCakeVaultContract, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
-import { deposit, withdraw, approve } from 'utils/vaultService'
-import { getPancakeProfileAddress, getAddress } from 'utils/addressHelpers'
+import { deposit, withdraw } from 'utils/vaultService'
+import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
-// import Deposit from './components/Deposit'
-// import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -78,7 +76,6 @@ const ButtonGroup = styled(Flex)`
 const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const cakeContract = useCake()
   const { balance } = useTokenBalance(account)
   console.log('lendAction props...', props)
   const {
@@ -89,33 +86,10 @@ const LendAction = (props) => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
-  const handleDeposit = () => {
-    deposit(account, 0.002)
-  }
-  const handleConfirm = () => {
-    withdraw(account, 11)
-  }
-
-  const handleApprove2 = async () => {
-    const tx = await callWithGasPrice(cakeContract, 'approve', [cakeVaultContract.address, ethers.constants.MaxUint256])
-    // setRequestedApproval(true)
-    const receipt = await tx.wait()
-    if (receipt.status) {
-      toastSuccess(t('Contract Enabled'), t('You can now stake in the %symbol% vault!', { symbol: 'CAKE' }))
-      // setLastUpdated()
-      // setRequestedApproval(false)
-    } else {
-      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-      // setRequestedApproval(false)
-    }
-  }
-  
   const lpAddress = getAddress(tokenData.token.address)
-
-  const cakeContract1 = useERC20(lpAddress)
+  const approveContract = useERC20(lpAddress)
   const handleApprove = async () => {
-
-    const tx = await cakeContract1.approve(cakeContract1.address, ethers.constants.MaxUint256)
+    const tx = await approveContract.approve(approveContract.address, ethers.constants.MaxUint256)
     // setIsApproving(true)
     const receipt = await tx.wait()
     console.info('tx',tx);
@@ -126,6 +100,13 @@ const LendAction = (props) => {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       // setIsApproving(false)
     }
+  }
+
+  const handleDeposit = () => {
+    deposit(lpAddress, 0.002)
+  }
+  const handleConfirm = () => {
+    withdraw(account, 11)
   }
 
   const handleConfirmClick = async () => {
