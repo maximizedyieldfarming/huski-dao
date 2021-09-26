@@ -36,13 +36,23 @@ const LeverageRow = ({ tokenData }) => {
   const { lpSymbol, tvl, leverage, reserveTokenOne, quoteToken, token } = tokenData
 
 
+
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
+
   getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
-  getYieldFarming(tokenData, cakePrice)
+  const asd = getYieldFarming(tokenData, cakePrice)
+  const aa = getDisplayApr(asd)
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={lpSymbol.replace(' LP', '')} quoteToken={quoteToken} token={token} />
-        <ApyCell apy={reserveTokenOne} />
+        <ApyCell apy={aa} />
         <TvlCell tvl={tvl} />
         <LeverageCell leverage={leverage} />
         <ActionCell token={tokenData} />

@@ -1,6 +1,9 @@
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR } from 'config'
+import { ChainId } from '@pancakeswap/sdk'
+import { getFarmApr } from 'utils/apr'
+
 // price = BaseToken_usd / HUSKI_usd
 // HUSKIRewards = HUSKI_block * 365  * 24 * 60 *  60 / 3 / TotalBorrowed * (Leverage - 1) / price
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
@@ -18,23 +21,13 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, po
 }
 
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
-  const { tokenReserve, quoteTokenReserve, poolWeight, quoteToken, token, lpTotalInQuoteToken } = farm
-
-  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteToken.busdPrice)
+  const { poolWeight, quoteToken, lpTotalInQuoteToken } = farm
   const poolWeightBigNumber: any =new BigNumber(poolWeight)
-
-  // const reserve0: any = parseInt(tokenReserve);
-  // const reserve1: any = parseInt(quoteTokenReserve);
-  // const poolLiquidityUsd: any = BigNumber.sum(reserve0, reserve1);
-
+  
+  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteToken.busdPrice)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
-  const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd)
+  const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
 
-  // const yieldFarmingApr = CAKE_PER_YEAR.times(poolWeightBigNumber * cakePrice).div(
-  //   poolLiquidityUsd
-  // );
-  console.log({'poolWeight':poolWeightBigNumber,'cakePrice':cakePrice.toNumber(),'poolLiquidityUsd':poolLiquidityUsd.toNumber(), quoteToken,  CAKE_PER_YEAR, yieldFarmingApr,});
-  console.info('yieldFarmingApr', yieldFarmingApr.toNumber());
-
-  return yieldFarmingApr;
+  return yieldFarmingApr.toNumber();
 }
+
