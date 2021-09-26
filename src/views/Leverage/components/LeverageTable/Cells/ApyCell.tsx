@@ -30,8 +30,8 @@ const ApyCell = ({ apy }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Apy
         </Text>
-        {apy && apy.gte(0) ? (
-          <Text>{new BigNumber(apy).toExponential(3)}</Text>
+        {apy ? (
+          <Text>{apy}%</Text>
         ) : (
           <Skeleton width="80px" height="16px" />
         )}

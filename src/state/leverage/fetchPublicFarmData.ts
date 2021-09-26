@@ -18,12 +18,13 @@ type PublicFarmData = {
   lpTotalInQuoteToken: SerializedBigNumber
   quoteTokenReserve: SerializedBigNumber
   poolWeight: SerializedBigNumber
+  name:string
   multiplier: string
   pooPerBlock: number
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { poolId, lpAddresses, token, quoteToken, vaultAddress } = farm
+  const { poolId, lpAddresses, token, quoteToken, vaultAddress, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
 
@@ -35,8 +36,12 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
   
-  const [totalSupply, totalToken, vaultDebtVal] =
+  const [name, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
+      {
+        address: vaultAddresses,
+        name: 'name',
+      },
       {
         address: vaultAddresses,
         name: 'totalSupply',
@@ -105,30 +110,51 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
 
   // Only make masterchef calls if farm has pid
+  // const [info, alpacaPerBlock, totalAllocPoint] =
+  // poolId || poolId === 0
+  //     ? await multicall(fairLaunchABI, [
+  //         {
+  //           address: getFairLaunch(),
+  //           name: 'poolInfo',
+  //           params: [poolId],
+  //         },
+  //         {
+  //           address: getFairLaunch(),
+  //           name: 'alpacaPerBlock',
+  //         },
+  //         {
+  //           address: getFairLaunch(),
+  //           name: 'totalAllocPoint',
+  //         },
+  //       ])
+  //     : [null, null]
+
   const [info, alpacaPerBlock, totalAllocPoint] =
-  poolId || poolId === 0
-      ? await multicall(fairLaunchABI, [
-          {
-            address: getFairLaunch(),
-            name: 'poolInfo',
-            params: [poolId],
-          },
-          {
-            address: getFairLaunch(),
-            name: 'alpacaPerBlock',
-          },
-          {
-            address: getFairLaunch(),
-            name: 'totalAllocPoint',
-          },
-        ])
+    pid || pid === 0
+      ? await multicall(masterchefABI, [
+        {
+          address: getMasterChefAddress(),
+          name: 'poolInfo',
+          params: [pid],
+        },
+        {
+          address: getMasterChefAddress(),
+          name: 'cakePerBlock',
+        },
+        {
+          address: getMasterChefAddress(),
+          name: 'totalAllocPoint',
+        },
+      ])
       : [null, null]
 
+      // console.log({'info':info,'totalAllocPoint':parseInt(totalAllocPoint[0]._hex) ,'alpacaPerBlock':parseInt(alpacaPerBlock[0]._hex)})
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
   const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
 
   return {
+    name,
     totalSupply: totalSupply[0]._hex,
     totalToken: totalToken[0]._hex,
     vaultDebtVal: vaultDebtVal[0]._hex,
