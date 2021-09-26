@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { Image, Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
+import { Image, Text, Button, Flex, Box, Skeleton, Grid } from '@pancakeswap/uikit'
 import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
@@ -23,7 +23,7 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
-import husky2 from './assets/husky2.png'
+import husky2 from './assets/stake_rewards_img.png'
 import huskyIcon from './assets/avatar1x.png'
 import StakeTable from './components/StakeTable/StakeTable'
 import TopTable from './components/TopTable/TopTable'
@@ -51,7 +51,10 @@ const TableWrapper = styled.div`
   padding: 10px;
 `
 
-const ImageContainer = styled.figure``
+const ImageContainer = styled.figure`
+  // position: absolute;
+  // right: -10px;
+`
 
 const Title = styled.div`
   color: #9615e7;
@@ -66,15 +69,26 @@ const StyledButton = styled(Button)`
   padding: 0.75rem;
   font-size: 14px;
   font-weight: 400;
-  height: auto;
   box-shadow: none;
 `
-const ClaimBubble = styled(Flex)`
+const RewardsSummarySection = styled(Flex)`
   gap: 2rem;
   background-color: ${({ theme }) => theme.card.background};
   border-radius: 20px;
   padding: 1rem;
-  width: fit-content;
+  > ${Flex} {
+    &:first-child {
+      background-color: #3ed3dd;
+    }
+  }
+  > ${Grid} {
+    > ${Flex} {
+      padding: 10px;
+      &:first-child {
+        border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
+      }
+    }
+  }
 `
 
 const CardLayout = styled(FlexLayout)`
@@ -125,28 +139,41 @@ const Stake: React.FC = () => {
   // console.log({ stakeBalanceData })
   return (
     <Page>
-      {/*  <SingleTableWrapper>
-        <Title>Positions</Title>
-        <Flex width="100%" alignItems="center">
-          <Box>
-            <TopTable data={stakingData} />
-          </Box>
-
-          <ImageContainer>
-            <img src={husky2} alt="" />
-          </ImageContainer>
-        </Flex> 
-      </SingleTableWrapper> */}
-      <ClaimBubble alignItems="center" alignSelf="flex-end" padding="10px 8px 0 32px">
-        <Flex alignItems="center">
-          <ImageContainer>
-            <img src={huskyIcon} alt="" />
-          </ImageContainer>
-          <Text>Huski Rewards</Text>
-        </Flex>
-        <Skeleton width="80px" height="16px" />
-        <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
-      </ClaimBubble>
+      <Box>
+        <Text fontSize="3" fontWeight="bold">
+          Your Rewards Summary
+        </Text>
+        <RewardsSummarySection padding="10px 8px 0 32px">
+          <Flex flex="1" padding="1rem" borderRadius="20px" justifyContent="space-between">
+            <Box>
+              <Text>Huski earned:</Text>
+              <Skeleton width="80px" height="16px" />
+            </Box>
+            <Flex position="relative">
+              <ImageContainer>
+                <img src={husky2} alt="" />
+              </ImageContainer>
+            </Flex>
+          </Flex>
+          <Grid flexDirection="column" flex="1">
+            <Flex justifyContent="space-between">
+              <Flex flexDirection="column">
+                <Text>Your HUSKI Wallet Balance</Text>
+                <Skeleton width="80px" height="16px" />
+              </Flex>
+              <Flex flexDirection="column">
+                <Text>Remaining Locked Amount</Text>
+                <Skeleton width="80px" height="16px" />
+              </Flex>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+              <Text>Unlocked Rewards</Text>
+              <Skeleton width="80px" height="16px" />
+              <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
+            </Flex>
+          </Grid>
+        </RewardsSummarySection>
+      </Box>
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
