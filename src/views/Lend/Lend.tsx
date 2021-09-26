@@ -172,7 +172,7 @@ const ActionCell = styled.div`
 const ImageContainer = styled.figure``
 
 const StyledBox = styled(Box)`
-  color: #9615e7;
+  background-color: ${({ theme }) => theme.card.background};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -235,36 +235,16 @@ const Lend: React.FC = () => {
 
   return (
     <Page>
-      <Flex justifyContent="space-between" marginBottom="1rem" alignItems="center">
-        <ImageContainer>
-          <img src={husky} alt="" />
-        </ImageContainer>
-        <StyledFlex flexDirection="row" borderRadius="20px">
-          <ImageContainer style={{ position: 'absolute', left: '-35px' }}>
-            <img src={bone2} alt="" />
-          </ImageContainer>
-          <StyledBox>
-            <Text>Total Supply</Text>
-            {lendTotalSupply ? (
-              <Text fontSize="30px">${lendTotalSupply}</Text>
-            ) : (
-              <Skeleton width="80px" height="16px" />
-            )}
-          </StyledBox>
-          <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
-            <img src={bone1} alt="" />
-          </ImageContainer>
-        </StyledFlex>
+      <Flex justifyContent="flex-end" marginBottom="1rem" alignItems="center">
+        <StyledBox>
+          <Text>Volume 24H:</Text>
+          {lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" />}
+        </StyledBox>
+        <StyledBox ml="1rem">
+          <Text>Total Value Locked:</Text>
+          {lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" />}
+        </StyledBox>
       </Flex>
-      {/* 
-      <Title>Lending Positions</Title>
-      <TableWrapper>
-        <TopTable data={lendData} />
-
-        <ImageContainer>
-          <img src={husky2} alt="" />
-        </ImageContainer>
-      </TableWrapper> */}
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
