@@ -223,7 +223,6 @@ const Farm = (props) => {
         <datalist id="leverage">{datalistOptions}</datalist>
       </StyledBox> */}
 
-   
       <StyledBox>
         <Flex>
           <Text>Assets Supplied</Text>
@@ -234,7 +233,11 @@ const Farm = (props) => {
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
-          <Text> Price Impact and Trading Fees</Text>
+          <Text>Price Impact</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+        </Flex>
+        <Flex>
+          <Text>Trading Fees</Text>
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
@@ -243,6 +246,10 @@ const Farm = (props) => {
         </Flex>
         <Flex>
           <Text>APR</Text>
+          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+        </Flex>
+        <Flex>
+          <Text>APRY</Text>
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
       </StyledBox>
