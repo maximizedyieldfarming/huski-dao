@@ -4,7 +4,7 @@ import { LeverageFarmConfig } from './types'
 const leverageFarms: LeverageFarmConfig[] = [
   {
     pid: 251,
-    lpSymbol: 'CAKE-BNB9999 LP',
+    lpSymbol: 'CAKE-BNB LP',
     lpAddresses: {
       97: '0x3ed8936cAFDF85cfDBa29Fbe5940A5b0524824F4',
       56: '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0',
