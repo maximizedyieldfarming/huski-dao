@@ -1,42 +1,46 @@
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import React from 'react'
 
-const ConverTo = () => {
+const ConverTo = ({ data }) => {
   return (
     <>
-      <Box>
+      <Flex flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>Position ID</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Withdraw</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>PancakeSwap交易手续费</Text>
-          <Text>1234</Text>
+          <Text>Price Impact</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Trading Fees</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Total Assets in Position Value</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Debt Value</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
-      </Box>
-      <Box>
+      </Flex>
+      <Flex flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>Assets Received</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Minimum Received</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Button>Close Position</Button>
-      </Box>
+      </Flex>
     </>
   )
 }

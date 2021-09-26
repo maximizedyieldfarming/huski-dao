@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton} from '@pancakeswap/uikit'
 import React from 'react'
 
-const MinimizeTrading = () => {
+const MinimizeTrading = ({data}) => {
   return (
     <>
       <Box>
@@ -10,39 +10,43 @@ const MinimizeTrading = () => {
           assets to you. This can potentially save on slippage and trading fees.
         </Text>
       </Box>
-      <Box>
+      <Flex flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>Position Value Asset</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Amount to Trade</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Price Impact and Trading Fees</Text>
-          <Text>1234</Text>
+          <Text>Price Impact</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Trading Fees</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Converted Position Value Assets</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Debt Value</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
-      </Box>
-      <Box>
+      </Flex>
+      <Flex flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>You will recelve approximately</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Minimum Received</Text>
-          <Text>1234</Text>
+          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Button>Close Position</Button>
-      </Box>
+      </Flex>
     </>
   )
 }

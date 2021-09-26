@@ -35,7 +35,7 @@ const ActionCell = ({ token }) => {
         <Button as={Link} to={{ pathname: `/leverage/adjustPosition/${token?.lpSymbol}`, state: { tokenData: token } }}>
           Adjust Position
         </Button>
-        <Button as={Link} to={`/leverage/closeposition/${token?.lpSymbol}`}>
+        <Button as={Link} to={{ pathname: `/leverage/closePosition/${token?.lpSymbol}`, state: { tokenData: token } }}>
           Close Position
         </Button>
       </CellContent>
