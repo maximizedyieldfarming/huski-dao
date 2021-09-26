@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import image from './assets/huskyBalloon.png'
 
@@ -32,14 +32,29 @@ const StyledBox = styled(Box)`
 const StyledPage = styled(Page)`
   display: flex;
   gap: 2rem;
+  input[type='range'] {
+    -webkit-appearance: auto;
+  }
+`
+
+const CustomSlider = styled.input.attrs({ type: 'range' })`
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 13px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 0px 0px 0px #000000;
+    background: #ac51b5;
+    border-radius: 25px;
+    border: 0px solid #000101;
+  }
 `
 
 const Farm = (props) => {
   console.log('props to adjust position...', props)
-  const [leverage, setLeverage] = useState(0)
   /*   const [incDecRadio, setIncDecRadio] = useState(true)
   console.log({ incDecRadio })
- */
+  */
   const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
     console.info('fired')
@@ -65,6 +80,23 @@ const Farm = (props) => {
   console.log({ quoteTokenName })
   console.log({ tokenName })
   const [radio, setRadio] = useState(quoteTokenName)
+  const { leverage } = tokenData
+  const [leverageValue, setLeverageValue] = useState(leverage)
+  console.log({ leverageValue })
+
+  const handleSliderChange = (e) => {
+    console.log('slider change event', e)
+    const value = e?.target?.value
+    setLeverageValue(value)
+  }
+
+  const datalistSteps = []
+  const datalistOptions = (() => {
+    for (let i = 1; i < leverage / 0.5; i++) {
+      datalistSteps.push(1 + 0.5 * (-1 + i))
+    }
+    return datalistSteps.map((value) => <option value={value} label={value} />)
+  })()
 
   return (
     <StyledPage>
@@ -111,19 +143,36 @@ const Farm = (props) => {
             </Box>
             <Box>
               <Flex alignItems="center">
-                <Radio name="leverage" checked />
                 <Text>Increase or decrease leverage</Text>
               </Flex>
 
-              <Text>Active Positions</Text>
-              <Slider
+              {/*   <Text>Active Positions</Text> */}
+
+              {/*  <Slider
                 min={1.0}
-                max={3.0}
+                max={leverage}
                 name="leverage"
                 step={0.5}
-                value={leverage}
-                onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
-              />
+                value={leverageValue}
+                valueLabel={`${leverageValue}x`}
+                onValueChanged={(value) => setLeverageValue(value)}
+              /> */}
+              <Flex>
+                <input
+                  type="range"
+                  min="1.0"
+                  max={leverage}
+                  step="0.5"
+                  name="leverage"
+                  value={leverageValue}
+                  onChange={handleSliderChange}
+                  list="leverage"
+                />
+                <datalist id="leverage">{datalistOptions}</datalist>
+                <Box ml="10px" width="15px">
+                  <Text textAlign="right">{leverageValue}X</Text>
+                </Box>
+              </Flex>
             </Box>
           </Flex>
           <Box>
@@ -134,11 +183,11 @@ const Farm = (props) => {
           <Text>Which asset would you like to borrow? </Text>
           <Flex>
             <Flex alignItems="center" marginRight="10px">
-              <Text>{quoteTokenName}</Text>
+              <Text mr="5px">{quoteTokenName}</Text>
               <Radio name="token" value={quoteTokenName} onChange={handleChange} checked={radio === quoteTokenName} />
             </Flex>
             <Flex alignItems="center">
-              <Text>{tokenName}</Text>
+              <Text mr="5px">{tokenName}</Text>
               <Radio name="token" value={tokenName} onChange={handleChange} checked={radio === tokenName} />
             </Flex>
           </Flex>
@@ -150,18 +199,31 @@ const Farm = (props) => {
           </Text>
         </Box>
       </StyledBox>
-
-      <StyledBox>
-        <Slider
-          min={1.0}
-          max={3.0}
-          name="range"
+      {/*  <StyledBox>
+       <Slider
+          min={0}
+          max={leverage}
+          name="leverage"
           step={0.5}
-          value={leverage}
-          onValueChanged={(sliderPercent) => setLeverage(sliderPercent)}
+          value={leverageValue}
+          valueLabel={`${leverageValue}x`}
+          onValueChanged={(value) => setLeverageValue(value)}
         />
-      </StyledBox>
+        <input
+          type="range"
+          min="1.0"
+          max={leverage}
+          step="0.5"
+          name="leverage"
+          value={leverageValue}
+          onChange={handleSliderChange}
+          list="leverage"
+        />
 
+        <datalist id="leverage">{datalistOptions}</datalist>
+      </StyledBox> */}
+
+   
       <StyledBox>
         <Flex>
           <Text>Assets Supplied</Text>
@@ -186,7 +248,7 @@ const Farm = (props) => {
       </StyledBox>
       <Flex justifyContent="space-evenly">
         <Button>Authorize</Button>
-        <Button>3x Farm</Button>
+        <Button>{leverageValue}X Farm</Button>
       </Flex>
     </StyledPage>
   )
