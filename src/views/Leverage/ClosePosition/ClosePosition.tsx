@@ -58,7 +58,7 @@ const Body = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
   > ${Flex} {
-    &:first-child {
+    &:first-of-type {
       border-bottom: 2px solid ${({ theme }) => theme.colors.cardBorder};
     }
     padding: 1rem;

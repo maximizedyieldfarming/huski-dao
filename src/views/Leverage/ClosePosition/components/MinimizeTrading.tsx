@@ -1,15 +1,13 @@
-import { Box, Button, Flex, Text, Skeleton} from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import React from 'react'
 
-const MinimizeTrading = ({data}) => {
+const MinimizeTrading = ({ data }) => {
   return (
     <>
-      <Box>
-        <Text>
-          We will convert the minimum required amount of tokens into ETH to pay back the debt and return the remaining
-          assets to you. This can potentially save on slippage and trading fees.
-        </Text>
-      </Box>
+      <Text small color="textSubtle">
+        We will convert the minimum required amount of tokens into ETH to pay back the debt and return the remaining
+        assets to you. This can potentially save on slippage and trading fees.
+      </Text>
       <Flex flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>Position Value Asset</Text>
