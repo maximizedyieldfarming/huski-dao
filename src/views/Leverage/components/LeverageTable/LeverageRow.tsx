@@ -3,7 +3,7 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import { getHuskyRewards, getYieldFarming } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
@@ -46,6 +46,7 @@ const LeverageRow = ({ tokenData }) => {
 
   getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
+  getTvl(tokenData)
 
   return (
     <>
