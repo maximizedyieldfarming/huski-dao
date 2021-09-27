@@ -9,10 +9,13 @@ interface RouteParams {
   token: string
 }
 
-const StyledBox = styled(Box)`
+const Section = styled(Box)`
+  /*  &:first-of-type {
+    background-color: ${({ theme }) => theme.colors.disabled};
+  } */
   background-color: ${({ theme }) => theme.card.background};
-  box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
-  border-radius: 20px;
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
+  border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem;
   &:not(:first-child) {
     > ${Flex} {
@@ -26,6 +29,9 @@ const StyledBox = styled(Box)`
     > div:first-child {
       flex: 1;
     }
+  }
+  input[type='range'] {
+    -webkit-appearance: auto;
   }
 `
 
@@ -99,12 +105,17 @@ const Farm = (props) => {
   })()
 
   return (
-    <StyledPage>
-      <Text fontWeight="bold" style={{ alignSelf: 'center' }}>
+    <Page>
+      <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
         Farming {token} Pools
       </Text>
-      <StyledBox>
-        <Text as="span">Collateral</Text>
+      <Section>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Text as="span">Collateral</Text>
+          <Text as="span" small color="textSubtle">
+            To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.
+          </Text>
+        </Flex>
         <Flex>
           <Flex flexDirection="column" justifyContent="space-between">
             <Box>
@@ -142,6 +153,10 @@ const Farm = (props) => {
               </Flex>
             </Box>
             <Box>
+              <Text>
+                You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields
+                and higher risk,vice versa.
+              </Text>
               <Flex alignItems="center">
                 <Text>Increase or decrease leverage</Text>
               </Flex>
@@ -193,12 +208,12 @@ const Farm = (props) => {
           </Flex>
         </Box>
         <Box>
-          <Text color="secondary">
+          <Text small color="failure">
             Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The
-            other paired asset will have typical long exposure ,so choose which asset you borrow wisely.
+            other paired asset will have typical long exposure, so choose which asset you borrow wisely.
           </Text>
         </Box>
-      </StyledBox>
+      </Section>
       {/*  <StyledBox>
        <Slider
           min={0}
@@ -222,8 +237,14 @@ const Farm = (props) => {
 
         <datalist id="leverage">{datalistOptions}</datalist>
       </StyledBox> */}
+      <Section>
+        <Text small color="failure">
+          Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation
+          ratio, your assets might encounter liquidation.
+        </Text>
+      </Section>
 
-      <StyledBox>
+      <Section>
         <Flex>
           <Text>Assets Supplied</Text>
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
@@ -249,15 +270,15 @@ const Farm = (props) => {
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
-          <Text>APRY</Text>
+          <Text>APY</Text>
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
-      </StyledBox>
+      </Section>
       <Flex justifyContent="space-evenly">
         <Button>Authorize</Button>
         <Button>{leverageValue}X Farm</Button>
       </Flex>
-    </StyledPage>
+    </Page>
   )
 }
 
