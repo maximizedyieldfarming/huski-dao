@@ -33,7 +33,12 @@ const TableWrapper = styled.div`
     }
   }
 `
-const ImageContainer = styled.figure``
+const ImageContainer = styled.figure`
+  display: none;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    display: block;
+  }
+`
 
 const StyledBox = styled(Box)`
   color: #9615e7;
@@ -64,22 +69,38 @@ const PositionsButton = styled(ActionButton)`
   background-color: ${(props) => (props.isActive === 'true' ? '#9615E7' : ({ theme }) => theme.card.background)};
   border: 1px solid #9615e7;
   color: ${(props) => (props.isActive === 'true' ? '#fff' : '#9615E7')};
-  font-size: 20px;
+  // font-size: 20px;
   font-weight: bold;
   border-radius: 21px;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 `
 
-const StyledFlex = styled(Flex)`
+const RewardsContainer = styled(Flex)`
   flex-direction: row;
   position: relative;
   background-color: ${({ theme }) => theme.card.background};
   padding: 5px 2rem;
+  ${({ theme }) => theme.mediaQueries.md} {
+    order: 2;
+  }
 `
 
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
+`
+
+const TopSection = styled(Flex)`
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+  }
+`
+
+const PositionButtonsContainer = styled(Flex)`
+  ${({ theme }) => theme.mediaQueries.md} {
+    order: 1;
+  }
 `
 
 const Leverage: React.FC = () => {
@@ -88,7 +109,7 @@ const Leverage: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
 
   usePollLeverageFarmsWithUserData()
-  
+
   const cardLayout = (
     <CardLayout>
       {farmsData.map((token) => (
@@ -99,34 +120,32 @@ const Leverage: React.FC = () => {
 
   return (
     <Page>
-      <Flex justifyContent="space-between">
-        <Flex alignSelf="flex-end" style={{ gap: '1rem' }}>
+      <TopSection justifyContent="space-between">
+        <RewardsContainer flexDirection="row" borderRadius="20px">
+          <ImageContainer style={{ position: 'absolute', left: '-35px' }}>
+            <img src={bone2} alt="" />
+          </ImageContainer>
+          <StyledBox>
+            <span>Husky Token Rewards</span>
+            <Flex alignItems="center" style={{ gap: '10px' }}>
+              <Skeleton width="80px" height="16px" />
+
+              <ActionButton>Claim</ActionButton>
+            </Flex>
+          </StyledBox>
+          <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
+            <img src={bone1} alt="" />
+          </ImageContainer>
+        </RewardsContainer>
+        <PositionButtonsContainer alignSelf="flex-end" style={{ gap: '1rem' }}>
           <PositionsButton isActive={isActivePos ? 'true' : 'false'} onClick={() => setActive(true)}>
             Active Positions
           </PositionsButton>
           <PositionsButton isActive={isActivePos ? 'false' : 'true'} onClick={() => setActive(false)}>
             Liquidated Positions
           </PositionsButton>
-        </Flex>
-        <Flex justifyContent="space-between" marginBottom="1rem" alignSelf="flex-end">
-          <StyledFlex flexDirection="row" borderRadius="20px">
-            <ImageContainer style={{ position: 'absolute', left: '-35px' }}>
-              <img src={bone2} alt="" />
-            </ImageContainer>
-            <StyledBox>
-              <span>Husky Token Rewards</span>
-              <Flex alignItems="center" style={{ gap: '10px' }}>
-                <Skeleton width="80px" height="16px" />
-
-                <ActionButton>Claim</ActionButton>
-              </Flex>
-            </StyledBox>
-            <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
-              <img src={bone1} alt="" />
-            </ImageContainer>
-          </StyledFlex>
-        </Flex>
-      </Flex>
+        </PositionButtonsContainer>
+      </TopSection>
 
       <TableWrapper>
         <TopTable data={farmsData} isActivePos={isActivePos} />
