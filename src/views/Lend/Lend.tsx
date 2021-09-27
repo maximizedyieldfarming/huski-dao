@@ -207,6 +207,17 @@ const StyledFlex = styled(Flex)`
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
 `
+const TopSection = styled(Flex)`
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-end;
+  ${({ theme }) => theme.mediaQueries.md} {
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: row;
+  }
+`
 
 const Lend: React.FC = () => {
   const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
@@ -235,16 +246,16 @@ const Lend: React.FC = () => {
 
   return (
     <Page>
-      <Flex justifyContent="flex-end" marginBottom="1rem" alignItems="center">
+      <TopSection>
         <StyledBox>
           <Text>Volume 24H:</Text>
           {lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" />}
         </StyledBox>
-        <StyledBox ml="1rem">
+        <StyledBox>
           <Text>Total Value Locked:</Text>
           {lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" />}
         </StyledBox>
-      </Flex>
+      </TopSection>
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
