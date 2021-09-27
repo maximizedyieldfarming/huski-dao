@@ -72,6 +72,10 @@ const StyledButton = styled(Button)`
   box-shadow: none;
 `
 const RewardsSummarySection = styled(Flex)`
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+  }
   gap: 2rem;
   background-color: ${({ theme }) => theme.card.background};
   border-radius: 20px;
