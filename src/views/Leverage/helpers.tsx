@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js'
+import { useEffect, useState } from 'react'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { ChainId } from '@pancakeswap/sdk'
-import { getFarmApr } from 'utils/apr'
+import { getFarmingData } from 'utils/pancakeService'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
   const { vaultDebtVal, token, leverage } = farm
@@ -29,7 +30,6 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
   return yieldFarmingApr.toNumber();
 }
 
-
 export const getTvl = (farm: LeverageFarm) => {
   const { tokenAmountTotal, quoteTokenAmountTotal, tokenBalanceLP, quoteTokenBalanceLP, tokenReserve, quoteTokenReserve, token, quoteToken } = farm
 
@@ -42,6 +42,27 @@ export const getTvl = (farm: LeverageFarm) => {
   return totalTvl.toNumber();
 }
 
-  // const tokensPriceCoinGecko = `https://api.coingecko.com/api/v3/coins/markets?ids=${coingeckoIds}&vs_currency=usd&per_page=200`;
-  // const res = await fetch(tokensPriceCoinGecko);
-  // const coingeckoPrices = await res.json();
+export const getTradingFees = (farm: LeverageFarm) => {
+
+//   const fetchData = async () => {
+//     try {
+//       const response = await fetch('https://api.alpacafinance.org/v1/internal/tradingFee')
+
+//       const responseData = await response.json()
+
+//     } catch (error) {
+//       console.error('Unable to fetch data:', error)
+//     }
+//   }
+
+//   fetchData()
+
+}
+
+export const getLeverageFarmingData = (farm: LeverageFarm) => {
+  const { leverage, tokenAmountTotal, quoteTokenAmountTotal } = farm
+
+  const farmdata = getFarmingData(leverage, 0.02, 0.05, parseInt(tokenAmountTotal), parseInt(quoteTokenAmountTotal), 0.0025)
+  
+  return farmdata
+}

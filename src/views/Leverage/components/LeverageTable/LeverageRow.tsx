@@ -3,7 +3,7 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData, getTradingFees } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
@@ -33,9 +33,7 @@ const LeverageRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { lpSymbol, tvl, leverage, reserveTokenOne, quoteToken, token } = tokenData
-
-
+  const { lpSymbol, tvl, leverage, quoteToken, token } = tokenData
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -47,7 +45,8 @@ const LeverageRow = ({ tokenData }) => {
   getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   getTvl(tokenData)
-
+  getTradingFees(tokenData)
+  getLeverageFarmingData(tokenData)
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
