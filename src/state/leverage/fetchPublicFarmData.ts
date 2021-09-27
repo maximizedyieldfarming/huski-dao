@@ -3,6 +3,7 @@ import masterchefABI from 'config/abi/masterchef.json'
 import lpTokenABI from 'config/abi/lpToken.json'
 import VaultABI from 'config/abi/vault.json'
 import erc20 from 'config/abi/erc20.json'
+import PancakePairABI from 'config/abi/pancakePair.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
@@ -11,12 +12,16 @@ import multicall from 'utils/multicall'
 import { LeverageFarm, SerializedBigNumber } from '../types'
 
 type PublicFarmData = {
+  tokenAmountTotal: SerializedBigNumber
+  quoteTokenAmountTotal: SerializedBigNumber
   totalSupply: SerializedBigNumber
   totalToken: SerializedBigNumber
   vaultDebtVal: SerializedBigNumber
   tokenReserve: SerializedBigNumber
   lpTotalInQuoteToken: SerializedBigNumber
   quoteTokenReserve: SerializedBigNumber
+  tokenBalanceLP:SerializedBigNumber
+  quoteTokenBalanceLP:SerializedBigNumber
   poolWeight: SerializedBigNumber
   name:string
   multiplier: string
@@ -35,7 +40,9 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         name: 'getReserves',
       },
     ])
-  
+  console.info('token',pid);
+  console.info('z这是什么玩意。lpTotalReserves',lpTotalReserves);
+  console.info('z这是什么玩意。lpTotalReserves----',lpTotalReserves[0]._hex,);
   const [name, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
       {
@@ -148,22 +155,26 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       ])
       : [null, null]
 
-      // console.log({'info':info,'totalAllocPoint':parseInt(totalAllocPoint[0]._hex) ,'alpacaPerBlock':parseInt(alpacaPerBlock[0]._hex)})
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
   const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
+
 
   return {
     name,
     totalSupply: totalSupply[0]._hex,
     totalToken: totalToken[0]._hex,
     vaultDebtVal: vaultDebtVal[0]._hex,
-    tokenReserve: lpTotalReserves._reserve0.toJSON(),
-    quoteTokenReserve: lpTotalReserves._reserve1.toJSON(),
+    tokenReserve: lpTotalReserves[0]._hex,
+    quoteTokenReserve: lpTotalReserves[1]._hex,
+    tokenAmountTotal: tokenAmountTotal.toJSON(),
+    quoteTokenAmountTotal: quoteTokenAmountTotal.toJSON(),
     lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),
     poolWeight: poolWeight.toJSON(),
     multiplier: `${allocPoint.div(100).toString()}XqQ`,
     pooPerBlock,
+    tokenBalanceLP:tokenBalanceLP[0]._hex,
+     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
   }
 }
 

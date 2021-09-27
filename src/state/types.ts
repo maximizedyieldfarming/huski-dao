@@ -40,6 +40,10 @@ export interface Farm extends FarmConfig {
 }
 
 export interface LeverageFarm extends LeverageFarmConfig {
+  tokenAmountTotal?: SerializedBigNumber
+  quoteTokenAmountTotal?: SerializedBigNumber
+  tokenBalanceLP?:SerializedBigNumber
+  quoteTokenBalanceLP?:SerializedBigNumber
   tokenReserve?: SerializedBigNumber
   quoteTokenReserve?: SerializedBigNumber
   lpTotalInQuoteToken?: SerializedBigNumber
