@@ -40,9 +40,9 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         name: 'getReserves',
       },
     ])
-  console.info('token',pid);
-  console.info('z这是什么玩意。lpTotalReserves',lpTotalReserves);
-  console.info('z这是什么玩意。lpTotalReserves----',lpTotalReserves[0]._hex,);
+  // console.info('token',pid);
+  // console.info('z这是什么玩意。lpTotalReserves',lpTotalReserves);
+  // console.info('z这是什么玩意。lpTotalReserves----',lpTotalReserves[0]._hex,);
   const [name, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
       {

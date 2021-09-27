@@ -35,7 +35,6 @@ createAsyncThunk<LeverageFarm[], number[]>(
     const farms = await fetchFarms(farmsToFetch)
     const farmsWithPrices = await fetchFarmsPrices(farms)
 
-    console.log("leverage: ", "fetchLeverageFarmsPublicDataAsync")
     // Filter out price helper LP config farms
     const farmsWithoutHelperLps = farmsWithPrices.filter((farm: LeverageFarm) => {
       return farm.pid || farm.pid === 0
