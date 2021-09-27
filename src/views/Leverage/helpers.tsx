@@ -31,37 +31,16 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
 
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenAmountTotal,quoteTokenAmountTotal, tokenBalanceLP, quoteTokenBalanceLP, tokenReserve, quoteTokenReserve, token, quoteToken } = farm
+  const { tokenAmountTotal, quoteTokenAmountTotal, tokenBalanceLP, quoteTokenBalanceLP, tokenReserve, quoteTokenReserve, token, quoteToken } = farm
 
-const tokenPriceInUsd = new BigNumber(token.busdPrice)
-const quoteTokenPriceInUsd = new BigNumber(quoteToken.busdPrice)
+  const tokenPriceInUsd = new BigNumber(token.busdPrice)
+  const quoteTokenPriceInUsd = new BigNumber(quoteToken.busdPrice)
 
-// const tvl0 = tokenPriceInUsd.times(tokenAmountTotal)
-// const tvl2 = quoteTokenPriceInUsd.times(quoteTokenAmountTotal)
-
-// 不对，0和1 值总是差不多的，很奇怪。怪不得乘以2
-// ttt与pancake上面的 Liquidity 值差不多，
-// const ttt = BigNumber.sum(tvl0,tvl2)
-//  '-----zong--------':ttt.toNumber(),'000-':tvl0.toNumber(),'111-':tvl2.toNumber(),
-// const a1 =new BigNumber(tokenBalanceLP).times(tokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
-// const a2 = new BigNumber(quoteTokenBalanceLP).times(quoteTokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
-
-  const tvl00 =new BigNumber(tokenReserve).times(tokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
+  const tvl0 = new BigNumber(tokenReserve).times(tokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
   const tvl1 = new BigNumber(quoteTokenReserve).times(quoteTokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
-
-  const t123 = BigNumber.sum(tvl00,tvl1)
-  console.log({'sum====':t123.toNumber(),'000=a1':tvl00.toNumber(),'111=a2':tvl1.toNumber(),   token, quoteToken })
- return 11; // totalTvl.toNumber();
+  const totalTvl = BigNumber.sum(tvl0, tvl1)
+  return totalTvl.toNumber();
 }
-
-  //       lpPool.tvl = totalTvl.toLocaleString('en-US', {
-  //         style: 'currency',
-  //         currency: 'USD',
-  //         minimumFractionDigits: 0,
-  //         maximumFractionDigits: 0,
-  //       });
-
-
 
   // const tokensPriceCoinGecko = `https://api.coingecko.com/api/v3/coins/markets?ids=${coingeckoIds}&vs_currency=usd&per_page=200`;
   // const res = await fetch(tokensPriceCoinGecko);
