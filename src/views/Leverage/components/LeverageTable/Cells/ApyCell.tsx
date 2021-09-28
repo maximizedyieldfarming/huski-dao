@@ -70,11 +70,27 @@ const ApyCell = ({ apy }) => {
         <InfoIcon ml="10px" />
         <Info show={displayInfo}>
           <Flex justifyContent="space-between" alignItems="center">
-            <Text small>Lending&nbsp;APR</Text>
+            <Text small>Yield&nbsp;Farming</Text>
             <Skeleton width="80px" height="16px" />
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
-            <Text small>Staking&nbsp;APR</Text>
+            <Text small>Trading&nbsp;Fees</Text>
+            <Skeleton width="80px" height="16px" />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text small>HUSKI&nbsp;Rewards</Text>
+            <Skeleton width="80px" height="16px" />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text small>Borrowing&nbsp;Interest</Text>
+            <Skeleton width="80px" height="16px" />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text small>Total&nbsp;APR</Text>
+            <Skeleton width="80px" height="16px" />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text small>Daily&nbsp;APR</Text>
             <Skeleton width="80px" height="16px" />
           </Flex>
         </Info>
