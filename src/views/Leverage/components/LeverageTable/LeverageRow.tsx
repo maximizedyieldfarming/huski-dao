@@ -33,7 +33,7 @@ const LeverageRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { lpSymbol, tvl, leverage, quoteToken, token } = tokenData
+  const { lpSymbol, leverage, quoteToken, token } = tokenData
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -42,17 +42,28 @@ const LeverageRow = ({ tokenData }) => {
     return null
   }
 
-  getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
+  console.log({ huskyRewards })
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
-  getTvl(tokenData)
-  getTradingFees(tokenData)
-  getLeverageFarmingData(tokenData)
+  console.log({ yieldFarmData })
+  const tvl = getTvl(tokenData)
+  console.log({ tvl })
+  const tradingFees = getTradingFees(tokenData)
+  console.log('typeof tradingfees (row)', typeof tradingFees)
+  const leverageFarming = getLeverageFarmingData(tokenData)
+  console.log({ leverageFarming })
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={lpSymbol.replace(' LP', '')} quoteToken={quoteToken} token={token} />
-        <ApyCell apy={getDisplayApr(yieldFarmData)} />
-        <TvlCell tvl={tvl} />
+        <ApyCell
+          apy={getDisplayApr(yieldFarmData)}
+          yieldFarming={yieldFarmData}
+          tradingFees={tradingFees}
+          huskyRewards={huskyRewards}
+        />
+        <TvlCell tvl={tvl} tokenData={tokenData} />
         <LeverageCell leverage={leverage} />
         <ActionCell token={tokenData} />
       </StyledRow>

@@ -53,7 +53,7 @@ const Info = styled(Box)<InfoParams>`
   }
 `
 
-const ApyCell = ({ apy }) => {
+const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards }) => {
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { isMobile } = useMatchBreakpoints()
@@ -71,15 +71,15 @@ const ApyCell = ({ apy }) => {
         <Info show={displayInfo}>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Yield&nbsp;Farming</Text>
-            <Skeleton width="80px" height="16px" />
+            <Text>{yieldFarming?.toFixed(2)}%</Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Trading&nbsp;Fees</Text>
-            <Skeleton width="80px" height="16px" />
+            <Text>{tradingFees}</Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
-            <Text small>HUSKI&nbsp;Rewards</Text>
-            <Skeleton width="80px" height="16px" />
+            <Text small>HUSKY&nbsp;Rewards</Text>
+            <Text>{huskyRewards?.toFixed(4)}</Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Borrowing&nbsp;Interest</Text>

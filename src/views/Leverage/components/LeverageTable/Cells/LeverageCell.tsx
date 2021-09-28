@@ -54,9 +54,7 @@ const LeverageCell = ({ leverage }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Leverage
         </Text>
-        {/*   <Text>{lvgValue}</Text> */}
         <LeverageContainer>
-          {/*  <CustomInput type="number" value={lvgValue} min="1" max="10" /> */}
           <Flex padding="1rem">
             <Text>{lvgValue.toFixed(2)}</Text>
           </Flex>
