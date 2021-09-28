@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { formatBigNumber } from 'state/utils'
+import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -22,8 +23,13 @@ const StyledCell = styled(BaseCell)`
     }
   }
 `
+
 const TotalSupplyCell = ({ supply }) => {
   const { isMobile } = useMatchBreakpoints()
+
+  console.log('formatBigNumber supply', supply && formatBigNumber(supply))
+  console.log('parseFloat supply', supply && parseFloat(formatBigNumber(supply).replace(/,/g, '')))
+  const formatedSupply = supply && parseFloat(formatBigNumber(supply).replace(/,/g, ''))
 
   return (
     <StyledCell role="cell">
@@ -31,7 +37,7 @@ const TotalSupplyCell = ({ supply }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Total Supply
         </Text>
-        {supply ? <Text>{formatBigNumber(supply)}</Text> : <Skeleton width="80px" height="16px" />}
+        {supply ? <Text>{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )
