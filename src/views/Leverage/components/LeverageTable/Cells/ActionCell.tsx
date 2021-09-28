@@ -37,7 +37,7 @@ const ActionCell = ({ token }) => {
         <Button
           as={Link}
           to={{ pathname: `/leverage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}
-          disabled={!account}
+          disabled={!token?.totalSupply || !account}
         >
           Farm
         </Button>
