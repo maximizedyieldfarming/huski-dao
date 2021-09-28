@@ -53,7 +53,7 @@ const Info = styled(Box)<InfoParams>`
   }
 `
 
-const ApyCell = ({ apy }) => {
+const ApyCell = ({ apy, token }) => {
   const { isMobile } = useMatchBreakpoints()
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
@@ -62,6 +62,8 @@ const ApyCell = ({ apy }) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
+
+  const tokenName = token?.token?.symbol
 
   const showText = (() => (
     <>
@@ -82,10 +84,12 @@ const ApyCell = ({ apy }) => {
             <Text small>Staking&nbsp;APR</Text>
             <Skeleton width="80px" height="16px" />
           </Flex>
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text small>Protocol&nbsp;APR</Text>
-            <Skeleton width="80px" height="16px" />
-          </Flex>
+          {tokenName === 'ALPACA' && (
+            <Flex justifyContent="space-between" alignItems="center">
+              <Text small>Protocol&nbsp;APR</Text>
+              <Skeleton width="80px" height="16px" />
+            </Flex>
+          )}
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Total&nbsp;APR</Text>
             <Skeleton width="80px" height="16px" />

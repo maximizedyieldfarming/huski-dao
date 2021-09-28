@@ -35,12 +35,12 @@ const LendRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
   // name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply,
-  const { totalToken, vaultDebtVal, token, userData } = tokenData
+  const { totalToken, vaultDebtVal, userData } = tokenData
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
-        <ApyCell apy={getAprData(tokenData, huskyPrice, huskyPerBlock)} />
+        <ApyCell apy={getAprData(tokenData, huskyPrice, huskyPerBlock)} token={tokenData} />
         <TotalSupplyCell supply={parseInt(totalToken)} />
         <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
