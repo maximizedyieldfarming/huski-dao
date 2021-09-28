@@ -1,34 +1,6 @@
 import { getWeb3MasterChefContract, getWeb3PancakePairContract, fromWei } from './contractHelper';
 import { BLOCKS_PER_YEAR } from './config';
 
-export async function getYieldFarmAPR(param: any) {
-    const masterChef = getWeb3MasterChefContract(); // new web3.eth.Contract(MasterChefABI, getPancakeMasterChef());
-
-    const cakePerBlock = await masterChef.methods.cakePerBlock().call();
-    const totalAllocPoint = await masterChef.methods.totalAllocPoint().call();
-    // Pid echange pool id
-    const poolInfo = await masterChef.methods.poolInfo('258').call();
-
-    const poolCakeYear = BLOCKS_PER_YEAR.times(cakePerBlock * poolInfo.allocPoint).div(totalAllocPoint);
-    // cake price from coingecko
-    const emissionCakePerYear = poolCakeYear.times('20.29').div(10 ** 18)
-
-    const lpToken = getWeb3PancakePairContract(poolInfo.lpToken); // new web3.eth.Contract(PancakePairABI, poolInfo.lpToken);
-    const totalSupply = await lpToken.methods.totalSupply().call();
-    // getRserves sum and $$$
-    const tvl = '1280000';// param.tvl;
-
-    const yieldFarmAPR = emissionCakePerYear.div(tvl);
-    const asd = yieldFarmAPR.toNumber()
-    // console.log({cakePerBlock,totalAllocPoint,poolInfo,poolCakeYear,emissionCakePerYear,lpToken,totalSupply,yieldFarmAPR,asd});
-    // console.log(`getYieldFarmAPR: ${  yieldFarmAPR.toNumber()}`);
-
-    // const masterChef2 = new ethers.Contract(getPancakeMasterChef(), MasterChefABI, provider);
-    // console.log("ethers getYieldFarmAPR: ", masterChef2.cakePerBlock());
-    // return yieldFarmAPR.toNumber();
-    return 12;
-}
-
 export async function getPancakeTradingFeesAPR(param: any) {
     const volumeUSD = (param.volumeUSD7Day * 17) / 10000; // 7日dailyVolumeUSD求和,0.17% - Returned to Liquidity Pools in the form of a fee reward for liquidity providers
 
