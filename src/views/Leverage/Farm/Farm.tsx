@@ -3,6 +3,8 @@ import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
 import styled from 'styled-components'
+
+import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData, getTradingFees } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
@@ -10,9 +12,9 @@ interface RouteParams {
 }
 
 const Section = styled(Box)`
-  /*  &:first-of-type {
+  &:first-of-type {
     background-color: ${({ theme }) => theme.colors.disabled};
-  } */
+  }
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
@@ -58,9 +60,7 @@ const CustomSlider = styled.input.attrs({ type: 'range' })`
 
 const Farm = (props) => {
   console.log('props to adjust position...', props)
-  /*   const [incDecRadio, setIncDecRadio] = useState(true)
-  console.log({ incDecRadio })
-  */
+
   const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
     console.info('fired')
@@ -68,13 +68,7 @@ const Farm = (props) => {
     console.log(value)
     setRadio(value)
   }
-  /*  const handleChangeIncDecRadio = (e) => {
-    console.info('fired')
-    console.log({ e })
-    const { value } = e.target
-    console.log({ value })
-    setIncDecRadio(value === 'on')
-  } */
+
   const {
     location: {
       state: { tokenData },
@@ -104,6 +98,9 @@ const Farm = (props) => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
+  getLeverageFarmingData(tokenData)
+  console.log('getLeverageFarmingData', getLeverageFarmingData(tokenData))
+
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
@@ -119,13 +116,18 @@ const Farm = (props) => {
         <Flex>
           <Flex flexDirection="column" justifyContent="space-between">
             <Box>
-              <Text as="span">Balance</Text>
-              <Flex justifyContent="space-between">
+              <Flex alignItems="center">
+                <Text as="span" mr="1rem">
+                  Balance:
+                </Text>
                 {tokenData?.user?.balance ? (
                   <Text>{tokenData?.user?.balance}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
+              </Flex>
+              <Flex justifyContent="space-between" mb="1rem" background="backgroundAlt" padding="0 1rem">
+                <Input type="number" scale="sm" style={{ width: 'unset' }} />
                 <Text>{quoteTokenName}</Text>
               </Flex>
               <Flex justifyContent="space-around">
@@ -136,13 +138,18 @@ const Farm = (props) => {
               </Flex>
             </Box>
             <Box>
-              <Text as="span">Balance</Text>
-              <Flex justifyContent="space-between">
+              <Flex alignItems="center">
+                <Text as="span" mr="1rem">
+                  Balance:
+                </Text>
                 {tokenData?.user?.balance ? (
                   <Text>{tokenData?.user?.balance}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
+              </Flex>
+              <Flex justifyContent="space-between" mb="1rem" background="backgroundAlt.0" padding="0 1rem">
+                <Input type="number" scale="sm" style={{ width: 'unset' }} />
                 <Text>{tokenName}</Text>
               </Flex>
               <Flex justifyContent="space-around">
