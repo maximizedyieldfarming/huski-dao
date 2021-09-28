@@ -12,6 +12,9 @@ import multicall from 'utils/multicall'
 import { LeverageFarm, SerializedBigNumber } from '../types'
 
 type PublicFarmData = {
+  lptotalSupply: SerializedBigNumber
+  tokenUserInfoLP: SerializedBigNumber
+  borrowingInterest: SerializedBigNumber
   tokenAmountTotal: SerializedBigNumber
   quoteTokenAmountTotal: SerializedBigNumber
   totalSupply: SerializedBigNumber
@@ -20,34 +23,42 @@ type PublicFarmData = {
   tokenReserve: SerializedBigNumber
   lpTotalInQuoteToken: SerializedBigNumber
   quoteTokenReserve: SerializedBigNumber
-  tokenBalanceLP:SerializedBigNumber
-  quoteTokenBalanceLP:SerializedBigNumber
+  tokenBalanceLP: SerializedBigNumber
+  quoteTokenBalanceLP: SerializedBigNumber
   poolWeight: SerializedBigNumber
-  name:string
+  name: string
   multiplier: string
   pooPerBlock: number
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { poolId, lpAddresses, token, quoteToken, vaultAddress, pid } = farm
+  const { poolId, lpAddresses, workerAddress, token, quoteToken, vaultAddress, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
+  const workerAddresses = getAddress(workerAddress)
 
-  const [lpTotalReserves] =
+  const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
       {
         address: lpAddress,
         name: 'getReserves',
       },
+      {
+        address: lpAddress,
+        name: 'totalSupply',
+      },
     ])
-  // console.info('token',pid);
-  // console.info('z这是什么玩意。lpTotalReserves',lpTotalReserves);
-  // console.info('z这是什么玩意。lpTotalReserves----',lpTotalReserves[0]._hex,);
-  const [name, totalSupply, totalToken, vaultDebtVal] =
+
+  const [name, borrowingInterest, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
       {
         address: vaultAddresses,
         name: 'name',
+      },
+      {
+        address: vaultAddresses,
+        name: 'pendingInterest',
+        params: [0],
       },
       {
         address: vaultAddresses,
@@ -63,42 +74,42 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
 
-    const calls = [
-      // Balance of token in the LP contract
-      {
-        address: getAddress(token.address),
-        name: 'balanceOf',
-        params: [lpAddress],
-      },
-      // Balance of quote token on LP contract
-      {
-        address: getAddress(quoteToken.address),
-        name: 'balanceOf',
-        params: [lpAddress],
-      },
-      // Balance of LP tokens in the master chef contract
-      {
-        address: lpAddress,
-        name: 'balanceOf',
-        params: [getMasterChefAddress()],
-      },
-      // Total supply of LP tokens
-      {
-        address: lpAddress,
-        name: 'totalSupply',
-      },
-      // Token decimals
-      {
-        address: getAddress(token.address),
-        name: 'decimals',
-      },
-      // Quote token decimals
-      {
-        address: getAddress(quoteToken.address),
-        name: 'decimals',
-      },
-    ]
-    const [tokenBalanceLP, quoteTokenBalanceLP, lpTokenBalanceMC, lpTotalSupply, tokenDecimals, quoteTokenDecimals] =
+  const calls = [
+    // Balance of token in the LP contract
+    {
+      address: getAddress(token.address),
+      name: 'balanceOf',
+      params: [lpAddress],
+    },
+    // Balance of quote token on LP contract
+    {
+      address: getAddress(quoteToken.address),
+      name: 'balanceOf',
+      params: [lpAddress],
+    },
+    // Balance of LP tokens in the master chef contract
+    {
+      address: lpAddress,
+      name: 'balanceOf',
+      params: [getMasterChefAddress()],
+    },
+    // Total supply of LP tokens
+    {
+      address: lpAddress,
+      name: 'totalSupply',
+    },
+    // Token decimals
+    {
+      address: getAddress(token.address),
+      name: 'decimals',
+    },
+    // Quote token decimals
+    {
+      address: getAddress(quoteToken.address),
+      name: 'decimals',
+    },
+  ]
+  const [tokenBalanceLP, quoteTokenBalanceLP, lpTokenBalanceMC, lpTotalSupply, tokenDecimals, quoteTokenDecimals] =
     await multicall(erc20, calls)
 
   // Ratio in % of LP tokens that are staked in the MC, vs the total number in circulation
@@ -136,22 +147,29 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   //       ])
   //     : [null, null]
 
-  const [info, alpacaPerBlock, totalAllocPoint] =
+
+  const masterChefAddress = getMasterChefAddress()
+  const [info, alpacaPerBlock, totalAllocPoint, userInfo] =
     pid || pid === 0
       ? await multicall(masterchefABI, [
         {
-          address: getMasterChefAddress(),
+          address: masterChefAddress,
           name: 'poolInfo',
           params: [pid],
         },
         {
-          address: getMasterChefAddress(),
+          address: masterChefAddress,
           name: 'cakePerBlock',
         },
         {
-          address: getMasterChefAddress(),
+          address: masterChefAddress,
           name: 'totalAllocPoint',
         },
+        {
+          address: masterChefAddress,
+          name: 'userInfo',
+          params: [pid, workerAddresses],
+        }
       ])
       : [null, null]
 
@@ -159,22 +177,24 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
   const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
 
-
   return {
     name,
+    lptotalSupply: lptotalSupply[0]._hex,
+    borrowingInterest: borrowingInterest[0]._hex,
     totalSupply: totalSupply[0]._hex,
     totalToken: totalToken[0]._hex,
     vaultDebtVal: vaultDebtVal[0]._hex,
     tokenReserve: lpTotalReserves[0]._hex,
     quoteTokenReserve: lpTotalReserves[1]._hex,
+    tokenUserInfoLP: userInfo[0]._hex,
     tokenAmountTotal: tokenAmountTotal.toJSON(),
     quoteTokenAmountTotal: quoteTokenAmountTotal.toJSON(),
     lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),
     poolWeight: poolWeight.toJSON(),
     multiplier: `${allocPoint.div(100).toString()}XqQ`,
     pooPerBlock,
-    tokenBalanceLP:tokenBalanceLP[0]._hex,
-     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
+    tokenBalanceLP: tokenBalanceLP[0]._hex,
+    quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
   }
 }
 

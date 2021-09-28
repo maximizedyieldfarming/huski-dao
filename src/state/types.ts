@@ -54,6 +54,9 @@ export interface LeverageFarm extends LeverageFarmConfig {
     stakedBalance: string
     earnings: string
   }
+  lptotalSupply?: SerializedBigNumber
+  tokenUserInfoLP?: SerializedBigNumber
+  borrowingInterest?: SerializedBigNumber
   totalSupply?: SerializedBigNumber
   totalToken?: SerializedBigNumber,
   vaultDebtVal?: SerializedBigNumber

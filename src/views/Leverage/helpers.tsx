@@ -31,14 +31,20 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenAmountTotal, quoteTokenAmountTotal, tokenBalanceLP, quoteTokenBalanceLP, tokenReserve, quoteTokenReserve, token, quoteToken } = farm
+  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, token, quoteToken } = farm
 
   const tokenPriceInUsd = new BigNumber(token.busdPrice)
   const quoteTokenPriceInUsd = new BigNumber(quoteToken.busdPrice)
 
-  const tvl0 = new BigNumber(tokenReserve).times(tokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
-  const tvl1 = new BigNumber(quoteTokenReserve).times(quoteTokenPriceInUsd).div(DEFAULT_TOKEN_DECIMAL)
-  const totalTvl = BigNumber.sum(tvl0, tvl1)
+  // 这个是上面lp tokens
+  // const tokensLP = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
+
+  const lpTokenRatio = new BigNumber(tokenUserInfoLP).div(new BigNumber(lptotalSupply))
+
+  const tokenTvl = new BigNumber(tokenAmountTotal).times(tokenPriceInUsd).times(lpTokenRatio)
+  const quoteTokenTvl = new BigNumber(quoteTokenAmountTotal).times(quoteTokenPriceInUsd).times(lpTokenRatio)
+
+  const totalTvl = BigNumber.sum(tokenTvl, quoteTokenTvl)
   return totalTvl.toNumber();
 }
 
