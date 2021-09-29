@@ -4,6 +4,7 @@ import isArchivedPid from 'utils/farmHelpers'
 import fetchFarms from './fetchFarms'
 import fetchFarmsPrices from './fetchFarmsPrices'
 import {
+  fetchFarmUserPositions,
   fetchFarmUserEarnings,
   fetchFarmUserAllowances,
   fetchFarmUserTokenBalances,
@@ -61,6 +62,7 @@ createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
+    const userFarmPositions = await fetchFarmUserPositions(account, farmsToFetch)
 
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
