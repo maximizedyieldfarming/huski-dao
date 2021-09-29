@@ -18,6 +18,7 @@ const minABI = [
 ];
 
 const web3 = new Web3(getDomain());
+const provider = new ethers.providers.Web3Provider(window.ethereum);
 const simpleRpcProvider = new ethers.providers.JsonRpcProvider(getDomain());
 
 export const fromWei = async (amount) => {
@@ -42,9 +43,12 @@ const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.
     return new ethers.Contract(address, abi, signerOrProvider)
 }
 
-export const getFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-    return getContract(FairLaunchABI, getFairLaunch(), signer)
-}
+// export const getFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+//     return getContract(FairLaunchABI, getFairLaunch(), signer)
+// }
+export const getFairLaunchContract = () => {
+    return getContract(FairLaunchABI, getFairLaunch(), provider.getSigner());
+};
 
 export const getWeb3FairLaunchContract = () => {
     const fairLaunch = new web3.eth.Contract(FairLaunchABI as any, getFairLaunch());
@@ -60,9 +64,13 @@ export const getWeb3HuskyTokenContract = () => {
     return huskyToken;
 };
 
-export const getMasterChefContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-    return getContract(MasterChefABI, getPancakeMasterChef(), signer)
-}
+// export const getMasterChefContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+//     return getContract(MasterChefABI, getPancakeMasterChef(), signer)
+// }
+
+export const getMasterChefContract = () => {
+    return getContract(MasterChefABI, getPancakeMasterChef(), provider.getSigner());
+};
 
 export const getWeb3MasterChefContract = () => {
     const masterChef = new web3.eth.Contract(MasterChefABI as any, getPancakeMasterChef());
@@ -78,9 +86,13 @@ export const getWeb3PancakePairContract = (address) => {
     return lpToken;
 };
 
-export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
-    return getContract(VaultABI, address, signer)
-}
+// export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
+//     return getContract(VaultABI, address, signer)
+// }
+
+export const getVaultContract = (address) => {
+    return getContract(VaultABI, address, provider.getSigner());
+};
 
 export const getWeb3VaultContract = (address) => {
     const vault = new web3.eth.Contract(VaultABI as any, address);
