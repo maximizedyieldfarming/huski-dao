@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
+import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
 
 interface InfoParams {
@@ -63,7 +64,7 @@ const TvlCell = ({ tvl, tokenData }) => {
 
   const showText = (() => (
     <>
-      <Text>{tvl}</Text>
+      <Text>{nFormatter(tvl)}</Text>
       <Box
         onMouseEnter={changeDisplayInfo}
         onMouseLeave={changeDisplayInfo}
@@ -100,7 +101,10 @@ const TvlCell = ({ tvl, tokenData }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           TVL
         </Text>
-        <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex>
+        {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
+        <Flex alignItems="center">
+          {tvl ? <Text>{nFormatter(tvl)}</Text> : <Skeleton width="80px" height="16px" />}
+        </Flex>
       </CellContent>
     </StyledCell>
   )
