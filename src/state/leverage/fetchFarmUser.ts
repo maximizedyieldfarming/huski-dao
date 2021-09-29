@@ -71,3 +71,14 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Lever
   })
   return parsedEarnings
 }
+
+export const fetchFarmUserPositions = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+
+  const response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
+  const res = await fetch(response);
+  const positionRes = await res.json();
+
+  // to do something
+
+  return positionRes
+}
