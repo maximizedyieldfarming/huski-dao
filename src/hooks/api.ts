@@ -31,3 +31,24 @@ export const useGetStats = () => {
 
   return data
 }
+
+export const useTradeFee = () => {
+  const [data, setData] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://api.alpacafinance.org/v1/internal/tradingFee')
+        const responseData = await response.json()
+        console.info('jinlale--- ',responseData.data.tradingFees);
+        setData(responseData.data.tradingFees)
+      } catch (error) {
+        console.error('Unable to fetch data:', error)
+      }
+    }
+    
+    fetchData()
+  }, [setData])
+
+  return data
+}

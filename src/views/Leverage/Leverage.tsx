@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
+import { useTradeFee } from 'hooks/api'
 import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
@@ -107,7 +108,7 @@ const Leverage: React.FC = () => {
   const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
-
+  const data = useTradeFee()
   usePollLeverageFarmsWithUserData()
 
   const cardLayout = (
