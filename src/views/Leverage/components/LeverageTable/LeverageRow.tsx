@@ -46,8 +46,8 @@ const LeverageRow = ({ tokenData }) => {
   console.log({ huskyRewards })
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   console.log({ yieldFarmData })
-  const tvl = getTvl(tokenData)
-  console.log({ tvl })
+  const { tokensLP,tokenNum,quoteTokenNum,totalTvl } = getTvl(tokenData)
+
   const tradingFees = getTradingFees(tokenData)
   console.log('typeof tradingfees (row)', typeof tradingFees)
   const leverageFarming = getLeverageFarmingData(tokenData)
@@ -63,7 +63,7 @@ const LeverageRow = ({ tokenData }) => {
           tradingFees={tradingFees}
           huskyRewards={huskyRewards}
         />
-        <TvlCell tvl={tvl} tokenData={tokenData} />
+        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <LeverageCell leverage={leverage} />
         <ActionCell token={tokenData} />
       </StyledRow>
