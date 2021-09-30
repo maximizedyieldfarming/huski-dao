@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
-import nFormatter from 'utils/nFormatter'
+import Select from 'components/Select/Select'
 import BaseCell, { CellContent } from './BaseCell'
 
 interface InfoParams {
@@ -54,60 +54,31 @@ const Info = styled(Box)<InfoParams>`
     gap: 10px;
   }
 `
-
-const TvlCell = ({ tvl, tokenData }) => {
-  const [displayInfo, setDisplayInfo] = useState(false)
-  const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
-  const { isMobile } = useMatchBreakpoints()
-  const { quoteToken, token } = tokenData
-  console.log({ tokenData })
-
-  const showText = (() => (
-    <>
-      <Text>{nFormatter(tvl)}</Text>
-      <Box
-        onMouseEnter={changeDisplayInfo}
-        onMouseLeave={changeDisplayInfo}
-        position="relative"
-        style={{ cursor: 'pointer' }}
-      >
-        <InfoIcon ml="10px" />
-        <Info show={displayInfo}>
-          <Skeleton width="80px" height="16px" />
-          <Flex alignItems="center">
-            <Box width={20} height={20} mr="5px">
-              <TokenImage token={token} width={20} height={20} />
-            </Box>
-            <Text small>
-              {token?.symbol}&nbsp;(1&nbsp;{token?.symbol}&nbsp;=&nbsp;USD)
-            </Text>
-          </Flex>
-          <Flex alignItems="center">
-            <Box width={20} height={20} mr="5px">
-              <TokenImage token={quoteToken} width={20} height={20} />
-            </Box>
-            <Text small>
-              {quoteToken?.symbol}&nbsp;(1&nbsp;{quoteToken?.symbol}&nbsp;=&nbsp;USD)
-            </Text>
-          </Flex>
-        </Info>
-      </Box>
-    </>
-  ))()
-
+const Borrowing = ({ tokenData }) => {
+  const quoteToken = tokenData?.quoteToken?.symbol
+  const token = tokenData?.token?.symbol
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          TVL
+          Borrowing
         </Text>
+        <Select
+          options={[
+            {
+              label: quoteToken,
+              value: quoteToken,
+            },
+            {
+              label: token,
+              value: token,
+            },
+          ]}
+        />
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
-        <Flex alignItems="center">
-          {tvl ? <Text>{nFormatter(tvl)}</Text> : <Skeleton width="80px" height="16px" />}
-        </Flex>
       </CellContent>
     </StyledCell>
   )
 }
 
-export default TvlCell
+export default Borrowing

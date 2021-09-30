@@ -53,7 +53,7 @@ const Info = styled(Box)<InfoParams>`
   }
 `
 
-const ApyCell = ({ apy, token }) => {
+const ApyCell = ({ getApyData, token }) => {
   const { isMobile } = useMatchBreakpoints()
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
@@ -62,7 +62,7 @@ const ApyCell = ({ apy, token }) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
-
+  const { landApr, stakeApr, totalApr, apy } = getApyData
   const tokenName = token?.token?.symbol
 
   const showText = (() => (
@@ -78,11 +78,11 @@ const ApyCell = ({ apy, token }) => {
         <Info show={displayInfo}>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Lending&nbsp;APR</Text>
-            <Skeleton width="80px" height="16px" />
+            {landApr ? <Text>{apyCell(landApr)}</Text> : <Skeleton width="80px" height="16px" />}
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Staking&nbsp;APR</Text>
-            <Skeleton width="80px" height="16px" />
+            {stakeApr ? <Text>{apyCell(stakeApr.toNumber())}</Text> : <Skeleton width="80px" height="16px" />}
           </Flex>
           {tokenName === 'ALPACA' && (
             <Flex justifyContent="space-between" alignItems="center">
@@ -92,11 +92,11 @@ const ApyCell = ({ apy, token }) => {
           )}
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Total&nbsp;APR</Text>
-            <Skeleton width="80px" height="16px" />
+            {totalApr ? <Text>{apyCell(totalApr.toNumber())}</Text> : <Skeleton width="80px" height="16px" />}
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Total&nbsp;APY</Text>
-            <Skeleton width="80px" height="16px" />
+            {apy ? <Text>{apyCell(apy)}</Text> : <Skeleton width="80px" height="16px" />}
           </Flex>
         </Info>
       </Box>

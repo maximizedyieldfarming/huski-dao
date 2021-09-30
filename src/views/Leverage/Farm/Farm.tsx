@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import { getLeverageFarmingData } from '../helpers'
+import { TokenImage } from 'components/TokenImage'
+import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
+import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData, getTradingFees } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
@@ -26,11 +28,11 @@ const Section = styled(Box)`
       }
     }
   }
-  > ${Flex} {
+  /*  > ${Flex} {
     > div:first-child {
       flex: 1;
     }
-  }
+  } */
   input[type='range'] {
     -webkit-appearance: auto;
   }
@@ -57,6 +59,14 @@ const CustomSlider = styled.input.attrs({ type: 'range' })`
   }
 `
 
+const InputArea = styled(Flex)`
+  background-color: ${({ theme }) => theme.card.background};
+  border-radius: ${({ theme }) => theme.radii.default};
+  padding: 0.5rem;
+  flex: 1;
+  align-items: center;
+`
+
 const Farm = (props) => {
   console.log('props to adjust position...', props)
 
@@ -73,15 +83,14 @@ const Farm = (props) => {
       state: { tokenData },
     },
   } = props
-  console.log('adjustPosition tokenData', tokenData)
+
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
-  console.log({ quoteTokenName })
-  console.log({ tokenName })
+
   const [radio, setRadio] = useState(quoteTokenName)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(leverage)
-  console.log({ leverageValue })
+
 
   const handleSliderChange = (e) => {
     console.log('slider change event', e)
@@ -97,8 +106,32 @@ const Farm = (props) => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-  getLeverageFarmingData(tokenData)
-  console.log('getLeverageFarmingData', getLeverageFarmingData(tokenData))
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const cakePrice = useCakePrice()
+
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
+  const yieldFarmData = getYieldFarming(tokenData, cakePrice)
+  const tvl = getTvl(tokenData)
+  const tradingFees = getTradingFees(tokenData)
+  const leverageFarming = getLeverageFarmingData(tokenData)
+  // console.log({ huskyRewards })
+  // console.log({ yieldFarmData })
+  // console.log({ tvl })
+  // console.log({ tradingFees })
+  // console.log({ leverageFarming })
+
+  // FIX for scroll-wheel changing input of number type
+  const numberInputRef = useRef([])
+  useEffect(() => {
+    const handleWheel = (e) => e.preventDefault()
+    const references = numberInputRef.current
+    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+
+    return () => {
+      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+    }
+  }, [])
 
   return (
     <Page>
@@ -113,7 +146,7 @@ const Farm = (props) => {
           </Text>
         </Flex>
         <Flex>
-          <Flex flexDirection="column" justifyContent="space-between">
+          <Flex flexDirection="column" justifyContent="space-between" flex="1">
             <Box>
               <Flex alignItems="center">
                 <Text as="span" mr="1rem">
@@ -125,10 +158,15 @@ const Farm = (props) => {
                   <Skeleton width="80px" height="16px" />
                 )}
               </Flex>
-              <Flex justifyContent="space-between" mb="1rem" background="backgroundAlt" padding="0 1rem">
-                <Input type="number" scale="sm" style={{ width: 'unset' }} />
+              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
+                <Flex alignItems="center" flex="1">
+                  <Box width={40} height={40} mr="5px">
+                    <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
+                  </Box>
+                  <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} />
+                </Flex>
                 <Text>{quoteTokenName}</Text>
-              </Flex>
+              </InputArea>
               <Flex justifyContent="space-around">
                 <Button variant="secondary">25%</Button>
                 <Button variant="secondary">50%</Button>
@@ -147,10 +185,15 @@ const Farm = (props) => {
                   <Skeleton width="80px" height="16px" />
                 )}
               </Flex>
-              <Flex justifyContent="space-between" mb="1rem" background="backgroundAlt.0" padding="0 1rem">
-                <Input type="number" scale="sm" style={{ width: 'unset' }} />
+              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0">
+                <Flex alignItems="center" flex="1">
+                  <Box width={40} height={40} mr="5px">
+                    <TokenImage token={tokenData?.token} width={40} height={40} />
+                  </Box>
+                  <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} />
+                </Flex>
                 <Text>{tokenName}</Text>
-              </Flex>
+              </InputArea>
               <Flex justifyContent="space-around">
                 <Button variant="secondary">25%</Button>
                 <Button variant="secondary">50%</Button>
@@ -159,12 +202,12 @@ const Farm = (props) => {
               </Flex>
             </Box>
             <Box>
-              <Text>
+              <Text color="textSubtle" small>
                 You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields
                 and higher risk,vice versa.
               </Text>
               <Flex alignItems="center">
-                <Text>Increase or decrease leverage</Text>
+                <Text bold>Increase or decrease leverage</Text>
               </Flex>
 
               {/*   <Text>Active Positions</Text> */}
@@ -196,20 +239,26 @@ const Farm = (props) => {
               </Flex>
             </Box>
           </Flex>
-          <Box>
+          <Flex flex="0.5">
             <img src={image} alt="" />
-          </Box>
+          </Flex>
         </Flex>
         <Box>
-          <Text>Which asset would you like to borrow? </Text>
+          <Text bold>Which asset would you like to borrow? </Text>
           <Flex>
             <Flex alignItems="center" marginRight="10px">
               <Text mr="5px">{quoteTokenName}</Text>
-              <Radio name="token" value={quoteTokenName} onChange={handleChange} checked={radio === quoteTokenName} />
+              <Radio
+                name="token"
+                scale="sm"
+                value={quoteTokenName}
+                onChange={handleChange}
+                checked={radio === quoteTokenName}
+              />
             </Flex>
             <Flex alignItems="center">
               <Text mr="5px">{tokenName}</Text>
-              <Radio name="token" value={tokenName} onChange={handleChange} checked={radio === tokenName} />
+              <Radio name="token" scale="sm" value={tokenName} onChange={handleChange} checked={radio === tokenName} />
             </Flex>
           </Flex>
         </Box>

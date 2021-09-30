@@ -9,6 +9,7 @@ import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
 import LeverageCell from './Cells/LeverageCell'
 import TvlCell from './Cells/TvlCell'
+import Borrowing from './Cells/Borrowing'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -46,7 +47,7 @@ const LeverageRow = ({ tokenData }) => {
   console.log({ huskyRewards })
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   console.log({ yieldFarmData })
-  const { tokensLP,tokenNum,quoteTokenNum,totalTvl } = getTvl(tokenData)
+  const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
 
   const tradingFees = getTradingFees(tokenData)
   console.log('typeof tradingfees (row)', typeof tradingFees)
@@ -56,7 +57,12 @@ const LeverageRow = ({ tokenData }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={lpSymbol.replace(' LP', '')} quoteToken={quoteToken} token={token} />
+        <PoolCell
+          pool={lpSymbol.replace(' LP', '')}
+          tokenData={tokenData}
+          tvl={totalTvl.toNumber()}
+          lpTokens={tokensLP}
+        />
         <ApyCell
           apy={getDisplayApr(yieldFarmData)}
           yieldFarming={yieldFarmData}
@@ -64,6 +70,7 @@ const LeverageRow = ({ tokenData }) => {
           huskyRewards={huskyRewards}
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
+        <Borrowing tokenData={tokenData} />
         <LeverageCell leverage={leverage} />
         <ActionCell token={tokenData} />
       </StyledRow>

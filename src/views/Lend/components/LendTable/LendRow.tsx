@@ -30,17 +30,21 @@ const LendRow = ({ tokenData }) => {
 
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
+  const { landApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice, huskyPerBlock)
+  console.log('landApr', landApr)
+  console.log('stakeApr', stakeApr)
+  console.log('totalApr', totalApr)
+  console.log('apy', apy)
 
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
-  // name, apy, totalDeposit, totalBorrowed, capitalUtilizationRate, totalSupply,
   const { totalToken, vaultDebtVal, userData } = tokenData
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
-        <ApyCell apy={getAprData(tokenData, huskyPrice, huskyPerBlock)} token={tokenData} />
+        <ApyCell getApyData={getAprData(tokenData, huskyPrice, huskyPerBlock)} token={tokenData} />
         <TotalSupplyCell supply={parseInt(totalToken)} />
         <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />

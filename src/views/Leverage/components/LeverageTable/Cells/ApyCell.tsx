@@ -102,7 +102,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Apy
+          APY
         </Text>
         <Flex alignItems="center">{apy ? showText : <Skeleton width="80px" height="16px" />}</Flex>
       </CellContent>
