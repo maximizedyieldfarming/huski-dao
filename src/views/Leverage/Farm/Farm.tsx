@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
 import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
@@ -93,7 +93,6 @@ const Farm = (props) => {
 
 
   const handleSliderChange = (e) => {
-    console.log('slider change event', e)
     const value = e?.target?.value
     setLeverageValue(value)
   }
@@ -114,24 +113,43 @@ const Farm = (props) => {
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const tvl = getTvl(tokenData)
   const tradingFees = getTradingFees(tokenData)
-  const leverageFarming = getLeverageFarmingData(tokenData)
-  // console.log({ huskyRewards })
+  
+  const [tokenInput, setTokenInput] = useState(0)
+  // manage focus on modal show
+  const tokenInputRef = useRef<HTMLInputElement>()
+  const handleTokenInput = useCallback((event) => {
+    const input = event.target.value
+    setTokenInput(input)
+  }, [])
+
+  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  // manage focus on modal show
+  const quoteTokenInputRef = useRef<HTMLInputElement>()
+  const handleQuoteTokenInput = useCallback((event) => {
+    const input = event.target.value
+    setQuoteTokenInput(input)
+  }, [])
+
+  
+ const farmingData=  getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
+
+    // console.log({ huskyRewards })
   // console.log({ yieldFarmData })
   // console.log({ tvl })
   // console.log({ tradingFees })
   // console.log({ leverageFarming })
 
   // FIX for scroll-wheel changing input of number type
-  const numberInputRef = useRef([])
-  useEffect(() => {
-    const handleWheel = (e) => e.preventDefault()
-    const references = numberInputRef.current
-    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+  // const numberInputRef = useRef([])
+  // useEffect(() => {
+  //   const handleWheel = (e) => e.preventDefault()
+  //   const references = numberInputRef.current
+  //   references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
 
-    return () => {
-      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
-    }
-  }, [])
+  //   return () => {
+  //     references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+  //   }
+  // }, [])
 
   return (
     <Page>
@@ -163,7 +181,14 @@ const Farm = (props) => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
                   </Box>
-                  <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} />
+                  {/* <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} /> */}
+                  <Input
+                    // type="number"
+                    placeholder="0.00"
+                    value={quoteTokenInput}
+                    ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
+                    onChange={handleQuoteTokenInput}
+                  />
                 </Flex>
                 <Text>{quoteTokenName}</Text>
               </InputArea>
@@ -190,7 +215,14 @@ const Farm = (props) => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.token} width={40} height={40} />
                   </Box>
-                  <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} />
+                  <Input
+                    // type="number"
+                    placeholder="0.00"
+                    value={tokenInput}
+                    ref={tokenInputRef as RefObject<HTMLInputElement>}
+                    onChange={handleTokenInput}
+                  // ref={(input) => numberInputRef.current.push(input)} 
+                  />
                 </Flex>
                 <Text>{tokenName}</Text>
               </InputArea>
@@ -306,11 +338,11 @@ const Farm = (props) => {
         </Flex>
         <Flex>
           <Text>Assets Borrowed</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData? <Text>{farmingData[1]}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Price Impact</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData? <Text>{farmingData[0]}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>Trading Fees</Text>
@@ -318,7 +350,7 @@ const Farm = (props) => {
         </Flex>
         <Flex>
           <Text>Position Value</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData? <Text>{farmingData[2]} + {farmingData[3]}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>APR</Text>

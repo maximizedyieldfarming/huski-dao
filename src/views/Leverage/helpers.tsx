@@ -4,6 +4,7 @@ import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { ChainId } from '@pancakeswap/sdk'
 import { getFarmingData } from 'utils/pancakeService'
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
   const { vaultDebtVal, token, leverage } = farm
@@ -65,10 +66,14 @@ export const getTradingFees = (farm: LeverageFarm) => {
 
 }
 
-export const getLeverageFarmingData = (farm: LeverageFarm) => {
-  const { leverage, tokenAmountTotal, quoteTokenAmountTotal } = farm
+export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput) => {
+  const { tokenAmountTotal, quoteTokenAmountTotal } = farm
 
-  const farmdata = getFarmingData(leverage, 0.02, 0.05, parseInt(tokenAmountTotal), parseInt(quoteTokenAmountTotal), 0.0025)
-  
+  console.log({leverage, tokenInput, quoteTokenInput, tokenAmountTotal, quoteTokenAmountTotal })
+const tokenInputNum =Number(tokenInput);
+const quoteTokenInputNum = Number(quoteTokenInput);
+
+  const farmdata = getFarmingData(leverage, tokenInputNum, quoteTokenInputNum, parseInt(tokenAmountTotal), parseInt(quoteTokenAmountTotal), 0.0025)
+  console.info('farmdata',farmdata)
   return farmdata
 }
