@@ -1,10 +1,19 @@
 import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import React from 'react'
+import styled from 'styled-components'
 
+const Section = styled(Flex)`
+  &:not(:last-child) {
+    border-bottom: 2px solid ${({ theme }) => theme.colors.cardBorder};
+  }
+  > ${Flex}, > ${Box} {
+    padding: 1rem 0;
+  }
+`
 const ConverTo = ({ data }) => {
   return (
     <>
-      <Flex flexDirection="column">
+      <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>Position ID</Text>
           {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
@@ -29,8 +38,8 @@ const ConverTo = ({ data }) => {
           <Text>Debt Value</Text>
           {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
-      </Flex>
-      <Flex flexDirection="column">
+      </Section>
+      <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>Assets Received</Text>
           {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
@@ -40,7 +49,7 @@ const ConverTo = ({ data }) => {
           {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Button>Close Position</Button>
-      </Flex>
+      </Section>
     </>
   )
 }

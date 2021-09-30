@@ -4,6 +4,7 @@ import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
+import { TokenPairImage } from 'components/TokenImage'
 import ConverTo from './components/ConverTo'
 import MinimizeTrading from './components/MinimizeTrading'
 
@@ -54,19 +55,14 @@ const HeaderTabs = styled.div<Props>`
 `
 
 const Body = styled(Flex)`
-  padding: 1rem;
+  padding: 2rem;
   flex-direction: column;
   gap: 1rem;
-  > ${Flex} {
-    &:first-of-type {
-      border-bottom: 2px solid ${({ theme }) => theme.colors.cardBorder};
-    }
-    padding: 1rem;
-    // gap: 1.5rem;
-    > ${Flex} {
-      padding: 1rem 0;
-    }
-  }
+`
+const Bubble = styled(Flex)`
+  background-color: ${({ theme }) => theme.card.background};
+  padding: 1rem;
+  border-radius: ${({ theme }) => theme.radii.default};
 `
 
 const ClosePosition = (props) => {
@@ -88,14 +84,17 @@ const ClosePosition = (props) => {
   console.log({ quoteTokenName })
   console.log({ tokenName })
 
+  const [isCloseEntire, setCloseEntire] = useState(true)
+  const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
+
   return (
     <Page>
-      <Flex flexDirection="column" alignItems="center">
-        <Text fontSize="36px" textTransform="capitalize">
-          Close Position
-        </Text>
-        <Flex justifyContent="space-between">
-          <Text ml="1rem">Which method would you like to use?</Text>
+      <Text fontSize="36px" textTransform="capitalize" mx="auto">
+        Close Position
+      </Text>
+      <Flex alignItems="center">
+        <Flex alignItems="center" justifySelf="flex-start" flex="1">
+          <Text mr="1rem">Which method would you like to use?</Text>
           <Select
             options={[
               {
@@ -103,12 +102,22 @@ const ClosePosition = (props) => {
                 value: 'close_all',
               },
               {
-                label: 'test',
-                value: 'test',
+                label: 'Partially Close Your Position',
+                value: 'close_partial',
               },
             ]}
+            onChange={handleSelectChange}
           />
         </Flex>
+        <Bubble alignSelf="flex-end">
+          <TokenPairImage
+            primaryToken={tokenData?.quoteToken}
+            secondaryToken={tokenData?.token}
+            width={40}
+            height={40}
+          />
+          <Text>{tokenData?.lpSymbol.replace(' LP', '')}</Text>
+        </Bubble>
       </Flex>
       <TabPanel>
         <Header>
@@ -119,7 +128,13 @@ const ClosePosition = (props) => {
             <Text>Minimize Trading</Text>
           </HeaderTabs>
         </Header>
-        <Body>{isDeposit ? <ConverTo data={tokenData} /> : <MinimizeTrading data={tokenData} />}</Body>
+        <Body>
+          {isDeposit ? (
+            <ConverTo data={tokenData} />
+          ) : (
+            <MinimizeTrading data={tokenData} isCloseEntire={isCloseEntire} />
+          )}
+        </Body>
       </TabPanel>
     </Page>
   )
