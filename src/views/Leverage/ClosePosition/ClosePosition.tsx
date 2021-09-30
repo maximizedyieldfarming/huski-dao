@@ -109,14 +109,19 @@ const ClosePosition = (props) => {
             onChange={handleSelectChange}
           />
         </Flex>
-        <Bubble alignSelf="flex-end">
-          <TokenPairImage
-            primaryToken={tokenData?.quoteToken}
-            secondaryToken={tokenData?.token}
-            width={40}
-            height={40}
-          />
-          <Text>{tokenData?.lpSymbol.replace(' LP', '')}</Text>
+        <Bubble alignSelf="flex-end" alignItems="center">
+          <Box width={40} height={40}>
+            <TokenPairImage
+              primaryToken={tokenData?.quoteToken}
+              secondaryToken={tokenData?.token}
+              width={40}
+              height={40}
+              variant="inverted"
+            />
+          </Box>
+          <Text style={{ whiteSpace: 'nowrap' }} ml="10px">
+            {tokenData?.lpSymbol.replace(' LP', '')}
+          </Text>
         </Bubble>
       </Flex>
       <TabPanel>

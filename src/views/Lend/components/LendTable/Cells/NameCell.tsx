@@ -34,7 +34,7 @@ const NameCell = ({ token }) => {
           </Text>
         </Flex>
         {exchangeRate ? (
-          <Text small color="secondary">
+          <Text small color="textSubtle" style={{ whiteSpace: 'nowrap' }}>
             1 ib{token?.token.symbol} = {exchangeRate.toFixed(4)}&nbsp;{token?.token.symbol}
           </Text>
         ) : (
