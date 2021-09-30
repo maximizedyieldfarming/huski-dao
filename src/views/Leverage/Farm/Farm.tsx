@@ -3,8 +3,7 @@ import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-
-import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData, getTradingFees } from '../helpers'
+import { getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
