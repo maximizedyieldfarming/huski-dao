@@ -19,7 +19,7 @@ const StyledCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 2 0 150px;
     padding-left: 32px;
   }
   ${CellContent} {
@@ -128,8 +128,8 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
           {/*   <Text fontSize="12px" color="textSubtle" textAlign="left">
           Pool
         </Text> */}
-          <Flex flex="1">
-            <Text bold={!isMobile} small={isMobile} style={{ flex: '1' }}>
+          <Flex flex="1" alignItems="center">
+            <Text bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }}>
               {pool}
             </Text>
             {showText}
