@@ -27,8 +27,6 @@ const StyledCell = styled(BaseCell)`
 const TotalSupplyCell = ({ supply }) => {
   const { isMobile } = useMatchBreakpoints()
 
-  console.log('formatBigNumber supply', supply && formatBigNumber(supply))
-  console.log('parseFloat supply', supply && parseFloat(formatBigNumber(supply).replace(/,/g, '')))
   const formatedSupply = supply && parseFloat(formatBigNumber(supply).replace(/,/g, ''))
 
   return (

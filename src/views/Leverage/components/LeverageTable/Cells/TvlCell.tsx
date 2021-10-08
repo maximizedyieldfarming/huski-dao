@@ -60,7 +60,6 @@ const TvlCell = ({ tvl, tokenData }) => {
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { isMobile } = useMatchBreakpoints()
   const { quoteToken, token } = tokenData
-  console.log({ tokenData })
 
   const showText = (() => (
     <>
