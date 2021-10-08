@@ -259,7 +259,7 @@ const Lend: React.FC = () => {
   }
   if (searchQuery) {
     const lowercaseQuery = latinise(searchQuery.toLowerCase())
-    lendData = lendData.filter((pool) => pool.token.symbol.toLowerCase().includes(lowercaseQuery))
+    lendData = lendData.filter((token) => token.token.symbol.toLowerCase().includes(lowercaseQuery))
   }
 
   // sort feature
@@ -269,34 +269,38 @@ const Lend: React.FC = () => {
   const handleSortOptionChange = (option) => {
     setSortOption(option.value)
   }
-  const sortPools = (poolsToSort) => {
+  const sortPools = (dataToSort) => {
     switch (sortOption) {
       case 'apy':
         return orderBy(
-          poolsToSort,
-          (pool) => (pool.totalToken ? getAprData(pool, huskyPrice, huskyPerBlock).apy.toFixed(4) : 0),
+          dataToSort,
+          (token) => (token.totalToken ? getAprData(token, huskyPrice, huskyPerBlock).apy.toFixed(4) : 0),
           'desc',
         )
       case 'total_supply':
-        return orderBy(poolsToSort, (pool) => (pool.totalToken ? parseInt(pool.totalToken) : 0), 'desc')
+        return orderBy(dataToSort, (token) => (token.totalToken ? parseInt(token.totalToken) : 0), 'desc')
 
       case 'total_borrowed':
-        return orderBy(poolsToSort, (pool) => (pool.vaultDebtVal ? parseInt(pool.vaultDebtVal) : 0), 'desc')
+        return orderBy(dataToSort, (token) => (token.vaultDebtVal ? parseInt(token.vaultDebtVal) : 0), 'desc')
       case 'utilization_rate':
         return orderBy(
-          poolsToSort,
-          (pool) =>
-            pool.vaultDebtVal && pool.totalToken ? (pool.totalToken > 0 ? pool.vaultDebtVal / pool.totalToken : 0) : 0,
+          dataToSort,
+          (token) =>
+            token.vaultDebtVal && token.totalToken
+              ? token.totalToken > 0
+                ? token.vaultDebtVal / token.totalToken
+                : 0
+              : 0,
           'desc',
         )
       case 'balance':
         return orderBy(
-          poolsToSort,
-          (pool) => (pool.userData.tokenBalance ? parseInt(pool.userData.tokenBalance) : 0),
+          dataToSort,
+          (token) => (token.userData.tokenBalance ? parseInt(token.userData.tokenBalance) : 0),
           'desc',
         )
       default:
-        return poolsToSort
+        return dataToSort
     }
   }
 
