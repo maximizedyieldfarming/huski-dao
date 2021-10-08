@@ -28,6 +28,9 @@ const StyledPage = styled(Page)`
   align-items: center;
   justify-content: center;
   gap: 2rem;
+  > div {
+    flex: 1 1 0;
+  }
 `
 const TabPanel = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
@@ -43,6 +46,7 @@ const Balance = styled(Flex)`
   border-radius: 20px;
   width: 510px;
   justify-content: space-between;
+  align-items: center;
 `
 
 const Header = styled(Flex)`
@@ -71,6 +75,11 @@ const Body = styled(Flex)`
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
+`
+const Section = styled(Flex)`
+  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
+  padding: 1rem;
+  border-radius: ${({ theme }) => theme.radii.card};
 `
 
 const LendAction = (props) => {
@@ -183,7 +192,7 @@ const LendAction = (props) => {
           </HeaderTabs>
         </Header>
         <Body>
-          <Flex justifyContent="space-between">
+          <Section justifyContent="space-between">
             <Box>
               <Text fontWeight="bold">Amount</Text>
               <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" />
@@ -191,7 +200,7 @@ const LendAction = (props) => {
             <Box>
               <Text fontWeight="bold">
                 Balance: {displayBalance}
-                {token}
+                {isDeposit ? token : `ib${token}`}
               </Text>
 
               <Flex>
@@ -201,16 +210,16 @@ const LendAction = (props) => {
                 </Button>
               </Flex>
             </Box>
-          </Flex>
+          </Section>
           <Box>
             <Text textAlign="center">Assets Received</Text>
-            <Flex justifyContent="space-between">
+            <Section justifyContent="space-between">
               <Text>{ibTokenValue}</Text>
-              <Text>ib{token}</Text>
-            </Flex>
+              <Text>{isDeposit ? `ib${token}` : token}</Text>
+            </Section>
           </Box>
           {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
-          <ButtonGroup flexDirection="column">
+          <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
             {/*      {isDeposit && (
               <Button as={Link} to={`/lend/deposit/${token}/approve`}>
                 Approve
@@ -219,18 +228,21 @@ const LendAction = (props) => {
             {/* <Button onClick={handleConfirmClick} disabled={!account}>
               Claim
             </Button> */}
-            {allowance === '0' ? (
-              <Button onClick={handleApprove}>Approve</Button>
-            ) : (
-              <Button
-                onClick={handleDeposit}
-                disabled={
-                  !account ? true : new BigNumber(ibTokenValue).isGreaterThan(new BigNumber(displayBalance).toNumber())
-                }
-              >
-                {t('Deposit')}
-              </Button>
-            )}
+            {isDeposit &&
+              (allowance === '0' ? (
+                <Button onClick={handleApprove}>Approve</Button>
+              ) : (
+                <Button
+                  onClick={handleDeposit}
+                  disabled={
+                    !account
+                      ? true
+                      : new BigNumber(ibTokenValue).isGreaterThan(new BigNumber(displayBalance).toNumber())
+                  }
+                >
+                  {t('Deposit')}
+                </Button>
+              ))}
             <Button onClick={handleConfirm} disabled={!account}>
               {t('Confirm')}
             </Button>
