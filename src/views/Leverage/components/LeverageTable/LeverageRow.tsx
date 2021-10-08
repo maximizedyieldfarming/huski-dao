@@ -63,7 +63,7 @@ const LeverageRow = ({ tokenData }) => {
           lpTokens={tokensLP}
         />
         <ApyCell
-          apy={getDisplayApr(yieldFarmData)}
+          apy={getDisplayApr(yieldFarmData * childLeverage)}
           yieldFarming={yieldFarmData}
           tradingFees={tradingFees}
           huskyRewards={huskyRewards}
