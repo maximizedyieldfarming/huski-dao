@@ -72,9 +72,8 @@ const Farm = (props) => {
 
   const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
-    console.info('fired')
     const { value } = e.target
-    console.log(value)
+    console.log('111111',value)
     setRadio(value)
   }
 
@@ -87,7 +86,7 @@ const Farm = (props) => {
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
 
-  const [radio, setRadio] = useState(quoteTokenName)
+  const [radio, setRadio] = useState(tokenName)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(leverage)
 
@@ -109,7 +108,7 @@ const Farm = (props) => {
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
 
-  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
+  // const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock,leverageValue )
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const tvl = getTvl(tokenData)
   const tradingFees = getTradingFees(tokenData)
@@ -130,10 +129,13 @@ const Farm = (props) => {
     setQuoteTokenInput(input)
   }, [])
 
-  
- const farmingData=  getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
 
-    // console.log({ huskyRewards })
+  if(radio === tokenData.token.symbol){
+// 
+  }
+
+ const farmingData =  getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
+
   // console.log({ yieldFarmData })
   // console.log({ tvl })
   // console.log({ tradingFees })
@@ -281,7 +283,7 @@ const Farm = (props) => {
             <Flex alignItems="center" marginRight="10px">
               <Text mr="5px">{quoteTokenName}</Text>
               <Radio
-                name="token"
+                // name="token"
                 scale="sm"
                 value={quoteTokenName}
                 onChange={handleChange}
@@ -290,7 +292,13 @@ const Farm = (props) => {
             </Flex>
             <Flex alignItems="center">
               <Text mr="5px">{tokenName}</Text>
-              <Radio name="token" scale="sm" value={tokenName} onChange={handleChange} checked={radio === tokenName} />
+              <Radio
+                //  name="token" 
+                scale="sm"
+                value={tokenName}
+                onChange={handleChange}
+                checked={radio === tokenName}
+              />
             </Flex>
           </Flex>
         </Box>
