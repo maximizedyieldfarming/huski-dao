@@ -274,7 +274,7 @@ const Lend: React.FC = () => {
       case 'apy':
         return orderBy(
           dataToSort,
-          (token) => (token.totalToken ? getAprData(token, huskyPrice, huskyPerBlock).apy.toFixed(4) : 0),
+          (token) => (token.totalToken ? getAprData(token, huskyPrice, huskyPerBlock).apy : 0),
           'desc',
         )
       case 'total_supply':

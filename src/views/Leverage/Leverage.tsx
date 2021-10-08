@@ -1,12 +1,22 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import usePersistState from 'hooks/usePersistState'
-import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
+import {
+  useLeverageFarms,
+  usePollLeverageFarmsWithUserData,
+  useHuskyPrice,
+  useHuskyPerBlock,
+  useCakePrice,
+} from 'state/leverage/hooks'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import { useTradeFee } from 'hooks/api'
+import { latinise } from 'utils/latinise'
+import { orderBy } from 'lodash'
+import BigNumber from 'bignumber.js'
+import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
@@ -14,6 +24,7 @@ import LeverageTable from './components/LeverageTable/LeverageTable'
 import TopTable from './components/TopTable/TopTable'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 import LeverageCard from './components/LeverageCard/LeverageCard'
+import { getHuskyRewards, getYieldFarming, getTvl, getTradingFees } from './helpers'
 
 const TableWrapper = styled.div`
   background-color: ${({ theme }) => theme.card.background};
@@ -106,7 +117,7 @@ const PositionButtonsContainer = styled(Flex)`
 
 const Leverage: React.FC = () => {
   const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
-  const { data: farmsData } = useLeverageFarms()
+  let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   const data = useTradeFee()
   usePollLeverageFarmsWithUserData()
@@ -118,6 +129,54 @@ const Leverage: React.FC = () => {
       ))}
     </CardLayout>
   )
+
+  // search feature
+  const [searchQuery, setSearchQuery] = useState('')
+  const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value)
+  }
+  if (searchQuery) {
+    const lowercaseQuery = latinise(searchQuery.toLowerCase())
+    farmsData = farmsData.filter((token) => token.token.symbol.toLowerCase().includes(lowercaseQuery))
+  }
+
+  // sort feature
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const cakePrice = useCakePrice()
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
+  // const yieldFarmData = getYieldFarming(tokenData, cakePrice)
+
+  const [sortOption, setSortOption] = useState('default')
+  const handleSortOptionChange = (option) => {
+    setSortOption(option.value)
+  }
+  const sortPools = (dataToSort) => {
+    switch (sortOption) {
+      case 'apy':
+        return orderBy(
+          dataToSort,
+          (token) =>
+            token.totalToken ? parseFloat(getDisplayApr(getYieldFarming(token, cakePrice) * token?.leverage)) : 0,
+          'desc',
+        )
+      case 'tvl':
+        return orderBy(dataToSort, (token) => (token.totalToken ? getTvl(token).totalTvl.toNumber() : 0), 'desc')
+
+      case 'leverage':
+        return orderBy(dataToSort, (token) => (token.leverage ? token.leverage : 0), 'desc')
+
+      default:
+        return dataToSort
+    }
+  }
+
+  farmsData = sortPools(farmsData)
 
   return (
     <Page>
@@ -160,26 +219,23 @@ const Leverage: React.FC = () => {
         <Select
           options={[
             {
-              label: 'Anual Income',
-              value: 'anual_income',
+              label: 'Default',
+              value: 'default',
             },
             {
-              label: 'APR',
-              value: 'apr',
+              label: 'APY',
+              value: 'apy',
             },
             {
-              label: 'Multiplier',
-              value: 'multiplier',
+              label: 'TVL',
+              value: 'tvl',
             },
             {
-              label: 'Earned',
-              value: 'earned',
-            },
-            {
-              label: 'Liquidity',
-              value: 'liquidity',
+              label: 'Leverage',
+              value: 'leverage',
             },
           ]}
+          onChange={handleSortOptionChange}
         />
       </Flex>
       {viewMode === ViewMode.CARD ? cardLayout : <LeverageTable leverageData={farmsData} />}
