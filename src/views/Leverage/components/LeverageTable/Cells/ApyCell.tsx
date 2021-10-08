@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Box, Flex, InfoIcon } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Box, Flex, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -53,14 +53,16 @@ const Info = styled(Box)<InfoParams>`
   }
 `
 
-const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards }) => {
+const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne }) => {
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { isMobile } = useMatchBreakpoints()
 
   const showText = (() => (
     <>
-      <Text>{apy}%</Text>
+      <Text color="textSubtle">{apyAtOne}%</Text>
+      <ChevronRightIcon />
+      <Text bold>{apy}%</Text>
       <Box
         onMouseEnter={changeDisplayInfo}
         onMouseLeave={changeDisplayInfo}

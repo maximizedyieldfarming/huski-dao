@@ -44,7 +44,7 @@ const LeverageRow = ({ tokenData }) => {
   }
 
   const onChildValueChange = (val) => {
-    setChildLeverage(val);
+    setChildLeverage(val)
   }
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, childLeverage)
@@ -63,6 +63,7 @@ const LeverageRow = ({ tokenData }) => {
           lpTokens={tokensLP}
         />
         <ApyCell
+          apyAtOne={getDisplayApr(yieldFarmData * 1)}
           apy={getDisplayApr(yieldFarmData * childLeverage)}
           yieldFarming={yieldFarmData}
           tradingFees={tradingFees}
@@ -70,7 +71,7 @@ const LeverageRow = ({ tokenData }) => {
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <Borrowing tokenData={tokenData} />
-        <LeverageCell leverage={leverage}  onChange={onChildValueChange}/>
+        <LeverageCell leverage={leverage} onChange={onChildValueChange} />
         <ActionCell token={tokenData} />
       </StyledRow>
     </>
