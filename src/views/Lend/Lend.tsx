@@ -22,7 +22,12 @@ import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import { useLendTotalSupply } from 'state/lend/hooks'
-import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
+import {
+  useLeverageFarms,
+  usePollLeverageFarmsWithUserData,
+  useHuskyPrice,
+  useHuskyPerBlock,
+} from 'state/leverage/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -257,6 +262,46 @@ const Lend: React.FC = () => {
     lendData = lendData.filter((pool) => pool.token.symbol.toLowerCase().includes(lowercaseQuery))
   }
 
+  // sort feature
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const [sortOption, setSortOption] = useState('hot')
+  const handleSortOptionChange = (option) => {
+    setSortOption(option.value)
+  }
+  const sortPools = (poolsToSort) => {
+    switch (sortOption) {
+      case 'apy':
+        return orderBy(
+          poolsToSort,
+          (pool) => (pool.totalToken ? getAprData(pool, huskyPrice, huskyPerBlock).apy.toFixed(4) : 0),
+          'desc',
+        )
+      case 'total_supply':
+        return orderBy(poolsToSort, (pool) => (pool.totalToken ? parseInt(pool.totalToken) : 0), 'desc')
+
+      case 'total_borrowed':
+        return orderBy(poolsToSort, (pool) => (pool.vaultDebtVal ? parseInt(pool.vaultDebtVal) : 0), 'desc')
+      case 'utilization_rate':
+        return orderBy(
+          poolsToSort,
+          (pool) =>
+            pool.vaultDebtVal && pool.totalToken ? (pool.totalToken > 0 ? pool.vaultDebtVal / pool.totalToken : 0) : 0,
+          'desc',
+        )
+      case 'balance':
+        return orderBy(
+          poolsToSort,
+          (pool) => (pool.userData.tokenBalance ? parseInt(pool.userData.tokenBalance) : 0),
+          'desc',
+        )
+      default:
+        return poolsToSort
+    }
+  }
+
+  lendData = sortPools(lendData)
+
   return (
     <Page>
       <TopSection>
@@ -279,26 +324,31 @@ const Lend: React.FC = () => {
         <Select
           options={[
             {
+              label: 'Default',
+              value: 'default',
+            },
+            {
               label: 'APY',
-              value: 'anual_income',
+              value: 'apy',
             },
             {
               label: 'Total Supply',
-              value: 'apr',
+              value: 'total_supply',
             },
             {
               label: 'Total Borrowed',
-              value: 'multiplier',
+              value: 'total_borrowed',
             },
             {
               label: 'Utilization Rate',
-              value: 'earned',
+              value: 'utilizatoin_rate',
             },
             {
               label: 'Balance',
-              value: 'liquidity',
+              value: 'balance',
             },
           ]}
+          onChange={handleSortOptionChange}
         />
       </Flex>
       {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={lendData} />}
