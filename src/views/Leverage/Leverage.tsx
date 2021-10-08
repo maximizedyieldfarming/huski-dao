@@ -178,6 +178,28 @@ const Leverage: React.FC = () => {
 
   farmsData = sortPools(farmsData)
 
+  const [dexFilter, setDexFilter] = useState('all')
+  const [pairFilter, setPairFilter] = useState('all')
+
+  if (pairFilter !== 'all') {
+    farmsData = farmsData.filter(
+      (pool) =>
+        pool?.quoteToken?.symbol.toLowerCase() === pairFilter || pool?.token?.symbol.toLowerCase() === pairFilter,
+    )
+  }
+
+  // this is part of the above condition
+  // DO NOT DELETE, might be useful for when theres more data
+  // commented out because of linter error
+  // This condition will always return 'false' since the types '"all"' and '"others"' have no overlap.  TS2367
+  /* else if (pairFilter === 'others') {
+    farmsData = farmsData.filter(
+      (pool) =>
+        pool?.quoteToken?.symbol.toLowerCase() !== ('eth' || 'wbnb' || 'busd' || 'btcb') ||
+        pool?.token?.symbol.toLowerCase() !== ('eth' || 'wbnb' || 'busd' || 'btcb'),
+    )
+  } */
+
   return (
     <Page>
       <TopSection justifyContent="space-between">
@@ -238,7 +260,17 @@ const Leverage: React.FC = () => {
           onChange={handleSortOptionChange}
         />
       </Flex>
-      {viewMode === ViewMode.CARD ? cardLayout : <LeverageTable leverageData={farmsData} />}
+      {viewMode === ViewMode.CARD ? (
+        cardLayout
+      ) : (
+        <LeverageTable
+          leverageData={farmsData}
+          dexFilter={dexFilter}
+          pairFilter={pairFilter}
+          setDexFilter={setDexFilter}
+          setPairFilter={setPairFilter}
+        />
+      )}
     </Page>
   )
 }
