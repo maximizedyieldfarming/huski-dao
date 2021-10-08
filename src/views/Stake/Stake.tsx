@@ -6,7 +6,7 @@ import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { Image, Text, Button, Flex, Box, Skeleton, Grid } from '@pancakeswap/uikit'
-import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
+import { useStakeWithUserData, useStakes, useHuskyPrice, useHuskyPerBlock } from 'state/stake/hooks'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
@@ -23,6 +23,8 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
+import { getStakeApy } from 'views/Stake/helpers'
+import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import husky2 from './assets/stake_rewards_img.png'
 import huskyIcon from './assets/avatar1x.png'
 import StakeTable from './components/StakeTable/StakeTable'
@@ -103,7 +105,7 @@ const Stake: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
-  const { data: farmsData } = useStakes()
+  let { data: farmsData } = useStakes()
   console.log({ ' 数据': farmsData })
   useStakeWithUserData()
 
@@ -141,6 +143,52 @@ const Stake: React.FC = () => {
   // console.log('useStakeData', useStakeData())
   // console.log({ stakingData })
   // console.log({ stakeBalanceData })
+
+  // search feature
+  const [searchQuery, setSearchQuery] = useState('')
+  const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value)
+  }
+  if (searchQuery) {
+    const lowercaseQuery = latinise(searchQuery.toLowerCase())
+    farmsData = farmsData.filter((token) => token.token.symbol.toLowerCase().includes(lowercaseQuery))
+  }
+
+  // sort feature
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const [sortOption, setSortOption] = useState('hot')
+  const handleSortOptionChange = (option) => {
+    setSortOption(option.value)
+  }
+  const sortPools = (dataToSort) => {
+    switch (sortOption) {
+      case 'apy':
+        return orderBy(
+          dataToSort,
+          (token) => (token.totalToken ? getStakeApy(token, huskyPrice, huskyPerBlock).toFixed(4) : 0),
+          'desc',
+        )
+      case 'total_supply':
+        return orderBy(dataToSort, (token) => (token.totalToken ? parseInt(token.totalToken) : 0), 'desc')
+
+      case 'total_huski_rewards':
+        return orderBy(
+          dataToSort,
+          (token) =>
+            token.userData.earnings
+              ? new BigNumber(parseFloat(token?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toFixed(3)
+              : 0,
+          'desc',
+        )
+
+      default:
+        return dataToSort
+    }
+  }
+
+  farmsData = sortPools(farmsData)
+
   return (
     <Page>
       <Box>
@@ -180,30 +228,30 @@ const Stake: React.FC = () => {
       </Box>
 
       <Flex alignSelf="flex-end">
-        <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
+        {/*         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} /> */}
+        <Flex alignItems="center" mr="10px">
+          <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+        </Flex>
         <Select
           options={[
             {
-              label: 'Anual Income',
-              value: 'anual_income',
+              label: 'Default',
+              value: 'default',
             },
             {
-              label: 'APR',
-              value: 'apr',
+              label: 'APY',
+              value: 'apy',
             },
             {
-              label: 'Multiplier',
-              value: 'multiplier',
+              label: 'Total Supply',
+              value: 'total_supply',
             },
             {
-              label: 'Earned',
-              value: 'earned',
-            },
-            {
-              label: 'Liquidity',
-              value: 'liquidity',
+              label: 'Total HUSKI Rewards',
+              value: 'total_huski_rewards',
             },
           ]}
+          onChange={handleSortOptionChange}
         />
       </Flex>
 
