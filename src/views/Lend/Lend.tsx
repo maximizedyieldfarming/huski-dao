@@ -227,13 +227,16 @@ const Lend: React.FC = () => {
   const { account } = useWeb3React()
   // const { account } = useActiveWeb3React()
   const lendTotalSupply = useLendTotalSupply()
+  console.log({ lendTotalSupply })
   const { data: farmsData } = useLeverageFarms()
   console.log({ 'farm 数据': farmsData })
   const hash = {}
-  const lendData = farmsData.reduce((cur, next) => {
+  let lendData = farmsData.reduce((cur, next) => {
     hash[next.poolId] ? '' : (hash[next.poolId] = true && cur.push(next))
     return cur
   }, [])
+
+  console.log({ lendData })
 
   usePollLeverageFarmsWithUserData()
   const cardLayout = (
@@ -244,12 +247,23 @@ const Lend: React.FC = () => {
     </CardLayout>
   )
 
+  // search feature
+  const [searchQuery, setSearchQuery] = useState('')
+  const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value)
+  }
+  if (searchQuery) {
+    const lowercaseQuery = latinise(searchQuery.toLowerCase())
+    lendData = lendData.filter((pool) => pool.token.symbol.toLowerCase().includes(lowercaseQuery))
+  }
+
   return (
     <Page>
       <TopSection>
         <StyledBox>
           <Text>Volume 24H:</Text>
-          {lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" />}
+          {/* lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" /> */}
+          <Skeleton width="180px" height="30px" />
         </StyledBox>
         <StyledBox>
           <Text>Total Value Locked:</Text>
@@ -257,28 +271,31 @@ const Lend: React.FC = () => {
         </StyledBox>
       </TopSection>
 
-      <Flex alignSelf="flex-end">
-        <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
+      <Flex alignSelf="flex-end" alignItems="center">
+        {/* <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} /> */}
+        <Flex alignItems="center" mr="10px">
+          <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+        </Flex>
         <Select
           options={[
             {
-              label: 'Anual Income',
+              label: 'APY',
               value: 'anual_income',
             },
             {
-              label: 'APR',
+              label: 'Total Supply',
               value: 'apr',
             },
             {
-              label: 'Multiplier',
+              label: 'Total Borrowed',
               value: 'multiplier',
             },
             {
-              label: 'Earned',
+              label: 'Utilization Rate',
               value: 'earned',
             },
             {
-              label: 'Liquidity',
+              label: 'Balance',
               value: 'liquidity',
             },
           ]}
