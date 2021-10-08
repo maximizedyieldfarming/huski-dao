@@ -71,25 +71,22 @@ const Farm = (props) => {
   console.log('props to adjust position...', props)
 
   const { token } = useParams<RouteParams>()
-  const handleChange = (e) => {
-    const { value } = e.target
-    console.log('111111',value)
-    setRadio(value)
-  }
 
   const {
     location: {
       state: { tokenData },
-    },
+    }
   } = props
 
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
 
+  const [tokenInputOther, setTokenInputOther] = useState(0)
+  const [quoteTokenInputOther, setQuoteTokenInputOther] = useState(0)
   const [radio, setRadio] = useState(tokenName)
+  const [radioQuote, setRadioQuote] = useState(quoteTokenName)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(leverage)
-
 
   const handleSliderChange = (e) => {
     const value = e?.target?.value
@@ -129,10 +126,20 @@ const Farm = (props) => {
     setQuoteTokenInput(input)
   }, [])
 
-
-  if(radio === tokenData.token.symbol){
-// 
+  const handleChange = (e) => {
+    const { value } = e.target
+    setRadio(value)
+    if (value === tokenData.token.symbol) {
+      setRadioQuote(tokenData.quoteToken.symbol)
+      setTokenInputOther(tokenInput)
+      setQuoteTokenInputOther(quoteTokenInput)
+    } else {
+      setRadioQuote(tokenData.token.symbol)
+      setTokenInputOther(quoteTokenInput)
+      setQuoteTokenInputOther(tokenInput)
+    }
   }
+
 
  const farmingData =  getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
 
@@ -152,6 +159,8 @@ const Farm = (props) => {
   //     references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
   //   }
   // }, [])
+
+
 
   return (
     <Page>
@@ -342,15 +351,15 @@ const Farm = (props) => {
       <Section>
         <Flex>
           <Text>Assets Supplied</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+          <Text>{tokenInputOther} {radio} + {quoteTokenInputOther} {radioQuote}</Text>  <Skeleton width="80px" height="16px" />
         </Flex>
         <Flex>
           <Text>Assets Borrowed</Text>
-          {farmingData? <Text>{farmingData[1]}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData[1]? <Text>{farmingData[1].toFixed(2)} {radio}</Text> : <Text>0.00 {radio}</Text>}
         </Flex>
         <Flex>
           <Text>Price Impact</Text>
-          {farmingData? <Text>{farmingData[0]}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData[0]? <Text>{(farmingData[0] * 100).toFixed(2)}%</Text> : <Text> 0.00 %</Text> }
         </Flex>
         <Flex>
           <Text>Trading Fees</Text>
@@ -358,7 +367,7 @@ const Farm = (props) => {
         </Flex>
         <Flex>
           <Text>Position Value</Text>
-          {farmingData? <Text>{farmingData[2]} + {farmingData[3]}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData? <Text>{farmingData[2].toFixed(2)} {radio} + {farmingData[3].toFixed(2) }  {radioQuote}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
         <Flex>
           <Text>APR</Text>
