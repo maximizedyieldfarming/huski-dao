@@ -40,7 +40,6 @@ export const useTradeFee = () => {
       try {
         const response = await fetch('https://api.alpacafinance.org/v1/internal/tradingFee')
         const responseData = await response.json()
-        console.info('jinlale--- ',responseData.data.tradingFees);
         setData(responseData.data.tradingFees)
       } catch (error) {
         console.error('Unable to fetch data:', error)
