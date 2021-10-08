@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { ChevronDownIcon, ChevronUpIcon, Flex, Input, Text, useMatchBreakpoints, Box, Button } from '@pancakeswap/uikit'
@@ -38,15 +38,37 @@ const CustomButton = styled(Button)`
   }
 `
 
-const LeverageCell = ({ leverage }) => {
+// const LeverageCell = ({ leverage }) => {
+export default function LeverageCell({ leverage, onChange }: {
+  leverage: any
+  onChange: (value: any) => void
+}) {
+
   const { isMobile } = useMatchBreakpoints()
   const [lvgValue, setLvgValue] = useState(leverage)
-  const increaseLvgValue = (e) => {
-    setLvgValue(lvgValue + 0.5)
-  }
-  const decreaseLvgValue = (e) => {
-    setLvgValue(lvgValue - 0.5)
-  }
+  // const increaseLvgValue = (e) => {
+  //   setLvgValue(lvgValue + 0.5)
+  // }
+  // const decreaseLvgValue = (e) => {
+  //   setLvgValue(lvgValue - 0.5)
+  // }
+
+    const increaseLvgValue = useCallback(
+      () => {
+        const input = lvgValue + 0.5;
+        setLvgValue(input)
+        onChange(input)
+      },
+      [lvgValue, onChange],
+    )
+    const decreaseLvgValue = useCallback(
+      () => {
+        const input = lvgValue - 0.5;
+        setLvgValue(input)
+        onChange(input)
+      },
+      [lvgValue, onChange],
+    )
 
   return (
     <StyledCell role="cell">
@@ -72,4 +94,4 @@ const LeverageCell = ({ leverage }) => {
   )
 }
 
-export default LeverageCell
+// export default LeverageCell

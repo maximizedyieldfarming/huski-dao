@@ -23,9 +23,11 @@ const StyledRow = styled.div`
 `
 
 const LeverageRow = ({ tokenData }) => {
+  const { lpSymbol, leverage, quoteToken, token } = tokenData
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
+  const [childLeverage, setChildLeverage] = useState(leverage)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
@@ -34,8 +36,6 @@ const LeverageRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { lpSymbol, leverage, quoteToken, token } = tokenData
-
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -43,7 +43,11 @@ const LeverageRow = ({ tokenData }) => {
     return null
   }
 
-  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock)
+  const onChildValueChange = (val) => {
+    setChildLeverage(val);
+  }
+
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, childLeverage)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
 
@@ -66,7 +70,7 @@ const LeverageRow = ({ tokenData }) => {
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <Borrowing tokenData={tokenData} />
-        <LeverageCell leverage={leverage} />
+        <LeverageCell leverage={leverage}  onChange={onChildValueChange}/>
         <ActionCell token={tokenData} />
       </StyledRow>
     </>
