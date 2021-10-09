@@ -77,7 +77,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne }) => 
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>Trading&nbsp;Fees</Text>
-            <Text>{tradingFees}</Text>
+            <Text>{(tradingFees * 365).toFixed(2)}%</Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text small>HUSKY&nbsp;Rewards</Text>
