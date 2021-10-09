@@ -9,6 +9,7 @@ export interface Address {
 export interface Token {
   symbol: string
   address?: Address
+  config?: Address
   decimals?: number
   projectLink?: string
   busdPrice?: string

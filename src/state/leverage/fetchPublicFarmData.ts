@@ -5,6 +5,7 @@ import VaultABI from 'config/abi/vault.json'
 import erc20 from 'config/abi/erc20.json'
 import PancakePairABI from 'config/abi/pancakePair.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
+import ConfigurableInterestVaultConfigABI from 'config/abi/ConfigurableInterestVaultConfig.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import { getFairLaunch } from 'utils/env'
@@ -36,7 +37,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
   const workerAddresses = getAddress(workerAddress)
-
+  const configAddress = getAddress(token.config)
   const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
       {
@@ -48,6 +49,15 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         name: 'totalSupply',
       },
     ])
+
+    // const [ borrowingInterest ] =
+    // await multicall(ConfigurableInterestVaultConfigABI, [
+    //   {
+    //     address: configAddress,
+    //     name: 'getInterestRate',
+    //     params: [0, 0],// 借贷值从vault合约中取， base token 的balance
+    //   }
+    // ])
 
   const [name, borrowingInterest, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -176,7 +186,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
   const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
-
+//   console.info('--111-',(borrowingInterest));console.info('---',(token));
+// console.info('数据对不上x',parseInt(borrowingInterest));
   return {
     name,
     lptotalSupply: lptotalSupply[0]._hex,
