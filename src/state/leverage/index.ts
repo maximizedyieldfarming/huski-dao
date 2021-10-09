@@ -3,6 +3,7 @@ import leverageFarmsConfig from 'config/constants/leverage'
 import isArchivedPid from 'utils/farmHelpers'
 import fetchFarms from './fetchFarms'
 import fetchFarmsPrices from './fetchFarmsPrices'
+import fetchFarmsTradeFees from './fetchFarmsTradeFees'
 import {
   fetchFarmUserPositions,
   fetchFarmUserEarnings,
@@ -35,9 +36,9 @@ createAsyncThunk<LeverageFarm[], number[]>(
 
     const farms = await fetchFarms(farmsToFetch)
     const farmsWithPrices = await fetchFarmsPrices(farms)
-
+    const farmsWithPricesAndTradeFee = await fetchFarmsTradeFees(farmsWithPrices)
     // Filter out price helper LP config farms
-    const farmsWithoutHelperLps = farmsWithPrices.filter((farm: LeverageFarm) => {
+    const farmsWithoutHelperLps = farmsWithPricesAndTradeFee.filter((farm: LeverageFarm) => {
       return farm.pid || farm.pid === 0
     })
     return farmsWithoutHelperLps
@@ -62,7 +63,7 @@ createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
-    const userFarmPositions = await fetchFarmUserPositions(account, farmsToFetch)
+    // const userFarmPositions = await fetchFarmUserPositions(account, farmsToFetch)
 
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
