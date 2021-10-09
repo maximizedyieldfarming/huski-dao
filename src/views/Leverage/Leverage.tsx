@@ -8,6 +8,7 @@ import {
   useHuskyPerBlock,
   useCakePrice,
 } from 'state/leverage/hooks'
+import SearchInput from 'components/SearchInput'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
@@ -137,7 +138,7 @@ const Leverage: React.FC = () => {
   }
   if (searchQuery) {
     const lowercaseQuery = latinise(searchQuery.toLowerCase())
-    farmsData = farmsData.filter((token) => token.token.symbol.toLowerCase().includes(lowercaseQuery))
+    farmsData = farmsData.filter((pool) => pool.lpSymbol.toLowerCase().includes(lowercaseQuery))
   }
 
   // sort feature
@@ -161,15 +162,15 @@ const Leverage: React.FC = () => {
       case 'apy':
         return orderBy(
           dataToSort,
-          (token) =>
-            token.totalToken ? parseFloat(getDisplayApr(getYieldFarming(token, cakePrice) * token?.leverage)) : 0,
+          (pool) =>
+            pool.totalToken ? parseFloat(getDisplayApr(getYieldFarming(pool, cakePrice) * pool?.leverage)) : 0,
           'desc',
         )
       case 'tvl':
-        return orderBy(dataToSort, (token) => (token.totalToken ? getTvl(token).totalTvl.toNumber() : 0), 'desc')
+        return orderBy(dataToSort, (pool) => (pool.totalToken ? getTvl(pool).totalTvl.toNumber() : 0), 'desc')
 
       case 'leverage':
-        return orderBy(dataToSort, (token) => (token.leverage ? token.leverage : 0), 'desc')
+        return orderBy(dataToSort, (pool) => (pool.leverage ? pool.leverage : 0), 'desc')
 
       default:
         return dataToSort
@@ -238,6 +239,9 @@ const Leverage: React.FC = () => {
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
+        <Flex alignItems="center" mr="10px">
+          <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+        </Flex>
         <Select
           options={[
             {
