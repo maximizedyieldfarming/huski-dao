@@ -48,23 +48,6 @@ export const getTvl = (farm: LeverageFarm) => {
   return { tokensLP,tokenNum,quoteTokenNum,totalTvl };
 }
 
-export const getTradingFees = (farm: LeverageFarm) => {
-
-//   const fetchData = async () => {
-//     try {
-//       const response = await fetch('https://api.alpacafinance.org/v1/internal/tradingFee')
-
-//       const responseData = await response.json()
-
-//     } catch (error) {
-//       console.error('Unable to fetch data:', error)
-//     }
-//   }
-
-//   fetchData()
-
-}
-
 export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput) => {
   const { tokenAmountTotal, quoteTokenAmountTotal } = farm
 

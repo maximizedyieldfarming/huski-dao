@@ -13,7 +13,6 @@ import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
-import { useTradeFee } from 'hooks/api'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -25,7 +24,7 @@ import LeverageTable from './components/LeverageTable/LeverageTable'
 import TopTable from './components/TopTable/TopTable'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 import LeverageCard from './components/LeverageCard/LeverageCard'
-import { getHuskyRewards, getYieldFarming, getTvl, getTradingFees } from './helpers'
+import { getHuskyRewards, getYieldFarming, getTvl } from './helpers'
 
 const TableWrapper = styled.div`
   background-color: ${({ theme }) => theme.card.background};
@@ -120,7 +119,6 @@ const Leverage: React.FC = () => {
   const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
-  const data = useTradeFee()
   usePollLeverageFarmsWithUserData()
 
   const cardLayout = (

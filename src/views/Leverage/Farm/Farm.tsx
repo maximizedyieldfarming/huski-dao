@@ -5,7 +5,7 @@ import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancak
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData, getTradingFees } from '../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
@@ -108,7 +108,6 @@ const Farm = (props) => {
   // const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock,leverageValue )
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const tvl = getTvl(tokenData)
-  const tradingFees = getTradingFees(tokenData)
   
   const [tokenInput, setTokenInput] = useState(0)
   // manage focus on modal show
@@ -145,7 +144,7 @@ const Farm = (props) => {
 
   // console.log({ yieldFarmData })
   // console.log({ tvl })
-  // console.log({ tradingFees })
+
   // console.log({ leverageFarming })
 
   // FIX for scroll-wheel changing input of number type
