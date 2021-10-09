@@ -15,11 +15,18 @@ import SafetyBufferCell from './Cells/SafetyBufferCell'
 import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
 import LiquidationFeeCell from './Cells/LiquidationFeeCell'
 import AssetsReturnedCell from './Cells/AssetsReturnedCell'
-import ProfitsCell from '../LeverageTable/Cells/ProfitsCell'
+import ProfitsCell from './Cells/ProfitsCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
+  flex-direction: column;
+  height: 350px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    height: unset;
+    flex-direction: row;
+  }
+
   //cursor: pointer;
 `
 
@@ -27,6 +34,10 @@ const ScrollContainer = styled.div`
   overflow-x: auto;
   display: flex;
   flex: 1;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+  }
 `
 
 const PositionsRow = ({ data, isActivePos }) => {
@@ -44,30 +55,27 @@ const PositionsRow = ({ data, isActivePos }) => {
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={data[0]?.lpSymbol} />
         <ScrollContainer>
-          {isXxl && <PositionCell position={data[0]?.totalDeposit} />}
-          {isXxl && <DebtCell debt={data[0]?.totalBorrowed} />}
-          {isXxl &&
-            (isActivePos ? (
-              <EquityCell equity={data[0]?.capitalUtilizationRate} />
-            ) : (
-              <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
-            ))}
+          <PositionCell position={data[0]?.totalDeposit} />
+          <DebtCell debt={data[0]?.totalBorrowed} />
+          {isActivePos ? (
+            <EquityCell equity={data[0]?.capitalUtilizationRate} />
+          ) : (
+            <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
+          )}
           {isActivePos && <ApyCell apy={data[0]?.landApr} />}
-          {isXxl && isActivePos && <DebtRatioCell debtRatio={data[0]?.capitalUtilizationRate} />}
-          {isXxl &&
-            (isActivePos ? (
-              <LiquidationThresholdCell liqTres={data[0]?.capitalUtilizationRate} />
-            ) : (
-              <LiquidationFeeCell fee={data[0]?.fee} />
-            ))}
-          {isXxl &&
-            (isActivePos ? (
-              <SafetyBufferCell safetyBuffer={data[0]?.capitalUtilizationRate} />
-            ) : (
-              <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
-            ))}
+          {isActivePos && <DebtRatioCell debtRatio={data[0]?.capitalUtilizationRate} />}
+          {isActivePos ? (
+            <LiquidationThresholdCell liqTres={data[0]?.capitalUtilizationRate} />
+          ) : (
+            <LiquidationFeeCell fee={data[0]?.fee} />
+          )}
+          {isActivePos ? (
+            <SafetyBufferCell safetyBuffer={data[0]?.capitalUtilizationRate} />
+          ) : (
+            <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
+          )}
           <ProfitsCell liqEquity={data[0]?.liqEquity} />
-          {isDesktop && isActivePos && <ActionCell token={data[0]} />}
+          {isActivePos && <ActionCell token={data[0]} />}
         </ScrollContainer>
       </StyledRow>
     </>
