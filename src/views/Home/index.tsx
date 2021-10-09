@@ -37,12 +37,12 @@ const StyledHeroSection = styled(Box)`
     margin: 5% 0;
   }
   &:nth-child(even) {
-    background-color: #f4f4f4;
+    background-color: ${({ theme }) => theme.colors.background};
   }
 
   &:nth-child(odd),
   &:nth-child(2) {
-    background-color: #ffffff;
+    background-color: ${({ theme }) => theme.colors.backgroundAlt};
   }
   ${({ theme }) => theme.mediaQueries.md} {
     padding: 48px;
@@ -94,7 +94,7 @@ const Card = styled(Flex)`
     box-shadow: 0px 0px 10px 0px rgba(123, 122, 123, 0.14);
   }
   &.community {
-    background: ${({ theme }) => theme.colors.background};
+    background: ${({ theme }) => theme.colors.backgroundAlt};
     padding: 1rem 2rem;
     border: 2px solid transparent;
     &:hover {
