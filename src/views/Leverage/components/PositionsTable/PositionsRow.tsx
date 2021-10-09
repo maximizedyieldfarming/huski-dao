@@ -15,6 +15,7 @@ import SafetyBufferCell from './Cells/SafetyBufferCell'
 import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
 import LiquidationFeeCell from './Cells/LiquidationFeeCell'
 import AssetsReturnedCell from './Cells/AssetsReturnedCell'
+import ProfitsCell from '../LeverageTable/Cells/ProfitsCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -65,6 +66,7 @@ const PositionsRow = ({ data, isActivePos }) => {
             ) : (
               <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
             ))}
+          <ProfitsCell liqEquity={data[0]?.liqEquity} />
           {isDesktop && isActivePos && <ActionCell token={data[0]} />}
         </ScrollContainer>
       </StyledRow>
