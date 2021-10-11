@@ -14,7 +14,7 @@ export const getStakeApy = (stake: Stake, cakePriceBusd: BigNumber, pooPerBlock:
     (busdTokenPrice * parseInt(totalToken) * parseInt(totalToken)) / parseInt(totalSupply)
   );
   const apy = Math.pow(1 + stakeApr.toNumber() / 365, 365) - 1;
-  return apy;
+  return { stakeApr, apy };
 }
 
 

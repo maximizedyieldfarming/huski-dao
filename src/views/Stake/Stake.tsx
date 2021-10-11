@@ -166,7 +166,7 @@ const Stake: React.FC = () => {
       case 'apy':
         return orderBy(
           dataToSort,
-          (token) => (token.totalToken ? getStakeApy(token, huskyPrice, huskyPerBlock) : 0),
+          (token) => (token.totalToken ? getStakeApy(token, huskyPrice, huskyPerBlock).apy : 0),
           'desc',
         )
       case 'total_supply':
