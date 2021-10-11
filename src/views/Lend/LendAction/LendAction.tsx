@@ -205,7 +205,7 @@ const LendAction = (props) => {
           <Section justifyContent="space-between">
             <Box>
               <Text fontWeight="bold">Amount</Text>
-              <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" value="amount" />
+              <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
             </Box>
             <Box>
               <Text fontWeight="bold">
@@ -265,7 +265,7 @@ const LendAction = (props) => {
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{displayBalance}</Text>
+        <Text>{isDeposit ? `${displayBalance} ${token}` : `${displayBalance} ib${token}`}</Text>
       </Balance>
       <Box>
         <Text>
