@@ -28,7 +28,7 @@ const DebtCell = ({ debt }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex>
+        <Flex alignItems="center">
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Debt
           </Text>

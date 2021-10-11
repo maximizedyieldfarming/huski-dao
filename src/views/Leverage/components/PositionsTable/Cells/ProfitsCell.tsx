@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import Tooltip from 'components/Tooltip'
-import BaseCell, { CellContent } from '../../LeverageTable/Cells/BaseCell'
+import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
@@ -28,10 +28,13 @@ const ProfitsCell = ({ liqEquity }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex>
+        <Flex alignItems="center">
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Profits/Loss
           </Text>
+          <Tooltip>
+            <Text>Profit/loss</Text>
+          </Tooltip>
         </Flex>
         {liqEquity ? <Text>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>

@@ -28,10 +28,13 @@ const LiquidatedEquityCell = ({ liqEquity }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex>
+        <Flex alignItems="center">
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Liquidated Equity
           </Text>
+          <Tooltip>
+            <Text>liquidated equity</Text>
+          </Tooltip>
         </Flex>
         {liqEquity ? <Text>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>

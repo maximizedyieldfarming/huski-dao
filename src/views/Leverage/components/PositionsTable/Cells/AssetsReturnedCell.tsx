@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
+import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -27,9 +28,14 @@ const AssetsReturnedCell = ({ assetsReturned }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Assets Returned
-        </Text>
+        <Flex alignItems="center">
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            Assets Returned
+          </Text>
+          <Tooltip>
+            <Text>assets returned</Text>
+          </Tooltip>
+        </Flex>
         {assetsReturned ? <Text>{assetsReturned}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
