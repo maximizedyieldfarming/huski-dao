@@ -23,8 +23,10 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const AprCell = ({ apy }) => {
+const AprCell = ({ getApyData }) => {
   const { isMobile } = useMatchBreakpoints()
+
+  const { stakeApr, apy } = getApyData
 
   const apyCell = (e) => {
     const value = e * 100
@@ -43,7 +45,7 @@ const AprCell = ({ apy }) => {
             <Tooltip>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Total&nbsp;APR</Text>
-                <Skeleton width="80px" height="16px" />
+                <Text>{apyCell(stakeApr)}</Text>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Total&nbsp;APY</Text>
