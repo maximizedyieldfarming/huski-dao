@@ -7,7 +7,11 @@ import LiquidatedPositionsRow from './LiquidatedPositionsRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-
+  overflow: auto;
+  height: 300px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    height: unset;
+  }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
@@ -19,13 +23,6 @@ const StyledTableBorder = styled.div`
   // background-color: ${({ theme }) => theme.colors.cardBorder};
   padding: 1px 1px 3px 1px;
   background-size: 400% 400%;
-`
-
-const ScrollButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
 `
 
 const LiquidatedPositionsTable = ({ data }) => {

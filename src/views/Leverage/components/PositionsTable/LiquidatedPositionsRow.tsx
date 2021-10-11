@@ -21,9 +21,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  height: 350px;
   ${({ theme }) => theme.mediaQueries.lg} {
-    height: unset;
     flex-direction: row;
   }
 
@@ -54,18 +52,12 @@ const LiquidatedPositionsRow = ({ data }) => {
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={data[0]?.lpSymbol} />
-        <ScrollContainer>
-          <PositionCell position={data[0]?.totalDeposit} />
-          <DebtCell debt={data[0]?.totalBorrowed} />
-
-          <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
-
-          <LiquidationFeeCell fee={data[0]?.fee} />
-
-          <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
-
-          <ProfitsCell liqEquity={data[0]?.liqEquity} />
-        </ScrollContainer>
+        <PositionCell position={data[0]?.totalDeposit} />
+        <DebtCell debt={data[0]?.totalBorrowed} />
+        <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
+        <LiquidationFeeCell fee={data[0]?.fee} />
+        <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
+        <ProfitsCell liqEquity={data[0]?.liqEquity} />
       </StyledRow>
     </>
   )

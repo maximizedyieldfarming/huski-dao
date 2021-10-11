@@ -21,9 +21,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  height: 350px;
   ${({ theme }) => theme.mediaQueries.lg} {
-    height: unset;
     flex-direction: row;
   }
 
@@ -54,17 +52,15 @@ const ActivePositionsRow = ({ data }) => {
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={data[0]?.lpSymbol} />
-        <ScrollContainer>
-          <PositionCell position={data[0]?.totalDeposit} />
-          <DebtCell debt={data[0]?.totalBorrowed} />
-          <EquityCell equity={data[0]?.capitalUtilizationRate} />
-          <ApyCell apy={data[0]?.landApr} />
-          <DebtRatioCell debtRatio={data[0]?.capitalUtilizationRate} />
-          <LiquidationThresholdCell liqTres={data[0]?.capitalUtilizationRate} />
-          <SafetyBufferCell safetyBuffer={data[0]?.capitalUtilizationRate} />
-          <ProfitsCell liqEquity={data[0]?.liqEquity} />
-          <ActionCell token={data[0]} />
-        </ScrollContainer>
+        <PositionCell position={data[0]?.totalDeposit} />
+        <DebtCell debt={data[0]?.totalBorrowed} />
+        <EquityCell equity={data[0]?.capitalUtilizationRate} />
+        <ApyCell apy={data[0]?.landApr} />
+        <DebtRatioCell debtRatio={data[0]?.capitalUtilizationRate} />
+        <LiquidationThresholdCell liqTres={data[0]?.capitalUtilizationRate} />
+        <SafetyBufferCell safetyBuffer={data[0]?.capitalUtilizationRate} />
+        <ProfitsCell liqEquity={data[0]?.liqEquity} />
+        <ActionCell token={data[0]} />
       </StyledRow>
     </>
   )
