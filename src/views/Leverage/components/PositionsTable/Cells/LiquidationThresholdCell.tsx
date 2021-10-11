@@ -32,7 +32,7 @@ const LiquidationThresholdCell = ({ liqTres }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Liquidation Threshold
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>When the debt ratio exceeds liquidation ratio, your position may be liquidated.</Text>
           </Tooltip>
         </Flex>

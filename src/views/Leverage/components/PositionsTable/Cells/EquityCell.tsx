@@ -32,7 +32,7 @@ const EquityCell = ({ equity }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Equity
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>Equity</Text>
           </Tooltip>
         </Flex>

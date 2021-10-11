@@ -32,7 +32,7 @@ const DebtRatioCell = ({ debtRatio }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Debt Ratio
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>Debt Ratio = Debt Value / Position Value</Text>
           </Tooltip>
         </Flex>

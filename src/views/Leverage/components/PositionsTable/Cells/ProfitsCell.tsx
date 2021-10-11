@@ -32,7 +32,7 @@ const ProfitsCell = ({ liqEquity }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Profits/Loss
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>Profit/loss</Text>
           </Tooltip>
         </Flex>

@@ -32,7 +32,7 @@ const DebtCell = ({ debt }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Debt
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>Debt Value = Borrowed Asset + Borrowing Interest Borrowed Asset: Borrowing Interest:</Text>
           </Tooltip>
         </Flex>

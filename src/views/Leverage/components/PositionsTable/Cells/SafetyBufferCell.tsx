@@ -32,7 +32,7 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Safety Buffer
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>Risk Ratio = Liquidation Ratio/Debt Ratio</Text>
           </Tooltip>
         </Flex>

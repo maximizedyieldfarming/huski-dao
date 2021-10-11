@@ -32,7 +32,7 @@ const AssetsReturnedCell = ({ assetsReturned }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Assets Returned
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>assets returned</Text>
           </Tooltip>
         </Flex>

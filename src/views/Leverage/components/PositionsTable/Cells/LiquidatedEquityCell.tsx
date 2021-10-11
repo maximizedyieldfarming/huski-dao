@@ -32,7 +32,7 @@ const LiquidatedEquityCell = ({ liqEquity }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Liquidated Equity
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>liquidated equity</Text>
           </Tooltip>
         </Flex>
