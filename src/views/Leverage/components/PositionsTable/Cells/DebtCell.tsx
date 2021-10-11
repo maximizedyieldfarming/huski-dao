@@ -36,7 +36,7 @@ const DebtCell = ({ debt }) => {
             <Text>Debt Value = Borrowed Asset + Borrowing Interest Borrowed Asset: Borrowing Interest:</Text>
           </Tooltip>
         </Flex>
-        {debt ? <Text>{debt}</Text> : <Skeleton width="80px" height="16px" />}
+        {debt ? <Text>{debt.toNumber().toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

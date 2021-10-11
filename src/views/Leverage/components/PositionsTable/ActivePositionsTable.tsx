@@ -28,18 +28,41 @@ const ScrollButtonContainer = styled.div`
   padding-bottom: 5px;
 `
 
-const ActivePositionsTable = ({ data  }) => {
-  console.log({ data })
+const ActivePositionsTable = ({ data, farmsData  }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
       behavior: 'smooth',
     })
   }
+
+  let positionFarmsData = [];
+
+  if (data && data !== null && data !== undefined) {
+
+    positionFarmsData = data.map((pdata) => {
+      let farmData;
+      // eslint-disable-next-line array-callback-return
+      farmsData.map((farm) => {
+        if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
+          farmData = farm;
+        }
+      })
+      return { ...pdata, farmData }
+    })
+
+    console.info('positionFarmsData', positionFarmsData);
+  }
+
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-        <ActivePositionsRow data={data} />
+
+        {data ? data.map((pd) => (
+          <ActivePositionsRow data={pd} key={pd?.id} />
+        )) : null}
+
+        {/* <ActivePositionsRow data={data} /> */}
 
         {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>

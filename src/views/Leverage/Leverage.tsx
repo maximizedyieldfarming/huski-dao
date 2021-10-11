@@ -17,6 +17,7 @@ import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
 import BigNumber from 'bignumber.js'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
+import { useGetPositions } from 'hooks/api'
 import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
@@ -121,6 +122,8 @@ const Leverage: React.FC = () => {
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
+console.info('farmsData',farmsData);
+  const data =  useGetPositions()
 
   const cardLayout = (
     <CardLayout>
@@ -230,7 +233,7 @@ const Leverage: React.FC = () => {
       </TopSection>
 
       <TableWrapper>
-        {isActivePos ? <ActivePositionsTable data={farmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
+        {isActivePos ? <ActivePositionsTable data={data} farmsData={farmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>

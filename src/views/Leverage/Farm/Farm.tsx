@@ -8,6 +8,8 @@ import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/ho
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress  } from 'utils/addressHelpers'
 import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
+import BigNumber from 'bignumber.js'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
@@ -109,7 +111,9 @@ const Farm = (props) => {
   const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
   const userQuoteTokenBalance = getBalanceAmount(quoteTokenBalance)
   const { balance: bnbBalance } = useGetBnbBalance()
-console.info('bnbBalance',bnbBalance);
+  console.info('bnbBalance',bnbBalance);
+  const userBnbBalance = new BigNumber(bnbBalance).dividedBy(BIG_TEN.pow(18))
+  console.info('bnbBalance',userBnbBalance);
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
@@ -221,8 +225,8 @@ console.info('bnbBalance',bnbBalance);
                 <Text as="span" mr="1rem">
                   Balance:
                 </Text>
-                {userTokenBalance ? (
-                  <Text>{userTokenBalance.toNumber()}</Text>
+                {userBnbBalance ? (
+                  <Text>{userBnbBalance.toNumber()}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
