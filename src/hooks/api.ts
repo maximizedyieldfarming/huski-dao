@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useWeb3React } from '@web3-react/core'
 
 /* eslint-disable camelcase */
 export interface DeBankTvlResponse {
@@ -28,6 +29,28 @@ export const useGetStats = () => {
 
     fetchData()
   }, [setData])
+
+  return data
+}
+
+export const useGetPositions = () => {
+  const [data, setData] = useState(null)
+  const { account } = useWeb3React()
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
+        const res = await fetch(response);
+        const responseData = await res.json();
+        
+        setData(responseData.data.positions)
+      } catch (error) {
+        console.error('Unable to fetch data:', error)
+      }
+    }
+
+    fetchData()
+  }, [account, setData])
 
   return data
 }
