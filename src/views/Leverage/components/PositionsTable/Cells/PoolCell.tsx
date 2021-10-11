@@ -17,6 +17,9 @@ const StyledCell = styled(BaseCell)`
     // flex: 1 0 150px;
     padding-left: 32px;
   }
+  ${Text} {
+    white-space: nowrap;
+  }
 `
 
 const PoolCell = ({ pool }) => {

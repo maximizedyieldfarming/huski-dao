@@ -7,7 +7,11 @@ import ActivePositionsRow from './ActivePositionsRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-
+  overflow: auto;
+  height: 300px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    height: unset;
+  }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};

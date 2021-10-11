@@ -28,11 +28,11 @@ const ApyCell = ({ apy }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex>
+        <Flex alignItems="center">
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Apy
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>
               Pancake Liquitity Rewards: 23.36% Pancake Trading Fee Rewards: 11.23% Huski Token Rewards: 45.36%
               Borrowing Interest: 23.36% APR: 156.23% APY: 256.23%

@@ -31,11 +31,11 @@ const PositionCell = ({ position }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex>
+        <Flex alignItems="center">
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Position
           </Text>
-          <Tooltip>
+          <Tooltip isTop>
             <Text>Position value = Debt Value + Equity Value + Yield Current yield: 0.01BNB</Text>
           </Tooltip>
         </Flex>

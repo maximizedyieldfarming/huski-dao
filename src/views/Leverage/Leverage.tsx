@@ -28,7 +28,7 @@ import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 import LeverageCard from './components/LeverageCard/LeverageCard'
 import { getHuskyRewards, getYieldFarming, getTvl } from './helpers'
 
-const TableWrapper = styled.div`
+const PositionsTableWrapper = styled.div`
   background-color: ${({ theme }) => theme.card.background};
   margin-bottom: 2rem;
   border-radius: 20px;
@@ -36,13 +36,14 @@ const TableWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 1rem 2rem;
+
   > div:first-child {
     flex-grow: 1;
   }
   > figure {
     display: none;
     ${({ theme }) => theme.mediaQueries.xxl} {
+      margin-left: 10px;
       display: block;
     }
   }
@@ -232,12 +233,12 @@ console.info('farmsData',farmsData);
         </PositionButtonsContainer>
       </TopSection>
 
-      <TableWrapper>
+      <PositionsTableWrapper>
         {isActivePos ? <ActivePositionsTable data={data} farmsData={farmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
-      </TableWrapper>
+      </PositionsTableWrapper>
 
       <Flex alignSelf="flex-end">
         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />

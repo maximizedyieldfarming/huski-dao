@@ -35,8 +35,8 @@ const LendRow = ({ tokenData }) => {
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
-  const { totalToken, vaultDebtVal, userData, totalSupply } = tokenData
- 
+  const { totalToken, vaultDebtVal, userData,  } = tokenData
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
@@ -45,7 +45,11 @@ const LendRow = ({ tokenData }) => {
         <TotalSupplyCell supply={parseInt(totalToken)} />
         <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
-        <BalanceCell balance={userData.tokenBalance} />
+        <BalanceCell
+          balance={userData.tokenBalance}
+          balanceIb={userData.tokenBalanceIB}
+          name={tokenData?.token?.symbol}
+        />
         <ActionCell token={tokenData} />
       </StyledRow>
     </>

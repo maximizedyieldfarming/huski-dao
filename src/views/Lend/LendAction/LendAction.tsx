@@ -6,7 +6,7 @@ import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { ethers, Contract } from 'ethers'
-import useTokenBalance from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { useCakeVaultContract, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
@@ -15,6 +15,9 @@ import { useTranslation } from 'contexts/Localization'
 import { deposit, withdraw } from 'utils/vaultService'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import Deposit from './components/Deposit'
+import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -85,8 +88,7 @@ const Section = styled(Flex)`
 const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const { balance } = useTokenBalance(account)
-  console.log('lendAction props...', props)
+  // const { balance } = useTokenBalance(account)
   const {
     location: {
       state: { exchangeRate: excRate, token: data },
@@ -94,8 +96,8 @@ const LendAction = (props) => {
   } = props
 
   const [tokenData, setTokenData] = useState(data)
-  const [allowance, setAllowance] = useState(tokenData?.userData?.allowance)
-  const [exchangeRate, setExchangeRate] = useState(excRate)
+  const allowance = tokenData?.userData?.allowance
+  const exchangeRate = excRate
   console.log({ tokenData })
 
   const { callWithGasPrice } = useCallWithGasPrice()
@@ -146,26 +148,18 @@ const LendAction = (props) => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const [ibTokenValue, setIbTokenValue] = useState(0)
-
-  const handleAmountChange = (e) => {
-    const value = e.target.value ? parseFloat(e.target.value) : 0
-    // console.log('type of value', typeof value)
-    // console.log('type of exchangeRate', typeof exchangeRate)
-    const ibTokenAmount = value / exchangeRate
-    setIbTokenValue(parseFloat(ibTokenAmount.toFixed(2))) // parseFloat because toFixed returns a string and was causing troubles with the state
-  }
-
-  // const [inputValue, setInputValue] = useState(3)
-
-  const setAmountToMax = (e) => {
-    setIbTokenValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
-    // setInputValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
-  }
-
-  const displayBalance = getFullDisplayBalance(balance, 18, 3)
+  // const displayBalance = getFullDisplayBalance(balance, 18, 3)
   // console.log('type of amount', typeof ibTokenValue)
   // console.log({ displayBalance })
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
+  const displayBalance = isDeposit
+    ? userTokenBalance(token.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+        .toNumber()
+        .toPrecision(3)
+    : userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)
 
   return (
     <StyledPage>
@@ -191,67 +185,33 @@ const LendAction = (props) => {
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
-        <Body>
-          <Section justifyContent="space-between">
-            <Box>
-              <Text fontWeight="bold">Amount</Text>
-              <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" />
-            </Box>
-            <Box>
-              <Text fontWeight="bold">
-                Balance: {displayBalance}
-                {isDeposit ? token : `ib${token}`}
-              </Text>
 
-              <Flex>
-                <Text>{token} | </Text>
-                <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                  MAX
-                </Button>
-              </Flex>
-            </Box>
-          </Section>
-          <Box>
-            <Text textAlign="center">Assets Received</Text>
-            <Section justifyContent="space-between">
-              <Text>{ibTokenValue}</Text>
-              <Text>{isDeposit ? `ib${token}` : token}</Text>
-            </Section>
-          </Box>
-          {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
-          <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
-            {/*      {isDeposit && (
-              <Button as={Link} to={`/lend/deposit/${token}/approve`}>
-                Approve
-              </Button>
-            )} */}
-            {/* <Button onClick={handleConfirmClick} disabled={!account}>
-              Claim
-            </Button> */}
-            {isDeposit &&
-              (allowance === '0' ? (
-                <Button onClick={handleApprove}>Approve</Button>
-              ) : (
-                <Button
-                  onClick={handleDeposit}
-                  disabled={
-                    !account
-                      ? true
-                      : new BigNumber(ibTokenValue).isGreaterThan(new BigNumber(displayBalance).toNumber())
-                  }
-                >
-                  {t('Deposit')}
-                </Button>
-              ))}
-            <Button onClick={handleConfirm} disabled={!account}>
-              {t('Confirm')}
-            </Button>
-          </ButtonGroup>
+        <Body>
+          {isDeposit ? (
+            <Deposit
+              balance={displayBalance}
+              name={token}
+              allowance={allowance}
+              exchangeRate={exchangeRate}
+              handleApprove={handleApprove}
+              handleDeposit={handleDeposit}
+              handleConfirm={handleConfirm}
+              account={account}
+            />
+          ) : (
+            <Withdraw
+              balance={displayBalance}
+              name={token}
+              exchangeRate={exchangeRate}
+              handleConfirm={handleConfirm}
+              account={account}
+            />
+          )}
         </Body>
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{displayBalance}</Text>
+        <Text>{isDeposit ? `${displayBalance} ${token}` : `${displayBalance} ib${token}`}</Text>
       </Balance>
       <Box>
         <Text>

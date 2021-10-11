@@ -24,9 +24,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  height: 350px;
   ${({ theme }) => theme.mediaQueries.lg} {
-    height: unset;
     flex-direction: row;
   }
 

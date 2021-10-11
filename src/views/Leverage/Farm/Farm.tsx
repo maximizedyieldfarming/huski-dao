@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getAddress  } from 'utils/addressHelpers'
+import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
@@ -80,7 +80,7 @@ const Farm = (props) => {
   const {
     location: {
       state: { tokenData },
-    }
+    },
   } = props
 
   const quoteTokenName = tokenData?.quoteToken?.symbol
@@ -106,14 +106,16 @@ const Farm = (props) => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
-  const userTokenBalance = getBalanceAmount(tokenBalance)
-  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
-  const userQuoteTokenBalance = getBalanceAmount(quoteTokenBalance)
   const { balance: bnbBalance } = useGetBnbBalance()
-  console.info('bnbBalance',bnbBalance);
-  const userBnbBalance = new BigNumber(bnbBalance).dividedBy(BIG_TEN.pow(18))
-  console.info('bnbBalance',userBnbBalance);
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  const userTokenBalance = getBalanceAmount(
+    tokenData?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+  )
+  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
+  const userQuoteTokenBalance = getBalanceAmount(
+    tokenData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
+  )
+  console.info('bnbBalance', bnbBalance)
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
@@ -121,7 +123,7 @@ const Farm = (props) => {
   // const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock,leverageValue )
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const tvl = getTvl(tokenData)
-  
+
   const [tokenInput, setTokenInput] = useState(0)
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback((event) => {
@@ -150,8 +152,7 @@ const Farm = (props) => {
     }
   }
 
-
- const farmingData =  getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
+  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
 
   // console.log({ yieldFarmData })
   // console.log({ tvl })
@@ -170,7 +171,28 @@ const Farm = (props) => {
   //   }
   // }, [])
 
-
+  const setQuoteTokenInputToFraction = (e) => {
+    if (e.target.innerText === '25%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+    } else if (e.target.innerText === '50%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+    } else if (e.target.innerText === '75%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+    } else if (e.target.innerText === '100%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+    }
+  }
+  const setTokenInputToFraction = (e) => {
+    if (e.target.innerText === '25%') {
+      setTokenInput(userTokenBalance.toNumber() * 0.25)
+    } else if (e.target.innerText === '50%') {
+      setTokenInput(userTokenBalance.toNumber() * 0.5)
+    } else if (e.target.innerText === '75%') {
+      setTokenInput(userTokenBalance.toNumber() * 0.75)
+    } else if (e.target.innerText === '100%') {
+      setTokenInput(userTokenBalance.toNumber())
+    }
+  }
 
   return (
     <Page>
@@ -192,7 +214,7 @@ const Farm = (props) => {
                   Balance:
                 </Text>
                 {userQuoteTokenBalance ? (
-                  <Text>{userQuoteTokenBalance.toNumber()}</Text>
+                  <Text>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -206,7 +228,7 @@ const Farm = (props) => {
                   <Input
                     // type="number"
                     placeholder="0.00"
-                    value={quoteTokenInput}
+                    value={quoteTokenInput.toPrecision(3)}
                     ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
                   />
@@ -214,10 +236,18 @@ const Farm = (props) => {
                 <Text>{quoteTokenName}</Text>
               </InputArea>
               <Flex justifyContent="space-around">
-                <Button variant="secondary">25%</Button>
-                <Button variant="secondary">50%</Button>
-                <Button variant="secondary">75%</Button>
-                <Button variant="secondary">100%</Button>
+                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                  25%
+                </Button>
+                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                  50%
+                </Button>
+                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                  75%
+                </Button>
+                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                  100%
+                </Button>
               </Flex>
             </Box>
             <Box>
@@ -225,8 +255,8 @@ const Farm = (props) => {
                 <Text as="span" mr="1rem">
                   Balance:
                 </Text>
-                {userBnbBalance ? (
-                  <Text>{userBnbBalance.toNumber()}</Text>
+                {userTokenBalance ? (
+                  <Text>{userTokenBalance.toNumber().toPrecision(3)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -239,19 +269,27 @@ const Farm = (props) => {
                   <Input
                     // type="number"
                     placeholder="0.00"
-                    value={tokenInput}
+                    value={tokenInput.toPrecision(3)}
                     ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
-                  // ref={(input) => numberInputRef.current.push(input)} 
+                    // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{tokenName}</Text>
               </InputArea>
               <Flex justifyContent="space-around">
-                <Button variant="secondary">25%</Button>
-                <Button variant="secondary">50%</Button>
-                <Button variant="secondary">75%</Button>
-                <Button variant="secondary">100%</Button>
+                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                  25%
+                </Button>
+                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                  50%
+                </Button>
+                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                  75%
+                </Button>
+                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                  100%
+                </Button>
               </Flex>
             </Box>
             <Box>
@@ -312,7 +350,7 @@ const Farm = (props) => {
             <Flex alignItems="center">
               <Text mr="5px">{tokenName}</Text>
               <Radio
-                //  name="token" 
+                //  name="token"
                 scale="sm"
                 value={tokenName}
                 onChange={handleChange}
@@ -361,15 +399,24 @@ const Farm = (props) => {
       <Section>
         <Flex>
           <Text>Assets Supplied</Text>
-          <Text>{tokenInputOther} {radio} + {quoteTokenInputOther} {radioQuote}</Text>  <Skeleton width="80px" height="16px" />
+          <Text>
+            {tokenInputOther} {radio} + {quoteTokenInputOther} {radioQuote}
+          </Text>{' '}
+          <Skeleton width="80px" height="16px" />
         </Flex>
         <Flex>
           <Text>Assets Borrowed</Text>
-          {farmingData? <Text>{farmingData[1]?.toFixed(2)} {radio}</Text> : <Text>0.00 {radio}</Text>}
+          {farmingData ? (
+            <Text>
+              {farmingData[1]?.toFixed(2)} {radio}
+            </Text>
+          ) : (
+            <Text>0.00 {radio}</Text>
+          )}
         </Flex>
         <Flex>
           <Text>Price Impact</Text>
-          {farmingData? <Text>{(farmingData[0] * 100)?.toFixed(2)}%</Text> : <Text> 0.00 %</Text> }
+          {farmingData ? <Text>{(farmingData[0] * 100)?.toFixed(2)}%</Text> : <Text> 0.00 %</Text>}
         </Flex>
         <Flex>
           <Text>Trading Fees</Text>
@@ -377,7 +424,13 @@ const Farm = (props) => {
         </Flex>
         <Flex>
           <Text>Position Value</Text>
-          {farmingData? <Text>{farmingData[2].toFixed(2)} {radio} + {farmingData[3].toFixed(2) }  {radioQuote}</Text> : <Skeleton width="80px" height="16px" />}
+          {farmingData ? (
+            <Text>
+              {farmingData[2].toFixed(2)} {radio} + {farmingData[3].toFixed(2)} {radioQuote}
+            </Text>
+          ) : (
+            <Skeleton width="80px" height="16px" />
+          )}
         </Flex>
         <Flex>
           <Text>APR</Text>

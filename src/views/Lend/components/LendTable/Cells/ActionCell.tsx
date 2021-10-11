@@ -48,14 +48,14 @@ const ActionCell = ({ token }) => {
         <Button
           as={Link}
           to={{ pathname: `/lend/deposit/${name}`, state: { exchangeRate, token } }}
-          disabled={!exchangeRate || !account}
+          disabled={!token?.userData?.tokenBalanceIB || !account}
         >
           Deposit
         </Button>
         <Button
           as={Link}
           to={{ pathname: `/lend/withdraw/${name}`, state: { exchangeRate, token } }}
-          disabled={!exchangeRate || !account}
+          disabled={!token?.userData?.tokenBalanceIB || !account}
         >
           Withdraw
         </Button>
