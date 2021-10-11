@@ -16,6 +16,8 @@ import { deposit, withdraw } from 'utils/vaultService'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import Deposit from './components/Deposit'
+import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -86,8 +88,7 @@ const Section = styled(Flex)`
 const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const { balance } = useTokenBalance(account)
-  console.log('lendAction props...', props)
+  // const { balance } = useTokenBalance(account)
   const {
     location: {
       state: { exchangeRate: excRate, token: data },
@@ -95,8 +96,8 @@ const LendAction = (props) => {
   } = props
 
   const [tokenData, setTokenData] = useState(data)
-  const [allowance, setAllowance] = useState(tokenData?.userData?.allowance)
-  const [exchangeRate, setExchangeRate] = useState(excRate)
+  const allowance = tokenData?.userData?.allowance
+  const exchangeRate = excRate
   console.log({ tokenData })
 
   const { callWithGasPrice } = useCallWithGasPrice()
@@ -147,23 +148,6 @@ const LendAction = (props) => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const [ibTokenValue, setIbTokenValue] = useState(0)
-
-  const handleAmountChange = (e) => {
-    const value = e.target.value ? parseFloat(e.target.value) : 0
-    // console.log('type of value', typeof value)
-    // console.log('type of exchangeRate', typeof exchangeRate)
-    const ibTokenAmount = value / exchangeRate
-    setIbTokenValue(parseFloat(ibTokenAmount.toFixed(2))) // parseFloat because toFixed returns a string and was causing troubles with the state
-  }
-
-  // const [inputValue, setInputValue] = useState(3)
-  const [amount, setAmount] = useState(0)
-  const setAmountToMax = (e) => {
-    setAmount(parseFloat(displayBalance))
-    // setInputValue(parseFloat(getFullDisplayBalance(balance, 18, 3)))
-  }
-
   // const displayBalance = getFullDisplayBalance(balance, 18, 3)
   // console.log('type of amount', typeof ibTokenValue)
   // console.log({ displayBalance })
@@ -201,66 +185,28 @@ const LendAction = (props) => {
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
-        <Body>
-          <Section justifyContent="space-between">
-            <Box>
-              <Text fontWeight="bold">Amount</Text>
-              <Input type="number" placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
-            </Box>
-            <Box>
-              <Text fontWeight="bold">
-                Balance:{' '}
-                {isDeposit
-                  ? `${userTokenBalance(token.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
-                      .toNumber()
-                      .toPrecision(3)} ${token}`
-                  : `${userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)} ib${token}`}
-              </Text>
 
-              <Flex>
-                <Text>{token} | </Text>
-                <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                  MAX
-                </Button>
-              </Flex>
-            </Box>
-          </Section>
-          <Box>
-            <Text textAlign="center">Assets Received</Text>
-            <Section justifyContent="space-between">
-              <Text>{ibTokenValue}</Text>
-              <Text>{isDeposit ? `ib${token}` : token}</Text>
-            </Section>
-          </Box>
-          {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
-          <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
-            {/*      {isDeposit && (
-              <Button as={Link} to={`/lend/deposit/${token}/approve`}>
-                Approve
-              </Button>
-            )} */}
-            {/* <Button onClick={handleConfirmClick} disabled={!account}>
-              Claim
-            </Button> */}
-            {isDeposit &&
-              (allowance === '0' ? (
-                <Button onClick={handleApprove}>Approve</Button>
-              ) : (
-                <Button
-                  onClick={handleDeposit}
-                  disabled={
-                    !account
-                      ? true
-                      : new BigNumber(ibTokenValue).isGreaterThan(new BigNumber(displayBalance).toNumber())
-                  }
-                >
-                  {t('Deposit')}
-                </Button>
-              ))}
-            <Button onClick={handleConfirm} disabled={!account}>
-              {t('Confirm')}
-            </Button>
-          </ButtonGroup>
+        <Body>
+          {isDeposit ? (
+            <Deposit
+              balance={displayBalance}
+              name={token}
+              allowance={allowance}
+              exchangeRate={exchangeRate}
+              handleApprove={handleApprove}
+              handleDeposit={handleDeposit}
+              handleConfirm={handleConfirm}
+              account={account}
+            />
+          ) : (
+            <Withdraw
+              balance={displayBalance}
+              name={token}
+              exchangeRate={exchangeRate}
+              handleConfirm={handleConfirm}
+              account={account}
+            />
+          )}
         </Body>
       </TabPanel>
       <Balance>
