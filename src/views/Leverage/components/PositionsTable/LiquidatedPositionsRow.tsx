@@ -40,7 +40,7 @@ const ScrollContainer = styled.div`
   }
 `
 
-const PositionsRow = ({ data, isActivePos }) => {
+const LiquidatedPositionsRow = ({ data }) => {
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
@@ -57,29 +57,18 @@ const PositionsRow = ({ data, isActivePos }) => {
         <ScrollContainer>
           <PositionCell position={data[0]?.totalDeposit} />
           <DebtCell debt={data[0]?.totalBorrowed} />
-          {isActivePos ? (
-            <EquityCell equity={data[0]?.capitalUtilizationRate} />
-          ) : (
-            <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
-          )}
-          {isActivePos && <ApyCell apy={data[0]?.landApr} />}
-          {isActivePos && <DebtRatioCell debtRatio={data[0]?.capitalUtilizationRate} />}
-          {isActivePos ? (
-            <LiquidationThresholdCell liqTres={data[0]?.capitalUtilizationRate} />
-          ) : (
-            <LiquidationFeeCell fee={data[0]?.fee} />
-          )}
-          {isActivePos ? (
-            <SafetyBufferCell safetyBuffer={data[0]?.capitalUtilizationRate} />
-          ) : (
-            <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
-          )}
+
+          <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
+
+          <LiquidationFeeCell fee={data[0]?.fee} />
+
+          <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
+
           <ProfitsCell liqEquity={data[0]?.liqEquity} />
-          {isActivePos && <ActionCell token={data[0]} />}
         </ScrollContainer>
       </StyledRow>
     </>
   )
 }
 
-export default PositionsRow
+export default LiquidatedPositionsRow

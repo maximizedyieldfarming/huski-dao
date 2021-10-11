@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Button, ChevronUpIcon } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
-import PositionsRow from './PositionsRow'
+import ActivePositionsRow from './ActivePositionsRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
@@ -28,7 +28,7 @@ const ScrollButtonContainer = styled.div`
   padding-bottom: 5px;
 `
 
-const PositionsTable = ({ data, isActivePos }) => {
+const ActivePositionsTable = ({ data  }) => {
   console.log({ data })
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
@@ -39,7 +39,7 @@ const PositionsTable = ({ data, isActivePos }) => {
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-        <PositionsRow data={data} isActivePos={isActivePos} />
+        <ActivePositionsRow data={data} />
 
         {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
@@ -52,4 +52,4 @@ const PositionsTable = ({ data, isActivePos }) => {
   )
 }
 
-export default PositionsTable
+export default ActivePositionsTable

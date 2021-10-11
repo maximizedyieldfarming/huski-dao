@@ -30,7 +30,7 @@ const ProfitsCell = ({ liqEquity }) => {
       <CellContent>
         <Flex>
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Profits
+            Profits/Loss
           </Text>
         </Flex>
         {liqEquity ? <Text>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}

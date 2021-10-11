@@ -21,7 +21,8 @@ import husky2 from './assets/husky2@1x.png'
 import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LeverageTable from './components/LeverageTable/LeverageTable'
-import PositionsTable from './components/PositionsTable/PositionsTable'
+import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
+import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 import LeverageCard from './components/LeverageCard/LeverageCard'
 import { getHuskyRewards, getYieldFarming, getTvl } from './helpers'
@@ -229,7 +230,7 @@ const Leverage: React.FC = () => {
       </TopSection>
 
       <TableWrapper>
-        <PositionsTable data={farmsData} isActivePos={isActivePos} />
+        {isActivePos ? <ActivePositionsTable data={farmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>
