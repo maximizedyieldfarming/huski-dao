@@ -5,6 +5,9 @@ import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancak
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { getAddress  } from 'utils/addressHelpers'
+import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
@@ -101,6 +104,12 @@ const Farm = (props) => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  const userTokenBalance = getBalanceAmount(tokenBalance)
+  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
+  const userQuoteTokenBalance = getBalanceAmount(quoteTokenBalance)
+  const { balance: bnbBalance } = useGetBnbBalance()
+console.info('bnbBalance',bnbBalance);
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
@@ -110,7 +119,6 @@ const Farm = (props) => {
   const tvl = getTvl(tokenData)
   
   const [tokenInput, setTokenInput] = useState(0)
-  // manage focus on modal show
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback((event) => {
     const input = event.target.value
@@ -118,7 +126,6 @@ const Farm = (props) => {
   }, [])
 
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
-  // manage focus on modal show
   const quoteTokenInputRef = useRef<HTMLInputElement>()
   const handleQuoteTokenInput = useCallback((event) => {
     const input = event.target.value
@@ -180,8 +187,8 @@ const Farm = (props) => {
                 <Text as="span" mr="1rem">
                   Balance:
                 </Text>
-                {tokenData?.user?.balance ? (
-                  <Text>{tokenData?.user?.balance}</Text>
+                {userQuoteTokenBalance ? (
+                  <Text>{userQuoteTokenBalance.toNumber()}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -214,8 +221,8 @@ const Farm = (props) => {
                 <Text as="span" mr="1rem">
                   Balance:
                 </Text>
-                {tokenData?.user?.balance ? (
-                  <Text>{tokenData?.user?.balance}</Text>
+                {userTokenBalance ? (
+                  <Text>{userTokenBalance.toNumber()}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -354,11 +361,11 @@ const Farm = (props) => {
         </Flex>
         <Flex>
           <Text>Assets Borrowed</Text>
-          {farmingData[1]? <Text>{farmingData[1].toFixed(2)} {radio}</Text> : <Text>0.00 {radio}</Text>}
+          {farmingData? <Text>{farmingData[1]?.toFixed(2)} {radio}</Text> : <Text>0.00 {radio}</Text>}
         </Flex>
         <Flex>
           <Text>Price Impact</Text>
-          {farmingData[0]? <Text>{(farmingData[0] * 100).toFixed(2)}%</Text> : <Text> 0.00 %</Text> }
+          {farmingData? <Text>{(farmingData[0] * 100)?.toFixed(2)}%</Text> : <Text> 0.00 %</Text> }
         </Flex>
         <Flex>
           <Text>Trading Fees</Text>

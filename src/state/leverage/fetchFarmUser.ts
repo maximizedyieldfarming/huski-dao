@@ -19,9 +19,44 @@ export const fetchFarmUserAllowances = async (account: string, farmsToFetch: Lev
   return parsedVaultAllowances
 }
 
-export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+export const fetchFarmUserTokenBalancesIB = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
     const vaultContractAddress = getAddress(farm.vaultAddress)
+    return {
+      address: vaultContractAddress,
+      name: 'balanceOf',
+      params: [account],
+    }
+  })
+
+  const rawTokenBalances = await multicall(erc20ABI, calls)
+  const parsedTokenBalances = rawTokenBalances.map((tokenBalance) => {
+    return new BigNumber(tokenBalance).toJSON()
+  })
+  return parsedTokenBalances
+}
+
+
+export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+  const calls = farmsToFetch.map((farm) => {
+    const vaultContractAddress = getAddress(farm.token.address)
+    return {
+      address: vaultContractAddress,
+      name: 'balanceOf',
+      params: [account],
+    }
+  })
+
+  const rawTokenBalances = await multicall(erc20ABI, calls)
+  const parsedTokenBalances = rawTokenBalances.map((tokenBalance) => {
+    return new BigNumber(tokenBalance).toJSON()
+  })
+  return parsedTokenBalances
+}
+
+export const fetchFarmUserQuoteTokenBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+  const calls = farmsToFetch.map((farm) => {
+    const vaultContractAddress = getAddress(farm.quoteToken.address)
     return {
       address: vaultContractAddress,
       name: 'balanceOf',

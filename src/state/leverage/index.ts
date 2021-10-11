@@ -9,6 +9,8 @@ import {
   fetchFarmUserEarnings,
   fetchFarmUserAllowances,
   fetchFarmUserTokenBalances,
+  fetchFarmUserTokenBalancesIB,
+  fetchFarmUserQuoteTokenBalances,
   fetchFarmUserStakedBalances,
 } from './fetchFarmUser'
 import { LeverageFarmsState, LeverageFarm } from '../types'
@@ -61,6 +63,8 @@ createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number
     const farmsToFetch = leverageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
     const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
+    const userFarmTokenBalancesIB = await fetchFarmUserTokenBalancesIB(account, farmsToFetch)
+    const userFarmQuoteTokenBalances = await fetchFarmUserQuoteTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
     // const userFarmPositions = await fetchFarmUserPositions(account, farmsToFetch)
@@ -70,6 +74,8 @@ createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number
         pid: farmsToFetch[index].pid,
         allowance: userFarmAllowances[index],
         tokenBalance: userFarmTokenBalances[index],
+        tokenBalanceIB: userFarmTokenBalancesIB[index],
+        quoteTokenBalance: userFarmQuoteTokenBalances[index],
         stakedBalance: userStakedBalances[index],
         earnings: userFarmEarnings[index],
       }
