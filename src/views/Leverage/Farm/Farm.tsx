@@ -104,11 +104,15 @@ const Farm = (props) => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
-  const userTokenBalance = getBalanceAmount(tokenBalance)
-  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
-  const userQuoteTokenBalance = getBalanceAmount(quoteTokenBalance)
   const { balance: bnbBalance } = useGetBnbBalance()
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  const userTokenBalance = getBalanceAmount(
+    tokenData?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+  )
+  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
+  const userQuoteTokenBalance = getBalanceAmount(
+    tokenData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
+  )
   console.info('bnbBalance', bnbBalance)
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
@@ -166,7 +170,6 @@ const Farm = (props) => {
   // }, [])
 
   const setQuoteTokenInputToFraction = (e) => {
-    console.log(e)
     if (e.target.innerText === '25%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
@@ -178,15 +181,14 @@ const Farm = (props) => {
     }
   }
   const setTokenInputToFraction = (e) => {
-    console.log(e)
     if (e.target.innerText === '25%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+      setTokenInput(userTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+      setTokenInput(userTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+      setTokenInput(userTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+      setTokenInput(userTokenBalance.toNumber())
     }
   }
 
@@ -210,7 +212,7 @@ const Farm = (props) => {
                   Balance:
                 </Text>
                 {userQuoteTokenBalance ? (
-                  <Text>{userQuoteTokenBalance.toNumber()}</Text>
+                  <Text>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -224,7 +226,7 @@ const Farm = (props) => {
                   <Input
                     // type="number"
                     placeholder="0.00"
-                    value={quoteTokenInput}
+                    value={quoteTokenInput.toPrecision(3)}
                     ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
                   />
@@ -252,7 +254,7 @@ const Farm = (props) => {
                   Balance:
                 </Text>
                 {userTokenBalance ? (
-                  <Text>{userTokenBalance.toNumber()}</Text>
+                  <Text>{userTokenBalance.toNumber().toPrecision(3)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -265,7 +267,7 @@ const Farm = (props) => {
                   <Input
                     // type="number"
                     placeholder="0.00"
-                    value={tokenInput}
+                    value={tokenInput.toPrecision(3)}
                     ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
                     // ref={(input) => numberInputRef.current.push(input)}
