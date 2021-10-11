@@ -16,8 +16,8 @@ const TooltipWrapper = styled(Box)<TooltipWrapperParams>`
   ${({ theme }) => theme.mediaQueries.xl} {
     ${({ isTop }) =>
       isTop
-        ? 'transform: translate(-50%, -3.5rem);'
-        : 'transform: translate(-50%, 1.5rem);'}// transform: translate(-50%, 1.5rem);;;
+        ? 'transform: translate(-50%, -110%);'
+        : 'transform: translate(-50%, 1.5rem);'}// transform: translate(-50%, 1.5rem);;;;;;
   }
   padding: 1rem;
   gap: 10px;
