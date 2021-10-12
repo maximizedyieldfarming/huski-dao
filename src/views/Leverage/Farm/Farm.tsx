@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
 import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input, ArrowForwardIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
@@ -10,6 +10,7 @@ import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import Tooltip from 'components/Tooltip'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
@@ -122,20 +123,33 @@ const Farm = (props) => {
 
   // const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock,leverageValue )
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
+
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
+
+  const apy = getDisplayApr(yieldFarmData * leverageValue)
+  const apyAtOne = getDisplayApr(yieldFarmData * 1)
+
   const tvl = getTvl(tokenData)
 
   const [tokenInput, setTokenInput] = useState(0)
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback((event) => {
     const input = event.target.value
-    setTokenInput(input)
+    setTokenInput(Number(input))
+    setTokenInputOther(Number(input))
   }, [])
 
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
   const handleQuoteTokenInput = useCallback((event) => {
     const input = event.target.value
-    setQuoteTokenInput(input)
+    setQuoteTokenInput(Number(input))
+    setQuoteTokenInputOther(Number(input))
   }, [])
 
   const handleChange = (e) => {
@@ -160,39 +174,52 @@ const Farm = (props) => {
   // console.log({ leverageFarming })
 
   // FIX for scroll-wheel changing input of number type
-  // const numberInputRef = useRef([])
-  // useEffect(() => {
-  //   const handleWheel = (e) => e.preventDefault()
-  //   const references = numberInputRef.current
-  //   references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+  // is better to use input of type Number
+  // to avoid having to sanitize input
+  // sudden breaks/bugs
+  const numberInputRef = useRef([])
+  useEffect(() => {
+    const handleWheel = (e) => e.preventDefault()
+    const references = numberInputRef.current
+    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
 
-  //   return () => {
-  //     references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
-  //   }
-  // }, [])
+    return () => {
+      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+    }
+  }, [])
 
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber())
     }
   }
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setTokenInput(userTokenBalance.toNumber() * 0.25)
+      setTokenInputOther(userTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
       setTokenInput(userTokenBalance.toNumber() * 0.5)
+      setTokenInputOther(userTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
       setTokenInput(userTokenBalance.toNumber() * 0.75)
+      setTokenInputOther(userTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
       setTokenInput(userTokenBalance.toNumber())
+      setTokenInputOther(userTokenBalance.toNumber())
     }
   }
+
+  console.log({ tokenInputOther })
 
   return (
     <Page>
@@ -224,16 +251,16 @@ const Farm = (props) => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
                   </Box>
-                  {/* <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} /> */}
                   <Input
-                    // type="number"
+                    type="number"
                     placeholder="0.00"
                     value={quoteTokenInput}
-                    ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
+                    // ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
+                    ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
-                <Text>{quoteTokenName}</Text>
+                <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
               <Flex justifyContent="space-around">
                 <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
@@ -267,15 +294,15 @@ const Farm = (props) => {
                     <TokenImage token={tokenData?.token} width={40} height={40} />
                   </Box>
                   <Input
-                    // type="number"
+                    type="number"
                     placeholder="0.00"
                     value={tokenInput}
-                    ref={tokenInputRef as RefObject<HTMLInputElement>}
+                    // ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
-                    // ref={(input) => numberInputRef.current.push(input)}
+                    ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
-                <Text>{tokenName}</Text>
+                <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
               <Flex justifyContent="space-around">
                 <Button variant="secondary" onClick={setTokenInputToFraction}>
@@ -301,17 +328,6 @@ const Farm = (props) => {
                 <Text bold>Increase or decrease leverage</Text>
               </Flex>
 
-              {/*   <Text>Active Positions</Text> */}
-
-              {/*  <Slider
-                min={1.0}
-                max={leverage}
-                name="leverage"
-                step={0.5}
-                value={leverageValue}
-                valueLabel={`${leverageValue}x`}
-                onValueChanged={(value) => setLeverageValue(value)}
-              /> */}
               <Flex>
                 <input
                   type="range"
@@ -338,7 +354,7 @@ const Farm = (props) => {
           <Text bold>Which asset would you like to borrow? </Text>
           <Flex>
             <Flex alignItems="center" marginRight="10px">
-              <Text mr="5px">{quoteTokenName}</Text>
+              <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
               <Radio
                 // name="token"
                 scale="sm"
@@ -348,7 +364,7 @@ const Farm = (props) => {
               />
             </Flex>
             <Flex alignItems="center">
-              <Text mr="5px">{tokenName}</Text>
+              <Text mr="5px">{tokenName.replace('wBNB', 'BNB')}</Text>
               <Radio
                 //  name="token"
                 scale="sm"
@@ -366,29 +382,7 @@ const Farm = (props) => {
           </Text>
         </Box>
       </Section>
-      {/*  <StyledBox>
-       <Slider
-          min={0}
-          max={leverage}
-          name="leverage"
-          step={0.5}
-          value={leverageValue}
-          valueLabel={`${leverageValue}x`}
-          onValueChanged={(value) => setLeverageValue(value)}
-        />
-        <input
-          type="range"
-          min="1.0"
-          max={leverage}
-          step="0.5"
-          name="leverage"
-          value={leverageValue}
-          onChange={handleSliderChange}
-          list="leverage"
-        />
 
-        <datalist id="leverage">{datalistOptions}</datalist>
-      </StyledBox> */}
       <Section>
         <Text small color="failure">
           Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation
@@ -397,48 +391,75 @@ const Farm = (props) => {
       </Section>
 
       <Section>
-        <Flex>
+        <Flex justifyContent="space-between">
           <Text>Assets Supplied</Text>
           <Text>
-            {tokenInputOther} {radio} + {quoteTokenInputOther} {radioQuote}
-          </Text>{' '}
-          <Skeleton width="80px" height="16px" />
+            {tokenInputOther} {radio.replace('wBNB', 'BNB')} + {quoteTokenInputOther}{' '}
+            {radioQuote.replace('wBNB', 'BNB')}
+          </Text>
         </Flex>
-        <Flex>
+        <Flex justifyContent="space-between">
           <Text>Assets Borrowed</Text>
-          {farmingData ? (
+          {farmingData[1] ? (
             <Text>
               {farmingData[1]?.toFixed(2)} {radio}
             </Text>
           ) : (
-            <Text>0.00 {radio}</Text>
+            <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
           )}
         </Flex>
-        <Flex>
-          <Text>Price Impact</Text>
-          {farmingData ? <Text>{(farmingData[0] * 100)?.toFixed(2)}%</Text> : <Text> 0.00 %</Text>}
+        <Flex justifyContent="space-between">
+          <Flex>
+            <Text>Price Impact</Text>
+            <Tooltip isLeft>
+              <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
+            </Tooltip>
+          </Flex>
+          {farmingData[0] ? (
+            <Text color="#1DBE03">+{(farmingData[0] * 100)?.toFixed(2)} %</Text>
+          ) : (
+            <Text color="#1DBE03"> 0.00 %</Text>
+          )}
         </Flex>
-        <Flex>
-          <Text>Trading Fees</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+        <Flex justifyContent="space-between">
+          <Flex>
+            <Text>Trading Fees</Text>
+            <Tooltip isLeft>
+              <Text>
+                Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’
+                for more information.
+              </Text>
+            </Tooltip>
+          </Flex>
+          {tokenData?.tradeFee ? (
+            <Text color="#EB0303">-{Number(tokenData?.tradeFee)?.toPrecision(2)}</Text>
+          ) : (
+            <Skeleton width="80px" height="16px" />
+          )}
         </Flex>
-        <Flex>
+        <Flex justifyContent="space-between">
           <Text>Position Value</Text>
           {farmingData ? (
             <Text>
-              {farmingData[2].toFixed(2)} {radio} + {farmingData[3].toFixed(2)} {radioQuote}
+              {farmingData[2].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmingData[3].toFixed(2)}{' '}
+              {radioQuote.replace('wBNB', 'BNB')}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
-        <Flex>
+        <Flex justifyContent="space-between">
           <Text>APR</Text>
+
           {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
         </Flex>
-        <Flex>
+        <Flex justifyContent="space-between">
           <Text>APY</Text>
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+          <Flex>
+            <Text>{apyAtOne}%</Text>
+            <ArrowForwardIcon />
+            <Text>{apy}%</Text>
+          </Flex>
         </Flex>
       </Section>
       <Flex justifyContent="space-evenly">
