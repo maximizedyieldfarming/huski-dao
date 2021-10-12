@@ -62,7 +62,7 @@ const ActivePositionsTable = ({ data, farmsData  }) => {
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
 
-        {data ? data.map((pd) => (
+        {positionFarmsData ? positionFarmsData.map((pd) => (
           <ActivePositionsRow data={pd} key={pd?.id} />
         )) : null}
 

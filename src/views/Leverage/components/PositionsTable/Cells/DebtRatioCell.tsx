@@ -36,7 +36,7 @@ const DebtRatioCell = ({ debtRatio }) => {
             <Text>Debt Ratio = Debt Value / Position Value</Text>
           </Tooltip>
         </Flex>
-        {debtRatio ? <Text>{debtRatio}</Text> : <Skeleton width="80px" height="16px" />}
+        {debtRatio ? <Text>{(debtRatio.toNumber() * 100).toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

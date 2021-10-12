@@ -56,31 +56,29 @@ console.info('开仓关仓', data);
   // useFarmsWithToken(vaultAddress)
 
   const totalPositionValueInUSDData = data.totalPositionValueInUSD;
+  const tokenBusdPrice = data.farmData.token.busdPrice;
+  const totalPositionValue = parseInt(totalPositionValueInUSDData.hex) / tokenBusdPrice;
+  const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
   const debtValueData = data.debtValue;
-  const totalPositionValueInUSD = new BigNumber(totalPositionValueInUSDData)
-
-  // const debtValue = new BigNumber(data[0]?.debtValue).dividedBy(BIG_TEN.pow(18))
-
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
 
-console.log({'debtValue-- ': parseInt(totalPositionValueInUSDData.hex) });
-
-
+  const debtRatio = (new BigNumber(debtValue)).div(new BigNumber(totalPositionValueInToken))
+  console.log({ 'debtValue-- ': parseInt(totalPositionValueInUSDData.hex), 'debtValue-- 22': totalPositionValueInToken.toNumber(), debtRatio });
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        {/* <PoolCell pool={data[0]?.lpSymbol} /> */}
+        <PoolCell pool={data.farmData.lpSymbol} />
         <ScrollContainer>
-          {/* <PositionCell position={data[0]?.totalPositionValueInUSD} /> */}
+          <PositionCell position={totalPositionValueInToken} />
           <DebtCell debt={debtValue} />
-          {/* <EquityCell equity={data[0]?.capitalUtilizationRate} />
-          <ApyCell apy={data[0]?.landApr} />
-          <DebtRatioCell debtRatio={data[0]?.capitalUtilizationRate} />
-          <LiquidationThresholdCell liqTres={data[0]?.capitalUtilizationRate} />
-          <SafetyBufferCell safetyBuffer={data[0]?.capitalUtilizationRate} />
-          <ProfitsCell liqEquity={data[0]?.liqEquity} />
-          <ActionCell token={data[0]} /> */}
+          <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
+          <ApyCell apy={data?.landApr} />
+          <DebtRatioCell debtRatio={debtRatio} />
+          <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
+          <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
+          <ProfitsCell liqEquity={data?.liqEquity} />
+          <ActionCell token={data} />
         </ScrollContainer>
       </StyledRow>
     </>

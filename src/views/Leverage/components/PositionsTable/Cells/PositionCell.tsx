@@ -39,7 +39,7 @@ const PositionCell = ({ position }) => {
             <Text>Position value = Debt Value + Equity Value + Yield Current yield: 0.01BNB</Text>
           </Tooltip>
         </Flex>
-        {position ? <Text>{position}</Text> : <Skeleton width="80px" height="16px" />}
+        {position ? <Text>{position.toNumber().toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

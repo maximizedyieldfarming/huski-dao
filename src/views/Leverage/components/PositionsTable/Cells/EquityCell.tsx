@@ -36,7 +36,7 @@ const EquityCell = ({ equity }) => {
             <Text>Equity</Text>
           </Tooltip>
         </Flex>
-        {equity ? <Text>{equity}</Text> : <Skeleton width="80px" height="16px" />}
+        {equity ? <Text>{equity.toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )
