@@ -6,7 +6,20 @@ const ButtonGroup = styled(Flex)`
   gap: 10px;
 `
 
-const Withdraw = ({ account, balance, name }) => {
+const Stake = ({ account, balance, name }) => {
+  // FIX: for scroll-wheel changing input of number type
+  // using this method the problem won't happen
+  const numberInputRef = useRef([])
+  useEffect(() => {
+    const handleWheel = (e) => e.preventDefault()
+    const references = numberInputRef.current
+    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+
+    return () => {
+      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+    }
+  }, [])
+  console.log({ balance })
   const [amount, setAmount] = useState(0)
 
   const handleAmountChange = (e) => {
@@ -15,14 +28,21 @@ const Withdraw = ({ account, balance, name }) => {
   }
 
   const setAmountToMax = (e) => {
-    // setAmount(parseFloat(getFullDisplayBalance(balance, 18, 3)))
+    setAmount(parseFloat(balance))
   }
   return (
     <>
       <Flex justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
+          <Input
+            type="number"
+            placeholder="0.00"
+            onChange={handleAmountChange}
+            step="0.01"
+            value={amount}
+            ref={(input) => numberInputRef.current.push(input)}
+          />
         </Box>
         <Box>
           <Text fontWeight="bold">
@@ -38,10 +58,11 @@ const Withdraw = ({ account, balance, name }) => {
       </Flex>
 
       <ButtonGroup flexDirection="column">
+        <Button disabled={!account}>Approve</Button>
         <Button disabled={!account}>Claim</Button>
       </ButtonGroup>
     </>
   )
 }
 
-export default Withdraw
+export default Stake

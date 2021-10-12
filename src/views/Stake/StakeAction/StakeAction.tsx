@@ -7,8 +7,10 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { getFullDisplayBalance } from 'utils/formatBalance'
-// import Deposit from './components/Deposit'
-// import Withdraw from './components/Withdraw'
+import BigNumber from 'bignumber.js'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import Stake from './components/Stake'
+import Withdraw from './components/Withdraw'
 
 interface Props {
   active: boolean
@@ -63,32 +65,29 @@ const Body = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
 `
-const ButtonGroup = styled(Flex)`
-  gap: 10px;
-`
 
-const StakeAction = () => {
+const StakeAction = (props) => {
+  const {
+    location: {
+      state: { token: data },
+    },
+  } = props
+  const [tokenData, setTokenData] = useState(data)
   const { account } = useWeb3React()
-  const { balance } = useTokenBalance(account)
+  // const { balance } = useTokenBalance(account)
   const { action, token } = useParams<RouteParams>()
-  const [isDeposit, setIsDeposit] = useState(action === 'stake')
+  const [isStake, setIsStake] = useState(action === 'stake')
 
-  const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
+  const handleWithdrawClick = (e) => isStake && setIsStake(false)
 
-  const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
+  const handleDepositClick = (e) => !isStake && setIsStake(true)
 
-  const [amount, setAmount] = useState(0)
 
-  const handleAmountChange = (e) => {
-    const value = e.target.value ? parseFloat(e.target.value) : 0
-    setAmount(value)
-  }
+  // const displayBalance = getFullDisplayBalance(balance, 18, 3)
 
-  const setAmountToMax = (e) => {
-    setAmount(parseFloat(getFullDisplayBalance(balance, 18, 3)))
-  }
-
-  const displayBalance = getFullDisplayBalance(balance, 18, 3)
+  const tokenBalanceIb = tokenData?.userData?.tokenBalance
+  const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
+  const userStaked = tokenData?.userData?.stakedBalance
 
   return (
     <StyledPage>
@@ -98,42 +97,32 @@ const StakeAction = () => {
       <Bubble>
         <Text>Staked</Text>
         <Text>
-          {displayBalance} {token}
+          {userTokenBalance(userStaked).toNumber().toPrecision(3)} {token}
         </Text>
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit} to={`/stake/stake/${token}`} replace>
+          <HeaderTabs onClick={handleDepositClick} active={isStake} to={`/stake/stake/${token}`} replace>
             <Text>Stake</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} to={`/stake/withdraw/${token}`} replace>
+          <HeaderTabs onClick={handleWithdrawClick} active={!isStake} to={`/stake/withdraw/${token}`} replace>
             <Text>Withdraw</Text>
           </HeaderTabs>
         </Header>
         <Body>
-          <Flex justifyContent="space-between">
-            <Box>
-              <Text fontWeight="bold">Amount</Text>
-              <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
-            </Box>
-            <Box>
-              <Text fontWeight="bold">
-                Balance: {displayBalance} {token}
-              </Text>
-              <Flex>
-                <Text>{token} | </Text>
-                <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                  MAX
-                </Button>
-              </Flex>
-            </Box>
-          </Flex>
-
-          {/*  {isDeposit ? <Deposit /> : <Withdraw />} */}
-          <ButtonGroup flexDirection="column">
-            {isDeposit && <Button disabled={!account}>Authorize</Button>}
-            <Button disabled={!account}>Claim</Button>
-          </ButtonGroup>
+          {isStake ? (
+            <Stake
+              account={account}
+              balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
+              name={token}
+            />
+          ) : (
+            <Withdraw
+              account={account}
+              balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
+              name={token}
+            />
+          )}
         </Body>
       </TabPanel>
     </StyledPage>
