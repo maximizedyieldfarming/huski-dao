@@ -434,7 +434,7 @@ const AdjustPosition = (props) => {
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Price Impact</Text>
-            <Tooltip>
+            <Tooltip isLeft>
               <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
             </Tooltip>
           </Flex>
@@ -447,7 +447,7 @@ const AdjustPosition = (props) => {
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Trading Fees</Text>
-            <Tooltip>
+            <Tooltip isLeft>
               <Text>
                 Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’
                 for more information.
