@@ -228,7 +228,7 @@ const Farm = (props) => {
                   <Input
                     // type="number"
                     placeholder="0.00"
-                    value={quoteTokenInput.toPrecision(3)}
+                    value={quoteTokenInput}
                     ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
                   />
@@ -269,7 +269,7 @@ const Farm = (props) => {
                   <Input
                     // type="number"
                     placeholder="0.00"
-                    value={tokenInput.toPrecision(3)}
+                    value={tokenInput}
                     ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
                     // ref={(input) => numberInputRef.current.push(input)}
