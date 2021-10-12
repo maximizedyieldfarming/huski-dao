@@ -61,10 +61,13 @@ console.info('开仓关仓', data);
   const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
   const debtValueData = data.debtValue;
+  const baseAmountData = data.baseAmount;
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
 
   const debtRatio = (new BigNumber(debtValue)).div(new BigNumber(totalPositionValueInToken))
-  console.log({ 'debtValue-- ': parseInt(totalPositionValueInUSDData.hex), 'debtValue-- 22': totalPositionValueInToken.toNumber(), debtRatio });
+  const leverage = (new BigNumber(debtValueData)).div(new BigNumber(baseAmountData)).plus(1);
+
+  console.log({ 'debtValue-- ': leverage.toNumber(), 'debtValue-- 22': totalPositionValueInToken.toNumber(), debtRatio });
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
