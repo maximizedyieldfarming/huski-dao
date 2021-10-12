@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import useFarmsWithToken from '../../hooks/usePositionsFarmsWithToken'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../../helpers'
 import NameCell from './Cells/NameCell'
@@ -76,22 +77,42 @@ const ActivePositionsRow = ({ data }) => {
   const farmingData = getLeverageFarmingData(data.farmData, leverage.toNumber(), '0.04', '0.0065')
 
   console.info('thefeels-----', farmingData)
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const cakePrice = useCakePrice()
+  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, huskyPerBlock, leverage)
+  const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
+  // const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
+
+  const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
+  console.log({ borrowingInterest })
 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={data.farmData.lpSymbol} />
-        <ScrollContainer>
-          <PositionCell position={totalPositionValueInToken} />
-          <DebtCell debt={debtValue} />
-          <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
-          <ApyCell apy={data?.landApr} />
-          <DebtRatioCell debtRatio={debtRatio} />
-          <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
-          <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
-          <ProfitsCell liqEquity={data?.liqEquity} />
-          <ActionCell data={data} />
-        </ScrollContainer>
+        <PositionCell position={totalPositionValueInToken} />
+        <DebtCell debt={debtValue} />
+        <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
+        <ApyCell
+          apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
+          huskyRewards={huskyRewards}
+          apr={null}
+          borrowingInterest={null}
+          liquidityRewards={null}
+          tradingFeesRewards={null}
+        />
+        <DebtRatioCell debtRatio={debtRatio} />
+        <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
+        <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
+        <ProfitsCell liqEquity={data?.liqEquity} />
+        <ActionCell data={data} />
       </StyledRow>
     </>
   )

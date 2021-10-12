@@ -23,7 +23,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const ApyCell = ({ apy }) => {
+const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, tradingFeesRewards }) => {
   const { isMobile } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">
@@ -33,13 +33,41 @@ const ApyCell = ({ apy }) => {
             Apy
           </Text>
           <Tooltip isTop>
-            <Text>
-              Pancake Liquitity Rewards: 23.36% Pancake Trading Fee Rewards: 11.23% Huski Token Rewards: 45.36%
-              Borrowing Interest: 23.36% APR: 156.23% APY: 256.23%
-            </Text>
+            <Flex justifyContent="space-between">
+              <Text small>Pancake Liquitity Rewards:</Text>
+              {liquidityRewards ? <Text small>{liquidityRewards}%</Text> : <Skeleton width="80px" height="16px" />}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text small>Pancake Trading Fee Rewards:</Text>
+              {tradingFeesRewards ? <Text small>{tradingFeesRewards}%</Text> : <Skeleton width="80px" height="16px" />}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text small>Huski Token Rewards:</Text>
+              {huskyRewards ? (
+                <Text small>{huskyRewards.toPrecision(3)}%</Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text small>Borrowing Interest:</Text>
+              {borrowingInterest ? (
+                <Text small>{borrowingInterest?.toPrecision(3)}%</Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text small>APR:</Text>
+              {apr ? <Text small>{apr}%</Text> : <Skeleton width="80px" height="16px" />}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text small>APY:</Text>
+              {apy ? <Text small>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
+            </Flex>
           </Tooltip>
         </Flex>
-        {apy ? <Text>{apy?.toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
+        {apy ? <Text>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )
