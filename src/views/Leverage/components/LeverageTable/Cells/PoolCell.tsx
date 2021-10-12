@@ -66,7 +66,8 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
                 </Box>
                 {token?.busdPrice ? (
                   <Text small>
-                    {token?.symbol}&nbsp;(1&nbsp;{token?.symbol}&nbsp;=&nbsp;{parseFloat(token?.busdPrice).toFixed(2)}
+                    {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
+                    &nbsp;=&nbsp;{parseFloat(token?.busdPrice).toFixed(2)}
                     &nbsp;USD)
                   </Text>
                 ) : (
@@ -79,7 +80,8 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
                 </Box>
                 {quoteToken?.busdPrice ? (
                   <Text small>
-                    {quoteToken?.symbol}&nbsp;(1&nbsp;{quoteToken?.symbol}&nbsp;=&nbsp;
+                    {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
+                    &nbsp;=&nbsp;
                     {parseFloat(quoteToken?.busdPrice).toFixed(2)}&nbsp;USD)
                   </Text>
                 ) : (

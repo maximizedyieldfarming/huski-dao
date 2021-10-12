@@ -27,7 +27,7 @@ const CurrencyCell = ({ token }) => {
       <CellContent>
         <TokenImage token={token?.token} width={40} height={40} mr="8px" />
         <Text bold={!isMobile} small={isMobile}>
-          {token.symbol}
+          {token.symbol.replace('WBNB', 'BNB')}
         </Text>
       </CellContent>
     </StyledCell>
