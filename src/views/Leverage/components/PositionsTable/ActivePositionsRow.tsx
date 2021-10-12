@@ -5,6 +5,7 @@ import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import useFarmsWithToken from '../../hooks/usePositionsFarmsWithToken'
+import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../../helpers'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
@@ -68,6 +69,11 @@ console.info('开仓关仓', data);
   const leverage = (new BigNumber(debtValueData)).div(new BigNumber(baseAmountData)).plus(1);
 
   console.log({ 'debtValue-- ': leverage.toNumber(), 'debtValue-- 22': totalPositionValueInToken.toNumber(), debtRatio });
+
+  const farmingData = getLeverageFarmingData(data.farmData, leverage.toNumber(), '0.04', '0.0065')
+
+  console.info('thefeels-----', farmingData);
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
