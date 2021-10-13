@@ -16,7 +16,7 @@ const Stake = ({ account, balance, name }) => {
     references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
 
     return () => {
-      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
     }
   }, [])
   console.log({ balance })

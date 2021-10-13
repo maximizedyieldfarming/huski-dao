@@ -24,7 +24,7 @@ interface Props {
 }
 interface RouteParams {
   action: string
-  token: string
+  tokenName: string
 }
 
 const StyledPage = styled(Page)`
@@ -141,7 +141,7 @@ const LendAction = (props) => {
     }
   }
 
-  const { action, token } = useParams<RouteParams>()
+  const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
   const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
@@ -149,14 +149,13 @@ const LendAction = (props) => {
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
   // const displayBalance = getFullDisplayBalance(balance, 18, 3)
-  // console.log('type of amount', typeof ibTokenValue)
-  // console.log({ displayBalance })
+
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
   const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const displayBalance = isDeposit
-    ? userTokenBalance(token.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+    ? userTokenBalance(tokenName.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
         .toNumber()
         .toPrecision(3)
     : userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)
@@ -164,14 +163,14 @@ const LendAction = (props) => {
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {token}
+        {action} {tokenName}
       </Text>
       <TabPanel>
         <Header>
           <HeaderTabs
             onClick={handleDepositClick}
             active={isDeposit}
-            to={{ pathname: `/lend/deposit/${token}`, state: { exchangeRate } }}
+            to={{ pathname: `/lend/deposit/${tokenName}`, state: { exchangeRate } }}
             replace
           >
             <Text>Deposit</Text>
@@ -179,7 +178,7 @@ const LendAction = (props) => {
           <HeaderTabs
             onClick={handleWithdrawClick}
             active={!isDeposit}
-            to={{ pathname: `/lend/withdraw/${token}`, state: { exchangeRate } }}
+            to={{ pathname: `/lend/withdraw/${tokenName}`, state: { exchangeRate } }}
             replace
           >
             <Text>Withdraw</Text>
@@ -190,7 +189,7 @@ const LendAction = (props) => {
           {isDeposit ? (
             <Deposit
               balance={displayBalance}
-              name={token}
+              name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
               handleApprove={handleApprove}
@@ -201,7 +200,7 @@ const LendAction = (props) => {
           ) : (
             <Withdraw
               balance={displayBalance}
-              name={token}
+              name={tokenName}
               exchangeRate={exchangeRate}
               handleConfirm={handleConfirm}
               account={account}
@@ -211,7 +210,7 @@ const LendAction = (props) => {
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{isDeposit ? `${displayBalance} ${token}` : `${displayBalance} ib${token}`}</Text>
+        <Text>{isDeposit ? `${displayBalance} ${tokenName}` : `${displayBalance} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>

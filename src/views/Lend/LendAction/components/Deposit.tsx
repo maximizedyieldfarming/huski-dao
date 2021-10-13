@@ -19,10 +19,10 @@ const Deposit = ({ balance, name, allowance, exchangeRate, handleDeposit, handle
   useEffect(() => {
     const handleWheel = (e) => e.preventDefault()
     const references = numberInputRef.current
-    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
 
     return () => {
-      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
     }
   }, [])
 
@@ -30,12 +30,12 @@ const Deposit = ({ balance, name, allowance, exchangeRate, handleDeposit, handle
   const [amount, setAmount] = useState(0)
 
   const handleAmountChange = (e) => {
-    const value = e.target.value ? parseFloat(e.target.value) : 0
+    const value = e.target.value ? Number(e.target.value) : 0
     setAmount(value)
   }
 
   const setAmountToMax = (e) => {
-    setAmount(parseFloat(balance))
+    setAmount(Number(balance))
   }
 
   return (
@@ -47,7 +47,6 @@ const Deposit = ({ balance, name, allowance, exchangeRate, handleDeposit, handle
             type="number"
             placeholder="0.00"
             onChange={handleAmountChange}
-            step="0.01"
             value={amount}
             ref={(input) => numberInputRef.current.push(input)}
           />

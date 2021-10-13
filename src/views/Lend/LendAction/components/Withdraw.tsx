@@ -20,10 +20,10 @@ const Withdraw = ({ balance, name, exchangeRate, handleConfirm, account }) => {
   useEffect(() => {
     const handleWheel = (e) => e.preventDefault()
     const references = numberInputRef.current
-    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
 
     return () => {
-      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
     }
   }, [])
 

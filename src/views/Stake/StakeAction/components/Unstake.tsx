@@ -7,6 +7,19 @@ const ButtonGroup = styled(Flex)`
 `
 
 const Unstake = ({ account, balance, name }) => {
+  // FIX: for scroll-wheel changing input of number type
+  // using this method the problem won't happen
+  const numberInputRef = useRef([])
+  useEffect(() => {
+    const handleWheel = (e) => e.preventDefault()
+    const references = numberInputRef.current
+    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
+
+    return () => {
+      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
+    }
+  }, [])
+
   const [amount, setAmount] = useState(0)
 
   const handleAmountChange = (e) => {
@@ -22,7 +35,14 @@ const Unstake = ({ account, balance, name }) => {
       <Flex justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <Input type="number" placeholder="0.00" onChange={handleAmountChange} />
+          <Input
+            type="number"
+            placeholder="0.00"
+            onChange={handleAmountChange}
+            step="0.01"
+            value={amount}
+            ref={(input) => numberInputRef.current.push(input)}
+          />
         </Box>
         <Box>
           <Text fontWeight="bold">

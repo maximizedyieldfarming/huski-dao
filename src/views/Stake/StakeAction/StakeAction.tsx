@@ -17,7 +17,7 @@ interface Props {
 }
 interface RouteParams {
   action: string
-  token: string
+  tokenName: string
 }
 
 const StyledPage = styled(Page)`
@@ -75,7 +75,7 @@ const StakeAction = (props) => {
   const [tokenData, setTokenData] = useState(data)
   const { account } = useWeb3React()
   // const { balance } = useTokenBalance(account)
-  const { action, token } = useParams<RouteParams>()
+  const { action, tokenName } = useParams<RouteParams>()
   const [isStake, setIsStake] = useState(action === 'stake')
 
   const handleUnstakeClick = (e) => isStake && setIsStake(false)
@@ -91,20 +91,30 @@ const StakeAction = (props) => {
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {token}
+        {action} {tokenName}
       </Text>
       <Bubble>
         <Text>Staked</Text>
         <Text>
-          {userTokenBalance(userStaked).toNumber().toPrecision(3)} {token}
+          {userTokenBalance(userStaked).toNumber().toPrecision(3)} {tokenName}
         </Text>
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleStakeClick} active={isStake} to={`/stake/stake/${token}`} replace>
+          <HeaderTabs
+            onClick={handleStakeClick}
+            active={isStake}
+            to={{ pathname: `/stake/stake/${tokenName}`, state: { token: tokenData } }}
+            replace
+          >
             <Text>Stake</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleUnstakeClick} active={!isStake} to={`/stake/withdraw/${token}`} replace>
+          <HeaderTabs
+            onClick={handleUnstakeClick}
+            active={!isStake}
+            to={{ pathname: `/stake/unstake/${tokenName}`, state: { token: tokenData } }}
+            replace
+          >
             <Text>Unstake</Text>
           </HeaderTabs>
         </Header>
@@ -113,13 +123,13 @@ const StakeAction = (props) => {
             <Stake
               account={account}
               balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
-              name={token}
+              name={tokenName}
             />
           ) : (
             <Unstake
               account={account}
               balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
-              name={token}
+              name={tokenName}
             />
           )}
         </Body>
