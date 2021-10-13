@@ -10,7 +10,7 @@ import { getFullDisplayBalance } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Stake from './components/Stake'
-import Withdraw from './components/Withdraw'
+import Unstake from './components/Unstake'
 
 interface Props {
   active: boolean
@@ -78,10 +78,9 @@ const StakeAction = (props) => {
   const { action, token } = useParams<RouteParams>()
   const [isStake, setIsStake] = useState(action === 'stake')
 
-  const handleWithdrawClick = (e) => isStake && setIsStake(false)
+  const handleUnstakeClick = (e) => isStake && setIsStake(false)
 
-  const handleDepositClick = (e) => !isStake && setIsStake(true)
-
+  const handleStakeClick = (e) => !isStake && setIsStake(true)
 
   // const displayBalance = getFullDisplayBalance(balance, 18, 3)
 
@@ -102,11 +101,11 @@ const StakeAction = (props) => {
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isStake} to={`/stake/stake/${token}`} replace>
+          <HeaderTabs onClick={handleStakeClick} active={isStake} to={`/stake/stake/${token}`} replace>
             <Text>Stake</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isStake} to={`/stake/withdraw/${token}`} replace>
-            <Text>Withdraw</Text>
+          <HeaderTabs onClick={handleUnstakeClick} active={!isStake} to={`/stake/withdraw/${token}`} replace>
+            <Text>Unstake</Text>
           </HeaderTabs>
         </Header>
         <Body>
@@ -117,7 +116,7 @@ const StakeAction = (props) => {
               name={token}
             />
           ) : (
-            <Withdraw
+            <Unstake
               account={account}
               balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
               name={token}

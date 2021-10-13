@@ -6,7 +6,7 @@ const ButtonGroup = styled(Flex)`
   gap: 10px;
 `
 
-const Withdraw = ({ account, balance, name }) => {
+const Unstake = ({ account, balance, name }) => {
   const [amount, setAmount] = useState(0)
 
   const handleAmountChange = (e) => {
@@ -44,4 +44,4 @@ const Withdraw = ({ account, balance, name }) => {
   )
 }
 
-export default Withdraw
+export default Unstake
