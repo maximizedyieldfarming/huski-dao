@@ -11,6 +11,7 @@ import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Tooltip from 'components/Tooltip'
+import NumberInput from 'components/NumberInput'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
@@ -80,9 +81,11 @@ const Farm = (props) => {
 
   const {
     location: {
-      state: { tokenData },
+      state: { tokenData: data },
     },
   } = props
+  const [tokenData, setTokenData] = useState(data)
+  console.log({ tokenData })
 
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
@@ -121,7 +124,7 @@ const Farm = (props) => {
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
 
-  // const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock,leverageValue )
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, leverageValue)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
@@ -130,9 +133,6 @@ const Farm = (props) => {
     }
     return null
   }
-
-  const apy = getDisplayApr(yieldFarmData * leverageValue)
-  const apyAtOne = getDisplayApr(yieldFarmData * 1)
 
   const tvl = getTvl(tokenData)
 
@@ -166,8 +166,6 @@ const Farm = (props) => {
     }
   }
 
-  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
-
   // console.log({ yieldFarmData })
   // console.log({ tvl })
 
@@ -181,10 +179,10 @@ const Farm = (props) => {
   useEffect(() => {
     const handleWheel = (e) => e.preventDefault()
     const references = numberInputRef.current
-    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
 
     return () => {
-      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
     }
   }, [])
 
@@ -221,6 +219,15 @@ const Farm = (props) => {
 
   console.log({ tokenInputOther })
 
+  // calculations
+  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
+  const apy = getDisplayApr(yieldFarmData * leverageValue)
+  const apyAtOne = getDisplayApr(yieldFarmData * 1)
+  const BorrowingInterestNumber = new BigNumber(tokenData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
+  const priceImpact = farmingData[0] * 100
+  const tradingFees = Number(tokenData?.tradeFee) * Number(leverageValue) * 365
+  const apr = Number(yieldFarmData) + Number(tradingFees) + Number(huskyRewards * 100) - Number(BorrowingInterestNumber)
+
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
@@ -251,13 +258,13 @@ const Farm = (props) => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
                   </Box>
-                  <Input
-                    type="number"
+                  <NumberInput
+                    // type="number"
                     placeholder="0.00"
                     value={quoteTokenInput}
                     // ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
-                    ref={(input) => numberInputRef.current.push(input)}
+                    // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
@@ -293,13 +300,13 @@ const Farm = (props) => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.token} width={40} height={40} />
                   </Box>
-                  <Input
-                    type="number"
+                  <NumberInput
+                    // type="number"
                     placeholder="0.00"
                     value={tokenInput}
                     // ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
-                    ref={(input) => numberInputRef.current.push(input)}
+                    // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
@@ -416,7 +423,7 @@ const Farm = (props) => {
             </Tooltip>
           </Flex>
           {farmingData[0] ? (
-            <Text color="#1DBE03">+{(farmingData[0] * 100)?.toFixed(2)} %</Text>
+            <Text color="#1DBE03">+{priceImpact.toPrecision(3)} %</Text>
           ) : (
             <Text color="#1DBE03"> 0.00 %</Text>
           )}
@@ -432,7 +439,7 @@ const Farm = (props) => {
             </Tooltip>
           </Flex>
           {tokenData?.tradeFee ? (
-            <Text color="#EB0303">-{Number(tokenData?.tradeFee)?.toPrecision(2)}</Text>
+            <Text color="#EB0303">-{tradingFees.toPrecision(3)} %</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
@@ -450,8 +457,7 @@ const Farm = (props) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>APR</Text>
-
-          {tokenData?.user?.balance ? <Text>{tokenData?.user?.balance}</Text> : <Skeleton width="80px" height="16px" />}
+          <Text>{apr.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Text>APY</Text>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Box, Flex, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import Tooltip from 'components/Tooltip'
@@ -23,8 +23,16 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne }) => {
+const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borrowingInterest }) => {
   const { isMobile } = useMatchBreakpoints()
+
+  const tradingFeesNumber = Number(tradingFees) * 365
+  const huskyRewardsNumber = Number(huskyRewards) * 100
+  console.log('yield farming', yieldFarming)
+  const BorrowingInterestNumber = new BigNumber(borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
+  console.log('borrowingInterestNumber', BorrowingInterestNumber)
+  const apr = Number(yieldFarming) + tradingFeesNumber + huskyRewardsNumber - Number(BorrowingInterestNumber)
+  const dailyApr = apr / 365
 
   return (
     <StyledCell role="cell">
@@ -44,23 +52,27 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne }) => 
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Trading&nbsp;Fees</Text>
-                <Text>{(tradingFees * 365).toFixed(2)}%</Text>
+                <Text>{tradingFeesNumber.toFixed(2)}%</Text>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>HUSKY&nbsp;Rewards</Text>
-                <Text>{huskyRewards?.toFixed(4)}</Text>
+                <Text>{huskyRewardsNumber.toFixed(2)}%</Text>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Borrowing&nbsp;Interest</Text>
-                <Skeleton width="80px" height="16px" />
+                <Text>-{Number(BorrowingInterestNumber).toFixed(2)}%</Text>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Total&nbsp;APR</Text>
-                <Skeleton width="80px" height="16px" />
+                <Text>{apr.toFixed(2)}%</Text>
+              </Flex>
+              <Flex justifyContent="space-between" alignItems="center">
+                <Text small>Total&nbsp;APY</Text>
+                <Text>{apyAtOne}%</Text>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Daily&nbsp;APR</Text>
-                <Skeleton width="80px" height="16px" />
+                <Text>{dailyApr.toFixed(2)}%</Text>
               </Flex>
             </Tooltip>
           </Flex>
