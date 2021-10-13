@@ -44,7 +44,7 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
         )}
         {balance ? (
           <Text small textAlign="left">
-            {userTokenBalance(name.toLowerCase() === 'wbnb' ? bnbBalance : balance)
+            {userTokenBalance(name.toLowerCase() === 'bnb' ? bnbBalance : balance)
               .toNumber()
               .toPrecision(3)}{' '}
             {name}

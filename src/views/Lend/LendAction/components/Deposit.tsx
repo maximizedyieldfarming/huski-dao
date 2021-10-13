@@ -3,6 +3,18 @@ import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
+import NumberInput from 'components/NumberInput'
+
+interface DepositProps {
+  balance: any
+  name: any
+  allowance: any
+  exchangeRate: any
+  handleDeposit: any
+  handleApprove: any
+  handleConfirm: any
+  account: any
+}
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -12,73 +24,81 @@ const Section = styled(Flex)`
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
 `
-const Deposit = ({ balance, name, allowance, exchangeRate, handleDeposit, handleApprove, handleConfirm, account }) => {
-  // FIX: for scroll-wheel changing input of number type
-  // using this method the problem won't happen
-  const numberInputRef = useRef([])
-  useEffect(() => {
-    const handleWheel = (e) => e.preventDefault()
-    const references = numberInputRef.current
-    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
 
-    return () => {
-      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
+const MaxContainer = styled(Flex)`
+  align-items: center;
+  justify-content: center;
+  ${Box} {
+    padding: 0 5px;
+    &:first-child {
+      border-right: 2px solid ${({ theme }) => theme.colors.text};
     }
-  }, [])
+    &:last-child {
+      // border-left: 1px solid purple;
+    }
+  }
+`
 
+const Deposit: React.FC<DepositProps> = ({
+  balance,
+  name,
+  allowance,
+  exchangeRate,
+  handleDeposit,
+  handleApprove,
+  handleConfirm,
+  account,
+}) => {
   const { t } = useTranslation()
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState<number>()
 
   const handleAmountChange = (e) => {
-    const value = e.target.value ? Number(e.target.value) : 0
-    setAmount(value)
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault()
+    }
+    const { value } = e.target
+
+    const finalValue = value > balance ? balance : value
+    setAmount(finalValue)
   }
 
   const setAmountToMax = (e) => {
-    setAmount(Number(balance))
+    setAmount(balance)
   }
+
+  const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
 
   return (
     <>
       <Section justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <Input
-            type="number"
-            placeholder="0.00"
-            onChange={handleAmountChange}
-            value={amount}
-            ref={(input) => numberInputRef.current.push(input)}
-          />
+          <NumberInput placeholder="0.00" onChange={handleAmountChange} value={amount} />
         </Box>
         <Box>
           <Text fontWeight="bold">Balance: {`${balance} ${name}`}</Text>
 
-          <Flex>
-            <Text>{name} | </Text>
-            <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-              MAX
-            </Button>
-          </Flex>
+          <MaxContainer>
+            <Box>
+              <Text>{name}</Text>
+            </Box>
+            <Box>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+                MAX
+              </Button>
+            </Box>
+          </MaxContainer>
         </Box>
       </Section>
       <Box>
         <Text textAlign="center">Assets Received</Text>
         <Section justifyContent="space-between">
-          <Text>{`${(amount / exchangeRate).toPrecision(3)} ib${name}`}</Text>
+          <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
+          <Text>ib{name}</Text>
         </Section>
       </Box>
-      {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
-        {/*      {isDeposit && (
-              <Button as={Link} to={`/lend/deposit/${token}/approve`}>
-                Approve
-              </Button>
-            )} */}
-        {/* <Button onClick={handleConfirmClick} disabled={!account}>
-              Claim
-            </Button> */}
-
         {allowance === '0' ? (
           <Button onClick={handleApprove}>Approve</Button>
         ) : (

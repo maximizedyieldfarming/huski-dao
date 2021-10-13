@@ -76,15 +76,6 @@ const Body = styled(Flex)`
   gap: 1rem;
 `
 
-const ButtonGroup = styled(Flex)`
-  gap: 10px;
-`
-const Section = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-  padding: 1rem;
-  border-radius: ${({ theme }) => theme.radii.card};
-`
-
 const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
@@ -121,6 +112,8 @@ const LendAction = (props) => {
   const handleDeposit = () => {
     deposit(tokenAddress, 0.002)
   }
+  console.log({ handleDeposit })
+
   const handleConfirm = () => {
     withdraw(account, 11)
   }
@@ -155,7 +148,7 @@ const LendAction = (props) => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const displayBalance = isDeposit
-    ? userTokenBalance(tokenName.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+    ? userTokenBalance(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance)
         .toNumber()
         .toPrecision(3)
     : userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)
@@ -214,7 +207,8 @@ const LendAction = (props) => {
       </Balance>
       <Box>
         <Text>
-          Reminder: After receiving hTokens from depositing in the lending pools, you can stake hTokens for more yields.
+          Reminder: After receiving ibTokens from depositing in the lending pools, you can stake ibTokens for more
+          yields.
         </Text>
       </Box>
     </StyledPage>

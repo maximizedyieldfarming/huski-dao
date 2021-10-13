@@ -3,6 +3,7 @@ import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
+import NumberInput from 'components/NumberInput'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -12,75 +13,67 @@ const Section = styled(Flex)`
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
 `
+const MaxContainer = styled(Flex)`
+  align-items: center;
+  justify-content: center;
+  ${Box} {
+    padding: 0 5px;
+    &:first-child {
+      border-right: 2px solid ${({ theme }) => theme.colors.text};
+    }
+    &:last-child {
+      // border-left: 1px solid purple;
+    }
+  }
+`
 
 const Withdraw = ({ balance, name, exchangeRate, handleConfirm, account }) => {
-  // FIX: for scroll-wheel changing input of number type
-  // using this method the problem won't happen
-  const numberInputRef = useRef([])
-  useEffect(() => {
-    const handleWheel = (e) => e.preventDefault()
-    const references = numberInputRef.current
-    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
-
-    return () => {
-      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
-    }
-  }, [])
-
   const { t } = useTranslation()
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState<number>()
 
   const handleAmountChange = (e) => {
-    const value = e.target.value ? parseFloat(e.target.value) : 0
-    setAmount(value)
+    const {value} = e.target
+
+    const finalValue = value > balance ? balance : value
+    setAmount(finalValue)
   }
 
   const setAmountToMax = (e) => {
-    setAmount(parseFloat(balance))
+    setAmount(balance)
   }
+
+  const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
 
   return (
     <>
       <Section justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <Input
-            type="number"
-            placeholder="0.00"
-            onChange={handleAmountChange}
-            step="0.01"
-            value={amount}
-            ref={(input) => numberInputRef.current.push(input)}
-          />
+          <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
         </Box>
         <Box>
           <Text fontWeight="bold">Balance: {`${balance} ib${name}`}</Text>
 
-          <Flex>
-            <Text>ib{name} | </Text>
-            <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-              MAX
-            </Button>
-          </Flex>
+          <MaxContainer>
+            <Box>
+              <Text>ib{name}</Text>
+            </Box>
+            <Box>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+                MAX
+              </Button>
+            </Box>
+          </MaxContainer>
         </Box>
       </Section>
       <Box>
         <Text textAlign="center">Assets Received</Text>
         <Section justifyContent="space-between">
-          <Text>{`${(amount * exchangeRate).toPrecision(3)} ${name}`}</Text>
+          <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
+          <Text>{name}</Text>
         </Section>
       </Box>
-      {/*    {isDeposit ? <Deposit /> : <Withdraw />} */}
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
-        {/*      {isDeposit && (
-              <Button as={Link} to={`/lend/deposit/${token}/approve`}>
-                Approve
-              </Button>
-            )} */}
-        {/* <Button onClick={handleConfirmClick} disabled={!account}>
-              Claim
-            </Button> */}
-
         <Button onClick={handleConfirm} disabled={!account}>
           {t('Confirm')}
         </Button>
