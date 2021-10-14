@@ -44,15 +44,17 @@ const ActionCell = ({ token }) => {
       <CellContent>
         <Button
           as={Link}
-          to={{ pathname: account && `/stake/stake/${token?.symbol.replace('WBNB', 'BNB')}`, state: { token } }}
+          to={{ pathname: `/stake/stake/${token?.symbol.replace('WBNB', 'BNB')}`, state: { token } }}
           disabled={!account}
+          onClick={(e) => !account && e.preventDefault()}
         >
           Stake
         </Button>
         <Button
           as={Link}
-          to={{ pathname: account && `/stake/unstake/${token?.symbol.replace('WBNB', 'BNB')}`, state: { token } }}
+          to={{ pathname: `/stake/unstake/${token?.symbol.replace('WBNB', 'BNB')}`, state: { token } }}
           disabled={!account}
+          onClick={(e) => !account && e.preventDefault()}
         >
           Unstake
         </Button>

@@ -36,8 +36,9 @@ const ActionCell = ({ token }) => {
       <CellContent>
         <Button
           as={Link}
-          to={{ pathname: account && `/leverage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}
+          to={{ pathname: `/leverage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}
           disabled={!token?.totalSupply || !account}
+          onClick={(e) => !account && e.preventDefault()}
         >
           Farm
         </Button>

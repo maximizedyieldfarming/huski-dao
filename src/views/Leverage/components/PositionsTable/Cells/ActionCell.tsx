@@ -37,14 +37,16 @@ const ActionCell = ({ data, disable }) => {
         <Button
           disabled={disable}
           as={Link}
-          to={{ pathname: account && `/leverage/adjustPosition/${data?.farmData?.lpSymbol}`, state: { data } }}
+          to={{ pathname: `/leverage/adjustPosition/${data?.farmData?.lpSymbol}`, state: { data } }}
+          onClick={(e) => !account && e.preventDefault()}
         >
           Adjust Position
         </Button>
         <Button
           disabled={disable}
           as={Link}
-          to={{ pathname: account && `/leverage/closePosition/${data?.farmData?.lpSymbol}`, state: { data } }}
+          to={{ pathname: `/leverage/closePosition/${data?.farmData?.lpSymbol}`, state: { data } }}
+          onClick={(e) => !account && e.preventDefault()}
         >
           Close Position
         </Button>
