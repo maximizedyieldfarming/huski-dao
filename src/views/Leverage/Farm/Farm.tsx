@@ -136,20 +136,28 @@ const Farm = (props) => {
 
   const tvl = getTvl(tokenData)
 
-  const [tokenInput, setTokenInput] = useState(0)
+  const [tokenInput, setTokenInput] = useState<number>(0)
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback((event) => {
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault()
+    }
     const input = event.target.value
-    setTokenInput(Number(input))
-    setTokenInputOther(Number(input))
+    setTokenInput(input)
+    setTokenInputOther(input)
   }, [])
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number>(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
   const handleQuoteTokenInput = useCallback((event) => {
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault()
+    }
     const input = event.target.value
-    setQuoteTokenInput(Number(input))
-    setQuoteTokenInputOther(Number(input))
+    setQuoteTokenInput(input)
+    setQuoteTokenInputOther(input)
   }, [])
 
   const handleChange = (e) => {
@@ -170,21 +178,6 @@ const Farm = (props) => {
   // console.log({ tvl })
 
   // console.log({ leverageFarming })
-
-  // FIX for scroll-wheel changing input of number type
-  // is better to use input of type Number
-  // to avoid having to sanitize input
-  // sudden breaks/bugs
-  const numberInputRef = useRef([])
-  useEffect(() => {
-    const handleWheel = (e) => e.preventDefault()
-    const references = numberInputRef.current
-    references.forEach((reference) => reference?.addEventListener('wheel', handleWheel))
-
-    return () => {
-      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
-    }
-  }, [])
 
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
