@@ -5,7 +5,6 @@ import fetchFarms from './fetchFarms'
 import fetchFarmsPrices from './fetchFarmsPrices'
 import fetchFarmsTradeFees from './fetchFarmsTradeFees'
 import {
-  fetchFarmUserPositions,
   fetchFarmUserEarnings,
   fetchFarmUserAllowances,
   fetchFarmUserTokenBalances,
@@ -67,7 +66,6 @@ createAsyncThunk<LeverageFarmUserDataResponse[], { account: string; pids: number
     const userFarmQuoteTokenBalances = await fetchFarmUserQuoteTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
-    // const userFarmPositions = await fetchFarmUserPositions(account, farmsToFetch)
 
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
