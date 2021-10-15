@@ -48,7 +48,7 @@ const ActivePositionsRow = ({ data }) => {
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-  // console.info('开仓关仓', data)
+
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
@@ -75,25 +75,25 @@ const ActivePositionsRow = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
-  // const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, huskyPerBlock, leverage)
-  // const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
-  // // const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
-  // const getDisplayApr = (cakeRewardsApr?: number) => {
-  //   if (cakeRewardsApr) {
-  //     return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
-  //   }
-  //   return null
-  // }
+  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, huskyPerBlock, leverage)
+  const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
+  // const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
 
-  // const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
+  const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <PoolCell pool={data.farmData?.lpSymbol} />
-        {/* <PositionCell position={totalPositionValueInToken} /> */}
+        <PositionCell position={totalPositionValueInToken} />
         <DebtCell debt={debtValue} />
-        {/* <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
+        <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
         <ApyCell
           apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
           huskyRewards={huskyRewards}
@@ -105,7 +105,7 @@ const ActivePositionsRow = ({ data }) => {
         <DebtRatioCell debtRatio={debtRatio} />
         <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
         <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
-        <ProfitsCell liqEquity={data?.liqEquity} /> */}
+        <ProfitsCell liqEquity={data?.liqEquity} />
         {/* <ActionCell data={data} /> */}
       </StyledRow>
     </>
