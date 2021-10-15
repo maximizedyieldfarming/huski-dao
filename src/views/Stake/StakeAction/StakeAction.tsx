@@ -10,14 +10,14 @@ import { getFullDisplayBalance } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Stake from './components/Stake'
-import Withdraw from './components/Withdraw'
+import Unstake from './components/Unstake'
 
 interface Props {
   active: boolean
 }
 interface RouteParams {
   action: string
-  token: string
+  tokenName: string
 }
 
 const StyledPage = styled(Page)`
@@ -75,13 +75,12 @@ const StakeAction = (props) => {
   const [tokenData, setTokenData] = useState(data)
   const { account } = useWeb3React()
   // const { balance } = useTokenBalance(account)
-  const { action, token } = useParams<RouteParams>()
+  const { action, tokenName } = useParams<RouteParams>()
   const [isStake, setIsStake] = useState(action === 'stake')
 
-  const handleWithdrawClick = (e) => isStake && setIsStake(false)
+  const handleUnstakeClick = (e) => isStake && setIsStake(false)
 
-  const handleDepositClick = (e) => !isStake && setIsStake(true)
-
+  const handleStakeClick = (e) => !isStake && setIsStake(true)
 
   // const displayBalance = getFullDisplayBalance(balance, 18, 3)
 
@@ -92,21 +91,31 @@ const StakeAction = (props) => {
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {token}
+        {action} {tokenName}
       </Text>
       <Bubble>
         <Text>Staked</Text>
         <Text>
-          {userTokenBalance(userStaked).toNumber().toPrecision(3)} {token}
+          {userTokenBalance(userStaked).toNumber().toPrecision(3)} {tokenName}
         </Text>
       </Bubble>
       <TabPanel>
         <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isStake} to={`/stake/stake/${token}`} replace>
+          <HeaderTabs
+            onClick={handleStakeClick}
+            active={isStake}
+            to={{ pathname: `/stake/stake/${tokenName}`, state: { token: tokenData } }}
+            replace
+          >
             <Text>Stake</Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isStake} to={`/stake/withdraw/${token}`} replace>
-            <Text>Withdraw</Text>
+          <HeaderTabs
+            onClick={handleUnstakeClick}
+            active={!isStake}
+            to={{ pathname: `/stake/unstake/${tokenName}`, state: { token: tokenData } }}
+            replace
+          >
+            <Text>Unstake</Text>
           </HeaderTabs>
         </Header>
         <Body>
@@ -114,13 +123,13 @@ const StakeAction = (props) => {
             <Stake
               account={account}
               balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
-              name={token}
+              name={tokenName}
             />
           ) : (
-            <Withdraw
+            <Unstake
               account={account}
               balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
-              name={token}
+              name={tokenName}
             />
           )}
         </Body>

@@ -23,7 +23,7 @@ const StyledRow = styled.div`
 `
 
 const LeverageRow = ({ tokenData }) => {
-  const { lpSymbol, leverage, quoteToken, token } = tokenData
+  const { lpSymbol, leverage } = tokenData
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
@@ -46,6 +46,7 @@ const LeverageRow = ({ tokenData }) => {
   const onChildValueChange = (val) => {
     setChildLeverage(val)
   }
+  console.log({ tokenData })
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, childLeverage)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
@@ -66,6 +67,7 @@ const LeverageRow = ({ tokenData }) => {
           yieldFarming={yieldFarmData}
           tradingFees={tokenData.tradeFee * childLeverage}
           huskyRewards={huskyRewards}
+          borrowingInterest={tokenData?.borrowingInterest}
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <Borrowing tokenData={tokenData} />

@@ -89,12 +89,12 @@ const App: React.FC = () => {
             <Route exact path="/lend">
               <Lend />
             </Route>
-            <Route exact path="/lend/:action/:token" component={LendAction} />
+            <Route exact path="/lend/:action/:tokenName" component={LendAction} />
 
             <Route exact path="/stake">
               <Stake />
             </Route>
-            <Route exact path="/stake/:action/:token" component={StakeAction} />
+            <Route exact path="/stake/:action/:tokenName" component={StakeAction} />
 
             <Route path="/lock">
               <Lock />

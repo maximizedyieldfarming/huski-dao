@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Input, Text, ToastContainer } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -24,7 +24,7 @@ interface Props {
 }
 interface RouteParams {
   action: string
-  token: string
+  tokenName: string
 }
 
 const StyledPage = styled(Page)`
@@ -76,15 +76,6 @@ const Body = styled(Flex)`
   gap: 1rem;
 `
 
-const ButtonGroup = styled(Flex)`
-  gap: 10px;
-`
-const Section = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-  padding: 1rem;
-  border-radius: ${({ theme }) => theme.radii.card};
-`
-
 const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
@@ -106,21 +97,7 @@ const LendAction = (props) => {
   const tokenAddress = getAddress(tokenData.token.address)
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const approveContract = useERC20(tokenAddress)
-  const handleApprove = async () => {
-    const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
-    // setIsApproving(true)
-    const receipt = await tx.wait()
-    if (receipt.status) {
-      // goToChange()
-    } else {
-      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-      // setIsApproving(false)
-    }
-  }
 
-  const handleDeposit = () => {
-    deposit(tokenAddress, 0.002)
-  }
   const handleConfirm = () => {
     withdraw(account, 11)
   }
@@ -141,7 +118,7 @@ const LendAction = (props) => {
     }
   }
 
-  const { action, token } = useParams<RouteParams>()
+  const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
   const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
@@ -149,29 +126,26 @@ const LendAction = (props) => {
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
   // const displayBalance = getFullDisplayBalance(balance, 18, 3)
-  // console.log('type of amount', typeof ibTokenValue)
-  // console.log({ displayBalance })
+
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
   const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const displayBalance = isDeposit
-    ? userTokenBalance(token.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
-        .toNumber()
-        .toPrecision(3)
-    : userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)
+    ? userTokenBalance(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber()
+    : userTokenBalance(tokenBalanceIb).toNumber()
 
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {token}
+        {action} {tokenName}
       </Text>
       <TabPanel>
         <Header>
           <HeaderTabs
             onClick={handleDepositClick}
             active={isDeposit}
-            to={{ pathname: `/lend/deposit/${token}`, state: { exchangeRate } }}
+            to={{ pathname: `/lend/deposit/${tokenName}`, state: { exchangeRate } }}
             replace
           >
             <Text>Deposit</Text>
@@ -179,7 +153,7 @@ const LendAction = (props) => {
           <HeaderTabs
             onClick={handleWithdrawClick}
             active={!isDeposit}
-            to={{ pathname: `/lend/withdraw/${token}`, state: { exchangeRate } }}
+            to={{ pathname: `/lend/withdraw/${tokenName}`, state: { exchangeRate } }}
             replace
           >
             <Text>Withdraw</Text>
@@ -190,32 +164,32 @@ const LendAction = (props) => {
           {isDeposit ? (
             <Deposit
               balance={displayBalance}
-              name={token}
+              name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
-              handleApprove={handleApprove}
-              handleDeposit={handleDeposit}
-              handleConfirm={handleConfirm}
+              tokenData={tokenData}
               account={account}
             />
           ) : (
             <Withdraw
               balance={displayBalance}
-              name={token}
+              name={tokenName}
+              allowance={allowance}
               exchangeRate={exchangeRate}
-              handleConfirm={handleConfirm}
               account={account}
+              tokenData={tokenData}
             />
           )}
         </Body>
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{isDeposit ? `${displayBalance} ${token}` : `${displayBalance} ib${token}`}</Text>
+        <Text>{`${userTokenBalance(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>
-          Reminder: After receiving hTokens from depositing in the lending pools, you can stake hTokens for more yields.
+          Reminder: After receiving ibTokens from depositing in the lending pools, you can stake ibTokens for more
+          yields.
         </Text>
       </Box>
     </StyledPage>

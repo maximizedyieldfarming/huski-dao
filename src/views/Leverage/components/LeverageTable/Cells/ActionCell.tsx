@@ -38,6 +38,7 @@ const ActionCell = ({ token }) => {
           as={Link}
           to={{ pathname: `/leverage/farm/${token?.lpSymbol}`, state: { tokenData: token } }}
           disabled={!token?.totalSupply || !account}
+          onClick={(e) => !account && e.preventDefault()}
         >
           Farm
         </Button>

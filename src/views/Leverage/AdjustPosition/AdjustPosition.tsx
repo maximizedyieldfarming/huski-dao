@@ -136,16 +136,16 @@ const AdjustPosition = (props) => {
     }
   }
   // FIX for scroll-wheel changing input of number type
-  // const numberInputRef = useRef([])
-  // useEffect(() => {
-  //   const handleWheel = (e) => e.preventDefault()
-  //   const references = numberInputRef.current
-  //   references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
+  const numberInputRef = useRef([])
+  useEffect(() => {
+    const handleWheel = (e) => e.preventDefault()
+    const references = numberInputRef.current
+    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
 
-  //   return () => {
-  //     references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
-  //   }
-  // }, [])
+    return () => {
+      references.forEach((reference) => reference.removeEventListener('wheel', handleWheel))
+    }
+  }, [])
 
   const { leverage } = data?.farmData
   const [leverageValue, setLeverageValue] = useState(leverage)
@@ -193,10 +193,10 @@ const AdjustPosition = (props) => {
                   </Box>
                   {/* <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} /> */}
                   <Input
-                    // type="number"
+                    type="number"
                     placeholder="0.00"
-                    value={quoteTokenInput.toPrecision(3)}
-                    ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
+                    value={quoteTokenInput}
+                    ref={(input) => numberInputRef.current.push(input)}
                     onChange={handleQuoteTokenInput}
                   />
                 </Flex>
@@ -234,12 +234,11 @@ const AdjustPosition = (props) => {
                     <TokenImage token={data?.farmData?.token} width={40} height={40} />
                   </Box>
                   <Input
-                    // type="number"
+                    type="number"
                     placeholder="0.00"
-                    value={tokenInput.toPrecision(3)}
-                    ref={tokenInputRef as RefObject<HTMLInputElement>}
+                    value={tokenInput}
                     onChange={handleTokenInput}
-                    // ref={(input) => numberInputRef.current.push(input)}
+                    ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{tokenName}</Text>
@@ -434,7 +433,7 @@ const AdjustPosition = (props) => {
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Price Impact</Text>
-            <Tooltip>
+            <Tooltip isLeft>
               <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
             </Tooltip>
           </Flex>
@@ -447,7 +446,7 @@ const AdjustPosition = (props) => {
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Trading Fees</Text>
-            <Tooltip>
+            <Tooltip isLeft>
               <Text>
                 Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’
                 for more information.
