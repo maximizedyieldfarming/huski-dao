@@ -27,7 +27,7 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ data, disable }) => {
+const ActionCell = ({ data }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
 
@@ -35,7 +35,6 @@ const ActionCell = ({ data, disable }) => {
     <StyledCell role="cell">
       <CellContent>
         <Button
-          disabled={disable}
           as={Link}
           to={{ pathname: `/leverage/adjustPosition/${data?.farmData?.lpSymbol}`, state: { data } }}
           onClick={(e) => !account && e.preventDefault()}
@@ -43,7 +42,6 @@ const ActionCell = ({ data, disable }) => {
           Adjust Position
         </Button>
         <Button
-          disabled={disable}
           as={Link}
           to={{ pathname: `/leverage/closePosition/${data?.farmData?.lpSymbol}`, state: { data } }}
           onClick={(e) => !account && e.preventDefault()}

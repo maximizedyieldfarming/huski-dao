@@ -1,8 +1,6 @@
-import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import React from 'react'
+import { Box, Button, Flex, Text, Skeleton, Input } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Tooltip from 'components/Tooltip'
 
 const Section = styled(Flex)`
@@ -12,16 +10,18 @@ const Section = styled(Flex)`
   > ${Flex}, > ${Box} {
     padding: 1rem 0;
   }
+  input[type='range'] {
+    -webkit-appearance: auto;
+  }
 `
-const ConverTo = ({ data }) => {
-  const { totalPositionValueInUSD, debtValue } = data
-  const { tradeFee, leverage } = data.farmData
-  const { busdPrice } = data.farmData.token
-
-  const totalPositionValue = new BigNumber(Number(totalPositionValueInUSD.hex) / busdPrice).dividedBy(BIG_TEN.pow(18))
-  const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
-  const tradingFees = Number(tradeFee) * Number(leverage) * 365
-
+const CloseEntirePosition = ({
+  totalPositionValue,
+  tradingFees,
+  debtValue,
+  amountToTrade,
+  priceImpact,
+  convertedPositionValue,
+}) => {
   return (
     <>
       <Section flexDirection="column">
@@ -42,10 +42,10 @@ const ConverTo = ({ data }) => {
           <Flex>
             <Text>Amount to Trade</Text>
             <Tooltip isLeft>
-              <Text>The amount that will be traded to XXX based on your selected method.</Text>
+              <Text>The amount that will be traded to BNB based on your selected method.</Text>
             </Tooltip>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {amountToTrade ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -54,7 +54,7 @@ const ConverTo = ({ data }) => {
               <Text>Impact to price due to trade size.</Text>
             </Tooltip>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {priceImpact ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -63,16 +63,16 @@ const ConverTo = ({ data }) => {
               <Text>PancakeSwap trading fees</Text>
             </Tooltip>
           </Flex>
-          {tradingFees ? <Text>{tradingFees}</Text> : <Skeleton height="16px" width="80px" />}
+          {tradingFees ? <Text>{tradingFees.toPrecision(3)}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Converted Position Value Assets</Text>
             <Tooltip isLeft>
-              <Text>Assets you will have after converting the required amount into XXXX</Text>
+              <Text>Assets you will have after converting the required amount into BNB</Text>
             </Tooltip>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -81,13 +81,13 @@ const ConverTo = ({ data }) => {
               <Text>Debt Value = Borrowed Asset + Borrowing Interest</Text>
             </Tooltip>
           </Flex>
-          {debtValueNumber ? <Text>{debtValueNumber.toFixed(3)}</Text> : <Skeleton height="16px" width="80px" />}
+          {debtValue ? <Text>{debtValue.toPrecision(3)}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
       </Section>
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>You will receive approximately</Text>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -98,7 +98,7 @@ const ConverTo = ({ data }) => {
               </Text>
             </Tooltip>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Button>Close Position</Button>
       </Section>
@@ -106,4 +106,4 @@ const ConverTo = ({ data }) => {
   )
 }
 
-export default ConverTo
+export default CloseEntirePosition

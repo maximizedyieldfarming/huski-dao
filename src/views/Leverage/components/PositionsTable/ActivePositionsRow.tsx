@@ -106,7 +106,7 @@ const ActivePositionsRow = ({ data }) => {
         <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
         <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
         <ProfitsCell liqEquity={data?.liqEquity} />
-        {/* <ActionCell data={data} /> */}
+        <ActionCell data={data} /> 
       </StyledRow>
     </>
   )

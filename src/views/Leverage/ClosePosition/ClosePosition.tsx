@@ -75,9 +75,15 @@ const ClosePosition = (props) => {
 
   const {
     location: {
-      state: { tokenData },
+      state: { data },
     },
   } = props
+
+  // const { farmData: tokenData } = data
+  console.log({ data })
+  const [tokenData, setTokenData] = useState(data.farmData)
+  const { positionId } = data
+
   console.log('closePosition tokenData', tokenData)
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
@@ -95,7 +101,7 @@ const ClosePosition = (props) => {
       <Flex alignItems="center">
         <Flex alignItems="center" justifySelf="flex-start" flex="1">
           <Text mr="1rem">Which method would you like to use?</Text>
-          <Select
+          {/*  <Select
             options={[
               {
                 label: 'Close Your Entire Position',
@@ -107,7 +113,7 @@ const ClosePosition = (props) => {
               },
             ]}
             onChange={handleSelectChange}
-          />
+          /> */}
         </Flex>
         <Bubble alignSelf="flex-end" alignItems="center">
           <Box width={40} height={40}>
@@ -134,11 +140,7 @@ const ClosePosition = (props) => {
           </HeaderTabs>
         </Header>
         <Body>
-          {isDeposit ? (
-            <ConverTo data={tokenData} />
-          ) : (
-            <MinimizeTrading data={tokenData} isCloseEntire={isCloseEntire} />
-          )}
+          {isDeposit ? <ConverTo data={data} /> : <MinimizeTrading data={data} isCloseEntire={isCloseEntire} />}
         </Body>
       </TabPanel>
     </Page>
