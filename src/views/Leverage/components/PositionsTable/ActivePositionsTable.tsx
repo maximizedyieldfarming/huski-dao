@@ -25,13 +25,6 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
 `
 
-const ScrollButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`
-
 const ActivePositionsTable = ({ data, farmsData  }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
@@ -40,22 +33,21 @@ const ActivePositionsTable = ({ data, farmsData  }) => {
     })
   }
 
-  let positionFarmsData = [];
+  const positionFarmsData = [];
 
   if (data && data !== null && data !== undefined) {
-
-    positionFarmsData = data.map((pdata) => {
-      let farmData;
+    // eslint-disable-next-line array-callback-return
+    data.map((pdata) => {
+      let pfarmData;
       // eslint-disable-next-line array-callback-return
       farmsData.map((farm) => {
         if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
-          farmData = farm;
+          pfarmData = pdata;
+          pfarmData.farmData = farm;
+          positionFarmsData.push(pfarmData)
         }
       })
-      return { ...pdata, farmData }
     })
-
-    console.info('positionFarmsData', positionFarmsData);
   }
 
   return (
@@ -65,8 +57,6 @@ const ActivePositionsTable = ({ data, farmsData  }) => {
         {positionFarmsData ? positionFarmsData.map((pd) => (
           <ActivePositionsRow data={pd} key={pd?.id} />
         )) : null}
-
-        {/* <ActivePositionsRow data={data} /> */}
 
         {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
