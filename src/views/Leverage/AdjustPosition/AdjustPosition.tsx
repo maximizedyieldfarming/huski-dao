@@ -11,6 +11,7 @@ import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Tooltip from 'components/Tooltip'
+import NumberInput from 'components/NumberInput'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
@@ -192,13 +193,7 @@ const AdjustPosition = (props) => {
                     <TokenImage token={data?.farmData?.quoteToken} width={40} height={40} />
                   </Box>
                   {/* <Input type="number" placeholder="0.00" ref={(input) => numberInputRef.current.push(input)} /> */}
-                  <Input
-                    type="number"
-                    placeholder="0.00"
-                    value={quoteTokenInput}
-                    ref={(input) => numberInputRef.current.push(input)}
-                    onChange={handleQuoteTokenInput}
-                  />
+                  <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
                 </Flex>
                 <Text>{quoteTokenName}</Text>
               </InputArea>
@@ -233,13 +228,7 @@ const AdjustPosition = (props) => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={data?.farmData?.token} width={40} height={40} />
                   </Box>
-                  <Input
-                    type="number"
-                    placeholder="0.00"
-                    value={tokenInput}
-                    onChange={handleTokenInput}
-                    ref={(input) => numberInputRef.current.push(input)}
-                  />
+                  <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                 </Flex>
                 <Text>{tokenName}</Text>
               </InputArea>
