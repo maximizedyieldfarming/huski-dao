@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Input, Text, ToastContainer } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -97,22 +97,6 @@ const LendAction = (props) => {
   const tokenAddress = getAddress(tokenData.token.address)
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const approveContract = useERC20(tokenAddress)
-  const handleApprove = async () => {
-    const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
-    // setIsApproving(true)
-    const receipt = await tx.wait()
-    if (receipt.status) {
-      // goToChange()
-    } else {
-      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-      // setIsApproving(false)
-    }
-  }
-
-  const handleDeposit = () => {
-    deposit(tokenAddress, 0.002)
-  }
-  console.log({ handleDeposit })
 
   const handleConfirm = () => {
     withdraw(account, 11)
@@ -148,10 +132,8 @@ const LendAction = (props) => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const displayBalance = isDeposit
-    ? userTokenBalance(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance)
-        .toNumber()
-        .toPrecision(3)
-    : userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)
+    ? userTokenBalance(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber()
+    : userTokenBalance(tokenBalanceIb).toNumber()
 
   return (
     <StyledPage>
@@ -185,25 +167,24 @@ const LendAction = (props) => {
               name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
-              handleApprove={handleApprove}
-              handleDeposit={handleDeposit}
-              handleConfirm={handleConfirm}
+              tokenData={tokenData}
               account={account}
             />
           ) : (
             <Withdraw
               balance={displayBalance}
               name={tokenName}
+              allowance={allowance}
               exchangeRate={exchangeRate}
-              handleConfirm={handleConfirm}
               account={account}
+              tokenData={tokenData}
             />
           )}
         </Body>
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{isDeposit ? `${displayBalance} ${tokenName}` : `${displayBalance} ib${tokenName}`}</Text>
+        <Text>{`${userTokenBalance(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>
