@@ -47,7 +47,7 @@ const ActivePositionsRow = ({ data }) => {
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-  console.info('开仓关仓', data)
+  // console.info('开仓关仓', data)
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
@@ -56,7 +56,7 @@ const ActivePositionsRow = ({ data }) => {
   // useFarmsWithToken(vaultAddress)
 
   const totalPositionValueInUSDData = data.totalPositionValueInUSD
-  const tokenBusdPrice = data.farmData.token.busdPrice
+  const tokenBusdPrice = data.farmData?.token.busdPrice
   const totalPositionValue = parseInt(totalPositionValueInUSDData.hex) / tokenBusdPrice
   const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
@@ -67,29 +67,21 @@ const ActivePositionsRow = ({ data }) => {
   const debtRatio = new BigNumber(debtValue).div(new BigNumber(totalPositionValueInToken))
   const leverage = new BigNumber(debtValueData).div(new BigNumber(baseAmountData)).plus(1)
 
-  console.log({
-    'debtValue-- ': leverage.toNumber(),
-    'debtValue-- 22': totalPositionValueInToken.toNumber(),
-    debtRatio,
-  })
-
-  const farmingData = getLeverageFarmingData(data.farmData, leverage.toNumber(), '0.04', '0.0065')
-
-  console.info('thefeels-----', farmingData)
+  const farmingData = getLeverageFarmingData(data, leverage.toNumber(), '0.04', '0.0065')
 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={data.farmData.lpSymbol} />
+        <PoolCell pool={data.farmData?.lpSymbol} />
         <ScrollContainer>
-          <PositionCell position={totalPositionValueInToken} />
+          {/* <PositionCell position={totalPositionValueInToken} /> */}
           <DebtCell debt={debtValue} />
-          <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
+          {/* <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
           <ApyCell apy={data?.landApr} />
           <DebtRatioCell debtRatio={debtRatio} />
           <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
           <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
-          <ProfitsCell liqEquity={data?.liqEquity} />
+          <ProfitsCell liqEquity={data?.liqEquity} /> */}
           <ActionCell data={data} />
         </ScrollContainer>
       </StyledRow>
