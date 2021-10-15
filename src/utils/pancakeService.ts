@@ -176,3 +176,91 @@ export async function calculateLossAndFeeAndPairStandard(
         }
     }
 }
+
+export const dichotomybasetoken = (leverage, tradefee, basetokenBalance1, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin1, farmingtokenBegin1) => {
+    const price = farmingtokenBegin1 / basetokenBegin1
+    let maxnum = basetokenBalance1 + (basetokenBalance1 + farmingtokenBalance / price + basetokenLp + farmingtokenLp / price - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed
+
+    // addvalue > 0 ,go on~
+    const addvalue = basetokenLpBorrowed / (leverage - 1) - (basetokenLp + farmingtokenLp / price - basetokenLpBorrowed)
+
+    if (maxnum < 0) {
+        console.info('添加的资金不足');
+        return [null, null]
+    }
+
+    let minnum = 0;
+    let data = exchangebasetoken(maxnum, leverage, tradefee, basetokenBalance1, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin1, farmingtokenBegin1)
+
+    let maxexc = data[0]
+    if (maxexc === 0) {
+        return [maxnum, data]
+    }
+
+    data = exchangebasetoken(minnum, leverage, tradefee, basetokenBalance1, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin1, farmingtokenBegin1)
+
+    let minexc = data[0]
+    if (minexc === 0) {
+        return [minnum, data]
+    }
+    if (maxexc * minexc > 0)
+        return [null, null]
+
+    while (true) {
+        const midnum = (maxnum + minnum) / 2
+        data = exchangebasetoken(midnum, leverage, tradefee, basetokenBalance1, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin1, farmingtokenBegin1)
+        const midexc = data[0]
+
+        if (midexc === 0) {
+            return [midnum, data]
+        }
+        if (maxnum - minnum < 1 / 10 ** 8) {
+            return [midnum, data]
+        }
+
+        if (midexc * maxexc < 0) {
+            minnum = midnum
+            minexc = midexc
+        } else if (midexc * minexc < 0) {
+            maxnum = midnum
+            maxexc = midexc
+        }
+        else {
+            return [null, null]
+        }
+
+    }
+
+};
+
+export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBalance1, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin1, farmingtokenBegin1) => {
+
+    const basetokenEnd = basetokenBegin1 + exchangeValue * (1 - tradefee)
+    const farmingtokenEnd = basetokenBegin1 * farmingtokenBegin1 / basetokenEnd
+    const farmingtokenNum = farmingtokenBegin1 - farmingtokenEnd;
+    const price = farmingtokenEnd / basetokenEnd
+    const priceBegin = farmingtokenBegin1 / basetokenBegin1
+    const priceimpactandtradingfees =
+        (exchangeValue * tradefee + exchangeValue * (1 - tradefee) * exchangeValue * (1 - tradefee) / basetokenEnd) /
+        (basetokenBalance1 + farmingtokenBalance / priceBegin);
+
+    const basetokenLpend = basetokenLp * basetokenEnd / basetokenBegin1
+    const farmingtokenLpend = farmingtokenLp * farmingtokenEnd / farmingtokenBegin1
+
+    const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) * (1 - priceimpactandtradingfees / 100) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
+    const exc = assetsborrowed + basetokenBalance1 - exchangeValue - (farmingtokenBalance + farmingtokenNum) / price
+
+
+    const basetokeninPosition = basetokenBalance1 + assetsborrowed - exchangeValue + basetokenLpend;
+    const farmingtokeninPosition = farmingtokenNum + farmingtokenBalance + farmingtokenLpend;
+
+    return [exc, price,
+        farmingtokenNum,
+        assetsborrowed,
+        priceimpactandtradingfees,
+        basetokenLpend,
+        farmingtokenLpend,
+        basetokeninPosition,
+        farmingtokeninPosition
+    ];
+};
