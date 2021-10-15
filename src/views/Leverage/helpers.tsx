@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { ChainId } from '@pancakeswap/sdk'
-import { getFarmingData } from 'utils/pancakeService'
+import { getFarmingData, dichotomybasetoken } from 'utils/pancakeService'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number, leverage) => {
   const { vaultDebtVal, token } = farm
@@ -51,11 +51,12 @@ export const getTvl = (farm: LeverageFarm) => {
 export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput) => {
   const { tokenAmountTotal, quoteTokenAmountTotal } = farm
 
-  console.log({ leverage, tokenInput, quoteTokenInput, tokenAmountTotal, quoteTokenAmountTotal })
   const tokenInputNum = Number(tokenInput);
   const quoteTokenInputNum = Number(quoteTokenInput);
 
   const farmdata = getFarmingData(leverage, tokenInputNum, quoteTokenInputNum, parseInt(tokenAmountTotal), parseInt(quoteTokenAmountTotal), 0.0025)
-  console.info('farmdata', farmdata)
+ 
+    // const aaa = dichotomybasetoken( 2.05, 0.0025,  0.04, 0.0065, 0.195,4.42, 0.201,   869611 , 19689464)
+  // console.info('aaaaaaaaaaaa--在这里！！-', aaa)
   return farmdata
 }

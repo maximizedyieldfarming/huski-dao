@@ -1,26 +1,6 @@
 import { getWeb3MasterChefContract, getWeb3PancakePairContract, fromWei } from './contractHelper';
 import { BLOCKS_PER_YEAR } from './config';
 
-export async function getPancakeTradingFeesAPR(param: any) {
-    const volumeUSD = (param.volumeUSD7Day * 17) / 10000; // 7日dailyVolumeUSD求和,0.17% - Returned to Liquidity Pools in the form of a fee reward for liquidity providers
-
-    const tradingFeesAPR = (volumeUSD / param.reserveUSD7Day) * 365;
-
-    return tradingFeesAPR;
-}
-
-export async function tokensBegin(address) {
-    const contract = await getWeb3PancakePairContract(address);
-    const tokensValue = await contract.methods.getReserves().call();
-    // const baseTokenBegin = tokensValue._reserve0
-    // const farmingTokenBegin = tokensValue._reserve1
-    // need result into ethers instead of wei?
-    const baseTokenBegin = parseFloat(tokensValue._reserve0);
-    const farmingTokenBegin = parseFloat(tokensValue._reserve1);
-
-    return [baseTokenBegin, farmingTokenBegin];
-}
-
 export const calculateLoss = (basetokenTotal, leverage, basetokenBegin, farmingtokenBegin, tradefee) => {
     // Calculate the initial solution
     let assetsborrowed = (basetokenTotal / leverage) * (leverage - 1);
