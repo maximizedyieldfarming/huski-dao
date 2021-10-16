@@ -36,7 +36,7 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
             <Text>Risk Ratio = Liquidation Ratio/Debt Ratio</Text>
           </Tooltip>
         </Flex>
-        {safetyBuffer ? <Text>{safetyBuffer}</Text> : <Skeleton width="80px" height="16px" />}
+        {safetyBuffer ? <Text>{safetyBuffer}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

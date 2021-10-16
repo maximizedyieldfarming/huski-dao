@@ -87,6 +87,10 @@ const ActivePositionsRow = ({ data }) => {
 
   const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
 
+  const liqTres = 83.33; // 暂时写死
+  const debtRatioRound :any = debtRatio ? debtRatio.toNumber() * 100 : 0
+  const safetyBuffer = Math.round(liqTres - debtRatioRound)
+ 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
@@ -103,8 +107,8 @@ const ActivePositionsRow = ({ data }) => {
           tradingFeesRewards={null}
         />
         <DebtRatioCell debtRatio={debtRatio} />
-        <LiquidationThresholdCell liqTres={data?.capitalUtilizationRate} />
-        <SafetyBufferCell safetyBuffer={data?.capitalUtilizationRate} />
+        <LiquidationThresholdCell liqTres={liqTres} />
+        <SafetyBufferCell safetyBuffer={safetyBuffer} />
         <ProfitsCell liqEquity={data?.liqEquity} />
         <ActionCell data={data} /> 
       </StyledRow>
