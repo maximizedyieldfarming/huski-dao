@@ -63,6 +63,7 @@ const Bubble = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.default};
+  gap: 10px;
 `
 
 const ClosePosition = (props) => {
@@ -116,18 +117,21 @@ const ClosePosition = (props) => {
           /> */}
         </Flex>
         <Bubble alignSelf="flex-end" alignItems="center">
-          <Box width={40} height={40}>
-            <TokenPairImage
-              primaryToken={tokenData?.quoteToken}
-              secondaryToken={tokenData?.token}
-              width={40}
-              height={40}
-              variant="inverted"
-            />
-          </Box>
-          <Text style={{ whiteSpace: 'nowrap' }} ml="10px">
-            {tokenData?.lpSymbol.replace(' LP', '')}
-          </Text>
+          <Text>#{positionId}</Text>
+          <Flex alignItems="center">
+            <Box width={40} height={40}>
+              <TokenPairImage
+                primaryToken={tokenData?.quoteToken}
+                secondaryToken={tokenData?.token}
+                width={40}
+                height={40}
+                variant="inverted"
+              />
+            </Box>
+            <Text style={{ whiteSpace: 'nowrap' }} ml="5px">
+              {tokenData?.lpSymbol.replace(' LP', '')}
+            </Text>
+          </Flex>
         </Bubble>
       </Flex>
       <TabPanel>
