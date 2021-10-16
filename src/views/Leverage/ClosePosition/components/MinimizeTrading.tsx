@@ -23,7 +23,7 @@ const Section = styled(Flex)`
 `
 
 const MinimizeTrading = ({ data, isCloseEntire }) => {
-  console.log({ data })
+  // console.log({ data })
 
   const { totalPositionValueInUSD, debtValue } = data
 

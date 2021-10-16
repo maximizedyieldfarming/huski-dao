@@ -28,9 +28,9 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
 
   const tradingFeesNumber = Number(tradingFees) * 365
   const huskyRewardsNumber = Number(huskyRewards) * 100
-  console.log('yield farming', yieldFarming)
+  // console.log('yield farming', yieldFarming)
   const BorrowingInterestNumber = new BigNumber(borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
-  console.log('borrowingInterestNumber', BorrowingInterestNumber)
+  // console.log('borrowingInterestNumber', BorrowingInterestNumber)
   const apr = Number(yieldFarming) + tradingFeesNumber + huskyRewardsNumber - Number(BorrowingInterestNumber)
   const dailyApr = apr / 365
 

@@ -46,7 +46,7 @@ const LeverageRow = ({ tokenData }) => {
   const onChildValueChange = (val) => {
     setChildLeverage(val)
   }
-  console.log({ tokenData })
+  // console.log({ tokenData })
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, childLeverage)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
