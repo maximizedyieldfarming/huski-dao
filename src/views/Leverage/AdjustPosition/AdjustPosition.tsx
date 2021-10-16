@@ -12,7 +12,7 @@ import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Tooltip from 'components/Tooltip'
 import NumberInput from 'components/NumberInput'
-import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl, getAdjustData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
@@ -65,9 +65,7 @@ const AdjustPosition = (props) => {
  */
   const { token } = useParams<RouteParams>()
   const handleChange = (e) => {
-    console.info('fired')
     const { value } = e.target
-    console.log(value)
     setRadio(value)
   }
   /*  const handleChangeIncDecRadio = (e) => {
@@ -82,11 +80,9 @@ const AdjustPosition = (props) => {
       state: { data },
     },
   } = props
-  console.log('adjustPosition tokenData', data?.farmData)
+  
   const quoteTokenName = data?.farmData?.quoteToken?.symbol
   const tokenName = data?.farmData?.token?.symbol
-  console.log({ quoteTokenName })
-  console.log({ tokenName })
 
   const [radio, setRadio] = useState(quoteTokenName)
 
@@ -162,6 +158,10 @@ const AdjustPosition = (props) => {
     const value = e?.target?.value
     setLeverageValue(value)
   }
+
+  const farmingData = getAdjustData(data.farmData, data, leverageValue, tokenInput, quoteTokenInput)
+  console.info('farmingData',farmingData);
+
   return (
     <Page>
       <Text fontWeight="bold" style={{ alignSelf: 'center' }}>

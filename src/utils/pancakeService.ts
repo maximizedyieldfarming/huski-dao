@@ -234,7 +234,9 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
     const basetokeninPosition = basetokenBalance1 + assetsborrowed - exchangeValue + basetokenLpend;
     const farmingtokeninPosition = farmingtokenNum + farmingtokenBalance + farmingtokenLpend;
 
-    return [exc, price,
+    return [
+        exc, 
+        price,
         farmingtokenNum,
         assetsborrowed,
         priceimpactandtradingfees,
