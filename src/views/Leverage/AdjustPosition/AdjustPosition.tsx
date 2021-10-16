@@ -160,7 +160,17 @@ const AdjustPosition = (props) => {
   }
 
   const farmingData = getAdjustData(data.farmData, data, leverageValue, tokenInput, quoteTokenInput)
-  console.info('farmingData',farmingData);
+  const adjustData = farmingData? farmingData[1] :[]
+  console.info('farmingData',adjustData);
+  // exc, 
+  //       price,
+  //       farmingtokenNum,
+  //       assetsborrowed,
+  //       priceimpactandtradingfees,
+  //       basetokenLpend,
+  //       farmingtokenLpend,
+  //       basetokeninPosition,
+  //       farmingtokeninPosition
 
   return (
     <Page>
@@ -405,16 +415,16 @@ const AdjustPosition = (props) => {
       <Section>
         <Flex justifyContent="space-between">
           <Text>Assets Supplied</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          { farmingData ? (
+            <Text>{ tokenInput } + {quoteTokenInput}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Assets Borrowed</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {farmingData ? (
+            <Text>{adjustData[3].toFixed(3)}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
@@ -426,8 +436,8 @@ const AdjustPosition = (props) => {
               <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
             </Tooltip>
           </Flex>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {farmingData ? (
+            <Text>{adjustData[4]}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
@@ -442,16 +452,17 @@ const AdjustPosition = (props) => {
               </Text>
             </Tooltip>
           </Flex>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {farmingData ? (
+            <Text>{adjustData[4]}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Updated Total Assets</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {farmingData ? (
+            <Text>{adjustData[7].toFixed(2)}  + {adjustData[8].toFixed(2)}
+            </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
