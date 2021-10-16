@@ -11,8 +11,8 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, po
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
   const poolHuskyPerBlock = pooPerBlock // pooPerBlock1;
-
-  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * (leverage - 1) * huskyPrice).div((259976557516924427536707 * busdTokenPrice));
+// 259976557516924427536707
+  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * (leverage - 1) * huskyPrice).div((parseInt(vaultDebtVal) * busdTokenPrice));
 
   return huskyRewards.toNumber();
 }
