@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -25,6 +25,39 @@ const StyledCell = styled(BaseCell)`
 
 const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, tradingFeesRewards }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Flex justifyContent="space-between">
+        <Text small>Pancake Liquitity Rewards:</Text>
+        {liquidityRewards ? <Text small>{liquidityRewards}%</Text> : <Skeleton width="80px" height="16px" />}
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Text small>Pancake Trading Fee Rewards:</Text>
+        {tradingFeesRewards ? <Text small>{tradingFeesRewards}%</Text> : <Skeleton width="80px" height="16px" />}
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Text small>Huski Token Rewards:</Text>
+        {huskyRewards ? <Text small>{huskyRewards.toPrecision(3)}%</Text> : <Skeleton width="80px" height="16px" />}
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Text small>Borrowing Interest:</Text>
+        {borrowingInterest ? (
+          <Text small>{borrowingInterest?.toPrecision(3)}%</Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Text small>APR:</Text>
+        {apr ? <Text small>{apr}%</Text> : <Skeleton width="80px" height="16px" />}
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Text small>APY:</Text>
+        {apy ? <Text small>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
+      </Flex>
+    </>,
+    { placement: 'top-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -32,40 +65,10 @@ const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, 
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Apy
           </Text>
-          <Tooltip isTop>
-            <Flex justifyContent="space-between">
-              <Text small>Pancake Liquitity Rewards:</Text>
-              {liquidityRewards ? <Text small>{liquidityRewards}%</Text> : <Skeleton width="80px" height="16px" />}
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text small>Pancake Trading Fee Rewards:</Text>
-              {tradingFeesRewards ? <Text small>{tradingFeesRewards}%</Text> : <Skeleton width="80px" height="16px" />}
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text small>Huski Token Rewards:</Text>
-              {huskyRewards ? (
-                <Text small>{huskyRewards.toPrecision(3)}%</Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text small>Borrowing Interest:</Text>
-              {borrowingInterest ? (
-                <Text small>{borrowingInterest?.toPrecision(3)}%</Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text small>APR:</Text>
-              {apr ? <Text small>{apr}%</Text> : <Skeleton width="80px" height="16px" />}
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text small>APY:</Text>
-              {apy ? <Text small>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
-            </Flex>
-          </Tooltip>
+          {tooltipVisible && tooltip}
+          <span ref={targetRef} >
+            <InfoIcon ml="10px" />
+          </span>
         </Flex>
         {apy ? <Text>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>

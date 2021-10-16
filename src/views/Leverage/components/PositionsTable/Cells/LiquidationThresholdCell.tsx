@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -23,8 +23,14 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const LiquidationThresholdCell = ({ liqTres }) => {
+const LiquidationThresholdCell = ({ liquidationThreshold }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text>When the debt ratio exceeds liquidation ratio, your position may be liquidated.</Text>
+    </>,
+    { placement: 'top-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -32,11 +38,12 @@ const LiquidationThresholdCell = ({ liqTres }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Liquidation Threshold
           </Text>
-          <Tooltip isTop>
-            <Text>When the debt ratio exceeds liquidation ratio, your position may be liquidated.</Text>
-          </Tooltip>
+          {tooltipVisible && tooltip}
+          <span ref={targetRef}>
+            <InfoIcon ml="10px" />
+          </span>
         </Flex>
-        {liqTres ? <Text>{liqTres}%</Text> : <Skeleton width="80px" height="16px" />}
+        {liquidationThreshold ? <Text>{liquidationThreshold}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

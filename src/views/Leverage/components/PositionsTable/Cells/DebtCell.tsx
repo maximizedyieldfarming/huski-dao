@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, TooltipText, InfoIcon } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -23,8 +23,16 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const DebtCell = ({ debt }) => {
+const DebtCell = ({ debt, borrowedAssets, borrowingInterest }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text>Debt Value = Borrowed Asset + Borrowing Interest</Text>
+      <Text>Borrowed Asset:</Text>
+      <Text>Borrowing Interest: {borrowingInterest}</Text>
+    </>,
+    { placement: 'top-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -32,9 +40,10 @@ const DebtCell = ({ debt }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Debt
           </Text>
-          <Tooltip isTop>
-            <Text>Debt Value = Borrowed Asset + Borrowing Interest Borrowed Asset: Borrowing Interest:</Text>
-          </Tooltip>
+          {tooltipVisible && tooltip}
+          <span ref={targetRef}>
+            <InfoIcon ml="10px" />
+          </span>
         </Flex>
         {debt ? <Text>{debt.toNumber().toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>

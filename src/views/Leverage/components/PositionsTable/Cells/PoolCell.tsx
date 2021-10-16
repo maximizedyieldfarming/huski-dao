@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Flex, Grid } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
@@ -10,9 +10,9 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  // flex: 1 0 50px;
+  flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
-    // flex: 1 0 120px;
+    flex: 2 0 150px;
   }
   ${Text} {
     white-space: nowrap;
@@ -27,7 +27,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const PoolCell = ({ pool }) => {
+const PoolCell = ({ pool, quoteToken, token }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
@@ -37,9 +37,19 @@ const PoolCell = ({ pool }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Pool
         </Text>
-        <Text bold={!isMobile} small={isMobile}>
-          {pool}
-        </Text>
+        <Grid alignItems="center" gridTemplateColumns="50px 1fr">
+          <TokenPairImage
+            variant="inverted"
+            primaryToken={quoteToken}
+            secondaryToken={token}
+            width={40}
+            height={40}
+            mr="8px"
+          />
+          <Text bold={!isMobile} small={isMobile}>
+            {pool}
+          </Text>
+        </Grid>
       </CellContent>
     </StyledCell>
   )

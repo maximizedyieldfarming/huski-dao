@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import ActivePositionsRow from './ActivePositionsRow'
@@ -25,7 +25,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
 `
 
-const ActivePositionsTable = ({ data, farmsData  }) => {
+const ActivePositionsTable = ({ data, farmsData }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
@@ -33,30 +33,33 @@ const ActivePositionsTable = ({ data, farmsData  }) => {
     })
   }
 
-  const positionFarmsData = [];
+  const positionFarmsData = []
 
   if (data && data !== null && data !== undefined) {
     // eslint-disable-next-line array-callback-return
     data.map((pdata) => {
-      let pfarmData;
+      let pfarmData
       // eslint-disable-next-line array-callback-return
       farmsData.map((farm) => {
         if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
-          pfarmData = pdata;
-          pfarmData.farmData = farm;
+          pfarmData = pdata
+          pfarmData.farmData = farm
           positionFarmsData.push(pfarmData)
         }
       })
     })
   }
 
+  console.log('positions', positionFarmsData)
+
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-
-        {positionFarmsData ? positionFarmsData.map((pd) => (
-          <ActivePositionsRow data={pd} key={pd?.id} />
-        )) : null}
+        {positionFarmsData.length ? (
+          positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.id} />)
+        ) : (
+          <Text textAlign="center">No Active Positions</Text>
+        )}
 
         {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>

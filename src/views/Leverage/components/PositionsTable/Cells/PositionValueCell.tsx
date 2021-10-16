@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon } from '@pancakeswap/uikit'
+import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -23,11 +23,16 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const PositionCell = ({ position }) => {
+const PositionValueCell = ({ position }) => {
   const { isMobile } = useMatchBreakpoints()
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
-
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text>Position value = Debt Value + Equity Value + Yield Current yield: </Text>
+    </>,
+    { placement: 'top-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -35,9 +40,10 @@ const PositionCell = ({ position }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Position
           </Text>
-          <Tooltip isTop>
-            <Text>Position value = Debt Value + Equity Value + Yield Current yield: 0.01BNB</Text>
-          </Tooltip>
+          {tooltipVisible && tooltip}
+          <span ref={targetRef}>
+            <InfoIcon ml="10px" />
+          </span>
         </Flex>
         {position ? <Text>{position.toNumber().toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
@@ -45,4 +51,4 @@ const PositionCell = ({ position }) => {
   )
 }
 
-export default PositionCell
+export default PositionValueCell

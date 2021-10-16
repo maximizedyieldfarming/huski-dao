@@ -3,15 +3,9 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import NameCell from './Cells/NameCell'
-import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
-import ActionCell from './Cells/ActionCell'
-import PositionCell from './Cells/PositionCell'
+import PositionCell from './Cells/PositionValueCell'
 import DebtCell from './Cells/DebtCell'
-import EquityCell from './Cells/EquityCell'
-import DebtRatioCell from './Cells/DebtRatioCell'
-import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
-import SafetyBufferCell from './Cells/SafetyBufferCell'
 import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
 import LiquidationFeeCell from './Cells/LiquidationFeeCell'
 import AssetsReturnedCell from './Cells/AssetsReturnedCell'
@@ -51,13 +45,13 @@ const LiquidatedPositionsRow = ({ data }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={data[0]?.lpSymbol} />
-        <PositionCell position={data[0]?.totalDeposit} />
-        <DebtCell debt={data[0]?.totalBorrowed} />
-        <LiquidatedEquityCell liqEquity={data[0]?.liqEquity} />
-        <LiquidationFeeCell fee={data[0]?.fee} />
-        <AssetsReturnedCell assetsReturned={data[0]?.assetsReturned} />
-        <ProfitsCell liqEquity={data[0]?.liqEquity} />
+        <PoolCell pool={null} quoteToken={null} token={null} />
+        <PositionCell position={null} />
+        <DebtCell debt={null} borrowedAssets={null} borrowingInterest={null} />
+        <LiquidatedEquityCell liqEquity={null} />
+        <LiquidationFeeCell fee={null} />
+        <AssetsReturnedCell assetsReturned={null} />
+        <ProfitsCell profitLoss={null} />
       </StyledRow>
     </>
   )

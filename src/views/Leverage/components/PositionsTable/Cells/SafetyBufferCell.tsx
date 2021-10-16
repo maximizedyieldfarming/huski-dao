@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -25,6 +25,12 @@ const StyledCell = styled(BaseCell)`
 
 const SafetyBufferCell = ({ safetyBuffer }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text>Risk Ratio = Liquidation Ratio - Debt Ratio</Text>
+    </>,
+    { placement: 'top-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -32,9 +38,10 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             Safety Buffer
           </Text>
-          <Tooltip isTop>
-            <Text>Risk Ratio = Liquidation Ratio/Debt Ratio</Text>
-          </Tooltip>
+          {tooltipVisible && tooltip}
+          <span ref={targetRef}>
+            <InfoIcon ml="10px" />
+          </span>
         </Flex>
         {safetyBuffer ? <Text>{safetyBuffer}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>

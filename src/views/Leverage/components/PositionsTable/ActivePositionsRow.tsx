@@ -11,7 +11,7 @@ import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
 import ActionCell from './Cells/ActionCell'
-import PositionCell from './Cells/PositionCell'
+import PositionValueCell from './Cells/PositionValueCell'
 import DebtCell from './Cells/DebtCell'
 import EquityCell from './Cells/EquityCell'
 import DebtRatioCell from './Cells/DebtRatioCell'
@@ -44,6 +44,7 @@ const ScrollContainer = styled.div`
 `
 
 const ActivePositionsRow = ({ data }) => {
+  console.log('active Positions data', data)
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
@@ -53,24 +54,23 @@ const ActivePositionsRow = ({ data }) => {
     setExpanded((prev) => !prev)
   }
 
-  const vaultAddress = data.vault
+  const { vault, positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
+  const { quoteToken, token } = data.farmData
   // useFarmsWithToken(vaultAddress)
 
-  const totalPositionValueInUSDData = data.totalPositionValueInUSD
+  // const totalPositionValueInUSDData = data.totalPositionValueInUSD
   const tokenBusdPrice = data.farmData?.token.busdPrice
-  const totalPositionValue = parseInt(totalPositionValueInUSDData.hex) / tokenBusdPrice
+  const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
   const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
-  const debtValueData = data.debtValue
-  const baseAmountData = data.baseAmount
-  const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
+  // const debtValueData = data.debtValue
+  // const baseAmountData = data.baseAmount
+  const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
 
-  const debtRatio = new BigNumber(debtValue).div(new BigNumber(totalPositionValueInToken))
-  const leverage = new BigNumber(debtValueData).div(new BigNumber(baseAmountData)).plus(1)
-
+  const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
+  const leverage = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
 
   // const farmingData = getLeverageFarmingData(data.farmData, leverage.toNumber(), '0.04', '0.0065')
-
 
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
@@ -86,18 +86,20 @@ const ActivePositionsRow = ({ data }) => {
   }
 
   const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
+  const profitLoss = undefined
 
-  const liqTres = 83.33; // 暂时写死
+  const liquidationThreshold = 83.33; // 暂时写死
   const debtRatioRound :any = debtRatio ? debtRatio.toNumber() * 100 : 0
-  const safetyBuffer = Math.round(liqTres - debtRatioRound)
+  const safetyBuffer = Math.round(liquidationThreshold - debtRatioRound)
  
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell pool={data.farmData?.lpSymbol} />
-        <PositionCell position={totalPositionValueInToken} />
-        <DebtCell debt={debtValue} />
-        <EquityCell equity={totalPositionValueInToken.toNumber() - debtValue.toNumber()} />
+        <NameCell name={null} positionId={positionId} />
+        <PoolCell pool={data.farmData?.lpSymbol} quoteToken={quoteToken} token={token} />
+        <PositionValueCell position={totalPositionValueInToken} />
+        <DebtCell debt={debtValueNumber} borrowedAssets={null} borrowingInterest={borrowingInterest.toPrecision(3)} />
+        <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} />
         <ApyCell
           apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
           huskyRewards={huskyRewards}
@@ -107,10 +109,10 @@ const ActivePositionsRow = ({ data }) => {
           tradingFeesRewards={null}
         />
         <DebtRatioCell debtRatio={debtRatio} />
-        <LiquidationThresholdCell liqTres={liqTres} />
+        <LiquidationThresholdCell liquidationThreshold={liquidationThreshold} />
         <SafetyBufferCell safetyBuffer={safetyBuffer} />
-        <ProfitsCell liqEquity={data?.liqEquity} />
-        <ActionCell data={data} /> 
+        <ProfitsCell profitLoss={profitLoss} />
+        <ActionCell data={data} />
       </StyledRow>
     </>
   )

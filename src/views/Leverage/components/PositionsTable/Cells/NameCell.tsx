@@ -10,26 +10,29 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 5;
+  // flex: 5;
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    // flex: 1 0 150px;
     padding-left: 32px;
   }
 `
 
-
-const NameCell = ({name}) => {
-   const { t } = useTranslation()
+const NameCell = ({ name, positionId }) => {
+  const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
+        <Text fontSize="12px" color="textSubtle" textAlign="left">
+          #
+        </Text>
         <Text bold={!isMobile} small={isMobile}>
           {name}
         </Text>
+        <Text>#{positionId}</Text>
       </CellContent>
     </StyledCell>
   )
