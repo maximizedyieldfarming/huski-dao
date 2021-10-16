@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { useRouteMatch, useLocation } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
+ import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useWeb3React } from '@web3-react/core'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
@@ -15,6 +16,7 @@ import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
+import useTokenBalance from 'hooks/useTokenBalance'
 import { getFarmApr } from 'utils/apr'
 import { orderBy } from 'lodash'
 import isArchivedPid from 'utils/farmHelpers'
@@ -43,15 +45,6 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   }
   return null
 }
-
-// styled components
-
-const TableWrapper = styled.div`
-  background-color: ${({ theme }) => theme.card.background};
-  margin-bottom: 2rem;
-  border-radius: 20px;
-  padding: 10px;
-`
 
 const ImageContainer = styled.figure`
   // position: absolute;
@@ -109,12 +102,6 @@ const Stake: React.FC = () => {
   console.log({ ' 数据': farmsData })
   useStakeWithUserData()
 
-  // const { stakeData } = useStakeData()
-  // const { stakeBalanceData } = useStakeBalanceData()
-
-  // const stakingData = stakeData.map((value, index) => {
-  //   return { ...value, huskyDaily: stakeBalanceData[index] }
-  // })
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
@@ -140,9 +127,6 @@ const Stake: React.FC = () => {
       ))}
     </CardLayout>
   )
-  // console.log('useStakeData', useStakeData())
-  // console.log({ stakingData })
-  // console.log({ stakeBalanceData })
 
   // search feature
   const [searchQuery, setSearchQuery] = useState('')
@@ -194,7 +178,10 @@ const Stake: React.FC = () => {
     reward += earnings
     return reward
   })
-  
+ 
+  const { balance } = useTokenBalance('0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F')
+  const alpacaBalance = balance ? balance.dividedBy(BIG_TEN.pow(18)) : BIG_ZERO
+
   return (
     <Page>
       <Box>
@@ -223,7 +210,13 @@ const Stake: React.FC = () => {
             <Flex justifyContent="space-between">
               <Flex flexDirection="column">
                 <Text>Your HUSKI Wallet Balance</Text>
-                <Skeleton width="80px" height="16px" />
+                {alpacaBalance ? (
+                  <Text>
+                    {alpacaBalance.toNumber().toFixed(2)}
+                  </Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
               </Flex>
               <Flex flexDirection="column">
                 <Text>Remaining Locked Amount</Text>
