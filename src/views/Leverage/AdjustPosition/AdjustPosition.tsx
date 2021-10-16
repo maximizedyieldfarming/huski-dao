@@ -162,15 +162,23 @@ const AdjustPosition = (props) => {
   const farmingData = getAdjustData(data.farmData, data, leverageValue, tokenInput, quoteTokenInput)
   const adjustData = farmingData? farmingData[1] :[]
   console.info('farmingData',adjustData);
-  // exc, 
-  //       price,
-  //       farmingtokenNum,
-  //       assetsborrowed,
-  //       priceimpactandtradingfees,
-  //       basetokenLpend,
-  //       farmingtokenLpend,
-  //       basetokeninPosition,
-  //       farmingtokeninPosition
+
+  const { positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
+  // const { quoteToken, token } = data.farmData
+
+
+  const tokenBusdPrice = data.farmData?.token.busdPrice
+  const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
+  const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
+
+  const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
+
+  const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
+  const lvgAdjust = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
+const aa:any =  debtValueNumber.toNumber().toFixed(3)
+  const debtAssetsBorrowed = adjustData ? adjustData[3].toFixed(3) - aa : 0
+
+
 
   return (
     <Page>
@@ -334,24 +342,24 @@ const AdjustPosition = (props) => {
       <Section>
         <Flex justifyContent="space-between">
           <Text>Debt Assets Borrowed</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {data? (
+            <Text>{debtAssetsBorrowed}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Updated Debt</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {data ? (
+            <Text>{debtValueNumber.toNumber().toFixed(3)} -》  {adjustData ? adjustData[3].toFixed(3) : 0} </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Leverage (ratio)</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {data ? (
+            <Text>{debtRatio.toNumber().toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)} x) -》 {0}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
@@ -423,7 +431,7 @@ const AdjustPosition = (props) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Assets Borrowed</Text>
-          {farmingData ? (
+          {adjustData ? (
             <Text>{adjustData[3].toFixed(3)}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -436,7 +444,7 @@ const AdjustPosition = (props) => {
               <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
             </Tooltip>
           </Flex>
-          {farmingData ? (
+          {adjustData ? (
             <Text>{adjustData[4]}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -452,7 +460,7 @@ const AdjustPosition = (props) => {
               </Text>
             </Tooltip>
           </Flex>
-          {farmingData ? (
+          {adjustData ? (
             <Text>{adjustData[4]}</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -460,7 +468,7 @@ const AdjustPosition = (props) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Updated Total Assets</Text>
-          {farmingData ? (
+          {adjustData ? (
             <Text>{adjustData[7].toFixed(2)}  + {adjustData[8].toFixed(2)}
             </Text>
           ) : (
