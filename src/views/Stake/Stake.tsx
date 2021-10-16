@@ -188,7 +188,13 @@ const Stake: React.FC = () => {
   }
 
   farmsData = sortPools(farmsData)
-
+  let reward = 0;
+  farmsData.map((farm) => {
+    const earnings = new BigNumber(parseFloat(farm?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    reward += earnings
+    return reward
+  })
+  
   return (
     <Page>
       <Box>
@@ -199,7 +205,13 @@ const Stake: React.FC = () => {
           <Flex flex="1" padding="1rem" borderRadius="20px" justifyContent="space-between">
             <Box>
               <Text>Huski earned:</Text>
-              <Skeleton width="80px" height="16px" />
+              {reward ? (
+                <Text>
+                  {reward.toFixed(3)}
+                </Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
             </Box>
             <Flex position="relative">
               <ImageContainer>
