@@ -27,7 +27,7 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ data }) => {
+const ActionCell = ({ data, disabled }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
 
@@ -37,14 +37,16 @@ const ActionCell = ({ data }) => {
         <Button
           as={Link}
           to={{ pathname: `/leverage/adjustPosition/${data?.farmData?.lpSymbol}`, state: { data } }}
-          onClick={(e) => !account && e.preventDefault()}
+          onClick={(e) => (!account || disabled) && e.preventDefault()}
+          disabled={disabled}
         >
           Adjust Position
         </Button>
         <Button
           as={Link}
           to={{ pathname: `/leverage/closePosition/${data?.farmData?.lpSymbol}`, state: { data } }}
-          onClick={(e) => !account && e.preventDefault()}
+          onClick={(e) => (!account || disabled) && e.preventDefault()}
+          disabled={disabled}
         >
           Close Position
         </Button>

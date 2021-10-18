@@ -88,10 +88,10 @@ const ActivePositionsRow = ({ data }) => {
   const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
   const profitLoss = undefined
 
-  const liquidationThreshold = 83.33; // 暂时写死
-  const debtRatioRound :any = debtRatio ? debtRatio.toNumber() * 100 : 0
+  const liquidationThreshold = 83.33 // 暂时写死
+  const debtRatioRound: any = debtRatio ? debtRatio.toNumber() * 100 : 0
   const safetyBuffer = Math.round(liquidationThreshold - debtRatioRound)
- 
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
@@ -112,7 +112,7 @@ const ActivePositionsRow = ({ data }) => {
         <LiquidationThresholdCell liquidationThreshold={liquidationThreshold} />
         <SafetyBufferCell safetyBuffer={safetyBuffer} />
         <ProfitsCell profitLoss={profitLoss} />
-        <ActionCell data={data} />
+        <ActionCell data={data} disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())} />
       </StyledRow>
     </>
   )

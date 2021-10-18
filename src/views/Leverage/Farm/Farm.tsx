@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
 import { useParams } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input, ArrowForwardIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Radio, InfoIcon, Text, Skeleton, useTooltip, ArrowForwardIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
@@ -221,6 +221,30 @@ const Farm = (props) => {
   const tradingFees = Number(tokenData?.tradeFee) * Number(leverageValue) * 365
   const apr = Number(yieldFarmData) + Number(tradingFees) + Number(huskyRewards * 100) - Number(BorrowingInterestNumber)
 
+  const {
+    targetRef: priceImpactTargetRef,
+    tooltip: priceImpactTooltip,
+    tooltipVisible: priceImpactTooltipVisible,
+  } = useTooltip(
+    <>
+      <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
+    </>,
+    { placement: 'top-start' },
+  )
+  const {
+    targetRef: tradingFeesTargetRef,
+    tooltip: tradingFeesTooltip,
+    tooltipVisible: tradingFeesTooltipVisible,
+  } = useTooltip(
+    <>
+      <Text>
+        Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’ for more
+        information.
+      </Text>
+    </>,
+    { placement: 'top-start' },
+  )
+
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
@@ -333,7 +357,7 @@ const Farm = (props) => {
                   type="range"
                   min="1.0"
                   max={leverage}
-                  step="0.5"
+                  step="0.01"
                   name="leverage"
                   value={leverageValue}
                   onChange={handleSliderChange}
@@ -411,9 +435,10 @@ const Farm = (props) => {
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Price Impact</Text>
-            <Tooltip isLeft>
-              <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
-            </Tooltip>
+            {priceImpactTooltipVisible && priceImpactTooltip}
+            <span ref={priceImpactTargetRef}>
+              <InfoIcon ml="10px" />
+            </span>
           </Flex>
           {farmingData[0] ? (
             <Text color="#1DBE03">+{priceImpact.toPrecision(3)} %</Text>
@@ -424,12 +449,10 @@ const Farm = (props) => {
         <Flex justifyContent="space-between">
           <Flex>
             <Text>Trading Fees</Text>
-            <Tooltip isLeft>
-              <Text>
-                Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’
-                for more information.
-              </Text>
-            </Tooltip>
+            {tradingFeesTooltipVisible && tradingFeesTooltip}
+            <span ref={tradingFeesTargetRef}>
+              <InfoIcon ml="10px" />
+            </span>
           </Flex>
           {tokenData?.tradeFee ? (
             <Text color="#EB0303">-{tradingFees.toPrecision(3)} %</Text>
