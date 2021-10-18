@@ -220,6 +220,8 @@ console.info('farmsData',farmsData);
     })
   }
 
+  console.info('positionFarmsData',positionFarmsData)
+
   let reward = 0;
   positionFarmsData.map((farm) => {
     const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
@@ -241,7 +243,7 @@ console.info('farmsData',farmsData);
             <Flex alignItems="center" style={{ gap: '10px' }}>
               {reward ? (
                 <Text>
-                  {reward.toFixed(3)}
+                  {reward.toPrecision(3)}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />

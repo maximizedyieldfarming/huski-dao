@@ -194,7 +194,7 @@ const Stake: React.FC = () => {
               <Text>Huski earned:</Text>
               {reward ? (
                 <Text>
-                  {reward.toFixed(3)}
+                  {reward.toPrecision(3)}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
@@ -212,7 +212,7 @@ const Stake: React.FC = () => {
                 <Text>Your HUSKI Wallet Balance</Text>
                 {alpacaBalance ? (
                   <Text>
-                    {alpacaBalance.toNumber().toFixed(2)}
+                    {alpacaBalance.toNumber().toPrecision(3)}
                   </Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
