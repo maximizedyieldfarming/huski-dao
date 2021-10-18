@@ -123,9 +123,8 @@ const AdjustPosition = (props) => {
   }
 
   const { leverage } = data?.farmData
-  const currentPositionLeverage = 1.0
 
-  const [leverageValue, setLeverageValue] = useState(currentPositionLeverage)
+  // const [leverageValue, setLeverageValue] = useState(currentPositionLeverage)
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -134,15 +133,6 @@ const AdjustPosition = (props) => {
     }
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
-
-  const handleSliderChange = (e) => {
-    const value = e?.target?.value
-    setLeverageValue(value)
-  }
-
-  const farmingData = getAdjustData(data.farmData, data, leverageValue, tokenInput, quoteTokenInput)
-  const adjustData = farmingData ? farmingData[1] : []
-  console.info('farmingData', adjustData)
 
   const { positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
   // const { quoteToken, token } = data.farmData
@@ -156,10 +146,18 @@ const AdjustPosition = (props) => {
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const lvgAdjust = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
   const aa: any = debtValueNumber.toNumber().toFixed(3)
+  const currentPositionLeverage = lvgAdjust.toNumber()
+  const [leverageValue, setLeverageValue] = useState(currentPositionLeverage)
+  const farmingData = getAdjustData(data.farmData, data, leverageValue, tokenInput, quoteTokenInput)
+  const adjustData = farmingData ? farmingData[1] : []
   const debtAssetsBorrowed = adjustData ? adjustData[3].toFixed(3) - aa : 0
-
+  console.info('farmingData', adjustData)
   console.info('farmingData', farmingData)
 
+  const handleSliderChange = (e) => {
+    const value = e?.target?.value
+    setLeverageValue(value)
+  }
   const BorrowingMore = () => {
     return (
       <Flex justifyContent="space-between" alignItems="center">
