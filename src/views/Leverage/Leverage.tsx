@@ -123,8 +123,8 @@ const Leverage: React.FC = () => {
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
-console.info('farmsData',farmsData);
-  const data =  useGetPositions()
+  console.info('farmsData', farmsData)
+  const data = useGetPositions()
 
   const cardLayout = (
     <CardLayout>
@@ -220,17 +220,17 @@ console.info('farmsData',farmsData);
     })
   }
 
-  console.info('positionFarmsData',positionFarmsData)
+  console.info('positionFarmsData', positionFarmsData)
 
-  let reward = 0;
+  let reward = 0
   positionFarmsData.map((farm) => {
-    const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
+      .div(DEFAULT_TOKEN_DECIMAL)
+      .toNumber()
     reward += farmEarnings
     return reward
   })
 
-
-  
   return (
     <Page>
       <TopSection justifyContent="space-between">
@@ -241,13 +241,7 @@ console.info('farmsData',farmsData);
           <StyledBox>
             <span>Husky Token Rewards</span>
             <Flex alignItems="center" style={{ gap: '10px' }}>
-              {reward ? (
-                <Text>
-                  {reward.toPrecision(3)}
-                </Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
+              {reward ? <Text>{reward.toPrecision(3)}</Text> : <Skeleton width="80px" height="16px" />}
               <ActionButton>Claim</ActionButton>
             </Flex>
           </StyledBox>
@@ -266,7 +260,11 @@ console.info('farmsData',farmsData);
       </TopSection>
 
       <PositionsTableWrapper>
-        {isActivePos ? <ActivePositionsTable positionFarmsData={positionFarmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
+        {isActivePos ? (
+          <ActivePositionsTable positionFarmsData={positionFarmsData} />
+        ) : (
+          <LiquidatedPositionsTable data={null} />
+        )}
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
@@ -26,7 +26,7 @@ const StyledTableBorder = styled.div`
 `
 
 const LiquidatedPositionsTable = ({ data }) => {
-  console.log({ data })
+  console.log('liquidated pos', data)
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
@@ -36,7 +36,7 @@ const LiquidatedPositionsTable = ({ data }) => {
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-        <LiquidatedPositionsRow data={data} />
+        {data ? <LiquidatedPositionsRow data={data} /> : <Text>No Liquidated Positions</Text>}
 
         {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
