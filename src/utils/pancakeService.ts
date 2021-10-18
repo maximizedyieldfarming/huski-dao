@@ -220,16 +220,20 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
     const farmingtokenNum = farmingtokenBegin1 - farmingtokenEnd;
     const price = farmingtokenEnd / basetokenEnd
     const priceBegin = farmingtokenBegin1 / basetokenBegin1
-    const priceimpactandtradingfees =
-        (exchangeValue * tradefee + exchangeValue * (1 - tradefee) * exchangeValue * (1 - tradefee) / basetokenEnd) /
-        (basetokenBalance1 + farmingtokenBalance / priceBegin);
+    const priceimpact = exchangeValue * (1 - tradefee) / basetokenEnd
+    const tradingfees = exchangeValue * tradefee / (basetokenBalance1 + farmingtokenBalance / priceBegin)
 
     const basetokenLpend = basetokenLp * basetokenEnd / basetokenBegin1
     const farmingtokenLpend = farmingtokenLp * farmingtokenEnd / farmingtokenBegin1
+    // 原来的
+    // const priceimpactandtradingfees =
+    //     (exchangeValue * tradefee + exchangeValue * (1 - tradefee) * exchangeValue * (1 - tradefee) / basetokenEnd) /
+    //     (basetokenBalance1 + farmingtokenBalance / priceBegin);
+    // const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) * (1 - priceimpactandtradingfees / 100) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
+    
+    const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
 
-    const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) * (1 - priceimpactandtradingfees / 100) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
     const exc = assetsborrowed + basetokenBalance1 - exchangeValue - (farmingtokenBalance + farmingtokenNum) / price
-
 
     const basetokeninPosition = basetokenBalance1 + assetsborrowed - exchangeValue + basetokenLpend;
     const farmingtokeninPosition = farmingtokenNum + farmingtokenBalance + farmingtokenLpend;
@@ -239,7 +243,8 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
         price,
         farmingtokenNum,
         assetsborrowed,
-        priceimpactandtradingfees,
+        priceimpact,
+        tradingfees,
         basetokenLpend,
         farmingtokenLpend,
         basetokeninPosition,
