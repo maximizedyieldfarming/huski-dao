@@ -53,7 +53,10 @@ interface LeverageFarmUserDataResponse {
   allowance: string
   tokenBalance: string
   stakedBalance: string
+  quoteTokenBalance: string
+  tokenBalanceIB: string
   earnings: string
+  farmEarnings: string
 }
 
 export const fetchLeverageFarmUserDataAsync = 
