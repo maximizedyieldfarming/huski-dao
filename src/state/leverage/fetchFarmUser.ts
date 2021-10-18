@@ -107,3 +107,20 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Lever
   return parsedEarnings
 }
 
+export const fetchFarmlpUserEarnings = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+  const fairLaunchAddress = getFairLaunch()
+
+  const calls = farmsToFetch.map((farm) => {
+    return {
+      address: fairLaunchAddress,
+      name: 'pendingAlpaca',
+      params: [farm.debtIbpid, account],
+    }
+  })
+
+  const rawEarnings = await multicall(fairLaunchABI, calls)
+  const parsedEarnings = rawEarnings.map((earnings) => {
+    return new BigNumber(earnings).toJSON()
+  })
+  return parsedEarnings
+}

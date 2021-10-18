@@ -25,7 +25,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
 `
 
-const ActivePositionsTable = ({ data, farmsData }) => {
+const ActivePositionsTable = ({ positionFarmsData }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
@@ -33,24 +33,24 @@ const ActivePositionsTable = ({ data, farmsData }) => {
     })
   }
 
-  const positionFarmsData = []
+  // const positionFarmsData = []
 
-  if (data && data !== null && data !== undefined) {
-    // eslint-disable-next-line array-callback-return
-    data.map((pdata) => {
-      let pfarmData
-      // eslint-disable-next-line array-callback-return
-      farmsData.map((farm) => {
-        if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
-          pfarmData = pdata
-          pfarmData.farmData = farm
-          positionFarmsData.push(pfarmData)
-        }
-      })
-    })
-  }
+  // if (data && data !== null && data !== undefined) {
+  //   // eslint-disable-next-line array-callback-return
+  //   data.map((pdata) => {
+  //     let pfarmData
+  //     // eslint-disable-next-line array-callback-return
+  //     farmsData.map((farm) => {
+  //       if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
+  //         pfarmData = pdata
+  //         pfarmData.farmData = farm
+  //         positionFarmsData.push(pfarmData)
+  //       }
+  //     })
+  //   })
+  // }
 
-  console.log('positions', positionFarmsData)
+  // console.log('positions', positionFarmsData)
 
   return (
     <StyledTableBorder>

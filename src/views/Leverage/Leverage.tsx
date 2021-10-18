@@ -204,6 +204,31 @@ console.info('farmsData',farmsData);
     )
   } */
 
+  const positionFarmsData = []
+  if (data && data !== null && data !== undefined) {
+    // eslint-disable-next-line array-callback-return
+    data.map((pdata) => {
+      let pfarmData
+      // eslint-disable-next-line array-callback-return
+      farmsData.map((farm) => {
+        if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
+          pfarmData = pdata
+          pfarmData.farmData = farm
+          positionFarmsData.push(pfarmData)
+        }
+      })
+    })
+  }
+
+  let reward = 0;
+  positionFarmsData.map((farm) => {
+    const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    reward += farmEarnings
+    return reward
+  })
+
+
+  
   return (
     <Page>
       <TopSection justifyContent="space-between">
@@ -214,8 +239,13 @@ console.info('farmsData',farmsData);
           <StyledBox>
             <span>Husky Token Rewards</span>
             <Flex alignItems="center" style={{ gap: '10px' }}>
-              <Skeleton width="80px" height="16px" />
-
+              {reward ? (
+                <Text>
+                  {reward.toFixed(3)}
+                </Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
               <ActionButton>Claim</ActionButton>
             </Flex>
           </StyledBox>
@@ -234,7 +264,7 @@ console.info('farmsData',farmsData);
       </TopSection>
 
       <PositionsTableWrapper>
-        {isActivePos ? <ActivePositionsTable data={data} farmsData={farmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
+        {isActivePos ? <ActivePositionsTable positionFarmsData={positionFarmsData} /> : <LiquidatedPositionsTable data={farmsData} />}
         <ImageContainer>
           <img src={husky2} alt="" />
         </ImageContainer>

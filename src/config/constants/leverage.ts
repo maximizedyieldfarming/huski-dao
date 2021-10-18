@@ -11,7 +11,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.wbnb,
     quoteToken: tokens.cake,
-
+    debtIbpid: 6,
     leverage: 3,
     poolId: 1,
     vaultAddress: {
@@ -54,7 +54,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.wbnb,
     quoteToken: tokens.usdt,
-
+    debtIbpid: 6,
     leverage: 3,
     poolId: 1,
     vaultAddress: {
@@ -97,7 +97,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.wbnb,
     quoteToken: tokens.btcb,
-
+    debtIbpid: 6,
     leverage: 3,
     poolId: 1,
     vaultAddress: {
@@ -140,7 +140,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.wbnb,
     quoteToken: tokens.eth,
-
+    debtIbpid: 6,
     leverage: 3,
     poolId: 1,
     vaultAddress: {
@@ -183,7 +183,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.busd,
     quoteToken: tokens.usdt,
-
+    debtIbpid: 7,
     leverage: 6,
     poolId: 3,
     vaultAddress: {
@@ -226,7 +226,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.alpaca,
     quoteToken: tokens.busd,
-
+    debtIbpid: 10,
     leverage: 6,
     poolId: 11,
     vaultAddress: {
