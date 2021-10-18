@@ -50,14 +50,18 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
 
-    // const [ borrowingInterest ] =
-    // await multicall(ConfigurableInterestVaultConfigABI, [
-    //   {
-    //     address: configAddress,
-    //     name: 'getInterestRate',
-    //     params: [0, 0],// 借贷值从vault合约中取， base token 的balance
-    //   }
-    // ])
+//     const [ borrowingInterest1 ] =
+//     await multicall(ConfigurableInterestVaultConfigABI, [
+//       {
+//         address: configAddress,
+//         name: 'getInterestRate',
+//         params: [0, 0],// 借贷值从vault合约中取， base token 的balance
+//       }
+//     ])
+
+//       console.info('--111-',(borrowingInterest1));console.info('---',(token));
+// console.info('数据对不上x',parseInt(borrowingInterest1));
+
 
   const [name, borrowingInterest, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -138,28 +142,28 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
 
   // Only make masterchef calls if farm has pid
-  // const [info, alpacaPerBlock, totalAllocPoint] =
-  // poolId || poolId === 0
-  //     ? await multicall(fairLaunchABI, [
-  //         {
-  //           address: getFairLaunch(),
-  //           name: 'poolInfo',
-  //           params: [poolId],
-  //         },
-  //         {
-  //           address: getFairLaunch(),
-  //           name: 'alpacaPerBlock',
-  //         },
-  //         {
-  //           address: getFairLaunch(),
-  //           name: 'totalAllocPoint',
-  //         },
-  //       ])
-  //     : [null, null]
+  const [infoFL, alpacaPerBlock, totalAllocPointFL] =
+  poolId || poolId === 0
+      ? await multicall(fairLaunchABI, [
+          {
+            address: getFairLaunch(),
+            name: 'poolInfo',
+            params: [poolId],
+          },
+          {
+            address: getFairLaunch(),
+            name: 'alpacaPerBlock',
+          },
+          {
+            address: getFairLaunch(),
+            name: 'totalAllocPoint',
+          },
+        ])
+      : [null, null]
 
 
   const masterChefAddress = getMasterChefAddress()
-  const [info, alpacaPerBlock, totalAllocPoint, userInfo] =
+  const [info, cakePerBlock, totalAllocPoint, userInfo] =
     pid || pid === 0
       ? await multicall(masterchefABI, [
         {
@@ -185,9 +189,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
-  const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
-//   console.info('--111-',(borrowingInterest));console.info('---',(token));
-// console.info('数据对不上x',parseInt(borrowingInterest));
+  const pooPerBlock = alpacaPerBlock * infoFL.allocPoint / totalAllocPointFL;
+
   return {
     name,
     lptotalSupply: lptotalSupply[0]._hex,
