@@ -1,8 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
-import { ChainId } from '@pancakeswap/sdk'
 import { getFarmingData, dichotomybasetoken } from 'utils/pancakeService'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 
@@ -54,8 +52,9 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
 
   const farmdata = getFarmingData(leverage, tokenInputNum, quoteTokenInputNum, parseInt(tokenAmountTotal), parseInt(quoteTokenAmountTotal), 0.0025)
 
-    // const aaa = dichotomybasetoken( 2.05, 0.0025,  0.04, 0.0065, 0.195,4.42, 0.201,   869611 , 19689464)
+  //   const aaa = dichotomybasetoken( 2.05, 0.0025,  0.04, 0.0065, 0,0, 0,   869611 , 19689464)
   // console.info('aaaaaaaaaaaa--在这里！！-', aaa)
+  // console.info('farmdata--在这里！！-', farmdata)
   return farmdata
 }
 
@@ -81,13 +80,16 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const basetokenlpborrowed = debtValue.toNumber()
 
 
-  console.log({
-    '1': leverageAdjust.toNumber().toFixed(2),
-    tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed,
-    'baseTokenAmount': baseTokenAmount.toNumber(), 'farmTokenAmount': farmTokenAmount.toNumber().toFixed(3),
-    'debtValue': debtValue.toNumber().toFixed(3), tokenAmountTotal, quoteTokenAmountTotal
-  })
+  // console.log({
+  //   '1': leverageAdjust.toNumber().toFixed(2),
+  //   tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed,
+  //   'baseTokenAmount': baseTokenAmount.toNumber(), 'farmTokenAmount': farmTokenAmount.toNumber().toFixed(3),
+  //   'debtValue': debtValue.toNumber().toFixed(3), tokenAmountTotal, quoteTokenAmountTotal
+  // })
+
+
 
   const farmdata = dichotomybasetoken(lvg , 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp , basetokenlpborrowed , parseInt(tokenAmountTotal), parseInt(quoteTokenAmountTotal))
+//  console.info('======farmdata======',farmdata);
   return farmdata
 }
