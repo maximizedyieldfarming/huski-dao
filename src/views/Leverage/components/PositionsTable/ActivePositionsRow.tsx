@@ -5,7 +5,6 @@ import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import useFarmsWithToken from '../../hooks/usePositionsFarmsWithToken'
 import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../../helpers'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
@@ -56,7 +55,6 @@ const ActivePositionsRow = ({ data }) => {
 
   const { vault, positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
   const { quoteToken, token } = data.farmData
-  // useFarmsWithToken(vaultAddress)
 
   // const totalPositionValueInUSDData = data.totalPositionValueInUSD
   const tokenBusdPrice = data.farmData?.token.busdPrice

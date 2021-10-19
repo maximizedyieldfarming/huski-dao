@@ -3,7 +3,10 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
+import { getAddress } from 'utils/addressHelpers'
+import  useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
+import useFarmsWithToken from '../../hooks/useFarmsWithToken'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
@@ -46,11 +49,14 @@ const LeverageRow = ({ tokenData }) => {
   const onChildValueChange = (val) => {
     setChildLeverage(val)
   }
-  // console.log({ tokenData })
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, childLeverage)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
+
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  useFarmsWithToken(tokenData, bnbBalance, tokenBalance)
 
   return (
     <>
