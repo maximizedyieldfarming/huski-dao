@@ -9,7 +9,7 @@ import { getBalanceAmount } from 'utils/formatBalance'
 
 
 const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
-  const { vaultDebtVal, token } = farm
+  const { vaultDebtVal, totalToken, token } = farm
 
   useEffect(() => {
     const fetchBorrowingInterest = async () => {
@@ -18,30 +18,29 @@ const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
         token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
       )
 
-      const aa = vaultDebtVal ? new BigNumber(parseInt(vaultDebtVal)).div(BIG_TEN.pow(18)) : BIG_ZERO // (10 **18)
-      const bb = userTokenBalance || BIG_ZERO
-
-      const aaa = Math.round(aa.toNumber())
-      const bbb = Math.round(bb.toNumber())
-
-      console.log({ vaultDebtVal ,aa , bb,aaa, bbb});
+      const vdv = vaultDebtVal ? new BigNumber(parseInt(vaultDebtVal)).div(BIG_TEN.pow(18)): BIG_ZERO //  
+      // const bb = userTokenBalance || BIG_ZERO
+      const tt = totalToken ? new BigNumber(parseInt(totalToken)).div(BIG_TEN.pow(18)): BIG_ZERO //  
+      const vdvData = Math.round(vdv.toNumber())
+      // const bbb = Math.round(bb.toNumber())
+      const ttData = Math.round(tt.toNumber())
 
       const [borrowingInterest] =
         await multicall(ConfigurableInterestVaultConfigABI, [
           {
             address: configAddress,
             name: 'getInterestRate',
-            params: [aaa, bbb],// 借贷值从vault合约中取， base token 的balance
+            params: [vdvData, ttData-vdvData],// 借贷值从vault合约中取， base token 的balance
           }
         ])
-        console.info('----borrowingInterest--0', (borrowingInterest));
-      console.info('------', parseInt(borrowingInterest[0]._hex));
+        console.info('----borrowingInterest', (borrowingInterest));
+      console.info('------', parseInt(borrowingInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 **18));
 
     }
 
     fetchBorrowingInterest()
 
-  }, [bnbBalance, token.config, token.symbol, tokenBalance, vaultDebtVal])
+  }, [bnbBalance, token.config, token.symbol, tokenBalance, totalToken, vaultDebtVal])
 
   return {  }
 }
