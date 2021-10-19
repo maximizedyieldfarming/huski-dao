@@ -231,7 +231,18 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
     //     (basetokenBalance1 + farmingtokenBalance / priceBegin);
     // const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) * (1 - priceimpactandtradingfees / 100) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
     
-    const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
+    const paramsNum = 4 * (farmingtokenNum + farmingtokenBalance) * (1 - 1 / leverage) ** 2;
+    const paramsA = priceBegin;
+    const paramsB = -paramsNum
+    const paramsC = -paramsNum * (basetokenBalance1 - exchangeValue)
+    let paramsB24AC = paramsB * paramsB - 4 * paramsA * paramsC
+
+    if (paramsB24AC < 0)
+        paramsB24AC = 0
+
+    const assetsborrowed = (-paramsB + paramsB24AC ** 0.5) / (2 * paramsA)
+
+    // const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance1) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
 
     const exc = assetsborrowed + basetokenBalance1 - exchangeValue - (farmingtokenBalance + farmingtokenNum) / price
 
