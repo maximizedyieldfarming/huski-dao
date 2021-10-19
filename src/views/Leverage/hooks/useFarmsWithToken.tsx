@@ -18,9 +18,9 @@ const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
         token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
       )
 
-      const vdv = vaultDebtVal ? new BigNumber(parseInt(vaultDebtVal)).div(BIG_TEN.pow(18)): BIG_ZERO //  
+      const vdv = vaultDebtVal ? new BigNumber(parseInt(vaultDebtVal)).div(BIG_TEN.pow(18)) : BIG_ZERO //  
       // const bb = userTokenBalance || BIG_ZERO
-      const tt = totalToken ? new BigNumber(parseInt(totalToken)).div(BIG_TEN.pow(18)): BIG_ZERO //  
+      const tt = totalToken ? new BigNumber(parseInt(totalToken)).div(BIG_TEN.pow(18)) : BIG_ZERO //  
       const vdvData = Math.round(vdv.toNumber())
       // const bbb = Math.round(bb.toNumber())
       const ttData = Math.round(tt.toNumber())
@@ -30,11 +30,11 @@ const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
           {
             address: configAddress,
             name: 'getInterestRate',
-            params: [vdvData, ttData-vdvData],// 借贷值从vault合约中取， base token 的balance
+            params: [vdvData, ttData - vdvData],// 借贷值从vault合约中取， base token 的balance
           }
         ])
-        console.info('----borrowingInterest', (borrowingInterest));
-      console.info('------', parseInt(borrowingInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 **18));
+      console.info('----borrowingInterest', (borrowingInterest));
+      console.info('------', parseInt(borrowingInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 ** 18));
 
     }
 
@@ -42,7 +42,7 @@ const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
 
   }, [bnbBalance, token.config, token.symbol, tokenBalance, totalToken, vaultDebtVal])
 
-  return {  }
+  return {}
 }
 
 export default useFarmsWithToken
