@@ -56,8 +56,8 @@ const LeverageRow = ({ tokenData }) => {
 
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
-  const { borrowInterest } = useFarmsWithToken(tokenData, bnbBalance, tokenBalance)
-console.info('borrowInterest',borrowInterest)
+  const { borrowInterest } = useFarmsWithToken(tokenData, bnbBalance, tokenBalance) // 计算方式换了
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
