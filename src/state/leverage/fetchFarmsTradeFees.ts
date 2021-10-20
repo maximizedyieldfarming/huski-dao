@@ -1,31 +1,18 @@
-
 const fetchFarmsTradeFees = async (farms) => {
 
-//   const header = new Headers({
-//     'Access-Control-Allow-Origin':'*',
-//     'Access-Control-Allow-Credentials': 'true',
-//     'Content-Type':'application/json;charset=utf8',
-//     "contentType": "application/json;charset=utf-8"
-//  })
-
-  // const response = await fetch('https://api.alpacafinance.org/v1/internal/tradingFee', {
-  //   method: 'GET',
-  //   headers: header,
-  //   mode: 'no-cors'
-  // })
-  const response = await fetch('https://api.alpacafinance.org/v1/internal/tradingFee')
+  const response = await fetch('http://192.168.0.187:8383/api/v1/tradingfees/get?dex=PancakeSwap')
   const responseData = await response.json()
-  const tradeFeeData = responseData.data.tradingFees;
+  const tradeFeeData = responseData.data;
 
   const farmsWithTradeFees = farms.map((farm) => {
     let tradeFee = 0;
     // eslint-disable-next-line array-callback-return
     tradeFeeData.map((tf) => {
-      if (farm.lpAddresses[56].toUpperCase()  === tf.lpAddress.toUpperCase() ) {
-         tradeFee = tf.dailyTradingFeesApr;
+      if (farm.lpAddresses[56].toUpperCase() === tf.LpAddress.toUpperCase()) {
+        tradeFee = tf.DailyTradingFeesApr;
       }
     })
-    return { ...farm,  tradeFee}
+    return { ...farm, tradeFee }
   })
 
   return farmsWithTradeFees
