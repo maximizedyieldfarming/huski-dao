@@ -5,44 +5,35 @@ import multicall from 'utils/multicall'
 import { getAddress } from 'utils/addressHelpers'
 import ConfigurableInterestVaultConfigABI from 'config/abi/ConfigurableInterestVaultConfig.json'
 import useRefresh from 'hooks/useRefresh'
-import { getBalanceAmount } from 'utils/formatBalance'
 
-
-const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
+export const useFarmsWithToken = (farm, bnbBalance, tokenBalance) => {
+  const [borrowInterest, setBorrowInterest] = useState(0)
   const { vaultDebtVal, totalToken, token } = farm
 
   useEffect(() => {
     const fetchBorrowingInterest = async () => {
       const configAddress = getAddress(token.config)
-      const userTokenBalance = getBalanceAmount(
-        token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
-      )
-
-      const vdv = vaultDebtVal ? new BigNumber(parseInt(vaultDebtVal)).div(BIG_TEN.pow(18)) : BIG_ZERO //  
-      // const bb = userTokenBalance || BIG_ZERO
-      const tt = totalToken ? new BigNumber(parseInt(totalToken)).div(BIG_TEN.pow(18)) : BIG_ZERO //  
-      const vdvData = Math.round(vdv.toNumber())
-      // const bbb = Math.round(bb.toNumber())
-      const ttData = Math.round(tt.toNumber())
+      const vaultDebtValBigNumber = vaultDebtVal ? new BigNumber(parseInt(vaultDebtVal)).div(BIG_TEN.pow(18)) : BIG_ZERO
+      const totalTokenBigNumber = totalToken ? new BigNumber(parseInt(totalToken)).div(BIG_TEN.pow(18)) : BIG_ZERO
+      const vaultDebtValData = Math.round(vaultDebtValBigNumber.toNumber())
+      const totalTokenData = Math.round(totalTokenBigNumber.toNumber())
 
       const [borrowingInterest] =
         await multicall(ConfigurableInterestVaultConfigABI, [
           {
             address: configAddress,
             name: 'getInterestRate',
-            params: [vdvData, ttData - vdvData],// 借贷值从vault合约中取， base token 的balance
+            params: [vaultDebtValData, totalTokenData - vaultDebtValData],
           }
         ])
-      console.info('----borrowingInterest', (borrowingInterest));
-      console.info('------', parseInt(borrowingInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 ** 18));
-
+      const borrowingInterestData = parseInt(borrowingInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 ** 18)
+      setBorrowInterest(borrowingInterestData)
     }
 
     fetchBorrowingInterest()
-
   }, [bnbBalance, token.config, token.symbol, tokenBalance, totalToken, vaultDebtVal])
 
-  return {}
+  return { borrowInterest }
 }
 
 export default useFarmsWithToken

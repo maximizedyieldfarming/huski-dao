@@ -6,7 +6,7 @@ import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/ho
 import { getAddress } from 'utils/addressHelpers'
 import  useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
-import useFarmsWithToken from '../../hooks/useFarmsWithToken'
+import {useFarmsWithToken} from '../../hooks/useFarmsWithToken'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
@@ -56,8 +56,8 @@ const LeverageRow = ({ tokenData }) => {
 
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
-  useFarmsWithToken(tokenData, bnbBalance, tokenBalance)
-
+  const { borrowInterest } = useFarmsWithToken(tokenData, bnbBalance, tokenBalance)
+console.info('borrowInterest',borrowInterest)
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
@@ -73,7 +73,7 @@ const LeverageRow = ({ tokenData }) => {
           yieldFarming={yieldFarmData}
           tradingFees={tokenData.tradeFee * childLeverage}
           huskyRewards={huskyRewards}
-          borrowingInterest={tokenData?.borrowingInterest}
+          borrowingInterest={borrowInterest}
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <Borrowing tokenData={tokenData} />

@@ -3,9 +3,7 @@ import masterchefABI from 'config/abi/masterchef.json'
 import lpTokenABI from 'config/abi/lpToken.json'
 import VaultABI from 'config/abi/vault.json'
 import erc20 from 'config/abi/erc20.json'
-import PancakePairABI from 'config/abi/pancakePair.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
-import ConfigurableInterestVaultConfigABI from 'config/abi/ConfigurableInterestVaultConfig.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import { getFairLaunch } from 'utils/env'
@@ -37,7 +35,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
   const workerAddresses = getAddress(workerAddress)
-  const configAddress = getAddress(token.config)
   const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
       {
@@ -49,19 +46,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         name: 'totalSupply',
       },
     ])
-
-//     const [ borrowingInterest1 ] =
-//     await multicall(ConfigurableInterestVaultConfigABI, [
-//       {
-//         address: configAddress,
-//         name: 'getInterestRate',
-//         params: [0, 0],// 借贷值从vault合约中取， base token 的balance
-//       }
-//     ])
-
-//       console.info('--111-',(borrowingInterest1));console.info('---',(token));
-// console.info('数据对不上x',parseInt(borrowingInterest1));
-
 
   const [name, borrowingInterest, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
