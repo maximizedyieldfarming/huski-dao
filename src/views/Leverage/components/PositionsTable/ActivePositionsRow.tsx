@@ -110,7 +110,10 @@ const ActivePositionsRow = ({ data }) => {
         <LiquidationThresholdCell liquidationThreshold={liquidationThreshold} />
         <SafetyBufferCell safetyBuffer={safetyBuffer} />
         <ProfitsCell profitLoss={profitLoss} />
-        <ActionCell data={data} disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())} />
+        <ActionCell
+          posData={{ data, liquidationThreshold }}
+          disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())}
+        />
       </StyledRow>
     </>
   )
