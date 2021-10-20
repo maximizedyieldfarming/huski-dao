@@ -5,7 +5,7 @@ import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
 import  useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import {useFarmsWithToken} from '../../hooks/useFarmsWithToken'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
@@ -56,7 +56,8 @@ const LeverageRow = ({ tokenData }) => {
 
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
-  const { borrowInterest } = useFarmsWithToken(tokenData, bnbBalance, tokenBalance) // 计算方式换了
+  // const { borrowInterest } = useFarmsWithToken(tokenData, bnbBalance, tokenBalance) // 计算方式换了
+  const {borrowingInterest} = getBorrowingInterest(tokenData)
 
   return (
     <>
@@ -70,10 +71,10 @@ const LeverageRow = ({ tokenData }) => {
         <ApyCell
           apyAtOne={getDisplayApr(yieldFarmData * 1)}
           apy={getDisplayApr(yieldFarmData * childLeverage)}
-          yieldFarming={yieldFarmData}
+          yieldFarming={yieldFarmData * childLeverage}
           tradingFees={tokenData.tradeFee * childLeverage}
-          huskyRewards={huskyRewards}
-          borrowingInterest={borrowInterest}
+          huskyRewards={huskyRewards * (childLeverage - 1)}
+          borrowingInterest={borrowingInterest * (childLeverage - 1)}
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <Borrowing tokenData={tokenData} />
