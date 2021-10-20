@@ -210,14 +210,12 @@ const Farm = (props) => {
     }
   }
 
-  console.log({ tokenInputOther })
 
-  // calculations
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
+  const farmData = farmingData ? farmingData[1] : []
   const apy = getDisplayApr(yieldFarmData * leverageValue)
   const apyAtOne = getDisplayApr(yieldFarmData * 1)
   const BorrowingInterestNumber = new BigNumber(tokenData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
-  const priceImpact = farmingData[0] * 100
   const tradingFees = Number(tokenData?.tradeFee) * Number(leverageValue) * 365
   const apr = Number(yieldFarmData) + Number(tradingFees) + Number(huskyRewards * 100) - Number(BorrowingInterestNumber)
 
@@ -424,9 +422,9 @@ const Farm = (props) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Assets Borrowed</Text>
-          {farmingData[1] ? (
+          {farmData[3] ? (
             <Text>
-              {farmingData[1]?.toFixed(2)} {radio}
+              {farmData[3]?.toFixed(2)} {radio}
             </Text>
           ) : (
             <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
@@ -440,8 +438,8 @@ const Farm = (props) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {farmingData[0] ? (
-            <Text color="#1DBE03">+{priceImpact.toPrecision(3)} %</Text>
+          {farmData[4] ? (
+            <Text color="#1DBE03">+{(farmData[4]*100).toPrecision(3)} %</Text>
           ) : (
             <Text color="#1DBE03"> 0.00 %</Text>
           )}
@@ -454,17 +452,17 @@ const Farm = (props) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {tokenData?.tradeFee ? (
-            <Text color="#EB0303">-{tradingFees.toPrecision(3)} %</Text>
+          {farmData[5]? (
+            <Text color="#EB0303">-{(farmData[5]* 100 ).toPrecision(3)} %</Text>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Position Value</Text>
-          {farmingData ? (
+          {farmData ? (
             <Text>
-              {farmingData[2].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmingData[3].toFixed(2)}{' '}
+              {farmData[8].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmData[9].toFixed(2)}{' '}
               {radioQuote.replace('wBNB', 'BNB')}
             </Text>
           ) : (
