@@ -55,6 +55,8 @@ interface StakeUserDataResponse {
   tokenBalance: string
   stakedBalance: string
   earnings: string
+  remainingLockedAmount: string,
+  unlockedRewards: string,
 }
 
 export const fetchStakeUserDataAsync = 

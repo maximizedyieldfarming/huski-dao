@@ -6,30 +6,23 @@ import { useWeb3React } from '@web3-react/core'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { Image, Text, Button, Flex, Box, Skeleton, Grid } from '@pancakeswap/uikit'
+import { Text, Button, Flex, Box, Skeleton, Grid } from '@pancakeswap/uikit'
 import { useStakeWithUserData, useStakes, useHuskyPrice, useHuskyPerBlock } from 'state/stake/hooks'
-import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import usePersistState from 'hooks/usePersistState'
 import { useTranslation } from 'contexts/Localization'
-import { getBalanceNumber } from 'utils/formatBalance'
 import { getHuskiAddress } from 'utils/addressHelpers'
 import useTokenBalance from 'hooks/useTokenBalance'
-import { getFarmApr } from 'utils/apr'
 import { orderBy } from 'lodash'
-import isArchivedPid from 'utils/farmHelpers'
 import { latinise } from 'utils/latinise'
-import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 import { getStakeApy } from 'views/Stake/helpers'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { useStakeWithToken } from 'views/Stake/stakeHooks/useStakeWithToken'
 import husky2 from './assets/stake_rewards_img.png'
-import huskyIcon from './assets/avatar1x.png'
 import StakeTable from './components/StakeTable/StakeTable'
 import TopTable from './components/TopTable/TopTable'
 import StakeCard from './components/StakeCard/StakeCard'
@@ -183,8 +176,17 @@ const Stake: React.FC = () => {
   const { balance } = useTokenBalance(getHuskiAddress())
   const alpacaBalance = balance ? balance.dividedBy(BIG_TEN.pow(18)) : BIG_ZERO
 
-  useStakeWithToken()
+  let remainingLockedAmount = 0;
+  farmsData.map((farm) => {
+    remainingLockedAmount = new BigNumber(parseFloat(farm?.userData?.unlockedRewards)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    return remainingLockedAmount
+  })
 
+  let unlockedRewards = 0;
+  farmsData.map((farm) => {
+    unlockedRewards = new BigNumber(parseFloat(farm?.userData?.unlockedRewards)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    return unlockedRewards
+  })
 
   return (
     <Page>
@@ -224,12 +226,16 @@ const Stake: React.FC = () => {
               </Flex>
               <Flex flexDirection="column">
                 <Text>Remaining Locked Amount</Text>
-                <Skeleton width="80px" height="16px" />
+                <Text>
+                  {remainingLockedAmount.toPrecision(3)}
+                </Text>
               </Flex>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
               <Text>Unlocked Rewards</Text>
-              <Skeleton width="80px" height="16px" />
+              <Text>
+                {unlockedRewards.toPrecision(3)}
+              </Text>
               <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
             </Flex>
           </Grid>

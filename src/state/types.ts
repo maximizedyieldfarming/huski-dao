@@ -72,6 +72,8 @@ export interface Stake extends StakeConfig {
     tokenBalance: string
     stakedBalance: string
     earnings: string
+    remainingLockedAmount: string
+    unlockedRewards: string
   }
   totalSupply?: SerializedBigNumber
   totalToken?: SerializedBigNumber,
