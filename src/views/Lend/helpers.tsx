@@ -1,8 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
-import { getBalanceNumber, getFullDisplayBalance, getDecimalAmount } from 'utils/formatBalance'
-import { BLOCKS_PER_YEAR, DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config';
+import { BLOCKS_PER_YEAR } from 'utils/config';
 
 const mathematics1 = 0.1;
 const mathematics2 = 4 / 55;
@@ -18,8 +17,7 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerB
   const poolHuskyPerBlock = pooPerBlock;
 
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
-  // console.info('1111啊山山水水',utilization)
-  // console.info('1111啊山山水水',token)
+
   let lendRate = 0;
   // TO CHECK 只有这几个的区分吗？ alpaca？
   if (token.symbol.toUpperCase() === 'WBNB' || token.symbol.toUpperCase() === 'BUSD' || token.symbol.toUpperCase() === 'USDT' || token.symbol.toUpperCase() === 'HUSKI' || token.symbol.toUpperCase() === 'ALPACA') {
