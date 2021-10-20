@@ -48,6 +48,7 @@ export interface LeverageFarm extends LeverageFarmConfig {
   quoteTokenReserve?: SerializedBigNumber
   lpTotalInQuoteToken?: SerializedBigNumber
   poolWeight?: SerializedBigNumber
+  liquidationThreshold?: SerializedBigNumber
   userData?: {
     allowance: string
     tokenBalance: string

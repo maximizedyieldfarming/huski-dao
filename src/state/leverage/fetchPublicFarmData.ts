@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import masterchefABI from 'config/abi/masterchef.json'
 import lpTokenABI from 'config/abi/lpToken.json'
 import VaultABI from 'config/abi/vault.json'
+import WorkerConfigABI from 'config/abi/WorkerConfig.json'
 import erc20 from 'config/abi/erc20.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
@@ -25,16 +26,18 @@ type PublicFarmData = {
   tokenBalanceLP: SerializedBigNumber
   quoteTokenBalanceLP: SerializedBigNumber
   poolWeight: SerializedBigNumber
+  liquidationThreshold: SerializedBigNumber
   name: string
   multiplier: string
   pooPerBlock: number
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { poolId, lpAddresses, workerAddress, token, quoteToken, vaultAddress, pid } = farm
+  const { poolId, lpAddresses, workerAddress, workerConfig, token, quoteToken, vaultAddress, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
   const workerAddresses = getAddress(workerAddress)
+  const workerConfigAddress = getAddress(workerConfig)
   const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
       {
@@ -45,6 +48,15 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         address: lpAddress,
         name: 'totalSupply',
       },
+    ])
+
+  const [liquidationThreshold] =
+    await multicall(WorkerConfigABI, [
+      {
+        address: workerConfigAddress,
+        name: 'killFactor',
+        params: [workerAddresses, 0],
+      }
     ])
 
   const [name, borrowingInterest, totalSupply, totalToken, vaultDebtVal] =
@@ -193,6 +205,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     pooPerBlock,
     tokenBalanceLP: tokenBalanceLP[0]._hex,
     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
+    liquidationThreshold: liquidationThreshold[0]._hex,
   }
 }
 

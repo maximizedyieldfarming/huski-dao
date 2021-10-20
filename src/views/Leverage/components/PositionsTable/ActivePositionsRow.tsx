@@ -5,7 +5,7 @@ import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../../helpers'
+import { getHuskyRewards, getYieldFarming } from '../../helpers'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
@@ -30,16 +30,6 @@ const StyledRow = styled.div`
   }
 
   //cursor: pointer;
-`
-
-const ScrollContainer = styled.div`
-  overflow-x: auto;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  ${({ theme }) => theme.mediaQueries.lg} {
-    flex-direction: row;
-  }
 `
 
 const ActivePositionsRow = ({ data }) => {
@@ -86,7 +76,7 @@ const ActivePositionsRow = ({ data }) => {
   const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
   const profitLoss = undefined
 
-  const liquidationThreshold = 83.33 // 暂时写死
+  const liquidationThreshold = parseInt(data?.farmData?.liquidationThreshold)/100
   const debtRatioRound: any = debtRatio ? debtRatio.toNumber() * 100 : 0
   const safetyBuffer = Math.round(liquidationThreshold - debtRatioRound)
 
