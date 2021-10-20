@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js'
 import erc20ABI from 'config/abi/erc20.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
+import huskyTokenABI from 'config/abi/huskyToken.json'
 import multicall from 'utils/multicall'
-import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
+import { getAddress, getHuskiAddress } from 'utils/addressHelpers'
 import { getFairLaunch } from 'utils/env'
 import { StakeConfig } from 'config/constants/types'
 
@@ -70,4 +71,40 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Stake
     return new BigNumber(earnings).toJSON()
   })
   return parsedEarnings
+}
+
+export const fetchFarmUserLocked = async (account: string, farmsToFetch: StakeConfig[]) => {
+  const huskiAddress = getHuskiAddress()
+
+  const calls = farmsToFetch.map((farm) => {
+    return {
+      address: huskiAddress,
+      name: 'lockOf',
+      params: [account],
+    }
+  })
+
+  const data = await multicall(huskyTokenABI, calls)
+  const parsedLocked = data.map((earnings) => {
+    return new BigNumber(earnings).toJSON()
+  })
+  return parsedLocked
+}
+
+export const fetchFarmUserUnLocked = async (account: string, farmsToFetch: StakeConfig[]) => {
+  const huskiAddress = getHuskiAddress()
+
+  const calls = farmsToFetch.map((farm) => {
+    return {
+      address: huskiAddress,
+      name: 'canUnlockAmount',
+      params: [account],
+    }
+  })
+
+  const data = await multicall(huskyTokenABI, calls)
+  const parsedUnLocked = data.map((earnings) => {
+    return new BigNumber(earnings).toJSON()
+  })
+  return parsedUnLocked
 }

@@ -4,6 +4,8 @@ import isArchivedPid from 'utils/farmHelpers'
 import fetchStakes from './fetchStake'
 import fetchFarmsPrices from './fetchStakePrices'
 import {
+  fetchFarmUserLocked,
+  fetchFarmUserUnLocked,
   fetchFarmUserEarnings,
   fetchFarmUserAllowances,
   fetchFarmUserTokenBalances,
@@ -18,6 +20,8 @@ const noAccountFarmConfig = stakeConfig.map((farm) => ({
     tokenBalance: '0',
     stakedBalance: '0',
     earnings: '0',
+    remainingLockedAmount: '0',
+    unlockedRewards: '0',
   },
 }))
 
@@ -62,8 +66,9 @@ createAsyncThunk<StakeUserDataResponse[], { account: string; pids: number[] }>(
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
+    const userFarmLocked = await fetchFarmUserLocked(account, farmsToFetch)
+    const userFarmUnLocked = await fetchFarmUserUnLocked(account, farmsToFetch)
 
-    // console.log("stake: ", "fetchStakeUserDataAsync")
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
         pid: farmsToFetch[index].pid,
@@ -71,6 +76,8 @@ createAsyncThunk<StakeUserDataResponse[], { account: string; pids: number[] }>(
         tokenBalance: userFarmTokenBalances[index],
         stakedBalance: userStakedBalances[index],
         earnings: userFarmEarnings[index],
+        remainingLockedAmount: userFarmLocked[index],
+        unlockedRewards: userFarmUnLocked[index],
       }
     })
   }
