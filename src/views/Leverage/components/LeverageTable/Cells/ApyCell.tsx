@@ -26,12 +26,9 @@ const StyledCell = styled(BaseCell)`
 const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borrowingInterest }) => {
   const { isMobile } = useMatchBreakpoints()
 
-  const tradingFeesNumber = Number(tradingFees) * 365
-  const huskyRewardsNumber = Number(huskyRewards) * 100
-  // console.log('yield farming', yieldFarming)
-  const BorrowingInterestNumber = new BigNumber(borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
-  // console.log('borrowingInterestNumber', BorrowingInterestNumber)
-  const apr = Number(yieldFarming) + tradingFeesNumber + huskyRewardsNumber - Number(BorrowingInterestNumber)
+  const tradingFeesNumber = tradingFees * 365
+  const huskyRewardsNumber = huskyRewards * 100
+  const apr = yieldFarming + tradingFeesNumber + huskyRewardsNumber - borrowingInterest
   const dailyApr = apr / 365
 
   return (
@@ -60,7 +57,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Borrowing&nbsp;Interest</Text>
-                <Text>-{Number(BorrowingInterestNumber).toFixed(2)}%</Text>
+                <Text>-{Number(borrowingInterest * 100).toFixed(2)}%</Text>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text small>Total&nbsp;APR</Text>
