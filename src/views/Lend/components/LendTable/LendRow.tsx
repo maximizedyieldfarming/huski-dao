@@ -30,7 +30,7 @@ const LendRow = ({ tokenData }) => {
 
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
-  const { landApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice, huskyPerBlock)
+  const { lendApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice, huskyPerBlock)
 
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)

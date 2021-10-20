@@ -4,9 +4,12 @@ import { LeverageFarm } from 'state/types'
 import { getBalanceNumber, getFullDisplayBalance, getDecimalAmount } from 'utils/formatBalance'
 import { BLOCKS_PER_YEAR, DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config';
 
-const mathematics1 = 0.4; // Less than 50% utilization
-const mathematics2 = 0; // Between 50% and 90%
-const mathematics3 = 13;
+const mathematics1 = 0.1;
+const mathematics2 = 4 / 55;
+const mathematics3 = 92 / 5;
+const mathematics1B = 3 / 40;
+const mathematics2B = 3 / 55;
+const mathematics3B = 94 / 5;
 
 export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
   const { totalToken, totalSupply, vaultDebtVal, token } = farm
@@ -15,23 +18,41 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerB
   const poolHuskyPerBlock = pooPerBlock;
 
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
-  let landRate = 0;
-  if (utilization < 0.5) {
-    landRate = mathematics1 * utilization;
-  } else if (utilization > 0.9) {
-    landRate = mathematics3 * utilization - 11.5;
-  } else {
-    landRate = mathematics2 * utilization + 0.2;
+  // console.info('1111啊山山水水',utilization)
+  // console.info('1111啊山山水水',token)
+  let lendRate = 0;
+  // TO CHECK 只有这几个的区分吗？ alpaca？
+  if (token.symbol.toUpperCase() === 'WBNB' || token.symbol.toUpperCase() === 'BUSD' || token.symbol.toUpperCase() === 'USDT' || token.symbol.toUpperCase() === 'HUSKI' || token.symbol.toUpperCase() === 'ALPACA') {
+    if (utilization < 0.4) {
+      lendRate = mathematics1B * utilization * 100;
+    } else if (utilization > 0.95) {
+      lendRate = mathematics3B * utilization * 100 - 1740;
+    } else {
+      lendRate = mathematics2B * utilization * 100 + 12 / 11;
+    }
+  } else if (token.symbol.toUpperCase() === 'BTCB' || token.symbol.toUpperCase() === 'ETH') {
+    if (utilization < 0.4) {
+      lendRate = mathematics1 * utilization * 100;
+    } else if (utilization > 0.95) {
+      lendRate = mathematics3 * utilization * 100 - 1780;
+    } else {
+      lendRate = mathematics2 * utilization * 100 + 9 / 11;
+    }
   }
 
-  const landApr = landRate * 0.9 * utilization;
+  const lendApr = lendRate / 100 
+  const BorrowingInterest = lendRate / (utilization * 100) / (1.0 - 0.16)
+
+  // const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(totalSupply) * busdTokenPrice));
+  // const stakeApr1 = 365 * 24 * 60 * 60 / 3 * 4 * 225 / 1910 * 0.915 / (484.651 * 332.76 * 1000)
+
   const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div(
     (busdTokenPrice * parseInt(totalToken) * parseInt(totalToken)) / parseInt(totalSupply)
   );
-  const totalApr = BigNumber.sum(landApr, stakeApr);
+  const totalApr = BigNumber.sum(lendApr, stakeApr);
   const apy = Math.pow(1 + totalApr.toNumber() / 365, 365) - 1;
 
-  return {landApr,stakeApr, totalApr, apy };
+  return { lendApr, stakeApr, totalApr, apy };
 }
 
 
