@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, Progress } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
@@ -18,6 +18,15 @@ import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebt
 
 interface RouteParams {
   token: string
+}
+interface LocationParams {
+  data: any
+  liquidationThreshold: number
+}
+
+interface DotProps {
+  text: string
+  percentage: string
 }
 
 const Section = styled(Box)`
@@ -46,34 +55,98 @@ const Section = styled(Box)`
   }
 `
 
-const AdjustPosition = (props) => {
-  console.log('props to adjust position...', props)
-  // const [leverage, setLeverage] = useState(0)
-  /*   const [incDecRadio, setIncDecRadio] = useState(true)
-  console.log({ incDecRadio })
- */
-  const { token } = useParams<RouteParams>()
-  const handleChange = (e) => {
-    const { value } = e.target
-    setRadio(value)
+const DotedProgressBar = styled.div`
+  background: ${({ theme }) => theme.colors.backgroundDisabled};
+  position: relative;
+  height: 10px;
+  width: 90%;
+  border-radius: 20px;
+  margin: 0 auto;
+`
+const Dot = styled.span<DotProps>`
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  background-color: ${({ theme }) => theme.colors.text};
+  border-radius: 50%;
+  display: inline-block;
+  &.liquidationRatio {
+    left: ${({ percentage }) => percentage}%;
+    &::before {
+      color: ${({ theme }) => theme.colors.text};
+      content: 'Liquidation Ratio';
+      position: absolute;
+      bottom: 100%;
+    }
+    &::after {
+      color: ${({ theme }) => theme.colors.text};
+      content: ${({ text }) => `'${text}%'`};
+      position: absolute;
+      top: 100%;
+    }
   }
-  /*  const handleChangeIncDecRadio = (e) => {
-    console.info('fired')
-    console.log({ e })
-    const { value } = e.target
-    console.log({ value })
-    setIncDecRadio(value === 'on')
-  } */
+  &.max {
+    left: ${({ percentage }) => percentage}%;
+    &::before {
+      color: ${({ theme }) => theme.colors.text};
+      content: 'MAX';
+      position: absolute;
+      bottom: 100%;
+    }
+    &::after {
+      color: ${({ theme }) => theme.colors.text};
+      content: ${({ text }) => `'${text}%'`};
+      position: absolute;
+      top: 100%;
+    }
+  }
+  &.debtRatio {
+    left: ${({ percentage }) => percentage}%;
+    &::before {
+      color: ${({ theme }) => theme.colors.text};
+      content: 'Debt Ratio';
+      position: absolute;
+      bottom: 100%;
+    }
+    &::after {
+      color: ${({ theme }) => theme.colors.text};
+
+      content: ${({ text }) => `'${text}%'`};
+
+      position: absolute;
+      top: 100%;
+    }
+  }
+`
+
+const DotedProgress = ({ debtRatio, liquidationThreshold, max }) => {
+  console.log('liqtres', liquidationThreshold)
+  return (
+    <>
+      <DotedProgressBar>
+        <Dot className="dot debtRatio" percentage={debtRatio.toString()} text={debtRatio.toFixed(2)} />
+        <Dot className="dot max" percentage={max.toString()} text={max.toFixed(2)} />
+        <Dot
+          className="dot liquidationRatio"
+          percentage={liquidationThreshold}
+          text={liquidationThreshold?.toFixed(2)}
+        />
+      </DotedProgressBar>
+    </>
+  )
+}
+
+const AdjustPosition = (props) => {
+  console.log('props', props)
   const {
-    location: {
-      state: { data },
-    },
-  } = props
+    state: { data, liquidationThreshold },
+  } = useLocation<LocationParams>()
+  const { token } = useParams<RouteParams>()
 
-  const quoteTokenName = data?.farmData?.quoteToken?.symbol
-  const tokenName = data?.farmData?.token?.symbol
+  console.log('data to adjust position...', data)
 
-  const [radio, setRadio] = useState(quoteTokenName)
+  const quoteTokenName = data?.farmData?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  const tokenName = data?.farmData?.token?.symbol.replace('wBNB', 'BNB')
 
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(data?.farmData.token.address))
@@ -85,46 +158,10 @@ const AdjustPosition = (props) => {
     data?.farmData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
   )
 
-  const quoteTokenInputRef = useRef<HTMLInputElement>()
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
-  const handleQuoteTokenInput = useCallback((event) => {
-    const input = event.target.value
-    setQuoteTokenInput(input)
-  }, [])
-  const setQuoteTokenInputToFraction = (e) => {
-    if (e.target.innerText === '25%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
-    } else if (e.target.innerText === '50%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
-    } else if (e.target.innerText === '75%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
-    } else if (e.target.innerText === '100%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
-    }
-  }
-
-  const tokenInputRef = useRef<HTMLInputElement>()
   const [tokenInput, setTokenInput] = useState(0)
-  const handleTokenInput = useCallback((event) => {
-    const input = event.target.value
-    setTokenInput(input)
-  }, [])
-
-  const setTokenInputToFraction = (e) => {
-    if (e.target.innerText === '25%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.25)
-    } else if (e.target.innerText === '50%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.5)
-    } else if (e.target.innerText === '75%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.75)
-    } else if (e.target.innerText === '100%') {
-      setTokenInput(userTokenBalance.toNumber())
-    }
-  }
 
   const { leverage } = data?.farmData
-
-  // const [leverageValue, setLeverageValue] = useState(currentPositionLeverage)
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -136,6 +173,12 @@ const AdjustPosition = (props) => {
 
   const { positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
   // const { quoteToken, token } = data.farmData
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
 
   const tokenBusdPrice = data.farmData?.token.busdPrice
   const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
@@ -145,26 +188,64 @@ const AdjustPosition = (props) => {
 
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const lvgAdjust = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
-  const aa: any = debtValueNumber.toNumber().toFixed(3)
+  // const aa: any = debtValueNumber.toNumber()
+
   const currentPositionLeverage = lvgAdjust.toNumber()
-  const [leverageValue, setLeverageValue] = useState(currentPositionLeverage)
-  const farmingData = getAdjustData(data.farmData, data, leverageValue, tokenInput, quoteTokenInput)
+  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
+    Number(currentPositionLeverage.toPrecision(3)),
+  )
+
+  console.log('tokenInput ; quoteTokenInput', tokenInput, quoteTokenInput)
+  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, quoteTokenInput)
   const adjustData = farmingData ? farmingData[1] : []
-  const debtAssetsBorrowed = adjustData ? adjustData[3].toFixed(3) - aa : 0
-  console.info('farmingData', adjustData)
+
+  const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
+  const assetsBorrowed = adjustData?.[3]
+  const tradingFees = adjustData?.[5] * 100
+  const priceImpact = adjustData?.[4]
+  const baseTokenInPosition = adjustData?.[8]
+  const farmingTokenInPosition = adjustData?.[9]
+
+  console.info('adjust', adjustData)
   console.info('farmingData', farmingData)
+  console.log('debt ratio', debtRatio.toNumber())
+  console.log('lvg', lvgAdjust.toNumber())
+
+  // for apr
+  const huskyPrice = useHuskyPrice()
+  const huskyPerBlock = useHuskyPerBlock()
+  const cakePrice = useCakePrice()
+  const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
+  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, huskyPerBlock, currentPositionLeverage) * 100
+  const BorrowingInterestNumber = new BigNumber(data?.farmData?.borrowingInterest)
+    .div(BIG_TEN.pow(18))
+    .times(100)
+    .toNumber()
+
+  const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
+  const adjustedYieldFarmAPR = yieldFarmData * Number(targetPositionLeverage)
+  const tradingFeesAPR = Number(data?.farmData?.tradingFee) * 100
+  const huskiRewardsAPR = undefined
+  const borrowingInterestAPR = undefined
+  const apr =
+    Number(adjustedYieldFarmAPR) + Number(tradingFeesAPR) + Number(huskyRewards) - Number(BorrowingInterestNumber)
+  console.log('apr', apr)
+  const apy = Number(yieldFarmData * currentPositionLeverage)
+
+  const adjustedYieldFarmData = getYieldFarming(data?.farmData, cakePrice)
+  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, huskyPerBlock, targetPositionLeverage) * 100
+  const adjustedBorrowingInterestNumber =
+    new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
+  const adjustedTradingFees = adjustData?.[5] * 100
+  const adjustedApr: number =
+    Number(yieldFarmData) + Number(tradingFees) + Number(huskyRewards) - Number(BorrowingInterestNumber)
+  const adjustedApy = Number(getDisplayApr(yieldFarmData * targetPositionLeverage))
+
+  const borrowingMoreValue = null
 
   const handleSliderChange = (e) => {
     const value = e?.target?.value
-    setLeverageValue(value)
-  }
-  const BorrowingMore = () => {
-    return (
-      <Flex justifyContent="space-between" alignItems="center">
-        <Text>You&apos;re Borrowing More</Text>
-        <Text>xx</Text>
-      </Flex>
-    )
+    setTargetPositionLeverage(value)
   }
 
   const {
@@ -193,14 +274,36 @@ const AdjustPosition = (props) => {
 
   const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
 
+  console.log('yield farm data', yieldFarmData)
+  console.log('husky rewards', huskyRewards)
+  console.log('borrowing intrest', BorrowingInterestNumber)
+  console.log('tradingFees', tradingFees)
+
+  const isConfirmDisabled =
+    (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
+    Number(currentPositionLeverage).toPrecision(3) === Number(targetPositionLeverage).toPrecision(3) ||
+    (!Number(tokenInput) && !Number(quoteTokenInput))
+
+  const maxValue = () => {
+    let value
+    if (Number(data?.farmData?.leverage) === 2) {
+      value = 50
+    }
+    if (Number(data?.farmData?.leverage) === 3) {
+      value = 66.666
+    }
+    return value
+  }
+
+  console.log('currentLvg; targetLvg', currentPositionLeverage, targetPositionLeverage)
   return (
     <Page>
-      <Text fontWeight="bold" style={{ alignSelf: 'center' }}>
+      <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
         Adjust Position {token}
       </Text>
       <Section>
-        <Text bold>Current Position Leverage: {currentPositionLeverage.toPrecision(3)}</Text>
-        <Text>Target Position Leverage: {Number(leverageValue).toPrecision(3)}</Text>
+        <Text bold>Current Position Leverage: {currentPositionLeverage.toPrecision(3)}x</Text>
+        <Text>Target Position Leverage: {Number(targetPositionLeverage).toPrecision(3)}x</Text>
         <Flex>
           <input
             type="range"
@@ -208,43 +311,46 @@ const AdjustPosition = (props) => {
             max={leverage}
             step="0.01"
             name="leverage"
-            value={leverageValue}
+            value={targetPositionLeverage}
             onChange={handleSliderChange}
             list="leverage"
             style={{ width: '90%' }}
           />
           <datalist id="leverage">{datalistOptions}</datalist>
           <Box ml="auto">
-            <Text textAlign="right">{Number(leverageValue).toPrecision(3)}X</Text>
+            <Text textAlign="right">{Number(targetPositionLeverage).toPrecision(3)}x</Text>
           </Box>
         </Flex>
-        {Number(leverageValue) > currentPositionLeverage && <BorrowingMore />}
-        {Number(currentPositionLeverage) === 1 || Number(leverageValue) < currentPositionLeverage
-          ? Number(leverageValue) <= currentPositionLeverage && (
-              <AddCollateralRepayDebtContainer
-                currentPositionLeverage={Number(currentPositionLeverage)}
-                leverageValue={Number(leverageValue)}
-                userQuoteTokenBalance={userQuoteTokenBalance}
-                userTokenBalance={userTokenBalance}
-                quoteTokenName={quoteTokenName}
-                tokenName={tokenName}
-                quoteToken={data?.farmData?.quoteToken}
-                token={data?.farmData?.token}
-                tokenInput={tokenInput}
-                quoteTokenInput={quoteTokenInput}
-                setTokenInput={setTokenInput}
-                setQuoteTokenInput={setQuoteTokenInput}
-                isAddCollateral={isAddCollateral}
-                setIsAddCollateral={setIsAddCollateral}
-              />
-            )
-          : null}
+        {Number(targetPositionLeverage) > Number(currentPositionLeverage.toPrecision(3)) && (
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text>You&apos;re Borrowing More</Text>
+            <NumberInput placeholder="0.00" style={{ width: '10%' }} />
+          </Flex>
+        )}
+        {Number(targetPositionLeverage) <= Number(currentPositionLeverage.toPrecision(3)) && (
+          <AddCollateralRepayDebtContainer
+            currentPositionLeverage={Number(currentPositionLeverage)}
+            targetPositionLeverage={Number(targetPositionLeverage)}
+            userQuoteTokenBalance={userQuoteTokenBalance}
+            userTokenBalance={userTokenBalance}
+            quoteTokenName={quoteTokenName}
+            tokenName={tokenName}
+            quoteToken={data?.farmData?.quoteToken}
+            token={data?.farmData?.token}
+            tokenInput={tokenInput}
+            quoteTokenInput={quoteTokenInput}
+            setTokenInput={setTokenInput}
+            setQuoteTokenInput={setQuoteTokenInput}
+            isAddCollateral={isAddCollateral}
+            setIsAddCollateral={setIsAddCollateral}
+          />
+        )}
       </Section>
 
       <Section>
         <Flex justifyContent="space-between">
           <Text>Debt Assets Borrowed</Text>
-          {data ? <Text>{debtAssetsBorrowed}</Text> : <Skeleton width="80px" height="16px" />}
+          {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)}</Text> : <Text>0.00</Text>}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Updated Debt</Text>
@@ -252,7 +358,7 @@ const AdjustPosition = (props) => {
             <Flex alignItems="center">
               <Text> {debtValueNumber.toNumber().toFixed(3)}</Text>
               <ChevronRightIcon />
-              <Text> {adjustData ? adjustData[3].toFixed(3) : 0}</Text>
+              <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)}</Text>
             </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -263,7 +369,7 @@ const AdjustPosition = (props) => {
           {data ? (
             <Flex>
               <Text>
-                {debtRatio.toNumber().toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)} x)
+                {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
               </Text>
               <ChevronRightIcon />
               <Text>{0}</Text>
@@ -272,36 +378,59 @@ const AdjustPosition = (props) => {
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
+        <Flex height="100px" alignItems="center">
+          <DotedProgress
+            debtRatio={debtRatio.toNumber() * 100}
+            liquidationThreshold={liquidationThreshold}
+            max={maxValue()}
+          />
+        </Flex>
       </Section>
       <Section>
         <Flex justifyContent="space-between">
           <Text>Yields Farm APR</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {yieldFarmAPR ? (
+            <Flex alignItems="center">
+              <Text>{yieldFarmAPR.toFixed(2)}%</Text>
+              <ChevronRightIcon />
+              <Text>{adjustedYieldFarmAPR.toFixed(2)}%</Text>
+            </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Trading Fees APR(7 DAYS average)</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {tradingFeesAPR ? (
+            <Flex alignItems="center">
+              <Text>{tradingFeesAPR}%</Text>
+              <ChevronRightIcon />
+              <Text>{tradingFeesAPR}%</Text>
+            </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>HUSKI Rewards APR</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {huskiRewardsAPR ? (
+            <Flex alignItems="center">
+              <Text>{huskiRewardsAPR}%</Text>
+              <ChevronRightIcon />
+              <Text>{huskiRewardsAPR}%</Text>
+            </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Borrowing Interest APR</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {borrowingInterestAPR ? (
+            <Flex alignItems="center">
+              <Text>-{borrowingInterestAPR}%</Text>
+              <ChevronRightIcon />
+              <Text>-{borrowingInterestAPR}%</Text>
+            </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
@@ -313,16 +442,24 @@ const AdjustPosition = (props) => {
               Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR
             </Text>
           </Box>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {apr ? (
+            <Flex alignItems="center">
+              <Text>{apr}%</Text>
+              <ChevronRightIcon />
+              <Text>{adjustedApr}%</Text>
+            </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>APY</Text>
-          {data?.farmData?.user?.balance ? (
-            <Text>{data?.farmData?.user?.balance}</Text>
+          {apy ? (
+            <Flex alignItems="center">
+              <Text>{apy.toPrecision(4)}%</Text>
+              <ChevronRightIcon />
+              <Text>{adjustedApy.toPrecision(4)}%</Text>
+            </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
           )}
@@ -333,7 +470,8 @@ const AdjustPosition = (props) => {
           <Text>Assets Supplied</Text>
           {farmingData ? (
             <Text>
-              {tokenInput} + {quoteTokenInput}
+              {Number(tokenInput).toPrecision(3)} {tokenName} + {Number(quoteTokenInput).toPrecision(3)}{' '}
+              {quoteTokenName}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -341,7 +479,11 @@ const AdjustPosition = (props) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Assets Borrowed</Text>
-          {adjustData ? <Text>{adjustData[3].toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
+          {adjustData ? (
+            <Text>{assetsBorrowed.toFixed(3)}</Text>
+          ) : (
+            <Text>{debtValueNumber.toNumber().toPrecision(3)}</Text>
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -351,7 +493,11 @@ const AdjustPosition = (props) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? <Text>{adjustData[4]}</Text> : <Skeleton width="80px" height="16px" />}
+          {adjustData ? (
+            <Text color="#1DBE03">+{priceImpact.toPrecision(4)}%</Text>
+          ) : (
+            <Text color="#1DBE03">0.00%</Text>
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -361,13 +507,13 @@ const AdjustPosition = (props) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? <Text>{adjustData[4]}</Text> : <Skeleton width="80px" height="16px" />}
+          {adjustData ? <Text color="#EB0303">-{tradingFees.toPrecision(4)}</Text> : <Text color="#EB0303">0.00%</Text>}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Updated Total Assets</Text>
           {adjustData ? (
             <Text>
-              {adjustData[7].toFixed(2)} + {adjustData[8].toFixed(2)}
+              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -375,7 +521,7 @@ const AdjustPosition = (props) => {
         </Flex>
       </Section>
       <Flex alignSelf="center">
-        <Button disabled={Number(currentPositionLeverage) === 1 && Number(leverageValue) === 1}>Confirm</Button>
+        <Button disabled={isConfirmDisabled}>Confirm</Button>
       </Flex>
     </Page>
   )

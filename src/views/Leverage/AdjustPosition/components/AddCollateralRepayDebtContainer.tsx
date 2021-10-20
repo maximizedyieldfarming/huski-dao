@@ -8,7 +8,7 @@ interface HeaderProps {
   active: boolean
 }
 interface Props {
-  leverageValue: number
+  targetPositionLeverage: number
   userQuoteTokenBalance: any
   userTokenBalance: any
   quoteTokenName: any
@@ -39,7 +39,7 @@ const HeaderTab = styled(Button)<HeaderProps>`
 `
 
 const AddCollateralRepayDebtContainer: React.FC<Props> = ({
-  leverageValue,
+  targetPositionLeverage,
   userQuoteTokenBalance,
   userTokenBalance,
   quoteTokenName,
@@ -87,7 +87,10 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
             setQuoteTokenInput={setQuoteTokenInput}
           />
         ) : (
-          <RepayDebt currentPositionLeverage={currentPositionLeverage} targetPositionLeverage={leverageValue} />
+          <RepayDebt
+            currentPositionLeverage={currentPositionLeverage}
+            targetPositionLeverage={targetPositionLeverage}
+          />
         )}
       </Box>
     </Box>

@@ -30,13 +30,24 @@ const AddColateral = ({
   }
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.25
+          ? 0
+          : userQuoteTokenBalance.toNumber() * 0.25
+      setQuoteTokenInput(value)
     } else if (e.target.innerText === '50%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.5 ? 0 : userQuoteTokenBalance.toNumber() * 0.5
+      setQuoteTokenInput(value)
     } else if (e.target.innerText === '75%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.75
+          ? 0
+          : userQuoteTokenBalance.toNumber() * 0.75
+      setQuoteTokenInput(value)
     } else if (e.target.innerText === '100%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+      const value = Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() ? 0 : userQuoteTokenBalance.toNumber()
+      setQuoteTokenInput(value)
     }
   }
   // const [tokenInput, setTokenInput] = useState(0)
@@ -47,19 +58,26 @@ const AddColateral = ({
 
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.25)
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.25 ? 0 : userTokenBalance.toNumber() * 0.25
+      setTokenInput(value)
     } else if (e.target.innerText === '50%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.5)
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.5 ? 0 : userTokenBalance.toNumber() * 0.5
+      setTokenInput(value)
     } else if (e.target.innerText === '75%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.75)
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.75 ? 0 : userTokenBalance.toNumber() * 0.75
+      setTokenInput(value)
     } else if (e.target.innerText === '100%') {
-      setTokenInput(userTokenBalance.toNumber())
+      const value = Number(tokenInput) === userTokenBalance.toNumber() ? 0 : userTokenBalance.toNumber()
+      setTokenInput(value)
     }
   }
+
   return (
     <>
       <Flex alignItems="center" justifyContent="space-between">
-        <Text as="span">Collateral</Text>
+        <Text as="span" bold>
+          Collateral
+        </Text>
         <Text as="span" small color="textSubtle">
           To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.
         </Text>
@@ -67,15 +85,22 @@ const AddColateral = ({
       <Flex>
         <Flex flexDirection="column" justifyContent="space-between" flex="1">
           <Box>
-            <Flex alignItems="center">
-              <Text as="span" mr="1rem">
-                Balance:
-              </Text>
-              {userQuoteTokenBalance ? (
-                <Text>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
+            <Flex alignItems="center" justifyContent="space-between">
+              <Flex>
+                <Text as="span" mr="1rem" small>
+                  Balance:
+                </Text>
+                {userQuoteTokenBalance ? (
+                  <Text small>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex>
+                <Text small>
+                  1 {quoteTokenName} = {quoteToken?.busdPrice}BUSD
+                </Text>
+              </Flex>
             </Flex>
             <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
               <Flex alignItems="center" flex="1">
@@ -102,15 +127,22 @@ const AddColateral = ({
             </Flex>
           </Box>
           <Box>
-            <Flex alignItems="center">
-              <Text as="span" mr="1rem">
-                Balance:
-              </Text>
-              {userTokenBalance ? (
-                <Text>{userTokenBalance.toNumber().toPrecision(3)}</Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
+            <Flex alignItems="center" justifyContent="space-between">
+              <Flex>
+                <Text as="span" mr="1rem" small>
+                  Balance:
+                </Text>
+                {userTokenBalance ? (
+                  <Text small>{userTokenBalance.toNumber().toPrecision(3)}</Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex>
+                <Text small>
+                  1 {tokenName} = {token?.busdPrice}BUSD
+                </Text>
+              </Flex>
             </Flex>
             <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0">
               <Flex alignItems="center" flex="1">
