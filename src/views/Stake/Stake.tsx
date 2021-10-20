@@ -13,9 +13,9 @@ import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import usePersistState from 'hooks/usePersistState'
-import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
+import { getHuskiAddress } from 'utils/addressHelpers'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { getFarmApr } from 'utils/apr'
 import { orderBy } from 'lodash'
@@ -27,6 +27,7 @@ import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 import { getStakeApy } from 'views/Stake/helpers'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
+import { useStakeWithToken } from 'views/Stake/stakeHooks/useStakeWithToken'
 import husky2 from './assets/stake_rewards_img.png'
 import huskyIcon from './assets/avatar1x.png'
 import StakeTable from './components/StakeTable/StakeTable'
@@ -179,8 +180,11 @@ const Stake: React.FC = () => {
     return reward
   })
  
-  const { balance } = useTokenBalance('0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F')
+  const { balance } = useTokenBalance(getHuskiAddress())
   const alpacaBalance = balance ? balance.dividedBy(BIG_TEN.pow(18)) : BIG_ZERO
+
+  useStakeWithToken()
+
 
   return (
     <Page>
