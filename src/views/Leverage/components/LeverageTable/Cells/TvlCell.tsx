@@ -58,48 +58,17 @@ const Info = styled(Box)<InfoParams>`
 const TvlCell = ({ tvl, tokenData }) => {
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const { quoteToken, token } = tokenData
-
-  const showText = (() => (
-    <>
-      <Text>{nFormatter(tvl)}</Text>
-      <Box
-        onMouseEnter={changeDisplayInfo}
-        onMouseLeave={changeDisplayInfo}
-        position="relative"
-        style={{ cursor: 'pointer' }}
-      >
-        <InfoIcon ml="10px" />
-        <Info show={displayInfo}>
-          <Skeleton width="80px" height="16px" />
-          <Flex alignItems="center">
-            <Box width={20} height={20} mr="5px">
-              <TokenImage token={token} width={20} height={20} />
-            </Box>
-            <Text small>
-              {token?.symbol}&nbsp;(1&nbsp;{token?.symbol}&nbsp;=&nbsp;USD)
-            </Text>
-          </Flex>
-          <Flex alignItems="center">
-            <Box width={20} height={20} mr="5px">
-              <TokenImage token={quoteToken} width={20} height={20} />
-            </Box>
-            <Text small>
-              {quoteToken?.symbol}&nbsp;(1&nbsp;{quoteToken?.symbol}&nbsp;=&nbsp;USD)
-            </Text>
-          </Flex>
-        </Info>
-      </Box>
-    </>
-  ))()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          TVL
-        </Text>
+        {(isMobile || isTablet) && (
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            TVL
+          </Text>
+        )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
         <Flex alignItems="center">
           {tvl ? <Text>{nFormatter(tvl)}</Text> : <Skeleton width="80px" height="16px" />}

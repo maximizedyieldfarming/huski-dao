@@ -24,53 +24,20 @@ import bone2 from './assets/bone2-1x.png'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
-import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 import LeverageCard from './components/LeverageCard/LeverageCard'
 import { getHuskyRewards, getYieldFarming, getTvl } from './helpers'
+import { ReactComponent as AllFilter } from './assets/AllFilter.svg'
+import { ReactComponent as BnbIcon } from './assets/Bnb.svg'
+import { ReactComponent as BusdIcon } from './assets/Busd.svg'
+import { ReactComponent as BtcbIcon } from './assets/Btcb.svg'
+import { ReactComponent as EthIcon } from './assets/Eth.svg'
+import { ReactComponent as PancakeSwapIcon } from './assets/pancakeswap.svg'
 
-const PositionsTableWrapper = styled.div`
-  background-color: ${({ theme }) => theme.card.background};
-  margin-bottom: 2rem;
-  border-radius: 20px;
-  padding: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  > div:first-child {
-    flex-grow: 1;
-  }
-  > figure {
-    display: none;
-    ${({ theme }) => theme.mediaQueries.xxl} {
-      margin-left: 10px;
-      display: block;
-    }
-  }
-`
 const ImageContainer = styled.figure`
   display: none;
   ${({ theme }) => theme.mediaQueries.lg} {
     display: block;
   }
-`
-
-const StyledBox = styled(Box)`
-  color: #9615e7;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 20px;
-  padding: 10px;
-  gap: 1rem;
-  span:last-child {
-    font-size: 2rem;
-  }
-`
-
-const Title = styled.div`
-  color: #9615e7;
-  font-size: 36px;
 `
 
 const ActionButton = styled(Button)`
@@ -81,28 +48,23 @@ const ActionButton = styled(Button)`
   box-shadow: none;
 `
 const PositionsButton = styled(ActionButton)`
-  background-color: ${(props) => (props.isActive === 'true' ? '#9615E7' : ({ theme }) => theme.card.background)};
-  border: 1px solid #9615e7;
-  color: ${(props) => (props.isActive === 'true' ? '#fff' : '#9615E7')};
-  // font-size: 20px;
+  background-color: unset;
+  border-bottom: ${({ isActive }) => (isActive === 'true' ? '2px solid #9615e7' : 'unset')};
+  color: ${({ isActive }) => (isActive === 'true' ? '#9615E7' : '#9D9D9D')};
   font-weight: bold;
-  border-radius: 21px;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  border-radius: unset;
+  padding: unset;
+  padding-bottom: 10px;
 `
 
 const RewardsContainer = styled(Flex)`
   flex-direction: row;
   position: relative;
   background-color: ${({ theme }) => theme.card.background};
-  padding: 5px 2rem;
+  padding: 10px 2rem;
   ${({ theme }) => theme.mediaQueries.md} {
     order: 2;
   }
-`
-
-const CardLayout = styled(FlexLayout)`
-  justify-content: center;
 `
 
 const TopSection = styled(Flex)`
@@ -118,21 +80,53 @@ const PositionButtonsContainer = styled(Flex)`
   }
 `
 
+const FilterOption = styled(Button)`
+  padding: 10px;
+  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : 'unset')};
+  // color: ${({ theme, isActive }) => isActive && theme.colors.primary};
+  border-radius: ${({ theme }) => theme.radii.default};
+  margin: 0 5px;
+  > svg {
+    height: 28px;
+    width: 28px;
+    path {
+      height: auto;
+      width: 100%;
+    }
+    &.allFilter {
+      fill: #f7931a;
+    }
+  }
+`
+
+const FiltersWrapper = styled(Flex)`
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+    gap: 0;
+  }
+  > .dexFilter {
+  }
+  > .tokenFilter {
+    overflow-x: auto;
+  }
+  .searchSortContainer {
+    flex-direction: column;
+    ${({ theme }) => theme.mediaQueries.lg} {
+      margin-left: auto;
+      flex-direction: row;
+      gap: 10px;
+    }
+  }
+`
+
 const Leverage: React.FC = () => {
-  const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
-  console.info('farmsData', farmsData)
   const data = useGetPositions()
-
-  const cardLayout = (
-    <CardLayout>
-      {farmsData.map((token) => (
-        <LeverageCard tokenData={token} key={token?.pid} />
-      ))}
-    </CardLayout>
-  )
 
   // search feature
   const [searchQuery, setSearchQuery] = useState('')
@@ -220,8 +214,6 @@ const Leverage: React.FC = () => {
     })
   }
 
-  console.info('positionFarmsData', positionFarmsData)
-
   let reward = 0
   positionFarmsData.map((farm) => {
     const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
@@ -235,19 +227,16 @@ const Leverage: React.FC = () => {
     <Page>
       <TopSection justifyContent="space-between">
         <RewardsContainer flexDirection="row" borderRadius="20px">
-          <ImageContainer style={{ position: 'absolute', left: '-35px' }}>
+          <ImageContainer style={{ position: 'absolute', left: '-35px', top: '50%' }}>
             <img src={bone2} alt="" />
           </ImageContainer>
-          <StyledBox>
-            <span>Husky Token Rewards</span>
-            <Flex alignItems="center" style={{ gap: '10px' }}>
-              {reward ? <Text>{reward.toPrecision(3)}</Text> : <Skeleton width="80px" height="16px" />}
-              <ActionButton>Claim</ActionButton>
-            </Flex>
-          </StyledBox>
-          <ImageContainer style={{ position: 'absolute', right: '-35px' }}>
-            <img src={bone1} alt="" />
-          </ImageContainer>
+          <Box padding="0 1rem">
+            <Text mb="1rem">HUSKI Rewards</Text>
+            {reward ? <Text>{reward.toPrecision(3)}</Text> : <Skeleton width="80px" height="16px" />}
+          </Box>
+          <Flex alignSelf="flex-end">
+            <ActionButton>Claim</ActionButton>
+          </Flex>
         </RewardsContainer>
         <PositionButtonsContainer alignSelf="flex-end" style={{ gap: '1rem' }}>
           <PositionsButton isActive={isActivePos ? 'true' : 'false'} onClick={() => setActive(true)}>
@@ -259,47 +248,113 @@ const Leverage: React.FC = () => {
         </PositionButtonsContainer>
       </TopSection>
 
-      <PositionsTableWrapper>
-        {isActivePos ? (
-          <ActivePositionsTable positionFarmsData={positionFarmsData} />
-        ) : (
-          <LiquidatedPositionsTable data={null} />
-        )}
-        <ImageContainer>
-          <img src={husky2} alt="" />
-        </ImageContainer>
-      </PositionsTableWrapper>
-
-      <Flex alignSelf="flex-end">
-        <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
-        <Flex alignItems="center" mr="10px">
-          <SearchInput onChange={handleChangeQuery} placeholder="Search" />
-        </Flex>
-        <Select
-          options={[
-            {
-              label: 'Default',
-              value: 'default',
-            },
-            {
-              label: 'APY',
-              value: 'apy',
-            },
-            {
-              label: 'TVL',
-              value: 'tvl',
-            },
-            {
-              label: 'Leverage',
-              value: 'leverage',
-            },
-          ]}
-          onChange={handleSortOptionChange}
-        />
-      </Flex>
-      {viewMode === ViewMode.CARD ? (
-        cardLayout
+      {isActivePos ? (
+        <ActivePositionsTable positionFarmsData={positionFarmsData} />
       ) : (
+        <LiquidatedPositionsTable data={null} />
+      )}
+
+      <Box>
+        <FiltersWrapper>
+          <Flex alignItems="center" className="dexFilter">
+            <Text>DEX:</Text>
+            <Flex overflowX="auto">
+              <FilterOption
+                variant="tertiary"
+                startIcon={<AllFilter className="allFilter" />}
+                isActive={dexFilter === 'all'}
+                onClick={() => setDexFilter('all')}
+              >
+                All
+              </FilterOption>
+              <FilterOption
+                variant="tertiary"
+                startIcon={<PancakeSwapIcon />}
+                isActive={dexFilter === 'pancake_swap'}
+                onClick={() => setDexFilter('pancake_swap')}
+              >
+                PancakeSwap
+              </FilterOption>
+            </Flex>
+          </Flex>
+          <Flex alignItems="center" className="tokenFilter">
+            <Text>Paired Assets:</Text>
+            <Flex overflowX="auto">
+              <FilterOption
+                variant="tertiary"
+                startIcon={<AllFilter className="allFilter" />}
+                isActive={pairFilter === 'all'}
+                onClick={() => setPairFilter('all')}
+              >
+                All
+              </FilterOption>
+              <FilterOption
+                variant="tertiary"
+                startIcon={<BnbIcon />}
+                isActive={pairFilter === 'wbnb'}
+                onClick={() => setPairFilter('wbnb')}
+              >
+                BNB
+              </FilterOption>
+              <FilterOption
+                variant="tertiary"
+                startIcon={<BusdIcon />}
+                isActive={pairFilter === 'busd'}
+                onClick={() => setPairFilter('busd')}
+              >
+                BUSD
+              </FilterOption>
+              <FilterOption
+                variant="tertiary"
+                startIcon={<BtcbIcon />}
+                isActive={pairFilter === 'btcb'}
+                onClick={() => setPairFilter('btcb')}
+              >
+                BTCB
+              </FilterOption>
+              <FilterOption
+                variant="tertiary"
+                startIcon={<EthIcon />}
+                isActive={pairFilter === 'eth'}
+                onClick={() => setPairFilter('eth')}
+              >
+                ETH
+              </FilterOption>
+              <FilterOption
+                variant="tertiary"
+                isActive={pairFilter === 'others'}
+                onClick={() => setPairFilter('others')}
+              >
+                Others
+              </FilterOption>
+            </Flex>
+          </Flex>
+          <Flex className="searchSortContainer">
+            <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+            <Select
+              options={[
+                {
+                  label: 'Default',
+                  value: 'default',
+                },
+                {
+                  label: 'APY',
+                  value: 'apy',
+                },
+                {
+                  label: 'TVL',
+                  value: 'tvl',
+                },
+                {
+                  label: 'Leverage',
+                  value: 'leverage',
+                },
+              ]}
+              onChange={handleSortOptionChange}
+            />
+          </Flex>
+        </FiltersWrapper>
+
         <LeverageTable
           leverageData={farmsData}
           dexFilter={dexFilter}
@@ -307,7 +362,7 @@ const Leverage: React.FC = () => {
           setDexFilter={setDexFilter}
           setPairFilter={setPairFilter}
         />
-      )}
+      </Box>
     </Page>
   )
 }
