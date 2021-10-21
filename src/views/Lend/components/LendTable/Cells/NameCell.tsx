@@ -15,7 +15,7 @@ const StyledCell = styled(BaseCell)`
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 1 0 150px;
-    padding-left: 32px;
+    // padding-left: 32px;
   }
 `
 
@@ -30,12 +30,13 @@ const NameCell = ({ token }) => {
         <Flex alignItems="center">
           <TokenImage token={token?.token} width={40} height={40} mr="8px" />
           <Text bold={!isMobile} small={isMobile}>
-            {token?.token.symbol.replace("wBNB", "BNB")}
+            {token?.token.symbol.replace('wBNB', 'BNB')}
           </Text>
         </Flex>
         {exchangeRate ? (
           <Text small color="textSubtle" style={{ whiteSpace: 'nowrap' }}>
-            1 ib{token?.token.symbol.replace("wBNB", "BNB")} = {exchangeRate.toFixed(4)}&nbsp;{token?.token.symbol.replace("wBNB", "BNB")}
+            1 ib{token?.token.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
+            {token?.token.symbol.replace('wBNB', 'BNB')}
           </Text>
         ) : (
           <Skeleton width="80px" height="16px" />

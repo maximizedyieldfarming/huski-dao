@@ -16,6 +16,7 @@ import {
   Flex,
   Box,
   Skeleton,
+  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { ChainId, Currency } from '@pancakeswap/sdk'
 import styled from 'styled-components'
@@ -146,67 +147,24 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   return null
 }
 
-// styled components
-const TableWrapper = styled.div`
-  background-color: ${({ theme }) => theme.card.background};
-  margin-bottom: 2rem;
-  border-radius: 20px;
-  padding: 10px;
-  margin: 1rem 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 1rem 2rem;
-  > div:first-child {
-    flex-grow: 1;
-  }
-  > div:nth-child(2) {
-    flex-basis: 20%;
-  }
-  @media (max-width: 1024px) {
-    flex-direction: column;
-  }
-`
-
-const ActionCell = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
 const ImageContainer = styled.figure``
 
-const StyledBox = styled(Box)`
+const StyledBox = styled(Flex)`
+  position: relative;
   background-color: ${({ theme }) => theme.card.background};
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   align-items: center;
   border-radius: 20px;
-  padding: 10px;
+  padding: 10px 30px;
   span:last-child {
     font-size: 2rem;
   }
-`
-
-const Title = styled.div`
-  color: #9615e7;
-  font-size: 1.5rem;
-  font-weight: bold;
-`
-
-const StyledButton = styled(Button)`
-  padding: 0.75rem;
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  box-shadow: none;
-  word-break: initial;
-`
-const StyledFlex = styled(Flex)`
-  flex-direction: row;
-  position: relative;
-  background-color: ${({ theme }) => theme.card.background};
-  padding: 5px 2rem;
+  > .imgContainer {
+    position: absolute;
+    // left: -40px;
+    transform: translate(-100%, 0);
+  }
 `
 
 const CardLayout = styled(FlexLayout)`
@@ -230,13 +188,10 @@ const Lend: React.FC = () => {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  // const { account } = useActiveWeb3React()
   const lendTotalSupply = useLendTotalSupply()
-  console.log({ lendTotalSupply })
   const { data: farmsData } = useLeverageFarms()
-  console.log({ 'farm 数据': farmsData })
   const hash = {}
-  let lendData = farmsData.reduce((cur, next) => {
+  const lendData = farmsData.reduce((cur, next) => {
     hash[next.poolId] ? '' : (hash[next.poolId] = true && cur.push(next))
     return cur
   }, [])
@@ -244,118 +199,37 @@ const Lend: React.FC = () => {
   console.log({ lendData })
 
   usePollLeverageFarmsWithUserData()
-  const cardLayout = (
-    <CardLayout>
-      {lendData.map((token) => (
-        <LendCard token={token} key={token?.pid} />
-      ))}
-    </CardLayout>
-  )
 
-  // search feature
-  const [searchQuery, setSearchQuery] = useState('')
-  const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value)
-  }
-  if (searchQuery) {
-    const lowercaseQuery = latinise(searchQuery.toLowerCase())
-    lendData = lendData.filter((token) => token.token.symbol.toLowerCase().includes(lowercaseQuery))
-  }
-
-  // sort feature
-  const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
-  const [sortOption, setSortOption] = useState('hot')
-  const handleSortOptionChange = (option) => {
-    setSortOption(option.value)
-  }
-  const sortPools = (dataToSort) => {
-    switch (sortOption) {
-      case 'apy':
-        return orderBy(
-          dataToSort,
-          (token) => (token.totalToken ? getAprData(token, huskyPrice, huskyPerBlock).apy : 0),
-          'desc',
-        )
-      case 'total_supply':
-        return orderBy(dataToSort, (token) => (token.totalToken ? parseInt(token.totalToken) : 0), 'desc')
-
-      case 'total_borrowed':
-        return orderBy(dataToSort, (token) => (token.vaultDebtVal ? parseInt(token.vaultDebtVal) : 0), 'desc')
-      case 'utilization_rate':
-        return orderBy(
-          dataToSort,
-          (token) =>
-            token.vaultDebtVal && token.totalToken
-              ? token.totalToken > 0
-                ? token.vaultDebtVal / token.totalToken
-                : 0
-              : 0,
-          'desc',
-        )
-      case 'balance':
-        return orderBy(
-          dataToSort,
-          (token) => (token.userData.tokenBalance ? parseInt(token.userData.tokenBalance) : 0),
-          'desc',
-        )
-      default:
-        return dataToSort
-    }
-  }
-
-  lendData = sortPools(lendData)
+  const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
     <Page>
       <TopSection>
         <StyledBox>
-          <Text>Volume 24H:</Text>
-          {/* lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" /> */}
-          <Skeleton width="180px" height="30px" />
+          {!(isMobile || isTablet) && (
+            <Box className="imgContainer">
+              <img src={bone2} alt="" />
+            </Box>
+          )}
+          <Box>
+            <Text>Volume 24H:</Text>
+            {/* lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" /> */}
+            <Skeleton width="180px" height="30px" />
+          </Box>
         </StyledBox>
         <StyledBox>
-          <Text>Total Value Locked:</Text>
-          {lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" />}
+          <Box>
+            <Text>Total Value Locked:</Text>
+            {lendTotalSupply ? (
+              <Text fontSize="30px">{`$${lendTotalSupply}`}</Text>
+            ) : (
+              <Skeleton width="180px" height="30px" />
+            )}
+          </Box>
         </StyledBox>
       </TopSection>
 
-      <Flex alignSelf="flex-end" alignItems="center">
-        {/* <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} /> */}
-        <Flex alignItems="center" mr="10px">
-          <SearchInput onChange={handleChangeQuery} placeholder="Search" />
-        </Flex>
-        <Select
-          options={[
-            {
-              label: 'Default',
-              value: 'default',
-            },
-            {
-              label: 'APY',
-              value: 'apy',
-            },
-            {
-              label: 'Total Supply',
-              value: 'total_supply',
-            },
-            {
-              label: 'Total Borrowed',
-              value: 'total_borrowed',
-            },
-            {
-              label: 'Utilization Rate',
-              value: 'utilizatoin_rate',
-            },
-            {
-              label: 'Balance',
-              value: 'balance',
-            },
-          ]}
-          onChange={handleSortOptionChange}
-        />
-      </Flex>
-      {viewMode === ViewMode.CARD ? cardLayout : <LendTable lendData={lendData} />}
+      <LendTable lendData={lendData} />
     </Page>
   )
 }

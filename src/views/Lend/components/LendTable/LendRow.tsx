@@ -35,20 +35,21 @@ const LendRow = ({ tokenData }) => {
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
-  const { totalToken, vaultDebtVal, userData,  } = tokenData
-
+  const { totalToken, vaultDebtVal, userData } = tokenData
+  const totalSupplyUSD = Number(totalToken) * Number(tokenData.token.busdPrice)
+  const totalBorrowedUSD = Number(vaultDebtVal) * Number(tokenData.token.busdPrice)
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
         <ApyCell getApyData={getAprData(tokenData, huskyPrice, huskyPerBlock)} token={tokenData} />
-        <TotalSupplyCell supply={parseInt(totalToken)} />
-        <TotalBorrowedCell borrowed={parseInt(vaultDebtVal)} />
+        <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />
+        <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} />
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
         <BalanceCell
           balance={userData.tokenBalance}
           balanceIb={userData.tokenBalanceIB}
-          name={tokenData?.token?.symbol.replace("wBNB", "BNB")}
+          name={tokenData?.token?.symbol.replace('wBNB', 'BNB')}
         />
         <ActionCell token={tokenData} />
       </StyledRow>

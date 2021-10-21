@@ -1,8 +1,9 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import LendRow from './LendRow'
+import LendHeaderRow from './LendHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
@@ -34,9 +35,13 @@ const LendTable = ({ lendData }) => {
       behavior: 'smooth',
     })
   }
+
+  const { isMobile, isTablet } = useMatchBreakpoints()
+
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
+        {!(isMobile || isTablet) && <LendHeaderRow />}
         {lendData.map((token) => (
           <LendRow tokenData={token} key={token?.pid} />
         ))}

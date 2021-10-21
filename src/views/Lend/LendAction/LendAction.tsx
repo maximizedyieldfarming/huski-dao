@@ -18,6 +18,8 @@ import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
+import bone1 from '../assets/bone1-1x.png'
+import bone2 from '../assets/bone2-1x.png'
 
 interface Props {
   active: boolean
@@ -74,12 +76,25 @@ const Body = styled(Flex)`
   padding: 1rem;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
+  > .imageContainer {
+    position: absolute;
+    &:first-child {
+      left: 0;
+      top: 30%;
+      transform: translateX(-65%);
+    }
+    &:last-child {
+      right: 0;
+      top: 65%;
+      transform: translateX(65%);
+    }
+  }
 `
 
 const LendAction = (props) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  // const { balance } = useTokenBalance(account)
   const {
     location: {
       state: { exchangeRate: excRate, token: data },
@@ -161,6 +176,9 @@ const LendAction = (props) => {
         </Header>
 
         <Body>
+          <Box className="imageContainer">
+            <img src={bone2} alt="" />
+          </Box>
           {isDeposit ? (
             <Deposit
               balance={displayBalance}
@@ -180,6 +198,9 @@ const LendAction = (props) => {
               tokenData={tokenData}
             />
           )}
+          <Box className="imageContainer">
+            <img src={bone1} alt="" />
+          </Box>
         </Body>
       </TabPanel>
       <Balance>
