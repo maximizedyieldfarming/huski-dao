@@ -84,7 +84,7 @@ const ActivePositionsRow = ({ data }) => {
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell name={null} positionId={positionId} />
-        <PoolCell pool={data.farmData?.lpSymbol} quoteToken={quoteToken} token={token} />
+        <PoolCell pool={data.farmData?.lpSymbol.replace(' LP', '')} quoteToken={quoteToken} token={token} />
         <PositionValueCell position={totalPositionValueInToken} />
         <DebtCell debt={debtValueNumber} borrowedAssets={null} borrowingInterest={borrowingInterest.toPrecision(3)} />
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} />

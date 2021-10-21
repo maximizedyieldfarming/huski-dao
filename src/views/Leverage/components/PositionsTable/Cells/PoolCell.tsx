@@ -29,14 +29,16 @@ const StyledCell = styled(BaseCell)`
 
 const PoolCell = ({ pool, quoteToken, token }) => {
   const { t } = useTranslation()
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Pool
-        </Text>
+        {(isMobile || isTablet) && (
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            Pool
+          </Text>
+        )}
         <Grid alignItems="center" gridTemplateColumns="50px 1fr">
           <TokenPairImage
             variant="inverted"

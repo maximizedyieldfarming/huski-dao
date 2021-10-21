@@ -24,7 +24,7 @@ const StyledCell = styled(BaseCell)`
 `
 
 const EquityCell = ({ equity }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Text>Equity Value = Position Value - Debt Value</Text>
@@ -34,15 +34,17 @@ const EquityCell = ({ equity }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center">
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Equity
-          </Text>
-          {tooltipVisible && tooltip}
-          <span ref={targetRef}>
-            <InfoIcon ml="10px" />
-          </span>
-        </Flex>
+        {(isMobile || isTablet) && (
+          <Flex alignItems="center">
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              Equity
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+        )}
         {equity ? <Text>{equity.toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
