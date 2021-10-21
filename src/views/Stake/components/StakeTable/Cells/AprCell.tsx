@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Box, Flex, InfoIcon } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -32,6 +31,19 @@ const AprCell = ({ getApyData }) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Total&nbsp;APR</Text>
+        <Text>{apyCell(stakeApr)}</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Total&nbsp;APY</Text>
+        <Text>{apyCell(apy)}</Text>
+      </Flex>
+    </>,
+    { placement: 'bottom-start' },
+  )
 
   return (
     <StyledCell role="cell">
@@ -42,16 +54,10 @@ const AprCell = ({ getApyData }) => {
         {apy ? (
           <Flex alignItems="center">
             <Text>{apyCell(apy)}</Text>
-            <Tooltip>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Total&nbsp;APR</Text>
-                <Text>{apyCell(stakeApr)}</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Total&nbsp;APY</Text>
-                <Text>{apyCell(apy)}</Text>
-              </Flex>
-            </Tooltip>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

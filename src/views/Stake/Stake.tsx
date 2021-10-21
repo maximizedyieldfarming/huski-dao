@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { useRouteMatch, useLocation } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
- import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useWeb3React } from '@web3-react/core'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
@@ -166,23 +166,25 @@ const Stake: React.FC = () => {
   }
 
   farmsData = sortPools(farmsData)
-  let reward = 0;
+  let reward = 0
   farmsData.map((farm) => {
     const earnings = new BigNumber(parseFloat(farm?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
     reward += earnings
     return reward
   })
- 
+
   const { balance } = useTokenBalance(getHuskiAddress())
   const alpacaBalance = balance ? balance.dividedBy(BIG_TEN.pow(18)) : BIG_ZERO
 
-  let remainingLockedAmount = 0;
+  let remainingLockedAmount = 0
   farmsData.map((farm) => {
-    remainingLockedAmount = new BigNumber(parseFloat(farm?.userData?.unlockedRewards)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    remainingLockedAmount = new BigNumber(parseFloat(farm?.userData?.unlockedRewards))
+      .div(DEFAULT_TOKEN_DECIMAL)
+      .toNumber()
     return remainingLockedAmount
   })
 
-  let unlockedRewards = 0;
+  let unlockedRewards = 0
   farmsData.map((farm) => {
     unlockedRewards = new BigNumber(parseFloat(farm?.userData?.unlockedRewards)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
     return unlockedRewards
@@ -198,13 +200,7 @@ const Stake: React.FC = () => {
           <Flex flex="1" padding="1rem" borderRadius="20px" justifyContent="space-between">
             <Box>
               <Text>Huski earned:</Text>
-              {reward ? (
-                <Text>
-                  {reward.toPrecision(3)}
-                </Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
+              {reward ? <Text>{reward.toPrecision(3)}</Text> : <Skeleton width="80px" height="16px" />}
             </Box>
             <Flex position="relative">
               <ImageContainer>
@@ -217,58 +213,24 @@ const Stake: React.FC = () => {
               <Flex flexDirection="column">
                 <Text>Your HUSKI Wallet Balance</Text>
                 {alpacaBalance ? (
-                  <Text>
-                    {alpacaBalance.toNumber().toPrecision(3)}
-                  </Text>
+                  <Text>{alpacaBalance.toNumber().toPrecision(3)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
               </Flex>
               <Flex flexDirection="column">
                 <Text>Remaining Locked Amount</Text>
-                <Text>
-                  {remainingLockedAmount.toPrecision(3)}
-                </Text>
+                <Text>{remainingLockedAmount.toPrecision(3)}</Text>
               </Flex>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
               <Text>Unlocked Rewards</Text>
-              <Text>
-                {unlockedRewards.toPrecision(3)}
-              </Text>
+              <Text>{unlockedRewards.toPrecision(3)}</Text>
               <StyledButton onClick={handleConfirmClick}>Claim</StyledButton>
             </Flex>
           </Grid>
         </RewardsSummarySection>
       </Box>
-
-      <Flex alignSelf="flex-end">
-        {/*         <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} /> */}
-        <Flex alignItems="center" mr="10px">
-          <SearchInput onChange={handleChangeQuery} placeholder="Search" />
-        </Flex>
-        <Select
-          options={[
-            {
-              label: 'Default',
-              value: 'default',
-            },
-            {
-              label: 'APY',
-              value: 'apy',
-            },
-            {
-              label: 'Total Supply',
-              value: 'total_supply',
-            },
-            {
-              label: 'Total HUSKI Rewards',
-              value: 'total_huski_rewards',
-            },
-          ]}
-          onChange={handleSortOptionChange}
-        />
-      </Flex>
 
       {viewMode === ViewMode.CARD ? cardLayout : <StakeTable stakeData={farmsData} />}
     </Page>
