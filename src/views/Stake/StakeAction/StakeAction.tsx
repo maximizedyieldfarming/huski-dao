@@ -51,7 +51,6 @@ const HeaderTabs = styled(Link)<Props>`
   border-top: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
   padding: 1rem;
   cursor: pointer;
-  background-color: y;
   &:first-child {
     border-top-left-radius: 20px;
   }
@@ -63,7 +62,16 @@ const HeaderTabs = styled(Link)<Props>`
 const Body = styled(Flex)`
   padding: 1rem;
   flex-direction: column;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 10rem;
+`
+const StakedContainer = styled(Flex)`
+  background-color: ${({ theme }) => theme.card.background};
+  padding: 1rem;
+  border-radius: 20px;
+  width: 510px;
+  justify-content: space-between;
+  align-items: center;
 `
 
 const StakeAction = (props) => {
@@ -85,20 +93,55 @@ const StakeAction = (props) => {
   // const displayBalance = getFullDisplayBalance(balance, 18, 3)
 
   const tokenBalanceIb = tokenData?.userData?.tokenBalance
+  const stakedBalanceIb = tokenData?.userData?.stakedBalance
   const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const userStaked = tokenData?.userData?.stakedBalance
+  const { allowance } = tokenData?.userData
+
+  /* const handleConfirmClick = async () => {
+    setPendingTx(true)
+
+    if (isRemovingStake) {
+      // unstaking
+      try {
+        await onUnstake(stakeAmount, stakingToken.decimals)
+        toastSuccess(
+          `${t('Unstaked')}!`,
+          t('Your %symbol% earnings have also been harvested to your wallet!', {
+            symbol: earningToken.symbol,
+          }),
+        )
+        setPendingTx(false)
+        onDismiss()
+      } catch (e) {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+        setPendingTx(false)
+      }
+    } else {
+      try {
+        // staking
+        await onStake(stakeAmount, stakingToken.decimals)
+        toastSuccess(
+          `${t('Staked')}!`,
+          t('Your %symbol% funds have been staked in the pool!', {
+            symbol: stakingToken.symbol,
+          }),
+        )
+        setPendingTx(false)
+        onDismiss()
+      } catch (e) {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+        setPendingTx(false)
+      }
+    }
+  } */
 
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
         {action} {tokenName}
       </Text>
-      <Bubble>
-        <Text>Staked</Text>
-        <Text>
-          {userTokenBalance(userStaked).toNumber().toPrecision(3)} {tokenName}
-        </Text>
-      </Bubble>
+
       <TabPanel>
         <Header>
           <HeaderTabs
@@ -124,16 +167,24 @@ const StakeAction = (props) => {
               account={account}
               balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
               name={tokenName}
+              allowance={allowance}
+              tokenData={tokenData}
             />
           ) : (
             <Unstake
               account={account}
-              balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
+              stakedBalance={userTokenBalance(stakedBalanceIb).toNumber().toPrecision(3)}
               name={tokenName}
+              allowance={allowance}
+              tokenData={tokenData}
             />
           )}
         </Body>
       </TabPanel>
+      <StakedContainer>
+        <Text>Staked</Text>
+        <Text>{`${userTokenBalance(stakedBalanceIb).toNumber().toPrecision(3)} ${tokenName}`}</Text>
+      </StakedContainer>
     </StyledPage>
   )
 }

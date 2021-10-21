@@ -1,65 +1,105 @@
 import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import NumberInput from 'components/NumberInput'
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
+import { getAddress } from 'utils/addressHelpers'
+import { ethers, Contract } from 'ethers'
+import { useCakeVaultContract, useERC20 } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useTranslation } from 'contexts/Localization'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
 `
-
-const Stake = ({ account, balance, name }) => {
-  // FIX: for scroll-wheel changing input of number type
-  // using this method the problem won't happen
-  const numberInputRef = useRef([])
-  useEffect(() => {
-    const handleWheel = (e) => e.preventDefault()
-    const references = numberInputRef.current
-    references.forEach((reference) => reference.addEventListener('wheel', handleWheel))
-
-    return () => {
-      references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
+const MaxContainer = styled(Flex)`
+  align-items: center;
+  justify-content: center;
+  ${Box} {
+    padding: 0 5px;
+    &:first-child {
+      border-right: 2px solid ${({ theme }) => theme.colors.text};
     }
-  }, [])
+    &:last-child {
+      // border-left: 1px solid purple;
+    }
+  }
+`
+
+const Stake = ({ account, balance, name, allowance, tokenData }) => {
+  const { t } = useTranslation()
   console.log({ balance })
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState<number>()
+  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
 
   const handleAmountChange = (e) => {
-    const value = e.target.value ? parseFloat(e.target.value) : 0
-    setAmount(value)
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault()
+    }
+    const { value } = e.target
+
+    const finalValue = value > balance ? balance : value
+    setAmount(finalValue)
   }
 
   const setAmountToMax = (e) => {
-    setAmount(parseFloat(balance))
+    setAmount(balance)
   }
+
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const tokenAddress = getAddress(tokenData.token.address)
+  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const approveContract = useERC20(tokenAddress)
+
+  const handleApprove = async () => {
+    toastInfo('Approving...', 'Please Wait!')
+    try {
+      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.log('receipt', receipt.status)
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        console.log('receipt', receipt.status)
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      console.log('error', error)
+      toastWarning(t('Error'), error.message)
+    }
+  }
+
   return (
     <>
       <Flex justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <Input
-            type="number"
-            placeholder="0.00"
-            onChange={handleAmountChange}
-            step="0.01"
-            value={amount}
-            ref={(input) => numberInputRef.current.push(input)}
-          />
+          <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
         </Box>
         <Box>
           <Text fontWeight="bold">
-            Balance: {balance} {name}
+            Available Balance: {balance} {name}
           </Text>
-          <Flex>
-            <Text>{name} | </Text>
-            <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-              MAX
-            </Button>
-          </Flex>
+          <MaxContainer>
+            <Box>
+              <Text>{name}</Text>
+            </Box>
+            <Box>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+                MAX
+              </Button>
+            </Box>
+          </MaxContainer>
         </Box>
       </Flex>
 
       <ButtonGroup flexDirection="column">
-        <Button disabled={!account}>Approve</Button>
-        <Button disabled={!account}>Claim</Button>
+        {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
+        <Button
+          disabled={!account || !isApproved || Number(amount) === 0 || amount === undefined || Number(balance) === 0}
+        >
+          Confirm
+        </Button>
       </ButtonGroup>
     </>
   )
