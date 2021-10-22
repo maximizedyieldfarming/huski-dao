@@ -9,14 +9,14 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.lg} {
     flex: 1 0 120px;
   }
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    ${({ theme }) => theme.mediaQueries.md} {
+    ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: column;
     }
   }
@@ -28,13 +28,15 @@ const UtilRateCell = ({ utilRate }) => {
     return `${value.toFixed(2)}%`
   }
 
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Utilization Rate
-        </Text>
+        {(isMobile || isTablet) && (
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            Utilization Rate
+          </Text>
+        )}
         {utilRate ? <Text>{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>

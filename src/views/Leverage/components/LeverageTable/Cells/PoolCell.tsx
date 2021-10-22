@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton } from '@pancakeswap/uikit'
+import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton, useTooltip } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenPairImage, TokenImage } from 'components/TokenImage'
 import nFormatter from 'utils/nFormatter'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -26,12 +25,52 @@ const StyledCell = styled(BaseCell)`
 
 const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
   const { t } = useTranslation()
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const quoteToken = tokenData?.quoteToken
   const token = tokenData?.token
 
   // const lpTokensValue = new BigNumber(tokenData?.tokenAmountTotal).times(lpTokens.toNumber())
-
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text small>TVL</Text>
+      {tvl && lpTokens ? (
+        <Text>
+          {nFormatter(tvl)}&nbsp;({nFormatter(lpTokens.toNumber())}&nbsp;LP Tokens)
+        </Text>
+      ) : (
+        <Skeleton width="80px" height="16px" />
+      )}
+      <Flex alignItems="center">
+        <Box width={20} height={20} mr="5px">
+          <TokenImage token={token} width={20} height={20} />
+        </Box>
+        {token?.busdPrice ? (
+          <Text small>
+            {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
+            &nbsp;=&nbsp;{parseFloat(token?.busdPrice).toFixed(2)}
+            &nbsp;USD)
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
+      </Flex>
+      <Flex alignItems="center">
+        <Box width={20} height={20} mr="5px">
+          <TokenImage token={quoteToken} width={20} height={20} />
+        </Box>
+        {quoteToken?.busdPrice ? (
+          <Text small>
+            {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
+            &nbsp;=&nbsp;
+            {parseFloat(quoteToken?.busdPrice).toFixed(2)}&nbsp;USD)
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
+      </Flex>
+    </>,
+    { placement: 'bottom-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -44,51 +83,19 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
             height={40}
             mr="8px"
           />
-          {/*   <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Pool
-        </Text> */}
+          {/*   {(isMobile || isTablet) && (
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              Pool
+            </Text>
+          )} */}
           <Flex flex="1" alignItems="center">
             <Text bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }}>
               {pool}
             </Text>
-            <Tooltip>
-              <Text small>TVL</Text>
-              {tvl && lpTokens ? (
-                <Text>
-                  {nFormatter(tvl)}&nbsp;({nFormatter(lpTokens.toNumber())}&nbsp;LP Tokens)
-                </Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
-              <Flex alignItems="center">
-                <Box width={20} height={20} mr="5px">
-                  <TokenImage token={token} width={20} height={20} />
-                </Box>
-                {token?.busdPrice ? (
-                  <Text small>
-                    {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
-                    &nbsp;=&nbsp;{parseFloat(token?.busdPrice).toFixed(2)}
-                    &nbsp;USD)
-                  </Text>
-                ) : (
-                  <Skeleton width="80px" height="16px" />
-                )}
-              </Flex>
-              <Flex alignItems="center">
-                <Box width={20} height={20} mr="5px">
-                  <TokenImage token={quoteToken} width={20} height={20} />
-                </Box>
-                {quoteToken?.busdPrice ? (
-                  <Text small>
-                    {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
-                    &nbsp;=&nbsp;
-                    {parseFloat(quoteToken?.busdPrice).toFixed(2)}&nbsp;USD)
-                  </Text>
-                ) : (
-                  <Skeleton width="80px" height="16px" />
-                )}
-              </Flex>
-            </Tooltip>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
           </Flex>
         </Flex>
       </CellContent>

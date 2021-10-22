@@ -24,28 +24,34 @@ const StyledCell = styled(BaseCell)`
 `
 
 const PositionValueCell = ({ position }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Position value = Debt Value + Equity Value + Yield Current yield: </Text>
+      <Text>Position value = Debt Value + Equity Value + Yield</Text>
     </>,
     { placement: 'top-start' },
   )
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center">
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Position
-          </Text>
-          {tooltipVisible && tooltip}
-          <span ref={targetRef}>
-            <InfoIcon ml="10px" />
-          </span>
-        </Flex>
-        {position ? <Text>{position.toNumber().toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
+        {(isMobile || isTablet) && (
+          <Flex alignItems="center">
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              APY
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+        )}
+        {position && !position.isNaN() ? (
+          <Text>{position.toNumber().toFixed(3)}</Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

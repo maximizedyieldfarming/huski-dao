@@ -57,12 +57,15 @@ const Info = styled(Box)<InfoParams>`
 const Borrowing = ({ tokenData }) => {
   const quoteToken = tokenData?.quoteToken?.symbol
   const token = tokenData?.token?.symbol
+  const { isMobile, isTablet } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Borrowing
-        </Text>
+        {(isMobile || isTablet) && (
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            Borrowing
+          </Text>
+        )}
         <Select
           options={[
             {

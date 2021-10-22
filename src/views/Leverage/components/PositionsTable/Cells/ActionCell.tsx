@@ -17,6 +17,14 @@ const StyledCell = styled(BaseCell)`
   > div {
     gap: 5px;
   }
+  a {
+    padding: 0.75rem;
+    font-size: 14px;
+    font-weight: 400;
+    height: auto;
+    box-shadow: none;
+    word-break: initial;
+  }
 `
 const StyledButton = styled(Button)`
   padding: 0.75rem;
@@ -44,7 +52,7 @@ const ActionCell = ({ posData, disabled }) => {
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
         >
-          Adjust Position
+          Adjust
         </Button>
         <Button
           as={Link}
@@ -55,7 +63,7 @@ const ActionCell = ({ posData, disabled }) => {
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
         >
-          Close Position
+          Close
         </Button>
       </CellContent>
     </StyledCell>

@@ -1,9 +1,10 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Text } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import ActivePositionsRow from './ActivePositionsRow'
+import ActivePositionsHeaderRow from './ActivePositionsHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
@@ -20,7 +21,7 @@ const StyledTable = styled.div`
 
 const StyledTableBorder = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  // background-color: ${({ theme }) => theme.colors.cardBorder};
+  background-color: ${({ theme }) => theme.colors.cardBorder};
   padding: 1px 1px 3px 1px;
   background-size: 400% 400%;
 `
@@ -52,9 +53,12 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
 
   // console.log('positions', positionFarmsData)
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
+
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
+        {!(isMobile || isTablet) && <ActivePositionsHeaderRow />}
         {positionFarmsData.length ? (
           positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.id} />)
         ) : (

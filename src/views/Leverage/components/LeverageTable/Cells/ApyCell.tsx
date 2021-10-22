@@ -1,6 +1,15 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Box, Flex, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Box,
+  Flex,
+  InfoIcon,
+  ChevronRightIcon,
+  useTooltip,
+} from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { Pool } from 'state/types'
@@ -24,54 +33,62 @@ const StyledCell = styled(BaseCell)`
 `
 
 const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borrowingInterest }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
 
   const tradingFeesNumber = tradingFees * 365
   const huskyRewardsNumber = huskyRewards * 100
   const apr = yieldFarming + tradingFeesNumber + huskyRewardsNumber - borrowingInterest
   const dailyApr = apr / 365
-
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Yield&nbsp;Farming</Text>
+        <Text>{yieldFarming?.toFixed(2)}%</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Trading&nbsp;Fees</Text>
+        <Text>{tradingFeesNumber.toFixed(2)}%</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>HUSKY&nbsp;Rewards</Text>
+        <Text>{huskyRewardsNumber.toFixed(2)}%</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Borrowing&nbsp;Interest</Text>
+        <Text>-{Number(borrowingInterest * 100).toFixed(2)}%</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Total&nbsp;APR</Text>
+        <Text>{apr.toFixed(2)}%</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Total&nbsp;APY</Text>
+        <Text>{apyAtOne}%</Text>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text small>Daily&nbsp;APR</Text>
+        <Text>{dailyApr.toFixed(2)}%</Text>
+      </Flex>
+    </>,
+    { placement: 'bottom-start' },
+  )
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          APY
-        </Text>
+        {(isMobile || isTablet) && (
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            APY
+          </Text>
+        )}
         {apy ? (
           <Flex alignItems="center">
             <Text color="textSubtle">{apyAtOne}%</Text>
             <ChevronRightIcon />
             <Text bold>{apy}%</Text>
-            <Tooltip>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Yield&nbsp;Farming</Text>
-                <Text>{yieldFarming?.toFixed(2)}%</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Trading&nbsp;Fees</Text>
-                <Text>{tradingFeesNumber.toFixed(2)}%</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>HUSKY&nbsp;Rewards</Text>
-                <Text>{huskyRewardsNumber.toFixed(2)}%</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Borrowing&nbsp;Interest</Text>
-                <Text>-{Number(borrowingInterest * 100).toFixed(2)}%</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Total&nbsp;APR</Text>
-                <Text>{apr.toFixed(2)}%</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Total&nbsp;APY</Text>
-                <Text>{apyAtOne}%</Text>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Text small>Daily&nbsp;APR</Text>
-                <Text>{dailyApr.toFixed(2)}%</Text>
-              </Flex>
-            </Tooltip>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

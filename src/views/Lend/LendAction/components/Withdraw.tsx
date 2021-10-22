@@ -7,6 +7,7 @@ import NumberInput from 'components/NumberInput'
 import useToast from 'hooks/useToast'
 import { getAddress } from 'utils/addressHelpers'
 import { withdraw } from 'utils/vaultService'
+import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -27,6 +28,15 @@ const MaxContainer = styled(Flex)`
     &:last-child {
       // border-left: 1px solid purple;
     }
+  }
+`
+const StyledArrowDown = styled(ArrowDown)`
+ fill: ${({ theme }) => theme.colors.text};
+  width: 20px;
+  height: 13px;
+  path {
+    stroke: ${({ theme }) => theme.colors.text};
+    stroke-width: 20px;
   }
 `
 
@@ -69,7 +79,13 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
       <Section justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
+          <NumberInput
+            placeholder="0.00"
+            onChange={handleAmountChange}
+            step="0.01"
+            value={amount}
+            style={{ backgroundColor: 'transparent' }}
+          />
         </Box>
         <Box>
           <Text fontWeight="bold">Balance: {`${balance} ib${name}`}</Text>
@@ -86,13 +102,14 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
           </MaxContainer>
         </Box>
       </Section>
-      <Box>
+      <Flex flexDirection="column">
+        <StyledArrowDown style={{ margin: '0 auto' }} />
         <Text textAlign="center">Assets Received</Text>
         <Section justifyContent="space-between">
           <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
           <Text>{name}</Text>
         </Section>
-      </Box>
+      </Flex>
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
         <Button
           onClick={handleConfirm}

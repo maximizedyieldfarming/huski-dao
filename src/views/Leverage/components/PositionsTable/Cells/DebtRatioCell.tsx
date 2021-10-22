@@ -24,7 +24,7 @@ const StyledCell = styled(BaseCell)`
 `
 
 const DebtRatioCell = ({ debtRatio }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Text>Debt Ratio = Debt Value / Position Value</Text>
@@ -34,16 +34,21 @@ const DebtRatioCell = ({ debtRatio }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center">
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Debt Ratio
-          </Text>
-          {tooltipVisible && tooltip}
-          <span ref={targetRef}>
-            <InfoIcon ml="10px" />
-          </span>
-        </Flex>
-        {debtRatio ? <Text>{(debtRatio.toNumber() * 100).toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
+        {(isMobile || isTablet) && (
+          <Flex alignItems="center">
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              Debt Ratio
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>)}
+        {debtRatio && !debtRatio.isNaN() ? (
+          <Text>{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

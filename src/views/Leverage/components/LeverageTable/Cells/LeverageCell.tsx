@@ -39,12 +39,7 @@ const CustomButton = styled(Button)`
 `
 
 // const LeverageCell = ({ leverage }) => {
-export default function LeverageCell({ leverage, onChange }: {
-  leverage: any
-  onChange: (value: any) => void
-}) {
-
-  const { isMobile } = useMatchBreakpoints()
+export default function LeverageCell({ leverage, onChange }: { leverage: any; onChange: (value: any) => void }) {
   const [lvgValue, setLvgValue] = useState(leverage)
   // const increaseLvgValue = (e) => {
   //   setLvgValue(lvgValue + 0.5)
@@ -53,29 +48,26 @@ export default function LeverageCell({ leverage, onChange }: {
   //   setLvgValue(lvgValue - 0.5)
   // }
 
-    const increaseLvgValue = useCallback(
-      () => {
-        const input = lvgValue + 0.5;
-        setLvgValue(input)
-        onChange(input)
-      },
-      [lvgValue, onChange],
-    )
-    const decreaseLvgValue = useCallback(
-      () => {
-        const input = lvgValue - 0.5;
-        setLvgValue(input)
-        onChange(input)
-      },
-      [lvgValue, onChange],
-    )
+  const increaseLvgValue = useCallback(() => {
+    const input = lvgValue + 0.5
+    setLvgValue(input)
+    onChange(input)
+  }, [lvgValue, onChange])
+  const decreaseLvgValue = useCallback(() => {
+    const input = lvgValue - 0.5
+    setLvgValue(input)
+    onChange(input)
+  }, [lvgValue, onChange])
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Leverage
-        </Text>
+        {(isMobile || isTablet) && (
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
+            Leverage
+          </Text>
+        )}
         <LeverageContainer>
           <Flex padding="1rem">
             <Text>{lvgValue.toFixed(2)}</Text>

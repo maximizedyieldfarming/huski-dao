@@ -231,11 +231,11 @@ const leverageFarms: LeverageFarmConfig[] = [
     poolId: 11,
     vaultAddress: {
       97: '',
-      56: '0x7C9e73d4C71dae564d41F78d56439bB4ba87592f',
+      56: '0xf1bE8ecC990cBcb90e166b71E368299f0116d421',
     },
     workerAddress: {
       97: '',
-      56: '0xC5954CA8988988362f60498d5aDEc67BA466492B',
+      56: '0xeF1C5D2c20b22Ae50437a2F3bd258Ab1117D1BaD',
     },
     workerConfig: {
       97: '',
@@ -252,7 +252,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       },
       addTwoSidesOptimal: {
         97: '',
-        56: '0x3fC149995021f1d7AEc54D015Dad3c7Abc952bf0',
+        56: '0xa964FCd9a434CB4C68bFE25E77D1F2Cd5D9679a8',
       },
       withdrawMinimizeTrading: {
         97: '',

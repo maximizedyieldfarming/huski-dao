@@ -11,6 +11,7 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { deposit, approve } from 'utils/vaultService'
+import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
 
 interface DepositProps {
   balance: any
@@ -41,6 +42,16 @@ const MaxContainer = styled(Flex)`
     &:last-child {
       // border-left: 1px solid purple;
     }
+  }
+`
+
+const StyledArrowDown = styled(ArrowDown)`
+  fill: ${({ theme }) => theme.colors.text};
+  width: 20px;
+  height: 13px;
+  path {
+    stroke: ${({ theme }) => theme.colors.text};
+    stroke-width: 20px;
   }
 `
 
@@ -119,7 +130,12 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       <Section justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">Amount</Text>
-          <NumberInput placeholder="0.00" onChange={handleAmountChange} value={amount} />
+          <NumberInput
+            placeholder="0.00"
+            onChange={handleAmountChange}
+            value={amount}
+            style={{ backgroundColor: 'transparent' }}
+          />
         </Box>
         <Box>
           <Text fontWeight="bold">Balance: {`${balance.toPrecision(4)} ${name}`}</Text>
@@ -136,13 +152,14 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           </MaxContainer>
         </Box>
       </Section>
-      <Box>
+      <Flex flexDirection="column">
+        <StyledArrowDown style={{ margin: '0 auto' }} />
         <Text textAlign="center">Assets Received</Text>
         <Section justifyContent="space-between">
           <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
           <Text>ib{name}</Text>
         </Section>
-      </Box>
+      </Flex>
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
         {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
         <Button

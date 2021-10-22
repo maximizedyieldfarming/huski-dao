@@ -10,12 +10,17 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  // flex: 5;
-  flex-direction: row;
-  padding-left: 12px;
-  ${({ theme }) => theme.mediaQueries.sm} {
-    // flex: 1 0 150px;
-    padding-left: 32px;
+  flex: 1 0 50px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex: 1 0 120px;
+  }
+  ${CellContent} {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    ${({ theme }) => theme.mediaQueries.md} {
+      flex-direction: column;
+    }
   }
 `
 

@@ -24,7 +24,7 @@ const StyledCell = styled(BaseCell)`
 `
 
 const LiquidationThresholdCell = ({ liquidationThreshold }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Text>When the debt ratio exceeds liquidation ratio, your position may be liquidated.</Text>
@@ -34,16 +34,18 @@ const LiquidationThresholdCell = ({ liquidationThreshold }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center">
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Liquidation Threshold
-          </Text>
-          {tooltipVisible && tooltip}
-          <span ref={targetRef}>
-            <InfoIcon ml="10px" />
-          </span>
-        </Flex>
-        {liquidationThreshold ? <Text>{liquidationThreshold}</Text> : <Skeleton width="80px" height="16px" />}
+        {(isMobile || isTablet) && (
+          <Flex alignItems="center">
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              Liquidation Threshold
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+        )}
+        {liquidationThreshold ? <Text>{liquidationThreshold}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )
