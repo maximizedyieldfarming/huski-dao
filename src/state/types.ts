@@ -65,8 +65,6 @@ export interface LeverageFarm extends LeverageFarmConfig {
 }
 
 export interface Stake extends StakeConfig {
-  tokenReserve?: SerializedBigNumber
-  quoteTokenReserve?: SerializedBigNumber
   poolWeight?: SerializedBigNumber
   userData?: {
     allowance: string

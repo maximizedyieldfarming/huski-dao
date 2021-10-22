@@ -73,23 +73,8 @@ export interface StakeConfig {
   symbol: string
   pid: number
   token?: Token
-  dual?: {
-    rewardPerBlock: number
-    earnLabel: string
-    endBlock: number
-  }
-  vaultAddress: Address
+  vaultAddress?: Address
   fairLaunchAddress?: Address
-  workerAddress?: Address
-  workerConfig?: Address
-  strategies?: {
-    addAllBaseToken: Address
-    liquidate: Address
-    addTwoSidesOptimal: Address
-    withdrawMinimizeTrading: Address
-  }
-
-
 }
 
 
