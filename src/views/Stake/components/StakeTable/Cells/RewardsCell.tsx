@@ -49,7 +49,7 @@ const RewardsCell = ({ token }) => {
       const tx = await callWithGasPrice(claimContract, 'harvest', [token.pid], { gasLimit: 300000 })
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
+        toastSuccess(t('Successful!'), t('bounty has been sent to your wallet.'))
       }
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
