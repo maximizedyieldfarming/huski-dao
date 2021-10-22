@@ -1,13 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button, Flex, Skeleton } from '@pancakeswap/uikit'
+import { Text,  Button, Flex, Skeleton } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
-import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
+import useToast from 'hooks/useToast'
+import { useClaimFairLaunch } from 'hooks/useContract'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -37,11 +37,24 @@ const StyledCell = styled(BaseCell)`
 `
 
 const RewardsCell = ({ token }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { account } = useWeb3React()
   const reward = new BigNumber(parseFloat(token?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toFixed(3)
-  // const stakedBalance = new BigNumber(parseFloat(token?.userData?.stakedBalance)).div(DEFAULT_TOKEN_DECIMAL).toFixed(3)
-  // console.log({ stakedBalance })
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const { toastError, toastSuccess } = useToast()
+  const claimContract = useClaimFairLaunch()
+
+  const handleConfirmClick = async () => {
+    try {
+      const tx = await callWithGasPrice(claimContract, 'harvest', [token.pid], { gasLimit: 300000 })
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
+      }
+    } catch (error) {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    }
+  }
 
   return (
     <StyledCell role="cell">
@@ -51,8 +64,8 @@ const RewardsCell = ({ token }) => {
         </Text>
         <Flex alignItems="center" style={{ gap: '10px' }}>
           {reward ? <Text fontSize="3">{reward}</Text> : <Skeleton width="80px" height="16px" />}
-          <Button disabled={!account || Number(reward) === 0} scale="sm">
-            Claim
+          <Button disabled={!account || Number(reward) === 0} onClick={handleConfirmClick} scale="sm">
+            {t('Claim1')}
           </Button>
         </Flex>
       </CellContent>

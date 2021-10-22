@@ -11,6 +11,7 @@ import {
   getBunnyFactoryAddress,
   getBunnySpecialAddress,
   getCakeAddress,
+  getFairLaunchAddress,
   getLotteryV2Address,
   getMasterChefAddress,
   getPointCenterIfoAddress,
@@ -33,7 +34,7 @@ import pancakeRabbitsAbi from 'config/abi/pancakeRabbits.json'
 import bunnyFactoryAbi from 'config/abi/bunnyFactory.json'
 import bunnySpecialAbi from 'config/abi/bunnySpecial.json'
 import bep20Abi from 'config/abi/erc20.json'
-
+import fairLaunchAbi from 'config/abi/fairLaunch.json'
 import vaultAbi from 'config/abi/vault.json'
 import erc721Abi from 'config/abi/erc721.json'
 import lpTokenAbi from 'config/abi/lpToken.json'
@@ -98,6 +99,10 @@ export const getPointCenterIfoContract = (signer?: ethers.Signer | ethers.provid
 export const getCakeContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(cakeAbi, getCakeAddress(), signer)
 }
+export const getClaimFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+  return getContract(fairLaunchAbi, getFairLaunchAddress(), signer)
+}
+
 export const getProfileContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(profileABI, getPancakeProfileAddress(), signer)
 }

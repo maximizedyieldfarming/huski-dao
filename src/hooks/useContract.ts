@@ -4,6 +4,7 @@ import {
   getVaultContract,
   getBep20Contract,
   getCakeContract,
+  getClaimFairLaunchContract,
   getBunnyFactoryContract,
   getBunnySpecialContract,
   getPancakeRabbitContract,
@@ -76,6 +77,10 @@ export const useERC721 = (address: string) => {
 export const useCake = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getCakeContract(library.getSigner()), [library])
+}
+export const useClaimFairLaunch = () => {
+  const { library } = useActiveWeb3React()
+  return useMemo(() => getClaimFairLaunchContract(library.getSigner()), [library])
 }
 
 export const useBunnyFactory = () => {

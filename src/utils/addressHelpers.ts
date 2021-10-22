@@ -12,6 +12,10 @@ export const getCakeAddress = () => {
   return getAddress(tokens.cake.address)
 }
 
+export const getFairLaunchAddress = () => {
+  return getAddress(addresses.fairLaunch)
+}
+
 export const getHuskiAddress = () => {
   return getAddress(tokens.alpaca.address)
 }
