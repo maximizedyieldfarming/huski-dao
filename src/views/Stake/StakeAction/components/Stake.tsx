@@ -1,10 +1,13 @@
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
+import BigNumber from 'bignumber.js'
+import { getDecimalAmount } from 'utils/formatBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { ethers, Contract } from 'ethers'
-import { useCakeVaultContract, useERC20 } from 'hooks/useContract'
+import { ethers } from 'ethers'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { useClaimFairLaunch, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useTranslation } from 'contexts/Localization'
 
@@ -27,7 +30,7 @@ const MaxContainer = styled(Flex)`
 
 const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const { t } = useTranslation()
-  console.log({ balance })
+
   const [amount, setAmount] = useState<number>()
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
 
@@ -50,6 +53,8 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const tokenAddress = getAddress(tokenData.token.address)
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const approveContract = useERC20(tokenAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const claimContract = useClaimFairLaunch()
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
@@ -67,6 +72,27 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       console.log('error', error)
       toastWarning(t('Error'), error.message)
     }
+  }
+
+  const callOptions = {
+    gasLimit: 380000,
+  }
+
+  const handleStake = async (convertedStakeAmount: BigNumber) => {
+    try {
+      const tx = await callWithGasPrice(claimContract, 'deposit', [account, tokenData.pid, convertedStakeAmount.toString()], callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your stake was successfull'))
+      }
+    } catch (error) {
+      toastError('Unsuccessfulll', 'Something went wrong your stake request. Please try again...')
+    }
+  }
+
+  const handleConfirm = async () => {
+    const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
+    handleStake(convertedStakeAmount)
   }
 
   return (
@@ -96,6 +122,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       <ButtonGroup flexDirection="column">
         {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
         <Button
+          onClick={handleConfirm}
           disabled={!account || !isApproved || Number(amount) === 0 || amount === undefined || Number(balance) === 0}
         >
           Confirm

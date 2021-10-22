@@ -1,6 +1,12 @@
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
+import BigNumber from 'bignumber.js'
+import { useTranslation } from 'contexts/Localization'
+import { getDecimalAmount } from 'utils/formatBalance'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { useClaimFairLaunch } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 
 const ButtonGroup = styled(Flex)`
@@ -22,8 +28,11 @@ const MaxContainer = styled(Flex)`
 `
 
 const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
+  const { t } = useTranslation()
   const [amount, setAmount] = useState<number>()
-
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const claimContract = useClaimFairLaunch()
+  const { toastError, toastSuccess } = useToast()
   const handleAmountChange = (e) => {
     const invalidChars = ['-', '+', 'e']
     if (invalidChars.includes(e.key)) {
@@ -37,6 +46,27 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
 
   const setAmountToMax = (e) => {
     setAmount(stakedBalance)
+  }
+  
+  const callOptions = {
+    gasLimit: 380000,
+  }
+console.info('tokenData',tokenData.pid)
+  const handleUnStake = async (convertedStakeAmount: BigNumber) => {
+    try {
+      const tx = await callWithGasPrice(claimContract, 'withdraw', [account, tokenData.pid, convertedStakeAmount.toString()], callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your unstake was successfull'))
+      }
+    } catch (error) {
+      toastError('Unsuccessfulll', 'Something went wrong your unstake request. Please try again...')
+    }
+  }
+
+  const handleConfirm = async () => {
+    const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
+    handleUnStake(convertedStakeAmount)
   }
 
   return (
@@ -64,7 +94,7 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
       </Flex>
 
       <ButtonGroup flexDirection="column">
-        <Button disabled={!account || Number(amount) === 0 || amount === undefined || Number(stakedBalance) === 0}>
+        <Button onClick={handleConfirm} disabled={!account || Number(amount) === 0 || amount === undefined || Number(stakedBalance) === 0}>
           Confirm
         </Button>
       </ButtonGroup>
