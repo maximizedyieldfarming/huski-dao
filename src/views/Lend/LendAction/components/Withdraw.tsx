@@ -1,12 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import React, { useState } from 'react'
+import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
 import useToast from 'hooks/useToast'
 import { getAddress } from 'utils/addressHelpers'
+import { getDecimalAmount } from 'utils/formatBalance'
+import { useVault } from 'hooks/useContract'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { withdraw } from 'utils/vaultService'
+import { useCakeVault } from 'state/pools/hooks'
+import { convertCakeToShares } from '../../helpers'
 import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
 
 const ButtonGroup = styled(Flex)`
@@ -56,24 +61,47 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const tokenAddress = getAddress(tokenData.token.address)
+  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const withdrawContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
+
+  const { pricePerFullShare } = useCakeVault()
+
   const handleConfirm = () => {
     toastInfo('Pending Transaction...', 'Please Wait!')
-    withdraw(account, amount)
-      .then((res) => {
-        console.log({ res })
-        if (res) {
-          toastSuccess(t('Successful!'), t('Your withdrawal was successfull'))
-        } else {
-          toastError('Unsuccessfulll', 'Something went wrong with your withdrawal request. Please  try again')
-        }
-      })
-      .catch((error: any) => {
-        console.log('error', error)
-        toastWarning(t('Error'), error.message)
-      })
+    const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
+    handleWithdrawal(convertedStakeAmount)
   }
+
+  const callOptions = {
+    gasLimit: 380000,
+  }
+
+  const handleWithdrawal = async (convertedStakeAmount: BigNumber) => {
+
+    // const shareStakeToWithdraw = convertCakeToShares(convertedStakeAmount, pricePerFullShare)
+
+    // .toString() being called to fix a BigNumber error in prod
+    // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
+    try {
+      const tx = await callWithGasPrice(
+        withdrawContract,
+        'withdraw',
+        [convertedStakeAmount.toString()],
+        callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your withdraw was successfull'))
+      }
+    } catch (error) {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+
+    }
+
+  }
+
   return (
     <>
       <Section justifyContent="space-between">
