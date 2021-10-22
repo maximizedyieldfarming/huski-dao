@@ -1,13 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import React, { useState } from 'react'
+import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
+import { getDecimalAmount } from 'utils/formatBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { ethers, Contract } from 'ethers'
-import { useCakeVaultContract, useERC20 } from 'hooks/useContract'
+import { ethers } from 'ethers'
+import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { deposit, approve } from 'utils/vaultService'
 
 interface DepositProps {
@@ -65,10 +67,9 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   const tokenAddress = getAddress(tokenData.token.address)
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const approveContract = useERC20(tokenAddress)
-
-  console.log('allowance', allowance)
+  const depositContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
-  console.log('is approved?', isApproved)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
@@ -88,26 +89,30 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
     }
   }
 
-  const handleConfirm = () => {
-    toastInfo('Pending Transaction...', 'Please Wait!')
-    deposit(tokenAddress, amount)
-      .then((res) => {
-        console.log({ res })
-        if (res) {
-          toastSuccess(t('Successful!'), t('Your deposit was successfull'))
-        } else {
-          toastError('Unsuccessfulll', 'Something went wrong your deposit request. Please try again...')
-        }
-      })
-      .then(() => setAmount(0))
-      .catch((error: any) => {
-        console.log('error', error)
-        toastWarning(t('Error'), error.message)
-      })
+  const callOptions = {
+    gasLimit: 200000,
+  }
+
+  const handleDeposit = async (convertedStakeAmount: BigNumber) => {
+    try {
+      // .toString() being called to fix a BigNumber error in prod
+      // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
+      const tx = await callWithGasPrice(depositContract, 'deposit', [convertedStakeAmount.toString()], callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      }
+    } catch (error) {
+      toastError('Unsuccessfulll', 'Something went wrong your deposit request. Please try again...')
+    }
+  }
+
+  const handleConfirm = async () => {
+    const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
+    handleDeposit(convertedStakeAmount)
   }
 
   const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
-  console.log('balance in lendAction', balance)
 
   return (
     <>
