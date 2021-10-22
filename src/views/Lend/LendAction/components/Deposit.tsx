@@ -101,7 +101,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   }
 
   const callOptions = {
-    gasLimit: 200000,
+    gasLimit: 380000,
   }
 
   const handleDeposit = async (convertedStakeAmount: BigNumber) => {
