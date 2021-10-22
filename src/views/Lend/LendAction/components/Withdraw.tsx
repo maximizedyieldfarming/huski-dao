@@ -11,7 +11,6 @@ import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { withdraw } from 'utils/vaultService'
 import { useCakeVault } from 'state/pools/hooks'
-import { convertCakeToShares } from '../../helpers'
 import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
 
 const ButtonGroup = styled(Flex)`
@@ -80,8 +79,6 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
 
   const handleWithdrawal = async (convertedStakeAmount: BigNumber) => {
 
-    // const shareStakeToWithdraw = convertCakeToShares(convertedStakeAmount, pricePerFullShare)
-
     // .toString() being called to fix a BigNumber error in prod
     // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
     try {
@@ -97,7 +94,6 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
       }
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-
     }
 
   }
