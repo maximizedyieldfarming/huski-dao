@@ -1,6 +1,5 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
-import usePersistState from 'hooks/usePersistState'
 import {
   useLeverageFarms,
   usePollLeverageFarmsWithUserData,
@@ -10,16 +9,17 @@ import {
 } from 'state/leverage/hooks'
 import SearchInput from 'components/SearchInput'
 import styled from 'styled-components'
-import FlexLayout from 'components/Layout/Flex'
 import Select from 'components/Select/Select'
 import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
 import BigNumber from 'bignumber.js'
+import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
+import { useClaimFairLaunch } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
-import husky2 from './assets/husky2@1x.png'
-import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
@@ -123,6 +123,7 @@ const FiltersWrapper = styled(Flex)`
 `
 
 const Leverage: React.FC = () => {
+  const { t } = useTranslation()
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
@@ -148,7 +149,6 @@ const Leverage: React.FC = () => {
     }
     return null
   }
-  // const yieldFarmData = getYieldFarming(tokenData, cakePrice)
 
   const [sortOption, setSortOption] = useState('default')
   const handleSortOptionChange = (option) => {
@@ -222,6 +222,22 @@ const Leverage: React.FC = () => {
     reward += farmEarnings
     return reward
   })
+// start farm page : claim
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const claimContract = useClaimFairLaunch()
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const handleConfirm = async () => {
+    // try {
+    //   const tx = await callWithGasPrice(claimContract, 'harvest', [这里要用debtIbpid], { gasLimit: 300000 })
+    //   const receipt = await tx.wait()
+    //   if (receipt.status) {
+    //     toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
+    //   }
+    // } catch (error) {
+    //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    // }
+  }
+  // end
 
   return (
     <Page>
@@ -235,7 +251,7 @@ const Leverage: React.FC = () => {
             {reward ? <Text>{reward.toPrecision(3)}</Text> : <Skeleton width="80px" height="16px" />}
           </Box>
           <Flex alignSelf="flex-end">
-            <ActionButton>Claim</ActionButton>
+            <ActionButton onClick={handleConfirm}>Claim</ActionButton>
           </Flex>
         </RewardsContainer>
         <PositionButtonsContainer alignSelf="flex-end" style={{ gap: '1rem' }}>
