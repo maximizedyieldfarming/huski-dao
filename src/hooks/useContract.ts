@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import {
+  getVaultContract,
   getBep20Contract,
   getCakeContract,
   getBunnyFactoryContract,
@@ -57,6 +58,11 @@ export const useIfoV2Contract = (address: string) => {
 export const useERC20 = (address: string) => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getBep20Contract(address, library.getSigner()), [address, library])
+}
+
+export const useVault = (address: string) => {
+  const { library } = useActiveWeb3React()
+  return useMemo(() => getVaultContract(address, library.getSigner()), [address, library])
 }
 
 /**
