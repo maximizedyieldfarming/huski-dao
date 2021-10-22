@@ -14,12 +14,11 @@ type PublicFarmData = {
   totalToken: SerializedBigNumber
   vaultDebtVal: SerializedBigNumber
   poolWeight: SerializedBigNumber
-  multiplier: string
   pooPerBlock: number
 }
 
 const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
-  const { poolId, vaultAddress } = farm
+  const { pid, vaultAddress } = farm
   const vaultAddresses = getAddress(vaultAddress)
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -36,14 +35,14 @@ const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
         name: 'vaultDebtVal',
       },
     ])
-  // Only make masterchef calls if farm has pid
+
   const [info, alpacaPerBlock, totalAllocPoint] =
-  poolId || poolId === 0
+  pid || pid === 0
       ? await multicall(fairLaunchABI, [
           {
             address: getFairLaunch(),
             name: 'poolInfo',
-            params: [poolId],
+            params: [pid],
           },
           {
             address: getFairLaunch(),
@@ -65,7 +64,6 @@ const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
     totalToken: totalToken[0]._hex,
     vaultDebtVal: vaultDebtVal[0]._hex,
     poolWeight: poolWeight.toJSON(),
-    multiplier: `${allocPoint.div(100).toString()}XqQ`,
     pooPerBlock,
   }
 }

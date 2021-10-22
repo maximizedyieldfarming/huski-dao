@@ -71,24 +71,15 @@ export interface FarmConfig {
 export interface StakeConfig {
   name: string
   symbol: string
-  pid?: number
-  lpSymbol?: string
-  lpAddresses?: Address
+  pid: number
   token?: Token
-  quoteToken?: Token
-  multiplier?: string
-  isCommunity?: boolean
   dual?: {
     rewardPerBlock: number
     earnLabel: string
     endBlock: number
   }
-  poolId: number
   vaultAddress: Address
   fairLaunchAddress?: Address
-
-
-  leverage?: number
   workerAddress?: Address
   workerConfig?: Address
   strategies?: {
