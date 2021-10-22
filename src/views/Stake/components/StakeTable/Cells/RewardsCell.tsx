@@ -65,7 +65,7 @@ const RewardsCell = ({ token }) => {
         <Flex alignItems="center" style={{ gap: '10px' }}>
           {reward ? <Text fontSize="3">{reward}</Text> : <Skeleton width="80px" height="16px" />}
           <Button disabled={!account || Number(reward) === 0} onClick={handleConfirmClick} scale="sm">
-            {t('Claim1')}
+            {t('Claim')}
           </Button>
         </Flex>
       </CellContent>
