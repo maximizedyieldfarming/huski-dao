@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import PageSection from 'components/PageSection'
 import { useWeb3React } from '@web3-react/core'
+import { Link } from 'react-router-dom'
 import useTheme from 'hooks/useTheme'
 import Container from 'components/Layout/Container'
 import { Text, Flex, Box, Button, Grid } from '@pancakeswap/uikit'
@@ -29,6 +30,7 @@ import telegram from './assets/telegram@2x.png'
 import discord from './assets/discord@2x.png'
 import medium from './assets/Medium@2x.png'
 import youtube from './assets/youtube@2x.png'
+import { ReactComponent as Slogan } from './assets/HuskiSlogan10-25.svg'
 
 const StyledHeroSection = styled(Box)`
   padding: 16px;
@@ -216,17 +218,28 @@ const Home: React.FC = () => {
         <Footer />
       </PageSection> */}
       <StyledHeroSection>
-        <StrokeText bold fontSize="6">
+        {/*  <StrokeText bold fontSize="6">
           Leveraged yield farming by the Huskis For the Huskis
-        </StrokeText>
+        </StrokeText> */}
+        <Slogan style={{ margin: '100px auto' }} />
       </StyledHeroSection>
       <SectionWithBgImg>
         <Flex width="100%" justifyContent="center">
-          <Button variant="secondary">Use Huski</Button>
-          <Button variant="secondary" mx="1rem">
+          <Button variant="secondary" as={Link} to="/lend">
+            Use Huski
+          </Button>
+          <Button
+            variant="secondary"
+            mx="1rem"
+            as={Link}
+            to={{ pathname: 'https://docs.huski.finance/' }}
+            target="_blank"
+          >
             Docs
           </Button>
-          <Button variant="secondary">FAQs</Button>
+          <Button variant="secondary" as={Link} to={{ pathname: 'https://docs.huski.finance/faq' }} target="_blank">
+            FAQs
+          </Button>
         </Flex>
       </SectionWithBgImg>
 
