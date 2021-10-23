@@ -35,9 +35,7 @@ const StyledCell = styled(BaseCell)`
 const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borrowingInterest }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
-  const tradingFeesNumber = tradingFees * 365
-  const huskyRewardsNumber = huskyRewards * 100
-  const apr = yieldFarming + tradingFeesNumber + huskyRewardsNumber - borrowingInterest
+  const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
   const dailyApr = apr / 365
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
@@ -47,15 +45,15 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Trading&nbsp;Fees</Text>
-        <Text>{tradingFeesNumber.toFixed(2)}%</Text>
+        <Text>{tradingFees.toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>HUSKY&nbsp;Rewards</Text>
-        <Text>{huskyRewardsNumber.toFixed(2)}%</Text>
+        <Text>{huskyRewards.toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Borrowing&nbsp;Interest</Text>
-        <Text>-{Number(borrowingInterest * 100).toFixed(2)}%</Text>
+        <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Total&nbsp;APR</Text>

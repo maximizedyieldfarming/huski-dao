@@ -227,7 +227,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     token: tokens.alpaca,
     quoteToken: tokens.busd,
     debtIbpid: 10,
-    leverage: 6,
+    leverage: 2,
     poolId: 11,
     vaultAddress: {
       97: '',
