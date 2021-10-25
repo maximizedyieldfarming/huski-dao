@@ -1,7 +1,14 @@
 import React from 'react'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import Tooltip from 'components/Tooltip'
+import { getAddress } from 'utils/addressHelpers'
+import { getDecimalAmount } from 'utils/formatBalance'
+import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers';
+import { useTranslation } from 'contexts/Localization'
+import { useVault } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
 
 const Section = styled(Flex)`
@@ -27,17 +34,63 @@ const BusdPriceContainer = styled(Flex)`
   }
 `
 const CloseEntirePosition = ({
-  totalPositionValue,
+  data,
+  baseTokenAmount,
+  farmTokenAmount,
   tradingFees,
   debtValue,
-  amountToTrade,
   priceImpact,
-  convertedPositionValue,
   token,
   quoteToken,
 }) => {
   const { busdPrice: tokenBusdPrice, symbol: tokenName } = token
   const { busdPrice: quoteTokenBusdPrice, symbol: quoteTokenName } = quoteToken
+  const { t } = useTranslation()
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const vaultAddress = getAddress(data.farmData.vaultAddress)
+  const vaultContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+
+
+  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    try {
+      const tx = await callWithGasPrice(vaultContract, 'work', [id, workerAddress, amount, loan, maxReturn, dataWorker], callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    }
+  }
+  console.info('data', data);
+  const handleConfirm = async () => {
+    const id = data.positionId
+    const workerAddress = getAddress(data.farmData.workerAddress)
+    const AssetsBorrowed = debtValue || 0
+    const amount = 0 // getDecimalAmount(new BigNumber(tokenInput), 18).toString()// basetoken input
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()// Assets Borrowed
+    const maxReturn = 0
+
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.withdrawMinimizeTrading)
+    const dataStrategy = 1 // abiCoder.encode(['uint256'], [minFarmingToken]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+
+    console.log({ id, workerAddress, amount, loan, maxReturn, dataWorker, withdrawMinimizeTradingAddress, dataStrategy });
+    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
+  const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const basetokenBegin = parseInt(tokenAmountTotal)
+  const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+  const amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - debtValue + Number(farmTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
+  const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
 
   const {
     targetRef: positionValueRef,
@@ -140,8 +193,10 @@ const CloseEntirePosition = ({
               </Flex>
             </BusdPriceContainer>
           </Box>
-          {totalPositionValue ? (
-            <Text>{totalPositionValue.toNumber().toPrecision(3)}</Text>
+          {baseTokenAmount ? (
+            <Text>
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenName} + {Number(baseTokenAmount).toPrecision(4)}{' '} {tokenName}
+            </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
           )}
@@ -154,7 +209,7 @@ const CloseEntirePosition = ({
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {amountToTrade ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {amountToTrade ? <Text>{amountToTrade.toPrecision(4)}{quoteTokenName}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -184,7 +239,7 @@ const CloseEntirePosition = ({
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {convertedPositionValue ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenName} + {Number(debtValue).toPrecision(4)} {tokenName} </Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -194,13 +249,13 @@ const CloseEntirePosition = ({
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {debtValue ? <Text>{debtValue.toPrecision(3)}</Text> : <Skeleton height="16px" width="80px" />}
+          {debtValue ? <Text>{debtValue.toPrecision(4)}{tokenName} </Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
       </Section>
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>You will receive approximately</Text>
-          {convertedPositionValue ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenName} + {0.00} {tokenName}    </Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -210,9 +265,9 @@ const CloseEntirePosition = ({
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {convertedPositionValue ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenName} + {0.00} {tokenName}     </Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
-        <Button>Close Position</Button>
+        <Button onClick={handleConfirm}>Close Position</Button>
       </Section>
     </>
   )

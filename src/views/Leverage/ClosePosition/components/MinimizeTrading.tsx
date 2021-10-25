@@ -31,9 +31,13 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
   const { tradeFee, leverage } = data.farmData
   const { busdPrice: tokenBusdPrice, symbol: token } = data.farmData.token
   const { busdPrice: quoteTokenBusdPrice, symbol: quoteToken } = data.farmData.quoteToken
-  const totalPositionValue = new BigNumber(Number(totalPositionValueInUSD.hex) / busdPrice).dividedBy(BIG_TEN.pow(18))
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
   const tradingFees = Number(tradeFee) * Number(leverage) * 365
+
+  const baseAmountData = data.baseAmount
+  const farmAmountData = data.farmAmount
+  const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
+  const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
 
   return (
     <>
@@ -44,12 +48,12 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
         </Text>
       </GrayBox>
       <CloseEntirePosition
-        totalPositionValue={totalPositionValue}
+        data={data}
+        baseTokenAmount={baseTokenAmount}
+        farmTokenAmount={farmTokenAmount}
         tradingFees={tradingFees}
         debtValue={debtValueNumber}
-        amountToTrade={undefined}
         priceImpact={undefined}
-        convertedPositionValue={undefined}
         token={data.farmData.token}
         quoteToken={data.farmData.quoteToken}
       />
