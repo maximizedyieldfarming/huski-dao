@@ -175,7 +175,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     }
   },
   {
-    pid: 258,
+    pid: 259,
     lpSymbol: 'USDT-BUSD LP',
     lpAddresses: {
       97: '',
@@ -253,6 +253,49 @@ const leverageFarms: LeverageFarmConfig[] = [
       addTwoSidesOptimal: {
         97: '',
         56: '0xa964FCd9a434CB4C68bFE25E77D1F2Cd5D9679a8',
+      },
+      withdrawMinimizeTrading: {
+        97: '',
+        56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
+      },
+    }
+  },
+  {
+    pid: 258,
+    lpSymbol: 'BUSD-USDT LP',
+    lpAddresses: {
+      97: '',
+      56: '0x7EFaEf62fDdCCa950418312c6C91Aef321375A00',
+    },
+    token: tokens.usdt,
+    quoteToken: tokens.busd,
+    debtIbpid: 15,
+    leverage: 6,
+    poolId: 16,
+    vaultAddress: {
+      97: '',
+      56: '0x158Da805682BdC8ee32d52833aD41E74bb951E59',
+    },
+    workerAddress: {
+      97: '',
+      56: '0xE90C44C16705859931099E7565DA5d3c21F67273',
+    },
+    workerConfig: {
+      97: '',
+      56: '0xADaBC5FC5da42c85A84e66096460C769a151A8F8',
+    },
+    strategies: {
+      addAllBaseToken: {
+        97: '',
+        56: '0x4c7a420142ec69c7Df5c6C673D862b9E030743bf',
+      },
+      liquidate: {
+        97: '',
+        56: '0x9Da5D593d08B062063F81913a08e04594F84d438',
+      },
+      addTwoSidesOptimal: {
+        97: '',
+        56: '0x5f94f61095731b669b30ed1f3f4586BBb51f4001',
       },
       withdrawMinimizeTrading: {
         97: '',
