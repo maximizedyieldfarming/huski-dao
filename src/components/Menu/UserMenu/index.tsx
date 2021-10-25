@@ -7,12 +7,14 @@ import {
   UserMenu as UIKitUserMenu,
   UserMenuDivider,
   UserMenuItem,
+  Button,
 } from '@pancakeswap/uikit'
 import useAuth from 'hooks/useAuth'
 import { useProfile } from 'state/profile/hooks'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { FetchStatus, useGetBnbBalance } from 'hooks/useTokenBalance'
 import { useTranslation } from 'contexts/Localization'
+import { useLocation, Link } from 'react-router-dom'
 import WalletModal, { WalletView, LOW_BNB_BALANCE } from './WalletModal'
 import ProfileUserMenuItem from './ProfileUserMenutItem'
 import WalletUserMenuItem from './WalletUserMenuItem'
@@ -29,6 +31,20 @@ const UserMenu = () => {
   const avatarSrc = profile && profile.nft ? `/images/nfts/${profile.nft.images.sm}` : undefined
   const hasLowBnbBalance = fetchStatus === FetchStatus.SUCCESS && balance.lte(LOW_BNB_BALANCE)
 
+  const { pathname } = useLocation()
+  if (pathname === '/') {
+    return (
+      <>
+        <Button mr="10px" variant="secondary">
+          Buy HUSKI
+        </Button>
+        <Button as={Link} to="/lend">
+          Launch App
+        </Button>
+      </>
+    )
+  }
+
   if (!account) {
     return <ConnectWalletButton scale="sm" />
   }
@@ -36,12 +52,12 @@ const UserMenu = () => {
   return (
     <UIKitUserMenu account={account} avatarSrc={avatarSrc}>
       <WalletUserMenuItem hasLowBnbBalance={hasLowBnbBalance} onPresentWalletModal={onPresentWalletModal} />
-      <UserMenuItem as="button" onClick={onPresentTransactionModal}>
+      {/*   <UserMenuItem as="button" onClick={onPresentTransactionModal}>
         {t('Transactions')}
       </UserMenuItem>
       <UserMenuDivider />
       <ProfileUserMenuItem isLoading={isLoading} hasProfile={hasProfile} />
-      <UserMenuDivider />
+      <UserMenuDivider /> */}
       <UserMenuItem as="button" onClick={logout}>
         <Flex alignItems="center" justifyContent="space-between" width="100%">
           {t('Disconnect')}

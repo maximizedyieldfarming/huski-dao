@@ -221,7 +221,7 @@ const Home: React.FC = () => {
         {/*  <StrokeText bold fontSize="6">
           Leveraged yield farming by the Huskis For the Huskis
         </StrokeText> */}
-        <Slogan style={{ margin: '100px auto' }} />
+        <Slogan style={{ margin: '100px auto', width: '100%' }} />
       </StyledHeroSection>
       <SectionWithBgImg>
         <Flex width="100%" justifyContent="center">
