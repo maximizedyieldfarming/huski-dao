@@ -46,11 +46,16 @@ const CloseEntirePosition = ({
   const { busdPrice: tokenBusdPrice, symbol: tokenName } = token
   const { busdPrice: quoteTokenBusdPrice, symbol: quoteTokenName } = quoteToken
   const { t } = useTranslation()
+  const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const basetokenBegin = parseInt(tokenAmountTotal)
+  const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+  const amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - debtValue + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
+  const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
+
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const vaultAddress = getAddress(data.farmData.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-
 
   const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -68,31 +73,21 @@ const CloseEntirePosition = ({
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
     }
   }
-  console.info('data', data);
+
   const handleConfirm = async () => {
     const id = data.positionId
     const workerAddress = getAddress(data.farmData.workerAddress)
-    const AssetsBorrowed = debtValue || 0
-    const amount = 0 // getDecimalAmount(new BigNumber(tokenInput), 18).toString()// basetoken input
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()// Assets Borrowed
-    const maxReturn = 0
-
+    const amount = 0
+    const loan = 0
+    const maxReturn = ethers.constants.MaxUint256;
+    const minfarmtoken = (Number(convertedPositionValue) * 0.995).toString()
     const abiCoder = ethers.utils.defaultAbiCoder;
     const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.withdrawMinimizeTrading)
-    const dataStrategy = 1 // abiCoder.encode(['uint256'], [minFarmingToken]);
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
 
-    console.log({ id, workerAddress, amount, loan, maxReturn, dataWorker, withdrawMinimizeTradingAddress, dataStrategy });
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
-
-  const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
-  const basetokenBegin = parseInt(tokenAmountTotal)
-  const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
-  const amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - debtValue + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
-  const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
-
-  console.log({ amountToTrade });
 
 
   const {

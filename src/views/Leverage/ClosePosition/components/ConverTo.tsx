@@ -3,7 +3,13 @@ import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import Tooltip from 'components/Tooltip'
+import { getAddress } from 'utils/addressHelpers'
+import { getDecimalAmount } from 'utils/formatBalance'
+import { ethers } from 'ethers';
+import { useTranslation } from 'contexts/Localization'
+import { useVault } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
 
 const Section = styled(Flex)`
@@ -44,6 +50,44 @@ const ConverTo = ({ data }) => {
   const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
+
+  const { t } = useTranslation()
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const vaultAddress = getAddress(data.farmData.vaultAddress)
+  const vaultContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+
+  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    try {
+      const tx = await callWithGasPrice(vaultContract, 'work', [id, workerAddress, amount, loan, maxReturn, dataWorker], callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    }
+  }
+
+  const handleConfirm = async () => {
+    const id = data.positionId
+    const workerAddress = getAddress(data.farmData.workerAddress)
+    const amount = 0
+    const loan = 0;
+    const maxReturn = ethers.constants.MaxUint256;
+    const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+
+    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
 
   const {
     targetRef: positionValueRef,
@@ -218,7 +262,7 @@ const ConverTo = ({ data }) => {
           </Flex>
           {convertedPositionValue ? <Text>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {token}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
-        <Button>Close Position</Button>
+        <Button onClick={handleConfirm}>Close Position</Button>
       </Section>
     </>
   )
