@@ -123,7 +123,7 @@ const DotedProgress = ({ debtRatio, liquidationThreshold, max }) => {
     <>
       <DotedProgressBar>
         <Dot className="dot debtRatio" percentage={debtRatio.toString()} text={debtRatio.toFixed(2)} />
-        <Dot className="dot max" percentage={max.toString()} text={max.toFixed(2)} />
+        <Dot className="dot max" percentage={max?.toString()} text={max?.toFixed(2)} />
         <Dot
           className="dot liquidationRatio"
           percentage={liquidationThreshold}
