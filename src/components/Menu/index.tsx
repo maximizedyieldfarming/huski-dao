@@ -1,6 +1,6 @@
 import React from 'react'
 // import { Menu as UikitMenu } from '@pancakeswap/uikit'
-import { Menu as UikitMenu } from 'pancake-uikit'
+import { Menu as UikitMenu } from 'husky-uikit'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
