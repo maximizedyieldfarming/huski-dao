@@ -28,16 +28,23 @@ const BusdPriceContainer = styled(Flex)`
 `
 
 const ConverTo = ({ data }) => {
-  const { totalPositionValueInUSD, debtValue } = data
+  const {  debtValue } = data
   const { tradeFee, leverage } = data.farmData
   const { busdPrice: tokenBusdPrice, symbol: token } = data.farmData.token
   const { busdPrice: quoteTokenBusdPrice, symbol: quoteToken } = data.farmData.quoteToken
-
-  const totalPositionValue = new BigNumber(Number(totalPositionValueInUSD.hex) / tokenBusdPrice).dividedBy(
-    BIG_TEN.pow(18),
-  )
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
   const tradingFees = Number(tradeFee) * Number(leverage) * 365
+  const baseAmountData = data.baseAmount
+  const farmAmountData = data.farmAmount
+  const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
+  const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
+  const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const basetokenBegin = parseInt(tokenAmountTotal)
+  const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+  const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
+  const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
+
+
   const {
     targetRef: positionValueRef,
     tooltip: positionValueTooltip,
@@ -139,8 +146,8 @@ const ConverTo = ({ data }) => {
               </Flex>
             </BusdPriceContainer>
           </Box>
-          {totalPositionValue ? (
-            <Text>{totalPositionValue.toNumber().toPrecision(3)}</Text>
+          {data ? (
+            <Text>{Number(farmTokenAmount).toPrecision(4)} {quoteToken} + {Number(baseTokenAmount).toPrecision(4)}{' '} {token}</Text>
           ) : (
             <Skeleton height="16px" width="80px" />
           )}
@@ -153,7 +160,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {data ? <Text>{Number(farmTokenAmount).toPrecision(4)} {quoteToken}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -163,7 +170,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -183,7 +190,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValueAssets ? <Text>{convertedPositionValueAssets.toFixed(3)}  {token}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -193,13 +200,13 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {debtValueNumber ? <Text>{debtValueNumber.toFixed(3)}</Text> : <Skeleton height="16px" width="80px" />}
+          {debtValueNumber ? <Text>{debtValueNumber.toFixed(3)}  {token}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
       </Section>
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>You will receive approximately</Text>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {token}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -209,7 +216,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {!data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? <Text>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {token}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Button>Close Position</Button>
       </Section>
