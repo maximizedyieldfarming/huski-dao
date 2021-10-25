@@ -7,12 +7,16 @@ import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import Tooltip from 'components/Tooltip'
+import { ethers } from 'ethers';
+import { useTranslation } from 'contexts/Localization'
+import { useVault, useERC20 } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import { getHuskyRewards, getYieldFarming, getTvl, getLeverageFarmingData } from '../helpers'
+import { getHuskyRewards, getYieldFarming, getLeverageFarmingData } from '../helpers'
 import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
@@ -45,27 +49,6 @@ const Section = styled(Box)`
   }
 `
 
-const StyledPage = styled(Page)`
-  display: flex;
-  gap: 2rem;
-  input[type='range'] {
-    -webkit-appearance: auto;
-  }
-`
-
-const CustomSlider = styled.input.attrs({ type: 'range' })`
-  &::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 13px;
-    cursor: pointer;
-    animate: 0.2s;
-    box-shadow: 0px 0px 0px #000000;
-    background: #ac51b5;
-    border-radius: 25px;
-    border: 0px solid #000101;
-  }
-`
-
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   border-radius: ${({ theme }) => theme.radii.default};
@@ -78,14 +61,13 @@ const Farm = (props) => {
   console.log('props to adjust position...', props)
 
   const { token } = useParams<RouteParams>()
-
+  const { t } = useTranslation()
   const {
     location: {
       state: { tokenData: data },
     },
   } = props
   const [tokenData, setTokenData] = useState(data)
-  console.log({ tokenData })
 
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
@@ -119,7 +101,7 @@ const Farm = (props) => {
   const userQuoteTokenBalance = getBalanceAmount(
     tokenData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
   )
-  console.info('bnbBalance', bnbBalance)
+
   const huskyPrice = useHuskyPrice()
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
@@ -133,8 +115,6 @@ const Farm = (props) => {
     }
     return null
   }
-
-  const tvl = getTvl(tokenData)
 
   const [tokenInput, setTokenInput] = useState<number>(0)
   const tokenInputRef = useRef<HTMLInputElement>()
@@ -174,11 +154,6 @@ const Farm = (props) => {
     }
   }
 
-  // console.log({ yieldFarmData })
-  // console.log({ tvl })
-
-  // console.log({ leverageFarming })
-
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
@@ -210,7 +185,6 @@ const Farm = (props) => {
     }
   }
 
-
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
   const farmData = farmingData ? farmingData[1] : []
   const apy = getDisplayApr(yieldFarmData * leverageValue)
@@ -218,6 +192,66 @@ const Farm = (props) => {
   const BorrowingInterestNumber = new BigNumber(tokenData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
   const tradingFees = Number(tokenData?.tradeFee) * Number(leverageValue) * 365
   const apr = Number(yieldFarmData) + Number(tradingFees) + Number(huskyRewards * 100) - Number(BorrowingInterestNumber)
+
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const vaultContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+ 
+
+  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => { 
+    const callOptions = {
+    gasLimit: 3800000,
+  
+  }
+ // value: amount
+    try {
+      const tx = await callWithGasPrice(vaultContract, 'work', [id, workerAddress, amount, loan, maxReturn, dataWorker], callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    }
+  }
+
+  const handleConfirm = async () => {
+    const id = 0// tokenData.pid
+    const workerAddress = getAddress(tokenData.workerAddress)
+    const AssetsBorrowed = farmData ? farmData[3] : 0
+    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString()// basetoken input
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()// Assets Borrowed
+    const maxReturn = 0
+
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    
+// 单币 只有base token 
+    // const strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
+    // const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
+    // const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
+
+// 双币 
+const strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
+const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [parseInt(tokenData.quoteTokenAmountTotal), 1]);
+const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
+
+
+console.log({id, workerAddress, amount, loan, maxReturn, dataWorker,strategiesAddress, dataStrategy});
+    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
+  let tradingFeesfarm = farmData?.[5] * 100
+  if (tradingFeesfarm < 0 || tradingFeesfarm > 1 || tradingFeesfarm.toString() === 'NaN') {
+    tradingFeesfarm = 0;
+  }
+
+  let priceImpact = farmData?.[4]
+  if (priceImpact < 0.0000001 || priceImpact > 1) {
+    priceImpact = 0;
+  }
 
   const {
     targetRef: priceImpactTargetRef,
@@ -452,11 +486,7 @@ const Farm = (props) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {farmData[5]? (
-            <Text color="#EB0303">-{(farmData[5]* 100 ).toPrecision(3)} %</Text>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
+            <Text color="#EB0303">-{(tradingFeesfarm).toPrecision(3)} %</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Position Value</Text>
@@ -483,8 +513,8 @@ const Farm = (props) => {
         </Flex>
       </Section>
       <Flex justifyContent="space-evenly">
-        <Button>Authorize</Button>
-        <Button>{leverageValue}X Farm</Button>
+      {/* <Button onClick={handleApprove}>Approve</Button> */}
+        <Button onClick={handleConfirm}>{leverageValue}X Farm</Button>
       </Flex>
     </Page>
   )
