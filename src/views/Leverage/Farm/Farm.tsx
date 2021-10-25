@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Radio, InfoIcon, Text, Skeleton, useTooltip, ArrowForwardIcon } from '@pancakeswap/uikit'
+import {
+  Box,
+  Button,
+  Flex,
+  Radio,
+  InfoIcon,
+  Text,
+  Skeleton,
+  useTooltip,
+  ArrowForwardIcon,
+  useMatchBreakpoints,
+} from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
@@ -10,7 +21,7 @@ import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
@@ -21,6 +32,10 @@ import image from './assets/huskyBalloon.png'
 
 interface RouteParams {
   token: string
+}
+
+interface LocationParams {
+  tokenData?: any
 }
 
 const Section = styled(Box)`
@@ -48,6 +63,17 @@ const Section = styled(Box)`
     -webkit-appearance: auto;
   }
 `
+const SectionWrapper = styled(Page)`
+  display: flex;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+  }
+  > .sideSection {
+    flex-direction: column;
+    gap: 1rem;
+  }
+`
 
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
@@ -62,11 +88,10 @@ const Farm = (props) => {
 
   const { token } = useParams<RouteParams>()
   const { t } = useTranslation()
+
   const {
-    location: {
-      state: { tokenData: data },
-    },
-  } = props
+    state: { tokenData: data },
+  } = useLocation<LocationParams>()
   const [tokenData, setTokenData] = useState(data)
 
   const quoteTokenName = tokenData?.quoteToken?.symbol
@@ -197,16 +222,19 @@ const Farm = (props) => {
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
- 
 
-  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => { 
+  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
-    gasLimit: 3800000,
-  
-  }
- // value: amount
+      gasLimit: 3800000,
+    }
+    // value: amount
     try {
-      const tx = await callWithGasPrice(vaultContract, 'work', [id, workerAddress, amount, loan, maxReturn, dataWorker], callOptions)
+      const tx = await callWithGasPrice(
+        vaultContract,
+        'work',
+        [id, workerAddress, amount, loan, maxReturn, dataWorker],
+        callOptions,
+      )
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
@@ -219,38 +247,37 @@ const Farm = (props) => {
   }
 
   const handleConfirm = async () => {
-    const id = 0// tokenData.pid
+    const id = 0 // tokenData.pid
     const workerAddress = getAddress(tokenData.workerAddress)
     const AssetsBorrowed = farmData ? farmData[3] : 0
-    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString()// basetoken input
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()// Assets Borrowed
+    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
 
-    const abiCoder = ethers.utils.defaultAbiCoder;
-    
-// 单币 只有base token 
+    const abiCoder = ethers.utils.defaultAbiCoder
+
+    // 单币 只有base token
     // const strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
     // const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
     // const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
 
-// 双币 
-const strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
-const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [parseInt(tokenData.quoteTokenAmountTotal), 1]);
-const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
+    // 双币
+    const strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [parseInt(tokenData.quoteTokenAmountTotal), 1])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
 
-
-console.log({id, workerAddress, amount, loan, maxReturn, dataWorker,strategiesAddress, dataStrategy});
+    console.log({ id, workerAddress, amount, loan, maxReturn, dataWorker, strategiesAddress, dataStrategy })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
   let tradingFeesfarm = farmData?.[5] * 100
   if (tradingFeesfarm < 0 || tradingFeesfarm > 1 || tradingFeesfarm.toString() === 'NaN') {
-    tradingFeesfarm = 0;
+    tradingFeesfarm = 0
   }
 
   let priceImpact = farmData?.[4]
   if (priceImpact < 0.0000001 || priceImpact > 1) {
-    priceImpact = 0;
+    priceImpact = 0
   }
 
   const {
@@ -277,19 +304,42 @@ console.log({id, workerAddress, amount, loan, maxReturn, dataWorker,strategiesAd
     { placement: 'top-start' },
   )
 
+  const allowance = tokenData.userData?.allowance
+  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+  const tokenAddress = getAddress(tokenData.token.address)
+  const approveContract = useERC20(tokenAddress)
+
+  const handleApprove = async () => {
+    toastInfo('Approving...', 'Please Wait!')
+    try {
+      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    }
+  }
+
+  const { isMobile, isTable } = useMatchBreakpoints()
+  const isMobileOrTable = isMobile || isTable
+
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
         Farming {token} Pools
       </Text>
-      <Section>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Text as="span">Collateral</Text>
-          <Text as="span" small color="textSubtle">
-            To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.
-          </Text>
-        </Flex>
-        <Flex>
+      <SectionWrapper>
+        <Section>
+          <Flex alignItems="center" justifyContent="space-between">
+            <Text as="span">Collateral</Text>
+            <Text as="span" small color="textSubtle">
+              To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.
+            </Text>
+          </Flex>
           <Flex flexDirection="column" justifyContent="space-between" flex="1">
             <Box>
               <Flex alignItems="center">
@@ -319,16 +369,32 @@ console.log({id, workerAddress, amount, loan, maxReturn, dataWorker,strategiesAd
                 <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
               <Flex justifyContent="space-around">
-                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                <Button
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setQuoteTokenInputToFraction}
+                >
                   25%
                 </Button>
-                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                <Button
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setQuoteTokenInputToFraction}
+                >
                   50%
                 </Button>
-                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                <Button
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setQuoteTokenInputToFraction}
+                >
                   75%
                 </Button>
-                <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+                <Button
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setQuoteTokenInputToFraction}
+                >
                   100%
                 </Button>
               </Flex>
@@ -361,16 +427,16 @@ console.log({id, workerAddress, amount, loan, maxReturn, dataWorker,strategiesAd
                 <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
               <Flex justifyContent="space-around">
-                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
                   25%
                 </Button>
-                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
                   50%
                 </Button>
-                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
                   75%
                 </Button>
-                <Button variant="secondary" onClick={setTokenInputToFraction}>
+                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
                   100%
                 </Button>
               </Flex>
@@ -396,124 +462,124 @@ console.log({id, workerAddress, amount, loan, maxReturn, dataWorker,strategiesAd
                   list="leverage"
                 />
                 <datalist id="leverage">{datalistOptions}</datalist>
-                <Box ml="10px" width="15px">
+                <Box ml="auto">
                   <Text textAlign="right">{leverageValue}X</Text>
                 </Box>
               </Flex>
             </Box>
           </Flex>
-          <Flex flex="0.5">
-            <img src={image} alt="" />
-          </Flex>
-        </Flex>
-        <Box>
-          <Text bold>Which asset would you like to borrow? </Text>
-          <Flex>
-            <Flex alignItems="center" marginRight="10px">
-              <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
-              <Radio
-                // name="token"
-                scale="sm"
-                value={quoteTokenName}
-                onChange={handleChange}
-                checked={radio === quoteTokenName}
-              />
-            </Flex>
-            <Flex alignItems="center">
-              <Text mr="5px">{tokenName.replace('wBNB', 'BNB')}</Text>
-              <Radio
-                //  name="token"
-                scale="sm"
-                value={tokenName}
-                onChange={handleChange}
-                checked={radio === tokenName}
-              />
-            </Flex>
-          </Flex>
-        </Box>
-        <Box>
-          <Text small color="failure">
-            Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The
-            other paired asset will have typical long exposure, so choose which asset you borrow wisely.
-          </Text>
-        </Box>
-      </Section>
 
-      <Section>
-        <Text small color="failure">
-          Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation
-          ratio, your assets might encounter liquidation.
-        </Text>
-      </Section>
+          <Box>
+            <Text bold>Which asset would you like to borrow? </Text>
+            <Flex>
+              <Flex alignItems="center" marginRight="10px">
+                <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
+                <Radio
+                  // name="token"
+                  scale="sm"
+                  value={quoteTokenName}
+                  onChange={handleChange}
+                  checked={radio === quoteTokenName}
+                />
+              </Flex>
+              <Flex alignItems="center">
+                <Text mr="5px">{tokenName.replace('wBNB', 'BNB')}</Text>
+                <Radio
+                  //  name="token"
+                  scale="sm"
+                  value={tokenName}
+                  onChange={handleChange}
+                  checked={radio === tokenName}
+                />
+              </Flex>
+            </Flex>
+          </Box>
+          <Box>
+            <Text small color="failure">
+              Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed
+              asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.
+            </Text>
+          </Box>
+        </Section>
 
-      <Section>
-        <Flex justifyContent="space-between">
-          <Text>Assets Supplied</Text>
-          <Text>
-            {tokenInputOther} {radio.replace('wBNB', 'BNB')} + {quoteTokenInputOther}{' '}
-            {radioQuote.replace('wBNB', 'BNB')}
-          </Text>
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>Assets Borrowed</Text>
-          {farmData[3] ? (
-            <Text>
-              {farmData[3]?.toFixed(2)} {radio}
+        <Flex className="sideSection" justifyContent="space-around">
+          <Section>
+            <Text small color="failure">
+              Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation
+              ratio, your assets might encounter liquidation.
             </Text>
-          ) : (
-            <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
-          )}
+          </Section>
+
+          <Section>
+            <Flex justifyContent="space-between">
+              <Text>Assets Supplied</Text>
+              <Text>
+                {tokenInputOther} {radio.replace('wBNB', 'BNB')} + {quoteTokenInputOther}{' '}
+                {radioQuote.replace('wBNB', 'BNB')}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text>Assets Borrowed</Text>
+              {farmData[3] ? (
+                <Text>
+                  {farmData[3]?.toFixed(2)} {radio}
+                </Text>
+              ) : (
+                <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
+              )}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Flex>
+                <Text>Price Impact</Text>
+                {priceImpactTooltipVisible && priceImpactTooltip}
+                <span ref={priceImpactTargetRef}>
+                  <InfoIcon ml="10px" />
+                </span>
+              </Flex>
+              {farmData[4] ? (
+                <Text color="#1DBE03">+{(farmData[4] * 100).toPrecision(3)} %</Text>
+              ) : (
+                <Text color="#1DBE03"> 0.00 %</Text>
+              )}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Flex>
+                <Text>Trading Fees</Text>
+                {tradingFeesTooltipVisible && tradingFeesTooltip}
+                <span ref={tradingFeesTargetRef}>
+                  <InfoIcon ml="10px" />
+                </span>
+              </Flex>
+              <Text color="#EB0303">-{tradingFeesfarm.toPrecision(3)} %</Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text>Position Value</Text>
+              {farmData ? (
+                <Text>
+                  {farmData[8].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmData[9].toFixed(2)}{' '}
+                  {radioQuote.replace('wBNB', 'BNB')}
+                </Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text>APR</Text>
+              <Text>{apr.toPrecision(3)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text>APY</Text>
+              <Flex>
+                <Text>{apyAtOne}%</Text>
+                <ArrowForwardIcon />
+                <Text>{apy}%</Text>
+              </Flex>
+            </Flex>
+          </Section>
         </Flex>
-        <Flex justifyContent="space-between">
-          <Flex>
-            <Text>Price Impact</Text>
-            {priceImpactTooltipVisible && priceImpactTooltip}
-            <span ref={priceImpactTargetRef}>
-              <InfoIcon ml="10px" />
-            </span>
-          </Flex>
-          {farmData[4] ? (
-            <Text color="#1DBE03">+{(farmData[4]*100).toPrecision(3)} %</Text>
-          ) : (
-            <Text color="#1DBE03"> 0.00 %</Text>
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Flex>
-            <Text>Trading Fees</Text>
-            {tradingFeesTooltipVisible && tradingFeesTooltip}
-            <span ref={tradingFeesTargetRef}>
-              <InfoIcon ml="10px" />
-            </span>
-          </Flex>
-            <Text color="#EB0303">-{(tradingFeesfarm).toPrecision(3)} %</Text>
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>Position Value</Text>
-          {farmData ? (
-            <Text>
-              {farmData[8].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmData[9].toFixed(2)}{' '}
-              {radioQuote.replace('wBNB', 'BNB')}
-            </Text>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>APR</Text>
-          <Text>{apr.toPrecision(3)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>APY</Text>
-          <Flex>
-            <Text>{apyAtOne}%</Text>
-            <ArrowForwardIcon />
-            <Text>{apy}%</Text>
-          </Flex>
-        </Flex>
-      </Section>
+      </SectionWrapper>
       <Flex justifyContent="space-evenly">
-      {/* <Button onClick={handleApprove}>Approve</Button> */}
+        {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
         <Button onClick={handleConfirm}>{leverageValue}X Farm</Button>
       </Flex>
     </Page>
