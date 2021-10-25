@@ -89,8 +89,11 @@ const CloseEntirePosition = ({
   const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
   const basetokenBegin = parseInt(tokenAmountTotal)
   const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
-  const amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - debtValue + Number(farmTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
+  const amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - debtValue + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
   const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
+
+  console.log({ amountToTrade });
+
 
   const {
     targetRef: positionValueRef,
