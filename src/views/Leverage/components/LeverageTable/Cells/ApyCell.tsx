@@ -4,17 +4,11 @@ import {
   Text,
   useMatchBreakpoints,
   Skeleton,
-  Box,
   Flex,
   InfoIcon,
   ChevronRightIcon,
   useTooltip,
 } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { Pool } from 'state/types'
-import { useTranslation } from 'contexts/Localization'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -34,7 +28,6 @@ const StyledCell = styled(BaseCell)`
 
 const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borrowingInterest }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
-
   const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
   const dailyApr = apr / 365
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
@@ -61,7 +54,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Total&nbsp;APY</Text>
-        <Text>{apyAtOne}%</Text>
+        <Text>{apy}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Daily&nbsp;APR</Text>
