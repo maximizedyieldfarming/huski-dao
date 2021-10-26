@@ -190,7 +190,7 @@ const Dot = styled.span<DotProps>`
 `
 
 const DotedProgress = ({ debtRatio, liquidationThreshold, max }) => {
-  console.log('progress debtRatio and max', debtRatio, max)
+
   return (
     <>
       <ProgressTrack>
@@ -379,7 +379,7 @@ const Farm = () => {
   }
 
   const handleConfirm = async () => {
-    const id = 0 // tokenData.pid
+    const id = 0
     const workerAddress = getAddress(tokenData.workerAddress)
     const AssetsBorrowed = farmData ? farmData[3] : 0
     const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
@@ -393,12 +393,14 @@ const Farm = () => {
     // const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
     // const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
 
-    // 双币
+
+    const farmingTokenAmount = quoteTokenInput.toString()
+    // 双币 and 只有farm token
     const strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [parseInt(tokenData.quoteTokenAmountTotal), 1])
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])// [param.farmingTokenAmount, param.minLPAmount])
     const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
 
-    console.log({ id, workerAddress, amount, loan, maxReturn, dataWorker, strategiesAddress, dataStrategy })
+    console.log({ id, workerAddress, amount, loan, AssetsBorrowed, maxReturn, farmingTokenAmount, dataWorker, strategiesAddress, dataStrategy })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
