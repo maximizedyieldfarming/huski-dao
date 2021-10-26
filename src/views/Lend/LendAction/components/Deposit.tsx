@@ -20,6 +20,7 @@ interface DepositProps {
   exchangeRate: any
   account: any
   tokenData: any
+  tokenName: string
 }
 
 const ButtonGroup = styled(Flex)`
@@ -55,7 +56,7 @@ const StyledArrowDown = styled(ArrowDown)`
   }
 `
 
-const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRate, account, tokenData }) => {
+const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRate, account, tokenData, tokenName }) => {
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number>()
 
@@ -106,19 +107,25 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
     }
     const callOptionsBNB = {
       gasLimit: 380000,
-      value: convertedStakeAmount.toString()
+      value: convertedStakeAmount.toString(),
     }
 
     try {
+      toastInfo('Transaction Pending...', 'Please Wait!')
       // .toString() being called to fix a BigNumber error in prod
       // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
-      const tx = await callWithGasPrice(depositContract, 'deposit', [convertedStakeAmount.toString()], callOptionsBNB)
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [convertedStakeAmount.toString()],
+        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+      )
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
       }
     } catch (error) {
-      toastError('Unsuccessfulll', 'Something went wrong your deposit request. Please try again...')
+      toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
     }
   }
 

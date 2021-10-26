@@ -113,26 +113,6 @@ const LendAction = (props) => {
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const approveContract = useERC20(tokenAddress)
 
-  const handleConfirm = () => {
-    withdraw(account, 11)
-  }
-
-  const handleConfirmClick = async () => {
-    // setPendingTx(true)
-    try {
-      const tx = await callWithGasPrice(cakeVaultContract, 'harvest', undefined, { gasLimit: 300000 })
-      const receipt = await tx.wait()
-      if (receipt.status) {
-        toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
-        // setPendingTx(false)
-        // onDismiss()
-      }
-    } catch (error) {
-      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-      // setPendingTx(false)
-    }
-  }
-
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -187,6 +167,7 @@ const LendAction = (props) => {
               exchangeRate={exchangeRate}
               tokenData={tokenData}
               account={account}
+              tokenName={tokenName}
             />
           ) : (
             <Withdraw
