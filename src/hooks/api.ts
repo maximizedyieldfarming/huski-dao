@@ -39,7 +39,22 @@ export const useGetPositions = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
+        let response;
+        const env = process.env.REACT_APP_ENV;
+        switch (env) {
+          case 'dev':
+            response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
+            break;
+          case 'test':
+            response = `https://api.huski.finance/api/v1/positions/get?owner=${account}`;
+            break;
+          case 'prod':
+          default:
+            response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
+            break;
+        }
+
+        // const response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
         const res = await fetch(response);
         const responseData = await res.json();
         

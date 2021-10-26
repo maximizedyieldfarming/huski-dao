@@ -7,9 +7,14 @@ import styled from 'styled-components'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { getBalanceAmount } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { ethers } from 'ethers'
+import { useTranslation } from 'contexts/Localization'
+import { useVault } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import DebtRatioProgress from 'components/DebRatioProgress'
@@ -55,7 +60,7 @@ const AdjustPosition = (props) => {
     state: { data, liquidationThreshold },
   } = useLocation<LocationParams>()
   const { token } = useParams<RouteParams>()
-
+  const { t } = useTranslation()
   const quoteTokenName = data?.farmData?.quoteToken?.symbol.replace('wBNB', 'BNB')
   const tokenName = data?.farmData?.token?.symbol.replace('wBNB', 'BNB')
 
@@ -111,8 +116,8 @@ const AdjustPosition = (props) => {
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
   const assetsBorrowed = adjustData?.[3]
   let tradingFees = adjustData?.[5] * 100
-  if (tradingFees < 0 || tradingFees > 1) {
-    tradingFees = 0
+  if (tradingFees < 0 || tradingFees > 1|| tradingFees.toString() === 'NaN') {
+    tradingFees = 0;
   }
   let priceImpact = adjustData?.[4]
   if (priceImpact < 0.0000001 || priceImpact > 1) {
@@ -121,10 +126,6 @@ const AdjustPosition = (props) => {
 
   const baseTokenInPosition = adjustData?.[8]
   const farmingTokenInPosition = adjustData?.[9]
-
-  // console.info('adjust', adjustData)
-  // console.info('farmingData', farmingData)
-  // console.log('lvg', lvgAdjust.toNumber())
 
   // for apr
   const cakePriceBusd = usePriceCakeBusd()
@@ -154,7 +155,59 @@ const AdjustPosition = (props) => {
     Number(adjustBorrowingInterestAPR)
   const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
-  const borrowingMoreValue = null
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const vaultAddress = getAddress(data?.farmData?.vaultAddress)
+  const vaultContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+
+  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    // value: amount
+    try {
+      const tx = await callWithGasPrice(
+        vaultContract,
+        'work',
+        [id, workerAddress, amount, loan, maxReturn, dataWorker],
+        callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    }
+  }
+
+  const handleConfirm = async () => {
+    const id = data.positionId
+    const workerAddress = getAddress(data?.farmData?.workerAddress)
+    const AssetsBorrowed = debtValueNumber.toNumber() // farmData ? farmData[3] : 0
+    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
+    const maxReturn = 0
+
+    const abiCoder = ethers.utils.defaultAbiCoder
+
+    // 单币 只有base token
+    // const strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
+    // const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
+    // const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
+
+
+    const farmingTokenAmount = quoteTokenInput.toString()
+    // 双币 and 只有farm token
+    const strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1])// [param.farmingTokenAmount, param.minLPAmount])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+
+    console.log({ id, workerAddress,AssetsBorrowed, amount,tokenInput,farmingTokenAmount, loan, maxReturn, dataWorker, strategiesAddress, dataStrategy })
+    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
 
   const handleSliderChange = (e) => {
     const value = e?.target?.value
@@ -426,7 +479,7 @@ const AdjustPosition = (props) => {
         </Flex>
       </Section>
       <Flex alignSelf="center">
-        <Button disabled={isConfirmDisabled}>Confirm</Button>
+        <Button onClick={handleConfirm} disabled={isConfirmDisabled}>Confirm</Button>
       </Flex>
     </Page>
   )
