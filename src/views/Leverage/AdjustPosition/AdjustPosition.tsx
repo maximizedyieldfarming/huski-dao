@@ -228,7 +228,7 @@ const AdjustPosition = (props) => {
             <NumberInput placeholder="0.00" style={{ width: '10%' }} />
           </Flex>
         )}
-        {Number(targetPositionLeverage) <= Number(currentPositionLeverage.toPrecision(3)) && (
+        {Number(targetPositionLeverage) < Number(currentPositionLeverage.toPrecision(3)) && (
           <AddCollateralRepayDebtContainer
             currentPositionLeverage={Number(currentPositionLeverage)}
             targetPositionLeverage={Number(targetPositionLeverage)}
