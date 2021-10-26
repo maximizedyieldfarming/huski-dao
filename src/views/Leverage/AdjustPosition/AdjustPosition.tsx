@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
 import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, Progress } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import NumberInput from 'components/NumberInput'
 import { usePriceCakeBusd } from 'state/farms/hooks'
+import DebtRatioProgress from 'components/DebRatioProgress'
 import { getHuskyRewards, getYieldFarming, getBorrowingInterest, getAdjustData } from '../helpers'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 
@@ -21,11 +22,6 @@ interface RouteParams {
 interface LocationParams {
   data: any
   liquidationThreshold: number
-}
-
-interface DotProps {
-  text: string
-  percentage: string
 }
 
 const Section = styled(Box)`
@@ -54,88 +50,7 @@ const Section = styled(Box)`
   }
 `
 
-const DotedProgressBar = styled.div`
-  background: ${({ theme }) => theme.colors.backgroundDisabled};
-  position: relative;
-  height: 10px;
-  width: 90%;
-  border-radius: 20px;
-  margin: 0 auto;
-`
-const Dot = styled.span<DotProps>`
-  position: absolute;
-  height: 10px;
-  width: 10px;
-  background-color: ${({ theme }) => theme.colors.text};
-  border-radius: 50%;
-  display: inline-block;
-  &.liquidationRatio {
-    left: ${({ percentage }) => percentage}%;
-    &::before {
-      color: ${({ theme }) => theme.colors.text};
-      content: 'Liquidation Ratio';
-      position: absolute;
-      bottom: 100%;
-    }
-    &::after {
-      color: ${({ theme }) => theme.colors.text};
-      content: ${({ text }) => `'${text}%'`};
-      position: absolute;
-      top: 100%;
-    }
-  }
-  &.max {
-    left: ${({ percentage }) => percentage}%;
-    &::before {
-      color: ${({ theme }) => theme.colors.text};
-      content: 'MAX';
-      position: absolute;
-      bottom: 100%;
-    }
-    &::after {
-      color: ${({ theme }) => theme.colors.text};
-      content: ${({ text }) => `'${text}%'`};
-      position: absolute;
-      top: 100%;
-    }
-  }
-  &.debtRatio {
-    left: ${({ percentage }) => percentage}%;
-    &::before {
-      color: ${({ theme }) => theme.colors.text};
-      content: 'Debt Ratio';
-      position: absolute;
-      bottom: 100%;
-    }
-    &::after {
-      color: ${({ theme }) => theme.colors.text};
-
-      content: ${({ text }) => `'${text}%'`};
-
-      position: absolute;
-      top: 100%;
-    }
-  }
-`
-
-const DotedProgress = ({ debtRatio, liquidationThreshold, max }) => {
-  return (
-    <>
-      <DotedProgressBar>
-        <Dot className="dot debtRatio" percentage={debtRatio.toString()} text={debtRatio.toFixed(2)} />
-        <Dot className="dot max" percentage={max?.toString()} text={max?.toFixed(2)} />
-        <Dot
-          className="dot liquidationRatio"
-          percentage={liquidationThreshold}
-          text={liquidationThreshold?.toFixed(2)}
-        />
-      </DotedProgressBar>
-    </>
-  )
-}
-
 const AdjustPosition = (props) => {
-  console.log('props', props)
   const {
     state: { data, liquidationThreshold },
   } = useLocation<LocationParams>()
@@ -197,11 +112,11 @@ const AdjustPosition = (props) => {
   const assetsBorrowed = adjustData?.[3]
   let tradingFees = adjustData?.[5] * 100
   if (tradingFees < 0 || tradingFees > 1) {
-    tradingFees = 0;
+    tradingFees = 0
   }
   let priceImpact = adjustData?.[4]
   if (priceImpact < 0.0000001 || priceImpact > 1) {
-    priceImpact = 0;
+    priceImpact = 0
   }
 
   const baseTokenInPosition = adjustData?.[8]
@@ -225,15 +140,19 @@ const AdjustPosition = (props) => {
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)
   const borrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
   const apr = Number(yieldFarmAPR) + Number(tradingFeesAPR) + Number(huskiRewardsAPR) - Number(borrowingInterestAPR)
-  const apy = Math.pow(1 + (apr / 100) / 365, 365) - 1;
+  const apy = Math.pow(1 + apr / 100 / 365, 365) - 1
 
   const adjustedYieldFarmAPR = yieldFarmData * Number(targetPositionLeverage)
   const adjustedTradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(targetPositionLeverage)
   const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, huskyPerBlock, targetPositionLeverage) * 100
   const adjustHuskiRewardsAPR = adjustedHuskyRewards * (targetPositionLeverage - 1)
   const adjustBorrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
-  const adjustedApr: number = Number(adjustedYieldFarmAPR) + Number(adjustedTradingFeesAPR) + Number(adjustHuskiRewardsAPR) - Number(adjustBorrowingInterestAPR)
-  const adjustedApy = Math.pow(1 + (adjustedApr / 100) / 365, 365) - 1;
+  const adjustedApr: number =
+    Number(adjustedYieldFarmAPR) +
+    Number(adjustedTradingFeesAPR) +
+    Number(adjustHuskiRewardsAPR) -
+    Number(adjustBorrowingInterestAPR)
+  const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
   const borrowingMoreValue = null
 
@@ -273,16 +192,10 @@ const AdjustPosition = (props) => {
     Number(currentPositionLeverage).toPrecision(3) === Number(targetPositionLeverage).toPrecision(3) ||
     (!Number(tokenInput) && !Number(quoteTokenInput))
 
-  const maxValue = () => {
-    let value
-    if (Number(data?.farmData?.leverage) === 2) {
-      value = 50
-    }
-    if (Number(data?.farmData?.leverage) === 3) {
-      value = 66.666
-    }
-    return value
-  }
+  const principal = 1
+  const maxValue = 1 - principal / data?.farmData?.leverage
+  const currentDebtRatio = 1 - principal / currentPositionLeverage
+  const updatedDebtRatio = 1 - principal / targetPositionLeverage
 
   return (
     <Page>
@@ -367,10 +280,10 @@ const AdjustPosition = (props) => {
           )}
         </Flex>
         <Flex height="100px" alignItems="center">
-          <DotedProgress
+          <DebtRatioProgress
             debtRatio={debtRatio.toNumber() * 100}
             liquidationThreshold={liquidationThreshold}
-            max={maxValue()}
+            max={maxValue * 100}
           />
         </Flex>
       </Section>
@@ -495,7 +408,11 @@ const AdjustPosition = (props) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text> : <Text color="#EB0303">0.00%</Text>}
+          {adjustData ? (
+            <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
+          ) : (
+            <Text color="#EB0303">0.00%</Text>
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Updated Total Assets</Text>
