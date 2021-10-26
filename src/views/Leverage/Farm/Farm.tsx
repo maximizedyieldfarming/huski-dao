@@ -36,28 +36,31 @@ interface RouteParams {
 interface LocationParams {
   tokenData?: any
 }
+interface DotProps {
+  text: string
+  overlap?: boolean
+}
+
+interface ProgressProps {
+  percentage: string
+}
 
 const Section = styled(Box)`
-  &:first-of-type {
+  &.gray {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem;
-  &:not(:first-child) {
-    > ${Flex} {
-      padding: 1.5rem 0;
-      &:not(:last-child) {
-        border-bottom: 1px solid #a41ff81a;
-      }
+
+  > ${Flex} {
+    padding: 1.5rem 0;
+    &:not(:last-child) {
+      border-bottom: 1px solid #a41ff81a;
     }
   }
-  /*  > ${Flex} {
-    > div:first-child {
-      flex: 1;
-    }
-  } */
+
   input[type='range'] {
     -webkit-appearance: auto;
   }
@@ -82,15 +85,137 @@ const InputArea = styled(Flex)`
   align-items: center;
 `
 
-const Farm = (props) => {
-  console.log('props to adjust position...', props)
+const ProgressTrack = styled.div`
+  background: ${({ theme }) => theme.colors.backgroundDisabled};
+  display: grid;
+  > div {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  height: 10px;
+  width: 90%;
+  border-radius: ${({ theme }) => theme.radii.default};
+  margin: 0 auto;
+  position: relative;
+  &::after {
+    position: absolute;
+    content: '100%';
+    right: 0;
+    top: 50%;
+    transform: translate(calc(100% + 8px), -50%);
+    color: ${({ theme }) => theme.colors.text};
+  }
+  &::before {
+    position: absolute;
+    content: '0%';
+    left: 0;
+    top: 50%;
+    transform: translate(calc(-100% - 8px), -50%);
+    color: ${({ theme }) => theme.colors.text};
+  }
+`
+const Progress = styled(Box)<ProgressProps>`
+  position: relative;
+  width: ${({ percentage }) => percentage}%;
+  height: 10px;
+  border-radius: ${({ theme }) => theme.radii.default};
+  z-index: 2;
+  &.colored {
+    z-index: 1;
+    // background-color: ${({ theme }) => theme.colors.text};
+    background-color: #f7931a;
+  }
+`
+const Dot = styled.span<DotProps>`
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  background-color: ${({ theme }) => theme.colors.text};
+  border-radius: 50%;
+  display: inline-block;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  &.liquidationRatio {
+    left: 100%;
+    &::before {
+      color: ${({ theme }) => theme.colors.textSubtle};
+      content: 'Liquidation Ratio';
+      position: absolute;
+      bottom: 100%;
+    }
+    &::after {
+      color: ${({ theme }) => theme.colors.textSubtle};
+      content: ${({ text }) => `'${text}%'`};
+      position: absolute;
+      top: 100%;
+    }
+  }
+  &.max {
+    left: 100%;
+    &::before {
+      color: ${({ theme }) => theme.colors.textSubtle};
+      content: 'MAX';
+      position: absolute;
+      bottom: 100%;
+    }
+    &::after {
+      color: ${({ theme }) => theme.colors.textSubtle};
+      content: ${({ text }) => `'${text}%'`};
+      position: absolute;
+      top: 100%;
+    }
+  }
+  &.debtRatio {
+    left: 100%;
+    &::before {
+      color: ${({ theme }) => theme.colors.textSubtle};
+      content: 'Debt Ratio';
+      position: absolute;
+      bottom: 100%;
+      ${({ overlap, theme }) =>
+        overlap &&
+        `transform: translateY(-55%);
+      border-bottom: 1px solid ${theme.colors.textSubtle};
+      `}
+    }
 
+    &::after {
+      color: ${({ theme }) => theme.colors.textSubtle};
+      content: ${({ text }) => `'${text}%'`};
+      position: absolute;
+      top: 100%;
+      // ${({ overlap }) => overlap && `transform: translateY(-100%);`}
+    }
+  }
+`
+
+const DotedProgress = ({ debtRatio, liquidationThreshold, max }) => {
+  console.log('progress debtRatio and max', debtRatio, max)
+  return (
+    <>
+      <ProgressTrack>
+        <Progress percentage={debtRatio?.toString()} className="colored">
+          <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={debtRatio === max} />
+        </Progress>
+        <Progress percentage={max?.toString()}>
+          <Dot className="dot max" text={max?.toFixed(2)} />
+        </Progress>
+        <Progress percentage={liquidationThreshold}>
+          <Dot className="dot liquidationRatio" text={liquidationThreshold?.toFixed(2)} />
+        </Progress>
+      </ProgressTrack>
+    </>
+  )
+}
+
+const Farm = () => {
   const { token } = useParams<RouteParams>()
   const { t } = useTranslation()
 
   const {
     state: { tokenData: data },
   } = useLocation<LocationParams>()
+
   const [tokenData, setTokenData] = useState(data)
 
   const quoteTokenName = tokenData?.quoteToken?.symbol
@@ -334,13 +459,20 @@ const Farm = (props) => {
   const { isMobile, isTable } = useMatchBreakpoints()
   const isMobileOrTable = isMobile || isTable
 
+  const principal = 1
+  const maxValue = 1 - principal / tokenData?.leverage
+
+  const debtRatio = 1 - principal / leverageValue
+
+  const liquidationThreshold = Number(tokenData?.liquidationThreshold) / 100
+
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
         Farming {token} Pools
       </Text>
       <SectionWrapper>
-        <Section>
+        <Section className="gray">
           <Flex alignItems="center" justifyContent="space-between">
             <Text as="span">Collateral</Text>
             <Text as="span" small color="textSubtle">
@@ -467,6 +599,7 @@ const Farm = (props) => {
                   value={leverageValue}
                   onChange={handleSliderChange}
                   list="leverage"
+                  style={{ width: '90%' }}
                 />
                 <datalist id="leverage">{datalistOptions}</datalist>
                 <Box ml="auto">
@@ -511,6 +644,13 @@ const Farm = (props) => {
 
         <Flex className="sideSection" justifyContent="space-around">
           <Section>
+            <Flex height="100px" alignItems="center">
+              <DotedProgress
+                debtRatio={debtRatio * 100}
+                liquidationThreshold={liquidationThreshold}
+                max={maxValue * 100}
+              />
+            </Flex>
             <Text small color="failure">
               Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation
               ratio, your assets might encounter liquidation.
