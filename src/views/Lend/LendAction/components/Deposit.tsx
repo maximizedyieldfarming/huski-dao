@@ -100,15 +100,19 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
     }
   }
 
-  const callOptions = {
-    gasLimit: 380000,
-  }
-
   const handleDeposit = async (convertedStakeAmount: BigNumber) => {
+    const callOptions = {
+      gasLimit: 380000,
+    }
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: convertedStakeAmount.toString()
+    }
+
     try {
       // .toString() being called to fix a BigNumber error in prod
       // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
-      const tx = await callWithGasPrice(depositContract, 'deposit', [convertedStakeAmount.toString()], callOptions)
+      const tx = await callWithGasPrice(depositContract, 'deposit', [convertedStakeAmount.toString()], callOptionsBNB)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
