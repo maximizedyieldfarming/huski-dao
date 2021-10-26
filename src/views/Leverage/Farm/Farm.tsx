@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
@@ -27,8 +27,7 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import { getHuskyRewards, getYieldFarming, getLeverageFarmingData } from '../helpers'
-import image from './assets/huskyBalloon.png'
+import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
 
 interface RouteParams {
   token: string
@@ -212,11 +211,19 @@ const Farm = (props) => {
 
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
   const farmData = farmingData ? farmingData[1] : []
-  const apy = getDisplayApr(yieldFarmData * leverageValue)
-  const apyAtOne = getDisplayApr(yieldFarmData * 1)
-  const BorrowingInterestNumber = new BigNumber(tokenData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber() * 100
-  const tradingFees = Number(tokenData?.tradeFee) * Number(leverageValue) * 365
-  const apr = Number(yieldFarmData) + Number(tradingFees) + Number(huskyRewards * 100) - Number(BorrowingInterestNumber)
+
+  const { borrowingInterest } = getBorrowingInterest(tokenData)
+  const getApr = (lvg) => {
+    const totalapr = Number(yieldFarmData / 100 * lvg) + Number(tokenData.tradeFee * 365 / 100 * lvg) + Number(huskyRewards * (lvg - 1)) - Number(borrowingInterest * (lvg - 1))
+    return totalapr
+  }
+  const getApy = (lvg) => {
+    const totalapr = getApr(lvg)
+    // eslint-disable-next-line no-restricted-properties
+    const totalapy = Math.pow(1 + totalapr / 365, 365) - 1;
+    return totalapy * 100
+  }
+  const totalAprDisplay = Number(getDisplayApr(getApr(leverageValue) * 100))
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const vaultAddress = getAddress(tokenData.vaultAddress)
@@ -565,14 +572,14 @@ const Farm = (props) => {
             </Flex>
             <Flex justifyContent="space-between">
               <Text>APR</Text>
-              <Text>{apr.toPrecision(3)}%</Text>
+              <Text>{totalAprDisplay.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between">
               <Text>APY</Text>
               <Flex>
-                <Text>{apyAtOne}%</Text>
+                <Text>{getDisplayApr(getApy(1))}%</Text>
                 <ArrowForwardIcon />
-                <Text>{apy}%</Text>
+                <Text>{getDisplayApr(getApy(leverageValue))}%</Text>
               </Flex>
             </Flex>
           </Section>
