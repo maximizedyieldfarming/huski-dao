@@ -255,7 +255,7 @@ const Farm = () => {
   }
 
   const handleConfirm = async () => {
-    const id = 0 // tokenData.pid
+    const id = 0
     const workerAddress = getAddress(tokenData.workerAddress)
     const AssetsBorrowed = farmData ? farmData[3] : 0
     const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
@@ -264,17 +264,36 @@ const Farm = () => {
 
     const abiCoder = ethers.utils.defaultAbiCoder
 
+    const farmingTokenAmount = quoteTokenInput.toString()
+    let strategiesAddress
+    let dataStrategy
+    let dataWorker
     // 单币 只有base token
-    // const strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
-    // const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
-    // const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
+    if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0 && radio === tokenData.token.symbol) {
+      strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
+      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      console.log('1')
+    } else {
+      // 双币 and 只有farm token
+      strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
+      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+      dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      console.log('2')
+    }
 
-    // 双币
-    const strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [parseInt(tokenData.quoteTokenAmountTotal), 1])
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-
-    console.log({ id, workerAddress, amount, loan, maxReturn, dataWorker, strategiesAddress, dataStrategy })
+    console.log({
+      id,
+      workerAddress,
+      amount,
+      loan,
+      AssetsBorrowed,
+      maxReturn,
+      farmingTokenAmount,
+      dataWorker,
+      strategiesAddress,
+      dataStrategy,
+    })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
