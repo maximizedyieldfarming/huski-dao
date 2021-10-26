@@ -162,15 +162,19 @@ const AdjustPosition = (props) => {
 
   const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
-      gasLimit: 3800000,
+      gasLimit: 3800000
     }
-    // value: amount
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount
+    }
+
     try {
       const tx = await callWithGasPrice(
         vaultContract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        callOptions,
+        tokenName === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -186,24 +190,30 @@ const AdjustPosition = (props) => {
   const handleConfirm = async () => {
     const id = data.positionId
     const workerAddress = getAddress(data?.farmData?.workerAddress)
-    const AssetsBorrowed = debtValueNumber.toNumber() // farmData ? farmData[3] : 0
+    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber() // debtValueNumber.toNumber() // farmData ? farmData[3] : 0
     const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
-
     const abiCoder = ethers.utils.defaultAbiCoder
-
-    // 单币 只有base token
-    // const strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
-    // const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
-    // const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
-
-
     const farmingTokenAmount = quoteTokenInput.toString()
-    // 双币 and 只有farm token
-    const strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1])// [param.farmingTokenAmount, param.minLPAmount])
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    let strategiesAddress
+    let dataStrategy
+    let dataWorker
+
+    if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
+      // 单币 只有base token
+      console.info('111')
+      strategiesAddress = getAddress(data?.farmData?.strategies.addAllBaseToken)
+      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
+      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
+
+    } else {
+      // 双币 and 只有farm token
+      console.info('222')
+      strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
+      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1])// [param.farmingTokenAmount, param.minLPAmount])
+      dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    }
 
     console.log({ id, workerAddress,AssetsBorrowed, amount,tokenInput,farmingTokenAmount, loan, maxReturn, dataWorker, strategiesAddress, dataStrategy })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)

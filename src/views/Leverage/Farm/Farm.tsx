@@ -235,13 +235,17 @@ const Farm = () => {
     const callOptions = {
       gasLimit: 3800000,
     }
-    // value: amount
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount
+    }
+    
     try {
       const tx = await callWithGasPrice(
         vaultContract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        callOptions,
+        tokenName === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -261,9 +265,7 @@ const Farm = () => {
     const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
-
     const abiCoder = ethers.utils.defaultAbiCoder
-
     const farmingTokenAmount = quoteTokenInput.toString()
     let strategiesAddress
     let dataStrategy
@@ -273,13 +275,11 @@ const Farm = () => {
       strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
       dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
       dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      console.log('1')
     } else {
       // 双币 and 只有farm token
       strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
       dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
       dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      console.log('2')
     }
 
     console.log({
