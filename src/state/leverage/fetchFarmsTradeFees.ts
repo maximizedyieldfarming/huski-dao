@@ -19,7 +19,7 @@ const fetchFarmsTradeFeesForAlpaca = async (farms) => {
 
 const fetchFarmsTradeFeesForTest = async (farms) => {
 
-  const response = await fetch('http://192.168.0.187:8383/api/v1/tradingfees/get?dex=PancakeSwap')
+  const response = await fetch('https://api.huski.finance/api/v1/tradingfees/get?dex=PancakeSwap')
   const responseData = await response.json()
   const tradeFeeData = responseData.data;
   const farmsWithTradeFees = farms.map((farm) => {
