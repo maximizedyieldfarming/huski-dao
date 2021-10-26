@@ -43,6 +43,14 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
   {
@@ -86,6 +94,14 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
   {
@@ -129,6 +145,14 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
   {
@@ -172,6 +196,14 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
   {
@@ -215,6 +247,14 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
   {
@@ -258,6 +298,14 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
   {
@@ -301,9 +349,17 @@ const leverageFarms: LeverageFarmConfig[] = [
         97: '',
         56: '0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419',
       },
+      partialCloseLiquidate: {
+        97: '',
+        56: '0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316',
+      },
+      partialCloseMinimizeTrading: {
+        97: '',
+        56: '0x8dcEC5e136B6321a50F8567588c2f25738D286C2',
+      }
     }
   },
-  
+
 ]
 
 export default leverageFarms

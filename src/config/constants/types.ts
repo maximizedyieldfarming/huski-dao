@@ -102,6 +102,9 @@ export interface LeverageFarmConfig {
     liquidate: Address
     addTwoSidesOptimal: Address
     withdrawMinimizeTrading: Address
+    partialCloseLiquidate: Address
+    partialCloseMinimizeTrading: Address
+
   }
 }
 
