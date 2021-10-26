@@ -5,9 +5,9 @@ import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
-import  useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
-import {useFarmsWithToken} from '../../hooks/useFarmsWithToken'
+import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'
@@ -58,18 +58,27 @@ const LeverageRow = ({ tokenData }) => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
   // const { borrowInterest } = useFarmsWithToken(tokenData, bnbBalance, tokenBalance)
-  const {borrowingInterest} = getBorrowingInterest(tokenData)
+  const { borrowingInterest } = getBorrowingInterest(tokenData)
 
   const getApr = (lvg) => {
-    const apr = Number(yieldFarmData/100 * lvg) + Number(tokenData.tradeFee * 365/ 100 * lvg) + Number(huskyRewards * (lvg - 1)) - Number(borrowingInterest * (lvg - 1))
+    const apr =
+      Number((yieldFarmData / 100) * lvg) +
+      Number(((tokenData.tradeFee * 365) / 100) * lvg) +
+      Number(huskyRewards * (lvg - 1)) -
+      Number(borrowingInterest * (lvg - 1))
     return apr
   }
 
   const getApy = (lvg) => {
     const apr = getApr(lvg)
-    const apy = Math.pow(1 + apr / 365, 365) - 1;
+    const apy = Math.pow(1 + apr / 365, 365) - 1
     return apy * 100
   }
+
+ /*  const [borrowingAsset, setBorrowingAsset] = useState(tokenData.quoteToken.symbol.replace('wBNB', 'BNB'))
+  const onBorrowingAssetChange = (asset) => {
+    setBorrowingAsset(asset)
+  } */
 
 
   return (
@@ -82,7 +91,7 @@ const LeverageRow = ({ tokenData }) => {
           lpTokens={tokensLP}
         />
         <ApyCell
-          apyAtOne={getDisplayApr(getApy(1) )}
+          apyAtOne={getDisplayApr(getApy(1))}
           apy={getDisplayApr(getApy(childLeverage))}
           yieldFarming={yieldFarmData * childLeverage}
           tradingFees={tokenData.tradeFee * 365 * childLeverage}
@@ -92,7 +101,7 @@ const LeverageRow = ({ tokenData }) => {
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
         <Borrowing tokenData={tokenData} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} />
-        <ActionCell token={tokenData} />
+        <ActionCell token={tokenData} selectedLeverage={childLeverage} />
       </StyledRow>
     </>
   )

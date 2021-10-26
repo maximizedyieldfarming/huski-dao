@@ -36,6 +36,8 @@ interface RouteParams {
 
 interface LocationParams {
   tokenData?: any
+  selectedLeverage: number
+  borrowingAsset?: string
 }
 
 const Section = styled(Box)`
@@ -83,7 +85,7 @@ const Farm = () => {
   const { t } = useTranslation()
 
   const {
-    state: { tokenData: data },
+    state: { tokenData: data, selectedLeverage },
   } = useLocation<LocationParams>()
 
   const [tokenData, setTokenData] = useState(data)
@@ -96,7 +98,7 @@ const Farm = () => {
   const [radio, setRadio] = useState(tokenName)
   const [radioQuote, setRadioQuote] = useState(quoteTokenName)
   const { leverage } = tokenData
-  const [leverageValue, setLeverageValue] = useState(leverage)
+  const [leverageValue, setLeverageValue] = useState(selectedLeverage)
 
   const handleSliderChange = (e) => {
     const value = e?.target?.value
