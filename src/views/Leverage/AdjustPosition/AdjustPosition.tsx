@@ -18,7 +18,13 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import DebtRatioProgress from 'components/DebRatioProgress'
-import { getHuskyRewards, getYieldFarming, getBorrowingInterest, getAdjustData, getAdjustPositionRepayDebt } from '../helpers'
+import {
+  getHuskyRewards,
+  getYieldFarming,
+  getBorrowingInterest,
+  getAdjustData,
+  getAdjustPositionRepayDebt,
+} from '../helpers'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 
 interface RouteParams {
@@ -109,15 +115,20 @@ const AdjustPosition = (props) => {
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
     Number(currentPositionLeverage.toPrecision(3)),
   )
-  getAdjustPositionRepayDebt(data.farmData, data, targetPositionLeverage,debtRatio.toNumber() )
+  const { remainLeverage } = getAdjustPositionRepayDebt(
+    data.farmData,
+    data,
+    targetPositionLeverage,
+    debtRatio.toNumber(),
+  )
   const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, quoteTokenInput)
   const adjustData = farmingData ? farmingData[1] : []
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
   const assetsBorrowed = adjustData?.[3]
   let tradingFees = adjustData?.[5] * 100
-  if (tradingFees < 0 || tradingFees > 1|| tradingFees.toString() === 'NaN') {
-    tradingFees = 0;
+  if (tradingFees < 0 || tradingFees > 1 || tradingFees.toString() === 'NaN') {
+    tradingFees = 0
   }
   let priceImpact = adjustData?.[4]
   if (priceImpact < 0.0000001 || priceImpact > 1) {
@@ -162,11 +173,11 @@ const AdjustPosition = (props) => {
 
   const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
-      gasLimit: 3800000
+      gasLimit: 3800000,
     }
     const callOptionsBNB = {
       gasLimit: 3800000,
-      value: amount
+      value: amount,
     }
 
     try {
@@ -204,18 +215,29 @@ const AdjustPosition = (props) => {
       // 单币 只有base token
       console.info('111')
       strategiesAddress = getAddress(data?.farmData?.strategies.addAllBaseToken)
-      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1']);
-      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy]);
-
+      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
     } else {
       // 双币 and 只有farm token
       console.info('222')
       strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
-      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1])// [param.farmingTokenAmount, param.minLPAmount])
+      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1]) // [param.farmingTokenAmount, param.minLPAmount])
       dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
     }
 
-    console.log({ id, workerAddress,AssetsBorrowed, amount,tokenInput,farmingTokenAmount, loan, maxReturn, dataWorker, strategiesAddress, dataStrategy })
+    console.log({
+      id,
+      workerAddress,
+      AssetsBorrowed,
+      amount,
+      tokenInput,
+      farmingTokenAmount,
+      loan,
+      maxReturn,
+      dataWorker,
+      strategiesAddress,
+      dataStrategy,
+    })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -257,8 +279,7 @@ const AdjustPosition = (props) => {
 
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
-  const currentDebtRatio = 1 - principal / currentPositionLeverage
-  const updatedDebtRatio = 1 - principal / targetPositionLeverage
+  const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
   return (
     <Page>
@@ -307,6 +328,12 @@ const AdjustPosition = (props) => {
             setQuoteTokenInput={setQuoteTokenInput}
             isAddCollateral={isAddCollateral}
             setIsAddCollateral={setIsAddCollateral}
+            minimizeTradingValues={getAdjustPositionRepayDebt(
+              data.farmData,
+              data,
+              targetPositionLeverage,
+              debtRatio.toNumber(),
+            )}
           />
         )}
       </Section>
@@ -336,7 +363,7 @@ const AdjustPosition = (props) => {
                 {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
               </Text>
               <ChevronRightIcon />
-              <Text>{0}</Text>
+              <Text>{(updatedDebtRatio * 100).toFixed(2)}%</Text>
             </Flex>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -344,7 +371,7 @@ const AdjustPosition = (props) => {
         </Flex>
         <Flex height="100px" alignItems="center">
           <DebtRatioProgress
-            debtRatio={debtRatio.toNumber() * 100}
+            debtRatio={updatedDebtRatio * 100}
             liquidationThreshold={liquidationThreshold}
             max={maxValue * 100}
           />
@@ -484,12 +511,16 @@ const AdjustPosition = (props) => {
               {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
             </Text>
           ) : (
-            <Text>0.00</Text>
+            <Text>
+              0.00 {tokenName} + 0.00 {quoteTokenName}
+            </Text>
           )}
         </Flex>
       </Section>
       <Flex alignSelf="center">
-        <Button onClick={handleConfirm} disabled={isConfirmDisabled}>Confirm</Button>
+        <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
+          Confirm
+        </Button>
       </Flex>
     </Page>
   )

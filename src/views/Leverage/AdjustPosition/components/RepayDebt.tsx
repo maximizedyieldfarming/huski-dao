@@ -6,11 +6,15 @@ import Select from 'components/Select/Select'
 import RepayDebtMinimizeTrading from './RepayDebtMinimizeTrading'
 import RepayDebtConvertTo from './RepayDebtConvertTo'
 
-const RepayDebt = ({ currentPositionLeverage, targetPositionLeverage }) => {
+const RepayDebt = ({
+  currentPositionLeverage,
+  targetPositionLeverage,
+  minimizeTradingValues,
+  quoteTokenName,
+  tokenName,
+}) => {
   const [isConvertTo, setIsConvertTo] = useState('convertTo')
-  console.log('selection', isConvertTo)
   const handleSelect = (option) => {
-    console.log('option', option.value)
     setIsConvertTo(option.value)
   }
 
@@ -22,7 +26,7 @@ const RepayDebt = ({ currentPositionLeverage, targetPositionLeverage }) => {
         <Text>Which method would you like to repay the debt?</Text>
         <Select
           options={[
-            { label: 'Convert To', value: 'convertTo' },
+            { label: `Convert To ${tokenName}`, value: 'convertTo' },
             { label: 'Minimize Trading', value: 'minimizeTrading' },
           ]}
           onChange={handleSelect}
@@ -32,11 +36,17 @@ const RepayDebt = ({ currentPositionLeverage, targetPositionLeverage }) => {
         <RepayDebtConvertTo
           currentPositionLeverage={Number(currentPositionLeverage)}
           targetPositionLeverage={Number(targetPositionLeverage)}
+          convertToValues={minimizeTradingValues}
+          quoteTokenName={quoteTokenName}
+          tokenName={tokenName}
         />
       ) : (
         <RepayDebtMinimizeTrading
           currentPositionLeverage={Number(currentPositionLeverage)}
           targetPositionLeverage={Number(targetPositionLeverage)}
+          minimizeTradingValues={minimizeTradingValues}
+          quoteTokenName={quoteTokenName}
+          tokenName={tokenName}
         />
       )}
     </>

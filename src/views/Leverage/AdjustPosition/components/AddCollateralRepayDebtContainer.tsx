@@ -22,6 +22,7 @@ interface Props {
   currentPositionLeverage: number
   isAddCollateral: any
   setIsAddCollateral: any
+  minimizeTradingValues: any
 }
 
 const Header = styled(Flex)`
@@ -53,6 +54,7 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
   currentPositionLeverage,
   isAddCollateral,
   setIsAddCollateral,
+  minimizeTradingValues,
 }) => {
   // const [isAddCollateral, setIsAddCollateral] = useState(currentPositionLeverage !== 1)
   return (
@@ -90,6 +92,9 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
           <RepayDebt
             currentPositionLeverage={currentPositionLeverage}
             targetPositionLeverage={targetPositionLeverage}
+            minimizeTradingValues={minimizeTradingValues}
+            quoteTokenName={quoteTokenName}
+            tokenName={tokenName}
           />
         )}
       </Box>

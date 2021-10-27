@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input, WarningIcon } from '@pancakeswap/uikit'
+import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 
 interface Props {
   currentPositionLeverage: number
   targetPositionLeverage: number
+  minimizeTradingValues: any
+  quoteTokenName: string
+  tokenName: string
 }
 
 const Wrapper = styled(Box)`
@@ -21,8 +24,17 @@ const GrayBox = styled(Flex)`
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
 `
-const RepayDebtMinimizeTrading: React.FC<Props> = ({ currentPositionLeverage, targetPositionLeverage }) => {
+const RepayDebtMinimizeTrading: React.FC<Props> = ({
+  currentPositionLeverage,
+  targetPositionLeverage,
+  minimizeTradingValues,
+  quoteTokenName,
+  tokenName,
+}) => {
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage } =
+    minimizeTradingValues
+
   return (
     <Wrapper>
       <GrayBox>
@@ -62,11 +74,21 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({ currentPositionLeverage, ta
         <Box>
           <Text>Position Value Assets to Close</Text>
         </Box>
-        <Text>xx</Text>
+        <Text>
+          {needCloseFarm?.toFixed(3)} {quoteTokenName} + {needCloseBase?.toFixed(3)} {tokenName}
+        </Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text>Updated Position Value Assets</Text>
-        <Text>xx</Text>
+        <Flex>
+          <Text color="textSubtle">
+            {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
+          </Text>
+          <ChevronRightIcon />
+          <Text>
+            {remainBorrowFarm?.toFixed(3)} {quoteTokenName} + {remainBorrowBase?.toFixed(3)} {tokenName}
+          </Text>
+        </Flex>
       </Flex>
     </Wrapper>
   )

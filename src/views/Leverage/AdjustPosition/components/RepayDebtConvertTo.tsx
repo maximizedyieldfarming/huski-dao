@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input, WarningIcon } from '@pancakeswap/uikit'
+import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 
 interface Props {
   currentPositionLeverage: number
   targetPositionLeverage: number
+  convertToValues: any
+  quoteTokenName: string
+  tokenName: string
 }
 const Wrapper = styled(Box)`
   margin-top: 1rem;
@@ -20,8 +23,17 @@ const GrayBox = styled(Flex)`
   border-radius: ${({ theme }) => theme.radii.card};
 `
 
-const RepayDebtConvertTo: React.FC<Props> = ({ currentPositionLeverage, targetPositionLeverage }) => {
+const RepayDebtConvertTo: React.FC<Props> = ({
+  currentPositionLeverage,
+  targetPositionLeverage,
+  convertToValues,
+  tokenName,
+  quoteTokenName,
+}) => {
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage } =
+    convertToValues
+
   return (
     <Wrapper>
       <GrayBox>
@@ -60,11 +72,21 @@ const RepayDebtConvertTo: React.FC<Props> = ({ currentPositionLeverage, targetPo
         <Box>
           <Text>Position Value Assets to Close</Text>
         </Box>
-        <Text>xx</Text>
+        <Text>
+          {needCloseFarm?.toFixed(3)} {quoteTokenName} + {needCloseBase?.toFixed(3)} {tokenName}
+        </Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text>Updated Position Value Assets</Text>
-        <Text>xx</Text>
+        <Flex>
+          <Text color="textSubtle">
+            {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
+          </Text>
+          <ChevronRightIcon />
+          <Text>
+            {remainBorrowFarm?.toFixed(3)} {quoteTokenName} + {remainBorrowBase?.toFixed(3)} {tokenName}
+          </Text>
+        </Flex>
       </Flex>
     </Wrapper>
   )
