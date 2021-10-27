@@ -255,7 +255,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     }
   },
   {
-    pid: 259,
+    pid: 258,
     lpSymbol: 'USDT-BUSD LP',
     lpAddresses: {
       97: '',
