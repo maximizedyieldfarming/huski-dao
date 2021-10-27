@@ -59,7 +59,8 @@ export const useGetPositions = () => {
         const res = await fetch(response);
         const responseData = await res.json();
         
-        setData(responseData.data.positions)
+        // setData(responseData.data.positions)
+        setData(responseData.data)
       } catch (error) {
         console.error('Unable to fetch data:', error)
       }
