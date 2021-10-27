@@ -20,6 +20,7 @@ const StyledTable = styled.div`
 `
 
 const StyledTableBorder = styled.div`
+  overflow: hidden;
   border-radius: ${({ theme }) => theme.radii.card};
   background-color: ${({ theme }) => theme.colors.cardBorder};
   padding: 1px 1px 3px 1px;
