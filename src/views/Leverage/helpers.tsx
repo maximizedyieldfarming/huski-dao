@@ -4,14 +4,22 @@ import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { dichotomybasetoken } from 'utils/pancakeService'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 
-export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number, leverage) => {
+export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number, leverage, tokenName?: string) => {
   const { vaultDebtVal, token, quoteTokenVaultDebtVal, quoteToken } = farm
-  // if else 
-  const busdTokenPrice: any = token.busdPrice;
+
+  let vaultDebtValue
+
+  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase()) {
+    vaultDebtValue = quoteTokenVaultDebtVal
+  } else {
+    vaultDebtValue = vaultDebtVal
+  }
+
+  const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() ? quoteToken.busdPrice : token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
   const poolHuskyPerBlock = pooPerBlock
 
-  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * (leverage - 1) * huskyPrice).div((parseInt(vaultDebtVal) * busdTokenPrice));
+  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * (leverage - 1) * huskyPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
 
   return huskyRewards.toNumber();
 }
@@ -88,14 +96,27 @@ const mathematics1B = 3 / 40;
 const mathematics2B = 3 / 55;
 const mathematics3B = 94 / 5;
 
-export const getBorrowingInterest = (farm: LeverageFarm) => {
+export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => {
   const { totalToken, vaultDebtVal, token, quoteTokenTotal, quoteTokenVaultDebtVal, quoteToken } = farm
 
-  const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
+  let totalTokenValue
+  let vaultDebtValue
+  let tokenSymbol
+  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase()) {
+    totalTokenValue = quoteTokenTotal
+    vaultDebtValue = quoteTokenVaultDebtVal
+   tokenSymbol = quoteToken.symbol.toUpperCase()
+  } else {
+    totalTokenValue = totalToken
+    vaultDebtValue = vaultDebtVal
+    tokenSymbol = token.symbol.toUpperCase()
+  }
+
+  const utilization = parseInt(totalTokenValue) > 0 ? parseInt(vaultDebtValue) / parseInt(totalTokenValue) : 0;
 
   let lendRate = 0;
 
-  if (token.symbol.toUpperCase() === 'WBNB' || token.symbol.toUpperCase() === 'BUSD' || token.symbol.toUpperCase() === 'USDT' || token.symbol.toUpperCase() === 'HUSKI' || token.symbol.toUpperCase() === 'ALPACA') {
+  if (tokenSymbol === 'WBNB' || tokenSymbol === 'BUSD' || tokenSymbol === 'USDT' || tokenSymbol === 'HUSKI' || tokenSymbol === 'ALPACA') {
     if (utilization < 0.4) {
       lendRate = mathematics1B * utilization * 100;
     } else if (utilization > 0.95) {
@@ -103,7 +124,7 @@ export const getBorrowingInterest = (farm: LeverageFarm) => {
     } else {
       lendRate = mathematics2B * utilization * 100 + 12 / 11;
     }
-  } else if (token.symbol.toUpperCase() === 'BTCB' || token.symbol.toUpperCase() === 'ETH') {
+  } else if (tokenSymbol === 'BTCB' || tokenSymbol === 'ETH') {
     if (utilization < 0.4) {
       lendRate = mathematics1 * utilization * 100;
     } else if (utilization > 0.95) {

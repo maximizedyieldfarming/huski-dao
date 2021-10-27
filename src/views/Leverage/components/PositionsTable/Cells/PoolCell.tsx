@@ -40,14 +40,14 @@ const PoolCell = ({ pool, quoteToken, token }) => {
           </Text>
         )}
         <Grid alignItems="center" gridTemplateColumns="50px 1fr">
-          {/*  <TokenPairImage
+          <TokenPairImage
             variant="inverted"
             primaryToken={quoteToken}
             secondaryToken={token}
             width={40}
             height={40}
             mr="8px"
-          /> */}
+          />
           <Text bold={!isMobile} small={isMobile}>
             {pool}
           </Text>

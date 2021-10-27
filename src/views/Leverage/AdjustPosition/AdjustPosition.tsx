@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState, useEffect, useCallback, useRef, RefObject, useMemo } from 'react'
+import React, { useState } from 'react'
 import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
@@ -484,7 +484,7 @@ const AdjustPosition = (props) => {
               {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
             </Text>
           ) : (
-            <Skeleton width="80px" height="16px" />
+            <Text>0.00</Text>
           )}
         </Flex>
       </Section>
