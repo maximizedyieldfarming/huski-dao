@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
@@ -24,18 +24,28 @@ const StyledCell = styled(BaseCell)`
 `
 
 const LiquidatedEquityCell = ({ liqEquity }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text>Liquidated Equity = 83.33% * Equity Value</Text>
+    </>,
+    { placement: 'top-start' },
+  )
+
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center">
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Liquidated Equity
-          </Text>
-          <Tooltip isTop>
-            <Text>liquidated equity</Text>
-          </Tooltip>
-        </Flex>
+       {(isMobile || isTablet) && (
+          <Flex alignItems="center">
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              Liquidated Equity
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+        )}
         {liqEquity ? <Text>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>

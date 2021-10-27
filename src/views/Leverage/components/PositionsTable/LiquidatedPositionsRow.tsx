@@ -4,12 +4,13 @@ import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import NameCell from './Cells/NameCell'
 import PoolCell from './Cells/PoolCell'
-import PositionCell from './Cells/PositionValueCell'
+import PositionValueCell from './Cells/PositionValueCell'
 import DebtCell from './Cells/DebtCell'
 import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
 import LiquidationFeeCell from './Cells/LiquidationFeeCell'
 import AssetsReturnedCell from './Cells/AssetsReturnedCell'
 import ProfitsCell from './Cells/ProfitsCell'
+import TxRecordCell from './Cells/TxRecordCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -45,13 +46,13 @@ const LiquidatedPositionsRow = ({ data }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
+        <NameCell name={null} positionId={null} />
         <PoolCell pool={null} quoteToken={null} token={null} />
-        <PositionCell position={null} />
-        <DebtCell debt={null} borrowedAssets={null} borrowingInterest={null} />
+        <PositionValueCell position={null} />
         <LiquidatedEquityCell liqEquity={null} />
         <LiquidationFeeCell fee={null} />
         <AssetsReturnedCell assetsReturned={null} />
-        <ProfitsCell profitLoss={null} />
+        <TxRecordCell />
       </StyledRow>
     </>
   )

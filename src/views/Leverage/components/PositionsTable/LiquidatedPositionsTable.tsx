@@ -1,9 +1,10 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Text } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
+import LiquidatedPositionsHeaderRow from './LiquidatedPositionsHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
@@ -33,10 +34,20 @@ const LiquidatedPositionsTable = ({ data }) => {
       behavior: 'smooth',
     })
   }
+
+  const { isMobile, isTablet } = useMatchBreakpoints()
+
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-        {data ? <LiquidatedPositionsRow data={data} /> : <Text>No Liquidated Positions</Text>}
+        {!(isMobile || isTablet) && <LiquidatedPositionsHeaderRow />}
+        {data ? (
+          <LiquidatedPositionsRow data={data} />
+        ) : (
+          <Box padding="100px 0">
+            <Text textAlign="center">No Liquidated Positions</Text>
+          </Box>
+        )}
 
         {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
