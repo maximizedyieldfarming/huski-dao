@@ -484,7 +484,7 @@ const AdjustPosition = (props) => {
               {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
             </Text>
           ) : (
-            <Skeleton width="80px" height="16px" />
+            <Text>0.00</Text>
           )}
         </Flex>
       </Section>
