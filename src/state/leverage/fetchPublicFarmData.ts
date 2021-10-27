@@ -17,6 +17,9 @@ type PublicFarmData = {
   borrowingInterest: SerializedBigNumber
   tokenAmountTotal: SerializedBigNumber
   quoteTokenAmountTotal: SerializedBigNumber
+  quoteTokenTotalSupply: SerializedBigNumber
+  quoteTokenTotal: SerializedBigNumber
+  quoteTokenVaultDebtVal: SerializedBigNumber
   totalSupply: SerializedBigNumber
   totalToken: SerializedBigNumber
   vaultDebtVal: SerializedBigNumber
@@ -33,10 +36,12 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { poolId, lpAddresses, workerAddress, workerConfig, token, quoteToken, vaultAddress, pid } = farm
+  const { poolId, lpAddresses, workerAddress, quoteTokenWorkerAddress, workerConfig, token, quoteToken, vaultAddress, quoteTokenVaultAddress, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
+  const quoteTokenVaultAddresses = getAddress(quoteTokenVaultAddress)
   const workerAddresses = getAddress(workerAddress)
+  const quotetokenWorkerAddress = getAddress(quoteTokenWorkerAddress)
   const workerConfigAddress = getAddress(workerConfig)
   const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
@@ -56,6 +61,15 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         address: workerConfigAddress,
         name: 'killFactor',
         params: [workerAddresses, 0],
+      }
+    ])
+
+  const [liquidationThresholdquoteToken] =
+    await multicall(WorkerConfigABI, [
+      {
+        address: workerConfigAddress,
+        name: 'killFactor',
+        params: [quotetokenWorkerAddress, 0],
       }
     ])
 
@@ -80,6 +94,22 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
       {
         address: vaultAddresses,
+        name: 'vaultDebtVal',
+      },
+    ])
+
+    const [quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
+    await multicall(VaultABI, [
+      {
+        address: quoteTokenVaultAddresses,
+        name: 'totalSupply',
+      },
+      {
+        address: quoteTokenVaultAddresses,
+        name: 'totalToken',
+      },
+      {
+        address: quoteTokenVaultAddresses,
         name: 'vaultDebtVal',
       },
     ])
@@ -191,6 +221,9 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     name,
     lptotalSupply: lptotalSupply[0]._hex,
     borrowingInterest: borrowingInterest[0]._hex,
+    quoteTokenTotalSupply: quoteTokenTotalSupply[0]._hex,
+    quoteTokenTotal: quoteTokenTotal[0]._hex,
+    quoteTokenVaultDebtVal: quoteTokenVaultDebtVal[0]._hex,
     totalSupply: totalSupply[0]._hex,
     totalToken: totalToken[0]._hex,
     vaultDebtVal: vaultDebtVal[0]._hex,

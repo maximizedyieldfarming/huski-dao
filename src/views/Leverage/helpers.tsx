@@ -5,7 +5,8 @@ import { dichotomybasetoken } from 'utils/pancakeService'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number, leverage) => {
-  const { vaultDebtVal, token } = farm
+  const { vaultDebtVal, token, quoteTokenVaultDebtVal, quoteToken } = farm
+  // if else 
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
   const poolHuskyPerBlock = pooPerBlock
@@ -88,7 +89,7 @@ const mathematics2B = 3 / 55;
 const mathematics3B = 94 / 5;
 
 export const getBorrowingInterest = (farm: LeverageFarm) => {
-  const { totalToken, vaultDebtVal, token } = farm
+  const { totalToken, vaultDebtVal, token, quoteTokenTotal, quoteTokenVaultDebtVal, quoteToken } = farm
 
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
 

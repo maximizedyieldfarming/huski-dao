@@ -95,12 +95,15 @@ export interface LeverageFarmConfig {
   leverage: number
   poolId: number
   vaultAddress: Address
+  quoteTokenVaultAddress: Address
   workerAddress: Address
+  quoteTokenWorkerAddress: Address
   workerConfig: Address
   strategies: {
     addAllBaseToken: Address
     liquidate: Address
     addTwoSidesOptimal: Address
+    quoteTokenAddTwoSidesOptimal: Address
     withdrawMinimizeTrading: Address
     partialCloseLiquidate: Address
     partialCloseMinimizeTrading: Address
