@@ -9,10 +9,6 @@ import { TokenImage } from 'components/TokenImage'
 import Select from 'components/Select/Select'
 import BaseCell, { CellContent } from './BaseCell'
 
-interface InfoParams {
-  show: boolean
-}
-
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
@@ -28,36 +24,48 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const Info = styled(Box)<InfoParams>`
-  display: ${({ show }) => (show ? 'flex' : 'none')};
-  flex-direction: column;
-  position: absolute;
-  top: 2rem;
-  right: 2px;
-  ${({ theme }) => theme.mediaQueries.xl} {
-    right: unset;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-  padding: 1rem;
-  gap: 10px;
-  background-color: ${({ theme }) => theme.colors.background};
-  box-shadow: ${({ theme }) => theme.card.boxShadow};
-  border-radius: ${({ theme }) => theme.radii.default};
-  z-index: ${({ theme }) => theme.zIndices.modal};
-  ${Text} {
-    word-wrap: break-word;
-    word-break: keep-all;
-  }
-  // width: max-content;
-  > ${Flex} {
-    gap: 10px;
-  }
-`
 const Borrowing = ({ tokenData }) => {
-  const quoteToken = tokenData?.quoteToken?.symbol
-  const token = tokenData?.token?.symbol
+  const quoteToken = tokenData?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  const token = tokenData?.token?.symbol.replace('wBNB', 'BNB')
   const { isMobile, isTablet } = useMatchBreakpoints()
+
+  const options = () => {
+    if (quoteToken === 'CAKE') {
+      return [
+        {
+          label: token,
+          value: token,
+        },
+        {
+          label: token,
+          value: token,
+        },
+      ]
+    }
+    if (token === 'CAKE') {
+      return [
+        {
+          label: quoteToken,
+          value: quoteToken,
+        },
+        {
+          label: quoteToken,
+          value: quoteToken,
+        },
+      ]
+    }
+    return [
+      {
+        label: quoteToken,
+        value: quoteToken,
+      },
+      {
+        label: token,
+        value: token,
+      },
+    ]
+  }
+
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -66,19 +74,7 @@ const Borrowing = ({ tokenData }) => {
             Borrowing
           </Text>
         )}
-        <Select
-          options={[
-            {
-              label: quoteToken,
-              value: quoteToken,
-            },
-            {
-              label: token,
-              value: token,
-            },
-          ]}
-        />
-        {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
+        <Select options={options()} />
       </CellContent>
     </StyledCell>
   )
