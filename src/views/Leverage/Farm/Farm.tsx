@@ -127,7 +127,7 @@ const Farm = () => {
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
 
-  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, leverageValue)
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, leverageValue, radio)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
@@ -209,7 +209,7 @@ const Farm = () => {
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
   const farmData = farmingData ? farmingData[1] : []
 
-  const { borrowingInterest } = getBorrowingInterest(tokenData)
+  const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
   const getApr = (lvg) => {
     const totalapr =
       Number((yieldFarmData / 100) * lvg) +
@@ -507,26 +507,30 @@ const Farm = () => {
           <Box>
             <Text bold>Which asset would you like to borrow? </Text>
             <Flex>
-              <Flex alignItems="center" marginRight="10px">
-                <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
-                <Radio
-                  // name="token"
-                  scale="sm"
-                  value={quoteTokenName}
-                  onChange={handleChange}
-                  checked={radio === quoteTokenName}
-                />
-              </Flex>
-              <Flex alignItems="center">
-                <Text mr="5px">{tokenName.replace('wBNB', 'BNB')}</Text>
-                <Radio
-                  //  name="token"
-                  scale="sm"
-                  value={tokenName}
-                  onChange={handleChange}
-                  checked={radio === tokenName}
-                />
-              </Flex>
+              {quoteTokenName.toLowerCase() !== 'cake' && (
+                <Flex alignItems="center" marginRight="10px">
+                  <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
+                  <Radio
+                    // name="token"
+                    scale="sm"
+                    value={quoteTokenName}
+                    onChange={handleChange}
+                    checked={radio === quoteTokenName}
+                  />
+                </Flex>
+              )}
+              {tokenName.toLowerCase() !== 'cake' && (
+                <Flex alignItems="center">
+                  <Text mr="5px">{tokenName.replace('wBNB', 'BNB')}</Text>
+                  <Radio
+                    //  name="token"
+                    scale="sm"
+                    value={tokenName}
+                    onChange={handleChange}
+                    checked={radio === tokenName}
+                  />
+                </Flex>
+              )}
             </Flex>
           </Box>
           <Box>

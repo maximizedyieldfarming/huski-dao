@@ -24,20 +24,20 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const Borrowing = ({ tokenData }) => {
-  const quoteToken = tokenData?.quoteToken?.symbol.replace('wBNB', 'BNB')
-  const token = tokenData?.token?.symbol.replace('wBNB', 'BNB')
+const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
+  const quoteToken = tokenData?.quoteToken?.symbol
+  const token = tokenData?.token?.symbol
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const options = () => {
     if (quoteToken === 'CAKE') {
       return [
         {
-          label: token,
+          label: token.replace('wBNB', 'BNB'),
           value: token,
         },
         {
-          label: token,
+          label: token.replace('wBNB', 'BNB'),
           value: token,
         },
       ]
@@ -45,23 +45,23 @@ const Borrowing = ({ tokenData }) => {
     if (token === 'CAKE') {
       return [
         {
-          label: quoteToken,
+          label: quoteToken.replace('wBNB', 'BNB'),
           value: quoteToken,
         },
         {
-          label: quoteToken,
+          label: quoteToken.replace('wBNB', 'BNB'),
           value: quoteToken,
         },
       ]
     }
     return [
       {
-        label: quoteToken,
-        value: quoteToken,
+        label: token.replace('wBNB', 'BNB'),
+        value: token,
       },
       {
-        label: token,
-        value: token,
+        label: quoteToken.replace('wBNB', 'BNB'),
+        value: quoteToken,
       },
     ]
   }
@@ -74,7 +74,7 @@ const Borrowing = ({ tokenData }) => {
             Borrowing
           </Text>
         )}
-        <Select options={options()} />
+        <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
       </CellContent>
     </StyledCell>
   )
