@@ -1,0 +1,33 @@
+
+if __name__ == '__main__':
+basetoken_lp = 1000
+farmingtoken_lp = 10000
+basetoken_lp_borrowed = 1000
+basetoken_name = 'BNB'
+farmingtoken_name = 'CAKE'
+basetoken_begin = 1000 * 1000
+farmingtoken_begin = 10000 * 1000
+TargetPositionLeverage = 1
+ClosePosFee = 5/100/100
+PancakeTradingFee = 0.25/100
+ClosePositionPercentage = 0.3  # AfterRepayAllDebt
+print('初始仓位：', basetoken_lp, basetoken_name, '+', farmingtoken_lp, farmingtoken_name)
+print('初始杠杆：', basetoken_lp_borrowed / (basetoken_lp + farmingtoken_lp / farmingtoken_begin * basetoken_begin - basetoken_lp_borrowed) + 1)
+num0 = (TargetPositionLeverage - 1) / TargetPositionLeverage * (basetoken_lp + farmingtoken_lp / farmingtoken_begin * basetoken_begin)
+num1 = (basetoken_lp * (1 - ClosePosFee) - num0)
+num2 = num0 - basetoken_lp_borrowed + basetoken_begin
+num3 = farmingtoken_lp * (1 - ClosePosFee) * (1 - PancakeTradingFee)
+a_num = num1 * num3
+b_num = (num1 * farmingtoken_begin + num3 * num2)
+c_num = (num2 - basetoken_begin) * farmingtoken_begin
+rationum = (0 - b_num + (b_num ** 2 - 4 * a_num * c_num) ** 0.5) / 2 / a_num
+if TargetPositionLeverage > 1:
+    print('需要关闭仓位：', basetoken_lp * rationum, basetoken_name, '+', farmingtoken_lp * rationum, farmingtoken_name)
+    repaydebtnum = basetoken_lp * rationum * (1 - ClosePosFee) + basetoken_begin - farmingtoken_begin * basetoken_begin / (farmingtoken_lp * rationum * (1 - ClosePosFee) * (1 - PancakeTradingFee) + farmingtoken_begin)
+    print('偿还债务：', repaydebtnum, basetoken_name)
+    print('剩余仓位：', basetoken_lp * (1 - rationum), basetoken_name, '+', farmingtoken_lp * (1 - rationum), farmingtoken_name)
+    print('剩余债务：', basetoken_lp_borrowed - repaydebtnum, basetoken_name)
+    print('剩余杠杆：', (basetoken_lp_borrowed - repaydebtnum) / (basetoken_lp * (1 - rationum) + farmingtoken_lp * (1 - rationum) / farmingtoken_begin * basetoken_begin - (basetoken_lp_borrowed - repaydebtnum)) + 1)
+elif TargetPositionLeverage == 1:
+    print('需要关闭仓位：', basetoken_lp * (rationum + (1 - rationum) * ClosePositionPercentage), basetoken_name, '+', farmingtoken_lp * (rationum + (1 - rationum) * ClosePositionPercentage), farmingtoken_name)
+    print('Minimize Trading 和 Convert to Basetoken 按照之前的公式计算即可')

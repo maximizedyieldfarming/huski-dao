@@ -117,3 +117,62 @@ export const getBorrowingInterest = (farm: LeverageFarm) => {
 
   return { borrowingInterest };
 }
+
+
+export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage) => {
+  const { tokenAmountTotal, quoteTokenAmountTotal } = farm
+
+  const debtValueData = data.debtValue
+  const baseAmountData = data.baseAmount
+  const farmAmountData = data.farmAmount
+  const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
+  const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
+  const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
+
+  const basetokenlp = baseTokenAmount.toNumber()
+  const farmingtokenlp = farmTokenAmount.toNumber()
+  const basetokenlpborrowed = debtValue.toNumber()
+
+  const ClosePosFee = 5 / 100 / 100;
+  const PancakeTradingFee = 0.25 / 100;
+  const basetokenBegin = parseFloat(tokenAmountTotal)
+  const farmingtokenBegin = parseFloat(quoteTokenAmountTotal)
+
+  const num0 = (leverage - 1) / leverage * (basetokenlp + farmingtokenlp / farmingtokenBegin * basetokenBegin)
+  const num1 = (basetokenlp * (1 - ClosePosFee) - num0)
+  const num2 = num0 - basetokenlpborrowed + basetokenBegin
+  const num3 = farmingtokenlp * (1 - ClosePosFee) * (1 - PancakeTradingFee)
+  const numA = num1 * num3
+  const numB = (num1 * farmingtokenBegin + num3 * num2)
+  const numC = (num2 - basetokenBegin) * farmingtokenBegin
+  const rationum = (0 - numB + (numB ** 2 - 4 * numA * numC) ** 0.5) / 2 / numA
+
+  let needCloseBase
+  let needCloseFarm
+  let remainBase
+  let remainFarm
+  let remainBorrowBase
+  let remainBorrowFarm
+  let remainLeverage
+  if (leverage > 1) {
+    needCloseBase = basetokenlp * rationum
+    needCloseFarm = farmingtokenlp * rationum
+    const repaydebtnum = basetokenlp * rationum * (1 - ClosePosFee) + basetokenBegin - farmingtokenBegin * basetokenBegin / (farmingtokenlp * rationum * (1 - ClosePosFee) * (1 - PancakeTradingFee) + farmingtokenBegin)
+    remainBase = basetokenlp * (1 - rationum)
+    remainFarm = farmingtokenlp * (1 - rationum)
+    remainBorrowBase = basetokenlpborrowed - repaydebtnum
+    remainBorrowFarm = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
+    remainLeverage = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
+    // basetokenlpborrowed - repaydebtnum  
+  } else if (leverage === 1) {
+    needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    remainBase = 0
+    remainFarm = 0
+    remainBorrowBase = 0
+    remainBorrowFarm = 0
+    remainLeverage = 0
+  }
+
+  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage };
+}

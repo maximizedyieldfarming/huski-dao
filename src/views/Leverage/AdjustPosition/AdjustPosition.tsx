@@ -18,7 +18,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import DebtRatioProgress from 'components/DebRatioProgress'
-import { getHuskyRewards, getYieldFarming, getBorrowingInterest, getAdjustData } from '../helpers'
+import { getHuskyRewards, getYieldFarming, getBorrowingInterest, getAdjustData, getAdjustPositionRepayDebt } from '../helpers'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 
 interface RouteParams {
@@ -109,7 +109,7 @@ const AdjustPosition = (props) => {
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
     Number(currentPositionLeverage.toPrecision(3)),
   )
-
+  getAdjustPositionRepayDebt(data.farmData, data, targetPositionLeverage,debtRatio.toNumber() )
   const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, quoteTokenInput)
   const adjustData = farmingData ? farmingData[1] : []
 
