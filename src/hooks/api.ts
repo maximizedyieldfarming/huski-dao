@@ -50,7 +50,8 @@ export const useGetPositions = () => {
             break;
           case 'prod':
           default:
-            response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
+            response = `https://api.huski.finance/api/v1/positions/get?owner=${account}`;
+            // response = `https://api.alpacafinance.org/v2/positions?owner=${account}&limit=10&offset=0`;
             break;
         }
 

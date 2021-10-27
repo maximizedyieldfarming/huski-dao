@@ -49,7 +49,8 @@ const fetchFarmsTradeFees = async (farms) => {
       break;
     case 'prod':
     default:
-      farmsWithTradeFees = fetchFarmsTradeFeesForAlpaca(farms);
+      farmsWithTradeFees = fetchFarmsTradeFeesForTest(farms);
+      // farmsWithTradeFees = fetchFarmsTradeFeesForAlpaca(farms);
       break;
   }
 
