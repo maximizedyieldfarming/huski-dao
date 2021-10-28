@@ -37,7 +37,7 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { poolId, quoteTokenPoolId, debtPoolId, quoteTokenDebtpoolId, lpAddresses, workerAddress, quoteTokenWorkerAddress, workerConfig, token, quoteToken, vaultAddress, quoteTokenVaultAddress, pid } = farm
+  const { lpAddresses, workerAddress, quoteTokenWorkerAddress, workerConfig, token, quoteToken, vaultAddress, quoteTokenVaultAddress, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = getAddress(vaultAddress)
   const quoteTokenVaultAddresses = getAddress(quoteTokenVaultAddress)
@@ -170,12 +170,12 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
   // Only make masterchef calls if farm has pid
   const [infoFL, alpacaPerBlock, totalAllocPointFL] =
-  debtPoolId || debtPoolId === 0
+  token?.debtPoolId || token?.debtPoolId === 0
       ? await multicall(fairLaunchABI, [
           {
             address: getFairLaunch(),
             name: 'poolInfo',
-            params: [debtPoolId],
+            params: [token?.debtPoolId],
           },
           {
             address: getFairLaunch(),
@@ -190,12 +190,12 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
    
       const [quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
-      quoteTokenDebtpoolId || quoteTokenDebtpoolId === 0
+      quoteToken?.debtPoolId || quoteToken?.debtPoolId === 0
           ? await multicall(fairLaunchABI, [
               {
                 address: getFairLaunch(),
                 name: 'poolInfo',
-                params: [quoteTokenDebtpoolId],
+                params: [quoteToken?.debtPoolId],
               },
               {
                 address: getFairLaunch(),

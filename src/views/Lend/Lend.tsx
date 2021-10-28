@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
-import { useFarms } from 'state/farms/hooks'
 import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
@@ -25,43 +24,19 @@ import Page from 'components/Layout/Page'
 import { useLendTotalSupply } from 'state/lend/hooks'
 import {
   useLeverageFarms,
-  usePollLeverageFarmsWithUserData,
-  useHuskyPrice,
-  useHuskyPerBlock,
+  usePollLeverageFarmsWithUserData
 } from 'state/leverage/hooks'
 import usePersistState from 'hooks/usePersistState'
-import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
-import { getFarmApr } from 'utils/apr'
 import { orderBy } from 'lodash'
-import isArchivedPid from 'utils/farmHelpers'
-import { latinise } from 'utils/latinise'
-import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
-import ERC20_INTERFACE from 'config/abi/erc20'
-import { useAllTokens } from 'hooks/Tokens'
-import { useMulticallContract } from 'hooks/useContract'
-import { isAddress } from 'utils'
-import { useSingleContractMultipleData, useMultipleContractSingleData } from 'state/multicall/hooks'
-import useTokenBalance from 'hooks/useTokenBalance'
-import { getAddress } from 'utils/addressHelpers'
-import { deposit } from 'utils/vaultService'
-import { Field } from '../../state/mint/actions'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
-import { ROUTER_ADDRESS } from '../../config/constants'
-import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
-import husky from './assets/husky@1x.png'
-import husky2 from './assets/husky2@1x.png'
-import bone1 from './assets/bone1-1x.png'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
-import TopTable from './components/TopTable/TopTable'
 import { getAprData } from './helpers'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
-import LendCard from './components/LendCard/LendCard'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -81,60 +56,6 @@ const ControlContainer = styled.div`
   }
 `
 
-const ToggleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-
-  ${Text} {
-    margin-left: 8px;
-  }
-`
-
-const LabelWrapper = styled.div`
-  > ${Text} {
-    font-size: 12px;
-  }
-`
-
-const FilterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 8px 0px;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    width: auto;
-    padding: 0;
-  }
-`
-
-const ViewControls = styled.div`
-  flex-wrap: wrap;
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
-  width: 100%;
-
-  > div {
-    padding: 8px 0px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    justify-content: flex-start;
-    width: auto;
-
-    > div {
-      padding: 0;
-    }
-  }
-`
-
-const StyledImage = styled(Image)`
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 58px;
-`
 const NUMBER_OF_FARMS_VISIBLE = 12
 
 const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
@@ -146,8 +67,6 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   }
   return null
 }
-
-const ImageContainer = styled.figure``
 
 const StyledBox = styled(Flex)`
   position: relative;
@@ -192,7 +111,7 @@ const Lend: React.FC = () => {
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
-    hash[next.poolId] ? '' : (hash[next.poolId] = true && cur.push(next))
+    hash[next.token.poolId] ? '' : (hash[next.token.poolId] = true && cur.push(next))
     return cur
   }, [])
 
