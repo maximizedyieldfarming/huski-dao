@@ -127,7 +127,7 @@ const Farm = () => {
   const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
 
-  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, leverageValue, radio)
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, radio)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
 
   const getDisplayApr = (cakeRewardsApr?: number) => {

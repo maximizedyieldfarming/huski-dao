@@ -51,21 +51,15 @@ const ActivePositionsRow = ({ data }) => {
   const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
   const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
-  // const debtValueData = data.debtValue
-  // const baseAmountData = data.baseAmount
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
-
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const leverage = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
 
-  // const farmingData = getLeverageFarmingData(data.farmData, leverage.toNumber(), '0.04', '0.0065')
-
   const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
-  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, huskyPerBlock, leverage)
+  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
-  // const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
+
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })

@@ -4,23 +4,24 @@ import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { dichotomybasetoken } from 'utils/pancakeService'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 
-export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number, leverage, tokenName?: string) => {
-  const { vaultDebtVal, token, quoteTokenVaultDebtVal, quoteToken } = farm
+export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, tokenName?: string) => {
+  const { vaultDebtVal, token, quoteTokenVaultDebtVal, quoteToken, pooPerBlock, quoteTokenPoolPerBlock } = farm
 
   let vaultDebtValue
+  let poolHuskyPerBlock
 
   if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase()) {
     vaultDebtValue = quoteTokenVaultDebtVal
+    poolHuskyPerBlock = quoteTokenPoolPerBlock
   } else {
     vaultDebtValue = vaultDebtVal
+    poolHuskyPerBlock = pooPerBlock
   }
 
   const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() ? quoteToken.busdPrice : token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
-  const poolHuskyPerBlock = pooPerBlock
-
-  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * (leverage - 1) * huskyPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
-
+ 
+  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
   return huskyRewards.toNumber();
 }
 

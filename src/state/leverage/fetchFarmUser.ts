@@ -114,7 +114,7 @@ export const fetchFarmlpUserEarnings = async (account: string, farmsToFetch: Lev
     return {
       address: fairLaunchAddress,
       name: 'pendingAlpaca',
-      params: [farm.debtIbpid, account],
+      params: [farm.debtPoolId, account],
     }
   })
 
