@@ -186,11 +186,11 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     remainBorrowFarm = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
     remainLeverage = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
     // basetokenlpborrowed - repaydebtnum  
-  } else if (leverage === 1) {
+ } else if (Number(leverage) === 1) {
     needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
-    remainBase = 0
-    remainFarm = 0
+    remainBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    remainFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     remainBorrowBase = 0
     remainBorrowFarm = 0
     remainLeverage = 0
