@@ -2,13 +2,11 @@ import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { useRouteMatch, useLocation } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { useWeb3React } from '@web3-react/core'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { Text, Button, Flex, Box, Skeleton, Grid } from '@pancakeswap/uikit'
-import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
-import { useHuskyPrice, useHuskyPerBlock } from 'state/leverage/hooks'
+import { useStakeWithUserData, useStakes, useHuskyPrice } from 'state/stake/hooks'
 import styled from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
@@ -44,15 +42,6 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 const ImageContainer = styled.figure`
   // position: absolute;
   // right: -10px;
-`
-
-const Title = styled.div`
-  color: #9615e7;
-  font-size: 30px;
-  border-bottom: 1px solid #ccc;
-  @media screen and (min-width: 1024px) {
-    font-size: 36px;
-  }
 `
 
 const StyledButton = styled(Button)`
@@ -135,7 +124,6 @@ const Stake: React.FC = () => {
 
   // sort feature
   const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const [sortOption, setSortOption] = useState('hot')
   const handleSortOptionChange = (option) => {
     setSortOption(option.value)
@@ -145,7 +133,7 @@ const Stake: React.FC = () => {
       case 'apy':
         return orderBy(
           dataToSort,
-          (token) => (token.totalToken ? getStakeApy(token, huskyPrice, huskyPerBlock).apy : 0),
+          (token) => (token.totalToken ? getStakeApy(token, huskyPrice).apy : 0),
           'desc',
         )
       case 'total_supply':

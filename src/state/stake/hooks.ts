@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
@@ -57,4 +57,15 @@ export const useFarmUser = (pid) => {
     stakedBalance: farm.userData ? new BigNumber(farm.userData.stakedBalance) : BIG_ZERO,
     earnings: farm.userData ? new BigNumber(farm.userData.earnings) : BIG_ZERO,
   }
+}
+
+
+export const useHuskyPrice = (): BigNumber => {
+  const huskyFarm = useFarmFromPid(11)
+  const huskyPriceAsString = huskyFarm.token.busdPrice
+  const huskyPrice = useMemo(() => {
+    return new BigNumber(huskyPriceAsString)
+  }, [huskyPriceAsString])
+
+  return huskyPrice
 }

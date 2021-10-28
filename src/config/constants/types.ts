@@ -72,8 +72,10 @@ export interface StakeConfig {
   name: string
   symbol: string
   pid: number
+  debtPid: number
   token?: Token
   vaultAddress?: Address
+  debtVaultAddress?: Address
   fairLaunchAddress?: Address
 }
 
