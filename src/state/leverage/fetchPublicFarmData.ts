@@ -236,32 +236,9 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
-  // console.info('alpacaPerBlock',alpacaPerBlock)
-  // console.info('infoFL',infoFL)
-  // console.info('totalAllocPointFL',totalAllocPointFL)
-  // console.info('alpacaPerBlock',Number(alpacaPerBlock))
-  // console.info('infoFL',Number(infoFL.allocPoint))
-
-  // console.info('allocPoint',Number(infoFL.allocPoint))
-  // console.info('accAlpacaPerShare',Number(infoFL.accAlpacaPerShare))
-  // console.info('accAlpacaPerShareTilBonusEnd',Number(infoFL.accAlpacaPerShareTilBonusEnd))
-  // console.info('lastRewardBlock',Number(infoFL.lastRewardBlock))
-
-  // // console.info('totalAllocPointFL',Number(totalAllocPointFL))
-
-  // // console.info('alpacaPerBlock---',Number(quoteTokenAlpacaPerBlock))
-  // console.info('infoFL---',Number(quoteTokenInfo.allocPoint))
-  // console.info('accAlpacaPerShare',Number(quoteTokenInfo.accAlpacaPerShare))
-  // console.info('accAlpacaPerShareTilBonusEnd',Number(quoteTokenInfo.accAlpacaPerShareTilBonusEnd))
-  // console.info('lastRewardBlock',Number(quoteTokenInfo.lastRewardBlock))
-  // console.info('totalAllocPointFL---',Number(quoteTokenTotalAllocPoint))
-
-
-  // console.info('allocPoint',Number(allocPoint))
-  // console.info('infoFL',pid)
-
   const pooPerBlock = alpacaPerBlock * infoFL.allocPoint / totalAllocPointFL;
   const quoteTokenPoolPerBlock = quoteTokenAlpacaPerBlock * quoteTokenInfo.allocPoint / quoteTokenTotalAllocPoint;
+  
   return {
     name,
     lptotalSupply: lptotalSupply[0]._hex,

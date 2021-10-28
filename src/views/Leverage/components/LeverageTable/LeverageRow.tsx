@@ -56,9 +56,9 @@ const LeverageRow = ({ tokenData }) => {
     setBorrowingAsset(asset)
   }
 
-  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, huskyPerBlock, childLeverage, borrowingAsset)
+  const huskyRewards = getHuskyRewards(tokenData, huskyPrice, borrowingAsset)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
-  const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
+  const { tokensLP, totalTvl } = getTvl(tokenData)
 
   const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 

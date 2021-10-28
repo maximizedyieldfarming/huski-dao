@@ -4,7 +4,7 @@ import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
+import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
@@ -16,7 +16,6 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import { usePriceCakeBusd } from 'state/farms/hooks'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import {
   getHuskyRewards,
@@ -139,12 +138,10 @@ const AdjustPosition = (props) => {
   const farmingTokenInPosition = adjustData?.[9]
 
   // for apr
-  const cakePriceBusd = usePriceCakeBusd()
   const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
-  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, huskyPerBlock, currentPositionLeverage) * 100
+  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice) * 100
   const { borrowingInterest } = getBorrowingInterest(data?.farmData)
 
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
@@ -156,7 +153,7 @@ const AdjustPosition = (props) => {
 
   const adjustedYieldFarmAPR = yieldFarmData * Number(targetPositionLeverage)
   const adjustedTradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(targetPositionLeverage)
-  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, huskyPerBlock, targetPositionLeverage) * 100
+  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice) * 100
   const adjustHuskiRewardsAPR = adjustedHuskyRewards * (targetPositionLeverage - 1)
   const adjustBorrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
   const adjustedApr: number =
