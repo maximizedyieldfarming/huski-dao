@@ -1,9 +1,7 @@
 import BigNumber from 'bignumber.js'
-import masterchefABI from 'config/abi/masterchef.json'
-import lpTokenABI from 'config/abi/lpToken.json'
 import VaultABI from 'config/abi/vault.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
-import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
+import { getAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import { getFairLaunch } from 'utils/env'
 import multicall from 'utils/multicall'
@@ -18,7 +16,7 @@ type PublicFarmData = {
 }
 
 const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
-  const { pid, vaultAddress } = farm
+  const { debtPid, vaultAddress, debtVaultAddress } = farm
   const vaultAddresses = getAddress(vaultAddress)
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -37,12 +35,12 @@ const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
     ])
 
   const [info, alpacaPerBlock, totalAllocPoint] =
-  pid || pid === 0
+  debtPid || debtPid === 0
       ? await multicall(fairLaunchABI, [
           {
             address: getFairLaunch(),
             name: 'poolInfo',
-            params: [pid],
+            params: [debtPid],
           },
           {
             address: getFairLaunch(),
