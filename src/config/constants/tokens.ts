@@ -66,6 +66,8 @@ const tokens = {
   },
   cake: {
     symbol: 'CAKE',
+    poolId: 1,
+    debtPoolId: 6,
     address: {
       56: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
       97: '0xa35062141Fa33BCA92Ce69FeD37D0E8908868AAe',
@@ -683,6 +685,8 @@ const tokens = {
   },
   wbnb: {
     symbol: 'wBNB',
+    poolId: 1,
+    debtPoolId: 6,
     address: {
       56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
       97: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
@@ -859,6 +863,8 @@ const tokens = {
   },
   busd: {
     symbol: 'BUSD',
+    poolId: 3,
+    debtPoolId: 7,
     address: {
       56: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
       97: '',
@@ -873,6 +879,8 @@ const tokens = {
   },
   eth: {
     symbol: 'ETH',
+    poolId: 9,
+    debtPoolId: 8,
     address: {
       56: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
       97: '',
@@ -1004,6 +1012,8 @@ const tokens = {
   },
   usdt: {
     symbol: 'USDT',
+    poolId: 16,
+    debtPoolId: 15,
     address: {
       56: '0x55d398326f99059fF775485246999027B3197955',
       97: '0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5',
@@ -1018,6 +1028,8 @@ const tokens = {
   },
   btcb: {
     symbol: 'BTCB',
+    poolId: 18,
+    debtPoolId: 17,
     address: {
       56: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
       97: '0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5',
@@ -1437,6 +1449,8 @@ const tokens = {
   },
   alpaca: {
     symbol: 'ALPACA',
+    poolId: 11,
+    debtPoolId: 10,
     address: {
       56: '0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F',
       97: '',

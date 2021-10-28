@@ -8,6 +8,8 @@ export interface Address {
 
 export interface Token {
   symbol: string
+  poolId?: number
+  debtPoolId?: number
   address?: Address
   config?: Address
   decimals?: number
@@ -93,11 +95,7 @@ export interface LeverageFarmConfig {
     earnLabel: string
     endBlock: number
   }
-  debtPoolId: number
-  quoteTokenDebtpoolId: number
   leverage: number
-  poolId: number
-  quoteTokenPoolId: number
   vaultAddress: Address
   quoteTokenVaultAddress: Address
   workerAddress: Address
