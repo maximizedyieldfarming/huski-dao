@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import erc20ABI from 'config/abi/erc20.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
 import multicall from 'utils/multicall'
-import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
+import { getAddress } from 'utils/addressHelpers'
 import { getFairLaunch } from 'utils/env'
 import { LeverageFarmConfig } from 'config/constants/types'
 
