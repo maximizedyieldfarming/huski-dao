@@ -54,11 +54,26 @@ export const getTvl = (farm: LeverageFarm) => {
   return { tokensLP, tokenNum, quoteTokenNum, totalTvl };
 }
 
-export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput) => {
+export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {
   const { tokenAmountTotal, quoteTokenAmountTotal } = farm
-  const tokenInputNum = Number(tokenInput);
-  const quoteTokenInputNum = Number(quoteTokenInput);
-  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotal), parseFloat(quoteTokenAmountTotal))
+
+  let tokenAmountTotalNum
+  let quoteTokenAmountTotalNum  
+  let tokenInputNum 
+  let quoteTokenInputNum 
+  if (farm.token.symbol.toLowerCase() === tokenName.toLowerCase()) {
+    tokenInputNum = Number(tokenInput);
+    quoteTokenInputNum = Number(quoteTokenInput);
+    tokenAmountTotalNum = tokenAmountTotal;
+    quoteTokenAmountTotalNum = quoteTokenAmountTotal;
+  } else {
+    tokenInputNum = Number(quoteTokenInput);
+    quoteTokenInputNum = Number(tokenInput);
+    tokenAmountTotalNum = quoteTokenAmountTotal;
+    quoteTokenAmountTotalNum = tokenAmountTotal;
+   }
+  
+  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
   console.info('======farmdata======', farmdata);
   return farmdata
 }
