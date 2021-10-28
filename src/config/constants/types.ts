@@ -91,9 +91,11 @@ export interface LeverageFarmConfig {
     earnLabel: string
     endBlock: number
   }
-  debtIbpid: number
+  debtPoolId: number
+  quoteTokenDebtpoolId: number
   leverage: number
   poolId: number
+  quoteTokenPoolId: number
   vaultAddress: Address
   quoteTokenVaultAddress: Address
   workerAddress: Address

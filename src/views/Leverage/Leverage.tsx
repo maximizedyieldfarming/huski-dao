@@ -24,8 +24,7 @@ import bone2 from './assets/bone2-1x.png'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
-import LeverageCard from './components/LeverageCard/LeverageCard'
-import { getHuskyRewards, getYieldFarming, getTvl } from './helpers'
+import { getYieldFarming, getTvl } from './helpers'
 import { ReactComponent as AllFilter } from './assets/AllFilter.svg'
 import { ReactComponent as BnbIcon } from './assets/Bnb.svg'
 import { ReactComponent as BusdIcon } from './assets/Busd.svg'
@@ -128,7 +127,7 @@ const Leverage: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions()
-
+console.info('farmsData',farmsData);
   // search feature
   const [searchQuery, setSearchQuery] = useState('')
   const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -200,6 +199,7 @@ const Leverage: React.FC = () => {
 
   const positionFarmsData = []
   if (data && data !== null && data !== undefined) {
+    console.info('data----positionFarmsData',data);
     // eslint-disable-next-line array-callback-return
     data.map((pdata) => {
       let pfarmData
@@ -228,7 +228,7 @@ const Leverage: React.FC = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const handleConfirm = async () => {
     // try {
-    //   const tx = await callWithGasPrice(claimContract, 'harvest', [这里要用debtIbpid], { gasLimit: 300000 })
+    //   const tx = await callWithGasPrice(claimContract, 'harvest', [这里要用debtPoolId], { gasLimit: 300000 })
     //   const receipt = await tx.wait()
     //   if (receipt.status) {
     //     toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))

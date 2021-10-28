@@ -187,8 +187,7 @@ export const useLpTokenPrice = (symbol: string) => {
 // }
 export const useHuskyPrice = (): BigNumber => {
   const huskyFarm = useFarmFromPid(362)
-  const huskyPriceAsString = huskyFarm.quoteToken.busdPrice
-
+  const huskyPriceAsString = huskyFarm.token.busdPrice
   const huskyPrice = useMemo(() => {
     return new BigNumber(huskyPriceAsString)
   }, [huskyPriceAsString])
