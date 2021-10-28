@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
+import React from 'react'
+import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
 import { TokenImage } from 'components/TokenImage'

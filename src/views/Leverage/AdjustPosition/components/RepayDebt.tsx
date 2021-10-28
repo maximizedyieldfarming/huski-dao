@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
-import styled from 'styled-components'
-import { TokenImage } from 'components/TokenImage'
+import React from 'react'
+import { Flex, Text } from '@pancakeswap/uikit'
 import Select from 'components/Select/Select'
 import RepayDebtMinimizeTrading from './RepayDebtMinimizeTrading'
 import RepayDebtConvertTo from './RepayDebtConvertTo'
+import { useConvertToContext } from '../context'
 
 const RepayDebt = ({
   currentPositionLeverage,
@@ -13,12 +12,10 @@ const RepayDebt = ({
   quoteTokenName,
   tokenName,
 }) => {
-  const [isConvertTo, setIsConvertTo] = useState('convertTo')
+  const { isConvertTo, handleIsConvertTo } = useConvertToContext()
   const handleSelect = (option) => {
-    setIsConvertTo(option.value)
+    handleIsConvertTo(option.value === 'convertTo')
   }
-
-  const [percentageValue, setPercentageValue] = useState<number>(0)
 
   return (
     <>
@@ -32,7 +29,7 @@ const RepayDebt = ({
           onChange={handleSelect}
         />
       </Flex>
-      {isConvertTo === 'convertTo' ? (
+      {isConvertTo ? (
         <RepayDebtConvertTo
           currentPositionLeverage={Number(currentPositionLeverage)}
           targetPositionLeverage={Number(targetPositionLeverage)}

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
+import { usePercentageToCloseContext } from '../context'
 
 interface Props {
   currentPositionLeverage: number
@@ -31,9 +32,10 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
   quoteTokenName,
   tokenName,
 }) => {
-  const [percentageToClose, setPercentageToClose] = useState<number>(0)
   const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage } =
     minimizeTradingValues
+
+  const { percentage, setPercentage } = usePercentageToCloseContext()
 
   return (
     <Wrapper>
@@ -56,8 +58,8 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
               min="0"
               max="100"
               step="1"
-              value={percentageToClose}
-              onChange={(e) => setPercentageToClose(Number(e.target.value))}
+              value={percentage}
+              onChange={(e) => setPercentage(Number(e.target.value))}
               style={{ width: '90%' }}
               list="percentageToClose"
             />
@@ -66,7 +68,7 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
               <option value="50" label="50%" />
               <option value="100" label="100%" />
             </datalist>
-            <Text ml="auto">{percentageToClose}%</Text>
+            <Text ml="auto">{percentage}%</Text>
           </Flex>
         </Box>
       )}

@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import { Box, Button, Flex, Radio, Slider, Text, Skeleton, Input } from '@pancakeswap/uikit'
+import React from 'react'
+import { Box, Button, Flex } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import AddColateral from './AddColateral'
 import RepayDebt from './RepayDebt'
+import { useAddCollateralContext } from '../context'
 
 interface HeaderProps {
   active: boolean
@@ -20,8 +21,6 @@ interface Props {
   setTokenInput: any
   setQuoteTokenInput: any
   currentPositionLeverage: number
-  isAddCollateral: any
-  setIsAddCollateral: any
   minimizeTradingValues: any
 }
 
@@ -52,24 +51,22 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
   setTokenInput,
   setQuoteTokenInput,
   currentPositionLeverage,
-  isAddCollateral,
-  setIsAddCollateral,
   minimizeTradingValues,
 }) => {
-  // const [isAddCollateral, setIsAddCollateral] = useState(currentPositionLeverage !== 1)
+  const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
   return (
     <Box>
       <Header>
         <HeaderTab
           active={isAddCollateral}
-          onClick={(e) => setIsAddCollateral(true)}
+          onClick={() => handleIsAddCollateral(true)}
           disabled={currentPositionLeverage === 1}
         >
           Add Collateral
         </HeaderTab>
         <HeaderTab
           active={!isAddCollateral || currentPositionLeverage === 1}
-          onClick={(e) => setIsAddCollateral(false)}
+          onClick={() => handleIsAddCollateral(false)}
         >
           {currentPositionLeverage === 1 ? 'Partially Close Your Position' : 'Repay Debt'}
         </HeaderTab>
