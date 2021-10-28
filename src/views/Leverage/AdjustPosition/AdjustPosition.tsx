@@ -25,6 +25,7 @@ import {
   getAdjustPositionRepayDebt,
 } from '../helpers'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
+import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
 interface RouteParams {
   token: string
@@ -59,12 +60,11 @@ const Section = styled(Box)`
     -webkit-appearance: auto;
   }
 `
-
-const AdjustPosition = (props) => {
+const AdjustPosition = () => {
   const {
     state: { data, liquidationThreshold },
   } = useLocation<LocationParams>()
-  const { token } = useParams<RouteParams>()
+  const { token: poolName } = useParams<RouteParams>()
   const { t } = useTranslation()
   const quoteTokenName = data?.farmData?.quoteToken?.symbol.replace('wBNB', 'BNB')
   const tokenName = data?.farmData?.token?.symbol.replace('wBNB', 'BNB')
@@ -114,12 +114,7 @@ const AdjustPosition = (props) => {
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
     Number(currentPositionLeverage.toPrecision(3)),
   )
-  const { remainLeverage } = getAdjustPositionRepayDebt(
-    data.farmData,
-    data,
-    targetPositionLeverage,
-    debtRatio.toNumber(),
-  )
+
   const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, quoteTokenInput)
   const adjustData = farmingData ? farmingData[1] : []
 
@@ -268,7 +263,15 @@ const AdjustPosition = (props) => {
   )
 
   const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
+  const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
+  const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
+  const { remainLeverage } = getAdjustPositionRepayDebt(
+    data.farmData,
+    data,
+    Number(targetPositionLeverage),
+    percentageToClose / 100,
+  )
   const isConfirmDisabled =
     (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
     Number(currentPositionLeverage).toPrecision(3) === Number(targetPositionLeverage).toPrecision(3) ||
@@ -278,181 +281,212 @@ const AdjustPosition = (props) => {
   const maxValue = 1 - principal / data?.farmData?.leverage
   const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
-  return (
-    <Page>
-      <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
-        Adjust Position {token}
-      </Text>
-      <Section>
-        <Text bold>Current Position Leverage: {currentPositionLeverage.toPrecision(3)}x</Text>
-        <Text>Target Position Leverage: {Number(targetPositionLeverage).toPrecision(3)}x</Text>
-        <Flex>
-          <input
-            type="range"
-            min="1.0"
-            max={leverage}
-            step="0.01"
-            name="leverage"
-            value={targetPositionLeverage}
-            onChange={handleSliderChange}
-            list="leverage"
-            style={{ width: '90%' }}
-          />
-          <datalist id="leverage">{datalistOptions}</datalist>
-          <Box ml="auto">
-            <Text textAlign="right">{Number(targetPositionLeverage).toPrecision(3)}x</Text>
-          </Box>
-        </Flex>
-        {Number(targetPositionLeverage) > Number(currentPositionLeverage.toPrecision(3)) && (
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text>You&apos;re Borrowing More</Text>
-            <NumberInput placeholder="0.00" style={{ width: '10%' }} />
-          </Flex>
-        )}
-        {Number(targetPositionLeverage) < Number(currentPositionLeverage.toPrecision(3)) && (
-          <AddCollateralRepayDebtContainer
-            currentPositionLeverage={Number(currentPositionLeverage)}
-            targetPositionLeverage={Number(targetPositionLeverage)}
-            userQuoteTokenBalance={userQuoteTokenBalance}
-            userTokenBalance={userTokenBalance}
-            quoteTokenName={quoteTokenName}
-            tokenName={tokenName}
-            quoteToken={data?.farmData?.quoteToken}
-            token={data?.farmData?.token}
-            tokenInput={tokenInput}
-            quoteTokenInput={quoteTokenInput}
-            setTokenInput={setTokenInput}
-            setQuoteTokenInput={setQuoteTokenInput}
-            isAddCollateral={isAddCollateral}
-            setIsAddCollateral={setIsAddCollateral}
-            minimizeTradingValues={getAdjustPositionRepayDebt(
-              data.farmData,
-              data,
-              targetPositionLeverage,
-              debtRatio.toNumber(),
-            )}
-          />
-        )}
-      </Section>
+  const baseAmountData = data.baseAmount
+  const farmAmountData = data.farmAmount
+  const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
+  const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
+  const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const basetokenBegin = parseInt(tokenAmountTotal)
+  const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+  const convertedPositionValueAssets =
+    Number(baseTokenAmount) +
+    basetokenBegin -
+    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
 
+  const amountToTrade =
+    ((basetokenBegin * farmingtokenBegin) / (basetokenBegin - debtValueNumber.toNumber() + Number(baseTokenAmount)) -
+      farmingtokenBegin) /
+    (1 - 0.0025)
+
+  const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
+
+  const convertedPositionValueMinimizeTrading = Number(farmTokenAmount) - amountToTrade
+
+  let lastSection
+  if (!isAddCollateral && Number(targetPositionLeverage) === 1) {
+    lastSection = (
       <Section>
         <Flex justifyContent="space-between">
-          <Text>Debt Assets Borrowed</Text>
-          {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)}</Text> : <Text>0.00</Text>}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>Updated Debt</Text>
-          {data ? (
-            <Flex alignItems="center">
-              <Text> {debtValueNumber.toNumber().toFixed(3)}</Text>
-              <ChevronRightIcon />
-              <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)}</Text>
-            </Flex>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>Leverage (ratio)</Text>
-          {data ? (
-            <Flex>
-              <Text>
-                {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
-              </Text>
-              <ChevronRightIcon />
-              <Text>{(updatedDebtRatio * 100).toFixed(2)}%</Text>
-            </Flex>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex height="100px" alignItems="center">
-          <DebtRatioProgress
-            debtRatio={updatedDebtRatio * 100}
-            liquidationThreshold={liquidationThreshold}
-            max={maxValue * 100}
-          />
-        </Flex>
-      </Section>
-      <Section>
-        <Flex justifyContent="space-between">
-          <Text>Yields Farm APR</Text>
-          {yieldFarmAPR ? (
-            <Flex alignItems="center">
-              <Text>{yieldFarmAPR.toFixed(2)}%</Text>
-              <ChevronRightIcon />
-              <Text>{adjustedYieldFarmAPR.toFixed(2)}%</Text>
-            </Flex>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>Trading Fees APR(7 DAYS average)</Text>
-          {tradingFeesAPR ? (
-            <Flex alignItems="center">
-              <Text>{tradingFeesAPR.toFixed(2)}%</Text>
-              <ChevronRightIcon />
-              <Text>{adjustedTradingFeesAPR.toFixed(2)}%</Text>
-            </Flex>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>HUSKI Rewards APR</Text>
-          {huskiRewardsAPR ? (
-            <Flex alignItems="center">
-              <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
-              <ChevronRightIcon />
-              <Text>{adjustHuskiRewardsAPR.toFixed(2)}%</Text>
-            </Flex>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>Borrowing Interest APR</Text>
-          {borrowingInterestAPR ? (
-            <Flex alignItems="center">
-              <Text>-{borrowingInterestAPR.toFixed(2)}%</Text>
-              <ChevronRightIcon />
-              <Text>-{adjustBorrowingInterestAPR.toFixed(2)}%</Text>
-            </Flex>
-          ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Box>
-            <Text>APR</Text>
-            <Text color="textSubtle" small>
-              Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR
+          <Text>Amount to Trade</Text>
+          {isConvertTo ? (
+            <Text>
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenName}
             </Text>
-          </Box>
-          {apr ? (
-            <Flex alignItems="center">
-              <Text>{apr.toFixed(2)}%</Text>
-              <ChevronRightIcon />
-              <Text>{adjustedApr.toFixed(2)}%</Text>
-            </Flex>
           ) : (
-            <Skeleton width="80px" height="16px" />
+            <Text>
+              {amountToTrade.toPrecision(4)}
+              {quoteTokenName}
+            </Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>APY</Text>
-          {apy ? (
-            <Flex alignItems="center">
-              <Text>{(apy * 100).toFixed(2)}%</Text>
-              <ChevronRightIcon />
-              <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
-            </Flex>
+          <Flex>
+            <Text>Price Impact</Text>
+            {priceImpactTooltipVisible && priceImpactTooltip}
+            <span ref={priceImpactTargetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+          {adjustData ? (
+            <Text color="#1DBE03">+{(priceImpact * 100).toPrecision(4)}%</Text>
           ) : (
-            <Skeleton width="80px" height="16px" />
+            <Text color="#1DBE03">0.00%</Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Flex>
+            <Text>Trading Fees</Text>
+            {tradingFeesTooltipVisible && tradingFeesTooltip}
+            <span ref={tradingFeesTargetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+          {adjustData ? (
+            <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
+          ) : (
+            <Text color="#EB0303">0.00%</Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Converted Position Value Assets</Text>
+          {isConvertTo ? (
+            <Text>
+              {convertedPositionValueAssets.toFixed(3)} {tokenName}
+            </Text>
+          ) : (
+            <Text>
+              {convertedPositionValueMinimizeTrading ? (
+                <Text>
+                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenName} +{' '}
+                  {Number(debtValueNumber).toPrecision(4)} {tokenName}{' '}
+                </Text>
+              ) : (
+                <Skeleton height="16px" width="80px" />
+              )}
+            </Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Amount of Debt to Repay</Text>
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Updated Position Value Assets</Text>
+          {adjustData ? (
+            <Text>
+              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+            </Text>
+          ) : (
+            <Text>
+              0.00 {tokenName} + 0.00 {quoteTokenName}
+            </Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>You will receive approximately</Text>
+          {convertedPositionValue ? (
+            <Text>
+              {Number(convertedPositionValue).toPrecision(4)} {tokenName}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Minimum Received</Text>
+          {convertedPositionValue ? (
+            <Text>
+              {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {tokenName}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
           )}
         </Flex>
       </Section>
+    )
+  } else if (!isAddCollateral && Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2))) {
+    lastSection = (
+      <Section>
+        <Flex justifyContent="space-between">
+          <Text>Amount to Trade</Text>
+          {isConvertTo ? (
+            <Text>
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenName}
+            </Text>
+          ) : (
+            <Text>
+              {amountToTrade.toPrecision(4)}
+              {quoteTokenName}
+            </Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Flex>
+            <Text>Price Impact</Text>
+            {priceImpactTooltipVisible && priceImpactTooltip}
+            <span ref={priceImpactTargetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+          {adjustData ? (
+            <Text color="#1DBE03">+{(priceImpact * 100).toPrecision(4)}%</Text>
+          ) : (
+            <Text color="#1DBE03">0.00%</Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Flex>
+            <Text>Trading Fees</Text>
+            {tradingFeesTooltipVisible && tradingFeesTooltip}
+            <span ref={tradingFeesTargetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+          {adjustData ? (
+            <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
+          ) : (
+            <Text color="#EB0303">0.00%</Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Converted Position Value Assets</Text>
+          {isConvertTo ? (
+            <Text>
+              {convertedPositionValueAssets.toFixed(3)} {tokenName}
+            </Text>
+          ) : (
+            <Text>
+              {convertedPositionValueMinimizeTrading.toFixed(3)} {tokenName}
+            </Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Amount of Debt to Repay</Text>
+          {adjustData ? (
+            <Text>
+              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+            </Text>
+          ) : (
+            <Text>
+              0.00 {tokenName} + 0.00 {quoteTokenName}
+            </Text>
+          )}
+        </Flex>
+        <Flex justifyContent="space-between">
+          <Text>Updated Position Value Assets</Text>
+          {adjustData ? (
+            <Text>
+              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+            </Text>
+          ) : (
+            <Text>
+              0.00 {tokenName} + 0.00 {quoteTokenName}
+            </Text>
+          )}
+        </Flex>
+      </Section>
+    )
+  } else {
+    lastSection = (
       <Section>
         <Flex justifyContent="space-between">
           <Text>Assets Supplied</Text>
@@ -514,12 +548,221 @@ const AdjustPosition = (props) => {
           )}
         </Flex>
       </Section>
-      <Flex alignSelf="center">
-        <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
-          Confirm
-        </Button>
-      </Flex>
-    </Page>
+    )
+  }
+
+  return (
+    <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
+      <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
+        <PercentageToCloseContext.Provider
+          value={{ percentage: percentageToClose, setPercentage: setPercentageToClose }}
+        >
+          <Page>
+            <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
+              Adjust Position {poolName}
+            </Text>
+            <Section>
+              <Text bold>Current Position Leverage: {currentPositionLeverage.toPrecision(3)}x</Text>
+              <Text>Target Position Leverage: {Number(targetPositionLeverage).toPrecision(3)}x</Text>
+              <Flex>
+                <input
+                  type="range"
+                  min="1.0"
+                  max={leverage}
+                  step="0.01"
+                  name="leverage"
+                  value={targetPositionLeverage}
+                  onChange={handleSliderChange}
+                  list="leverage"
+                  style={{ width: '90%' }}
+                />
+                <datalist id="leverage">{datalistOptions}</datalist>
+                <Box ml="auto">
+                  <Text textAlign="right">{Number(targetPositionLeverage).toPrecision(3)}x</Text>
+                </Box>
+              </Flex>
+              {Number(targetPositionLeverage) > Number(currentPositionLeverage.toPrecision(3)) && (
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Text>You&apos;re Borrowing More</Text>
+                  <NumberInput placeholder="0.00" style={{ width: '10%' }} />
+                </Flex>
+              )}
+              {Number(targetPositionLeverage) < Number(currentPositionLeverage.toPrecision(3)) && (
+                <AddCollateralRepayDebtContainer
+                  currentPositionLeverage={Number(currentPositionLeverage)}
+                  targetPositionLeverage={Number(targetPositionLeverage)}
+                  userQuoteTokenBalance={userQuoteTokenBalance}
+                  userTokenBalance={userTokenBalance}
+                  quoteTokenName={quoteTokenName}
+                  tokenName={tokenName}
+                  quoteToken={data?.farmData?.quoteToken}
+                  token={data?.farmData?.token}
+                  tokenInput={tokenInput}
+                  quoteTokenInput={quoteTokenInput}
+                  setTokenInput={setTokenInput}
+                  setQuoteTokenInput={setQuoteTokenInput}
+                  minimizeTradingValues={getAdjustPositionRepayDebt(
+                    data.farmData,
+                    data,
+                    Number(targetPositionLeverage),
+                    percentageToClose / 100,
+                  )}
+                />
+              )}
+              {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
+                <AddCollateralRepayDebtContainer
+                  currentPositionLeverage={Number(currentPositionLeverage)}
+                  targetPositionLeverage={Number(targetPositionLeverage)}
+                  userQuoteTokenBalance={userQuoteTokenBalance}
+                  userTokenBalance={userTokenBalance}
+                  quoteTokenName={quoteTokenName}
+                  tokenName={tokenName}
+                  quoteToken={data?.farmData?.quoteToken}
+                  token={data?.farmData?.token}
+                  tokenInput={tokenInput}
+                  quoteTokenInput={quoteTokenInput}
+                  setTokenInput={setTokenInput}
+                  setQuoteTokenInput={setQuoteTokenInput}
+                  minimizeTradingValues={getAdjustPositionRepayDebt(
+                    data.farmData,
+                    data,
+                    Number(targetPositionLeverage),
+                    percentageToClose / 100,
+                  )}
+                />
+              )}
+            </Section>
+
+            <Section>
+              <Flex justifyContent="space-between">
+                <Text>Debt Assets Borrowed</Text>
+                {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)}</Text> : <Text>0.00</Text>}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>Updated Debt</Text>
+                {data ? (
+                  <Flex alignItems="center">
+                    <Text> {debtValueNumber.toNumber().toFixed(3)}</Text>
+                    <ChevronRightIcon />
+                    <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)}</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>Leverage (ratio)</Text>
+                {data ? (
+                  <Flex>
+                    <Text>
+                      {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
+                    </Text>
+                    <ChevronRightIcon />
+                    <Text>{(updatedDebtRatio * 100).toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex height="100px" alignItems="center">
+                <DebtRatioProgress
+                  debtRatio={updatedDebtRatio * 100}
+                  liquidationThreshold={liquidationThreshold}
+                  max={maxValue * 100}
+                />
+              </Flex>
+            </Section>
+            <Section>
+              <Flex justifyContent="space-between">
+                <Text>Yields Farm APR</Text>
+                {yieldFarmAPR ? (
+                  <Flex alignItems="center">
+                    <Text>{yieldFarmAPR.toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{adjustedYieldFarmAPR.toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>Trading Fees APR(7 DAYS average)</Text>
+                {tradingFeesAPR ? (
+                  <Flex alignItems="center">
+                    <Text>{tradingFeesAPR.toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{adjustedTradingFeesAPR.toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>HUSKI Rewards APR</Text>
+                {huskiRewardsAPR ? (
+                  <Flex alignItems="center">
+                    <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{adjustHuskiRewardsAPR.toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>Borrowing Interest APR</Text>
+                {borrowingInterestAPR ? (
+                  <Flex alignItems="center">
+                    <Text>-{borrowingInterestAPR.toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>-{adjustBorrowingInterestAPR.toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Box>
+                  <Text>APR</Text>
+                  <Text color="textSubtle" small>
+                    Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR
+                  </Text>
+                </Box>
+                {apr ? (
+                  <Flex alignItems="center">
+                    <Text>{apr.toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{adjustedApr.toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>APY</Text>
+                {apy ? (
+                  <Flex alignItems="center">
+                    <Text>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+            </Section>
+
+            {lastSection}
+
+            <Flex alignSelf="center">
+              <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
+                Confirm
+              </Button>
+            </Flex>
+          </Page>
+        </PercentageToCloseContext.Provider>
+      </ConvertToContext.Provider>
+    </AddCollateralContext.Provider>
   )
 }
 
