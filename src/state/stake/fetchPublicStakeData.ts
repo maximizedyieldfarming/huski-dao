@@ -57,11 +57,6 @@ const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
   const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
 
-  console.info(token)
-  console.info('alpacaPerBlock', Number(alpacaPerBlock))
-  console.info('allocPoint', Number(info.allocPoint))
-  console.info('totalAllocPoint', Number(totalAllocPoint))
-
   return {
     totalSupply: totalSupply[0]._hex,
     totalToken: totalToken[0]._hex,

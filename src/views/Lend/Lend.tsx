@@ -37,24 +37,6 @@ import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 
-const ControlContainer = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  position: relative;
-
-  justify-content: space-between;
-  flex-direction: column;
-  margin-bottom: 32px;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 16px 32px;
-    margin-bottom: 0;
-  }
-`
-
 const NUMBER_OF_FARMS_VISIBLE = 12
 
 const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
@@ -85,9 +67,6 @@ const StyledBox = styled(Flex)`
   }
 `
 
-const CardLayout = styled(FlexLayout)`
-  justify-content: center;
-`
 const TopSection = styled(Flex)`
   flex-direction: column;
   gap: 1rem;

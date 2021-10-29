@@ -104,7 +104,6 @@ const LendAction = (props) => {
   const [tokenData, setTokenData] = useState(data)
   const allowance = tokenData?.userData?.allowance
   const exchangeRate = excRate
-  console.log({ tokenData })
 
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
