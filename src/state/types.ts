@@ -65,6 +65,7 @@ export interface LeverageFarm extends LeverageFarmConfig {
   vaultDebtVal?: SerializedBigNumber
   pooPerBlock?: number
   quoteTokenPoolPerBlock?: number
+  poolLendPerBlock?: number
 }
 
 export interface Stake extends StakeConfig {

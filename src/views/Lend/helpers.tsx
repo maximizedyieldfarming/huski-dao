@@ -10,12 +10,11 @@ const mathematics1B = 3 / 40;
 const mathematics2B = 3 / 55;
 const mathematics3B = 94 / 5;
 
-export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerBlock: number) => {
-  const { totalToken, totalSupply, vaultDebtVal, token } = farm
+export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber) => {
+  const { totalToken, totalSupply, vaultDebtVal, token, poolLendPerBlock } = farm
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
-  const poolHuskyPerBlock = pooPerBlock;
-
+  const poolHuskyPerBlock = poolLendPerBlock;
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
 
   let lendRate = 0;
@@ -44,9 +43,12 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, pooPerB
   // const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(totalSupply) * busdTokenPrice));
   // const stakeApr1 = 365 * 24 * 60 * 60 / 3 * 4 * 225 / 1910 * 0.915 / (484.651 * 332.76 * 1000)
 
-  const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div(
-    (busdTokenPrice * parseInt(totalToken) * parseInt(totalToken)) / parseInt(totalSupply)
-  );
+  // const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div(
+  //   (busdTokenPrice * parseInt(totalToken) * parseInt(totalToken)) / parseInt(totalSupply)
+  // );
+
+  const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(totalToken) * busdTokenPrice));
+
   const totalApr = BigNumber.sum(lendApr, stakeApr);
   const apy = Math.pow(1 + totalApr.toNumber() / 365, 365) - 1;
 

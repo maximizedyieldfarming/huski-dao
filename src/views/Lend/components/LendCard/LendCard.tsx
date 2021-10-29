@@ -2,16 +2,14 @@ import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody, Flex, Text, CardRibbon, Skeleton, Button } from '@pancakeswap/uikit'
+import { CardBody, Flex, Text, Skeleton, Button } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import styled from 'styled-components'
-
 import ExpandableSectionButton from 'components/ExpandableSectionButton'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Pool } from 'state/types'
 import { formatBigNumber } from 'state/utils'
-import { useHuskyPrice, useHuskyPerBlock } from 'state/leverage/hooks'
+import { useHuskyPrice } from 'state/leverage/hooks'
 import { getAprData } from '../../helpers'
 import AprRow from './AprRow'
 import { StyledCard } from './StyledCard'
@@ -27,11 +25,9 @@ const ExpandingWrapper = styled.div`
 
 const LendCard = ({ token }) => {
   const [showExpandableSection, setShowExpandableSection] = useState(false)
-  const { account } = useWeb3React()
   const { t } = useTranslation()
 
   const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const { name, totalToken, vaultDebtVal, userData } = token
 
   const utilizationRateToPercentage = (rate) => {
@@ -49,7 +45,7 @@ const LendCard = ({ token }) => {
         isFinished={isFinished && sousId !== 0} */
       />
       <CardBody>
-        <AprRow apy={getAprData(token, huskyPrice, huskyPerBlock)} />
+        <AprRow apy={getAprData(token, huskyPrice)} />
         <Flex mt="24px" justifyContent="space-between">
          {/*  {account ? (
              <CardActions pool={pool} stakedBalance={stakedBalance} /> /

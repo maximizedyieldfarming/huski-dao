@@ -30,13 +30,13 @@ const StakeRow = ({ tokenData }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { name, totalSupply } = tokenData
+  const { name, totalToken } = tokenData
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <CurrencyCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
-        <TotalSupplyCell supply={parseInt(totalSupply)} />
+        <TotalSupplyCell supply={parseInt(totalToken)} />
         <ActionCell token={tokenData} />
         <RewardsCell token={tokenData} />
       </StyledRow>
