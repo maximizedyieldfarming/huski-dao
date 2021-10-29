@@ -9,14 +9,15 @@ import { StakeConfig } from 'config/constants/types'
 
 export const fetchFarmUserAllowances = async (account: string, farmsToFetch: StakeConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const baseTokenAddress = getAddress(farm.token.address)
-    return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.vaultAddress)] }
+    const baseTokenAddress = getAddress(farm.vaultAddress)
+    return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.fairLaunchAddress)] }
   })
 
   const rawVaultAllowances = await multicall(erc20ABI, calls)
   const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
     return new BigNumber(lpBalance).toJSON()
   })
+  console.info('parsedVaultAllowances',parsedVaultAllowances)
   return parsedVaultAllowances
 }
 
