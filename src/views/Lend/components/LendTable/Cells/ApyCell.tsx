@@ -29,14 +29,14 @@ const ApyCell = ({ getApyData, token }) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
-  const { landApr, stakeApr, totalApr, apy } = getApyData
+  const { lendApr, stakeApr, totalApr, apy } = getApyData
   const tokenName = token?.token?.symbol
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Lending&nbsp;APR</Text>
-        {landApr ? <Text>{apyCell(landApr)}</Text> : <Skeleton width="80px" height="16px" />}
+        {lendApr ? <Text>{apyCell(lendApr)}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
         <Text small>Staking&nbsp;APR</Text>

@@ -25,13 +25,13 @@ const TableRow = ({ data }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { name, landApr, totalDeposit, totalBorrowed, capitalUtilizationRate } = data
+  const { name, lendApr, totalDeposit, totalBorrowed, capitalUtilizationRate } = data
 
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell name={data[0]?.name} />
-        <ApyCell apy={data[0]?.landApr} />
+        <ApyCell apy={data[0]?.lendApr} />
         {isDesktop && <DepositCell deposit={data[0]?.totalDeposit} />}
         {isDesktop && <YieldCell yieldData={data[0]?.totalBorrowed} />}
         {isDesktop && <BalanceCell balance={data[0]?.capitalUtilizationRate} />}

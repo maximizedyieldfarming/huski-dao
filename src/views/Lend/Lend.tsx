@@ -35,7 +35,6 @@ import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
-import { getAprData } from './helpers'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 
 const ControlContainer = styled.div`
