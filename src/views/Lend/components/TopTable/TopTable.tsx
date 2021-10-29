@@ -29,7 +29,7 @@ const ScrollButtonContainer = styled.div`
 `
 
 const TopTable = ({ data }) => {
-  // console.log({ data })
+
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({

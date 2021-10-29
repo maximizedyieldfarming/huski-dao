@@ -16,7 +16,7 @@ type PublicFarmData = {
 }
 
 const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
-  const { debtPid, vaultAddress, debtVaultAddress } = farm
+  const { pid, vaultAddress, token } = farm
   const vaultAddresses = getAddress(vaultAddress)
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -35,22 +35,22 @@ const fetchStake = async (farm: Stake): Promise<PublicFarmData> => {
     ])
 
   const [info, alpacaPerBlock, totalAllocPoint] =
-  debtPid || debtPid === 0
+    pid || pid === 0
       ? await multicall(fairLaunchABI, [
-          {
-            address: getFairLaunch(),
-            name: 'poolInfo',
-            params: [debtPid],
-          },
-          {
-            address: getFairLaunch(),
-            name: 'alpacaPerBlock',
-          },
-          {
-            address: getFairLaunch(),
-            name: 'totalAllocPoint',
-          },
-        ])
+        {
+          address: getFairLaunch(),
+          name: 'poolInfo',
+          params: [pid],
+        },
+        {
+          address: getFairLaunch(),
+          name: 'alpacaPerBlock',
+        },
+        {
+          address: getFairLaunch(),
+          name: 'totalAllocPoint',
+        },
+      ])
       : [null, null]
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
