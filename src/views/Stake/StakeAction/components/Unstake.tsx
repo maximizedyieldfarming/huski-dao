@@ -48,7 +48,6 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
     setAmount(stakedBalance)
   }
 
-  const tokenName = name.replace('ib', '')
   const handleUnStake = async (convertedStakeAmount: BigNumber) => {
     const callOptions = {
       gasLimit: 380000,
