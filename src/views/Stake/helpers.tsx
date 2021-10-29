@@ -2,31 +2,17 @@
 import BigNumber from 'bignumber.js'
 import { Stake } from 'state/types'
 import { BLOCKS_PER_YEAR } from 'utils/config';
-import { formatBigNumber } from 'state/utils'
 
 export const getStakeApy = (stake: Stake, huskyPriceBusd: BigNumber) => {
-  const { totalToken, totalSupply, token, pooPerBlock } = stake
+  const { totalToken, token, pooPerBlock } = stake
 
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = huskyPriceBusd;
   const poolHuskyPerBlock = pooPerBlock;
-
   // const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div(
   //   (busdTokenPrice * parseInt(totalToken) * parseInt(totalToken)) / parseInt(totalSupply)
   // );
-
-  const formatedSupply = totalToken && Number(formatBigNumber(totalToken).replace(/,/g, ''))
-
-
   const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(totalToken) * busdTokenPrice));
-
-
-console.log({ poolHuskyPerBlock,  huskyPrice,  busdTokenPrice, totalToken,totalSupply,'aa':parseInt(totalToken), formatedSupply    })
-  console.info('stakeApr--',stakeApr.toNumber())
-  // console.info('stakeApr-1-',stakeApr1.toNumber()) 
-
   const apy = Math.pow(1 + stakeApr.toNumber() / 365, 365) - 1;
   return { stakeApr, apy };
 }
-
-
