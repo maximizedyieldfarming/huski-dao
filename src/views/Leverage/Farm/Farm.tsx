@@ -141,14 +141,15 @@ const Farm = () => {
   const [tokenInput, setTokenInput] = useState<number>(0)
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback((event) => {
-    const invalidChars = ['-', '+', 'e']
+   const invalidChars = ['-', '+', 'e']
     if (invalidChars.includes(event.key)) {
       event.preventDefault()
     }
     const input = event.target.value
-    setTokenInput(input)
+    const finalValue = input > userTokenBalance ? userTokenBalance : input
+    setTokenInput(finalValue)
     // setTokenInputOther(input)
-  }, [])
+  }, [userTokenBalance])
 
   const [quoteTokenInput, setQuoteTokenInput] = useState<number>(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
@@ -158,9 +159,10 @@ const Farm = () => {
       event.preventDefault()
     }
     const input = event.target.value
-    setQuoteTokenInput(input)
+    const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
+    setQuoteTokenInput(finalValue)
     // setQuoteTokenInputOther(input)
-  }, [])
+  }, [userQuoteTokenBalance])
 
   const handleChange = (e) => {
     const { value } = e.target
@@ -568,8 +570,9 @@ const Farm = () => {
             <Flex justifyContent="space-between">
               <Text>Assets Supplied</Text>
               <Text>
-                {radio === tokenName ? tokenInput.toPrecision(4): quoteTokenInput.toPrecision(4)} {radio.replace('wBNB', 'BNB')} +{' '}
-                {radio === tokenName ? quoteTokenInput.toPrecision(4): tokenInput.toPrecision(4)}{' '}
+                {radio === tokenName ? Number(tokenInput)?.toPrecision(4) : Number(quoteTokenInput)?.toPrecision(4)}{' '}
+                {radio.replace('wBNB', 'BNB')} +{' '}
+                {radio === tokenName ? Number(quoteTokenInput)?.toPrecision(4) : Number(tokenInput)?.toPrecision(4)}{' '}
                 {
                   radio === tokenName
                     ? quoteTokenName.replace('wBNB', 'BNB')

@@ -25,8 +25,13 @@ const AddColateral = ({
 }) => {
   // const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const handleQuoteTokenInput = (event) => {
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault()
+    }
     const input = event.target.value
-    setQuoteTokenInput(input)
+    const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
+    setQuoteTokenInput(finalValue)
   }
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
@@ -52,8 +57,13 @@ const AddColateral = ({
   }
   // const [tokenInput, setTokenInput] = useState(0)
   const handleTokenInput = (event) => {
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault()
+    }
     const input = event.target.value
-    setTokenInput(input)
+    const finalValue = input > userTokenBalance ? userTokenBalance : input
+    setTokenInput(finalValue)
   }
 
   const setTokenInputToFraction = (e) => {
