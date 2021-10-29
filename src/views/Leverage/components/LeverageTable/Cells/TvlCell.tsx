@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, Grid } from '@pancakeswap/uikit'
+import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
-import { TokenImage } from 'components/TokenImage'
+import { TokenImage, TokenPairImage } from 'components/TokenImage'
 import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -28,38 +28,54 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const Info = styled(Box)<InfoParams>`
-  display: ${({ show }) => (show ? 'flex' : 'none')};
-  flex-direction: column;
-  position: absolute;
-  top: 2rem;
-  right: 2px;
-  ${({ theme }) => theme.mediaQueries.xl} {
-    right: unset;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-  padding: 1rem;
-  gap: 10px;
-  background-color: ${({ theme }) => theme.colors.background};
-  box-shadow: ${({ theme }) => theme.card.boxShadow};
-  border-radius: ${({ theme }) => theme.radii.default};
-  z-index: ${({ theme }) => theme.zIndices.modal};
-  ${Text} {
-    word-wrap: break-word;
-    word-break: keep-all;
-  }
-  // width: max-content;
-  > ${Flex} {
-    gap: 10px;
-  }
-`
-
-const TvlCell = ({ tvl, tokenData }) => {
+const TvlCell = ({ tvl, tokenData, lpTokens }) => {
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const { quoteToken, token } = tokenData
+  const quoteToken = tokenData?.quoteToken
+  const token = tokenData?.token
+
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text small>TVL</Text>
+      {tvl && lpTokens ? (
+        <Text>
+          {nFormatter(tvl)}&nbsp;({nFormatter(lpTokens.toNumber())}&nbsp;LP Tokens)
+        </Text>
+      ) : (
+        <Skeleton width="80px" height="16px" />
+      )}
+      <Flex alignItems="center">
+        <Box width={20} height={20} mr="5px">
+          <TokenImage token={token} width={20} height={20} />
+        </Box>
+        {token?.busdPrice ? (
+          <Text small>
+            {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
+            &nbsp;=&nbsp;{parseFloat(token?.busdPrice).toFixed(2)}
+            &nbsp;USD)
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
+      </Flex>
+      <Flex alignItems="center">
+        <Box width={20} height={20} mr="5px">
+          <TokenImage token={quoteToken} width={20} height={20} />
+        </Box>
+        {quoteToken?.busdPrice ? (
+          <Text small>
+            {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
+            &nbsp;=&nbsp;
+            {parseFloat(quoteToken?.busdPrice).toFixed(2)}&nbsp;USD)
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
+      </Flex>
+    </>,
+    { placement: 'bottom-start' },
+  )
 
   return (
     <StyledCell role="cell">
@@ -71,7 +87,17 @@ const TvlCell = ({ tvl, tokenData }) => {
         )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
         <Flex alignItems="center">
-          {tvl ? <Text>{nFormatter(tvl)}</Text> : <Skeleton width="80px" height="16px" />}
+          {tvl ? (
+            <>
+              <Text>{nFormatter(tvl)}</Text>
+              {tooltipVisible && tooltip}
+              <span ref={targetRef}>
+                <InfoIcon ml="10px" />
+              </span>
+            </>
+          ) : (
+            <Skeleton width="80px" height="16px" />
+          )}
         </Flex>
       </CellContent>
     </StyledCell>
