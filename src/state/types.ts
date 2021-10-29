@@ -57,7 +57,6 @@ export interface LeverageFarm extends LeverageFarmConfig {
   }
   lptotalSupply?: SerializedBigNumber
   tokenUserInfoLP?: SerializedBigNumber
-  borrowingInterest?: SerializedBigNumber
   quoteTokenTotalSupply?: SerializedBigNumber
   quoteTokenTotal?: SerializedBigNumber
   quoteTokenVaultDebtVal?: SerializedBigNumber

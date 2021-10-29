@@ -14,7 +14,6 @@ import { LeverageFarm, SerializedBigNumber } from '../types'
 type PublicFarmData = {
   lptotalSupply: SerializedBigNumber
   tokenUserInfoLP: SerializedBigNumber
-  borrowingInterest: SerializedBigNumber
   tokenAmountTotal: SerializedBigNumber
   quoteTokenAmountTotal: SerializedBigNumber
   quoteTokenTotalSupply: SerializedBigNumber
@@ -31,7 +30,6 @@ type PublicFarmData = {
   poolWeight: SerializedBigNumber
   liquidationThreshold: SerializedBigNumber
   name: string
-  multiplier: string
   pooPerBlock: number
   quoteTokenPoolPerBlock: number
 }
@@ -74,16 +72,11 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       }
     ])
 
-  const [name, borrowingInterest, totalSupply, totalToken, vaultDebtVal] =
+  const [name, totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
       {
         address: vaultAddresses,
         name: 'name',
-      },
-      {
-        address: vaultAddresses,
-        name: 'pendingInterest',
-        params: [0],
       },
       {
         address: vaultAddresses,
@@ -99,7 +92,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
 
-    const [quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
+  const [quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
     await multicall(VaultABI, [
       {
         address: quoteTokenVaultAddresses,
@@ -170,44 +163,43 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
   // Only make masterchef calls if farm has pid
   const [infoFL, alpacaPerBlock, totalAllocPointFL] =
-  token?.debtPoolId || token?.debtPoolId === 0
+    token?.debtPoolId || token?.debtPoolId === 0
       ? await multicall(fairLaunchABI, [
-          {
-            address: getFairLaunch(),
-            name: 'poolInfo',
-            params: [token?.debtPoolId],
-          },
-          {
-            address: getFairLaunch(),
-            name: 'alpacaPerBlock',
-          },
-          {
-            address: getFairLaunch(),
-            name: 'totalAllocPoint',
-          },
-        ])
+        {
+          address: getFairLaunch(),
+          name: 'poolInfo',
+          params: [token?.debtPoolId],
+        },
+        {
+          address: getFairLaunch(),
+          name: 'alpacaPerBlock',
+        },
+        {
+          address: getFairLaunch(),
+          name: 'totalAllocPoint',
+        },
+      ])
       : [null, null]
 
-   
-      const [quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
-      quoteToken?.debtPoolId || quoteToken?.debtPoolId === 0
-          ? await multicall(fairLaunchABI, [
-              {
-                address: getFairLaunch(),
-                name: 'poolInfo',
-                params: [quoteToken?.debtPoolId],
-              },
-              {
-                address: getFairLaunch(),
-                name: 'alpacaPerBlock',
-              },
-              {
-                address: getFairLaunch(),
-                name: 'totalAllocPoint',
-              },
-            ])
-          : [null, null]
-      
+
+  const [quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
+    quoteToken?.debtPoolId || quoteToken?.debtPoolId === 0
+      ? await multicall(fairLaunchABI, [
+        {
+          address: getFairLaunch(),
+          name: 'poolInfo',
+          params: [quoteToken?.debtPoolId],
+        },
+        {
+          address: getFairLaunch(),
+          name: 'alpacaPerBlock',
+        },
+        {
+          address: getFairLaunch(),
+          name: 'totalAllocPoint',
+        },
+      ])
+      : [null, null]
 
   const masterChefAddress = getMasterChefAddress()
   const [info, cakePerBlock, totalAllocPoint, userInfo] =
@@ -238,11 +230,10 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
   const pooPerBlock = alpacaPerBlock * infoFL.allocPoint / totalAllocPointFL;
   const quoteTokenPoolPerBlock = quoteTokenAlpacaPerBlock * quoteTokenInfo.allocPoint / quoteTokenTotalAllocPoint;
-  
+
   return {
     name,
     lptotalSupply: lptotalSupply[0]._hex,
-    borrowingInterest: borrowingInterest[0]._hex,
     quoteTokenTotalSupply: quoteTokenTotalSupply[0]._hex,
     quoteTokenTotal: quoteTokenTotal[0]._hex,
     quoteTokenVaultDebtVal: quoteTokenVaultDebtVal[0]._hex,
@@ -256,7 +247,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     quoteTokenAmountTotal: quoteTokenAmountTotal.toJSON(),
     lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),
     poolWeight: poolWeight.toJSON(),
-    multiplier: `${allocPoint.div(100).toString()}XqQ`,
     pooPerBlock,
     quoteTokenPoolPerBlock,
     tokenBalanceLP: tokenBalanceLP[0]._hex,
