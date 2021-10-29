@@ -47,14 +47,17 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
   const setAmountToMax = (e) => {
     setAmount(stakedBalance)
   }
-  
-  const callOptions = {
-    gasLimit: 380000,
-  }
-console.info('tokenData',tokenData.pid)
+
   const handleUnStake = async (convertedStakeAmount: BigNumber) => {
+    const callOptions = {
+      gasLimit: 380000,
+    }
+
     try {
-      const tx = await callWithGasPrice(claimContract, 'withdraw', [account, tokenData.pid, convertedStakeAmount.toString()], callOptions)
+      const tx = await callWithGasPrice(claimContract, 
+      'withdraw', 
+      [account, tokenData.pid, convertedStakeAmount.toString()], 
+      callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your unstake was successfull'))

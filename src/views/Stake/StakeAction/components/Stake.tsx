@@ -74,13 +74,19 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
     }
   }
 
-  const callOptions = {
-    gasLimit: 380000,
-  }
-
   const handleStake = async (convertedStakeAmount: BigNumber) => {
+
+    const callOptions = {
+      gasLimit: 380000,
+    }
+
     try {
-      const tx = await callWithGasPrice(claimContract, 'deposit', [account, tokenData.pid, convertedStakeAmount.toString()], callOptions)
+      const tx = await callWithGasPrice(
+        claimContract,
+        'deposit',
+        [account, tokenData.pid, convertedStakeAmount.toString()],
+        callOptions
+      )
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your stake was successfull'))
