@@ -40,7 +40,7 @@ const RepayDebtConvertTo: React.FC<Props> = ({
       <GrayBox>
         <WarningIcon />
         <Text color="textSubtle">
-          Your position value will all be converted to xx and returned to you after paying back the debt.
+          Your position value will all be converted to {tokenName} and returned to you after paying back the debt.
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (

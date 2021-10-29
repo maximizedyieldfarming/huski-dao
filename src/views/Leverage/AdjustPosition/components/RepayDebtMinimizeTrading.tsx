@@ -42,8 +42,8 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
       <GrayBox>
         <WarningIcon />
         <Text color="textSubtle">
-          We will convert the minimum required amount of tokens into xx to pay back the debt and return the remaining
-          assets to you. This can potentially saveon slippage and trading fees.
+          We will convert the minimum required amount of tokens into {tokenName} to pay back the debt and return the remaining
+          assets to you. This can potentially save on slippage and trading fees.
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (

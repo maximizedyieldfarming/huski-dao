@@ -233,6 +233,80 @@ const AdjustPosition = () => {
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
+  const handleFarmConvertTo = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    try {
+      const tx = await callWithGasPrice(
+        vaultContract,
+        'work',
+        [id, workerAddress, amount, loan, maxReturn, dataWorker],
+        callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    }
+  }
+
+  const handleConfirmConvertTo = async () => {
+    const id = data.positionId
+    const workerAddress = getAddress(data.farmData.workerAddress)
+    const amount = 0
+    const loan = 0
+    const maxReturn = ethers.constants.MaxUint256
+    const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder
+    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
+
+    handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
+  const handleFarmMinimize = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    try {
+      const tx = await callWithGasPrice(
+        vaultContract,
+        'work',
+        [id, workerAddress, amount, loan, maxReturn, dataWorker],
+        callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    }
+  }
+
+  const handleConfirmMinimize = async () => {
+    const id = data.positionId
+    const workerAddress = getAddress(data.farmData.workerAddress)
+    const amount = 0
+    const loan = 0
+    const maxReturn = ethers.constants.MaxUint256
+    const minfarmtoken = (Number(convertedPositionValueMinimizeTrading) * 0.995).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder
+    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.withdrawMinimizeTrading)
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
+
+    handleFarmMinimize(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
   const handleSliderChange = (e) => {
     const value = e?.target?.value
     setTargetPositionLeverage(value)
@@ -385,7 +459,15 @@ const AdjustPosition = () => {
           <Text>You will receive approximately</Text>
           {convertedPositionValue ? (
             <Text>
-              {Number(convertedPositionValue).toPrecision(4)} {tokenName}
+              {isConvertTo ? (
+                <>
+                  {Number(convertedPositionValue).toPrecision(4)} {tokenName}
+                </>
+              ) : (
+                <>
+                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenName} + {0.0} {tokenName}{' '}
+                </>
+              )}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -395,7 +477,16 @@ const AdjustPosition = () => {
           <Text>Minimum Received</Text>
           {convertedPositionValue ? (
             <Text>
-              {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {tokenName}
+              {isConvertTo ? (
+                <>
+                  {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {tokenName}
+                </>
+              ) : (
+                <>
+                  {(Number(convertedPositionValueMinimizeTrading) * 0.995).toPrecision(4)} {quoteTokenName} + {0.0}{' '}
+                  {tokenName}{' '}
+                </>
+              )}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -755,9 +846,13 @@ const AdjustPosition = () => {
             {lastSection}
 
             <Flex alignSelf="center">
-              <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
-                Confirm
-              </Button>
+              {isAddCollateral && (
+                <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
+                  Confirm
+                </Button>
+              )}
+              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo}>Confirm</Button>}
+              {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>Confirm</Button>}
             </Flex>
           </Page>
         </PercentageToCloseContext.Provider>
