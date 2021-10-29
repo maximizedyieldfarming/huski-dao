@@ -94,10 +94,10 @@ const LeverageRow = ({ tokenData }) => {
           huskyRewards={huskyRewards * 100 * (childLeverage - 1)}
           borrowingInterest={borrowingInterest * 100 * (childLeverage - 1)}
         />
-        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} />
+        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} />
         <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} />
-        <ActionCell token={tokenData} selectedLeverage={childLeverage} />
+        <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />
       </StyledRow>
     </>
   )

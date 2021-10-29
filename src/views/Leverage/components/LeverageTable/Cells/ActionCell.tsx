@@ -27,7 +27,7 @@ const StyledButton = styled(Button)`
   word-break: initial;
 `
 
-const ActionCell = ({ token, selectedLeverage }) => {
+const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
 
@@ -38,7 +38,7 @@ const ActionCell = ({ token, selectedLeverage }) => {
           as={Link}
           to={{
             pathname: `/leverage/farm/${token?.lpSymbol}`,
-            state: { tokenData: token, selectedLeverage },
+            state: { tokenData: token, selectedLeverage, selectedBorrowing },
           }}
           disabled={!token?.totalSupply || !account}
           onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}

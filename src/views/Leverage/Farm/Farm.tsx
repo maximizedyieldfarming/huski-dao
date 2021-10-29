@@ -37,7 +37,7 @@ interface RouteParams {
 interface LocationParams {
   tokenData?: any
   selectedLeverage: number
-  borrowingAsset?: string
+  selectedBorrowing?: string
 }
 
 const Section = styled(Box)`
@@ -85,7 +85,7 @@ const Farm = () => {
   const { t } = useTranslation()
 
   const {
-    state: { tokenData: data, selectedLeverage },
+    state: { tokenData: data, selectedLeverage, selectedBorrowing },
   } = useLocation<LocationParams>()
 
   const [tokenData, setTokenData] = useState(data)
@@ -93,10 +93,11 @@ const Farm = () => {
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
 
-  const [tokenInputOther, setTokenInputOther] = useState(0)
-  const [quoteTokenInputOther, setQuoteTokenInputOther] = useState(0)
-  const [radio, setRadio] = useState(tokenName)
-  const [radioQuote, setRadioQuote] = useState(quoteTokenName)
+  // const [tokenInputOther, setTokenInputOther] = useState(0)
+  // const [quoteTokenInputOther, setQuoteTokenInputOther] = useState(0)
+  const [radio, setRadio] = useState(selectedBorrowing)
+  // const [radioQuote, setRadioQuote] = useState(tokenName === radio ? quoteTokenName : tokenName)
+  console.log('radio', radio, 'selected borrowing', selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
 
@@ -146,7 +147,7 @@ const Farm = () => {
     }
     const input = event.target.value
     setTokenInput(input)
-    setTokenInputOther(input)
+    // setTokenInputOther(input)
   }, [])
 
   const [quoteTokenInput, setQuoteTokenInput] = useState<number>(0)
@@ -158,13 +159,13 @@ const Farm = () => {
     }
     const input = event.target.value
     setQuoteTokenInput(input)
-    setQuoteTokenInputOther(input)
+    // setQuoteTokenInputOther(input)
   }, [])
 
   const handleChange = (e) => {
     const { value } = e.target
     setRadio(value)
-    if (value === tokenData.token.symbol) {
+    /*  if (value === tokenData.token.symbol) {
       setRadioQuote(tokenData.quoteToken.symbol)
       setTokenInputOther(tokenInput)
       setQuoteTokenInputOther(quoteTokenInput)
@@ -172,41 +173,41 @@ const Farm = () => {
       setRadioQuote(tokenData.token.symbol)
       setTokenInputOther(quoteTokenInput)
       setQuoteTokenInputOther(tokenInput)
-    }
+    } */
   }
 
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
-      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.25)
+      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
-      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.5)
+      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
-      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.75)
+      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber())
-      setQuoteTokenInputOther(userQuoteTokenBalance.toNumber())
+      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber())
     }
   }
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setTokenInput(userTokenBalance.toNumber() * 0.25)
-      setTokenInputOther(userTokenBalance.toNumber() * 0.25)
+      // setTokenInputOther(userTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
       setTokenInput(userTokenBalance.toNumber() * 0.5)
-      setTokenInputOther(userTokenBalance.toNumber() * 0.5)
+      // setTokenInputOther(userTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
       setTokenInput(userTokenBalance.toNumber() * 0.75)
-      setTokenInputOther(userTokenBalance.toNumber() * 0.75)
+      // setTokenInputOther(userTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
       setTokenInput(userTokenBalance.toNumber())
-      setTokenInputOther(userTokenBalance.toNumber())
+      // setTokenInputOther(userTokenBalance.toNumber())
     }
   }
 
-  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput)
+  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
 
   const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
@@ -237,9 +238,9 @@ const Farm = () => {
     }
     const callOptionsBNB = {
       gasLimit: 3800000,
-      value: amount
+      value: amount,
     }
-    
+
     try {
       const tx = await callWithGasPrice(
         vaultContract,
@@ -277,7 +278,14 @@ const Farm = () => {
       dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
     } else {
       // 双币 and 只有farm token
-      strategiesAddress = getAddress(tokenData.strategies.addTwoSidesOptimal)
+      let addTwoSidesOptimal
+      if (radio.toLowerCase() === tokenName.toLowerCase()) {
+        addTwoSidesOptimal = tokenData.strategies.addTwoSidesOptimal
+      } else {
+        addTwoSidesOptimal = tokenData.strategies.quoteTokenAddTwoSidesOptimal
+      }
+
+      strategiesAddress = getAddress(addTwoSidesOptimal)
       dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
       dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
     }
@@ -560,15 +568,20 @@ const Farm = () => {
             <Flex justifyContent="space-between">
               <Text>Assets Supplied</Text>
               <Text>
-                {tokenInputOther} {radio.replace('wBNB', 'BNB')} + {quoteTokenInputOther}{' '}
-                {radioQuote.replace('wBNB', 'BNB')}
+                {radio === tokenName ? tokenInput.toPrecision(4): quoteTokenInput.toPrecision(4)} {radio.replace('wBNB', 'BNB')} +{' '}
+                {radio === tokenName ? quoteTokenInput.toPrecision(4): tokenInput.toPrecision(4)}{' '}
+                {
+                  radio === tokenName
+                    ? quoteTokenName.replace('wBNB', 'BNB')
+                    : tokenName.replace('wBNB', 'BNB') /* radioQuote.replace('wBNB', 'BNB') */
+                }
               </Text>
             </Flex>
             <Flex justifyContent="space-between">
               <Text>Assets Borrowed</Text>
               {farmData[3] ? (
                 <Text>
-                  {farmData[3]?.toFixed(2)} {radio}
+                  {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                 </Text>
               ) : (
                 <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
@@ -603,7 +616,7 @@ const Farm = () => {
               {farmData ? (
                 <Text>
                   {farmData[8].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmData[9].toFixed(2)}{' '}
-                  {radioQuote.replace('wBNB', 'BNB')}
+                  {radio === tokenName ? quoteTokenName.replace('wBNB', 'BNB') : tokenName.replace('wBNB', 'BNB')}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
