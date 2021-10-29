@@ -59,7 +59,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
     try {
-      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await claimContract.approve(claimContract, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         console.log('receipt', receipt.status)
