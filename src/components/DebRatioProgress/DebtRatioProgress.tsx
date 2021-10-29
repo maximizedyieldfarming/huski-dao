@@ -49,6 +49,7 @@ const ProgressTrack = styled.div`
 const Progress = styled(Box)<ProgressProps>`
   position: relative;
   width: ${({ percentage }) => percentage}%;
+  transition: width 0.2s ease-in-out;
   height: 10px;
   border-radius: ${({ theme }) => theme.radii.default};
   z-index: 2;
@@ -67,8 +68,9 @@ const Dot = styled.span<DotProps>`
   display: inline-block;
   top: 50%;
   transform: translate(-50%, -50%);
+  left: 100%;
+  transition: left 0.2s ease-in-out;
   &.liquidationRatio {
-    left: 100%;
     &::before {
       color: ${({ theme }) => theme.colors.textSubtle};
       content: 'Liquidation Ratio';
@@ -83,7 +85,6 @@ const Dot = styled.span<DotProps>`
     }
   }
   &.max {
-    left: 100%;
     &::before {
       color: ${({ theme }) => theme.colors.textSubtle};
       content: 'MAX';
@@ -98,7 +99,6 @@ const Dot = styled.span<DotProps>`
     }
   }
   &.debtRatio {
-    left: 100%;
     &::before {
       color: ${({ theme }) => theme.colors.textSubtle};
       content: 'Debt Ratio';
@@ -124,7 +124,7 @@ const DebtRatioProgress = ({ debtRatio, liquidationThreshold, max }) => {
   return (
     <ProgressTrack>
       <Progress percentage={debtRatio?.toString()} className="colored">
-        <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={debtRatio === max} />
+        <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={debtRatio.toFixed(2) === max.toFixed(2)} />
       </Progress>
       <Progress percentage={max?.toString()}>
         <Dot className="dot max" text={max?.toFixed(2)} />
