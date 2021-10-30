@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
@@ -18,6 +18,10 @@ interface Props {
 interface RouteParams {
   action: string
   tokenName: string
+}
+
+interface LocationParams {
+  token?: any
 }
 
 const StyledPage = styled(Page)`
@@ -74,15 +78,14 @@ const StakedContainer = styled(Flex)`
   align-items: center;
 `
 
-const StakeAction = (props) => {
+const StakeAction = () => {
   const {
-    location: {
-      state: { token: data },
-    },
-  } = props
+    state: { token: data },
+  } = useLocation<LocationParams>()
   const [tokenData, setTokenData] = useState(data)
+
+  console.log('tokenData', tokenData)
   const { account } = useWeb3React()
-  // const { balance } = useTokenBalance(account)
   const { action, tokenName } = useParams<RouteParams>()
   const [isStake, setIsStake] = useState(action === 'stake')
 
@@ -90,51 +93,18 @@ const StakeAction = (props) => {
 
   const handleStakeClick = (e) => !isStake && setIsStake(true)
 
-  // const displayBalance = getFullDisplayBalance(balance, 18, 3)
-
-  const tokenBalanceIb = tokenData?.userData?.tokenBalance
-  const stakedBalanceIb = tokenData?.userData?.stakedBalance
-  const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
-  const userStaked = tokenData?.userData?.stakedBalance
+  const { tokenBalance } = tokenData.userData
+  const { stakedBalance } = tokenData.userData
+  console.log({ tokenBalance, stakedBalance })
+  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const { allowance } = tokenData?.userData
 
-  /* const handleConfirmClick = async () => {
-    setPendingTx(true)
-
-    if (isRemovingStake) {
-      // unstaking
-      try {
-        await onUnstake(stakeAmount, stakingToken.decimals)
-        toastSuccess(
-          `${t('Unstaked')}!`,
-          t('Your %symbol% earnings have also been harvested to your wallet!', {
-            symbol: earningToken.symbol,
-          }),
-        )
-        setPendingTx(false)
-        onDismiss()
-      } catch (e) {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-        setPendingTx(false)
-      }
-    } else {
-      try {
-        // staking
-        await onStake(stakeAmount, stakingToken.decimals)
-        toastSuccess(
-          `${t('Staked')}!`,
-          t('Your %symbol% funds have been staked in the pool!', {
-            symbol: stakingToken.symbol,
-          }),
-        )
-        setPendingTx(false)
-        onDismiss()
-      } catch (e) {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-        setPendingTx(false)
-      }
-    }
-  } */
+  const [userTokenBalance, setUserTokenBalance] = useState(userTokenBalanceCalc(tokenBalance).toNumber())
+  const [userStakedBalance, setStakedBalance] = useState(userTokenBalanceCalc(stakedBalance).toNumber())
+  useEffect(() => {
+    setUserTokenBalance(userTokenBalanceCalc(tokenBalance).toNumber())
+    setStakedBalance(userTokenBalanceCalc(stakedBalance).toNumber())
+  }, [tokenData, tokenBalance, stakedBalance])
 
   return (
     <StyledPage>
@@ -147,7 +117,7 @@ const StakeAction = (props) => {
           <HeaderTabs
             onClick={handleStakeClick}
             active={isStake}
-            to={{ pathname: `/stake/stake/${tokenName}`, state: { token: tokenData } }}
+            to={(location) => ({ ...location, pathname: `/stake/stake/${tokenName}` })}
             replace
           >
             <Text>Stake</Text>
@@ -155,7 +125,7 @@ const StakeAction = (props) => {
           <HeaderTabs
             onClick={handleUnstakeClick}
             active={!isStake}
-            to={{ pathname: `/stake/unstake/${tokenName}`, state: { token: tokenData } }}
+            to={(location) => ({ ...location, pathname: `/stake/unstake/${tokenName}` })}
             replace
           >
             <Text>Unstake</Text>
@@ -165,7 +135,7 @@ const StakeAction = (props) => {
           {isStake ? (
             <Stake
               account={account}
-              balance={userTokenBalance(tokenBalanceIb).toNumber().toPrecision(3)}
+              balance={userTokenBalance}
               name={tokenName}
               allowance={allowance}
               tokenData={tokenData}
@@ -173,7 +143,7 @@ const StakeAction = (props) => {
           ) : (
             <Unstake
               account={account}
-              stakedBalance={userTokenBalance(stakedBalanceIb).toNumber().toPrecision(3)}
+              stakedBalance={userStakedBalance}
               name={tokenName}
               allowance={allowance}
               tokenData={tokenData}
@@ -183,7 +153,7 @@ const StakeAction = (props) => {
       </TabPanel>
       <StakedContainer>
         <Text>Staked</Text>
-        <Text>{`${userTokenBalance(stakedBalanceIb).toNumber().toPrecision(3)} ${tokenName}`}</Text>
+        <Text>{userStakedBalance}</Text>
       </StakedContainer>
     </StyledPage>
   )
