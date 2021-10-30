@@ -12,6 +12,7 @@ import {
   useTooltip,
   ArrowForwardIcon,
   useMatchBreakpoints,
+  AutoRenewIcon,
 } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
@@ -28,6 +29,7 @@ import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import DebtRatioProgress from 'components/DebRatioProgress'
+import { useWeb3React } from '@web3-react/core'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
 
 interface RouteParams {
@@ -83,6 +85,7 @@ const InputArea = styled(Flex)`
 const Farm = () => {
   const { token } = useParams<RouteParams>()
   const { t } = useTranslation()
+  const { account } = useWeb3React()
 
   const {
     state: { tokenData: data, selectedLeverage, selectedBorrowing },
@@ -140,29 +143,35 @@ const Farm = () => {
 
   const [tokenInput, setTokenInput] = useState<number>(0)
   const tokenInputRef = useRef<HTMLInputElement>()
-  const handleTokenInput = useCallback((event) => {
-   const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(event.key)) {
-      event.preventDefault()
-    }
-    const input = event.target.value
-    const finalValue = input > userTokenBalance ? userTokenBalance : input
-    setTokenInput(finalValue)
-    // setTokenInputOther(input)
-  }, [userTokenBalance])
+  const handleTokenInput = useCallback(
+    (event) => {
+      const invalidChars = ['-', '+', 'e']
+      if (invalidChars.includes(event.key)) {
+        event.preventDefault()
+      }
+      const input = event.target.value
+      const finalValue = input > userTokenBalance ? userTokenBalance : input
+      setTokenInput(finalValue)
+      // setTokenInputOther(input)
+    },
+    [userTokenBalance],
+  )
 
   const [quoteTokenInput, setQuoteTokenInput] = useState<number>(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
-  const handleQuoteTokenInput = useCallback((event) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(event.key)) {
-      event.preventDefault()
-    }
-    const input = event.target.value
-    const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
-    setQuoteTokenInput(finalValue)
-    // setQuoteTokenInputOther(input)
-  }, [userQuoteTokenBalance])
+  const handleQuoteTokenInput = useCallback(
+    (event) => {
+      const invalidChars = ['-', '+', 'e']
+      if (invalidChars.includes(event.key)) {
+        event.preventDefault()
+      }
+      const input = event.target.value
+      const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
+      setQuoteTokenInput(finalValue)
+      // setQuoteTokenInputOther(input)
+    },
+    [userQuoteTokenBalance],
+  )
 
   const handleChange = (e) => {
     const { value } = e.target
@@ -233,6 +242,7 @@ const Farm = () => {
   const vaultAddress = getAddress(tokenData.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
+  const [isPending, setIsPending] = useState(false)
 
   const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -243,6 +253,7 @@ const Farm = () => {
       value: amount,
     }
 
+    setIsPending(true)
     try {
       const tx = await callWithGasPrice(
         vaultContract,
@@ -258,6 +269,10 @@ const Farm = () => {
     } catch (error) {
       console.info('error', error)
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    } finally {
+      setIsPending(false)
+      setTokenInput(0)
+      setQuoteTokenInput(0)
     }
   }
 
@@ -345,9 +360,11 @@ const Farm = () => {
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const tokenAddress = getAddress(tokenData.token.address)
   const approveContract = useERC20(tokenAddress)
+  const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
+    setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
@@ -358,6 +375,8 @@ const Farm = () => {
       }
     } catch (error: any) {
       toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
     }
   }
 
@@ -642,7 +661,20 @@ const Farm = () => {
       </SectionWrapper>
       <Flex justifyContent="space-evenly">
         {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
-        <Button onClick={handleConfirm}>{leverageValue}X Farm</Button>
+        <Button
+          onClick={handleConfirm}
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          disabled={
+            !account ||
+            !isApproved ||
+            (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+            (tokenInput === undefined && quoteTokenInput === undefined) ||
+            isPending
+          }
+        >
+          {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
+        </Button>
       </Flex>
     </Page>
   )
