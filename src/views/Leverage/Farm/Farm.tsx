@@ -230,7 +230,8 @@ const Farm = () => {
   const totalAprDisplay = Number(getDisplayApr(getApr(leverageValue) * 100))
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const vaultAddress = getAddress(tokenData.token.vaultAddress)
+  const quoteTokenVaultAddress = getAddress(tokenData.quoteToken.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
 
@@ -278,12 +279,15 @@ const Farm = () => {
       strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
       dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
       dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      console.info('111')
     } else {
       // 双币 and 只有farm token
       let addTwoSidesOptimal
       if (radio.toLowerCase() === tokenName.toLowerCase()) {
+        console.info('2222')
         addTwoSidesOptimal = tokenData.strategies.addTwoSidesOptimal
       } else {
+        console.info('3333')
         addTwoSidesOptimal = tokenData.strategies.quoteTokenAddTwoSidesOptimal
       }
 
@@ -341,15 +345,34 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  const allowance = tokenData.userData?.allowance
+  let allowance = '0';
+  if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
+    allowance = tokenData.userData?.quoteTokenAllowance
+  } else {
+    allowance = tokenData.userData?.allowance
+  }
+
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const tokenAddress = getAddress(tokenData.token.address)
+  const quoteTokenAddress = getAddress(tokenData.quoteToken.address)
   const approveContract = useERC20(tokenAddress)
+  const quoteTokenApproveContract = useERC20(quoteTokenAddress)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
+
+    let contract
+    let address
+    if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
+      contract = quoteTokenApproveContract
+      address = quoteTokenVaultAddress
+    } else {
+      contract = approveContract
+      address = vaultAddress
+    }
+
     try {
-      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await contract.approve(address, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
@@ -359,6 +382,23 @@ const Farm = () => {
     } catch (error: any) {
       toastWarning(t('Error'), error.message)
     }
+
+    // try {
+    //   const tx = await callWithGasPrice(approveContract, 'approve', [vaultAddress, ethers.constants.MaxUint256])
+    //   const receipt = await tx.wait()
+    //   if (receipt.status) {
+    //     console.log('receipt', receipt.status)
+    //     toastSuccess(t('Successful!'), t('Your farm was successfull'))
+    //   } else {
+    //     console.log('receipt--', receipt.status)
+    //     toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    //   }
+    // } catch (error) {
+    //   console.log('receipt   error', error)
+    //   toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    // }
+
+
   }
 
   const { isMobile, isTable } = useMatchBreakpoints()
@@ -582,7 +622,7 @@ const Farm = () => {
             </Flex>
             <Flex justifyContent="space-between">
               <Text>Assets Borrowed</Text>
-              {farmData[3] ? (
+              {farmData? (
                 <Text>
                   {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                 </Text>

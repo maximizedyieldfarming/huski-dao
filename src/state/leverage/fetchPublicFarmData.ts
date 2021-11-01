@@ -36,10 +36,10 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { lpAddresses, workerAddress, quoteTokenWorkerAddress, workerConfig, token, quoteToken, vaultAddress, quoteTokenVaultAddress, pid } = farm
+  const { lpAddresses, workerAddress, quoteTokenWorkerAddress, workerConfig, token, quoteToken, pid } = farm
   const lpAddress = getAddress(lpAddresses)
-  const vaultAddresses = getAddress(vaultAddress)
-  const quoteTokenVaultAddresses = getAddress(quoteTokenVaultAddress)
+  const vaultAddresses = getAddress(token.vaultAddress)
+  const quoteTokenVaultAddresses = getAddress(quoteToken.vaultAddress)
   const workerAddresses = getAddress(workerAddress)
   const quotetokenWorkerAddress = getAddress(quoteTokenWorkerAddress)
   const workerConfigAddress = getAddress(workerConfig)

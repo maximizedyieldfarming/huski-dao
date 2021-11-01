@@ -2,14 +2,14 @@ import BigNumber from 'bignumber.js'
 import erc20ABI from 'config/abi/erc20.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
 import multicall from 'utils/multicall'
-import { getAddress } from 'utils/addressHelpers'
+import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { getFairLaunch } from 'utils/env'
 import { LeverageFarmConfig } from 'config/constants/types'
 
 export const fetchFarmUserAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
     const baseTokenAddress = getAddress(farm.token.address)
-    return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.vaultAddress)] }
+    return { address: baseTokenAddress, name: 'allowance', params: [account, farm.TokenInfo.vaultAddress] }
   })
 
   const rawVaultAllowances = await multicall(erc20ABI, calls)
@@ -19,9 +19,37 @@ export const fetchFarmUserAllowances = async (account: string, farmsToFetch: Lev
   return parsedVaultAllowances
 }
 
+export const fetchFarmUserTokenAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+  const calls = farmsToFetch.map((farm) => {
+    const tokenAddress = getAddress(farm.quoteToken.address)
+    return { address: tokenAddress, name: 'allowance', params: [account, farm.TokenInfo.vaultAddress] }
+  })
+
+  const rawVaultAllowances = await multicall(erc20ABI, calls)
+  const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
+    return new BigNumber(lpBalance).toJSON()
+  })
+  console.info('parsedLpAllowances1-', parsedVaultAllowances)
+  return parsedVaultAllowances
+}
+
+export const fetchFarmUserQuoteTokenAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
+  const calls = farmsToFetch.map((farm) => {
+    const tokenAddress = getAddress(farm.token.address)
+    return { address: tokenAddress, name: 'allowance', params: [account, farm.QuoteTokenInfo.vaultAddress] }
+  })
+
+  const rawLpAllowances = await multicall(erc20ABI, calls)
+  const parsedLpAllowances = rawLpAllowances.map((lpBalance) => {
+    return new BigNumber(lpBalance).toJSON()
+  })
+  console.info('parsedLpAllowances', parsedLpAllowances)
+  return parsedLpAllowances
+}
+
 export const fetchFarmUserTokenBalancesIB = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const vaultContractAddress = getAddress(farm.vaultAddress)
+    const vaultContractAddress = getAddress(farm.token.vaultAddress)
     return {
       address: vaultContractAddress,
       name: 'balanceOf',

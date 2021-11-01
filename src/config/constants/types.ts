@@ -12,6 +12,7 @@ export interface Token {
   debtPoolId?: number
   address?: Address
   config?: Address
+  vaultAddress?: Address
   decimals?: number
   projectLink?: string
   busdPrice?: string
@@ -94,11 +95,53 @@ export interface LeverageFarmConfig {
     endBlock: number
   }
   leverage: number
-  vaultAddress: Address
-  quoteTokenVaultAddress: Address
+  // vaultAddress: Address
+  // quoteTokenVaultAddress: Address
   workerAddress: Address
   quoteTokenWorkerAddress: Address
   workerConfig: Address
+
+  TokenInfo: {
+    token: Token
+    quoteToken: Token
+    vaultAddress: string
+    name: string
+    address: string
+    deployedBlock: number
+    config: string
+    pId: number
+    stakingToken: string
+    stakingTokenAt: string
+    strategies: {
+      StrategyAddAllBaseToken: string
+      StrategyLiquidate: string
+      StrategyAddTwoSidesOptimal: string
+      StrategyWithdrawMinimizeTrading: string
+      StrategyPartialCloseLiquidate: string
+      StrategyPartialCloseMinimizeTrading: string
+    }
+  }
+  QuoteTokenInfo: {
+    token: Token
+    quoteToken: Token
+    vaultAddress: string
+    name: string
+    address: string
+    deployedBlock: number
+    config: string
+    pId: number
+    stakingToken: string
+    stakingTokenAt: string
+    strategies: {
+      StrategyAddAllBaseToken: string
+      StrategyLiquidate: string
+      StrategyAddTwoSidesOptimal: string
+      StrategyWithdrawMinimizeTrading: string
+      StrategyPartialCloseLiquidate: string
+      StrategyPartialCloseMinimizeTrading: string
+    }
+  }
+
   strategies: {
     addAllBaseToken: Address
     liquidate: Address

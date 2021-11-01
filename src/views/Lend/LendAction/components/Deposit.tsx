@@ -89,14 +89,11 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
-        console.log('receipt', receipt.status)
         toastSuccess(t('Approved!'), t('Your request has been approved'))
       } else {
-        console.log('receipt', receipt.status)
         toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       }
     } catch (error: any) {
-      console.log('error', error)
       toastWarning(t('Error'), error.message)
     }
   }
@@ -112,8 +109,6 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
     try {
       toastInfo('Transaction Pending...', 'Please Wait!')
-      // .toString() being called to fix a BigNumber error in prod
-      // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
