@@ -17,7 +17,7 @@ export const fetchFarmUserAllowances = async (account: string, farmsToFetch: Sta
   const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
     return new BigNumber(lpBalance).toJSON()
   })
-  console.info('parsedVaultAllowances',parsedVaultAllowances)
+
   return parsedVaultAllowances
 }
 
