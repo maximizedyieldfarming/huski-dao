@@ -239,8 +239,8 @@ const Farm = () => {
   const totalAprDisplay = Number(getDisplayApr(getApr(leverageValue) * 100))
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = getAddress(tokenData.token.vaultAddress)
-  const quoteTokenVaultAddress = getAddress(tokenData.quoteToken.vaultAddress)
+  const vaultAddress = tokenData.TokenInfo.vaultAddress
+  const quoteTokenVaultAddress = (tokenData.QuoteTokenInfo.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
