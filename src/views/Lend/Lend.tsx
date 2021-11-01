@@ -30,14 +30,10 @@ import usePersistState from 'hooks/usePersistState'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { orderBy } from 'lodash'
-import SearchInput from 'components/SearchInput'
-import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
-
-const NUMBER_OF_FARMS_VISIBLE = 12
 
 const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   if (cakeRewardsApr && lpRewardsApr) {

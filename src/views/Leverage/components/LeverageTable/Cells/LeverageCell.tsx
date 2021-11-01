@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { ChevronDownIcon, ChevronUpIcon, Flex, Input, Text, useMatchBreakpoints, Box, Button } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 

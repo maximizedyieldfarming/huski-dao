@@ -6,16 +6,6 @@ import { Link } from 'react-router-dom'
 import useTheme from 'hooks/useTheme'
 import Container from 'components/Layout/Container'
 import { Text, Flex, Box, Button, Grid } from '@pancakeswap/uikit'
-import Hero from './components/Hero'
-import { swapSectionData, earnSectionData, cakeSectionData } from './components/SalesSection/data'
-import MetricsSection from './components/MetricsSection'
-import SalesSection from './components/SalesSection'
-import WinSection from './components/WinSection'
-import FarmsPoolsRow from './components/FarmsPoolsRow'
-import Footer from './components/Footer'
-import CakeDataRow from './components/CakeDataRow'
-import { WedgeTopLeft, InnerWedgeWrapper, OuterWedgeWrapper, WedgeTopRight } from './components/WedgeSvgs'
-import UserBanner from './components/UserBanner'
 import background from './assets/bg.png'
 import communityImg from './assets/1.png'
 import noInvestorsImg from './assets/2.png'
@@ -48,22 +38,6 @@ const StyledHeroSection = styled(Box)`
   }
   ${({ theme }) => theme.mediaQueries.md} {
     padding: 48px;
-  }
-`
-
-const UserBannerWrapper = styled(Container)`
-  z-index: 1;
-  position: absolute;
-  width: 100%;
-  top: 0px;
-  left: 50%;
-  transform: translate(-50%, 0);
-  padding-left: 0px;
-  padding-right: 0px;
-
-  ${({ theme }) => theme.mediaQueries.lg} {
-    padding-left: 24px;
-    padding-right: 24px;
   }
 `
 

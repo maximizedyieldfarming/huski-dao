@@ -2,7 +2,7 @@ import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from '@reduxjs/toolkit'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { CampaignType, FarmConfig, LeverageFarmConfig, StakeConfig, LotteryStatus, LotteryTicket, Nft, PoolConfig, Team } from 'config/constants/types'
+import { CampaignType, FarmConfig, LeverageFarmConfig, StakeConfig, LotteryStatus, LotteryTicket, Nft, Team } from 'config/constants/types'
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>
 
@@ -84,22 +84,6 @@ export interface Stake extends StakeConfig {
   pooPerBlock?: number
 }
 
-export interface Pool extends PoolConfig {
-  totalStaked?: BigNumber
-  stakingLimit?: BigNumber
-  startBlock?: number
-  endBlock?: number
-  apr?: number
-  stakingTokenPrice?: number
-  earningTokenPrice?: number
-  isAutoVault?: boolean
-  userData?: {
-    allowance: BigNumber
-    stakingTokenBalance: BigNumber
-    stakedBalance: BigNumber
-    pendingReward: BigNumber
-  }
-}
 
 export interface Profile {
   userId: number
@@ -110,7 +94,7 @@ export interface Profile {
   isActive: boolean
   username: string
   nft?: Nft
-  team: Team
+  team?: Team
   hasRegistered: boolean
 }
 
@@ -159,11 +143,6 @@ export interface CakeVault {
   userData?: VaultUser
 }
 
-export interface PoolsState {
-  data: Pool[]
-  cakeVault: CakeVault
-  userDataLoaded: boolean
-}
 
 export interface ProfileState {
   isInitialized: boolean
@@ -551,12 +530,11 @@ export type UserTicketsResponse = [ethers.BigNumber[], number[], boolean[]]
 // Global state
 
 export interface State {
-  achievements: AchievementState
+  // achievements: AchievementState
   block: BlockState
   farms: FarmsState
   leverage: LeverageFarmsState
   stake: StakeState
-  pools: PoolsState
   predictions: PredictionsState
   profile: ProfileState
   teams: TeamsState

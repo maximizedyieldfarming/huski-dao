@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Pool } from 'state/types'
+
 import LeverageRow from './LeverageRow'
 import LeverageHeaderRow from './LeverageHeaderRow'
 

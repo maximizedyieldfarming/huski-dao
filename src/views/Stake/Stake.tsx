@@ -24,10 +24,8 @@ import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import husky2 from './assets/stake_rewards_img.png'
 import StakeTable from './components/StakeTable/StakeTable'
 import TopTable from './components/TopTable/TopTable'
-import StakeCard from './components/StakeCard/StakeCard'
 import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 
-const NUMBER_OF_FARMS_VISIBLE = 12
 
 const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
   if (cakeRewardsApr && lpRewardsApr) {
@@ -104,13 +102,6 @@ const Stake: React.FC = () => {
       // setPendingTx(false)
     }
   }
-  const cardLayout = (
-    <CardLayout>
-      {farmsData.map((token) => (
-        <StakeCard token={token} key={token?.pid} />
-      ))}
-    </CardLayout>
-  )
 
   // search feature
   const [searchQuery, setSearchQuery] = useState('')
@@ -221,7 +212,7 @@ const Stake: React.FC = () => {
         </RewardsSummarySection>
       </Box>
 
-      {viewMode === ViewMode.CARD ? cardLayout : <StakeTable stakeData={farmsData} />}
+      <StakeTable stakeData={farmsData} />
     </Page>
   )
 }

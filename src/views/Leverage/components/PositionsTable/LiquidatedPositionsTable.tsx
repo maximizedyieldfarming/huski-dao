@@ -2,7 +2,6 @@ import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { Button, ChevronUpIcon, Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Pool } from 'state/types'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
 import LiquidatedPositionsHeaderRow from './LiquidatedPositionsHeaderRow'
 

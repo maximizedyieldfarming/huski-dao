@@ -1,16 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import farmsConfig from 'config/constants/farms'
 import isArchivedPid from 'utils/farmHelpers'
-import priceHelperLpsConfig from 'config/constants/priceHelperLps'
-// import fetchFarms from './fetchFarms'
-// import fetchFarmsPrices from './fetchFarmsPrices'
-// import {
-//   fetchFarmUserEarnings,
-//   fetchFarmUserAllowances,
-//   fetchFarmUserTokenBalances,
-//   fetchFarmUserStakedBalances,
-// } from './fetchFarmUser'
-import { FarmsState, Farm } from '../types'
+import { FarmsState } from '../types'
 
 const noAccountFarmConfig = farmsConfig.map((farm) => ({
   ...farm,

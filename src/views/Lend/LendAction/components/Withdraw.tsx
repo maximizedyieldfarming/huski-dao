@@ -10,7 +10,6 @@ import { getDecimalAmount } from 'utils/formatBalance'
 import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { withdraw } from 'utils/vaultService'
-import { useCakeVault } from 'state/pools/hooks'
 import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
 
 const ButtonGroup = styled(Flex)`
@@ -65,8 +64,6 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
   const { callWithGasPrice } = useCallWithGasPrice()
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
   const [isPending, setIsPending] = useState<boolean>(false)
-
-  const { pricePerFullShare } = useCakeVault()
 
   const handleConfirm = () => {
     toastInfo('Pending Transaction...', 'Please Wait!')

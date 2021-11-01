@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { Pool } from 'state/types'
+
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 

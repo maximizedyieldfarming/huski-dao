@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { Button, ChevronUpIcon } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Pool } from 'state/types'
+
 import StakeRow from './StakeRow'
 
 const StyledTable = styled.div`

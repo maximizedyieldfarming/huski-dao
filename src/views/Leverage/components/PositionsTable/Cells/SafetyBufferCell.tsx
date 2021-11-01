@@ -3,10 +3,9 @@ import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { Pool } from 'state/types'
+
 import { useTranslation } from 'contexts/Localization'
 import Tooltip from 'components/Tooltip'
-import ProgressCircles from 'views/Swap/components/ProgressSteps'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`

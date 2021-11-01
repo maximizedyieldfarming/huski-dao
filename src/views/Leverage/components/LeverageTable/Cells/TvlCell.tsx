@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { Pool } from 'state/types'
+
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage, TokenPairImage } from 'components/TokenImage'
 import nFormatter from 'utils/nFormatter'
