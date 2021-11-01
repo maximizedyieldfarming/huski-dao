@@ -9,19 +9,19 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     href: '/lend',
   },
   {
+    label: t('Farms'),
+    icon: 'NftIcon',
+    href: '/leverage',
+  },
+  {
     label: t('Stake'),
     icon: 'TicketIcon',
     href: '/stake',
   },
-  /* {
-    label: t('Lock'),
+  {
+    label: t('HODL & Lock Up'),
     icon: 'NftIcon',
     href: '/lock',
-  }, */
-  {
-    label: t('Leverage Farms'),
-    icon: 'NftIcon',
-    href: '/leverage',
   },
 
 ]
