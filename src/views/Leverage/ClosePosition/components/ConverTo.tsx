@@ -65,11 +65,9 @@ const ConverTo = ({ data }) => {
       const tx = await callWithGasPrice(vaultContract, 'work', [id, workerAddress, amount, loan, maxReturn, dataWorker], callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
-        console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your farm was successfull'))
       }
     } catch (error) {
-      console.info('error', error)
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
     }
   }
@@ -85,7 +83,7 @@ const ConverTo = ({ data }) => {
     const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
     const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
-
+// console.log({id, workerAddress, amount, loan,convertedPositionValue,minbasetoken, maxReturn, dataWorker})
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
