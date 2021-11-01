@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-
 import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
