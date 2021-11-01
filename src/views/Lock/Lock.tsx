@@ -1,187 +1,101 @@
 import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
-import { Route, useRouteMatch, useLocation, NavLink } from 'react-router-dom'
+import { Route, useRouteMatch, useLocation } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex, Box } from '@pancakeswap/uikit'
+import {
+  Image,
+  Heading,
+  RowType,
+  Toggle,
+  Text,
+  Button,
+  ArrowForwardIcon,
+  Flex,
+  Box,
+  Skeleton,
+} from '@pancakeswap/uikit'
 import { ChainId } from '@pancakeswap/sdk'
 import styled from 'styled-components'
-import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
-
-import usePersistState from 'hooks/usePersistState'
-import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
-import { getBalanceNumber } from 'utils/formatBalance'
-import { getFarmApr } from 'utils/apr'
-import { orderBy } from 'lodash'
-import isArchivedPid from 'utils/farmHelpers'
-import { latinise } from 'utils/latinise'
-
-import PageHeader from 'components/PageHeader'
-import SearchInput from 'components/SearchInput'
-import Select, { OptionProps } from 'components/Select/Select'
-import Loading from 'components/Loading'
 import huskyIcon from './assets/avatar1x.png'
+import LockTable from './components/LockTable/LockTable'
 
-const ControlContainer = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  position: relative;
+const NUMBER_OF_FARMS_VISIBLE = 12
 
-  justify-content: space-between;
-  flex-direction: column;
-  margin-bottom: 32px;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 16px 32px;
-    margin-bottom: 0;
+const Section = styled(Flex)`
+  background-color: ${({ theme }) => theme.colors.backgroundAlt};
+  padding: 1rem;
+  gap: 1rem;
+  border-radius: ${({ theme }) => theme.radii.default};
+  .container {
+    background-color: ${({ theme }) => theme.colors.textDisabled};
+    padding: 1rem;
+    border-radius: ${({ theme }) => theme.radii.small};
   }
-`
-
-const ToggleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-
-  ${Text} {
-    margin-left: 8px;
+  .block {
+    background-color: ${({ theme }) => theme.colors.textDisabled};
+    flex: 1;
+    border-radius: ${({ theme }) => theme.radii.small};
   }
-`
-
-const LabelWrapper = styled.div`
-  > ${Text} {
-    font-size: 12px;
-  }
-`
-
-const FilterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 8px 0px;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    width: auto;
-    padding: 0;
-  }
-`
-
-const ViewControls = styled.div`
-  flex-wrap: wrap;
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
-  width: 100%;
-
-  > div {
-    padding: 8px 0px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    justify-content: flex-start;
-    width: auto;
-
-    > div {
-      padding: 0;
+  &.balanceWrapper {
+    gap: unset;
+    > ${Flex} {
+      padding: 5px 10px;
+      flex-direction: column;
+      gap: 10px;
+      ${({ theme }) => theme.mediaQueries.lg} {
+        flex-direction: row;
+      }
+      &:first-child {
+        border-right: 1px solid ${({ theme }) => theme.colors.textDisabled};
+      }
+      &:last-child {
+        border-left: 1px solid ${({ theme }) => theme.colors.textDisabled};
+      }
     }
   }
 `
 
-const StyledImage = styled(Image)`
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 58px;
-`
-const NUMBER_OF_FARMS_VISIBLE = 12
-
-const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
-  if (cakeRewardsApr && lpRewardsApr) {
-    return (cakeRewardsApr + lpRewardsApr).toLocaleString('en-US', { maximumFractionDigits: 2 })
-  }
-  if (cakeRewardsApr) {
-    return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
-  }
-  return null
-}
-
-// styled components
-const StyledBox = styled(Box)`
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 20px;
-  flex: 1;
-`
-const Container = styled(Box)`
-  background-color: #fff;
-  border-radius: 20px;
-  border-top: 3px solid #9615e7;
-  padding: 1rem;
-  color: #9615e7;
-`
-
-const Header = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #9615e7;
-`
-
-const Farms: React.FC = () => {
+const Lock: React.FC = () => {
   const { path } = useRouteMatch()
   const { pathname } = useLocation()
   const { t } = useTranslation()
 
+  const sHuskiBalance = null
+  const volume24 = null
+  const volumeLocked = null
+
   return (
     <Page>
-      <Flex style={{ gap: '1rem' }}>
-        <StyledBox>
-          <Flex justifyContent="space-between">
-            <Text color="#9615E7">Husky Total Supply</Text>
-            <Text color="#9615E7" fontSize="30px" fontWeight="bold">
-              123456789
-            </Text>
-          </Flex>
-        </StyledBox>
-        <StyledBox>
-          <Flex justifyContent="space-between">
-            <Text color="#9615E7">Husky TVL</Text>
-            <Text color="#9615E7" fontSize="30px" fontWeight="bold">
-              123456789
-            </Text>
-          </Flex>
-        </StyledBox>
-      </Flex>
-      <Container>
-        <Header>
-          <Text color="#9615E7">Huski Lock</Text>
+      <Section>
+        <Box className="block" />
+        <Box className="container">
+          <Text color="textSubtle">{t('Total Volume 24H')}</Text>
+          {volume24 ? <Text>{volume24}</Text> : <Skeleton width="80px" height="16px" />}
+        </Box>
+        <Box className="container">
+          <Text color="textSubtle">{t('Total Volume Locked')}</Text>
+          {volumeLocked ? <Text>{volumeLocked}</Text> : <Skeleton width="80px" height="16px" />}
+        </Box>
+      </Section>
+      <Flex>
+        <Section className="balanceWrapper">
           <Flex alignItems="center">
-            <Text color="#9615E7">APY</Text>
-            <Text color="#FB646B" fontSize="30px">
-              236
-            </Text>
+            <Text>{t('My sHUSKI Balance')}</Text>
+            {sHuskiBalance ? <Text>{sHuskiBalance}</Text> : <Skeleton width="80px" height="16px" />}
           </Flex>
-        </Header>
-        <Flex>
-          <Box style={{ flex: '1' }}>
-            <Box>
-              <Text color="#9617e7">Totall Volume Locked</Text>
-              <Text color="#FC9B02">1774</Text>
-            </Box>
-          </Box>
-          <Box style={{ flex: '1' }}>
-            <Box>
-              <Text color="#9617e7">Totall Volume Locked</Text>
-              <Text color="#FC9B02">1774</Text>
-            </Box>
-          </Box>
-        </Flex>
-      </Container>
+          <Flex alignItems="center">
+            <Text>{t('Redeem your sHUSKI for HUSKI')}</Text>
+            <Button scale="sm" disabled={!sHuskiBalance}>
+              {t('Approve & Redeem')}
+            </Button>
+          </Flex>
+        </Section>
+      </Flex>
+      <LockTable data={null} />
     </Page>
   )
 }
 
-export default Farms
+export default Lock
