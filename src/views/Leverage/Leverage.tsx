@@ -1,5 +1,7 @@
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useWeb3React } from '@web3-react/core'
 import {
   useLeverageFarms,
   usePollLeverageFarmsWithUserData,
@@ -123,11 +125,11 @@ const FiltersWrapper = styled(Flex)`
 
 const Leverage: React.FC = () => {
   const { t } = useTranslation()
+  const { account } = useWeb3React()
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions()
-console.info('farmsData',farmsData);
   // search feature
   const [searchQuery, setSearchQuery] = useState('')
   const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,7 +201,7 @@ console.info('farmsData',farmsData);
 
   const positionFarmsData = []
   if (data && data !== null && data !== undefined) {
-    console.info('data----positionFarmsData',data);
+    console.info('data----positionFarmsData', data)
     // eslint-disable-next-line array-callback-return
     data.map((pdata) => {
       let pfarmData
@@ -222,22 +224,7 @@ console.info('farmsData',farmsData);
     reward += farmEarnings
     return reward
   })
-// start farm page : claim
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const claimContract = useClaimFairLaunch()
-  const { callWithGasPrice } = useCallWithGasPrice()
-  const handleConfirm = async () => {
-    // try {
-    //   const tx = await callWithGasPrice(claimContract, 'harvest', [这里要用debtPoolId], { gasLimit: 300000 })
-    //   const receipt = await tx.wait()
-    //   if (receipt.status) {
-    //     toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
-    //   }
-    // } catch (error) {
-    //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-    // }
-  }
-  // end
+  
 
   return (
     <Page>
@@ -251,7 +238,13 @@ console.info('farmsData',farmsData);
             <Text>{reward.toPrecision(3)}</Text>
           </Box>
           <Flex alignSelf="flex-end">
-            <ActionButton onClick={handleConfirm}>Claim</ActionButton>
+            <Button
+              as={Link}
+              to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
+              disabled={!account}
+            >
+              {t('Claim')}
+            </Button>
           </Flex>
         </RewardsContainer>
         <PositionButtonsContainer alignSelf="flex-end" style={{ gap: '1rem' }}>

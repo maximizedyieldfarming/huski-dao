@@ -25,10 +25,12 @@ const Stake = lazy(() => import('./views/Stake'))
 const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
+const LockAction = lazy(() => import('./views/Lock/LockAction'))
 const Leverage = lazy(() => import('./views/Leverage'))
 const ClosePosition = lazy(() => import('views/Leverage/ClosePosition/ClosePosition'))
 const AdjustPosition = lazy(() => import('views/Leverage/AdjustPosition/AdjustPosition'))
 const Farm = lazy(() => import('views/Leverage/Farm/Farm'))
+const Claim = lazy(() => import('views/Leverage/Claim'))
 
 // This config is required for number formatting
 BigNumber.config({
@@ -63,9 +65,10 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/stake/:action/:tokenName" component={StakeAction} />
 
-            <Route path="/lock">
+            <Route exact path="/lock">
               <Lock />
             </Route>
+            <Route exact path="/lock/:token" component={LockAction} />
 
             <Route exact path="/leverage">
               <Leverage />
@@ -73,6 +76,7 @@ const App: React.FC = () => {
             <Route exact path="/leverage/closeposition/:token" component={ClosePosition} />
             <Route exact path="/leverage/adjustPosition/:token" component={AdjustPosition} />
             <Route exact path="/leverage/farm/:token" component={Farm} />
+            <Route exact path="/leverage/claim" component={Claim} />
             <Route component={NotFound} />
           </Switch>
         </SuspenseWithChunkError>
