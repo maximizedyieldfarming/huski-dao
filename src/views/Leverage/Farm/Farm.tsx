@@ -364,20 +364,28 @@ const Farm = () => {
   if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
     allowance = tokenData.userData?.quoteTokenAllowance
   } else {
-    allowance = tokenData.userData?.allowance
+    allowance = tokenData.userData?.tokenAllowance
   }
-
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const tokenAddress = getAddress(tokenData.token.address)
   const quoteTokenAddress = getAddress(tokenData.quoteToken.address)
   const approveContract = useERC20(tokenAddress)
+  const quoteTokenApproveContract = useERC20(quoteTokenAddress)
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
+// not sure contract param is right? but can sussess
+    let contract;
+    if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
+      contract = approveContract// quoteTokenApproveContract
+    } else {
+      contract = quoteTokenApproveContract// approveContract
+    }
+
     toastInfo('Approving...', 'Please Wait!')
     setIsApproving(true)
     try {
-      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
@@ -389,23 +397,6 @@ const Farm = () => {
     } finally {
       setIsApproving(false)
     }
-
-    // try {
-    //   const tx = await callWithGasPrice(approveContract, 'approve', [vaultAddress, ethers.constants.MaxUint256])
-    //   const receipt = await tx.wait()
-    //   if (receipt.status) {
-    //     console.log('receipt', receipt.status)
-    //     toastSuccess(t('Successful!'), t('Your farm was successfull'))
-    //   } else {
-    //     console.log('receipt--', receipt.status)
-    //     toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-    //   }
-    // } catch (error) {
-    //   console.log('receipt   error', error)
-    //   toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
-    // }
-
-
   }
 
   const { isMobile, isTable } = useMatchBreakpoints()
