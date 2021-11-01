@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -35,7 +35,7 @@ const MaxContainer = styled(Flex)`
   }
 `
 const StyledArrowDown = styled(ArrowDown)`
- fill: ${({ theme }) => theme.colors.text};
+  fill: ${({ theme }) => theme.colors.text};
   width: 20px;
   height: 13px;
   path {
@@ -64,6 +64,7 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
   const withdrawContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
+  const [isPending, setIsPending] = useState<boolean>(false)
 
   const { pricePerFullShare } = useCakeVault()
 
@@ -78,24 +79,21 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
   }
 
   const handleWithdrawal = async (convertedStakeAmount: BigNumber) => {
-
+    setIsPending(true)
     // .toString() being called to fix a BigNumber error in prod
     // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
     try {
-      const tx = await callWithGasPrice(
-        withdrawContract,
-        'withdraw',
-        [convertedStakeAmount.toString()],
-        callOptions,
-      )
+      const tx = await callWithGasPrice(withdrawContract, 'withdraw', [convertedStakeAmount.toString()], callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your withdraw was successfull'))
       }
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    } finally {
+      setIsPending(false)
+      setAmount(0)
     }
-
   }
 
   return (
@@ -137,9 +135,11 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
         <Button
           onClick={handleConfirm}
-          disabled={!account || Number(balance) === 0 || Number(amount) === 0 || amount === undefined}
+          disabled={!account || Number(balance) === 0 || Number(amount) === 0 || amount === undefined || isPending}
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
-          {t('Confirm')}
+          {isPending ? t('Confirming') : t('Confirm')}
         </Button>
       </ButtonGroup>
     </>

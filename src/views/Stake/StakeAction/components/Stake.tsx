@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
 import React, { useState } from 'react'
 import styled from 'styled-components'
@@ -55,9 +55,12 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const approveContract = useERC20(tokenAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const claimContract = useClaimFairLaunch()
+  const [isPending, setIsPending] = useState<boolean>(false)
+  const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
+    setIsApproving(true)
     try {
       const tx = await claimContract.approve(claimContract, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
@@ -71,21 +74,23 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
     } catch (error: any) {
       console.log('error', error)
       toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
     }
   }
 
   const handleStake = async (convertedStakeAmount: BigNumber) => {
-
     const callOptions = {
       gasLimit: 380000,
     }
 
+    setIsPending(true)
     try {
       const tx = await callWithGasPrice(
         claimContract,
         'deposit',
         [account, tokenData.pid, convertedStakeAmount.toString()],
-        callOptions
+        callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -93,6 +98,9 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       }
     } catch (error) {
       toastError('Unsuccessfulll', 'Something went wrong your stake request. Please try again...')
+    } finally {
+      setIsPending(false)
+      setAmount(0)
     }
   }
 
@@ -126,12 +134,30 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       </Flex>
 
       <ButtonGroup flexDirection="column">
-        {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
+        {isApproved ? null : (
+          <Button
+            onClick={handleApprove}
+            disabled={!account || isApproving}
+            isLoading={isApproving}
+            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          >
+            {isPending ? t('Approving') : t('Approve')}
+          </Button>
+        )}
         <Button
           onClick={handleConfirm}
-          disabled={!account || !isApproved || Number(amount) === 0 || amount === undefined || Number(balance) === 0}
+          disabled={
+            !account ||
+            !isApproved ||
+            Number(amount) === 0 ||
+            amount === undefined ||
+            Number(balance) === 0 ||
+            isPending
+          }
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
-          Confirm
+          {isPending ? t('Confirming') : t('Confirm')}
         </Button>
       </ButtonGroup>
     </>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -11,6 +11,7 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { deposit, approve } from 'utils/vaultService'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
 
 interface DepositProps {
@@ -82,9 +83,12 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+  const [isPending, setIsPending] = useState<boolean>(false)
+  const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
+    setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
@@ -95,6 +99,8 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       }
     } catch (error: any) {
       toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
     }
   }
 
@@ -106,7 +112,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       gasLimit: 380000,
       value: convertedStakeAmount.toString(),
     }
-
+    setIsPending(true)
     try {
       toastInfo('Transaction Pending...', 'Please Wait!')
       const tx = await callWithGasPrice(
@@ -121,6 +127,9 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       }
     } catch (error) {
       toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
+    } finally {
+      setIsPending(false)
+      setAmount(0)
     }
   }
 
@@ -167,12 +176,30 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
         </Section>
       </Flex>
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
-        {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
+        {isApproved ? null : (
+          <Button
+            onClick={handleApprove}
+            disabled={!account || isApproving}
+            isLoading={isApproving}
+            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          >
+            {isPending ? t('Approving') : t('Approve')}
+          </Button>
+        )}
         <Button
           onClick={handleConfirm}
-          disabled={!account || !isApproved || Number(amount) === 0 || amount === undefined || Number(balance) === 0}
+          disabled={
+            !account ||
+            !isApproved ||
+            Number(amount) === 0 ||
+            amount === undefined ||
+            Number(balance) === 0 ||
+            isPending
+          }
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
-          {t('Confirm')}
+          {isPending ? t('Confirming') : t('Confirm')}
         </Button>
       </ButtonGroup>
     </>

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
 import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
@@ -33,6 +33,7 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const claimContract = useClaimFairLaunch()
   const { toastError, toastSuccess } = useToast()
+  const [isPending, setIsPending] = useState<boolean>(false)
   const handleAmountChange = (e) => {
     const invalidChars = ['-', '+', 'e']
     if (invalidChars.includes(e.key)) {
@@ -53,17 +54,23 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
       gasLimit: 380000,
     }
 
+    setIsPending(true)
     try {
-      const tx = await callWithGasPrice(claimContract, 
-      'withdraw', 
-      [account, tokenData.pid, convertedStakeAmount.toString()], 
-      callOptions)
+      const tx = await callWithGasPrice(
+        claimContract,
+        'withdraw',
+        [account, tokenData.pid, convertedStakeAmount.toString()],
+        callOptions,
+      )
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your unstake was successfull'))
       }
     } catch (error) {
       toastError('Unsuccessfulll', 'Something went wrong your unstake request. Please try again...')
+    } finally {
+      setIsPending(false)
+      setAmount(0)
     }
   }
 
@@ -97,8 +104,15 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
       </Flex>
 
       <ButtonGroup flexDirection="column">
-        <Button onClick={handleConfirm} disabled={!account || Number(amount) === 0 || amount === undefined || Number(stakedBalance) === 0}>
-          Confirm
+        <Button
+          onClick={handleConfirm}
+          disabled={
+            !account || Number(amount) === 0 || amount === undefined || Number(stakedBalance) === 0 || isPending
+          }
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+        >
+          {isPending ? t('Confirming') : t('Confirm')}
         </Button>
       </ButtonGroup>
     </>

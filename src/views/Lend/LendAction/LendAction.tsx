@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import { Box, Button, Flex, Input, Text, ToastContainer } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
@@ -27,6 +27,11 @@ interface Props {
 interface RouteParams {
   action: string
   tokenName: string
+}
+
+interface LocationParams {
+  token?: any
+  exchangeRate?: any
 }
 
 const StyledPage = styled(Page)`
@@ -92,16 +97,15 @@ const Body = styled(Flex)`
   }
 `
 
-const LendAction = (props) => {
+const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const {
-    location: {
-      state: { exchangeRate: excRate, token: data },
-    },
-  } = props
+    state: { exchangeRate: excRate, token: data },
+  } = useLocation<LocationParams>()
 
   const [tokenData, setTokenData] = useState(data)
+  console.log('tokenData', tokenData)
   const allowance = tokenData?.userData?.allowance
   const exchangeRate = excRate
 
@@ -119,15 +123,20 @@ const LendAction = (props) => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  // const displayBalance = getFullDisplayBalance(balance, 18, 3)
-
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
-  const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
+  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const displayBalance = isDeposit
-    ? userTokenBalance(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber()
-    : userTokenBalance(tokenBalanceIb).toNumber()
+    ? userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber()
+    : userTokenBalanceCalc(tokenBalanceIb).toNumber()
+
+  const [userTokenBalance, setUserTokenBalance] = useState(displayBalance)
+  const [userIbTokenBalance, setUserIbTokenBalance] = useState(tokenBalanceIb)
+  useEffect(() => {
+    setUserTokenBalance(userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber())
+    setUserIbTokenBalance(userTokenBalanceCalc(tokenBalanceIb).toNumber())
+  }, [tokenData, tokenBalance, tokenBalanceIb, tokenName, bnbBalance])
 
   return (
     <StyledPage>
@@ -139,7 +148,7 @@ const LendAction = (props) => {
           <HeaderTabs
             onClick={handleDepositClick}
             active={isDeposit}
-            to={{ pathname: `/lend/deposit/${tokenName}`, state: { exchangeRate } }}
+            to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
             replace
           >
             <Text>Deposit</Text>
@@ -147,7 +156,7 @@ const LendAction = (props) => {
           <HeaderTabs
             onClick={handleWithdrawClick}
             active={!isDeposit}
-            to={{ pathname: `/lend/withdraw/${tokenName}`, state: { exchangeRate } }}
+            to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
             replace
           >
             <Text>Withdraw</Text>
@@ -160,7 +169,7 @@ const LendAction = (props) => {
           </Box>
           {isDeposit ? (
             <Deposit
-              balance={displayBalance}
+              balance={userTokenBalance}
               name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
@@ -170,7 +179,7 @@ const LendAction = (props) => {
             />
           ) : (
             <Withdraw
-              balance={displayBalance}
+              balance={userIbTokenBalance}
               name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
@@ -185,7 +194,7 @@ const LendAction = (props) => {
       </TabPanel>
       <Balance>
         <Text>Balance</Text>
-        <Text>{`${userTokenBalance(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
+        <Text>{`${userTokenBalanceCalc(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>
