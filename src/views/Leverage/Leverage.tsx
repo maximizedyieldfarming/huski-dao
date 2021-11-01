@@ -248,7 +248,7 @@ console.info('farmsData',farmsData);
           </ImageContainer>
           <Box padding="0 1rem">
             <Text mb="1rem">HUSKI Rewards</Text>
-            {reward ? <Text>{reward.toPrecision(3)}</Text> : <Skeleton width="80px" height="16px" />}
+            <Text>{reward.toPrecision(3)}</Text>
           </Box>
           <Flex alignSelf="flex-end">
             <ActionButton onClick={handleConfirm}>Claim</ActionButton>
