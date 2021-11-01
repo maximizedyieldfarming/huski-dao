@@ -78,7 +78,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenAddress = getAddress(tokenData.token.address)
-  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const {vaultAddress} = tokenData.TokenInfo
   const approveContract = useERC20(tokenAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()

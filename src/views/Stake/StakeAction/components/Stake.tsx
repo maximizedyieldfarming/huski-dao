@@ -105,7 +105,9 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   }
 
   const handleConfirm = async () => {
+    console.info('amount',amount)
     const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
+    console.info('convertedStakeAmount',convertedStakeAmount.toString())
     handleStake(convertedStakeAmount)
   }
 

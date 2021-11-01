@@ -60,7 +60,7 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const {vaultAddress} = tokenData.TokenInfo
   const withdrawContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)

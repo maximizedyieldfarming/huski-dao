@@ -113,7 +113,7 @@ const LendAction = () => {
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
   const tokenAddress = getAddress(tokenData.token.address)
-  const vaultAddress = getAddress(tokenData.vaultAddress)
+  const vaultAddress = (tokenData.TokenInfo.vaultAddress)
   const approveContract = useERC20(tokenAddress)
 
   const { action, tokenName } = useParams<RouteParams>()
