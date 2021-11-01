@@ -12,7 +12,6 @@ export interface Token {
   debtPoolId?: number
   address?: Address
   config?: Address
-  vaultAddress?: Address
   decimals?: number
   projectLink?: string
   busdPrice?: string

@@ -76,10 +76,6 @@ const tokens = {
       56: '0x8F8Ed54901b90c89C5817B7F67a425c0e6091284',
       97: 'cake的没有,暂时随便写个',
     },
-    vaultAddress: {
-      97: '',
-      56: '0xd7D069493685A581d27824Fc46EdA46B7EfC0063',
-    },
     decimals: 18,
     projectLink: 'https://pancakeswap.finance/',
     coingeckoId: 'pancakeswap-token',
@@ -699,10 +695,6 @@ const tokens = {
       56: '0x53dbb71303ad0F9AFa184B8f7147F9f12Bb5Dc01',
       97: '',
     },
-    vaultAddress: {
-      97: '',
-      56: '0xd7D069493685A581d27824Fc46EdA46B7EfC0063',
-    },
     decimals: 18,
     projectLink: 'https://pancakeswap.finance/',
     coingeckoId: 'binancecoin',
@@ -881,10 +873,6 @@ const tokens = {
       56: '0xd7b805E88c5F52EDE71a9b93F7048c8d632DBEd4',
       97: '',
     },
-    vaultAddress: {
-      97: '',
-      56: '0x7C9e73d4C71dae564d41F78d56439bB4ba87592f',
-    },
     decimals: 18,
     projectLink: 'https://www.paxos.com/busd/',
     coingeckoId: 'binance-usd',
@@ -900,10 +888,6 @@ const tokens = {
     config: {
       56: '0x724E6748Cb1d52Ec45b77Fb82a0750A2B759c038',
       97: '',
-    },
-    vaultAddress: {
-      97: '',
-      56: '0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE',
     },
     decimals: 18,
     projectLink: 'https://ethereum.org/en/',
@@ -1038,10 +1022,6 @@ const tokens = {
       56: '0x709b102EF4b605197C75CfEA45F455A4e7ce065B',
       97: '',
     },
-    vaultAddress: {
-      97: '',
-      56: '0x158Da805682BdC8ee32d52833aD41E74bb951E59',
-    },
     decimals: 18,
     projectLink: 'https://tether.to/',
     coingeckoId: 'tether',
@@ -1057,10 +1037,6 @@ const tokens = {
     config: {
       56: '0x6cc80Df354415fA0FfeF78555a06C1DdE7549FB8',
       97: '',
-    },
-    vaultAddress: {
-      97: '',
-      56: '0x08FC9Ba2cAc74742177e0afC3dC8Aed6961c24e7',
     },
     decimals: 18,
     projectLink: 'https://bitcoin.org/',
@@ -1482,10 +1458,6 @@ const tokens = {
     config: {
       56: '0x8F8Ed54901b90c89C5817B7F67a425c0e6091284',
       97: '',
-    },
-    vaultAddress: {
-      97: '',
-      56: '0xf1bE8ecC990cBcb90e166b71E368299f0116d421',
     },
     decimals: 18,
     projectLink: 'https://www.alpacafinance.org/',

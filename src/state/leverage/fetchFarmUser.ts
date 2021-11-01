@@ -29,7 +29,7 @@ export const fetchFarmUserTokenAllowances = async (account: string, farmsToFetch
   const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
     return new BigNumber(lpBalance).toJSON()
   })
-  console.info('parsedLpAllowances1-', parsedVaultAllowances)
+
   return parsedVaultAllowances
 }
 
@@ -43,13 +43,13 @@ export const fetchFarmUserQuoteTokenAllowances = async (account: string, farmsTo
   const parsedLpAllowances = rawLpAllowances.map((lpBalance) => {
     return new BigNumber(lpBalance).toJSON()
   })
-  console.info('parsedLpAllowances', parsedLpAllowances)
+
   return parsedLpAllowances
 }
 
 export const fetchFarmUserTokenBalancesIB = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const vaultContractAddress = getAddress(farm.token.vaultAddress)
+    const vaultContractAddress = farm.TokenInfo.vaultAddress
     return {
       address: vaultContractAddress,
       name: 'balanceOf',
