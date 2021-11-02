@@ -23,7 +23,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const PositionValueCell = ({ position }) => {
+const PositionValueCell = ({ position, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
@@ -48,7 +48,9 @@ const PositionValueCell = ({ position }) => {
           </Flex>
         )}
         {position && !position.isNaN() ? (
-          <Text>{position.toNumber().toFixed(3)}</Text>
+          <Text>
+            {position.toNumber().toFixed(3)} {name}
+          </Text>
         ) : (
           <Skeleton width="80px" height="16px" />
         )}

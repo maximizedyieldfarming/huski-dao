@@ -23,7 +23,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const DebtCell = ({ debt, borrowedAssets, borrowingInterest }) => {
+const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
@@ -47,7 +47,13 @@ const DebtCell = ({ debt, borrowedAssets, borrowingInterest }) => {
             </span>
           </Flex>
         )}
-        {debt ? <Text>{debt.toNumber().toFixed(3)}</Text> : <Skeleton width="80px" height="16px" />}
+        {debt ? (
+          <Text>
+            {debt.toNumber().toFixed(3)} {name}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

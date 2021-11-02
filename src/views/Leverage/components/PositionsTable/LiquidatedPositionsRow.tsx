@@ -48,7 +48,7 @@ const LiquidatedPositionsRow = ({ data }) => {
       <StyledRow role="row" onClick={toggleExpanded}>
         <NameCell name={null} positionId={null} />
         <PoolCell pool={null} quoteToken={null} token={null} />
-        <PositionValueCell position={null} />
+        <PositionValueCell position={null} name={null} />
         <LiquidatedEquityCell liqEquity={null} />
         <LiquidationFeeCell fee={null} />
         <AssetsReturnedCell assetsReturned={null} />

@@ -48,7 +48,7 @@ const ActivePositionsRow = ({ data }) => {
 
   const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
-  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18))// positionValueBaseNumber
+  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
   // const totalPositionValueInUSD1 = positionValueBaseNumber.times(token.busdPrice)
   // const tokenBusdPrice = data.farmData?.token.busdPrice
   // const totalPositionValue =  parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
@@ -80,11 +80,11 @@ const ActivePositionsRow = ({ data }) => {
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <NameCell name={null} positionId={positionId} />
+        <NameCell name={data.farmData?.token?.symbol} positionId={positionId} />
         <PoolCell pool={data.farmData?.lpSymbol.replace(' LP', '')} quoteToken={quoteToken} token={token} />
-        <PositionValueCell position={totalPositionValueInToken} />
-        <DebtCell debt={debtValueNumber} borrowedAssets={null} borrowingInterest={borrowingInterest.toPrecision(3)} />
-        <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} />
+        <PositionValueCell position={totalPositionValueInToken} name={data.farmData?.token?.symbol}/>
+        <DebtCell debt={debtValueNumber} borrowedAssets={null} borrowingInterest={borrowingInterest.toPrecision(3)} name={data.farmData?.token?.symbol}/>
+        <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={data.farmData?.token?.symbol}/>
         <ApyCell
           apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
           huskyRewards={huskyRewards}

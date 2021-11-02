@@ -29,9 +29,6 @@ const NameCell = ({ name, positionId }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          #
-        </Text>
         <Text bold={!isMobile} small={isMobile}>
           {name}
         </Text>
