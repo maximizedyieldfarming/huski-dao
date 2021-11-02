@@ -4,7 +4,7 @@ import PageSection from 'components/PageSection'
 import { useWeb3React } from '@web3-react/core'
 import { Link } from 'react-router-dom'
 import useTheme from 'hooks/useTheme'
-import Container from 'components/Layout/Container'
+import { useGetPositions } from 'hooks/api'
 import { Text, Flex, Box, Button, Grid } from '@pancakeswap/uikit'
 import background from './assets/bg.png'
 import communityImg from './assets/1.png'
@@ -101,7 +101,7 @@ const StrokeText = styled(Text)`
 const Home: React.FC = () => {
   const { theme } = useTheme()
   const { account } = useWeb3React()
-
+  useGetPositions(account)
   const HomeSectionContainerStyles = { margin: '0', width: '100%', maxWidth: '968px' }
 
   return (

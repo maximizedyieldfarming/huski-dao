@@ -43,17 +43,20 @@ const ActivePositionsRow = ({ data }) => {
     setExpanded((prev) => !prev)
   }
 
-  const { vault, positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
-  const { quoteToken, token } = data.farmData
+  const { positionId, debtValue, lpAmount, positionValueBase } = data
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, quoteToken, token } = data.farmData
 
-  // const totalPositionValueInUSDData = data.totalPositionValueInUSD
-  const tokenBusdPrice = data.farmData?.token.busdPrice
-  const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
-  const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
+  const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+
+  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18))// positionValueBaseNumber
+  // const totalPositionValueInUSD1 = positionValueBaseNumber.times(token.busdPrice)
+  // const tokenBusdPrice = data.farmData?.token.busdPrice
+  // const totalPositionValue =  parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
+  // const totalPositionValueInToken = positionValueBaseNumber // new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const leverage = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
+  const leverage = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()

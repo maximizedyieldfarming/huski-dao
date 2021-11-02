@@ -53,7 +53,7 @@ const CloseEntirePosition = ({
   const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = getAddress(data.farmData.vaultAddress)
+  const vaultAddress = (data.farmData.TokenInfo.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
 

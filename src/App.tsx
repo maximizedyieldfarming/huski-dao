@@ -43,7 +43,7 @@ const App: React.FC = () => {
   useEagerConnect()
   useFetchProfile()
   // usePollCoreFarmData()
-
+  const { account } = useWeb3React()
   return (
     <Router history={history}>
       <ResetCSS />

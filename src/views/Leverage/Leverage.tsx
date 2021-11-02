@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -9,6 +10,7 @@ import {
   useHuskyPerBlock,
   useCakePrice,
 } from 'state/leverage/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import SearchInput from 'components/SearchInput'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
@@ -22,6 +24,7 @@ import { useClaimFairLaunch } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
+import { usePositions } from './hooks/usePositions'
 import bone2 from './assets/bone2-1x.png'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
@@ -129,7 +132,37 @@ const Leverage: React.FC = () => {
   let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
-  const data = useGetPositions()
+  const data = useGetPositions(account)
+  const positionData = usePositions(data)
+
+  const positionFarmsData = []
+  if (positionData && positionData !== null && positionData !== undefined) {
+    positionData.map((pdata) => {
+      let pfarmData
+      farmsData.map((farm) => {
+        if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
+          pfarmData = pdata
+          pfarmData.farmData = farm
+          positionFarmsData.push(pfarmData)
+        }
+      })
+    })
+  }
+
+  // if (data && data !== null && data !== undefined) {
+  //   data.map((pdata) => {
+  //     let pfarmData
+  //     farmsData.map((farm) => {
+  //       if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
+  //         pfarmData = pdata
+  //         pfarmData.farmData = farm
+  //         positionFarmsData.push(pfarmData)
+  //       }
+  //     })
+  //   })
+  // }
+
+  console.info('farmsData', farmsData)
   // search feature
   const [searchQuery, setSearchQuery] = useState('')
   const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,23 +232,6 @@ const Leverage: React.FC = () => {
     )
   } */
 
-  const positionFarmsData = []
-  if (data && data !== null && data !== undefined) {
-    console.info('data----positionFarmsData', data)
-    // eslint-disable-next-line array-callback-return
-    data.map((pdata) => {
-      let pfarmData
-      // eslint-disable-next-line array-callback-return
-      farmsData.map((farm) => {
-        if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
-          pfarmData = pdata
-          pfarmData.farmData = farm
-          positionFarmsData.push(pfarmData)
-        }
-      })
-    })
-  }
-
   let reward = 0
   positionFarmsData.map((farm) => {
     const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
@@ -224,7 +240,6 @@ const Leverage: React.FC = () => {
     reward += farmEarnings
     return reward
   })
-  
 
   return (
     <Page>
