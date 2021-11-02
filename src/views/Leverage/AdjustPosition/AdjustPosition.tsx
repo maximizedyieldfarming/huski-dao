@@ -82,8 +82,8 @@ const AdjustPosition = () => {
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const [tokenInput, setTokenInput] = useState(0)
 
-  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal,leverage } = data?.farmData
-  const { lpAmount,  debtValue, positionValueBase } = data
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, leverage } = data?.farmData
+  const { lpAmount, debtValue, positionValueBase } = data
 
   const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
@@ -95,8 +95,6 @@ const AdjustPosition = () => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-
-
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -104,12 +102,7 @@ const AdjustPosition = () => {
     return null
   }
   const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
-  // const tokenBusdPrice = data.farmData?.token.busdPrice
-  // const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
-  // const totalPositionValueInToken = positionValueBaseNumber// new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
-
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
-
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const lvgAdjust = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
 
@@ -359,8 +352,8 @@ const AdjustPosition = () => {
   const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
 
-  const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
   // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
   // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
