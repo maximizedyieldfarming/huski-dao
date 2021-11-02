@@ -1,27 +1,11 @@
-import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
-import { Route, useRouteMatch, useLocation } from 'react-router-dom'
-import BigNumber from 'bignumber.js'
+import React from 'react'
 import { useWeb3React } from '@web3-react/core'
-import {
-  Image,
-  Heading,
-  RowType,
-  Toggle,
-  Text,
-  Button,
-  ArrowForwardIcon,
-  Flex,
-  Box,
-  Skeleton,
-} from '@pancakeswap/uikit'
-import { ChainId } from '@pancakeswap/sdk'
+import { Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'
 import huskyIcon from './assets/avatar1x.png'
 import LockTable from './components/LockTable/LockTable'
-
-const NUMBER_OF_FARMS_VISIBLE = 12
 
 const Section = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
@@ -58,8 +42,6 @@ const Section = styled(Flex)`
 `
 
 const Lock: React.FC = () => {
-  const { path } = useRouteMatch()
-  const { pathname } = useLocation()
   const { t } = useTranslation()
 
   const sHuskiBalance = null

@@ -220,18 +220,6 @@ const Leverage: React.FC = () => {
     )
   }
 
-  // this is part of the above condition
-  // DO NOT DELETE, might be useful for when theres more data
-  // commented out because of linter error
-  // This condition will always return 'false' since the types '"all"' and '"others"' have no overlap.  TS2367
-  /* else if (pairFilter === 'others') {
-    farmsData = farmsData.filter(
-      (pool) =>
-        pool?.quoteToken?.symbol.toLowerCase() !== ('eth' || 'wbnb' || 'busd' || 'btcb') ||
-        pool?.token?.symbol.toLowerCase() !== ('eth' || 'wbnb' || 'busd' || 'btcb'),
-    )
-  } */
-
   let reward = 0
   positionFarmsData.map((farm) => {
     const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
@@ -343,13 +331,6 @@ const Leverage: React.FC = () => {
                 onClick={() => setPairFilter('eth')}
               >
                 ETH
-              </FilterOption>
-              <FilterOption
-                variant="tertiary"
-                isActive={pairFilter === 'others'}
-                onClick={() => setPairFilter('others')}
-              >
-                Others
               </FilterOption>
             </Flex>
           </Flex>
