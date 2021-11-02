@@ -42,18 +42,14 @@ const ConverTo = ({ data }) => {
   const tradingFees = Number(tradeFee) * Number(leverage) * 365
   const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-
-  // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
-  // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
   const basetokenBegin = parseInt(tokenAmountTotal)
   const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
   const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
-
   const { t } = useTranslation()
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = (data.farmData.TokenInfo.vaultAddress)
+  const {vaultAddress} = data.farmData.TokenInfo
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
 

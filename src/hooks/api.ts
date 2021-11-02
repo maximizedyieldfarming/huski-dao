@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import VaultABI from 'config/abi/vault.json'
 import WorkerABI from 'config/abi/PancakeswapV2Worker.json'
-import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
+import { getAddress } from 'utils/addressHelpers'
 import multicall from 'utils/multicall'
 import { useWeb3React } from '@web3-react/core'
 
 /* eslint-disable camelcase */
-export interface DeBankTvlResponse {
+export interface PositionsResponse {
   id: string
   chain: string
   name: string
@@ -16,29 +16,11 @@ export interface DeBankTvlResponse {
   tvl: number
 }
 
-// export const useGetStats = () => {
-//   const [data, setData] = useState<DeBankTvlResponse | null>(null)
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const response = await fetch('https://openapi.debank.com/v1/protocol?id=bsc_pancakeswap')
-//         const responseData: DeBankTvlResponse = await response.json()
-
-//         setData(responseData)
-//       } catch (error) {
-//         console.error('Unable to fetch data:', error)
-//       }
-//     }
-
-//     fetchData()
-//   }, [setData])
-
-//   return data
-// }
+//  const [data, setData] = useState<DeBankTvlResponse | null>(null)
+//  const responseData: DeBankTvlResponse = await response.json()
 
 export const useGetPositions = (account) => {
-  const [data, setData] = useState(null)
+  const [data, setData] = useState([])
   // const { account } = useWeb3React()
   useEffect(() => {
     const fetchData = async () => {
@@ -64,8 +46,6 @@ export const useGetPositions = (account) => {
         const responseData = await res.json();
   
         const returnData = responseData.data === null ?  []: responseData.data 
-        console.info('responseData.data',responseData.data)
-        console.info('responseData.data',returnData)
         setData(returnData)
       } catch (error) {
         console.error('Unable to fetch data:', error)

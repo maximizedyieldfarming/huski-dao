@@ -7,7 +7,6 @@ import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/ho
 import { getAddress } from 'utils/addressHelpers'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
-import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import PoolCell from './Cells/PoolCell'

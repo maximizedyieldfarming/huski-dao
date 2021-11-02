@@ -10,26 +10,12 @@ const GrayBox = styled(Box)`
   border-radius: ${({ theme }) => theme.radii.default};
   padding: 1rem;
 `
-const Section = styled(Flex)`
-  &:not(:last-child) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.cardBorder};
-  }
-  > ${Flex}, > ${Box} {
-    padding: 1rem 0;
-  }
-  input[type='range'] {
-    -webkit-appearance: auto;
-  }
-`
 
 const MinimizeTrading = ({ data, isCloseEntire }) => {
-  // console.log({ data })
 
   const { debtValue ,lpAmount} = data
-
   const { busdPrice } = data.farmData.token
   const { tradeFee, leverage , lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal} = data.farmData
-
 
   const { busdPrice: tokenBusdPrice, symbol: token } = data.farmData.token
   const { busdPrice: quoteTokenBusdPrice, symbol: quoteToken } = data.farmData.quoteToken
@@ -38,9 +24,6 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
 
   const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-
-  // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
-  // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
 
   return (
     <>

@@ -10,7 +10,7 @@ export const usePositions = (data) => {
 
   const [positionData, setPositionData] = useState([])
 
-    useEffect(() => {
+  useEffect(() => {
     const positions = async () => {
       const debtShares = await fetchDebtShares(data);
       const lpAmount = await fetchLpAmount(data, debtShares);
@@ -36,36 +36,8 @@ export const usePositions = (data) => {
     positions();
   }, [data])
 
-  // }
-
 
   return positionData;
-
-  //   const [sharesValue, setSharesValue] = useState(0)
-  //   const { worker, positionId } = data
-
-  //   useEffect(() => {
-  //     const fetchPositions = async () => {
-
-  //       const [shares] =
-  //         await multicall(WorkerABI, [
-  //           {
-  //             address: worker,
-  //             name: 'shares',
-  //             params: [positionId],
-  //           }
-  //         ])
-  //         if(shares==='' || !shares ){
-  //           setSharesValue(0)
-  //         }
-
-  //         setSharesValue(Number(shares))
-  //     }
-
-  //     fetchPositions()
-  //   }, [positionId, sharesValue, worker])
-
-  // return { sharesValue }
 
 }
 

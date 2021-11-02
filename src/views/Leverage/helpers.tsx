@@ -152,13 +152,6 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
 
 
 export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage) => {
-  // const { tokenAmountTotal, quoteTokenAmountTotal } = farm
-  // const debtValueData = data.debtValue
-  // const baseAmountData = data.baseAmount
-  // const farmAmountData = data.farmAmount
-  // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
-  // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
-
 
   const {lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
   const { lpAmount} = data
