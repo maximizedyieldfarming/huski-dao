@@ -25,19 +25,22 @@ const Section = styled(Flex)`
 const MinimizeTrading = ({ data, isCloseEntire }) => {
   // console.log({ data })
 
-  const { totalPositionValueInUSD, debtValue } = data
+  const { debtValue ,lpAmount} = data
 
   const { busdPrice } = data.farmData.token
-  const { tradeFee, leverage } = data.farmData
+  const { tradeFee, leverage , lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal} = data.farmData
+
+
   const { busdPrice: tokenBusdPrice, symbol: token } = data.farmData.token
   const { busdPrice: quoteTokenBusdPrice, symbol: quoteToken } = data.farmData.quoteToken
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
   const tradingFees = Number(tradeFee) * Number(leverage) * 365
 
-  const baseAmountData = data.baseAmount
-  const farmAmountData = data.farmAmount
-  const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
-  const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
+  const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+
+  // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
+  // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
 
   return (
     <>

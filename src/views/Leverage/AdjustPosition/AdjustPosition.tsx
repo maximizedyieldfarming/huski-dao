@@ -82,7 +82,10 @@ const AdjustPosition = () => {
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const [tokenInput, setTokenInput] = useState(0)
 
-  const { leverage } = data?.farmData
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal,leverage } = data?.farmData
+  const { lpAmount,  debtValue, positionValueBase } = data
+
+  const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -92,7 +95,7 @@ const AdjustPosition = () => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-  const { positionId, debtValue, baseAmount, totalPositionValueInUSD } = data
+
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -100,15 +103,15 @@ const AdjustPosition = () => {
     }
     return null
   }
-
-  const tokenBusdPrice = data.farmData?.token.busdPrice
-  const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
-  const totalPositionValueInToken = new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
+  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
+  // const tokenBusdPrice = data.farmData?.token.busdPrice
+  // const totalPositionValue = parseInt(totalPositionValueInUSD.hex) / tokenBusdPrice
+  // const totalPositionValueInToken = positionValueBaseNumber// new BigNumber(totalPositionValue).dividedBy(BIG_TEN.pow(18))
 
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
 
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const lvgAdjust = new BigNumber(debtValue).div(new BigNumber(baseAmount)).plus(1)
+  const lvgAdjust = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
 
   const currentPositionLeverage = lvgAdjust.toNumber()
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
@@ -159,7 +162,7 @@ const AdjustPosition = () => {
   const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = getAddress(data?.farmData?.vaultAddress)
+  const vaultAddress = (data?.farmData?.TokenInfo.vaultAddress)
   const vaultContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
 
@@ -355,11 +358,13 @@ const AdjustPosition = () => {
   const maxValue = 1 - principal / data?.farmData?.leverage
   const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
-  const baseAmountData = data.baseAmount
-  const farmAmountData = data.farmAmount
-  const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
-  const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
-  const { tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+
+  const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+
+  // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
+  // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
+
   const basetokenBegin = parseInt(tokenAmountTotal)
   const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
   const convertedPositionValueAssets =
