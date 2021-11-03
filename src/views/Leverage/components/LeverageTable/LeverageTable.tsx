@@ -38,7 +38,6 @@ const StyledTable = styled.div`
 
 const StyledTableBorder = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  // background-color: ${({ theme }) => theme.colors.cardBorder};
   padding: 1px 1px 1px 1px;
   background-size: 400% 400%;
   box-shadow: ${({ theme }) => theme.card.boxShadow};

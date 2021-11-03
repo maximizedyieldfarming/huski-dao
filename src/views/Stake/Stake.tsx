@@ -32,6 +32,7 @@ const RewardsSummarySection = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem;
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
   > ${Grid} {
     &:first-child {
       background-color: #3ed3dd;

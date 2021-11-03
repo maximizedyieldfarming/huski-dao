@@ -12,13 +12,14 @@ const Section = styled(Flex)`
   padding: 1rem;
   gap: 1rem;
   border-radius: ${({ theme }) => theme.radii.default};
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
   .container {
-    background-color: ${({ theme }) => theme.colors.textDisabled};
+    background-color: ${({ theme }) => theme.colors.background};
     padding: 1rem;
     border-radius: ${({ theme }) => theme.radii.small};
   }
   .block {
-    background-color: ${({ theme }) => theme.colors.textDisabled};
+    background-color: ${({ theme }) => theme.colors.background};
     flex: 1;
     border-radius: ${({ theme }) => theme.radii.small};
   }
@@ -58,7 +59,7 @@ const Lock: React.FC = () => {
         </Box>
         <Box className="container">
           <Text color="textSubtle">{t('Total Volume Locked')}</Text>
-          {volumeLocked ? <Text>{volumeLocked}</Text> : <Skeleton width="80px" height="16px" />}
+          {volumeLocked ? <Text color="secondary">{`$${volumeLocked}`}</Text> : <Skeleton width="80px" height="16px" />}
         </Box>
       </Section>
       <Flex>
