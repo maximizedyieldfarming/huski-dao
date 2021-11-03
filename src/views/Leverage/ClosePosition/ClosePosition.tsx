@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router'
-import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
-import Select from 'components/Select/Select'
 import { TokenPairImage } from 'components/TokenImage'
 import ConverTo from './components/ConverTo'
 import MinimizeTrading from './components/MinimizeTrading'
@@ -11,29 +9,13 @@ import MinimizeTrading from './components/MinimizeTrading'
 interface Props {
   active: boolean
 }
-interface RouteParams {
-  token: string
-}
 
-const StyledPage = styled(Page)`
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-`
 const TabPanel = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
   // width: 510px;
   // height: 528px;
-`
-
-const Balance = styled(Flex)`
-  background-color: ${({ theme }) => theme.card.background};
-  padding: 1rem;
-  border-radius: 20px;
-  width: 510px;
-  justify-content: space-between;
 `
 
 const Header = styled(Flex)`
@@ -67,12 +49,6 @@ const Bubble = styled(Flex)`
 `
 
 const ClosePosition = (props) => {
-  const { token } = useParams<RouteParams>()
-  const [isDeposit, setIsDeposit] = useState(true)
-
-  const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
-
-  const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
   const {
     location: {
@@ -80,16 +56,28 @@ const ClosePosition = (props) => {
     },
   } = props
 
-  // const { farmData: tokenData } = data
-  console.log({ data })
-  const [tokenData, setTokenData] = useState(data.farmData)
-  const { positionId } = data
+  const [isDeposit, setIsDeposit] = useState(true)
+  const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
+  const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  console.log('closePosition tokenData', tokenData)
-  const quoteTokenName = tokenData?.quoteToken?.symbol
-  const tokenName = tokenData?.token?.symbol
-  console.log({ quoteTokenName })
-  console.log({ tokenName })
+  const { positionId, vault } = data
+  const { quoteToken, token, TokenInfo, QuoteTokenInfo } = data.farmData
+
+  let symbolName;
+  let lpSymbolName;
+  let tokenValue;
+  let quoteTokenValue;
+  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
+    lpSymbolName = TokenInfo?.name
+    tokenValue = token;
+    quoteTokenValue = quoteToken;
+  } else {
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
+    lpSymbolName = QuoteTokenInfo?.name
+    tokenValue = quoteToken;
+    quoteTokenValue = token;
+  }
 
   const [isCloseEntire, setCloseEntire] = useState(true)
   const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
@@ -102,34 +90,22 @@ const ClosePosition = (props) => {
       <Flex alignItems="center">
         <Flex alignItems="center" justifySelf="flex-start" flex="1">
           <Text mr="1rem">Which method would you like to use?</Text>
-          {/*  <Select
-            options={[
-              {
-                label: 'Close Your Entire Position',
-                value: 'close_all',
-              },
-              {
-                label: 'Partially Close Your Position',
-                value: 'close_partial',
-              },
-            ]}
-            onChange={handleSelectChange}
-          /> */}
         </Flex>
         <Bubble alignSelf="flex-end" alignItems="center">
+          <Text>{symbolName}</Text>
           <Text>#{positionId}</Text>
           <Flex alignItems="center">
             <Box width={40} height={40}>
               <TokenPairImage
-                primaryToken={tokenData?.quoteToken}
-                secondaryToken={tokenData?.token}
+                primaryToken={quoteTokenValue}
+                secondaryToken={tokenValue}
                 width={40}
                 height={40}
                 variant="inverted"
               />
             </Box>
             <Text style={{ whiteSpace: 'nowrap' }} ml="5px">
-              {tokenData?.lpSymbol.replace(' LP', '')}
+              {lpSymbolName.replace(' PancakeswapWorker', '')}
             </Text>
           </Flex>
         </Bubble>
@@ -137,7 +113,7 @@ const ClosePosition = (props) => {
       <TabPanel>
         <Header>
           <HeaderTabs onClick={handleDepositClick} active={isDeposit}>
-            <Text>Convert To</Text>
+            <Text>Convert To {symbolName}</Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit}>
             <Text>Minimize Trading</Text>

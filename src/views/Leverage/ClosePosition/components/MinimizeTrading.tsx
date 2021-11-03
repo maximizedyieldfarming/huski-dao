@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Box, Button, Flex, Text, Skeleton, Input } from '@pancakeswap/uikit'
+import { Box, Text } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import CloseEntirePosition from './CloseEntirePosition'
 
 const GrayBox = styled(Box)`
@@ -13,35 +13,25 @@ const GrayBox = styled(Box)`
 
 const MinimizeTrading = ({ data, isCloseEntire }) => {
 
-  const { debtValue ,lpAmount} = data
-  const { busdPrice } = data.farmData.token
-  const { tradeFee, leverage , lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal} = data.farmData
-
-  const { busdPrice: tokenBusdPrice, symbol: token } = data.farmData.token
-  const { busdPrice: quoteTokenBusdPrice, symbol: quoteToken } = data.farmData.quoteToken
-  const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
-  const tradingFees = Number(tradeFee) * Number(leverage) * 365
-
-  const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const { vault } = data
+  const { quoteToken, token, TokenInfo } = data.farmData
+  let symbolName;
+  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
+  } else {
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
+  }
 
   return (
     <>
       <GrayBox background="backgroundDisabled">
         <Text small color="textSubtle">
-          We will convert the minimum required amount of tokens into {token} to pay back the debt and return the
+          We will convert the minimum required amount of tokens into {symbolName} to pay back the debt and return the
           remaining assets to you. This can potentially save on slippage and trading fees.
         </Text>
       </GrayBox>
       <CloseEntirePosition
         data={data}
-        baseTokenAmount={baseTokenAmount}
-        farmTokenAmount={farmTokenAmount}
-        tradingFees={tradingFees}
-        debtValue={debtValueNumber}
-        priceImpact={undefined}
-        token={data.farmData.token}
-        quoteToken={data.farmData.quoteToken}
       />
     </>
   )

@@ -54,14 +54,14 @@ const ActivePositionsRow = ({ data }) => {
   let liquidationThresholdValue;
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
     tokenValue = token;
     quoteTokenValue = quoteToken;
     baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = liquidationThreshold
   } else {
-    symbolName = quoteToken?.symbol
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
     tokenValue = quoteToken;
     quoteTokenValue = token;
@@ -74,7 +74,7 @@ const ActivePositionsRow = ({ data }) => {
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const leverage = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
-
+console.info('leverage',leverage)
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const huskyRewards = getHuskyRewards(data.farmData, huskyPrice)

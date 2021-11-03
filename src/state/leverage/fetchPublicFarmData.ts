@@ -37,13 +37,10 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { lpAddresses, TokenInfo, QuoteTokenInfo,  workerConfig, token, quoteToken, pid } = farm
+  const { lpAddresses, TokenInfo, QuoteTokenInfo, token, quoteToken, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = TokenInfo.vaultAddress
   const quoteTokenVaultAddresses = QuoteTokenInfo.vaultAddress
-  // const workerAddresses = getAddress(workerAddress)
-  // const quotetokenWorkerAddress = getAddress(quoteTokenWorkerAddress)
-  const workerConfigAddress = TokenInfo.config  // getAddress(workerConfig)
   const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
       {

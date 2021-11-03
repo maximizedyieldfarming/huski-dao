@@ -6,15 +6,12 @@ import { useWeb3React } from '@web3-react/core'
 import {
   useLeverageFarms,
   usePollLeverageFarmsWithUserData,
-  useHuskyPrice,
-  useHuskyPerBlock,
   useCakePrice,
 } from 'state/leverage/hooks'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import SearchInput from 'components/SearchInput'
 import styled from 'styled-components'
 import Select from 'components/Select/Select'
-import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -174,8 +171,6 @@ console.info('positionData',positionData)
   }
 
   // sort feature
-  const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
