@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router'
 import { Box, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
@@ -9,9 +8,6 @@ import MinimizeTrading from './components/MinimizeTrading'
 
 interface Props {
   active: boolean
-}
-interface RouteParams {
-  token: string
 }
 
 const TabPanel = styled(Box)`
@@ -82,12 +78,6 @@ const ClosePosition = (props) => {
     tokenValue = quoteToken;
     quoteTokenValue = token;
   }
-  // const [farmData, setFarmData] = useState(data.farmData)
-  // console.log('closePosition farmData', farmData)
-  // const quoteTokenName = farmData?.quoteToken?.symbol
-  // const tokenName = farmData?.token?.symbol
-  // console.log({ quoteTokenName })
-  // console.log({ tokenName })
 
   const [isCloseEntire, setCloseEntire] = useState(true)
   const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
