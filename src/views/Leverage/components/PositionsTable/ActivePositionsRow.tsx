@@ -74,7 +74,7 @@ const ActivePositionsRow = ({ data }) => {
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const leverage = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
-
+console.info('leverage',leverage)
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const huskyRewards = getHuskyRewards(data.farmData, huskyPrice)
