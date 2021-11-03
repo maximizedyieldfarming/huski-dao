@@ -84,6 +84,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       gasLimit: 380000,
     }
 
+    toastInfo('Pending request...', 'Please Wait!')
     setIsPending(true)
     try {
       const tx = await callWithGasPrice(

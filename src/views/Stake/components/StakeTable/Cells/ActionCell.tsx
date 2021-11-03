@@ -26,15 +26,6 @@ const StyledCell = styled(BaseCell)`
     word-break: initial;
   }
 `
-const StyledButton = styled(Button)`
-  padding: 0.75rem;
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  box-shadow: none;
-  word-break: initial;
-`
-
 const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()

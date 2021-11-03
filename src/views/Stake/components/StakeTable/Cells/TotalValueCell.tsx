@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-
 import { useTranslation } from 'contexts/Localization'
 import { formatBigNumber } from 'state/utils'
 import nFormatter from 'utils/nFormatter'
@@ -24,16 +23,17 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalSupplyCell = ({ supply }) => {
+const TotalValueCell = ({ supply }) => {
   const { isMobile } = useMatchBreakpoints()
 
+  const { t } = useTranslation()
   const formatedSupply = supply && parseFloat(formatBigNumber(supply).replace(/,/g, ''))
 
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Total Supply
+          {t('Total Value Staked')}
         </Text>
         {supply ? <Text>{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
@@ -41,4 +41,4 @@ const TotalSupplyCell = ({ supply }) => {
   )
 }
 
-export default TotalSupplyCell
+export default TotalValueCell

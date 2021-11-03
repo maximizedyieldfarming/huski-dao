@@ -6,19 +6,19 @@ import { useTranslation } from 'contexts/Localization'
 import StakeRow from './StakeRow'
 
 const StyledTable = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
+  // border-radius: ${({ theme }) => theme.radii.card};
 
-  background-color: ${({ theme }) => theme.card.background};
+  // background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
+    // border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
   }
 `
 
 const StyledTableBorder = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
-  background-color: ${({ theme }) => theme.colors.cardBorder};
-  padding: 1px 1px 3px 1px;
-  background-size: 400% 400%;
+  // border-radius: ${({ theme }) => theme.radii.card};
+  // background-color: ${({ theme }) => theme.colors.cardBorder};
+  // padding: 1px 1px 3px 1px;
+  // background-size: 400% 400%;
 `
 
 const ScrollButtonContainer = styled.div`
@@ -41,12 +41,6 @@ const StakeTable = ({ stakeData }) => {
         {stakeData.map((token) => (
           <StakeRow tokenData={token} key={token?.pid} />
         ))}
-        <ScrollButtonContainer>
-          <Button variant="text" onClick={scrollToTop}>
-            To Top
-            <ChevronUpIcon color="primary" />
-          </Button>
-        </ScrollButtonContainer>
       </StyledTable>
     </StyledTableBorder>
   )
