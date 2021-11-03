@@ -29,6 +29,7 @@ type PublicFarmData = {
   quoteTokenBalanceLP: SerializedBigNumber
   poolWeight: SerializedBigNumber
   liquidationThreshold: SerializedBigNumber
+  quoteTokenLiquidationThreshold: SerializedBigNumber
   name: string
   pooPerBlock: number
   quoteTokenPoolPerBlock: number
@@ -36,13 +37,13 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { lpAddresses, TokenInfo, QuoteTokenInfo, workerAddress, quoteTokenWorkerAddress, workerConfig, token, quoteToken, pid } = farm
+  const { lpAddresses, TokenInfo, QuoteTokenInfo,  workerConfig, token, quoteToken, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = TokenInfo.vaultAddress
   const quoteTokenVaultAddresses = QuoteTokenInfo.vaultAddress
-  const workerAddresses = getAddress(workerAddress)
-  const quotetokenWorkerAddress = getAddress(quoteTokenWorkerAddress)
-  const workerConfigAddress = getAddress(workerConfig)
+  // const workerAddresses = getAddress(workerAddress)
+  // const quotetokenWorkerAddress = getAddress(quoteTokenWorkerAddress)
+  const workerConfigAddress = TokenInfo.config  // getAddress(workerConfig)
   const [lpTotalReserves, lptotalSupply] =
     await multicall(lpTokenABI, [
       {
@@ -58,18 +59,18 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const [liquidationThreshold] =
     await multicall(WorkerConfigABI, [
       {
-        address: workerConfigAddress,
+        address: TokenInfo.config,
         name: 'killFactor',
-        params: [workerAddresses, 0],
+        params: [TokenInfo.address, 0],
       }
     ])
 
-  const [liquidationThresholdquoteToken] =
+  const [quoteTokenLiquidationThreshold] =
     await multicall(WorkerConfigABI, [
       {
-        address: workerConfigAddress,
+        address: QuoteTokenInfo.config,
         name: 'killFactor',
-        params: [quotetokenWorkerAddress, 0],
+        params: [QuoteTokenInfo.address, 0],
       }
     ])
 
@@ -240,7 +241,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         {
           address: masterChefAddress,
           name: 'userInfo',
-          params: [pid, workerAddresses],
+          params: [pid, TokenInfo.address],
         }
       ])
       : [null, null]
@@ -273,6 +274,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     tokenBalanceLP: tokenBalanceLP[0]._hex,
     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
     liquidationThreshold: liquidationThreshold[0]._hex,
+    quoteTokenLiquidationThreshold: quoteTokenLiquidationThreshold[0]._hex,
   }
 }
 

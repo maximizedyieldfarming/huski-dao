@@ -134,13 +134,13 @@ const Leverage: React.FC = () => {
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
-
+console.info('positionData',positionData)
   const positionFarmsData = []
   if (positionData && positionData !== null && positionData !== undefined) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
-        if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
+        if (farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() || farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ) {
           pfarmData = pdata
           pfarmData.farmData = farm
           positionFarmsData.push(pfarmData)

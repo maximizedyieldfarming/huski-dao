@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import ActivePositionsRow from './ActivePositionsRow'
 import ActivePositionsHeaderRow from './ActivePositionsHeaderRow'
@@ -34,25 +34,6 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
     })
   }
 
-  // const positionFarmsData = []
-
-  // if (data && data !== null && data !== undefined) {
-  //   // eslint-disable-next-line array-callback-return
-  //   data.map((pdata) => {
-  //     let pfarmData
-  //     // eslint-disable-next-line array-callback-return
-  //     farmsData.map((farm) => {
-  //       if (farm.workerAddress[56].toUpperCase() === pdata.worker.toUpperCase()) {
-  //         pfarmData = pdata
-  //         pfarmData.farmData = farm
-  //         positionFarmsData.push(pfarmData)
-  //       }
-  //     })
-  //   })
-  // }
-
-  // console.log('positions', positionFarmsData)
-
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
@@ -64,13 +45,6 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
         ) : (
           <Text textAlign="center">No Active Positions</Text>
         )}
-
-        {/*  <ScrollButtonContainer>
-          <Button variant="text" onClick={scrollToTop}>
-            To Top
-            <ChevronUpIcon color="primary" />
-          </Button>
-        </ScrollButtonContainer> */}
       </StyledTable>
     </StyledTableBorder>
   )
