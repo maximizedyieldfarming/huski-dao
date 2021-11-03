@@ -2,9 +2,7 @@ import { Box, Button, Flex, Text, Skeleton, InfoIcon, useTooltip } from '@pancak
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { getAddress } from 'utils/addressHelpers'
-import { getDecimalAmount } from 'utils/formatBalance'
+import { BIG_TEN } from 'utils/bigNumber'
 import { ethers } from 'ethers';
 import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
@@ -91,8 +89,6 @@ const ConverTo = ({ data }) => {
   const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
-
-
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -114,16 +110,14 @@ const ConverTo = ({ data }) => {
 
   const handleConfirm = async () => {
     const id = positionId
-    // const workerAddress = getAddress(data.farmData.workerAddress)
     const amount = 0
     const loan = 0;
     const maxReturn = ethers.constants.MaxUint256;
     const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
     const abiCoder = ethers.utils.defaultAbiCoder;
-    // const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
     const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
-    console.log({symbolName, id, workerAddress, amount, loan,convertedPositionValue,withdrawMinimizeTradingAddress, minbasetoken, maxReturn, dataWorker})
+    // console.log({symbolName, id, workerAddress, amount, loan,convertedPositionValue,withdrawMinimizeTradingAddress, minbasetoken, maxReturn, dataWorker})
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 

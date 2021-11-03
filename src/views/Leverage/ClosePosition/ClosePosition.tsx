@@ -68,12 +68,12 @@ const ClosePosition = (props) => {
   let tokenValue;
   let quoteTokenValue;
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
     tokenValue = token;
     quoteTokenValue = quoteToken;
   } else {
-    symbolName = quoteToken?.symbol
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
     tokenValue = quoteToken;
     quoteTokenValue = token;
