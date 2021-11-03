@@ -16,12 +16,11 @@ import {
 } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
+import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault, useERC20 } from 'hooks/useContract'
@@ -92,15 +91,10 @@ const Farm = () => {
   } = useLocation<LocationParams>()
 
   const [tokenData, setTokenData] = useState(data)
-
   const quoteTokenName = tokenData?.quoteToken?.symbol
   const tokenName = tokenData?.token?.symbol
 
-  // const [tokenInputOther, setTokenInputOther] = useState(0)
-  // const [quoteTokenInputOther, setQuoteTokenInputOther] = useState(0)
   const [radio, setRadio] = useState(selectedBorrowing)
-  // const [radioQuote, setRadioQuote] = useState(tokenName === radio ? quoteTokenName : tokenName)
-  // console.log('radio', radio, 'selected borrowing', selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
 
@@ -128,7 +122,6 @@ const Farm = () => {
   )
 
   const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, radio)
@@ -152,7 +145,6 @@ const Farm = () => {
       const input = event.target.value
       const finalValue = input > userTokenBalance ? userTokenBalance : input
       setTokenInput(finalValue)
-      // setTokenInputOther(input)
     },
     [userTokenBalance],
   )
@@ -168,7 +160,6 @@ const Farm = () => {
       const input = event.target.value
       const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
       setQuoteTokenInput(finalValue)
-      // setQuoteTokenInputOther(input)
     },
     [userQuoteTokenBalance],
   )
@@ -176,45 +167,28 @@ const Farm = () => {
   const handleChange = (e) => {
     const { value } = e.target
     setRadio(value)
-    /*  if (value === tokenData.token.symbol) {
-      setRadioQuote(tokenData.quoteToken.symbol)
-      setTokenInputOther(tokenInput)
-      setQuoteTokenInputOther(quoteTokenInput)
-    } else {
-      setRadioQuote(tokenData.token.symbol)
-      setTokenInputOther(quoteTokenInput)
-      setQuoteTokenInputOther(tokenInput)
-    } */
   }
 
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
-      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
-      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
-      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
       setQuoteTokenInput(userQuoteTokenBalance.toNumber())
-      // setQuoteTokenInputOther(userQuoteTokenBalance.toNumber())
     }
   }
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setTokenInput(userTokenBalance.toNumber() * 0.25)
-      // setTokenInputOther(userTokenBalance.toNumber() * 0.25)
     } else if (e.target.innerText === '50%') {
       setTokenInput(userTokenBalance.toNumber() * 0.5)
-      // setTokenInputOther(userTokenBalance.toNumber() * 0.5)
     } else if (e.target.innerText === '75%') {
       setTokenInput(userTokenBalance.toNumber() * 0.75)
-      // setTokenInputOther(userTokenBalance.toNumber() * 0.75)
     } else if (e.target.innerText === '100%') {
       setTokenInput(userTokenBalance.toNumber())
-      // setTokenInputOther(userTokenBalance.toNumber())
     }
   }
 
@@ -281,7 +255,6 @@ const Farm = () => {
   const handleConfirm = async () => {
     const id = 0
     const AssetsBorrowed = farmData ? farmData[3] : 0
-    // const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
@@ -293,7 +266,6 @@ const Farm = () => {
     let dataWorker
     let contract
 
-    // 单币 只有base token
     // base token is base token
     if (radio === tokenData.token.symbol) {
       // single base token 
@@ -343,45 +315,22 @@ const Farm = () => {
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
-
-    // if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0 && radio === tokenData.token.symbol) {
-    //   strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
-    //   dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-    //   dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    //   console.info('111')
-    // } else {
-    //   // 双币 and 只有farm token
-    //   let addTwoSidesOptimal
-    //   if (radio.toLowerCase() === tokenName.toLowerCase()) {
-    //     console.info('2222')
-    //     addTwoSidesOptimal = tokenData.strategies.addTwoSidesOptimal
-    //   } else {
-    //     console.info('3333')
-    //     addTwoSidesOptimal = tokenData.strategies.quoteTokenAddTwoSidesOptimal
-    //   }
-
-    //   strategiesAddress = getAddress(addTwoSidesOptimal)
-    //   dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
-    //   dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    // }
-
-    console.log({
-      id,
-      workerAddress,
-      amount,
-      loan,
-      AssetsBorrowed,
-      maxReturn,
-      farmingTokenAmount,
-      dataWorker,
-      strategiesAddress,
-      dataStrategy,
-      tokenInput,
-      'a': Number(tokenInput),
-      quoteTokenInput,
-      'b': Number(quoteTokenInput)
-    })
-
+    // console.log({
+    //   id,
+    //   workerAddress,
+    //   amount,
+    //   loan,
+    //   AssetsBorrowed,
+    //   maxReturn,
+    //   farmingTokenAmount,
+    //   dataWorker,
+    //   strategiesAddress,
+    //   dataStrategy,
+    //   tokenInput,
+    //   'a': Number(tokenInput),
+    //   quoteTokenInput,
+    //   'b': Number(quoteTokenInput)
+    // })
 
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -464,9 +413,7 @@ const Farm = () => {
 
   const principal = 1
   const maxValue = 1 - principal / tokenData?.leverage
-
   const debtRatio = 1 - principal / leverageValue
-
   const liquidationThreshold = Number(tokenData?.liquidationThreshold) / 100
 
   return (
@@ -500,12 +447,9 @@ const Farm = () => {
                     <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
                   </Box>
                   <NumberInput
-                    // type="number"
                     placeholder="0.00"
                     value={quoteTokenInput}
-                    // ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
-                  // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
@@ -558,12 +502,9 @@ const Farm = () => {
                     <TokenImage token={tokenData?.token} width={40} height={40} />
                   </Box>
                   <NumberInput
-                    // type="number"
                     placeholder="0.00"
                     value={tokenInput}
-                    // ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
-                  // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
