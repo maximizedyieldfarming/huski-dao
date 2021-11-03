@@ -9,12 +9,16 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   overflow: auto;
   height: 300px;
+  padding: 1rem 1.5rem;
   ${({ theme }) => theme.mediaQueries.lg} {
     height: unset;
   }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
+  }
+  ::-webkit-scrollbar {
+    height: 8px;
   }
 `
 
@@ -37,16 +41,14 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
-    <StyledTableBorder>
-      <StyledTable role="table" ref={tableWrapperEl}>
-        {!(isMobile || isTablet) && <ActivePositionsHeaderRow />}
-        {positionFarmsData.length ? (
-          positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.id} />)
-        ) : (
-          <Text textAlign="center">No Active Positions</Text>
-        )}
-      </StyledTable>
-    </StyledTableBorder>
+    <StyledTable role="table" ref={tableWrapperEl}>
+      {!(isMobile || isTablet) && <ActivePositionsHeaderRow />}
+      {positionFarmsData.length ? (
+        positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.id} />)
+      ) : (
+        <Text textAlign="center">No Active Positions</Text>
+      )}
+    </StyledTable>
   )
 }
 
