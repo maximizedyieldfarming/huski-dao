@@ -44,7 +44,7 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
     <StyledTable role="table" ref={tableWrapperEl}>
       {!(isMobile || isTablet) && <ActivePositionsHeaderRow />}
       {positionFarmsData.length ? (
-        positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.id} />)
+        positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.positionId} />)
       ) : (
         <Text textAlign="center">No Active Positions</Text>
       )}
