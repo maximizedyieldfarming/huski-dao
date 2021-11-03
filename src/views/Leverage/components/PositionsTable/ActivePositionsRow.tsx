@@ -54,14 +54,14 @@ const ActivePositionsRow = ({ data }) => {
   let liquidationThresholdValue;
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
     tokenValue = token;
     quoteTokenValue = quoteToken;
     baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = liquidationThreshold
   } else {
-    symbolName = quoteToken?.symbol
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
     tokenValue = quoteToken;
     quoteTokenValue = token;

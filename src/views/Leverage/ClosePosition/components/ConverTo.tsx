@@ -34,11 +34,18 @@ const BusdPriceContainer = styled(Flex)`
 `
 
 const ConverTo = ({ data }) => {
-  const { debtValue, lpAmount, vault } = data
+  const { positionId, debtValue, lpAmount, vault } = data
   const { quoteToken, token, TokenInfo, QuoteTokenInfo, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
 
+  const { t } = useTranslation()
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const tokenVaultAddress = TokenInfo?.vaultAddress
+  const quoteTokenVaultAddress = QuoteTokenInfo?.vaultAddress
+  const vaultContract = useVault(tokenVaultAddress)
+  const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+
   let symbolName;
-  let lpSymbolName;
   let tokenValue;
   let quoteTokenValue;
   let tokenValueSymbol;
@@ -47,9 +54,12 @@ const ConverTo = ({ data }) => {
   let farmTokenAmount;
   let basetokenBegin;
   let farmingtokenBegin;
+  let workerAddress;
+  let withdrawMinimizeTradingAddress;
+  let contract;
+
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol
-    lpSymbolName = TokenInfo?.name
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
     tokenValue = token;
     quoteTokenValue = quoteToken;
     tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
@@ -58,47 +68,41 @@ const ConverTo = ({ data }) => {
     farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(tokenAmountTotal)
     farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+    workerAddress = TokenInfo.address
+    withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyLiquidate
+    contract = vaultContract
   } else {
-    symbolName = quoteToken?.symbol
-    lpSymbolName = QuoteTokenInfo?.name
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     tokenValue = quoteToken;
     quoteTokenValue = token;
     tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-
     basetokenBegin = parseInt(quoteTokenAmountTotal)
     farmingtokenBegin = parseInt(tokenAmountTotal)
-
+    workerAddress = QuoteTokenInfo.address
+    withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyLiquidate
+    contract = quoteTokenVaultContract
   }
 
-
-
-
-  // const { busdPrice: tokenBusdPrice, symbol: token } = data.farmData.token
-  // const { busdPrice: quoteTokenBusdPrice, symbol: quoteToken } = data.farmData.quoteToken
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
   const tradingFees = Number(tradeFee) * Number(leverage) * 365
-  // const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  // const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  // const basetokenBegin = parseInt(tokenAmountTotal)
-  // const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
   const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
-  const { t } = useTranslation()
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const { vaultAddress } = data.farmData.TokenInfo
-  const vaultContract = useVault(vaultAddress)
-  const { callWithGasPrice } = useCallWithGasPrice()
 
-  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+
+  const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
     }
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount,
+    }
     try {
-      const tx = await callWithGasPrice(vaultContract, 'work', [id, workerAddress, amount, loan, maxReturn, dataWorker], callOptions)
+      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions,)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your farm was successfull'))
@@ -109,17 +113,17 @@ const ConverTo = ({ data }) => {
   }
 
   const handleConfirm = async () => {
-    const id = data.positionId
-    const workerAddress = getAddress(data.farmData.workerAddress)
+    const id = positionId
+    // const workerAddress = getAddress(data.farmData.workerAddress)
     const amount = 0
     const loan = 0;
     const maxReturn = ethers.constants.MaxUint256;
     const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
     const abiCoder = ethers.utils.defaultAbiCoder;
-    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
+    // const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
     const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
-    // console.log({id, workerAddress, amount, loan,convertedPositionValue,minbasetoken, maxReturn, dataWorker})
+    console.log({symbolName, id, workerAddress, amount, loan,convertedPositionValue,withdrawMinimizeTradingAddress, minbasetoken, maxReturn, dataWorker})
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -211,7 +215,7 @@ const ConverTo = ({ data }) => {
                   <TokenImage token={quoteTokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenValue?.quoteTokenBusdPrice}&nbsp;{symbolName}{' '}
+                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenValue?.busdPrice}&nbsp;{symbolName}
                 </Text>
               </Flex>
               <Flex alignItems="center">
@@ -225,7 +229,7 @@ const ConverTo = ({ data }) => {
             </BusdPriceContainer>
           </Box>
           {data ? (
-            <Text>{Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} + {Number(baseTokenAmount).toPrecision(4)}{' '} {tokenValueSymbol}</Text>
+            <Text>{Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} + {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}</Text>
           ) : (
             <Skeleton height="16px" width="80px" />
           )}
