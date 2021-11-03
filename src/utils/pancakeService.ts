@@ -7,7 +7,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
 
     if (maxnum < 0) {
         console.info('添加的资金不足');
-        return [null, null]
+        return [0, [0,0,0,0,0,0,0,0,0,0]]
     }
 
     let minnum = 0;
@@ -25,7 +25,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
         return [minnum, data]
     }
     if (maxexc * minexc > 0)
-        return [null, null]
+        return [0, [0,0,0,0,0,0,0,0,0,0]]
 
     while (true) {
         const midnum = (maxnum + minnum) / 2
@@ -47,7 +47,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
             maxexc = midexc
         }
         else {
-            return [null, null]
+        return [0, [0,0,0,0,0,0,0,0,0,0]]
         }
 
     }
