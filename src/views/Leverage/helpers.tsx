@@ -74,7 +74,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
    }
   
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
-  console.info('======farmdata======', farmdata);
+  // console.info('======farmdata======', farmdata);
   return farmdata
 }
 
@@ -93,10 +93,10 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount.toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  console.log({ tokenInputNum, quoteTokenInputNum, leverage, lvg, basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotal), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotal) });
+  // console.log({ tokenInputNum, quoteTokenInputNum, leverage, lvg, basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotal), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotal) });
 
   const farmdata = dichotomybasetoken( leverage , 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotal), parseFloat(quoteTokenAmountTotal))
-  console.info('======adjust======', farmdata);
+  // console.info('======adjust======', farmdata);
   return farmdata
 }
 

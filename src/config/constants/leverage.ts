@@ -536,7 +536,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     token: tokens.alpaca,
     quoteToken: tokens.busd,
-    leverage: 2,
+    leverage: 3,
     workerAddress: {
       97: '',
       56: '0xeF1C5D2c20b22Ae50437a2F3bd258Ab1117D1BaD',
