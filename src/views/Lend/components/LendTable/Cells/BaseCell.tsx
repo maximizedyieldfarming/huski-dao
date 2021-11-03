@@ -8,13 +8,14 @@ const BaseCell = styled.div`
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  // justify-content: flex-start;
+  justify-content: center;
 `
 
 export const CellContent = styled(Flex)`
   flex-direction: column;
   justify-content: center;
-  max-height: 40px;
+  // max-height: 40px;
   ${Text} {
     line-height: 1;
   }
