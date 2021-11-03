@@ -9,12 +9,16 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   overflow: auto;
   height: 300px;
+  padding: 1rem 1.5rem;
   ${({ theme }) => theme.mediaQueries.lg} {
     height: unset;
   }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
+  }
+  ::-webkit-scrollbar {
+    height: 6px;
   }
 `
 
@@ -38,25 +42,23 @@ const LiquidatedPositionsTable = ({ data }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
-    <StyledTableBorder>
-      <StyledTable role="table" ref={tableWrapperEl}>
-        {!(isMobile || isTablet) && <LiquidatedPositionsHeaderRow />}
-        {data ? (
-          <LiquidatedPositionsRow data={data} />
-        ) : (
-          <Box padding="100px 0">
-            <Text textAlign="center">No Liquidated Positions</Text>
-          </Box>
-        )}
+    <StyledTable role="table" ref={tableWrapperEl}>
+      {!(isMobile || isTablet) && <LiquidatedPositionsHeaderRow />}
+      {data ? (
+        <LiquidatedPositionsRow data={data} />
+      ) : (
+        <Box padding="100px 0">
+          <Text textAlign="center">No Liquidated Positions</Text>
+        </Box>
+      )}
 
-        {/*  <ScrollButtonContainer>
+      {/*  <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
             To Top
             <ChevronUpIcon color="primary" />
           </Button>
         </ScrollButtonContainer> */}
-      </StyledTable>
-    </StyledTableBorder>
+    </StyledTable>
   )
 }
 

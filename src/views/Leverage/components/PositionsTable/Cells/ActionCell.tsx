@@ -9,6 +9,7 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
+  justify-content: center;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -34,6 +35,7 @@ const ActionCell = ({ posData, disabled }) => {
     <StyledCell role="cell">
       <CellContent>
         <Button
+          scale="sm"
           as={Link}
           to={{
             pathname: `/leverage/adjustPosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
@@ -45,6 +47,7 @@ const ActionCell = ({ posData, disabled }) => {
           Adjust
         </Button>
         <Button
+          scale="sm"
           as={Link}
           to={{
             pathname: `/leverage/closePosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,

@@ -10,6 +10,7 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
+  justify-content: center;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -34,6 +35,7 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
     <StyledCell role="cell">
       <CellContent>
         <Button
+          scale="sm"
           as={Link}
           to={{
             pathname: `/leverage/farm/${token?.lpSymbol}`,
