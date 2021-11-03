@@ -1,5 +1,6 @@
 import React from 'react'
-import { ModalProvider, light, dark } from '@pancakeswap/uikit'
+// import { ModalProvider, light, dark } from '@pancakeswap/uikit'
+import { ModalProvider } from '@pancakeswap/uikit'
 import { Web3ReactProvider } from '@web3-react/core'
 import { HelmetProvider } from 'react-helmet-async'
 import { Provider } from 'react-redux'
@@ -10,6 +11,7 @@ import { LanguageProvider } from 'contexts/Localization'
 import { RefreshContextProvider } from 'contexts/RefreshContext'
 import { ToastsProvider } from 'contexts/ToastsContext'
 import store from 'state'
+import { light, dark } from './huskiTheme'
 
 const ThemeProviderWrapper = (props) => {
   const [isDark] = useThemeManager()
