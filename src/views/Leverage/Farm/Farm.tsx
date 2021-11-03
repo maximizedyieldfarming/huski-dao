@@ -100,7 +100,7 @@ const Farm = () => {
   // const [quoteTokenInputOther, setQuoteTokenInputOther] = useState(0)
   const [radio, setRadio] = useState(selectedBorrowing)
   // const [radioQuote, setRadioQuote] = useState(tokenName === radio ? quoteTokenName : tokenName)
-  console.log('radio', radio, 'selected borrowing', selectedBorrowing)
+  // console.log('radio', radio, 'selected borrowing', selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
 
@@ -239,13 +239,14 @@ const Farm = () => {
   const totalAprDisplay = Number(getDisplayApr(getApr(leverageValue) * 100))
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const {vaultAddress} = tokenData.TokenInfo
+  const { vaultAddress } = tokenData.TokenInfo
   const quoteTokenVaultAddress = tokenData.QuoteTokenInfo.vaultAddress
   const vaultContract = useVault(vaultAddress)
+  const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
-  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+  const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
     }
@@ -257,7 +258,7 @@ const Farm = () => {
     setIsPending(true)
     try {
       const tx = await callWithGasPrice(
-        vaultContract,
+        contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
         tokenName === 'BNB' ? callOptionsBNB : callOptions,
@@ -279,37 +280,90 @@ const Farm = () => {
 
   const handleConfirm = async () => {
     const id = 0
-    const workerAddress = getAddress(tokenData.workerAddress)
     const AssetsBorrowed = farmData ? farmData[3] : 0
-    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
+    // const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
-    const farmingTokenAmount = quoteTokenInput.toString()
+    let amount
+    let workerAddress
+    let farmingTokenAmount
     let strategiesAddress
     let dataStrategy
     let dataWorker
-    // 单币 只有base token
-    if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0 && radio === tokenData.token.symbol) {
-      strategiesAddress = getAddress(tokenData.strategies.addAllBaseToken)
-      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      console.info('111')
-    } else {
-      // 双币 and 只有farm token
-      let addTwoSidesOptimal
-      if (radio.toLowerCase() === tokenName.toLowerCase()) {
-        console.info('2222')
-        addTwoSidesOptimal = tokenData.strategies.addTwoSidesOptimal
-      } else {
-        console.info('3333')
-        addTwoSidesOptimal = tokenData.strategies.quoteTokenAddTwoSidesOptimal
-      }
+    let contract
 
-      strategiesAddress = getAddress(addTwoSidesOptimal)
-      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
-      dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    // 单币 只有base token
+    // base token is base token
+    if (radio === tokenData.token.symbol) {
+      // single base token 
+      if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
+        console.info('base + single + token input ')
+        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
+        console.info('base + single + quote token input ')
+        farmingTokenAmount = Number(quoteTokenInput).toString()
+        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else {
+        console.info('base + all ')
+        farmingTokenAmount = Number(quoteTokenInput).toString()
+        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      }
+      contract = vaultContract
+      amount = getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
+      workerAddress = tokenData.TokenInfo.address
+    } else {
+      // farm token is base token
+      if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
+        console.info('farm + single + token input ')
+        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
+        console.info('farm + single + quote token input ')
+        farmingTokenAmount = Number(tokenInput).toString()
+        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else {
+        console.info('farm + all ')
+        farmingTokenAmount = Number(tokenInput).toString()
+        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      }
+      contract = quoteTokenVaultContract
+      amount = getDecimalAmount(new BigNumber(Number(quoteTokenInput)), 18).toString()
+      workerAddress = tokenData.QuoteTokenInfo.address
     }
+
+
+    // if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0 && radio === tokenData.token.symbol) {
+    //   strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
+    //   dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+    //   dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    //   console.info('111')
+    // } else {
+    //   // 双币 and 只有farm token
+    //   let addTwoSidesOptimal
+    //   if (radio.toLowerCase() === tokenName.toLowerCase()) {
+    //     console.info('2222')
+    //     addTwoSidesOptimal = tokenData.strategies.addTwoSidesOptimal
+    //   } else {
+    //     console.info('3333')
+    //     addTwoSidesOptimal = tokenData.strategies.quoteTokenAddTwoSidesOptimal
+    //   }
+
+    //   strategiesAddress = getAddress(addTwoSidesOptimal)
+    //   dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+    //   dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    // }
 
     console.log({
       id,
@@ -322,8 +376,14 @@ const Farm = () => {
       dataWorker,
       strategiesAddress,
       dataStrategy,
+      tokenInput,
+      'a': Number(tokenInput),
+      quoteTokenInput,
+      'b': Number(quoteTokenInput)
     })
-    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+
+
+    handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
   let tradingFeesfarm = farmData?.[5] * 100
@@ -374,7 +434,7 @@ const Farm = () => {
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
-// not sure contract param is right? but can sussess
+    // not sure contract param is right? but can sussess
     let contract;
     if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
       contract = approveContract// quoteTokenApproveContract
@@ -445,7 +505,7 @@ const Farm = () => {
                     value={quoteTokenInput}
                     // ref={quoteTokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleQuoteTokenInput}
-                    // ref={(input) => numberInputRef.current.push(input)}
+                  // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
@@ -503,7 +563,7 @@ const Farm = () => {
                     value={tokenInput}
                     // ref={tokenInputRef as RefObject<HTMLInputElement>}
                     onChange={handleTokenInput}
-                    // ref={(input) => numberInputRef.current.push(input)}
+                  // ref={(input) => numberInputRef.current.push(input)}
                   />
                 </Flex>
                 <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
@@ -620,7 +680,7 @@ const Farm = () => {
             </Flex>
             <Flex justifyContent="space-between">
               <Text>Assets Borrowed</Text>
-              {farmData? (
+              {farmData ? (
                 <Text>
                   {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                 </Text>
@@ -636,7 +696,7 @@ const Farm = () => {
                   <InfoIcon ml="10px" />
                 </span>
               </Flex>
-              {farmData[4] ? (
+              {farmData ? (
                 <Text color="#1DBE03">+{(farmData[4] * 100).toPrecision(3)} %</Text>
               ) : (
                 <Text color="#1DBE03"> 0.00 %</Text>
