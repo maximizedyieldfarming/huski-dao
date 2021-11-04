@@ -277,7 +277,7 @@ const Farm = () => {
       } else if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
         console.info('base + single + quote token input ')
         farmingTokenAmount = Number(quoteTokenInput).toString()
-        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
@@ -300,7 +300,7 @@ const Farm = () => {
       } else if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
         console.info('farm + single + quote token input ')
         farmingTokenAmount = Number(tokenInput).toString()
-        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
