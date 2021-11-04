@@ -194,8 +194,8 @@ const Farm = () => {
 
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
-
   const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
+
   const getApr = (lvg) => {
     const totalapr =
       Number((yieldFarmData / 100) * lvg) +

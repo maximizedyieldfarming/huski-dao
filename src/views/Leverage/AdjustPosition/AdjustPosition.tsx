@@ -64,10 +64,59 @@ const AdjustPosition = () => {
   const {
     state: { data, liquidationThreshold },
   } = useLocation<LocationParams>()
-  const { token: poolName } = useParams<RouteParams>()
+  // const { token: poolName } = useParams<RouteParams>()
   const { t } = useTranslation()
   const quoteTokenName = data?.farmData?.quoteToken?.symbol.replace('wBNB', 'BNB')
   const tokenName = data?.farmData?.token?.symbol.replace('wBNB', 'BNB')
+
+  const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
+  const { quoteToken, token, TokenInfo, QuoteTokenInfo, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
+
+  let symbolName;
+  let lpSymbolName;
+  let tokenValue;
+  let quoteTokenValue;
+  let tokenValueSymbol;
+  let quoteTokenValueSymbol;
+  let baseTokenAmount;
+  let farmTokenAmount;
+  let basetokenBegin;
+  let farmingtokenBegin;
+  // let workerAddress;
+  // let withdrawMinimizeTradingAddress;
+  // let contract;
+
+  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+    symbolName = token?.symbol.replace('wBNB', 'BNB')
+    lpSymbolName = TokenInfo?.name.replace(' PancakeswapWorker', '')
+    tokenValue = token;
+    quoteTokenValue = quoteToken;
+    tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
+    quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
+    baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    basetokenBegin = parseInt(tokenAmountTotal)
+    farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+    // workerAddress = TokenInfo.address
+    // withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyLiquidate
+    // contract = vaultContract
+  } else {
+    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
+    lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
+    tokenValue = quoteToken;
+    quoteTokenValue = token;
+    tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
+    quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
+    baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    basetokenBegin = parseInt(quoteTokenAmountTotal)
+    farmingtokenBegin = parseInt(tokenAmountTotal)
+    // workerAddress = QuoteTokenInfo.address
+    // withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyLiquidate
+    // contract = quoteTokenVaultContract
+  }
+
+  // const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(data?.farmData.token.address))
@@ -81,11 +130,6 @@ const AdjustPosition = () => {
 
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const [tokenInput, setTokenInput] = useState(0)
-
-  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, leverage } = data?.farmData
-  const { lpAmount, debtValue, positionValueBase } = data
-
-  const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -104,7 +148,7 @@ const AdjustPosition = () => {
   const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const lvgAdjust = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
+  const lvgAdjust = new BigNumber(debtValueNumber).div(new BigNumber(baseTokenAmount)).plus(1)
 
   const currentPositionLeverage = lvgAdjust.toNumber()
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
@@ -352,14 +396,14 @@ const AdjustPosition = () => {
   const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
 
-  const baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  // const baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  // const farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
   // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
   // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
 
-  const basetokenBegin = parseInt(tokenAmountTotal)
-  const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
+  // const basetokenBegin = parseInt(tokenAmountTotal)
+  // const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
   const convertedPositionValueAssets =
     Number(baseTokenAmount) +
     basetokenBegin -
@@ -581,7 +625,7 @@ const AdjustPosition = () => {
           <Text>Assets Supplied</Text>
           {farmingData ? (
             <Text>
-              {Number(tokenInput).toPrecision(3)} {tokenName} + {Number(quoteTokenInput).toPrecision(3)}{' '}
+              {Number(tokenInput).toPrecision(3)} {tokenValue.symbol} + {Number(quoteTokenInput).toPrecision(3)} {quoteTokenValue.symbol}
               {quoteTokenName}
             </Text>
           ) : (
@@ -591,9 +635,9 @@ const AdjustPosition = () => {
         <Flex justifyContent="space-between">
           <Text>Assets Borrowed</Text>
           {adjustData ? (
-            <Text>{assetsBorrowed.toFixed(3)}</Text>
+            <Text>{assetsBorrowed.toFixed(3)} {symbolName}</Text>
           ) : (
-            <Text>{debtValueNumber.toNumber().toPrecision(3)}</Text>
+            <Text>{debtValueNumber.toNumber().toPrecision(3)} {symbolName}</Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
@@ -628,11 +672,11 @@ const AdjustPosition = () => {
           <Text>Updated Total Assets</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+              {baseTokenInPosition.toFixed(2)} {tokenValue.symbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValue.symbol}
             </Text>
           ) : (
             <Text>
-              0.00 {tokenName} + 0.00 {quoteTokenName}
+              0.00 {tokenValue.symbol} + 0.00 {quoteTokenValue.symbol}
             </Text>
           )}
         </Flex>
@@ -648,7 +692,7 @@ const AdjustPosition = () => {
         >
           <Page>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
-              Adjust Position {poolName}
+              Adjust Position {lpSymbolName}
             </Text>
             <Section>
               <Text bold>Current Position Leverage: {currentPositionLeverage.toPrecision(3)}x</Text>
@@ -725,15 +769,15 @@ const AdjustPosition = () => {
             <Section>
               <Flex justifyContent="space-between">
                 <Text>Debt Assets Borrowed</Text>
-                {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)}</Text> : <Text>0.00</Text>}
+                {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)} {symbolName}</Text> : <Text>0.00</Text>}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>Updated Debt</Text>
                 {data ? (
                   <Flex alignItems="center">
-                    <Text> {debtValueNumber.toNumber().toFixed(3)}</Text>
+                    <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                     <ChevronRightIcon />
-                    <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)}</Text>
+                    <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -747,7 +791,7 @@ const AdjustPosition = () => {
                       {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
                     </Text>
                     <ChevronRightIcon />
-                    <Text>{(updatedDebtRatio * 100).toFixed(2)}%</Text>
+                    <Text>{(updatedDebtRatio * 100).toFixed(2)}% ({Number(targetPositionLeverage).toFixed(2)}X)</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
