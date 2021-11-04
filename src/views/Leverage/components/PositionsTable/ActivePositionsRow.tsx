@@ -73,11 +73,11 @@ const ActivePositionsRow = ({ data }) => {
   const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const leverage = new BigNumber(debtValueNumber).div(new BigNumber(baseAmount)).plus(1)
-console.info('leverage',leverage)
+  const leverage = new BigNumber(baseAmount).times(2).div((new BigNumber(baseAmount).times(2)).minus(new BigNumber(debtValueNumber)))
+
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
-  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice)
+  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
