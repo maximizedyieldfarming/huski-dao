@@ -20,7 +20,7 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
 
   const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() ? quoteToken.busdPrice : token.busdPrice;
   const huskyPrice: any = cakePriceBusd;
- 
+
   const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
   return huskyRewards.toNumber();
 }
@@ -58,9 +58,9 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   const { tokenAmountTotal, quoteTokenAmountTotal } = farm
 
   let tokenAmountTotalNum
-  let quoteTokenAmountTotalNum  
-  let tokenInputNum 
-  let quoteTokenInputNum 
+  let quoteTokenAmountTotalNum
+  let tokenInputNum
+  let quoteTokenInputNum
   if (farm.token.symbol?.toLowerCase() === tokenName?.toLowerCase()) {
     tokenInputNum = Number(tokenInput);
     quoteTokenInputNum = Number(quoteTokenInput);
@@ -71,19 +71,19 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
     quoteTokenInputNum = Number(tokenInput);
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
-   }
-  
+  }
+
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
   // console.info('======farmdata======', farmdata);
   return farmdata
 }
 
 export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput) => {
-  const {lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
-  const { lpAmount} = data
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
+  const { lpAmount } = data
   const debtValueData = data.debtValue
-  const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
   // const leverageAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValue)))
   const tokenInputNum = Number(tokenInput);
@@ -93,9 +93,9 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount.toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  console.log({ tokenInputNum, quoteTokenInputNum, leverage,  basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotal), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotal) });
+  console.log({ tokenInputNum, quoteTokenInputNum, leverage, basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotal), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotal) });
 
-  const farmdata = dichotomybasetoken( leverage , 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotal), parseFloat(quoteTokenAmountTotal))
+  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotal), parseFloat(quoteTokenAmountTotal))
   console.info('======adjust======', farmdata);
   return farmdata
 }
@@ -113,10 +113,10 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
   let totalTokenValue
   let vaultDebtValue
   let tokenSymbol
-  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase() ) {
+  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     totalTokenValue = quoteTokenTotal
     vaultDebtValue = quoteTokenVaultDebtVal
-   tokenSymbol = quoteToken.symbol.toUpperCase()
+    tokenSymbol = quoteToken.symbol.toUpperCase()
   } else {
     totalTokenValue = totalToken
     vaultDebtValue = vaultDebtVal
@@ -151,13 +151,24 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
 }
 
 
-export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage) => {
+export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage, tokenName?: string) => {
 
-  const {lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
-  const { lpAmount} = data
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, quoteToken } = farm
+
+  let tokenAmountTotalValue
+  let quoteTokenAmountTotalValue
+  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+    tokenAmountTotalValue = quoteTokenAmountTotal
+    quoteTokenAmountTotalValue = tokenAmountTotal
+  } else {
+    tokenAmountTotalValue = tokenAmountTotal
+    quoteTokenAmountTotalValue = quoteTokenAmountTotal
+  }
+
+  const { lpAmount } = data
   const debtValueData = data.debtValue
-  const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const baseTokenAmount = new BigNumber(tokenAmountTotalValue).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  const farmTokenAmount = new BigNumber(quoteTokenAmountTotalValue).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
   const basetokenlp = baseTokenAmount.toNumber()
   const farmingtokenlp = farmTokenAmount.toNumber()
@@ -165,8 +176,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
 
   const ClosePosFee = 5 / 100 / 100;
   const PancakeTradingFee = 0.25 / 100;
-  const basetokenBegin = parseFloat(tokenAmountTotal)
-  const farmingtokenBegin = parseFloat(quoteTokenAmountTotal)
+  const basetokenBegin = parseFloat(tokenAmountTotalValue)
+  const farmingtokenBegin = parseFloat(quoteTokenAmountTotalValue)
 
   const num0 = (leverage - 1) / leverage * (basetokenlp + farmingtokenlp / farmingtokenBegin * basetokenBegin)
   const num1 = (basetokenlp * (1 - ClosePosFee) - num0)
@@ -194,7 +205,7 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     remainBorrowFarm = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
     remainLeverage = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
     // basetokenlpborrowed - repaydebtnum  
- } else if (Number(leverage) === 1) {
+  } else if (Number(leverage) === 1) {
     needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     remainBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
