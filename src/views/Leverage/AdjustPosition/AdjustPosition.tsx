@@ -29,7 +29,7 @@ import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from
 
 interface LocationParams {
   data: any
-  liquidationThreshold: number
+  liquidationThresholdData: number
 }
 
 const Section = styled(Box)`
@@ -59,7 +59,7 @@ const Section = styled(Box)`
 `
 const AdjustPosition = () => {
   const {
-    state: { data, liquidationThreshold },
+    state: { data, liquidationThresholdData },
   } = useLocation<LocationParams>()
 
   const { t } = useTranslation()
@@ -120,7 +120,6 @@ const AdjustPosition = () => {
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
     )
-
 
   } else {
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
@@ -808,8 +807,8 @@ const AdjustPosition = () => {
                   tokenName={tokenValueSymbol}
                   quoteToken={quoteTokenValue}
                   token={tokenValue}
-                  tokenInput={tokenInputValue}
-                  quoteTokenInput={quoteTokenInputValue}
+                  tokenInput={tokenInput}
+                  quoteTokenInput={quoteTokenInput}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
@@ -831,8 +830,8 @@ const AdjustPosition = () => {
                   tokenName={tokenValueSymbol}
                   quoteToken={quoteTokenValue}
                   token={tokenValue}
-                  tokenInput={tokenInputValue}
-                  quoteTokenInput={quoteTokenInputValue}
+                  tokenInput={tokenInput}
+                  quoteTokenInput={quoteTokenInput}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
@@ -880,7 +879,7 @@ const AdjustPosition = () => {
               <Flex height="100px" alignItems="center">
                 <DebtRatioProgress
                   debtRatio={updatedDebtRatio * 100}
-                  liquidationThreshold={liquidationThreshold}
+                  liquidationThreshold={liquidationThresholdData}
                   max={maxValue * 100}
                 />
               </Flex>
