@@ -82,6 +82,9 @@ const AddColateral = ({
     }
   }
 
+  const tokenDisplay = tokenInput ? tokenInput.toFixed(18) : 0
+  const quoteTokenDisplay = quoteTokenInput ? quoteTokenInput.toFixed(18) : 0
+
   return (
     <>
       <Flex alignItems="center" justifyContent="space-between">
@@ -101,7 +104,11 @@ const AddColateral = ({
                   Balance:
                 </Text>
                 {userQuoteTokenBalance ? (
-                  <Text small>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
+                  <Text small>
+                    {userQuoteTokenBalance.toNumber().toFixed(3) < userQuoteTokenBalance.toNumber()
+                      ? `${userQuoteTokenBalance.toNumber().toFixed(3)}...`
+                      : userQuoteTokenBalance.toNumber().toFixed(3)}
+                  </Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -117,7 +124,7 @@ const AddColateral = ({
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={quoteToken} width={40} height={40} />
                 </Box>
-                <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
+                <NumberInput placeholder="0.00" value={quoteTokenDisplay} onChange={handleQuoteTokenInput} />
               </Flex>
               <Text>{quoteTokenName}</Text>
             </InputArea>
@@ -143,7 +150,11 @@ const AddColateral = ({
                   Balance:
                 </Text>
                 {userTokenBalance ? (
-                  <Text small>{userTokenBalance.toNumber().toPrecision(3)}</Text>
+                  <Text small>
+                    {userTokenBalance.toNumber().toFixed(3) < userTokenBalance.toNumber()
+                      ? `${userTokenBalance.toNumber().toFixed(3)}...`
+                      : userTokenBalance.toNumber().toFixed(3)}
+                  </Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -159,7 +170,7 @@ const AddColateral = ({
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={token} width={40} height={40} />
                 </Box>
-                <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                <NumberInput placeholder="0.00" value={tokenDisplay} onChange={handleTokenInput} />
               </Flex>
               <Text>{tokenName}</Text>
             </InputArea>
