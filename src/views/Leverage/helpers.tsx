@@ -10,7 +10,7 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
   let vaultDebtValue
   let poolHuskyPerBlock
 
-  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase()) {
+  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     vaultDebtValue = quoteTokenVaultDebtVal
     poolHuskyPerBlock = quoteTokenPoolPerBlock
   } else {
@@ -85,19 +85,18 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
-
-  const leverageAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValue)))
+  // const leverageAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValue)))
   const tokenInputNum = Number(tokenInput);
   const quoteTokenInputNum = Number(quoteTokenInput);
-  const lvg = leverageAdjust.toNumber()
+  // const lvg = leverageAdjust.toNumber()
   const basetokenlp = baseTokenAmount.toNumber()
   const farmingtokenlp = farmTokenAmount.toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  // console.log({ tokenInputNum, quoteTokenInputNum, leverage, lvg, basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotal), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotal) });
+  console.log({ tokenInputNum, quoteTokenInputNum, leverage,  basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotal), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotal) });
 
   const farmdata = dichotomybasetoken( leverage , 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotal), parseFloat(quoteTokenAmountTotal))
-  // console.info('======adjust======', farmdata);
+  console.info('======adjust======', farmdata);
   return farmdata
 }
 
@@ -114,7 +113,7 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
   let totalTokenValue
   let vaultDebtValue
   let tokenSymbol
-  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase()) {
+  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase() ) {
     totalTokenValue = quoteTokenTotal
     vaultDebtValue = quoteTokenVaultDebtVal
    tokenSymbol = quoteToken.symbol.toUpperCase()
