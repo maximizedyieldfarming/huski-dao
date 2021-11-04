@@ -72,7 +72,7 @@ const ApyCell = ({ getApyData, token }) => {
             <Text>{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="5px" color="textSubtle" />
             </span>
           </Flex>
         ) : (

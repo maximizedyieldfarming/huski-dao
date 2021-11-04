@@ -3,11 +3,7 @@ import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import {
-  useLeverageFarms,
-  usePollLeverageFarmsWithUserData,
-  useCakePrice,
-} from 'state/leverage/hooks'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData, useCakePrice } from 'state/leverage/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
@@ -51,10 +47,10 @@ const RewardsContainer = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem;
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
 `
 
 const PositionButtonsContainer = styled(Box)`
-  padding: 1rem 1.5rem;
   > div {
     border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
   }
@@ -70,6 +66,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   overflow: hidden;
+  padding: 1rem 1.5rem;
 `
 
 const Leverage: React.FC = () => {
@@ -80,13 +77,16 @@ const Leverage: React.FC = () => {
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
-console.info('positionData',positionData)
+  console.info('positionData', positionData)
   const positionFarmsData = []
   if (positionData && positionData !== null && positionData !== undefined) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
-        if (farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() || farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ) {
+        if (
+          farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ||
+          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()
+        ) {
           pfarmData = pdata
           pfarmData.farmData = farm
           positionFarmsData.push(pfarmData)
@@ -122,9 +122,11 @@ console.info('positionData',positionData)
   return (
     <Page>
       <RewardsContainer>
-        <Text mb="8px">HUSKI Rewards</Text>
+        <Text mb="8px">{t('HUSKI Rewards')}</Text>
         <Flex justifyContent="space-between" alignItems="flex-end" style={{ gap: '4rem' }}>
-          <Text color="secondary">{reward.toPrecision(3)}</Text>
+          <Text color="secondary" bold fontSize="2">
+            {reward.toPrecision(3)}
+          </Text>
           <Button
             as={Link}
             to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
@@ -140,10 +142,10 @@ console.info('positionData',positionData)
         <PositionButtonsContainer>
           <Box>
             <PositionsButton isActive={isActivePos ? 'true' : 'false'} onClick={() => setActive(true)}>
-              Active Positions
+              {t('Active Positions')}
             </PositionsButton>
             <PositionsButton isActive={isActivePos ? 'false' : 'true'} onClick={() => setActive(false)}>
-              Liquidated Positions
+              {t('Liquidated Positions')}
             </PositionsButton>
           </Box>
         </PositionButtonsContainer>

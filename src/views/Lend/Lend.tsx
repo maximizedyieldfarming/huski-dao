@@ -1,79 +1,34 @@
 /* eslint-disable no-unused-expressions */
-import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
-import { Route, useRouteMatch, useLocation } from 'react-router-dom'
-import BigNumber from 'bignumber.js'
-import { useWeb3React } from '@web3-react/core'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import {
-  Text,
-  Flex,
-  Box,
-  Skeleton,
-  useMatchBreakpoints,
-} from '@pancakeswap/uikit'
+import React from 'react'
+import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import { useLendTotalSupply } from 'state/lend/hooks'
-import {
-  useLeverageFarms,
-  usePollLeverageFarmsWithUserData
-} from 'state/leverage/hooks'
-import usePersistState from 'hooks/usePersistState'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
-import { getBalanceNumber } from 'utils/formatBalance'
-import { orderBy } from 'lodash'
-import Loading from 'components/Loading'
 import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
-import ToggleView, { ViewMode } from './components/ToggleView/ToggleView'
 
-const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
-  if (cakeRewardsApr && lpRewardsApr) {
-    return (cakeRewardsApr + lpRewardsApr).toLocaleString('en-US', { maximumFractionDigits: 2 })
-  }
-  if (cakeRewardsApr) {
-    return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
-  }
-  return null
-}
-
-const StyledBox = styled(Flex)`
-  position: relative;
+const Section = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
-  display: flex;
-  // flex-direction: column;
-  align-items: center;
-  border-radius: 20px;
-  padding: 10px 30px;
-  span:last-child {
-    font-size: 2rem;
-  }
-  > .imgContainer {
-    position: absolute;
-    // left: -40px;
-    transform: translate(-100%, 0);
-  }
-`
-
-const TopSection = styled(Flex)`
-  flex-direction: column;
+  padding: 1rem;
   gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: flex-end;
-  ${({ theme }) => theme.mediaQueries.md} {
-    justify-content: flex-end;
-    align-items: center;
-    flex-direction: row;
+  border-radius: ${({ theme }) => theme.radii.default};
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
+  .container {
+    background-color: ${({ theme }) => theme.colors.background};
+    padding: 1rem;
+    border-radius: ${({ theme }) => theme.radii.small};
+  }
+  .block {
+    background-color: ${({ theme }) => theme.colors.background};
+    flex: 1;
+    border-radius: ${({ theme }) => theme.radii.small};
   }
 `
 
 const Lend: React.FC = () => {
-  const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_pool_view' })
-  const { path } = useRouteMatch()
-  const { pathname } = useLocation()
   const { t } = useTranslation()
-  const { account } = useWeb3React()
   const lendTotalSupply = useLendTotalSupply()
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
@@ -87,33 +42,25 @@ const Lend: React.FC = () => {
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const volume24 = undefined
 
   return (
     <Page>
-      <TopSection>
-        <StyledBox>
-          {!(isMobile || isTablet) && (
-            <Box className="imgContainer">
-              <img src={bone2} alt="" />
-            </Box>
-          )}
-          <Box>
-            <Text>Volume 24H:</Text>
-            {/* lendTotalSupply ? <Text fontSize="30px">${lendTotalSupply}</Text> : <Skeleton width="180px" height="30px" /> */}
+      <Section>
+        <Box className="block" />
+        <Box className="container">
+          <Text color="textSubtle">{t(`Volume 24H:`)}</Text>
+          <Text fontSize="30px">{volume24}</Text>
+        </Box>
+        <Box className="container">
+          <Text color="textSubtle">{t('Total Value Locked:')}</Text>
+          {lendTotalSupply ? (
+            <Text fontSize="30px" color="secondary">{`$${lendTotalSupply}`}</Text>
+          ) : (
             <Skeleton width="180px" height="30px" />
-          </Box>
-        </StyledBox>
-        <StyledBox>
-          <Box>
-            <Text>Total Value Locked:</Text>
-            {lendTotalSupply ? (
-              <Text fontSize="30px">{`$${lendTotalSupply}`}</Text>
-            ) : (
-              <Skeleton width="180px" height="30px" />
-            )}
-          </Box>
-        </StyledBox>
-      </TopSection>
+          )}
+        </Box>
+      </Section>
 
       <LendTable lendData={lendData} />
     </Page>

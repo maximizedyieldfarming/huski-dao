@@ -7,18 +7,21 @@ import LendHeaderRow from './LendHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-
+  padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+  }
+  > div:first-child {
+    border-bottom: none;
   }
 `
 
 const StyledTableBorder = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  background-color: ${({ theme }) => theme.colors.cardBorder};
-  padding: 1px 1px 3px 1px;
+  padding: 1px 1px 1px 1px;
   background-size: 400% 400%;
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
 `
 
 const ScrollButtonContainer = styled.div`
@@ -45,12 +48,12 @@ const LendTable = ({ lendData }) => {
         {lendData.map((token) => (
           <LendRow tokenData={token} key={token?.pid} />
         ))}
-        <ScrollButtonContainer>
+        {/*   <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
             To Top
             <ChevronUpIcon color="primary" />
           </Button>
-        </ScrollButtonContainer>
+        </ScrollButtonContainer> */}
       </StyledTable>
     </StyledTableBorder>
   )

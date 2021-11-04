@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
 import LiquidatedPositionsHeaderRow from './LiquidatedPositionsHeaderRow'
@@ -9,16 +9,15 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   overflow: auto;
   height: 300px;
-  padding: 1rem 1.5rem;
   ${({ theme }) => theme.mediaQueries.lg} {
     height: unset;
   }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   ::-webkit-scrollbar {
-    height: 6px;
+    height: 8px;
   }
 `
 
@@ -39,6 +38,7 @@ const LiquidatedPositionsTable = ({ data }) => {
     })
   }
 
+  const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
@@ -48,16 +48,9 @@ const LiquidatedPositionsTable = ({ data }) => {
         <LiquidatedPositionsRow data={data} />
       ) : (
         <Box padding="100px 0">
-          <Text textAlign="center">No Liquidated Positions</Text>
+          <Text textAlign="center">{t('No Liquidated Positions')}</Text>
         </Box>
       )}
-
-      {/*  <ScrollButtonContainer>
-          <Button variant="text" onClick={scrollToTop}>
-            To Top
-            <ChevronUpIcon color="primary" />
-          </Button>
-        </ScrollButtonContainer> */}
     </StyledTable>
   )
 }

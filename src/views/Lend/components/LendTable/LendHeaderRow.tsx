@@ -66,7 +66,7 @@ const LendHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            Utilization Rate
+            Utilization
           </Text>
         </CellContent>
       </StyledCell>

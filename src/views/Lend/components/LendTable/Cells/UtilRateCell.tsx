@@ -33,7 +33,7 @@ const UtilRateCell = ({ utilRate }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Utilization Rate
+            Utilization
           </Text>
         )}
         {utilRate ? <Text>{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}
