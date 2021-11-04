@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-properties */
 import React, { useState } from 'react'
-import { useParams, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
@@ -27,9 +27,6 @@ import {
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
-interface RouteParams {
-  token: string
-}
 interface LocationParams {
   data: any
   liquidationThreshold: number
@@ -64,13 +61,22 @@ const AdjustPosition = () => {
   const {
     state: { data, liquidationThreshold },
   } = useLocation<LocationParams>()
-  // const { token: poolName } = useParams<RouteParams>()
-  const { t } = useTranslation()
-  const quoteTokenName = data?.farmData?.quoteToken?.symbol.replace('wBNB', 'BNB')
-  const tokenName = data?.farmData?.token?.symbol.replace('wBNB', 'BNB')
 
+  const { t } = useTranslation()
+  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  const [tokenInput, setTokenInput] = useState(0)
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { quoteToken, token, TokenInfo, QuoteTokenInfo, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
+
+  const { vaultAddress } = TokenInfo
+  const quoteTokenVaultAddress = QuoteTokenInfo.vaultAddress
+  const vaultContract = useVault(vaultAddress)
+  const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const { balance: tokenBalance } = useTokenBalance(getAddress(data?.farmData.token.address))
+  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(data?.farmData.quoteToken.address))
 
   let symbolName;
   let lpSymbolName;
@@ -82,9 +88,14 @@ const AdjustPosition = () => {
   let farmTokenAmount;
   let basetokenBegin;
   let farmingtokenBegin;
-  // let workerAddress;
-  // let withdrawMinimizeTradingAddress;
-  // let contract;
+  let workerAddress;
+  let withdrawMinimizeTradingAddress;
+  let partialCloseLiquidateAddress
+  let contract;
+  let tokenInputValue;
+  let quoteTokenInputValue;
+  let userTokenBalance
+  let userQuoteTokenBalance
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = token?.symbol.replace('wBNB', 'BNB')
@@ -97,9 +108,20 @@ const AdjustPosition = () => {
     farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(tokenAmountTotal)
     farmingtokenBegin = parseInt(quoteTokenAmountTotal)
-    // workerAddress = TokenInfo.address
-    // withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyLiquidate
-    // contract = vaultContract
+    workerAddress = TokenInfo.address
+    withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
+    partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
+    contract = vaultContract
+    tokenInputValue = tokenInput
+    quoteTokenInputValue = quoteTokenInput
+    userTokenBalance = getBalanceAmount(
+      tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+    )
+    userQuoteTokenBalance = getBalanceAmount(
+      quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
+    )
+
+
   } else {
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
@@ -111,25 +133,43 @@ const AdjustPosition = () => {
     farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(quoteTokenAmountTotal)
     farmingtokenBegin = parseInt(tokenAmountTotal)
-    // workerAddress = QuoteTokenInfo.address
-    // withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyLiquidate
-    // contract = quoteTokenVaultContract
+    workerAddress = QuoteTokenInfo.address
+    withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
+    partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
+    contract = quoteTokenVaultContract
+    tokenInputValue = quoteTokenInput
+    quoteTokenInputValue = tokenInput
+    userTokenBalance = getBalanceAmount(
+      quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
+    )
+    userQuoteTokenBalance = getBalanceAmount(
+      tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+    )
+
+
   }
 
-  // const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
-  const { balance: bnbBalance } = useGetBnbBalance()
-  const { balance: tokenBalance } = useTokenBalance(getAddress(data?.farmData.token.address))
-  const userTokenBalance = getBalanceAmount(
-    data?.farmData?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
-  )
-  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(data?.farmData.quoteToken.address))
-  const userQuoteTokenBalance = getBalanceAmount(
-    data?.farmData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
-  )
-
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
-  const [tokenInput, setTokenInput] = useState(0)
+  console.log({
+    symbolName,
+    lpSymbolName,
+    tokenValue,
+    quoteTokenValue,
+    tokenValueSymbol,
+    quoteTokenValueSymbol,
+    baseTokenAmount,
+    farmTokenAmount,
+    basetokenBegin,
+    farmingtokenBegin,
+    workerAddress,
+    withdrawMinimizeTradingAddress,
+    partialCloseLiquidateAddress,
+    contract,
+    tokenInputValue,
+    quoteTokenInputValue,
+    userTokenBalance,
+    userQuoteTokenBalance,
+  })
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -154,7 +194,7 @@ const AdjustPosition = () => {
     Number(currentPositionLeverage.toPrecision(3)),
   )
 
-  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, quoteTokenInput)
+  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue,)
   const adjustData = farmingData ? farmingData[1] : []
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
@@ -168,15 +208,23 @@ const AdjustPosition = () => {
     priceImpact = 0
   }
 
-  const baseTokenInPosition = adjustData?.[8]
-  const farmingTokenInPosition = adjustData?.[9]
+  let baseTokenInPosition
+  let farmingTokenInPosition
+  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+    baseTokenInPosition = adjustData?.[8]
+    farmingTokenInPosition = adjustData?.[9]
+  } else {
+    baseTokenInPosition = adjustData?.[9]
+    farmingTokenInPosition = adjustData?.[8]
+  }
+
 
   // for apr
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
-  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice) * 100
-  const { borrowingInterest } = getBorrowingInterest(data?.farmData)
+  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
+  const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
 
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(currentPositionLeverage)
@@ -187,7 +235,7 @@ const AdjustPosition = () => {
 
   const adjustedYieldFarmAPR = yieldFarmData * Number(targetPositionLeverage)
   const adjustedTradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(targetPositionLeverage)
-  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice) * 100
+  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   const adjustHuskiRewardsAPR = adjustedHuskyRewards * (targetPositionLeverage - 1)
   const adjustBorrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
   const adjustedApr: number =
@@ -198,11 +246,9 @@ const AdjustPosition = () => {
   const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = (data?.farmData?.TokenInfo.vaultAddress)
-  const vaultContract = useVault(vaultAddress)
-  const { callWithGasPrice } = useCallWithGasPrice()
-
-  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+  const [isPending, setIsPending] = useState(false)
+  
+  const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
     }
@@ -211,12 +257,13 @@ const AdjustPosition = () => {
       value: amount,
     }
 
+    setIsPending(true)
     try {
       const tx = await callWithGasPrice(
-        vaultContract,
+        contract,
         'work',
-        [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+        [id, address, amount, loan, maxReturn, dataWorker],
+        symbolName === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -226,100 +273,141 @@ const AdjustPosition = () => {
     } catch (error) {
       console.info('error', error)
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    } finally {
+      setIsPending(false)
+      setTokenInput(0)
+      setQuoteTokenInput(0)
     }
   }
 
   const handleConfirm = async () => {
-    const id = data.positionId
-    const workerAddress = getAddress(data?.farmData?.workerAddress)
+    const id = positionId
+    // const AssetsBorrowed = farmData ? farmData[3] : 0
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber() // debtValueNumber.toNumber() // farmData ? farmData[3] : 0
-    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
-    const farmingTokenAmount = quoteTokenInput.toString()
+    let amount
+    // let workerAddress
+    let farmingTokenAmount
     let strategiesAddress
     let dataStrategy
     let dataWorker
+    // let contract
 
-    if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
-      // 单币 只有base token
-      console.info('111')
-      strategiesAddress = getAddress(data?.farmData?.strategies.addAllBaseToken)
-      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    // base token is base token
+    if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+      // single base token 
+      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+        console.info('base + single + token input ')
+        strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
+        console.info('base + single + quote token input ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else {
+        console.info('base + all ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      }
+      // contract = vaultContract
+      amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+      // workerAddress = TokenInfo.address
     } else {
-      // 双币 and 只有farm token
-      console.info('222')
-      strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
-      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1]) // [param.farmingTokenAmount, param.minLPAmount])
-      dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      // farm token is base token
+      // if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
+      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+        console.info('farm + single + token input ')
+        strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
+        console.info('farm + single +1 quote token input ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else {
+        console.info('farm + all ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      }
+      // contract = quoteTokenVaultContract
+      amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+      // workerAddress = QuoteTokenInfo.address
     }
 
     console.log({
       id,
       workerAddress,
-      AssetsBorrowed,
       amount,
-      tokenInput,
-      farmingTokenAmount,
       loan,
+      AssetsBorrowed,
       maxReturn,
+      farmingTokenAmount,
       dataWorker,
       strategiesAddress,
       dataStrategy,
+      tokenInputValue,
+      quoteTokenInputValue,
+
+      'tokenInput': Number(tokenInput),
+      'quoteTokenInput': Number(quoteTokenInput)
     })
+
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
-  const handleFarmConvertTo = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+  const handleFarmConvertTo = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
     }
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount,
+    }
     try {
-      const tx = await callWithGasPrice(
-        vaultContract,
-        'work',
-        [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        callOptions,
-      )
+      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions,)
       const receipt = await tx.wait()
       if (receipt.status) {
-        console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your farm was successfull'))
       }
     } catch (error) {
-      console.info('error', error)
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
     }
   }
 
   const handleConfirmConvertTo = async () => {
-    const id = data.positionId
-    const workerAddress = getAddress(data.farmData.workerAddress)
+    const id = positionId
     const amount = 0
-    const loan = 0
-    const maxReturn = ethers.constants.MaxUint256
+    const loan = 0;
+    const maxReturn = ethers.constants.MaxUint256;
     const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
-    const abiCoder = ethers.utils.defaultAbiCoder
-    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.liquidate)
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)])
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
-
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
+    console.log({ symbolName, id, workerAddress, amount, loan, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
-  const handleFarmMinimize = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+  const handleFarmMinimize = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
     }
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount,
+    }
     try {
-      const tx = await callWithGasPrice(
-        vaultContract,
-        'work',
-        [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        callOptions,
-      )
+      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
@@ -332,16 +420,17 @@ const AdjustPosition = () => {
   }
 
   const handleConfirmMinimize = async () => {
-    const id = data.positionId
-    const workerAddress = getAddress(data.farmData.workerAddress)
+    const id = positionId
     const amount = 0
     const loan = 0
-    const maxReturn = ethers.constants.MaxUint256
-    const minfarmtoken = (Number(convertedPositionValueMinimizeTrading) * 0.995).toString()
-    const abiCoder = ethers.utils.defaultAbiCoder
-    const withdrawMinimizeTradingAddress = getAddress(data.farmData.strategies.withdrawMinimizeTrading)
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)])
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
+    const maxReturn = ethers.constants.MaxUint256;
+    const minfarmtoken = (Number(convertedPositionValue) * 0.995).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder;
+
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+
+    console.log({ '这是最小化关仓': symbolName, id, workerAddress, amount, loan, convertedPositionValue, withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker })
 
     handleFarmMinimize(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -384,6 +473,7 @@ const AdjustPosition = () => {
     data,
     Number(targetPositionLeverage),
     percentageToClose / 100,
+    symbolName
   )
   const isConfirmDisabled =
     (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
@@ -394,15 +484,6 @@ const AdjustPosition = () => {
   const maxValue = 1 - principal / data?.farmData?.leverage
   const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
-
-  // const baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  // const farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-
-  // const baseTokenAmount = new BigNumber(baseAmountData).dividedBy(BIG_TEN.pow(18))
-  // const farmTokenAmount = new BigNumber(farmAmountData).dividedBy(BIG_TEN.pow(18))
-
-  // const basetokenBegin = parseInt(tokenAmountTotal)
-  // const farmingtokenBegin = parseInt(quoteTokenAmountTotal)
   const convertedPositionValueAssets =
     Number(baseTokenAmount) +
     basetokenBegin -
@@ -425,12 +506,12 @@ const AdjustPosition = () => {
           <Text>Amount to Trade</Text>
           {isConvertTo ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenName}
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
               {amountToTrade.toPrecision(4)}
-              {quoteTokenName}
+              {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -466,14 +547,14 @@ const AdjustPosition = () => {
           <Text>Converted Position Value Assets</Text>
           {isConvertTo ? (
             <Text>
-              {convertedPositionValueAssets.toFixed(3)} {tokenName}
+              {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol}
             </Text>
           ) : (
             <Text>
               {convertedPositionValueMinimizeTrading ? (
                 <Text>
-                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenName} +{' '}
-                  {Number(debtValueNumber).toPrecision(4)} {tokenName}{' '}
+                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenValueSymbol} +
+                  {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
                 </Text>
               ) : (
                 <Skeleton height="16px" width="80px" />
@@ -492,7 +573,7 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              0.00 {tokenName} + 0.00 {quoteTokenName}
+              0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -502,11 +583,11 @@ const AdjustPosition = () => {
             <Text>
               {isConvertTo ? (
                 <>
-                  {Number(convertedPositionValue).toPrecision(4)} {tokenName}
+                  {Number(convertedPositionValue).toPrecision(4)} {tokenValueSymbol}
                 </>
               ) : (
                 <>
-                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenName} + {0.0} {tokenName}{' '}
+                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenValueSymbol} + {0.0} {tokenValueSymbol}
                 </>
               )}
             </Text>
@@ -520,12 +601,11 @@ const AdjustPosition = () => {
             <Text>
               {isConvertTo ? (
                 <>
-                  {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {tokenName}
+                  {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {tokenValueSymbol}
                 </>
               ) : (
                 <>
-                  {(Number(convertedPositionValueMinimizeTrading) * 0.995).toPrecision(4)} {quoteTokenName} + {0.0}{' '}
-                  {tokenName}{' '}
+                  {(Number(convertedPositionValueMinimizeTrading) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} + {0.0} {tokenValueSymbol}
                 </>
               )}
             </Text>
@@ -542,12 +622,12 @@ const AdjustPosition = () => {
           <Text>Amount to Trade</Text>
           {isConvertTo ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenName}
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
               {amountToTrade.toPrecision(4)}
-              {quoteTokenName}
+              {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -583,11 +663,11 @@ const AdjustPosition = () => {
           <Text>Converted Position Value Assets</Text>
           {isConvertTo ? (
             <Text>
-              {convertedPositionValueAssets.toFixed(3)} {tokenName}
+              {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol}
             </Text>
           ) : (
             <Text>
-              {convertedPositionValueMinimizeTrading.toFixed(3)} {tokenName}
+              {convertedPositionValueMinimizeTrading.toFixed(3)} {tokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -599,7 +679,7 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              0.00 {tokenName} + 0.00 {quoteTokenName}
+              0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -611,7 +691,7 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              0.00 {tokenName} + 0.00 {quoteTokenName}
+              0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -624,8 +704,7 @@ const AdjustPosition = () => {
           <Text>Assets Supplied</Text>
           {farmingData ? (
             <Text>
-              {Number(tokenInput).toPrecision(3)} {tokenValue.symbol} + {Number(quoteTokenInput).toPrecision(3)} {quoteTokenValue.symbol}
-              {quoteTokenName}
+              {Number(tokenInputValue).toPrecision(3)} {tokenValue.symbol} + {Number(quoteTokenInputValue).toPrecision(3)} {quoteTokenValue.symbol}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -725,12 +804,12 @@ const AdjustPosition = () => {
                   targetPositionLeverage={Number(targetPositionLeverage)}
                   userQuoteTokenBalance={userQuoteTokenBalance}
                   userTokenBalance={userTokenBalance}
-                  quoteTokenName={quoteTokenName}
-                  tokenName={tokenName}
-                  quoteToken={data?.farmData?.quoteToken}
-                  token={data?.farmData?.token}
-                  tokenInput={tokenInput}
-                  quoteTokenInput={quoteTokenInput}
+                  quoteTokenName={quoteTokenValueSymbol}
+                  tokenName={tokenValueSymbol}
+                  quoteToken={quoteTokenValue}
+                  token={tokenValue}
+                  tokenInput={tokenInputValue}
+                  quoteTokenInput={quoteTokenInputValue}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
@@ -738,6 +817,7 @@ const AdjustPosition = () => {
                     data,
                     Number(targetPositionLeverage),
                     percentageToClose / 100,
+                    symbolName
                   )}
                 />
               )}
@@ -747,12 +827,12 @@ const AdjustPosition = () => {
                   targetPositionLeverage={Number(targetPositionLeverage)}
                   userQuoteTokenBalance={userQuoteTokenBalance}
                   userTokenBalance={userTokenBalance}
-                  quoteTokenName={quoteTokenName}
-                  tokenName={tokenName}
-                  quoteToken={data?.farmData?.quoteToken}
-                  token={data?.farmData?.token}
-                  tokenInput={tokenInput}
-                  quoteTokenInput={quoteTokenInput}
+                  quoteTokenName={quoteTokenValueSymbol}
+                  tokenName={tokenValueSymbol}
+                  quoteToken={quoteTokenValue}
+                  token={tokenValue}
+                  tokenInput={tokenInputValue}
+                  quoteTokenInput={quoteTokenInputValue}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
@@ -760,6 +840,7 @@ const AdjustPosition = () => {
                     data,
                     Number(targetPositionLeverage),
                     percentageToClose / 100,
+                    symbolName
                   )}
                 />
               )}
@@ -776,7 +857,7 @@ const AdjustPosition = () => {
                   <Flex alignItems="center">
                     <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                     <ChevronRightIcon />
-                    <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
+                    <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed(3) : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
