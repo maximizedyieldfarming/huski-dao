@@ -77,7 +77,7 @@ const ActivePositionsRow = ({ data }) => {
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
-  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice)
+  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
