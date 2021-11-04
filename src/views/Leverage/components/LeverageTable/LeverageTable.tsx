@@ -43,12 +43,6 @@ const StyledTableBorder = styled.div`
   box-shadow: ${({ theme }) => theme.card.boxShadow};
 `
 
-const ScrollButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`
 const FilterOption = styled(Button)`
   padding: 5px;
   background-color: transparent;
@@ -166,6 +160,7 @@ const LeverageTable = ({ leverageData }) => {
     )
   }
 
+  const { t } = useTranslation()
   return (
     <>
       <StyledTableBorder>
@@ -180,7 +175,7 @@ const LeverageTable = ({ leverageData }) => {
                   isActive={dexFilter === 'all'}
                   onClick={() => setDexFilter('all')}
                 >
-                  All
+                  {t('All')}
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
@@ -193,7 +188,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
             </Flex>
             <Flex alignItems="center" className="tokenFilter">
-              <Text>Paired Assets:</Text>
+              <Text>{t('Paired Assets:')}</Text>
               <Flex>
                 <FilterOption
                   variant="tertiary"
@@ -201,7 +196,7 @@ const LeverageTable = ({ leverageData }) => {
                   isActive={pairFilter === 'all'}
                   onClick={() => setPairFilter('all')}
                 >
-                  All
+                  {t('All')}
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
@@ -242,19 +237,19 @@ const LeverageTable = ({ leverageData }) => {
               <Select
                 options={[
                   {
-                    label: 'Default',
+                    label: `${t('Default')}`,
                     value: 'default',
                   },
                   {
-                    label: 'APY',
+                    label: `${t('APY')}`,
                     value: 'apy',
                   },
                   {
-                    label: 'TVL',
+                    label: `${t('TVL')}`,
                     value: 'tvl',
                   },
                   {
-                    label: 'Leverage',
+                    label: `${t('Leverage')}`,
                     value: 'leverage',
                   },
                 ]}
@@ -266,12 +261,6 @@ const LeverageTable = ({ leverageData }) => {
           {farmsData.map((token) => (
             <LeverageRow tokenData={token} key={token?.pid} />
           ))}
-          <ScrollButtonContainer>
-            <Button variant="text" onClick={scrollToTop}>
-              To Top
-              <ChevronUpIcon color="primary" />
-            </Button>
-          </ScrollButtonContainer>
         </StyledTable>
       </StyledTableBorder>
     </>

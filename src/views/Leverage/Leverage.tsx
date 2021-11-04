@@ -51,7 +51,6 @@ const RewardsContainer = styled(Box)`
 `
 
 const PositionButtonsContainer = styled(Box)`
-  padding: 1rem 1.5rem;
   > div {
     border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
   }
@@ -67,6 +66,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   overflow: hidden;
+  padding: 1rem 1.5rem;
 `
 
 const Leverage: React.FC = () => {
