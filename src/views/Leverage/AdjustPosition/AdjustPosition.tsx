@@ -27,9 +27,9 @@ import {
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
-interface RouteParams {
-  token: string
-}
+// interface RouteParams {
+//   token: string
+// }
 interface LocationParams {
   data: any
   liquidationThreshold: number
@@ -68,7 +68,8 @@ const AdjustPosition = () => {
   const { t } = useTranslation()
   const quoteTokenName = data?.farmData?.quoteToken?.symbol.replace('wBNB', 'BNB')
   const tokenName = data?.farmData?.token?.symbol.replace('wBNB', 'BNB')
-
+  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  const [tokenInput, setTokenInput] = useState(0)
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { quoteToken, token, TokenInfo, QuoteTokenInfo, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
 
@@ -85,6 +86,8 @@ const AdjustPosition = () => {
   // let workerAddress;
   // let withdrawMinimizeTradingAddress;
   // let contract;
+  let tokenInputValue;
+  let quoteTokenInputValue;
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = token?.symbol.replace('wBNB', 'BNB')
@@ -100,6 +103,8 @@ const AdjustPosition = () => {
     // workerAddress = TokenInfo.address
     // withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyLiquidate
     // contract = vaultContract
+    tokenInputValue = tokenInput
+    quoteTokenInputValue = quoteTokenInput
   } else {
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
@@ -114,7 +119,10 @@ const AdjustPosition = () => {
     // workerAddress = QuoteTokenInfo.address
     // withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyLiquidate
     // contract = quoteTokenVaultContract
+    tokenInputValue = quoteTokenInput 
+    quoteTokenInputValue = tokenInput
   }
+
 
   // const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
 
@@ -128,8 +136,7 @@ const AdjustPosition = () => {
     data?.farmData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
   )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
-  const [tokenInput, setTokenInput] = useState(0)
+
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -154,7 +161,7 @@ const AdjustPosition = () => {
     Number(currentPositionLeverage.toPrecision(3)),
   )
 
-  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, quoteTokenInput)
+  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, )
   const adjustData = farmingData ? farmingData[1] : []
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
@@ -168,15 +175,24 @@ const AdjustPosition = () => {
     priceImpact = 0
   }
 
-  const baseTokenInPosition = adjustData?.[8]
-  const farmingTokenInPosition = adjustData?.[9]
+
+  let baseTokenInPosition
+  let farmingTokenInPosition
+  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+    baseTokenInPosition = adjustData?.[8]
+    farmingTokenInPosition = adjustData?.[9]
+  } else {
+    baseTokenInPosition = adjustData?.[9]
+    farmingTokenInPosition = adjustData?.[8]
+  }
+
 
   // for apr
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
-  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice) * 100
-  const { borrowingInterest } = getBorrowingInterest(data?.farmData)
+  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
+  const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
 
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(currentPositionLeverage)
@@ -187,7 +203,7 @@ const AdjustPosition = () => {
 
   const adjustedYieldFarmAPR = yieldFarmData * Number(targetPositionLeverage)
   const adjustedTradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(targetPositionLeverage)
-  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice) * 100
+  const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   const adjustHuskiRewardsAPR = adjustedHuskyRewards * (targetPositionLeverage - 1)
   const adjustBorrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
   const adjustedApr: number =
@@ -198,11 +214,85 @@ const AdjustPosition = () => {
   const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const vaultAddress = (data?.farmData?.TokenInfo.vaultAddress)
+  // const vaultAddress = (data?.farmData?.TokenInfo.vaultAddress)
+  // const vaultContract = useVault(vaultAddress)
+  const { vaultAddress } = TokenInfo
+  const quoteTokenVaultAddress = QuoteTokenInfo.vaultAddress
   const vaultContract = useVault(vaultAddress)
+  const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
+  const [isPending, setIsPending] = useState(false)
+  // const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+  //   const callOptions = {
+  //     gasLimit: 3800000,
+  //   }
+  //   const callOptionsBNB = {
+  //     gasLimit: 3800000,
+  //     value: amount,
+  //   }
 
-  const handleFarm = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+  //   try {
+  //     const tx = await callWithGasPrice(
+  //       vaultContract,
+  //       'work',
+  //       [id, workerAddress, amount, loan, maxReturn, dataWorker],
+  //       tokenName === 'BNB' ? callOptionsBNB : callOptions,
+  //     )
+  //     const receipt = await tx.wait()
+  //     if (receipt.status) {
+  //       console.info('receipt', receipt)
+  //       toastSuccess(t('Successful!'), t('Your farm was successfull'))
+  //     }
+  //   } catch (error) {
+  //     console.info('error', error)
+  //     toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+  //   }
+  // }
+
+  // const handleConfirm = async () => {
+  //   const id = data.positionId
+  //   const workerAddress = getAddress(data?.farmData?.workerAddress)
+  //   const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber() // debtValueNumber.toNumber() // farmData ? farmData[3] : 0
+  //   const amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString() // basetoken input
+  //   const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
+  //   const maxReturn = 0
+  //   const abiCoder = ethers.utils.defaultAbiCoder
+  //   const farmingTokenAmount = quoteTokenInputValue.toString()
+  //   let strategiesAddress
+  //   let dataStrategy
+  //   let dataWorker
+
+  //   if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+  //     // 单币 只有base token
+  //     console.info('111')
+  //     strategiesAddress = getAddress(data?.farmData?.strategies.addAllBaseToken)
+  //     dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+  //     dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+  //   } else {
+  //     // 双币 and 只有farm token
+  //     console.info('222')
+  //     strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
+  //     dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1]) // [param.farmingTokenAmount, param.minLPAmount])
+  //     dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+  //   }
+
+  //   console.log({
+  //     id,
+  //     workerAddress,
+  //     AssetsBorrowed,
+  //     amount,
+  //     tokenInput,
+  //     farmingTokenAmount,
+  //     loan,
+  //     maxReturn,
+  //     dataWorker,
+  //     strategiesAddress,
+  //     dataStrategy,
+  //   })
+  //   handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  // }
+
+  const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
     }
@@ -211,9 +301,10 @@ const AdjustPosition = () => {
       value: amount,
     }
 
+    setIsPending(true)
     try {
       const tx = await callWithGasPrice(
-        vaultContract,
+        contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
         tokenName === 'BNB' ? callOptionsBNB : callOptions,
@@ -226,51 +317,105 @@ const AdjustPosition = () => {
     } catch (error) {
       console.info('error', error)
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    } finally {
+      setIsPending(false)
+      setTokenInput(0)
+      setQuoteTokenInput(0)
     }
   }
 
   const handleConfirm = async () => {
-    const id = data.positionId
-    const workerAddress = getAddress(data?.farmData?.workerAddress)
+    const id = positionId
+    // const AssetsBorrowed = farmData ? farmData[3] : 0
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber() // debtValueNumber.toNumber() // farmData ? farmData[3] : 0
-    const amount = getDecimalAmount(new BigNumber(tokenInput), 18).toString() // basetoken input
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
-    const farmingTokenAmount = quoteTokenInput.toString()
+    let amount
+    let workerAddress
+    let farmingTokenAmount
     let strategiesAddress
     let dataStrategy
     let dataWorker
+    let contract
 
-    if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
-      // 单币 只有base token
-      console.info('111')
-      strategiesAddress = getAddress(data?.farmData?.strategies.addAllBaseToken)
-      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    // base token is base token
+    if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+      // single base token 
+      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+        console.info('base + single + token input ')
+        strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
+        console.info('base + single + quote token input ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else {
+        console.info('base + all ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      }
+      contract = vaultContract
+      amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+      workerAddress = TokenInfo.address
     } else {
-      // 双币 and 只有farm token
-      console.info('222')
-      strategiesAddress = getAddress(data?.farmData?.strategies.addTwoSidesOptimal)
-      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), 1]) // [param.farmingTokenAmount, param.minLPAmount])
-      dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      // farm token is base token
+      // if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
+        if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+        console.info('farm + single + token input ')
+        strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
+        console.info('farm + single +1 quote token input ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else {
+        console.info('farm + all ')
+        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      }
+      contract = quoteTokenVaultContract
+      amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+      workerAddress = QuoteTokenInfo.address
     }
 
     console.log({
       id,
       workerAddress,
-      AssetsBorrowed,
       amount,
-      tokenInput,
-      farmingTokenAmount,
       loan,
+      AssetsBorrowed,
       maxReturn,
+      farmingTokenAmount,
       dataWorker,
       strategiesAddress,
       dataStrategy,
+      tokenInputValue,
+      quoteTokenInputValue,
+
+      'tokenInput': Number(tokenInput),
+      'quoteTokenInput': Number(quoteTokenInput)
     })
-    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+
+    handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
+
+
+
+
+
+
+
 
   const handleFarmConvertTo = async (id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -624,8 +769,7 @@ const AdjustPosition = () => {
           <Text>Assets Supplied</Text>
           {farmingData ? (
             <Text>
-              {Number(tokenInput).toPrecision(3)} {tokenValue.symbol} + {Number(quoteTokenInput).toPrecision(3)} {quoteTokenValue.symbol}
-              {quoteTokenName}
+              {Number(tokenInputValue).toPrecision(3)} {tokenValue.symbol} + {Number(quoteTokenInputValue).toPrecision(3)} {quoteTokenValue.symbol}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -776,7 +920,7 @@ const AdjustPosition = () => {
                   <Flex alignItems="center">
                     <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                     <ChevronRightIcon />
-                    <Text> {adjustData ? assetsBorrowed.toFixed(3) : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
+                    <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed(3) : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
