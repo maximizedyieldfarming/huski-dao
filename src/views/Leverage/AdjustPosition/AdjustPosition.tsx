@@ -148,8 +148,7 @@ const AdjustPosition = () => {
   const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const lvgAdjust = new BigNumber(debtValueNumber).div(new BigNumber(baseTokenAmount)).plus(1)
-
+  const lvgAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValueNumber)))
   const currentPositionLeverage = lvgAdjust.toNumber()
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
     Number(currentPositionLeverage.toPrecision(3)),

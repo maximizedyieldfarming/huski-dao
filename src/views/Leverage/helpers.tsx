@@ -85,7 +85,8 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const baseTokenAmount =  new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const farmTokenAmount =  new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
-  const leverageAdjust = new BigNumber(debtValue).div(new BigNumber(baseTokenAmount)).plus(1)
+
+  const leverageAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValue)))
   const tokenInputNum = Number(tokenInput);
   const quoteTokenInputNum = Number(quoteTokenInput);
   const lvg = leverageAdjust.toNumber()
