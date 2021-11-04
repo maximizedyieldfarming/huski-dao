@@ -9,7 +9,7 @@ import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
@@ -227,14 +227,14 @@ const AdjustPosition = () => {
   const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
 
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
-  const tradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(currentPositionLeverage)
+  const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)
   const borrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
   const apr = Number(yieldFarmAPR) + Number(tradingFeesAPR) + Number(huskiRewardsAPR) - Number(borrowingInterestAPR)
   const apy = Math.pow(1 + apr / 100 / 365, 365) - 1
 
   const adjustedYieldFarmAPR = yieldFarmData * Number(targetPositionLeverage)
-  const adjustedTradingFeesAPR = Number(data?.farmData?.tradeFee) * 365 * Number(targetPositionLeverage)
+  const adjustedTradingFeesAPR = Number(tradeFee) * 365 * Number(targetPositionLeverage)
   const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   const adjustHuskiRewardsAPR = adjustedHuskyRewards * (targetPositionLeverage - 1)
   const adjustBorrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
