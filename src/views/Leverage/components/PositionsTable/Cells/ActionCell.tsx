@@ -29,7 +29,7 @@ const StyledCell = styled(BaseCell)`
 const ActionCell = ({ posData, disabled }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
-  const { data, liquidationThreshold } = posData
+  const { data, liquidationThresholdData } = posData
 
   return (
     <StyledCell role="cell">
@@ -39,7 +39,7 @@ const ActionCell = ({ posData, disabled }) => {
           as={Link}
           to={{
             pathname: `/leverage/adjustPosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
-            state: { data, liquidationThreshold },
+            state: { data, liquidationThresholdData },
           }}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
