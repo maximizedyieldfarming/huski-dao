@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
-import { Box, Button, Flex, Input, Text, ToastContainer } from '@pancakeswap/uikit'
+import { Box, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { ethers, Contract } from 'ethers'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { useCakeVaultContract, useERC20 } from 'hooks/useContract'
-import useToast from 'hooks/useToast'
-import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
-import { deposit, withdraw } from 'utils/vaultService'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import {Bone, Bone2} from 'assets'
+import { BIG_TEN } from 'utils/bigNumber'
+import { Bone, Bone2 } from 'assets'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
@@ -108,13 +102,6 @@ const LendAction = () => {
   const allowance = tokenData?.userData?.allowance
   const exchangeRate = excRate
 
-  const { callWithGasPrice } = useCallWithGasPrice()
-  const { toastError, toastSuccess } = useToast()
-  const cakeVaultContract = useCakeVaultContract()
-  const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
-  const vaultAddress = (tokenData.TokenInfo.vaultAddress)
-  const approveContract = useERC20(tokenAddress)
-
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
 
@@ -140,7 +127,7 @@ const LendAction = () => {
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {tokenName}
+        {t(`${action}`)} {tokenName}
       </Text>
       <TabPanel>
         <Header>
@@ -150,7 +137,7 @@ const LendAction = () => {
             to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
             replace
           >
-            <Text>Deposit</Text>
+            <Text>{t('Deposit')}</Text>
           </HeaderTabs>
           <HeaderTabs
             onClick={handleWithdrawClick}
@@ -158,7 +145,7 @@ const LendAction = () => {
             to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
             replace
           >
-            <Text>Withdraw</Text>
+            <Text>{t('Withdraw')}</Text>
           </HeaderTabs>
         </Header>
 
@@ -192,13 +179,14 @@ const LendAction = () => {
         </Body>
       </TabPanel>
       <Balance>
-        <Text>Balance</Text>
+        <Text>{t('Balance')}</Text>
         <Text>{`${userTokenBalanceCalc(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>
-          Reminder: After receiving ibTokens from depositing in the lending pools, you can stake ibTokens for more
-          yields.
+          {t(
+            'Reminder: After receiving ibTokens from depositing in the lending pools, you can stake ibTokens for more yields.',
+          )}
         </Text>
       </Box>
     </StyledPage>

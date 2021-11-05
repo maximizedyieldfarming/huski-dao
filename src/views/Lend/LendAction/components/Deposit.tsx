@@ -10,8 +10,6 @@ import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { deposit, approve } from 'utils/vaultService'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { ArrowDownIcon } from 'assets'
 
 interface DepositProps {
@@ -87,7 +85,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
-    toastInfo('Approving...', 'Please Wait!')
+    toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
@@ -114,7 +112,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
     }
     setIsPending(true)
     try {
-      toastInfo('Transaction Pending...', 'Please Wait!')
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
@@ -126,7 +124,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
       }
     } catch (error) {
-      toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       setIsPending(false)
       setAmount(0)
@@ -144,7 +142,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
     <>
       <Section justifyContent="space-between">
         <Box>
-          <Text fontWeight="bold">Amount</Text>
+          <Text fontWeight="bold">{t('Amount')}</Text>
           <NumberInput
             placeholder="0.00"
             onChange={handleAmountChange}
@@ -153,7 +151,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           />
         </Box>
         <Box>
-          <Text fontWeight="bold">Balance: {`${balance.toPrecision(4)} ${name}`}</Text>
+          <Text fontWeight="bold">{t('Balance')}: {`${balance.toPrecision(4)} ${name}`}</Text>
 
           <MaxContainer>
             <Box>
@@ -161,7 +159,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
             </Box>
             <Box>
               <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                MAX
+                {t('MAX')}
               </Button>
             </Box>
           </MaxContainer>
@@ -169,7 +167,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       </Section>
       <Flex flexDirection="column">
         <StyledArrowDown style={{ margin: '0 auto' }} />
-        <Text textAlign="center">Assets Received</Text>
+        <Text textAlign="center">{t('Assets Received')}</Text>
         <Section justifyContent="space-between">
           <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
           <Text>ib{name}</Text>

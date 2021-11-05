@@ -5,12 +5,10 @@ import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
 import useToast from 'hooks/useToast'
-import { getAddress } from 'utils/addressHelpers'
 import { getDecimalAmount } from 'utils/formatBalance'
 import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { withdraw } from 'utils/vaultService'
-import {ArrowDownIcon } from 'assets'
+import { ArrowDownIcon } from 'assets'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -58,15 +56,15 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
     setAmount(balance)
   }
 
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const {vaultAddress} = tokenData.TokenInfo
+  const { toastError, toastSuccess, toastInfo } = useToast()
+  const { vaultAddress } = tokenData.TokenInfo
   const withdrawContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
   const [isPending, setIsPending] = useState<boolean>(false)
 
   const handleConfirm = () => {
-    toastInfo('Pending Transaction...', 'Please Wait!')
+    toastInfo(t('Pending Transaction...'), t('Please Wait!'))
     const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
     handleWithdrawal(convertedStakeAmount)
   }
@@ -97,7 +95,7 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
     <>
       <Section justifyContent="space-between">
         <Box>
-          <Text fontWeight="bold">Amount</Text>
+          <Text fontWeight="bold">{t('Amount')}</Text>
           <NumberInput
             placeholder="0.00"
             onChange={handleAmountChange}
@@ -107,7 +105,7 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
           />
         </Box>
         <Box>
-          <Text fontWeight="bold">Balance: {`${balance} ib${name}`}</Text>
+          <Text fontWeight="bold">{t('Balance')}: {`${balance} ib${name}`}</Text>
 
           <MaxContainer>
             <Box>
@@ -115,7 +113,7 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
             </Box>
             <Box>
               <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                MAX
+                {t('MAX')}
               </Button>
             </Box>
           </MaxContainer>
@@ -123,7 +121,7 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
       </Section>
       <Flex flexDirection="column">
         <StyledArrowDown style={{ margin: '0 auto' }} />
-        <Text textAlign="center">Assets Received</Text>
+        <Text textAlign="center">{t('Assets Received')}</Text>
         <Section justifyContent="space-between">
           <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
           <Text>{name}</Text>
