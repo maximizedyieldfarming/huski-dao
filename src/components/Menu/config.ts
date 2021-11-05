@@ -20,7 +20,7 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
   },
   {
     label: t('HODL & Lock Up'),
-    icon: 'NftIcon',
+    icon: 'LockIcon',
     href: '/lock',
   },
 

@@ -16,7 +16,14 @@ const NumberInput = (props) => {
       references.forEach((reference) => reference?.removeEventListener('wheel', handleWheel))
     }
   }, [])
-  return <Input type="number" {...props} ref={(input) => numberInputRef.current.push(input)} />
+  return (
+    <Input
+      pattern={`^[0-9]*[.,]?[0-9]{0,${18}}$`}
+      inputMode="decimal"
+      {...props}
+      ref={(input) => numberInputRef.current.push(input)}
+    />
+  )
 }
 
 export default NumberInput

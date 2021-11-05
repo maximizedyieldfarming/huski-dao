@@ -30,8 +30,8 @@ const AddColateral = ({
   BigNumber.config({ DECIMAL_PLACES: 18, EXPONENTIAL_AT: 18 })
   const handleQuoteTokenInput = useCallback(
     (event) => {
-      // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d+\.?\d*$/)) {
+      // check if input is a number and includes decimals and allow empty string
+      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
         const input = event.target.value
         const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
         setQuoteTokenInput(finalValue)
@@ -67,7 +67,7 @@ const AddColateral = ({
   const handleTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d+\.?\d*$/)) {
+      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
         const input = event.target.value
         const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
         setTokenInput(finalValue)
