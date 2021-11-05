@@ -50,8 +50,6 @@ const leverageFarms: LeverageFarmConfig[] = [
       }
     },
 
-    // token: tokens.wbnb,
-    // quoteToken: tokens.cake,
     leverage: 3,
 
   },
@@ -103,10 +101,8 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
-    // token: tokens.wbnb,
-    // quoteToken: tokens.usdt,
-    leverage: 3,
 
+    leverage: 3,
 
   },
   {
@@ -158,8 +154,6 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
-    // token: tokens.wbnb,
-    // quoteToken: tokens.btcb,
     leverage: 3,
 
   },
@@ -213,8 +207,6 @@ const leverageFarms: LeverageFarmConfig[] = [
       }
     },
 
-    // token: tokens.wbnb,
-    // quoteToken: tokens.eth,
     leverage: 3,
 
 
@@ -268,8 +260,6 @@ const leverageFarms: LeverageFarmConfig[] = [
       }
     },
 
-    // token: tokens.busd,
-    // quoteToken: tokens.usdt,
     leverage: 6,
 
 
@@ -323,8 +313,7 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
-    // token: tokens.alpaca,
-    // quoteToken: tokens.busd,
+
     leverage: 3,
 
   },

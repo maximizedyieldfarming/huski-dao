@@ -3,6 +3,8 @@ import masterchefABI from 'config/abi/masterchef.json'
 import lpTokenABI from 'config/abi/lpToken.json'
 import VaultABI from 'config/abi/vault.json'
 import WorkerConfigABI from 'config/abi/WorkerConfig.json'
+import SimpleVaultConfigABI from 'config/abi/SimpleVaultConfig.json'
+// import SimpleVaultConfigABI from 'config/abi/ConfigurableInterestVaultConfig.json'
 import erc20 from 'config/abi/erc20.json'
 import fairLaunchABI from 'config/abi/fairLaunch.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
@@ -30,6 +32,8 @@ type PublicFarmData = {
   poolWeight: SerializedBigNumber
   liquidationThreshold: SerializedBigNumber
   quoteTokenLiquidationThreshold: SerializedBigNumber
+  tokenMinDebtSize: SerializedBigNumber
+  quoteTokenMinDebtSize: SerializedBigNumber
   name: string
   pooPerBlock: number
   quoteTokenPoolPerBlock: number
@@ -37,7 +41,7 @@ type PublicFarmData = {
 }
 
 const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
-  const { lpAddresses, TokenInfo, QuoteTokenInfo,  pid } = farm
+  const { lpAddresses, TokenInfo, QuoteTokenInfo, pid } = farm
   const lpAddress = getAddress(lpAddresses)
   const vaultAddresses = TokenInfo.vaultAddress
   const quoteTokenVaultAddresses = QuoteTokenInfo.vaultAddress
@@ -68,6 +72,22 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         address: QuoteTokenInfo.config,
         name: 'killFactor',
         params: [QuoteTokenInfo.address, 0],
+      }
+    ])
+
+  const [tokenMinDebtSize] =
+    await multicall(SimpleVaultConfigABI, [
+      {
+        address: getAddress(TokenInfo.token.config),
+        name: 'minDebtSize',
+      }
+    ])
+
+  const [quoteTokenMinDebtSize] =
+    await multicall(SimpleVaultConfigABI, [
+      {
+        address: getAddress(QuoteTokenInfo.token.config),
+        name: 'minDebtSize',
       }
     ])
 
@@ -160,7 +180,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const lpTotalInQuoteToken = quoteTokenAmountMc.times(new BigNumber(2))
 
   const [infoLend, alpacaPerBlockLend, totalAllocPointLend] =
-  TokenInfo.token?.poolId || TokenInfo.token?.poolId === 0
+    TokenInfo.token?.poolId || TokenInfo.token?.poolId === 0
       ? await multicall(fairLaunchABI, [
         {
           address: getFairLaunch(),
@@ -180,7 +200,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
 
   const [infoFL, alpacaPerBlock, totalAllocPointFL] =
-  TokenInfo.token?.debtPoolId || TokenInfo.token?.debtPoolId === 0
+    TokenInfo.token?.debtPoolId || TokenInfo.token?.debtPoolId === 0
       ? await multicall(fairLaunchABI, [
         {
           address: getFairLaunch(),
@@ -200,7 +220,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
 
   const [quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
-  TokenInfo.quoteToken?.debtPoolId || TokenInfo.quoteToken?.debtPoolId === 0
+    TokenInfo.quoteToken?.debtPoolId || TokenInfo.quoteToken?.debtPoolId === 0
       ? await multicall(fairLaunchABI, [
         {
           address: getFairLaunch(),
@@ -272,6 +292,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
     liquidationThreshold: liquidationThreshold[0]._hex,
     quoteTokenLiquidationThreshold: quoteTokenLiquidationThreshold[0]._hex,
+    tokenMinDebtSize: tokenMinDebtSize[0]._hex,
+    quoteTokenMinDebtSize: quoteTokenMinDebtSize[0]._hex,
   }
 }
 
