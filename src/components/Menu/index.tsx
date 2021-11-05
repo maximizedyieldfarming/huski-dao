@@ -1,5 +1,4 @@
 import React from 'react'
-// import { Menu as UikitMenu } from '@pancakeswap/uikit'
 import { Menu as UikitMenu } from 'husky-uikit'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
@@ -11,7 +10,9 @@ import useAuth from 'hooks/useAuth'
 import config from './config'
 import UserMenu from './UserMenu'
 import GlobalSettings from './GlobalSettings'
-import logo from './HUSKILogo.png'
+import huskiLogo from './HUSKILogo.png'
+
+const Logo = () => <img src={huskiLogo} height="100%" width="50px" alt="HUSKI Logo" />
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
@@ -32,14 +33,15 @@ const Menu = (props) => {
       setLang={setLanguage}
       cakePriceUsd={cakePriceUsd.toNumber()}
       links={config(t)}
-      logo={logo}
-      profile={{
+      logo={<Logo />}
+      huskiPriceUsd={null}
+     /*  profile={{
         username: profile?.username,
         image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
         profileLink: '/profile',
         noProfileLink: '/profile',
         showPip: !profile?.username,
-      }}
+      }} */
       {...props}
     />
   )
