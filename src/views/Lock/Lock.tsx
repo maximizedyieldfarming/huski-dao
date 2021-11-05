@@ -4,7 +4,7 @@ import { Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'
-import huskyIcon from './assets/avatar1x.png'
+import { WalletIcon } from 'assets'
 import LockTable from './components/LockTable/LockTable'
 
 const Section = styled(Flex)`
@@ -65,7 +65,10 @@ const Lock: React.FC = () => {
       <Flex>
         <Section className="balanceWrapper">
           <Flex alignItems="center">
-            <Text>{t('My sHUSKI Balance')}</Text>
+            <Flex>
+              <WalletIcon width="24px" height="24px" color="gold" />
+              <Text>{t('My sHUSKI Balance')}</Text>
+            </Flex>
             {sHuskiBalance ? <Text>{sHuskiBalance}</Text> : <Skeleton width="80px" height="16px" />}
           </Flex>
           <Flex alignItems="center">

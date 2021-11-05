@@ -10,7 +10,7 @@ import { getDecimalAmount } from 'utils/formatBalance'
 import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { withdraw } from 'utils/vaultService'
-import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
+import {ArrowDownIcon } from 'assets'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -33,7 +33,7 @@ const MaxContainer = styled(Flex)`
     }
   }
 `
-const StyledArrowDown = styled(ArrowDown)`
+const StyledArrowDown = styled(ArrowDownIcon)`
   fill: ${({ theme }) => theme.colors.text};
   width: 20px;
   height: 13px;

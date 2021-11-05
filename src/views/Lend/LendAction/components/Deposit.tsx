@@ -12,7 +12,7 @@ import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { deposit, approve } from 'utils/vaultService'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { ReactComponent as ArrowDown } from '../../assets/arrowDown.svg'
+import { ArrowDownIcon } from 'assets'
 
 interface DepositProps {
   balance: any
@@ -47,7 +47,7 @@ const MaxContainer = styled(Flex)`
   }
 `
 
-const StyledArrowDown = styled(ArrowDown)`
+const StyledArrowDown = styled(ArrowDownIcon)`
   fill: ${({ theme }) => theme.colors.text};
   width: 20px;
   height: 13px;
@@ -78,7 +78,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
-  const {vaultAddress} = tokenData.TokenInfo
+  const { vaultAddress } = tokenData.TokenInfo
   const approveContract = useERC20(tokenAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()

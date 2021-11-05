@@ -13,13 +13,8 @@ import {
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
+import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
 import { getYieldFarming, getTvl } from '../../helpers'
-import { ReactComponent as AllFilter } from '../../assets/AllFilter.svg'
-import { ReactComponent as BnbIcon } from '../../assets/Bnb.svg'
-import { ReactComponent as BusdIcon } from '../../assets/Busd.svg'
-import { ReactComponent as BtcbIcon } from '../../assets/Btcb.svg'
-import { ReactComponent as EthIcon } from '../../assets/Eth.svg'
-import { ReactComponent as PancakeSwapIcon } from '../../assets/pancakeswap.svg'
 
 import LeverageRow from './LeverageRow'
 import LeverageHeaderRow from './LeverageHeaderRow'
@@ -156,7 +151,8 @@ const LeverageTable = ({ leverageData }) => {
   if (pairFilter !== 'all') {
     farmsData = farmsData.filter(
       (pool) =>
-        pool?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter || pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+        pool?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
+        pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
 
@@ -171,7 +167,7 @@ const LeverageTable = ({ leverageData }) => {
               <Flex overflowX="auto">
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<AllFilter className="allFilter" />}
+                  startIcon={<AllFilterIcon className="allFilter" />}
                   isActive={dexFilter === 'all'}
                   onClick={() => setDexFilter('all')}
                 >
@@ -192,7 +188,7 @@ const LeverageTable = ({ leverageData }) => {
               <Flex>
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<AllFilter className="allFilter" />}
+                  startIcon={<AllFilterIcon className="allFilter" />}
                   isActive={pairFilter === 'all'}
                   onClick={() => setPairFilter('all')}
                 >

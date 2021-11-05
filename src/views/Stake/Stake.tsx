@@ -13,8 +13,8 @@ import { useTranslation } from 'contexts/Localization'
 import { getHuskiAddress } from 'utils/addressHelpers'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
+import { WalletIcon, LockIcon, FlexingHuski } from 'assets'
 import StakeTable from './components/StakeTable/StakeTable'
-import { WalletIcon, LockIcon,FlexingHuski} from './assets'
 
 const StyledButton = styled(Button)`
   padding: 0.75rem;

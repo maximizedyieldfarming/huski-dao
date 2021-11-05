@@ -16,10 +16,9 @@ import { deposit, withdraw } from 'utils/vaultService'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import {Bone, Bone2} from 'assets'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
-import bone1 from '../assets/bone1-1x.png'
-import bone2 from '../assets/bone2-1x.png'
 
 interface Props {
   active: boolean
@@ -165,7 +164,7 @@ const LendAction = () => {
 
         <Body>
           <Box className="imageContainer">
-            <img src={bone2} alt="" />
+            <img src={Bone2} alt="" />
           </Box>
           {isDeposit ? (
             <Deposit
@@ -188,7 +187,7 @@ const LendAction = () => {
             />
           )}
           <Box className="imageContainer">
-            <img src={bone1} alt="" />
+            <img src={Bone} alt="" />
           </Box>
         </Body>
       </TabPanel>
