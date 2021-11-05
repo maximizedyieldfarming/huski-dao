@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
+import BigNumber from 'bignumber.js'
 import { TokenImage } from 'components/TokenImage'
 
 const InputArea = styled(Flex)`
@@ -23,67 +24,72 @@ const AddColateral = ({
   setTokenInput,
   setQuoteTokenInput,
 }) => {
-  // const [quoteTokenInput, setQuoteTokenInput] = useState(0)
-  const handleQuoteTokenInput = (event) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(event.key)) {
-      event.preventDefault()
-    }
-    const input = event.target.value
-    const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
-    setQuoteTokenInput(finalValue)
-  }
+  BigNumber.config({ DECIMAL_PLACES: 18, EXPONENTIAL_AT: 18 })
+  const handleQuoteTokenInput = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^\d+\.?\d*$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        setQuoteTokenInput(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userQuoteTokenBalance, setQuoteTokenInput],
+  )
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       const value =
         Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.25
           ? 0
           : userQuoteTokenBalance.toNumber() * 0.25
-      setQuoteTokenInput(value)
+      setQuoteTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '50%') {
       const value =
         Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.5 ? 0 : userQuoteTokenBalance.toNumber() * 0.5
-      setQuoteTokenInput(value)
+      setQuoteTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '75%') {
       const value =
         Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.75
           ? 0
           : userQuoteTokenBalance.toNumber() * 0.75
-      setQuoteTokenInput(value)
+      setQuoteTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '100%') {
       const value = Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() ? 0 : userQuoteTokenBalance.toNumber()
-      setQuoteTokenInput(value)
+      setQuoteTokenInput(new BigNumber(value))
     }
   }
-  // const [tokenInput, setTokenInput] = useState(0)
-  const handleTokenInput = (event) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(event.key)) {
-      event.preventDefault()
-    }
-    const input = event.target.value
-    const finalValue = input > userTokenBalance ? userTokenBalance : input
-    setTokenInput(finalValue)
-  }
+
+  const handleTokenInput = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^\d+\.?\d*$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        setTokenInput(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userTokenBalance, setTokenInput],
+  )
 
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.25 ? 0 : userTokenBalance.toNumber() * 0.25
-      setTokenInput(value)
+      setTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '50%') {
       const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.5 ? 0 : userTokenBalance.toNumber() * 0.5
-      setTokenInput(value)
+      setTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '75%') {
       const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.75 ? 0 : userTokenBalance.toNumber() * 0.75
-      setTokenInput(value)
+      setTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '100%') {
       const value = Number(tokenInput) === userTokenBalance.toNumber() ? 0 : userTokenBalance.toNumber()
-      setTokenInput(value)
+      setTokenInput(new BigNumber(value))
     }
   }
-
-  const tokenDisplay = tokenInput ? tokenInput.toFixed(18) : 0
-  const quoteTokenDisplay = quoteTokenInput ? quoteTokenInput.toFixed(18) : 0
 
   return (
     <>
@@ -124,7 +130,7 @@ const AddColateral = ({
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={quoteToken} width={40} height={40} />
                 </Box>
-                <NumberInput placeholder="0.00" value={quoteTokenDisplay} onChange={handleQuoteTokenInput} />
+                <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
               </Flex>
               <Text>{quoteTokenName}</Text>
             </InputArea>
@@ -170,7 +176,7 @@ const AddColateral = ({
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={token} width={40} height={40} />
                 </Box>
-                <NumberInput placeholder="0.00" value={tokenDisplay} onChange={handleTokenInput} />
+                <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
               </Flex>
               <Text>{tokenName}</Text>
             </InputArea>
