@@ -49,7 +49,14 @@ const Lend: React.FC = () => {
       <Section>
         <Box className="block" />
         <Box className="container">
-          <Text color="textSubtle">{t(`Volume 24H:`)}</Text>
+          <Text color="textSubtle">{t(`Total Volume 24H:`)}</Text>
+          {volume24 ? (
+            <Text fontSize="30px" color="secondary">
+              {volume24}
+            </Text>
+          ) : (
+            <Skeleton width="180px" height="30px" />
+          )}
           <Text fontSize="30px">{volume24}</Text>
         </Box>
         <Box className="container">

@@ -26,6 +26,7 @@ const UtilRateCell = ({ utilRate }) => {
     const value = rate * 100
     return `${value.toFixed(2)}%`
   }
+  const { t } = useTranslation()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
   return (
@@ -33,7 +34,7 @@ const UtilRateCell = ({ utilRate }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Utilization
+            {t('Utilization')}
           </Text>
         )}
         {utilRate ? <Text>{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}

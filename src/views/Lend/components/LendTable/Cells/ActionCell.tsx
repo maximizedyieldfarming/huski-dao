@@ -40,6 +40,7 @@ const ActionCell = ({ token }) => {
   // const tokenData = token
   const name = token?.token?.symbol
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
@@ -53,7 +54,7 @@ const ActionCell = ({ token }) => {
           disabled={!token?.userData?.tokenBalanceIB || !account}
           onClick={(e) => !account && e.preventDefault()}
         >
-          Deposit
+          {t('Deposit')}
         </Button>
         <Button
           as={Link}
@@ -61,7 +62,7 @@ const ActionCell = ({ token }) => {
           disabled={!token?.userData?.tokenBalanceIB || !account}
           onClick={(e) => !account && e.preventDefault()}
         >
-          Withdraw
+          {t('Withdraw')}
         </Button>
       </CellContent>
     </StyledCell>

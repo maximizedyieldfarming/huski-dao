@@ -28,13 +28,14 @@ const TotalSupplyCell = ({ supply, supplyUSD }) => {
 
   const formatedSupply = supply && Number(formatBigNumber(supply).replace(/,/g, ''))
   const formatedSupplyUSD = supplyUSD && Number(formatBigNumber(supplyUSD).replace(/,/g, ''))
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Total Supply
+            {t('Total Supply')}
           </Text>
         )}
         {supply ? (

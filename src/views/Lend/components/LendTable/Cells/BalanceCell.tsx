@@ -28,13 +28,14 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const { balance: bnbBalance } = useGetBnbBalance()
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            My Balance
+            {t('My Balance')}
           </Text>
         )}
         {balanceIb ? (

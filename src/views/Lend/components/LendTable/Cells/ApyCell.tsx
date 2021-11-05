@@ -23,6 +23,7 @@ const StyledCell = styled(BaseCell)`
 
 const ApyCell = ({ getApyData, token }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
 
   const apyCell = (e) => {
     const value = e * 100
@@ -34,25 +35,25 @@ const ApyCell = ({ getApyData, token }) => {
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Lending&nbsp;APR</Text>
+        <Text small>{t('Lending APR')}</Text>
         {lendApr ? <Text>{apyCell(lendApr)}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Staking&nbsp;APR</Text>
+        <Text small>{t('Staking APR')}</Text>
         {stakeApr ? <Text>{apyCell(stakeApr.toNumber())}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       {tokenName === 'ALPACA' && (
         <Flex justifyContent="space-between" alignItems="center">
-          <Text small>Protocol&nbsp;APR</Text>
+          <Text small>{t('Protocol APR')}</Text>
           <Skeleton width="80px" height="16px" />
         </Flex>
       )}
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Total&nbsp;APR</Text>
+        <Text small>{t('Total APR')}</Text>
         {totalApr ? <Text>{apyCell(totalApr.toNumber())}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Total&nbsp;APY</Text>
+        <Text small>{t('Total APY')}</Text>
         {apy ? <Text>{apyCell(apy)}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
     </>,
@@ -64,7 +65,7 @@ const ApyCell = ({ getApyData, token }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            APY
+            {t('APY')}
           </Text>
         )}
         {apy ? (

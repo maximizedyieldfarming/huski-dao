@@ -27,13 +27,14 @@ const TotalBorrowedCell = ({ borrowed, borrowedUSD }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const formatedBorrowed = borrowed && parseFloat(formatBigNumber(borrowed).replace(/,/g, ''))
   const formatedBorrowedUSD = borrowedUSD && Number(formatBigNumber(borrowedUSD).replace(/,/g, ''))
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Total Borrowed
+            {t('Total Borrowed')}
           </Text>
         )}
         {borrowed ? (
