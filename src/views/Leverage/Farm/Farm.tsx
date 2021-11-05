@@ -134,32 +134,34 @@ const Farm = () => {
     return null
   }
 
-  const [tokenInput, setTokenInput] = useState<number>(0)
+  const [tokenInput, setTokenInput] = useState(0)
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback(
     (event) => {
-      const invalidChars = ['-', '+', 'e']
-      if (invalidChars.includes(event.key)) {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        setTokenInput(finalValue)
+      } else {
         event.preventDefault()
       }
-      const input = event.target.value
-      const finalValue = input > userTokenBalance ? userTokenBalance : input
-      setTokenInput(finalValue)
     },
     [userTokenBalance],
   )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState<number>(0)
+  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
   const handleQuoteTokenInput = useCallback(
     (event) => {
-      const invalidChars = ['-', '+', 'e']
-      if (invalidChars.includes(event.key)) {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        setQuoteTokenInput(finalValue)
+      } else {
         event.preventDefault()
       }
-      const input = event.target.value
-      const finalValue = input > userQuoteTokenBalance ? userQuoteTokenBalance : input
-      setQuoteTokenInput(finalValue)
     },
     [userQuoteTokenBalance],
   )
@@ -268,7 +270,7 @@ const Farm = () => {
 
     // base token is base token
     if (radio === tokenData.token.symbol) {
-      // single base token 
+      // single base token
       if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
@@ -369,7 +371,7 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  let allowance = '0';
+  let allowance = '0'
   if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
     allowance = tokenData.userData?.quoteTokenAllowance
   } else {
@@ -384,11 +386,11 @@ const Farm = () => {
 
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
-    let contract;
+    let contract
     if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
-      contract = approveContract// quoteTokenApproveContract
+      contract = approveContract // quoteTokenApproveContract
     } else {
-      contract = quoteTokenApproveContract// approveContract
+      contract = quoteTokenApproveContract // approveContract
     }
 
     toastInfo('Approving...', 'Please Wait!')
@@ -446,11 +448,7 @@ const Farm = () => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
                   </Box>
-                  <NumberInput
-                    placeholder="0.00"
-                    value={quoteTokenInput}
-                    onChange={handleQuoteTokenInput}
-                  />
+                  <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
                 </Flex>
                 <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
@@ -501,11 +499,7 @@ const Farm = () => {
                   <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.token} width={40} height={40} />
                   </Box>
-                  <NumberInput
-                    placeholder="0.00"
-                    value={tokenInput}
-                    onChange={handleTokenInput}
-                  />
+                  <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                 </Flex>
                 <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
