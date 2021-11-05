@@ -34,7 +34,7 @@ const PoolCell = ({ pool, quoteToken, token }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Pool
+            {t('Pool')}
           </Text>
         )}
         <Grid alignItems="center" gridTemplateColumns="50px 1fr">

@@ -30,6 +30,7 @@ const StyledButton = styled(Button)`
 const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
@@ -44,7 +45,7 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
           disabled={!token?.totalSupply || !account}
           onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
         >
-          Farm
+          {t('Farm')}
         </Button>
       </CellContent>
     </StyledCell>

@@ -25,9 +25,10 @@ const StyledCell = styled(BaseCell)`
 
 const LiquidatedEquityCell = ({ liqEquity }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Liquidated Equity = 83.33% * Equity Value</Text>
+      <Text>{t('Liquidated Equity = 83.33% * Equity Value')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -35,10 +36,10 @@ const LiquidatedEquityCell = ({ liqEquity }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-       {(isMobile || isTablet) && (
+        {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Liquidated Equity
+              {t('Liquidated Equity')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

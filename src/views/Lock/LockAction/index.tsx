@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useParams } from 'react-router'
 import { Box, Button, Flex, Input, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
 import Page from 'components/Layout/Page'
@@ -13,14 +12,6 @@ import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useTranslation } from 'contexts/Localization'
 import { useMatchBreakpoints } from 'husky-uikit'
-
-interface Props {
-  active: boolean
-}
-interface RouteParams {
-  action: string
-  tokenName: string
-}
 
 interface LocationParams {
   data?: any
@@ -60,20 +51,6 @@ const Section = styled(Flex)`
   justify-content: space-between;
   &.gray {
     background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-  }
-`
-
-const MaxContainer = styled(Flex)`
-  align-items: center;
-  justify-content: center;
-  ${Box} {
-    padding: 0 5px;
-    &:first-child {
-      border-right: 2px solid ${({ theme }) => theme.colors.text};
-    }
-    &:last-child {
-      // border-left: 1px solid purple;
-    }
   }
 `
 
@@ -127,15 +104,15 @@ const LockAction = () => {
       <Container>
         <Section className="gray" mt="1rem">
           <Box>
-            <Text color="textSubtle">Amount</Text>
+            <Text color="textSubtle">{t('Amount')}</Text>
             <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
           </Box>
           <Box>
             <Text color="textSubtle" fontWeight="bold">
-              Balance: {balance} {name}
+              {t('Balance')}: {balance} {name}
             </Text>
             <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-              MAX
+              {t('MAX')}
             </Button>
           </Box>
         </Section>

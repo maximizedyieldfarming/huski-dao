@@ -25,9 +25,10 @@ const StyledCell = styled(BaseCell)`
 
 const LiquidationFeeCell = ({ fee }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Liquidation fee = 5% * Liquidated Equity</Text>
+      <Text>{t('Liquidation fee = 5% * Liquidated Equity')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -37,7 +38,7 @@ const LiquidationFeeCell = ({ fee }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Liquidation Fee
+              {t('Liquidation Fee')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

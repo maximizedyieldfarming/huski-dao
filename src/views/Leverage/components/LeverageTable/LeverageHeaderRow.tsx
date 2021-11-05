@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Text, useMatchBreakpoints, Skeleton } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
 const StyledRow = styled.div`
@@ -41,40 +42,41 @@ const StyledCell = styled(BaseCell)`
   }
 `
 const LeverageHeaderRow = () => {
+  const { t } = useTranslation()
   return (
     <StyledRow>
       <NameCell>
         <CellContent>
           <Text small color="textSubtle">
-            Pool
+            {t('Pool')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            APY
+            {t('APY')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            TVL
+            {t('TVL')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            Borrowing
+            {t('Borrowing')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            Leverage
+            {t('Leverage')}
           </Text>
         </CellContent>
       </StyledCell>

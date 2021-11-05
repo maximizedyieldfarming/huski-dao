@@ -270,7 +270,7 @@ const Farm = () => {
 
     // base token is base token
     if (radio === tokenData?.TokenInfo?.token?.symbol) {
-      // single base token 
+      // single base token
       if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
@@ -353,7 +353,7 @@ const Farm = () => {
     tooltipVisible: priceImpactTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
+      <Text>{t('Price impact will be calculated based on your supplied asset value and the current price.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -364,14 +364,15 @@ const Farm = () => {
   } = useTooltip(
     <>
       <Text>
-        Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’ for more
-        information.
+        {t(
+          'Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’ for more information.',
+        )}
       </Text>
     </>,
     { placement: 'top-start' },
   )
 
-  let allowance = '0';
+  let allowance = '0'
   if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
     allowance = tokenData.userData?.quoteTokenAllowance
   } else {
@@ -386,14 +387,14 @@ const Farm = () => {
 
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
-    let contract;
+    let contract
     if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
-      contract = approveContract// quoteTokenApproveContract
+      contract = approveContract // quoteTokenApproveContract
     } else {
       contract = quoteTokenApproveContract // approveContract
     }
 
-    toastInfo('Approving...', 'Please Wait!')
+    toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
       const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
@@ -421,21 +422,21 @@ const Farm = () => {
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
-        Farming {token} Pools
+        {t(`Farming ${token} Pools`)}
       </Text>
       <SectionWrapper>
         <Section className="gray">
           <Flex alignItems="center" justifyContent="space-between">
-            <Text as="span">Collateral</Text>
+            <Text as="span">{t('Collateral')}</Text>
             <Text as="span" small color="textSubtle">
-              To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.
+              {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
             </Text>
           </Flex>
           <Flex flexDirection="column" justifyContent="space-between" flex="1">
             <Box>
               <Flex alignItems="center">
                 <Text as="span" mr="1rem">
-                  Balance:
+                  {t('Balance:')}
                 </Text>
                 {userQuoteTokenBalance ? (
                   <Text>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
@@ -486,7 +487,7 @@ const Farm = () => {
             <Box>
               <Flex alignItems="center">
                 <Text as="span" mr="1rem">
-                  Balance:
+                  {t('Balance:')}
                 </Text>
                 {userTokenBalance ? (
                   <Text>{userTokenBalance.toNumber().toPrecision(3)}</Text>
@@ -520,11 +521,12 @@ const Farm = () => {
             </Box>
             <Box>
               <Text color="textSubtle" small>
-                You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields
-                and higher risk,vice versa.
+                {t(
+                  'You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields and higher risk,vice versa.',
+                )}
               </Text>
               <Flex alignItems="center">
-                <Text bold>Increase or decrease leverage</Text>
+                <Text bold>{t('Increase or decrease leverage')}</Text>
               </Flex>
 
               <Flex>
@@ -548,7 +550,7 @@ const Farm = () => {
           </Flex>
 
           <Box>
-            <Text bold>Which asset would you like to borrow? </Text>
+            <Text bold>{t('Which asset would you like to borrow?')}</Text>
             <Flex>
               {quoteTokenName.toLowerCase() !== 'cake' && (
                 <Flex alignItems="center" marginRight="10px">
@@ -578,8 +580,9 @@ const Farm = () => {
           </Box>
           <Box>
             <Text small color="failure">
-              Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed
-              asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.
+              {t(
+                'Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.',
+              )}
             </Text>
           </Box>
         </Section>
@@ -594,14 +597,15 @@ const Farm = () => {
               />
             </Flex>
             <Text small color="failure">
-              Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation
-              ratio, your assets might encounter liquidation.
+              {t(
+                'Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation ratio, your assets might encounter liquidation.',
+              )}
             </Text>
           </Section>
 
           <Section>
             <Flex justifyContent="space-between">
-              <Text>Assets Supplied</Text>
+              <Text>{t('Assets Supplied')}</Text>
               <Text>
                 {radio === tokenName ? Number(tokenInput)?.toPrecision(4) : Number(quoteTokenInput)?.toPrecision(4)}{' '}
                 {radio.replace('wBNB', 'BNB')} +{' '}
@@ -614,7 +618,7 @@ const Farm = () => {
               </Text>
             </Flex>
             <Flex justifyContent="space-between">
-              <Text>Assets Borrowed</Text>
+              <Text>{t('Assets Borrowed')}</Text>
               {farmData ? (
                 <Text>
                   {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
@@ -625,7 +629,7 @@ const Farm = () => {
             </Flex>
             <Flex justifyContent="space-between">
               <Flex>
-                <Text>Price Impact</Text>
+                <Text>{t('Price Impact')}</Text>
                 {priceImpactTooltipVisible && priceImpactTooltip}
                 <span ref={priceImpactTargetRef}>
                   <InfoIcon ml="10px" />
@@ -639,7 +643,7 @@ const Farm = () => {
             </Flex>
             <Flex justifyContent="space-between">
               <Flex>
-                <Text>Trading Fees</Text>
+                <Text>{t('Trading Fees')}</Text>
                 {tradingFeesTooltipVisible && tradingFeesTooltip}
                 <span ref={tradingFeesTargetRef}>
                   <InfoIcon ml="10px" />
@@ -648,7 +652,7 @@ const Farm = () => {
               <Text color="#EB0303">-{tradingFeesfarm.toPrecision(3)} %</Text>
             </Flex>
             <Flex justifyContent="space-between">
-              <Text>Position Value</Text>
+              <Text>{t('Position Value')}</Text>
               {farmData ? (
                 <Text>
                   {farmData[8].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmData[9].toFixed(2)}{' '}
@@ -659,11 +663,11 @@ const Farm = () => {
               )}
             </Flex>
             <Flex justifyContent="space-between">
-              <Text>APR</Text>
+              <Text>{t('APR')}</Text>
               <Text>{totalAprDisplay.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between">
-              <Text>APY</Text>
+              <Text>{t('APY')}</Text>
               <Flex>
                 <Text>{getDisplayApr(getApy(1))}%</Text>
                 <ArrowForwardIcon />
@@ -674,7 +678,7 @@ const Farm = () => {
         </Flex>
       </SectionWrapper>
       <Flex justifyContent="space-evenly">
-        {isApproved ? null : <Button onClick={handleApprove}>Approve</Button>}
+        {isApproved ? null : <Button onClick={handleApprove}>{t('Approve')}</Button>}
         <Button
           onClick={handleConfirm}
           isLoading={isPending}

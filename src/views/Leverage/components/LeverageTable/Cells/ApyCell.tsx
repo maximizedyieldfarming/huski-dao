@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import {
-  Text,
-  useMatchBreakpoints,
-  Skeleton,
-  Flex,
-  InfoIcon,
-  ChevronRightIcon,
-  useTooltip,
-} from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, ChevronRightIcon, useTooltip } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -30,34 +23,36 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
   const { isMobile, isTablet } = useMatchBreakpoints()
   const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
   const dailyApr = apr / 365
+  const { t } = useTranslation()
+
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Yield&nbsp;Farming</Text>
+        <Text small>{t('Yield Farming')}</Text>
         <Text>{yieldFarming?.toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Trading&nbsp;Fees</Text>
+        <Text small>{t('Trading Fees')}</Text>
         <Text>{tradingFees.toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>HUSKY&nbsp;Rewards</Text>
+        <Text small>{t('Huski Rewards')}</Text>
         <Text>{huskyRewards.toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Borrowing&nbsp;Interest</Text>
+        <Text small>{t('Borrowing Interest')}</Text>
         <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Total&nbsp;APR</Text>
+        <Text small>{t('Total APR')}</Text>
         <Text>{apr.toFixed(2)}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Total&nbsp;APY</Text>
+        <Text small>{t('Total APY')}</Text>
         <Text>{apy}%</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Daily&nbsp;APR</Text>
+        <Text small>{t('Daily APR')}</Text>
         <Text>{dailyApr.toFixed(2)}%</Text>
       </Flex>
     </>,
@@ -68,7 +63,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            APY
+            {t('APY')}
           </Text>
         )}
         {apy ? (
