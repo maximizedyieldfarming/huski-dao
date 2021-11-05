@@ -86,7 +86,7 @@
     "swiper": "^6.6.1",
     "typescript": "^4.3.2",
     "pancake-uikit": "file:./pancakeswap-uikit-0.49.16.tgz",
-    "husky-uikit": "^0.49.18"
+    "husky-uikit": "^0.49.19"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
