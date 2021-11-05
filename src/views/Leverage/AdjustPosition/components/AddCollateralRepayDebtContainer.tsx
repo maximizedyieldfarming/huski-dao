@@ -21,13 +21,16 @@ interface Props {
   setTokenInput: any
   setQuoteTokenInput: any
   currentPositionLeverage: number
+  symbolName: string
+  tokenPrice: string
+  quoteTokenPrice: string
   minimizeTradingValues: any
 }
 
 const Header = styled(Flex)`
   // border-radius: 20px 0 20px 0;
 `
-const HeaderTab = styled(Button)<HeaderProps>`
+const HeaderTab = styled(Button) <HeaderProps>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
@@ -51,6 +54,9 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
   setTokenInput,
   setQuoteTokenInput,
   currentPositionLeverage,
+  symbolName,
+  tokenPrice,
+  quoteTokenPrice,
   minimizeTradingValues,
 }) => {
   const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
@@ -84,6 +90,9 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
             quoteTokenInput={quoteTokenInput}
             setTokenInput={setTokenInput}
             setQuoteTokenInput={setQuoteTokenInput}
+            symbolName={symbolName}
+            tokenPrice={tokenPrice}
+            quoteTokenPrice={quoteTokenPrice}
           />
         ) : (
           <RepayDebt

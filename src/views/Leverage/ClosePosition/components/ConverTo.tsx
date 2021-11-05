@@ -33,7 +33,7 @@ const BusdPriceContainer = styled(Flex)`
 
 const ConverTo = ({ data }) => {
   const { positionId, debtValue, lpAmount, vault } = data
-  const { quoteToken, token, TokenInfo, QuoteTokenInfo, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const { quoteToken, token, TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
 
   const { t } = useTranslation()
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -46,6 +46,8 @@ const ConverTo = ({ data }) => {
   let symbolName;
   let tokenValue;
   let quoteTokenValue;
+  let tokenPrice;
+  let quoteTokenPrice;
   let tokenValueSymbol;
   let quoteTokenValueSymbol;
   let baseTokenAmount;
@@ -60,6 +62,8 @@ const ConverTo = ({ data }) => {
     symbolName = token?.symbol.replace('wBNB', 'BNB')
     tokenValue = token;
     quoteTokenValue = quoteToken;
+    tokenPrice = tokenPriceUsd;
+    quoteTokenPrice = quoteTokenPriceUsd;
     tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -73,6 +77,8 @@ const ConverTo = ({ data }) => {
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     tokenValue = quoteToken;
     quoteTokenValue = token;
+    tokenPrice = quoteTokenPriceUsd;
+    quoteTokenPrice = tokenPriceUsd;
     tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -209,7 +215,7 @@ const ConverTo = ({ data }) => {
                   <TokenImage token={quoteTokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenValue?.busdPrice}&nbsp;{symbolName}
+                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{symbolName}
                 </Text>
               </Flex>
               <Flex alignItems="center">
@@ -217,7 +223,7 @@ const ConverTo = ({ data }) => {
                   <TokenImage token={tokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenValue?.busdPrice}&nbsp;{symbolName}
+                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{symbolName}
                 </Text>
               </Flex>
             </BusdPriceContainer>

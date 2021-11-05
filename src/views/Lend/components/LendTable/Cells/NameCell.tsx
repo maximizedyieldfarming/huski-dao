@@ -26,16 +26,16 @@ const NameCell = ({ token }) => {
       <CellContent>
         <Flex alignItems="center" >
           <Box width={40} height={40} mr="5px">
-            <TokenImage token={token?.token} width={40} height={40} mr="8px" />
+            <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
           </Box>
           <Box>
             <Text bold={!isMobile} small={isMobile} mb="5px">
-              {token?.token.symbol.replace('wBNB', 'BNB')}
+              {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (
               <Text small color="textSubtle" style={{ whiteSpace: 'nowrap' }}>
-                1 ib{token?.token.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
-                {token?.token.symbol.replace('wBNB', 'BNB')}
+                1 ib{token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
+                {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
               </Text>
             ) : (
               <Skeleton width="80px" height="16px" />

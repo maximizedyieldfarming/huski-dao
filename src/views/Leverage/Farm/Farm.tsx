@@ -91,8 +91,8 @@ const Farm = () => {
   } = useLocation<LocationParams>()
 
   const [tokenData, setTokenData] = useState(data)
-  const quoteTokenName = tokenData?.quoteToken?.symbol
-  const tokenName = tokenData?.token?.symbol
+  const quoteTokenName = tokenData?.TokenInfo?.quoteToken?.symbol
+  const tokenName = tokenData?.TokenInfo?.token?.symbol
 
   const [radio, setRadio] = useState(selectedBorrowing)
   const { leverage } = tokenData
@@ -112,13 +112,13 @@ const Farm = () => {
   })()
 
   const { balance: bnbBalance } = useGetBnbBalance()
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   const userTokenBalance = getBalanceAmount(
-    tokenData?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+    tokenData?.TokenInfo?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
   )
-  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.quoteToken.address))
+  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.quoteToken.address))
   const userQuoteTokenBalance = getBalanceAmount(
-    tokenData?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
+    tokenData?.TokenInfo?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
   )
 
   const huskyPrice = useHuskyPrice()
@@ -269,8 +269,8 @@ const Farm = () => {
     let contract
 
     // base token is base token
-    if (radio === tokenData.token.symbol) {
-      // single base token
+    if (radio === tokenData?.TokenInfo?.token?.symbol) {
+      // single base token 
       if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
@@ -371,24 +371,24 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  let allowance = '0'
-  if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
+  let allowance = '0';
+  if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
     allowance = tokenData.userData?.quoteTokenAllowance
   } else {
     allowance = tokenData.userData?.tokenAllowance
   }
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
-  const tokenAddress = getAddress(tokenData.token.address)
-  const quoteTokenAddress = getAddress(tokenData.quoteToken.address)
+  const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
+  const quoteTokenAddress = getAddress(tokenData.TokenInfo.quoteToken.address)
   const approveContract = useERC20(tokenAddress)
   const quoteTokenApproveContract = useERC20(quoteTokenAddress)
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
-    let contract
-    if (radio?.toUpperCase() === tokenData.quoteToken.symbol.toUpperCase()) {
-      contract = approveContract // quoteTokenApproveContract
+    let contract;
+    if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+      contract = approveContract// quoteTokenApproveContract
     } else {
       contract = quoteTokenApproveContract // approveContract
     }
@@ -446,7 +446,7 @@ const Farm = () => {
               <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
                 <Flex alignItems="center" flex="1">
                   <Box width={40} height={40} mr="5px">
-                    <TokenImage token={tokenData?.quoteToken} width={40} height={40} />
+                    <TokenImage token={tokenData?.TokenInfo.quoteToken} width={40} height={40} />
                   </Box>
                   <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
                 </Flex>
@@ -497,7 +497,7 @@ const Farm = () => {
               <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0">
                 <Flex alignItems="center" flex="1">
                   <Box width={40} height={40} mr="5px">
-                    <TokenImage token={tokenData?.token} width={40} height={40} />
+                    <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
                   </Box>
                   <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                 </Flex>

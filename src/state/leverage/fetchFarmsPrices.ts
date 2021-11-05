@@ -13,7 +13,7 @@ import { LeverageFarm } from 'state/types'
 const getFarmBaseTokenPrice = (farm: LeverageFarm, coingeckoPrices: any): BigNumber => {
   let baseTokenPrice = BIG_ZERO
   coingeckoPrices.forEach(coingeckoPrice => {
-    if (coingeckoPrice.id === farm.token.coingeckoId) {
+    if (coingeckoPrice.id === farm.TokenInfo.token.coingeckoId) {
       baseTokenPrice = new BigNumber(coingeckoPrice.current_price)
     }
   })
@@ -24,7 +24,7 @@ const getFarmBaseTokenPrice = (farm: LeverageFarm, coingeckoPrices: any): BigNum
 const getFarmQuoteTokenPrice = (farm: LeverageFarm, coingeckoPrices: any): BigNumber => {
   let quoteTokenPrice = BIG_ZERO
   coingeckoPrices.forEach(coingeckoPrice => {
-    if (coingeckoPrice.id === farm.quoteToken.coingeckoId) {
+    if (coingeckoPrice.id === farm.TokenInfo.quoteToken.coingeckoId) {
       quoteTokenPrice = new BigNumber(coingeckoPrice.current_price)
     }
   })
@@ -43,9 +43,11 @@ const fetchFarmsPrices = async (farms) => {
   const farmsWithPrices = farms.map((farm) => {
     const baseTokenPrice = getFarmBaseTokenPrice(farm, coingeckoPrices)
     const quoteTokenPrice = getFarmQuoteTokenPrice(farm, coingeckoPrices)
-    const token = { ...farm.token, busdPrice: baseTokenPrice.toJSON() }
-    const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
-    return { ...farm, token, quoteToken }
+    // const token = { ...farm.token, busdPrice: baseTokenPrice.toJSON() }
+    // const quoteToken = { ...farm.quoteToken, busdPrice: quoteTokenPrice.toJSON() }
+        const tokenPriceUsd =   baseTokenPrice.toJSON()
+    const quoteTokenPriceUsd = quoteTokenPrice.toJSON() 
+    return { ...farm, tokenPriceUsd, quoteTokenPriceUsd }
   })
   // console.log("leverage farmsWithPrices----------: ", farmsWithPrices)
 

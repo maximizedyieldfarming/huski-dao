@@ -11,15 +11,16 @@ const mathematics2B = 3 / 55;
 const mathematics3B = 94 / 5;
 
 export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber) => {
-  const { totalToken, vaultDebtVal, token, poolLendPerBlock } = farm
-  const busdTokenPrice: any = token.busdPrice;
+  const { totalToken, vaultDebtVal, TokenInfo, poolLendPerBlock, tokenPriceUsd } = farm
+  const { token } = TokenInfo
+  const busdTokenPrice: any = tokenPriceUsd
   const huskyPrice: any = cakePriceBusd;
   const poolHuskyPerBlock = poolLendPerBlock;
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
 
   let lendRate = 0;
   // TO CHECK 只有这几个的区分吗？ alpaca？
-  if (token.symbol.toUpperCase() === 'WBNB' || token.symbol.toUpperCase() === 'BUSD' || token.symbol.toUpperCase() === 'USDT' || token.symbol.toUpperCase() === 'HUSKI' || token.symbol.toUpperCase() === 'ALPACA') {
+  if (token?.symbol.toUpperCase() === 'WBNB' || token?.symbol.toUpperCase() === 'BUSD' || token?.symbol.toUpperCase() === 'USDT' || token?.symbol.toUpperCase() === 'HUSKI' || token?.symbol.toUpperCase() === 'ALPACA') {
     if (utilization < 0.4) {
       lendRate = mathematics1B * utilization * 100;
     } else if (utilization > 0.95) {
@@ -27,7 +28,7 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber) => {
     } else {
       lendRate = mathematics2B * utilization * 100 + 12 / 11;
     }
-  } else if (token.symbol.toUpperCase() === 'BTCB' || token.symbol.toUpperCase() === 'ETH') {
+  } else if (token?.symbol.toUpperCase() === 'BTCB' || token?.symbol.toUpperCase() === 'ETH') {
     if (utilization < 0.4) {
       lendRate = mathematics1 * utilization * 100;
     } else if (utilization > 0.95) {
@@ -37,7 +38,7 @@ export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber) => {
     }
   }
 
-  const lendApr = lendRate / 100 
+  const lendApr = lendRate / 100
   const BorrowingInterest = lendRate / (utilization * 100) / (1.0 - 0.16)
 
   const stakeApr = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(totalToken) * busdTokenPrice));

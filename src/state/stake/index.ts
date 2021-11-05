@@ -13,8 +13,8 @@ import {
 } from './fetchStakeUser'
 import { StakeState, Stake } from '../types'
 
-const noAccountFarmConfig = stakeConfig.map((farm) => ({
-  ...farm,
+const noAccountFarmConfig = stakeConfig.map((stake) => ({
+  ...stake,
   userData: {
     allowance: '0',
     tokenBalance: '0',
@@ -40,8 +40,8 @@ createAsyncThunk<Stake[], number[]>(
     const farmsWithPrices = await fetchFarmsPrices(farms)
 
     // Filter out price helper LP config farms
-    const farmsWithoutHelperLps = farmsWithPrices.filter((farm: Stake) => {
-      return farm.pid || farm.pid === 0
+    const farmsWithoutHelperLps = farmsWithPrices.filter((stake: Stake) => {
+      return stake.pid || stake.pid === 0
     })
     return farmsWithoutHelperLps
 
@@ -98,9 +98,9 @@ export const stakeSlice = createSlice({
   extraReducers: (builder) => {
     // Update farms with live data
     builder.addCase(fetchStakePublicDataAsync.fulfilled, (state, action) => {
-      state.data = state.data.map((farm) => {
-        const liveFarmData = action.payload.find((farmData) => farmData.pid === farm.pid)
-        return { ...farm, ...liveFarmData }
+      state.data = state.data.map((stake) => {
+        const liveFarmData = action.payload.find((farmData) => farmData.pid === stake.pid)
+        return { ...stake, ...liveFarmData }
       })
     })
 
@@ -108,7 +108,7 @@ export const stakeSlice = createSlice({
     builder.addCase(fetchStakeUserDataAsync.fulfilled, (state, action) => {
       action.payload.forEach((userDataEl) => {
         const { pid } = userDataEl
-        const index = state.data.findIndex((farm) => farm.pid === pid)
+        const index = state.data.findIndex((stake) => stake.pid === pid)
         state.data[index] = { ...state.data[index], userData: userDataEl }
       })
       state.userDataLoaded = true

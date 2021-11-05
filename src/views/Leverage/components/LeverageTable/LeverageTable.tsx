@@ -156,7 +156,7 @@ const LeverageTable = ({ leverageData }) => {
   if (pairFilter !== 'all') {
     farmsData = farmsData.filter(
       (pool) =>
-        pool?.quoteToken?.symbol.toLowerCase() === pairFilter || pool?.token?.symbol.toLowerCase() === pairFilter,
+        pool?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter || pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
 

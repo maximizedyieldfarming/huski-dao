@@ -18,7 +18,6 @@ export const usePollLeverageFarmsPublicData = (includeArchive = true) => {
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
     dispatch(fetchLeverageFarmsPublicDataAsync(pids))
-    // fetchLeverageFarmsPublicDataAsync(pids)
   }, [includeArchive, dispatch, slowRefresh])
 }
 
@@ -26,32 +25,23 @@ export const usePollLeverageFarmsWithUserData = (includeArchive = true) => {
   const dispatch = useAppDispatch()
   const { slowRefresh } = useRefresh()
   const { account } = useWeb3React()
-  // console.log("leverage: ", "usePollLeverageFarmsWithUserData")
 
   useEffect(() => {
     const farmsToFetch = includeArchive ? leverageFarmsConfig : nonArchivedFarms
     const pids = farmsToFetch.map((farmToFetch) => farmToFetch.pid)
 
     dispatch(fetchLeverageFarmsPublicDataAsync(pids))
-    // fetchLeverageFarmsPublicDataAsync(pids)
-    // console.log("leverage account: ", account)
 
     if (account) {
       dispatch(fetchLeverageFarmUserDataAsync({ account, pids }))
-      // fetchLeverageFarmUserDataAsync({ account, pids })
     }
   }, [includeArchive, dispatch, slowRefresh, account])
 }
 
-/**
- * Fetches the "core" farm data used globally
- * 251 = CAKE-BNB LP
- * 252 = BUSD-BNB LP
- */
+
 export const usePollCoreLeverageFarmData = () => {
   const dispatch = useAppDispatch()
   const { fastRefresh } = useRefresh()
-  // console.log("leverage: ", "usePollCoreLeverageFarmData")
 
   useEffect(() => {
     dispatch(fetchLeverageFarmsPublicDataAsync([251, 252]))
@@ -65,8 +55,6 @@ export const useLeverageFarms = (): LeverageFarmsState => {
 
 export const useLends = (): LeverageFarmsState => {
   const farms = useSelector((state: State) => state.leverage)
-
-  
   return farms
 }
 
@@ -94,12 +82,12 @@ export const useFarmUser = (pid) => {
 // Return the base token price for a farm, from a given pid
 export const useBusdPriceFromPid = (pid: number): BigNumber => {
   const farm = useFarmFromPid(pid)
-  return farm && new BigNumber(farm.token.busdPrice)
+  return farm && new BigNumber(farm.tokenPriceUsd)
 }
 
 export const useHuskyPrice = (): BigNumber => {
   const huskyFarm = useFarmFromPid(362)
-  const huskyPriceAsString = huskyFarm.token.busdPrice
+  const huskyPriceAsString = huskyFarm.tokenPriceUsd
   const huskyPrice = useMemo(() => {
     return new BigNumber(huskyPriceAsString)
   }, [huskyPriceAsString])
@@ -109,7 +97,7 @@ export const useHuskyPrice = (): BigNumber => {
 
 export const useCakePrice = (): BigNumber => {
   const cakeFarm = useFarmFromPid(251)
-  const cakePriceAsString = cakeFarm.quoteToken.busdPrice
+  const cakePriceAsString = cakeFarm.quoteTokenPriceUsd
 
   const cakePrice = useMemo(() => {
     return new BigNumber(cakePriceAsString)

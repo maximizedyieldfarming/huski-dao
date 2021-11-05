@@ -8,9 +8,9 @@ import { getFairLaunch } from 'utils/env'
 import { StakeConfig } from 'config/constants/types'
 
 export const fetchFarmUserAllowances = async (account: string, farmsToFetch: StakeConfig[]) => {
-  const calls = farmsToFetch.map((farm) => {
-    const baseTokenAddress = getAddress(farm.vaultAddress)
-    return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(farm.fairLaunchAddress)] }
+  const calls = farmsToFetch.map((stake) => {
+    const baseTokenAddress = getAddress(stake.vaultAddress)
+    return { address: baseTokenAddress, name: 'allowance', params: [account, getAddress(stake.fairLaunchAddress)] }
   })
 
   const rawVaultAllowances = await multicall(erc20ABI, calls)
@@ -22,8 +22,8 @@ export const fetchFarmUserAllowances = async (account: string, farmsToFetch: Sta
 }
 
 export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: StakeConfig[]) => {
-  const calls = farmsToFetch.map((farm) => {
-    const vaultContractAddress = getAddress(farm.vaultAddress)
+  const calls = farmsToFetch.map((stake) => {
+    const vaultContractAddress = getAddress(stake.vaultAddress)
     return {
       address: vaultContractAddress,
       name: 'balanceOf',
@@ -41,11 +41,11 @@ export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: 
 export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch: StakeConfig[]) => {
   const fairLaunchAddress = getFairLaunch()
 
-  const calls = farmsToFetch.map((farm) => {
+  const calls = farmsToFetch.map((stake) => {
     return {
       address: fairLaunchAddress,
       name: 'userInfo',
-      params: [farm.pid, account],
+      params: [stake.pid, account],
     }
   })
 
@@ -59,11 +59,11 @@ export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch:
 export const fetchFarmUserEarnings = async (account: string, farmsToFetch: StakeConfig[]) => {
   const fairLaunchAddress = getFairLaunch()
 
-  const calls = farmsToFetch.map((farm) => {
+  const calls = farmsToFetch.map((stake) => {
     return {
       address: fairLaunchAddress,
       name: 'pendingAlpaca',
-      params: [farm.pid, account],
+      params: [stake.pid, account],
     }
   })
 
@@ -77,7 +77,7 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Stake
 export const fetchFarmUserLocked = async (account: string, farmsToFetch: StakeConfig[]) => {
   const huskiAddress = getHuskiAddress()
 
-  const calls = farmsToFetch.map((farm) => {
+  const calls = farmsToFetch.map((stake) => {
     return {
       address: huskiAddress,
       name: 'lockOf',
@@ -95,7 +95,7 @@ export const fetchFarmUserLocked = async (account: string, farmsToFetch: StakeCo
 export const fetchFarmUserUnLocked = async (account: string, farmsToFetch: StakeConfig[]) => {
   const huskiAddress = getHuskiAddress()
 
-  const calls = farmsToFetch.map((farm) => {
+  const calls = farmsToFetch.map((stake) => {
     return {
       address: huskiAddress,
       name: 'canUnlockAmount',

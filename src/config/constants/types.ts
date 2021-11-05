@@ -86,20 +86,12 @@ export interface LeverageFarmConfig {
   pid: number
   lpSymbol: string
   lpAddresses: Address
-  token: Token
-  quoteToken: Token
   dual?: {
     rewardPerBlock: number
     earnLabel: string
     endBlock: number
   }
   leverage: number
-  // vaultAddress: Address
-  // quoteTokenVaultAddress: Address
-  workerAddress: Address
-  quoteTokenWorkerAddress: Address
-  workerConfig: Address
-
   TokenInfo: {
     token: Token
     quoteToken: Token
@@ -139,17 +131,6 @@ export interface LeverageFarmConfig {
       StrategyPartialCloseLiquidate: string
       StrategyPartialCloseMinimizeTrading: string
     }
-  }
-
-  strategies: {
-    addAllBaseToken: Address
-    liquidate: Address
-    addTwoSidesOptimal: Address
-    quoteTokenAddTwoSidesOptimal: Address
-    withdrawMinimizeTrading: Address
-    partialCloseLiquidate: Address
-    partialCloseMinimizeTrading: Address
-
   }
 }
 

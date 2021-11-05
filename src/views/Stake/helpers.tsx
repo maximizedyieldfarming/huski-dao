@@ -4,7 +4,7 @@ import { Stake } from 'state/types'
 import { BLOCKS_PER_YEAR } from 'utils/config';
 
 export const getStakeApy = (stake: Stake, huskyPriceBusd: BigNumber) => {
-  const { totalToken, token, pooPerBlock } = stake
+  const { totalToken, token, pooPerBlock,  } = stake
 
   const busdTokenPrice: any = token.busdPrice;
   const huskyPrice: any = huskyPriceBusd;

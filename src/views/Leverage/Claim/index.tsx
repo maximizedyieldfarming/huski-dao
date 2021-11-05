@@ -79,12 +79,12 @@ const Claim: React.FC = () => {
 
   const rewards = []
   positionsWithEarnings.forEach((pool, index) => {
-    if (pool?.farmData?.token?.symbol === positionsWithEarnings[index + 1]?.farmData?.token?.symbol) {
+    if (pool?.farmData?.TokenInfo?.token?.symbol === positionsWithEarnings[index + 1]?.farmData?.TokenInfo?.token?.symbol) {
       const sum =
         Number(pool?.farmData?.userData?.farmEarnings) +
         Number(positionsWithEarnings[index + 1]?.farmData?.userData?.farmEarnings)
       rewards.push({
-        name: pool?.farmData?.token?.symbol,
+        name: pool?.farmData?.TokenInfo?.token?.symbol,
         earnings: sum,
       })
     }
@@ -117,7 +117,7 @@ const Claim: React.FC = () => {
       <Wrapper>
         {positionsWithEarnings.map((pool) => (
           <Rewards
-            name={pool?.farmData?.token?.symbol}
+            name={pool?.farmData?.TokenInfo?.token?.symbol}
             earnings={Number(pool?.farmData?.userData?.farmEarnings)}
             key={pool?.pid}
           />

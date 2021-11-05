@@ -2,17 +2,17 @@ import { StakeConfig } from 'config/constants/types'
 import { Stake } from 'state/types'
 import fetchPublicFarmData from './fetchPublicStakeData'
 
-const fetchStake = async (farm: Stake): Promise<Stake> => {
-  const farmPublicData = await fetchPublicFarmData(farm)
+const fetchStake = async (stake: Stake): Promise<Stake> => {
+  const farmPublicData = await fetchPublicFarmData(stake)
 
-  return { ...farm, ...farmPublicData }
+  return { ...stake, ...farmPublicData }
 }
 
 const fetchStakes = async (farmsToFetch: StakeConfig[]) => {
   const data = await Promise.all(
     farmsToFetch.map(async (farmConfig) => {
-      const farm = await fetchStake(farmConfig)
-      return farm
+      const stake = await fetchStake(farmConfig)
+      return stake
     }),
   )
   return data
