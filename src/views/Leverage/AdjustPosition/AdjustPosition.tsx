@@ -66,8 +66,8 @@ const AdjustPosition = () => {
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const [tokenInput, setTokenInput] = useState(0)
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
-  const { quoteToken, token, TokenInfo, QuoteTokenInfo, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
-
+  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
+  const { quoteToken, token } = TokenInfo
   const { vaultAddress } = TokenInfo
   const quoteTokenVaultAddress = QuoteTokenInfo.vaultAddress
   const vaultContract = useVault(vaultAddress)
@@ -75,13 +75,15 @@ const AdjustPosition = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
 
   const { balance: bnbBalance } = useGetBnbBalance()
-  const { balance: tokenBalance } = useTokenBalance(getAddress(data?.farmData.token.address))
-  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(data?.farmData.quoteToken.address))
+  const { balance: tokenBalance } = useTokenBalance(getAddress(TokenInfo.token.address))
+  const { balance: quoteTokenBalance } = useTokenBalance(getAddress(TokenInfo.quoteToken.address))
 
   let symbolName;
   let lpSymbolName;
   let tokenValue;
   let quoteTokenValue;
+  let tokenPrice;
+  let quoteTokenPrice;
   let tokenValueSymbol;
   let quoteTokenValueSymbol;
   let baseTokenAmount;
@@ -102,6 +104,8 @@ const AdjustPosition = () => {
     lpSymbolName = TokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = token;
     quoteTokenValue = quoteToken;
+    tokenPrice = tokenPriceUsd;
+    quoteTokenPrice = quoteTokenPriceUsd;
     tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -126,6 +130,8 @@ const AdjustPosition = () => {
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = quoteToken;
     quoteTokenValue = token;
+    tokenPrice = quoteTokenPriceUsd;
+    quoteTokenPrice = tokenPriceUsd;
     tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -246,7 +252,7 @@ const AdjustPosition = () => {
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isPending, setIsPending] = useState(false)
-  
+
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -703,7 +709,7 @@ const AdjustPosition = () => {
           <Text>Assets Supplied</Text>
           {farmingData ? (
             <Text>
-              {Number(tokenInputValue).toPrecision(3)} {tokenValue.symbol} + {Number(quoteTokenInputValue).toPrecision(3)} {quoteTokenValue.symbol}
+              {Number(tokenInputValue).toPrecision(3)} {tokenValue?.symbol} + {Number(quoteTokenInputValue).toPrecision(3)} {quoteTokenValue?.symbol}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
@@ -749,11 +755,11 @@ const AdjustPosition = () => {
           <Text>Updated Total Assets</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition.toFixed(2)} {tokenValue.symbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValue.symbol}
+              {baseTokenInPosition.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValue?.symbol}
             </Text>
           ) : (
             <Text>
-              0.00 {tokenValue.symbol} + 0.00 {quoteTokenValue.symbol}
+              0.00 {tokenValue?.symbol} + 0.00 {quoteTokenValue?.symbol}
             </Text>
           )}
         </Flex>
@@ -811,6 +817,9 @@ const AdjustPosition = () => {
                   quoteTokenInput={quoteTokenInput}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
+                  symbolName={symbolName}
+                  tokenPrice={tokenPrice}
+                  quoteTokenPrice={quoteTokenPrice}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
                     data.farmData,
                     data,
@@ -834,6 +843,9 @@ const AdjustPosition = () => {
                   quoteTokenInput={quoteTokenInput}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
+                  symbolName={symbolName}
+                  tokenPrice={tokenPrice}
+                  quoteTokenPrice={quoteTokenPrice}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
                     data.farmData,
                     data,

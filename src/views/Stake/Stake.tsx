@@ -101,8 +101,8 @@ const Stake: React.FC = () => {
   }
 
   let reward = 0
-  farmsData.map((farm) => {
-    const earnings = new BigNumber(parseFloat(farm?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+  farmsData.map((stake) => {
+    const earnings = new BigNumber(parseFloat(stake?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
     reward += earnings
     return reward
   })
@@ -111,16 +111,16 @@ const Stake: React.FC = () => {
   const alpacaBalance = balance ? balance.dividedBy(BIG_TEN.pow(18)) : BIG_ZERO
 
   let remainingLockedAmount = 0
-  farmsData.map((farm) => {
-    remainingLockedAmount = new BigNumber(parseFloat(farm?.userData?.unlockedRewards))
+  farmsData.map((stake) => {
+    remainingLockedAmount = new BigNumber(parseFloat(stake?.userData?.unlockedRewards))
       .div(DEFAULT_TOKEN_DECIMAL)
       .toNumber()
     return remainingLockedAmount
   })
 
   let unlockedRewards = 0
-  farmsData.map((farm) => {
-    unlockedRewards = new BigNumber(parseFloat(farm?.userData?.unlockedRewards)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+  farmsData.map((stake) => {
+    unlockedRewards = new BigNumber(parseFloat(stake?.userData?.unlockedRewards)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
     return unlockedRewards
   })
 

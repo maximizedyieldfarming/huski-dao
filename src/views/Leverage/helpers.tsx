@@ -2,15 +2,15 @@ import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { dichotomybasetoken } from 'utils/pancakeService'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, tokenName?: string) => {
-  const { vaultDebtVal, token, quoteTokenVaultDebtVal, quoteToken, pooPerBlock, quoteTokenPoolPerBlock } = farm
-
+  const { vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd } = farm
+  const { token, quoteToken } = TokenInfo
   let vaultDebtValue
   let poolHuskyPerBlock
 
-  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+  if (tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     vaultDebtValue = quoteTokenVaultDebtVal
     poolHuskyPerBlock = quoteTokenPoolPerBlock
   } else {
@@ -18,7 +18,7 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
     poolHuskyPerBlock = pooPerBlock
   }
 
-  const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() ? quoteToken.busdPrice : token.busdPrice;
+  const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() ? quoteTokenPriceUsd : tokenPriceUsd;
   const huskyPrice: any = cakePriceBusd;
 
   const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
@@ -26,10 +26,11 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
 }
 
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
-  const { poolWeight, quoteToken, lpTotalInQuoteToken } = farm
+  const { poolWeight, TokenInfo, lpTotalInQuoteToken, tokenPriceUsd, quoteTokenPriceUsd } = farm
+  const { quoteToken } = TokenInfo
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
 
-  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteToken.busdPrice)
+  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
 
@@ -37,10 +38,10 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, token, quoteToken } = farm
-
-  const tokenPriceInUsd = new BigNumber(token.busdPrice)
-  const quoteTokenPriceInUsd = new BigNumber(quoteToken.busdPrice)
+  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, tokenPriceUsd, quoteTokenPriceUsd } = farm
+  const { token, quoteToken } = TokenInfo
+  const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
+  const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
 
   const tokensLP = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
   const lpTokenRatio = new BigNumber(tokenUserInfoLP).div(new BigNumber(lptotalSupply))
@@ -55,13 +56,13 @@ export const getTvl = (farm: LeverageFarm) => {
 }
 
 export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {
-  const { tokenAmountTotal, quoteTokenAmountTotal } = farm
+  const { tokenAmountTotal, quoteTokenAmountTotal, TokenInfo } = farm
 
   let tokenAmountTotalNum
   let quoteTokenAmountTotalNum
   let tokenInputNum
   let quoteTokenInputNum
-  if (farm.token.symbol?.toLowerCase() === tokenName?.toLowerCase()) {
+  if (TokenInfo?.token?.symbol?.toLowerCase() === tokenName?.toLowerCase()) {
     tokenInputNum = Number(tokenInput);
     quoteTokenInputNum = Number(quoteTokenInput);
     tokenAmountTotalNum = tokenAmountTotal;
@@ -108,19 +109,19 @@ const mathematics2B = 3 / 55;
 const mathematics3B = 94 / 5;
 
 export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => {
-  const { totalToken, vaultDebtVal, token, quoteTokenTotal, quoteTokenVaultDebtVal, quoteToken } = farm
-
+  const { totalToken, vaultDebtVal, TokenInfo, quoteTokenTotal, quoteTokenVaultDebtVal } = farm
+  const { token, quoteToken } = TokenInfo
   let totalTokenValue
   let vaultDebtValue
   let tokenSymbol
-  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+  if (tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     totalTokenValue = quoteTokenTotal
     vaultDebtValue = quoteTokenVaultDebtVal
-    tokenSymbol = quoteToken.symbol.toUpperCase()
+    tokenSymbol = quoteToken?.symbol.toUpperCase()
   } else {
     totalTokenValue = totalToken
     vaultDebtValue = vaultDebtVal
-    tokenSymbol = token.symbol.toUpperCase()
+    tokenSymbol = token?.symbol.toUpperCase()
   }
 
   const utilization = parseInt(totalTokenValue) > 0 ? parseInt(vaultDebtValue) / parseInt(totalTokenValue) : 0;
@@ -153,11 +154,11 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
 
 export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage, tokenName?: string) => {
 
-  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, quoteToken } = farm
-
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo } = farm
+  const { quoteToken } = TokenInfo
   let tokenAmountTotalValue
   let quoteTokenAmountTotalValue
-  if (tokenName?.toUpperCase() === quoteToken.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+  if (tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     tokenAmountTotalValue = quoteTokenAmountTotal
     quoteTokenAmountTotalValue = tokenAmountTotal
   } else {

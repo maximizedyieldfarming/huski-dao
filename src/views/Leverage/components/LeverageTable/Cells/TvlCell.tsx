@@ -32,8 +32,9 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
   const [displayInfo, setDisplayInfo] = useState(false)
   const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const quoteToken = tokenData?.quoteToken
-  const token = tokenData?.token
+  const {tokenPriceUsd, quoteTokenPriceUsd } = tokenData
+  const quoteToken = tokenData?.TokenInfo.quoteToken
+  const token = tokenData?.TokenInfo.token
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
@@ -49,10 +50,11 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
         <Box width={20} height={20} mr="5px">
           <TokenImage token={token} width={20} height={20} />
         </Box>
-        {token?.busdPrice ? (
+        
+        {tokenPriceUsd ? (
           <Text small>
             {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
-            &nbsp;=&nbsp;{parseFloat(token?.busdPrice).toFixed(2)}
+            &nbsp;=&nbsp;{parseFloat(tokenPriceUsd).toFixed(2)}
             &nbsp;USD)
           </Text>
         ) : (
@@ -63,11 +65,11 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
         <Box width={20} height={20} mr="5px">
           <TokenImage token={quoteToken} width={20} height={20} />
         </Box>
-        {quoteToken?.busdPrice ? (
+        {quoteTokenPriceUsd ? (
           <Text small>
             {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
             &nbsp;=&nbsp;
-            {parseFloat(quoteToken?.busdPrice).toFixed(2)}&nbsp;USD)
+            {parseFloat(quoteTokenPriceUsd).toFixed(2)}&nbsp;USD)
           </Text>
         ) : (
           <Skeleton width="80px" height="16px" />

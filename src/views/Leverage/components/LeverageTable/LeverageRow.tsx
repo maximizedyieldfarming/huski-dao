@@ -50,7 +50,7 @@ const LeverageRow = ({ tokenData }) => {
     setChildLeverage(val)
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(tokenData.token.symbol)
+  const [borrowingAsset, setBorrowingAsset] = useState(tokenData?.TokenInfo?.token?.symbol)
   const onBorrowingAssetChange = (asset) => {
     setBorrowingAsset(asset)
   }

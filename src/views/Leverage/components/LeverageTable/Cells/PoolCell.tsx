@@ -22,8 +22,8 @@ const StyledCell = styled(BaseCell)`
 const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const quoteToken = tokenData?.quoteToken
-  const token = tokenData?.token
+  const quoteToken = tokenData?.TokenInfo.quoteToken
+  const token = tokenData?.TokenInfo.token
 
   return (
     <StyledCell role="cell">

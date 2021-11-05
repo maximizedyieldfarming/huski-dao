@@ -8,7 +8,7 @@ import { LeverageFarmConfig } from 'config/constants/types'
 
 export const fetchFarmUserAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const baseTokenAddress = getAddress(farm.token.address)
+    const baseTokenAddress = getAddress(farm.TokenInfo.token.address)
     return { address: baseTokenAddress, name: 'allowance', params: [account, farm.TokenInfo.vaultAddress] }
   })
 
@@ -21,7 +21,7 @@ export const fetchFarmUserAllowances = async (account: string, farmsToFetch: Lev
 
 export const fetchFarmUserTokenAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const tokenAddress = getAddress(farm.quoteToken.address)
+    const tokenAddress = getAddress(farm.TokenInfo.quoteToken.address)
     return { address: tokenAddress, name: 'allowance', params: [account, farm.TokenInfo.vaultAddress] }
   })
 
@@ -35,7 +35,7 @@ export const fetchFarmUserTokenAllowances = async (account: string, farmsToFetch
 
 export const fetchFarmUserQuoteTokenAllowances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const tokenAddress = getAddress(farm.token.address)
+    const tokenAddress = getAddress(farm.TokenInfo.token.address)
     return { address: tokenAddress, name: 'allowance', params: [account, farm.QuoteTokenInfo.vaultAddress] }
   })
 
@@ -67,7 +67,7 @@ export const fetchFarmUserTokenBalancesIB = async (account: string, farmsToFetch
 
 export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const vaultContractAddress = getAddress(farm.token.address)
+    const vaultContractAddress = getAddress(farm.TokenInfo.token.address)
     return {
       address: vaultContractAddress,
       name: 'balanceOf',
@@ -84,7 +84,7 @@ export const fetchFarmUserTokenBalances = async (account: string, farmsToFetch: 
 
 export const fetchFarmUserQuoteTokenBalances = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
   const calls = farmsToFetch.map((farm) => {
-    const vaultContractAddress = getAddress(farm.quoteToken.address)
+    const vaultContractAddress = getAddress(farm.TokenInfo.quoteToken.address)
     return {
       address: vaultContractAddress,
       name: 'balanceOf',
@@ -106,7 +106,7 @@ export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch:
     return {
       address: fairLaunchAddress,
       name: 'userInfo',
-      params: [farm.token.poolId, account],
+      params: [farm.TokenInfo.token.poolId, account],
     }
   })
 
@@ -124,7 +124,7 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Lever
     return {
       address: fairLaunchAddress,
       name: 'pendingAlpaca',
-      params: [farm.token.poolId, account],
+      params: [farm.TokenInfo.token.poolId, account],
     }
   })
 
@@ -142,7 +142,7 @@ export const fetchFarmlpUserEarnings = async (account: string, farmsToFetch: Lev
     return {
       address: fairLaunchAddress,
       name: 'pendingAlpaca',
-      params: [farm.token.debtPoolId, account],
+      params: [farm.TokenInfo.token.debtPoolId, account],
     }
   })
 

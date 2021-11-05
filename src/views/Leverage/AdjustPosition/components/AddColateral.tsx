@@ -23,6 +23,9 @@ const AddColateral = ({
   quoteTokenInput,
   setTokenInput,
   setQuoteTokenInput,
+  symbolName,
+  tokenPrice,
+  quoteTokenPrice
 }) => {
   BigNumber.config({ DECIMAL_PLACES: 18, EXPONENTIAL_AT: 18 })
   const handleQuoteTokenInput = useCallback(
@@ -121,7 +124,7 @@ const AddColateral = ({
               </Flex>
               <Flex>
                 <Text small>
-                  1 {quoteTokenName} = {quoteToken?.busdPrice}BUSD
+                  1 {quoteTokenName} = {quoteTokenPrice} {symbolName}
                 </Text>
               </Flex>
             </Flex>
@@ -167,7 +170,7 @@ const AddColateral = ({
               </Flex>
               <Flex>
                 <Text small>
-                  1 {tokenName} = {token?.busdPrice}BUSD
+                  1 {tokenName} = {tokenPrice} {symbolName}
                 </Text>
               </Flex>
             </Flex>

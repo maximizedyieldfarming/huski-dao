@@ -24,8 +24,8 @@ const StyledCell = styled(BaseCell)`
 `
 
 const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
-  const quoteToken = tokenData?.quoteToken?.symbol
-  const token = tokenData?.token?.symbol
+  const quoteToken = tokenData?.TokenInfo?.quoteToken?.symbol
+  const token = tokenData?.TokenInfo?.token?.symbol
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const options = () => {

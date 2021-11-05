@@ -6,7 +6,6 @@ import Page from 'components/Layout/Page'
 import { useLendTotalSupply } from 'state/lend/hooks'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
-import bone2 from './assets/bone2-1x.png'
 import LendTable from './components/LendTable/LendTable'
 
 const Section = styled(Flex)`
@@ -33,7 +32,7 @@ const Lend: React.FC = () => {
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
-    hash[next.token.poolId] ? '' : (hash[next.token.poolId] = true && cur.push(next))
+    hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
     return cur
   }, [])
 

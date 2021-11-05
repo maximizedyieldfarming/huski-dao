@@ -34,7 +34,7 @@ const NameCell = ({ token }) => {
           <TokenImage token={token?.token} width={40} height={40} mr="8px" />
         </Box>
         <Text bold={!isMobile} small={isMobile} color="secondary">
-          {token.symbol.replace('WBNB', 'BNB')}
+          {token?.symbol.replace('WBNB', 'BNB')}
         </Text>
       </CellContent>
     </StyledCell>

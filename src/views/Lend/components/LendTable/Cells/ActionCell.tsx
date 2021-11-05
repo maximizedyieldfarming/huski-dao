@@ -38,7 +38,7 @@ const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
   // const tokenData = token
-  const name = token?.token?.symbol
+  const name = token?.TokenInfo.token?.symbol
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
 
   return (

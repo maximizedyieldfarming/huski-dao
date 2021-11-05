@@ -16,9 +16,6 @@ import EquityCell from './Cells/EquityCell'
 import DebtRatioCell from './Cells/DebtRatioCell'
 import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
 import SafetyBufferCell from './Cells/SafetyBufferCell'
-import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
-import LiquidationFeeCell from './Cells/LiquidationFeeCell'
-import AssetsReturnedCell from './Cells/AssetsReturnedCell'
 import ProfitsCell from './Cells/ProfitsCell'
 
 const StyledRow = styled.div`
@@ -44,7 +41,7 @@ const ActivePositionsRow = ({ data }) => {
   }
 
   const { positionId, debtValue, lpAmount, positionValueBase, vault } = data
-  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, quoteToken, token, TokenInfo, QuoteTokenInfo, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData
+  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, QuoteTokenInfo, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData
 
   let symbolName;
   let lpSymbolName;
@@ -54,17 +51,17 @@ const ActivePositionsRow = ({ data }) => {
   let liquidationThresholdValue;
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol.replace('wBNB', 'BNB')
+    symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
-    tokenValue = token;
-    quoteTokenValue = quoteToken;
+    tokenValue = TokenInfo?.token;
+    quoteTokenValue = TokenInfo?.quoteToken;
     baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = liquidationThreshold
   } else {
-    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
+    symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
-    tokenValue = quoteToken;
-    quoteTokenValue = token;
+    tokenValue = TokenInfo?.quoteToken;
+    quoteTokenValue = TokenInfo?.token;
     baseAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = quoteTokenLiquidationThreshold
   }

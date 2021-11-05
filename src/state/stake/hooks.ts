@@ -44,18 +44,18 @@ export const useStakes = (): StakeState => {
 }
 
 export const useFarmFromPid = (pid): Stake => {
-  const farm = useSelector((state: State) => state.stake.data.find((f) => f.pid === pid))
-  return farm
+  const stake = useSelector((state: State) => state.stake.data.find((f) => f.pid === pid))
+  return stake
 }
 
 export const useFarmUser = (pid) => {
-  const farm = useFarmFromPid(pid)
+  const stake = useFarmFromPid(pid)
 
   return {
-    allowance: farm.userData ? new BigNumber(farm.userData.allowance) : BIG_ZERO,
-    tokenBalance: farm.userData ? new BigNumber(farm.userData.tokenBalance) : BIG_ZERO,
-    stakedBalance: farm.userData ? new BigNumber(farm.userData.stakedBalance) : BIG_ZERO,
-    earnings: farm.userData ? new BigNumber(farm.userData.earnings) : BIG_ZERO,
+    allowance: stake.userData ? new BigNumber(stake.userData.allowance) : BIG_ZERO,
+    tokenBalance: stake.userData ? new BigNumber(stake.userData.tokenBalance) : BIG_ZERO,
+    stakedBalance: stake.userData ? new BigNumber(stake.userData.stakedBalance) : BIG_ZERO,
+    earnings: stake.userData ? new BigNumber(stake.userData.earnings) : BIG_ZERO,
   }
 }
 

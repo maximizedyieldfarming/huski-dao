@@ -112,7 +112,7 @@ const LendAction = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastError, toastSuccess } = useToast()
   const cakeVaultContract = useCakeVaultContract()
-  const tokenAddress = getAddress(tokenData.token.address)
+  const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const vaultAddress = (tokenData.TokenInfo.vaultAddress)
   const approveContract = useERC20(tokenAddress)
 
@@ -123,7 +123,7 @@ const LendAction = () => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.token.address))
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
