@@ -9,6 +9,7 @@ import { useWeb3React } from '@web3-react/core'
 import { getFullDisplayBalance } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { useTranslation } from 'contexts/Localization'
 import Stake from './components/Stake'
 import Unstake from './components/Unstake'
 
@@ -83,6 +84,7 @@ const StakeAction = () => {
     state: { token: data },
   } = useLocation<LocationParams>()
   const [tokenData, setTokenData] = useState(data)
+  const { t } = useTranslation()
 
   console.log('tokenData', tokenData)
   const { account } = useWeb3React()
@@ -109,7 +111,7 @@ const StakeAction = () => {
   return (
     <StyledPage>
       <Text fontSize="36px" textTransform="capitalize">
-        {action} {tokenName}
+        {t(`${action}`)} {tokenName}
       </Text>
 
       <TabPanel>
@@ -120,7 +122,7 @@ const StakeAction = () => {
             to={(location) => ({ ...location, pathname: `/stake/stake/${tokenName}` })}
             replace
           >
-            <Text>Stake</Text>
+            <Text>{t('Stake')}</Text>
           </HeaderTabs>
           <HeaderTabs
             onClick={handleUnstakeClick}
@@ -128,7 +130,7 @@ const StakeAction = () => {
             to={(location) => ({ ...location, pathname: `/stake/unstake/${tokenName}` })}
             replace
           >
-            <Text>Unstake</Text>
+            <Text>{t('Unstake')}</Text>
           </HeaderTabs>
         </Header>
         <Body>
@@ -152,7 +154,7 @@ const StakeAction = () => {
         </Body>
       </TabPanel>
       <StakedContainer>
-        <Text>Staked</Text>
+        <Text>{t('Staked')}</Text>
         <Text>{userStakedBalance}</Text>
       </StakedContainer>
     </StyledPage>

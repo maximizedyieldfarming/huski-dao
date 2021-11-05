@@ -13,9 +13,8 @@ import { useTranslation } from 'contexts/Localization'
 import { getHuskiAddress } from 'utils/addressHelpers'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import husky2 from './assets/stake_rewards_img.png'
 import StakeTable from './components/StakeTable/StakeTable'
-import { WalletIcon, LockIcon } from './assets'
+import { WalletIcon, LockIcon,FlexingHuski} from './assets'
 
 const StyledButton = styled(Button)`
   padding: 0.75rem;
@@ -143,7 +142,7 @@ const Stake: React.FC = () => {
           </Box>
           <Box position="relative">
             <figure>
-              <img src={husky2} alt="" />
+              <img src={FlexingHuski} alt="" />
             </figure>
           </Box>
         </Grid>
@@ -165,7 +164,7 @@ const Stake: React.FC = () => {
             <Flex flexDirection="column">
               <Flex flexDirection={isSmallScreen ? 'column' : 'row'} mb="1rem">
                 <LockIcon width="24px" height="24px" color="gold" />
-                <Text ml={isSmallScreen ? '0px' : '5px'}>Remaining Locked Amount</Text>
+                <Text ml={isSmallScreen ? '0px' : '5px'}>{t('Remaining Locked Amount')}</Text>
               </Flex>
               <Text color="secondary" bold fontSize="3">
                 {remainingLockedAmount.toPrecision(3)}
@@ -173,7 +172,7 @@ const Stake: React.FC = () => {
             </Flex>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center" padding="1rem">
-            <Text>Unlocked Rewards</Text>
+            <Text>{t('Unstaked Rewards')}</Text>
             <Text color="secondary" bold fontSize="3">
               {unlockedRewards.toPrecision(3)}
             </Text>
@@ -183,7 +182,6 @@ const Stake: React.FC = () => {
               disabled={!account || Number(unlockedRewards) === 0}
               endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
             >
-              {' '}
               {isPending ? t('Claiming') : t('Claim')}
             </StyledButton>
           </Flex>

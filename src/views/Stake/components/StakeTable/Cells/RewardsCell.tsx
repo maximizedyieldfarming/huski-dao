@@ -44,7 +44,7 @@ const RewardsCell = ({ token }) => {
 
   const handleConfirmClick = async () => {
     setIsPending(true)
-    toastInfo('Pending request...', 'Please Wait!')
+    toastInfo(t('Pending request...'), t('Please Wait!'))
     try {
       const tx = await callWithGasPrice(claimContract, 'harvest', [token.pid], { gasLimit: 300000 })
       const receipt = await tx.wait()

@@ -29,6 +29,7 @@ const StyledCell = styled(BaseCell)`
 const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
@@ -39,7 +40,7 @@ const ActionCell = ({ token }) => {
           disabled={!account || !token.totalSupply}
           onClick={(e) => (!account || !token.totalSupply) && e.preventDefault()}
         >
-          Stake
+          {t('Stake')}
         </Button>
         <Button
           as={Link}
@@ -47,7 +48,7 @@ const ActionCell = ({ token }) => {
           disabled={!account || !token.totalSupply}
           onClick={(e) => (!account || !token.totalSupply) && e.preventDefault()}
         >
-          Unstake
+          {t('Unstake')}
         </Button>
       </CellContent>
     </StyledCell>

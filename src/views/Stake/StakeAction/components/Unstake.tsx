@@ -67,7 +67,7 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
         toastSuccess(t('Successful!'), t('Your unstake was successfull'))
       }
     } catch (error) {
-      toastError('Unsuccessfulll', 'Something went wrong your unstake request. Please try again...')
+      toastError(t('Unsuccessful'), t('Something went wrong your unstake request. Please try again...'))
     } finally {
       setIsPending(false)
       setAmount(0)
@@ -83,12 +83,12 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
     <>
       <Flex justifyContent="space-between">
         <Box>
-          <Text fontWeight="bold">Amount</Text>
+          <Text fontWeight="bold">{t('Amount')}</Text>
           <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
         </Box>
         <Box>
           <Text fontWeight="bold">
-            Staked Balance: {stakedBalance} {name}
+            {t('Staked Balance:')} {stakedBalance} {name}
           </Text>
           <MaxContainer>
             <Box>
@@ -96,7 +96,7 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
             </Box>
             <Box>
               <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                MAX
+                {t('MAX')}
               </Button>
             </Box>
           </MaxContainer>

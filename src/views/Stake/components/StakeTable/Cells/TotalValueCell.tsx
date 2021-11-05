@@ -33,7 +33,7 @@ const TotalValueCell = ({ supply }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          {t('Total Value Staked')}
+          {t('Total Supply Value')}
         </Text>
         {supply ? <Text>{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>

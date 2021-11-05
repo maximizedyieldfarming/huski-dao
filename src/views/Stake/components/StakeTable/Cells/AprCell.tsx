@@ -24,6 +24,7 @@ const StyledCell = styled(BaseCell)`
 
 const AprCell = ({ getApyData }) => {
   const { isMobile } = useMatchBreakpoints()
+  const { t } = useTranslation()
 
   const { stakeApr, apy } = getApyData
 
@@ -34,11 +35,15 @@ const AprCell = ({ getApyData }) => {
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Total&nbsp;APR</Text>
+        <Text small mr="10px">
+          {t('Total APR')}
+        </Text>
         <Text>{apyCell(stakeApr)}</Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>Total&nbsp;APY</Text>
+        <Text small mr="10px">
+          {t('Total APY')}
+        </Text>
         <Text>{apyCell(apy)}</Text>
       </Flex>
     </>,
@@ -49,7 +54,7 @@ const AprCell = ({ getApyData }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          Apy
+          {t('APY')}
         </Text>
         {apy ? (
           <Flex alignItems="center">

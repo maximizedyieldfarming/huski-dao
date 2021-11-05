@@ -59,7 +59,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
-    toastInfo('Approving...', 'Please Wait!')
+    toastInfo(t('Approving...'),t('Please Wait!'))
     setIsApproving(true)
     try {
       const tx = await claimContract.approve(claimContract, ethers.constants.MaxUint256)
@@ -84,7 +84,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       gasLimit: 380000,
     }
 
-    toastInfo('Pending request...', 'Please Wait!')
+    toastInfo(t('Pending request...'), t('Please Wait!'))
     setIsPending(true)
     try {
       const tx = await callWithGasPrice(
@@ -98,7 +98,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
         toastSuccess(t('Successful!'), t('Your stake was successfull'))
       }
     } catch (error) {
-      toastError('Unsuccessfulll', 'Something went wrong your stake request. Please try again...')
+      toastError(t('Unsuccessfulll'), t('Something went wrong your stake request. Please try again...'))
     } finally {
       setIsPending(false)
       setAmount(0)
@@ -116,12 +116,12 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
     <>
       <Flex justifyContent="space-between">
         <Box>
-          <Text fontWeight="bold">Amount</Text>
+          <Text fontWeight="bold">{t('Amount')}</Text>
           <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
         </Box>
         <Box>
           <Text fontWeight="bold">
-            Available Balance: {balance} {name}
+            {t('Available Balance:')} {balance} {name}
           </Text>
           <MaxContainer>
             <Box>
@@ -129,7 +129,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
             </Box>
             <Box>
               <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-                MAX
+                {t('MAX')}
               </Button>
             </Box>
           </MaxContainer>
