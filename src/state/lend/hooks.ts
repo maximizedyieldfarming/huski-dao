@@ -1,15 +1,8 @@
-import { useEffect, useMemo, useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useAppDispatch } from 'state'
-import { useWeb3React } from '@web3-react/core'
-import BigNumber from 'bignumber.js'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { getBalanceAmount } from 'utils/formatBalance'
+import { useEffect,useState } from 'react'
 import { getSumLendData } from 'utils/vaultService'
 import useRefresh from 'hooks/useRefresh'
 import mainnet from '../../mainnet.json'
-import { sumTokenData, formatBigNumber } from '../utils'
-
+import { sumTokenData } from '../utils'
 
 export const useLendTotalSupply = () => {
   const [lendTotalSupply, setLendTotalSupply] = useState('')
