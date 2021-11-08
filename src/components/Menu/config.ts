@@ -11,7 +11,17 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
   {
     label: t('Farms'),
     icon: 'NftIcon',
-    href: '/leverage',
+    initialOpenState: true,
+    items: [
+      {
+        label: 'Single Assets',
+        href: '/farms/singleAssets'
+      },
+      {
+        label: 'Advanced Farm',
+        href: '/leverage'
+      },]
+
   },
   {
     label: t('Stake'),

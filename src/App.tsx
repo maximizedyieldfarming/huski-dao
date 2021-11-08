@@ -27,9 +27,11 @@ const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
 const LockAction = lazy(() => import('./views/Lock/LockAction'))
 const Leverage = lazy(() => import('./views/Leverage'))
+const SingleAssetsFarms = lazy(() => import('./views/Leverage/SingleAssetsFarms'))
 const ClosePosition = lazy(() => import('views/Leverage/ClosePosition/ClosePosition'))
 const AdjustPosition = lazy(() => import('views/Leverage/AdjustPosition/AdjustPosition'))
 const Farm = lazy(() => import('views/Leverage/Farm/Farm'))
+const FarmSA = lazy(() => import('./views/Leverage/Farm/FarmSA'))
 const Claim = lazy(() => import('views/Leverage/Claim'))
 
 // This config is required for number formatting
@@ -73,9 +75,13 @@ const App: React.FC = () => {
             <Route exact path="/leverage">
               <Leverage />
             </Route>
+            <Route exact path="/farms/singleAssets">
+              <SingleAssetsFarms />
+            </Route>
             <Route exact path="/leverage/closeposition/:token" component={ClosePosition} />
             <Route exact path="/leverage/adjustPosition/:token" component={AdjustPosition} />
             <Route exact path="/leverage/farm/:token" component={Farm} />
+            <Route exact path="/farms/singleAssets/farm/:token" component={FarmSA} />
             <Route exact path="/leverage/claim" component={Claim} />
             <Route component={NotFound} />
           </Switch>
