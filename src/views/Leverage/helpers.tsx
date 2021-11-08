@@ -34,6 +34,8 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
 
+  // console.log({poolWeight, TokenInfo, lpTotalInQuoteToken, quoteTokenPriceUsd , poolWeightBigNumber,poolLiquidityUsd, yearlyCakeRewardAllocation,   yieldFarmingApr  })
+
   return yieldFarmingApr.toNumber();
 }
 
@@ -80,7 +82,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
 }
 
 export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {
-  const {TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
+  const { TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
 
   let tokenAmountTotalNum
   let quoteTokenAmountTotalNum
@@ -234,4 +236,24 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   }
 
   return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage };
+}
+
+
+export const getPriceImpact = (farm: LeverageFarm, tokenInput, tokenName?: string) => {
+  const { tokenAmountTotal, quoteTokenAmountTotal, TokenInfo } = farm
+
+  let tokenAmountTotalNum
+  let tokenInputNum
+  if (TokenInfo?.token?.symbol?.toLowerCase() === tokenName?.toLowerCase() || TokenInfo?.token?.symbol?.replace('wBNB', 'BNB').toLowerCase() === tokenName?.toLowerCase()) {
+    tokenInputNum = Number(tokenInput);
+    tokenAmountTotalNum = tokenAmountTotal;
+  } else {
+    tokenInputNum = Number(tokenInput);
+    tokenAmountTotalNum = quoteTokenAmountTotal;
+  }
+
+  const baseTokenEnd = new BigNumber(tokenInputNum).plus(new BigNumber(tokenAmountTotalNum))
+  const priceImpact = new BigNumber(tokenInputNum).div(new BigNumber(baseTokenEnd))
+
+  return priceImpact.toNumber()
 }
