@@ -199,7 +199,7 @@ const AdjustPosition = () => {
     Number(currentPositionLeverage.toPrecision(3)),
   )
 
-  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue,)
+  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName )
   const adjustData = farmingData ? farmingData[1] : []
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
@@ -213,15 +213,17 @@ const AdjustPosition = () => {
     priceImpact = 0
   }
 
-  let baseTokenInPosition
-  let farmingTokenInPosition
-  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    baseTokenInPosition = adjustData?.[8]
-    farmingTokenInPosition = adjustData?.[9]
-  } else {
-    baseTokenInPosition = adjustData?.[9]
-    farmingTokenInPosition = adjustData?.[8]
-  }
+  // let baseTokenInPosition
+  // let farmingTokenInPosition
+  // if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+  const  baseTokenInPosition = adjustData?.[8]
+  const  farmingTokenInPosition = adjustData?.[9]
+  // } else {
+  //   // baseTokenInPosition = adjustData?.[9]
+  //   // farmingTokenInPosition = adjustData?.[8]
+  //   baseTokenInPosition = adjustData?.[8]
+  //   farmingTokenInPosition = adjustData?.[9]
+  // }
 
 
   // for apr
