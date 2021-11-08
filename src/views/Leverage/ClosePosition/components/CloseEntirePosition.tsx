@@ -34,7 +34,7 @@ const BusdPriceContainer = styled(Flex)`
 `
 const CloseEntirePosition = ({ data }) => {
   const { positionId, debtValue, lpAmount, vault } = data
-  const { quoteToken, token, TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
 
   const { t } = useTranslation()
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -60,13 +60,13 @@ const CloseEntirePosition = ({ data }) => {
   let contract;
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol.replace('wBNB', 'BNB')
-    tokenValue = token;
-    quoteTokenValue = quoteToken;
+    symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+    tokenValue = TokenInfo?.token;
+    quoteTokenValue = TokenInfo?.quoteToken;
     tokenPrice = tokenPriceUsd;
     quoteTokenPrice = quoteTokenPriceUsd;
-    tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
-    quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
+    tokenValueSymbol = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+    quoteTokenValueSymbol = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(tokenAmountTotal)
@@ -75,13 +75,13 @@ const CloseEntirePosition = ({ data }) => {
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyWithdrawMinimizeTrading
     contract = vaultContract
   } else {
-    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
-    tokenValue = quoteToken;
-    quoteTokenValue = token;
+    symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    tokenValue = TokenInfo?.quoteToken;
+    quoteTokenValue = TokenInfo?.token;
     tokenPrice = quoteTokenPriceUsd;
     quoteTokenPrice = tokenPriceUsd;
-    tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
-    quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
+    tokenValueSymbol = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    quoteTokenValueSymbol = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(quoteTokenAmountTotal)
