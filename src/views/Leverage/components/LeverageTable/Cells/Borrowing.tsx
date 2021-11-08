@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, Grid } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
+import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { TokenImage } from 'components/TokenImage'
 import Select from 'components/Select/Select'
 import BaseCell, { CellContent } from './BaseCell'
 

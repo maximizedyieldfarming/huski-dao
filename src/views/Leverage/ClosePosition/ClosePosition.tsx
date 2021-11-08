@@ -61,22 +61,22 @@ const ClosePosition = (props) => {
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
   const { positionId, vault } = data
-  const { quoteToken, token, TokenInfo, QuoteTokenInfo } = data.farmData
+  const { TokenInfo, QuoteTokenInfo } = data?.farmData
 
   let symbolName;
   let lpSymbolName;
   let tokenValue;
   let quoteTokenValue;
-  if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = token?.symbol.replace('wBNB', 'BNB')
+  if (vault.toUpperCase() === TokenInfo?.vaultAddress.toUpperCase()) {
+    symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
-    tokenValue = token;
-    quoteTokenValue = quoteToken;
+    tokenValue = TokenInfo?.token;
+    quoteTokenValue = TokenInfo?.quoteToken;
   } else {
-    symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
+    symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
-    tokenValue = quoteToken;
-    quoteTokenValue = token;
+    tokenValue = TokenInfo?.quoteToken;
+    quoteTokenValue = TokenInfo?.token;
   }
 
   const [isCloseEntire, setCloseEntire] = useState(true)
