@@ -1,11 +1,9 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import { getAddress } from 'utils/addressHelpers'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { useHuskyPrice,  useCakePrice } from 'state/leverage/hooks'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
@@ -33,7 +31,6 @@ const LeverageRow = ({ tokenData }) => {
   const [childLeverage, setChildLeverage] = useState(leverage)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
@@ -76,6 +73,19 @@ const LeverageRow = ({ tokenData }) => {
     return apy * 100
   }
 
+  // const apyarray = [];
+  // const newLeverage = leverage
+  // for (let i = 1; i <= leverage; i++) {
+  //   // if (getApy(i) >= getApy(i + 1)) {
+  //     // newLeverage = i;
+  //     apyarray.push(getApy(i))
+  //   // }
+  //   // break;
+  // }
+
+
+  // console.log({'newLeverage--': apyarray, 'lpSymbol': lpSymbol, childLeverage })
+  
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
