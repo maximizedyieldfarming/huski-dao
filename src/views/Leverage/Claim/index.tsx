@@ -46,12 +46,12 @@ const Rewards: React.FC<RewardsProps> = ({ name, debtPoolId, earnings }) => {
   const { callWithGasPrice } = useCallWithGasPrice()
 
   const handleConfirm = async () => {
-    
+
     try {
       const tx = await callWithGasPrice(claimContract, 'harvest', [debtPoolId], { gasLimit: 300000 })
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
+        toastSuccess(t('Bounty collected!'), t('bounty has been sent to your wallet.'))
       }
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
@@ -82,20 +82,13 @@ const Claim: React.FC = () => {
   const {
     state: { farmsData },
   } = useLocation<LocationState>()
-  // console.log({ positionFarmsData, farmsData })
 
-  /* const cells = farmsData.filter(
-    (pool, index, array) => array.findIndex((pools) => pools.token.symbol === pool.token.symbol) === index,
-  ) */
-  // const positionsWithEarnings = farmsData.filter((pool) => Number(pool?.userData?.farmEarnings) > 0)
   const hash = {}
   const positionsWithEarnings = farmsData.reduce((cur, next) => {
     hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
     return cur
   }, [])
 
-
-  // console.log({ positionsWithEarnings })
 
   const rewards = []
   positionsWithEarnings.forEach((pool, index) => {
@@ -105,30 +98,11 @@ const Claim: React.FC = () => {
         Number(positionsWithEarnings[index + 1]?.userData?.farmEarnings)
       rewards.push({
         name: pool?.TokenInfo?.token?.symbol,
-        earnings: sum,
+        earnings: sum
       })
     }
   })
 
-  console.log({ rewards })
-
-  // start farm page : claim
-  // const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  // const claimContract = useClaimFairLaunch()
-  // const { callWithGasPrice } = useCallWithGasPrice()
-  // const handleConfirm = async () => {
-  //   console.info('---')
-  //   // try {
-  //   //   const tx = await callWithGasPrice(claimContract, 'harvest', [这里要用debtPoolId], { gasLimit: 300000 })
-  //   //   const receipt = await tx.wait()
-  //   //   if (receipt.status) {
-  //   //     toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
-  //   //   }
-  //   // } catch (error) {
-  //   //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-  //   // }
-  // }
-  // end
 
   return (
     <Page>
@@ -141,7 +115,6 @@ const Claim: React.FC = () => {
             name={pool?.TokenInfo?.token?.symbol}
             debtPoolId={pool?.TokenInfo?.token?.debtPoolId}
             earnings={Number(pool?.userData?.farmEarnings)}
-            // key={pool?.pid}
             key={pool?.TokenInfo?.token?.debtPoolId}
           />
         ))}
