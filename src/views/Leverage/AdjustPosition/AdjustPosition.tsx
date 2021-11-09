@@ -65,6 +65,7 @@ const AdjustPosition = () => {
   const { t } = useTranslation()
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const [tokenInput, setTokenInput] = useState(0)
+  const [borrowingMore, setBorrowingMore] = useState<number>()
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
   const { quoteToken, token } = TokenInfo
@@ -447,6 +448,13 @@ const AdjustPosition = () => {
     setTargetPositionLeverage(value)
   }
 
+  const handleBorrowMoreChange = (e) => {
+    const { value } = e.target
+    
+    // const finalValue = value > balance ? balance : value
+    // setBorrowingMore(finalValue)
+  }
+
   const {
     targetRef: priceImpactTargetRef,
     tooltip: priceImpactTooltip,
@@ -804,7 +812,8 @@ const AdjustPosition = () => {
                   <Text>You&apos;re Borrowing More</Text>
                   <NumberInput
                     placeholder="0.00"
-                    value={assetsBorrowed.toFixed(3)}
+                    onChange={handleBorrowMoreChange}
+                    value={assetsBorrowed?.toPrecision(3)}
                     style={{ width: '10%' }}
                   />
                 </Flex>
