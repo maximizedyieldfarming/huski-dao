@@ -3,6 +3,25 @@ import { StakeConfig } from './types'
 
 const stakeConfig: StakeConfig[] = [
   {
+    name: "ALPACA",
+    symbol: "ibALPACA",
+    vaultAddress: {
+      97: '',
+      56: "0xf1bE8ecC990cBcb90e166b71E368299f0116d421",
+    },
+    debtVaultAddress: {
+      97: '',
+      56: "0x11362eA137A799298306123EEa014b7809A9DB40",
+    },
+    pid: 11,
+    debtPid: 10,
+    token: tokens.alpaca,
+    fairLaunchAddress: {
+      97: '',
+      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+    }
+  },
+  {
     name: 'BNB',
     symbol: "ibWBNB",
     vaultAddress: {
@@ -35,44 +54,6 @@ const stakeConfig: StakeConfig[] = [
     pid: 3,
     debtPid: 7,
     token: tokens.busd,
-    fairLaunchAddress: {
-      97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
-    }
-  },
-  {
-    name: "ETH",
-    symbol: "ibETH",
-    vaultAddress: {
-      97: '',
-      56: "0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE",
-    },
-    debtVaultAddress: {
-      97: '',
-      56: "0x92110af24d280E412b3a89691f6B0B9E09258fe6",
-    },
-    pid: 9,
-    debtPid: 8,
-    token: tokens.eth,
-    fairLaunchAddress: {
-      97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
-    }
-  },
-  {
-    name: "ALPACA",
-    symbol: "ibALPACA",
-    vaultAddress: {
-      97: '',
-      56: "0xf1bE8ecC990cBcb90e166b71E368299f0116d421",
-    },
-    debtVaultAddress: {
-      97: '',
-      56: "0x11362eA137A799298306123EEa014b7809A9DB40",
-    },
-    pid: 11,
-    debtPid: 10,
-    token: tokens.alpaca,
     fairLaunchAddress: {
       97: '',
       56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
@@ -115,7 +96,27 @@ const stakeConfig: StakeConfig[] = [
       97: '',
       56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
     }
-  }
+  },
+  {
+    name: "ETH",
+    symbol: "ibETH",
+    vaultAddress: {
+      97: '',
+      56: "0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE",
+    },
+    debtVaultAddress: {
+      97: '',
+      56: "0x92110af24d280E412b3a89691f6B0B9E09258fe6",
+    },
+    pid: 9,
+    debtPid: 8,
+    token: tokens.eth,
+    fairLaunchAddress: {
+      97: '',
+      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+    }
+  },
+
 ]
 
 export default stakeConfig

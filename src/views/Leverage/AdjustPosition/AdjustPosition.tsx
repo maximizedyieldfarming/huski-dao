@@ -199,7 +199,7 @@ const AdjustPosition = () => {
     Number(currentPositionLeverage.toPrecision(3)),
   )
 
-  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName )
+  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
@@ -216,8 +216,8 @@ const AdjustPosition = () => {
   // let baseTokenInPosition
   // let farmingTokenInPosition
   // if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-  const  baseTokenInPosition = adjustData?.[8]
-  const  farmingTokenInPosition = adjustData?.[9]
+  const baseTokenInPosition = adjustData?.[8]
+  const farmingTokenInPosition = adjustData?.[9]
   // } else {
   //   // baseTokenInPosition = adjustData?.[9]
   //   // farmingTokenInPosition = adjustData?.[8]
@@ -802,7 +802,11 @@ const AdjustPosition = () => {
               {Number(targetPositionLeverage) > Number(currentPositionLeverage.toPrecision(3)) && (
                 <Flex justifyContent="space-between" alignItems="center">
                   <Text>You&apos;re Borrowing More</Text>
-                  <NumberInput placeholder="0.00" style={{ width: '10%' }} />
+                  <NumberInput
+                    placeholder="0.00"
+                    value={assetsBorrowed.toFixed(3)}
+                    style={{ width: '10%' }}
+                  />
                 </Flex>
               )}
               {Number(targetPositionLeverage) < Number(currentPositionLeverage.toPrecision(3)) && (

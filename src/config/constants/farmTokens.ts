@@ -53,7 +53,7 @@ const farmTokens: Token[] = [
     coingeckoId: 'tether',
   },
   {
-    symbol: 'ALPACA11111',
+    symbol: 'ALPACA',
     address: {
       56: '0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F',
       97: '',
@@ -72,6 +72,40 @@ const farmTokens: Token[] = [
     projectLink: 'https://www.paxos.com/busd/',
     coingeckoId: 'binance-usd',
   },
+  {
+    symbol: 'DOT',
+    address: {
+      56: '0x7083609fCE4d1d8Dc0C979AAb8c869Ea2C873402',
+      97: '0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5',
+    },
+    decimals: 18,
+    projectLink: 'https://polkadot.network/',
+    coingeckoId: 'polkadot',
+  },
+  {
+    symbol: 'SUSHI',
+    address: {
+      56: '0x947950BcC74888a40Ffa2593C5798F11Fc9124C4',
+      97: '',
+    },
+    decimals: 18,
+    projectLink: 'https://sushi.com/',
+    coingeckoId: 'sushi',
+  },
+  {
+    symbol: 'USDC',
+    address: {
+      56: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
+      97: '',
+    },
+    decimals: 18,
+    projectLink: 'https://www.centre.io/usdc',
+    coingeckoId: 'usd-coin',
+  },
+
+
+
+
 ]
 
 export default farmTokens

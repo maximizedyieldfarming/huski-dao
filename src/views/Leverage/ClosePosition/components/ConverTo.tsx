@@ -9,6 +9,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
+import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
   &:not(:last-child) {
@@ -91,9 +92,11 @@ const ConverTo = ({ data }) => {
   }
 
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
-  const tradingFees = Number(tradeFee) * Number(leverage) * 365
   const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
+
+  const priceImpact = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
+  const tradingFees = Number(farmTokenAmount) * 0.0025
 
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -215,7 +218,7 @@ const ConverTo = ({ data }) => {
                   <TokenImage token={quoteTokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{symbolName}
+                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{quoteTokenValueSymbol}
                 </Text>
               </Flex>
               <Flex alignItems="center">
@@ -223,7 +226,7 @@ const ConverTo = ({ data }) => {
                   <TokenImage token={tokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{symbolName}
+                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{quoteTokenValueSymbol}
                 </Text>
               </Flex>
             </BusdPriceContainer>
@@ -252,7 +255,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {data ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          <Text>{priceImpact.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -262,7 +265,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {tradingFees ? <Text>{tradingFees.toPrecision(3)}</Text> : <Skeleton height="16px" width="80px" />}
+          <Text>{tradingFees.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>

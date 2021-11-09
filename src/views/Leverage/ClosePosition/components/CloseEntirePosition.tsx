@@ -9,6 +9,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
+import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
   &:not(:last-child) {
@@ -91,8 +92,7 @@ const CloseEntirePosition = ({ data }) => {
     contract = quoteTokenVaultContract
   }
 
-  const tradingFees = Number(tradeFee) * Number(leverage) * 365
-  const priceImpact = Number(tradeFee) * Number(leverage) * 365
+
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
 
   let amountToTrade = 0;
@@ -115,6 +115,10 @@ const CloseEntirePosition = ({ data }) => {
   } else {
     tokenReceive = 0;
   }
+
+
+  const priceImpact = getPriceImpact(data.farmData, amountToTrade, symbolName)
+  const tradingFees = Number(amountToTrade) * 0.0025
 
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -239,7 +243,7 @@ const CloseEntirePosition = ({ data }) => {
                   <TokenImage token={quoteTokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{symbolName}
+                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{quoteTokenValueSymbol}
                 </Text>
               </Flex>
               <Flex alignItems="center">
@@ -247,7 +251,7 @@ const CloseEntirePosition = ({ data }) => {
                   <TokenImage token={tokenValue} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{symbolName}
+                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{quoteTokenValueSymbol}
                 </Text>
               </Flex>
             </BusdPriceContainer>
@@ -278,7 +282,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {priceImpact ? <Text>1234</Text> : <Skeleton height="16px" width="80px" />}
+          {priceImpact ? <Text>{priceImpact.toPrecision(3)}%</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -288,7 +292,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {tradingFees ? <Text>{tradingFees.toPrecision(3)}</Text> : <Skeleton height="16px" width="80px" />}
+          {tradingFees ? <Text>{tradingFees.toPrecision(3)}%</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>

@@ -7,7 +7,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
 
     if (maxnum < 0) {
         console.info('添加的资金不足');
-        return [0, [0,0,0,0,0,0,0,0,0,0]]
+        return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
     }
 
     let minnum = 0;
@@ -25,7 +25,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
         return [minnum, data]
     }
     if (maxexc * minexc > 0)
-        return [0, [0,0,0,0,0,0,0,0,0,0]]
+        return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     while (true) {
         const midnum = (maxnum + minnum) / 2
@@ -47,7 +47,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
             maxexc = midexc
         }
         else {
-        return [0, [0,0,0,0,0,0,0,0,0,0]]
+            return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         }
 
     }
@@ -62,20 +62,20 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
     const price = farmingtokenEnd / basetokenEnd
     const priceBegin = farmingtokenBegin / basetokenBegin
     const priceimpact = exchangeValue * (1 - tradefee) / basetokenEnd
-    const tradingfees = exchangeValue * tradefee / (basetokenBalance + farmingtokenBalance / priceBegin)
+    let tradingfees
 
-    const basetokenLpend = basetokenLp * basetokenEnd / basetokenBegin
-    const farmingtokenLpend = farmingtokenLp * farmingtokenEnd / farmingtokenBegin
-    // 原来的
-    // const priceimpactandtradingfees =
-    //     (exchangeValue * tradefee + exchangeValue * (1 - tradefee) * exchangeValue * (1 - tradefee) / basetokenEnd) /
-    //     (basetokenBalance + farmingtokenBalance / priceBegin);
-    // const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance) * (1 - priceimpactandtradingfees / 100) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
+    if (basetokenBalance + farmingtokenBalance / priceBegin > 0) {
+        tradingfees = exchangeValue * tradefee / (basetokenBalance + farmingtokenBalance / priceBegin)
+    } else {
+        tradingfees = 0
+    }
 
-    const paramsNum = 4 * (farmingtokenNum + farmingtokenBalance) * (1 - 1 / leverage) ** 2;
-    const paramsA = priceBegin;
-    const paramsB = -paramsNum
-    const paramsC = -paramsNum * (basetokenBalance - exchangeValue)
+    const params1 = (leverage - 1) * 2 * basetokenLp / leverage - basetokenLpBorrowed
+    const params2 = 4 * (farmingtokenNum + farmingtokenBalance) / priceBegin * (1 - 1 / leverage) ** 2
+    const paramsA = 1
+    const paramsB = -(2 * params1 + params2)
+    const paramsC = params1 ** 2 - params2 * (basetokenBalance - exchangeValue)
+
     let paramsB24AC = paramsB * paramsB - 4 * paramsA * paramsC
 
     if (paramsB24AC < 0)
@@ -83,10 +83,10 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
 
     const assetsborrowed = (-paramsB + paramsB24AC ** 0.5) / (2 * paramsA)
 
-    // const assetsborrowed = ((farmingtokenBalance / priceBegin + basetokenBalance) + basetokenLp + farmingtokenLp / priceBegin - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed;// farmtoken basetoken 一样的
+    const basetokenLpend = basetokenLp * basetokenEnd / basetokenBegin
+    const farmingtokenLpend = farmingtokenLp * farmingtokenEnd / farmingtokenBegin
 
     const exc = assetsborrowed + basetokenBalance - exchangeValue - (farmingtokenBalance + farmingtokenNum) / price
-
     const basetokeninPosition = basetokenBalance + assetsborrowed - exchangeValue + basetokenLpend;
     const farmingtokeninPosition = farmingtokenNum + farmingtokenBalance + farmingtokenLpend;
 
