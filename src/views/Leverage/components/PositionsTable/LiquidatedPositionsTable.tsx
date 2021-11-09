@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Box } from 'husky-uikit'
 import { useTranslation } from 'contexts/Localization'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
 import LiquidatedPositionsHeaderRow from './LiquidatedPositionsHeaderRow'
@@ -21,14 +21,6 @@ const StyledTable = styled.div`
   }
 `
 
-const StyledTableBorder = styled.div`
-  overflow: hidden;
-  border-radius: ${({ theme }) => theme.radii.card};
-  background-color: ${({ theme }) => theme.colors.cardBorder};
-  padding: 1px 1px 3px 1px;
-  background-size: 400% 400%;
-`
-
 const LiquidatedPositionsTable = ({ data }) => {
   console.log('liquidated pos', data)
   const tableWrapperEl = useRef<HTMLDivElement>(null)
@@ -43,11 +35,11 @@ const LiquidatedPositionsTable = ({ data }) => {
 
   return (
     <StyledTable role="table" ref={tableWrapperEl}>
-      {!(isMobile || isTablet) && <LiquidatedPositionsHeaderRow />}
+      {!(isMobile || isTablet) && data && <LiquidatedPositionsHeaderRow />}
       {data ? (
         <LiquidatedPositionsRow data={data} />
       ) : (
-        <Box padding="100px 0">
+        <Box padding="100px">
           <Text textAlign="center">{t('No Liquidated Positions')}</Text>
         </Box>
       )}

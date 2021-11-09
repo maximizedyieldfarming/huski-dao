@@ -20,7 +20,7 @@ const NameCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 150px;
+    flex: 1 0 150px;
     padding-left: 32px;
   }
   ${CellContent} {

@@ -14,17 +14,17 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  > div {
-    gap: 5px;
+  ${CellContent} {
+    align-items: unset;
   }
-`
-const StyledButton = styled(Button)`
-  padding: 0.75rem;
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  box-shadow: none;
-  word-break: initial;
+  a {
+    padding: 0.75rem;
+    font-size: 14px;
+    font-weight: 400;
+    height: auto;
+    box-shadow: none;
+    word-break: initial;
+  }
 `
 
 const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {

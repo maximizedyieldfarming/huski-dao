@@ -15,14 +15,6 @@ const StyledCell = styled(BaseCell)`
   ${Text} {
     white-space: nowrap;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 
 const PoolCell = ({ pool, quoteToken, token }) => {
@@ -37,16 +29,16 @@ const PoolCell = ({ pool, quoteToken, token }) => {
             {t('Pool')}
           </Text>
         )}
-        <Grid alignItems="center" gridTemplateColumns="50px 1fr">
+        <Grid alignItems="center" gridTemplateRows="1fr 1fr">
           <TokenPairImage
             variant="inverted"
             primaryToken={quoteToken}
             secondaryToken={token}
             width={40}
             height={40}
-            mr="8px"
+            mx="auto"
           />
-          <Text bold={!isMobile} small={isMobile}>
+          <Text bold={!isMobile} small={isMobile} mx="auto">
             {pool}
           </Text>
         </Grid>

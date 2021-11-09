@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useHuskyPrice,  useCakePrice } from 'state/leverage/hooks'
+import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
@@ -83,18 +83,12 @@ const LeverageRow = ({ tokenData }) => {
   //   // break;
   // }
 
-
   // console.log({'newLeverage--': apyarray, 'lpSymbol': lpSymbol, childLeverage })
-  
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell
-          pool={lpSymbol.replace(' LP', '')}
-          tokenData={tokenData}
-          tvl={totalTvl.toNumber()}
-          lpTokens={tokensLP}
-        />
+        <PoolCell pool={lpSymbol.replace(' LP', '')} tokenData={tokenData} />
         <ApyCell
           apyAtOne={getDisplayApr(getApy(1))}
           apy={getDisplayApr(getApy(childLeverage))}

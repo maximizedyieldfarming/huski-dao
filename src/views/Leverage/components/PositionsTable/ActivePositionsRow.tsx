@@ -34,34 +34,37 @@ const ActivePositionsRow = ({ data }) => {
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
-  const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-
-  const toggleExpanded = () => {
-    setExpanded((prev) => !prev)
-  }
 
   const { positionId, debtValue, lpAmount, positionValueBase, vault } = data
-  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, QuoteTokenInfo, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData
+  const {
+    lptotalSupply,
+    tokenAmountTotal,
+    quoteTokenAmountTotal,
+    TokenInfo,
+    QuoteTokenInfo,
+    liquidationThreshold,
+    quoteTokenLiquidationThreshold,
+  } = data.farmData
 
-  let symbolName;
-  let lpSymbolName;
-  let tokenValue;
-  let quoteTokenValue;
-  let baseAmount;
-  let liquidationThresholdValue;
+  let symbolName
+  let lpSymbolName
+  let tokenValue
+  let quoteTokenValue
+  let baseAmount
+  let liquidationThresholdValue
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
-    tokenValue = TokenInfo?.token;
-    quoteTokenValue = TokenInfo?.quoteToken;
+    tokenValue = TokenInfo?.token
+    quoteTokenValue = TokenInfo?.quoteToken
     baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = liquidationThreshold
   } else {
     symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
-    tokenValue = TokenInfo?.quoteToken;
-    quoteTokenValue = TokenInfo?.token;
+    tokenValue = TokenInfo?.quoteToken
+    quoteTokenValue = TokenInfo?.token
     baseAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = quoteTokenLiquidationThreshold
   }
@@ -70,7 +73,9 @@ const ActivePositionsRow = ({ data }) => {
   const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const leverage = new BigNumber(baseAmount).times(2).div((new BigNumber(baseAmount).times(2)).minus(new BigNumber(debtValueNumber)))
+  const leverage = new BigNumber(baseAmount)
+    .times(2)
+    .div(new BigNumber(baseAmount).times(2).minus(new BigNumber(debtValueNumber)))
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
@@ -93,11 +98,20 @@ const ActivePositionsRow = ({ data }) => {
 
   return (
     <>
-      <StyledRow role="row" onClick={toggleExpanded}>
+      <StyledRow role="row">
         <NameCell name={symbolName} positionId={positionId} />
-        <PoolCell pool={lpSymbolName.replace(' PancakeswapWorker', '')} quoteToken={quoteTokenValue} token={tokenValue} />
+        <PoolCell
+          pool={lpSymbolName.replace(' PancakeswapWorker', '')}
+          quoteToken={quoteTokenValue}
+          token={tokenValue}
+        />
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
-        <DebtCell debt={debtValueNumber} borrowedAssets={null} borrowingInterest={borrowingInterest.toPrecision(3)} name={symbolName} />
+        <DebtCell
+          debt={debtValueNumber}
+          borrowedAssets={null}
+          borrowingInterest={borrowingInterest.toPrecision(3)}
+          name={symbolName}
+        />
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={symbolName} />
         <ApyCell
           apy={getDisplayApr(yieldFarmData * leverage.toNumber())}

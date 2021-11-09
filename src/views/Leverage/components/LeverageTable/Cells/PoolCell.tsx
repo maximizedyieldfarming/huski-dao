@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton, useTooltip } from '@pancakeswap/uikit'
-import { useTranslation } from 'contexts/Localization'
+import { Flex, Text, useMatchBreakpoints, Box } from 'husky-uikit'
 import { TokenPairImage, TokenImage } from 'components/TokenImage'
-import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -11,16 +9,14 @@ const StyledCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 150px;
-    padding-left: 32px;
-  }
-  ${CellContent} {
-    flex: 1;
+    flex: 1 0 150px;
+    justify-content: flex-start;
+    align-items: center;
+    // padding-left: 32px;
   }
 `
 
-const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
-  const { t } = useTranslation()
+const PoolCell = ({ pool, tokenData }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token
@@ -29,24 +25,19 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
     <StyledCell role="cell">
       <CellContent>
         <Flex alignItems="center">
-          <TokenPairImage
-            variant="inverted"
-            primaryToken={quoteToken}
-            secondaryToken={token}
-            width={40}
-            height={40}
-            mr="8px"
-          />
-          {/*   {(isMobile || isTablet) && (
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Pool
-            </Text>
-          )} */}
-          <Flex flex="1" alignItems="center">
-            <Text bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }}>
-              {pool}
-            </Text>
-          </Flex>
+          <Box width={40} height={40} mr="5px">
+            <TokenPairImage
+              variant="inverted"
+              primaryToken={quoteToken}
+              secondaryToken={token}
+              width={40}
+              height={40}
+              mr="8px"
+            />
+          </Box>
+          <Text bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }}>
+            {pool}
+          </Text>
         </Flex>
       </CellContent>
     </StyledCell>

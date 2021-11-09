@@ -11,30 +11,17 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 const LeverageContainer = styled(Flex)`
   border-radius: 10px;
   text-align: center;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
 `
 
 const CustomButton = styled(Button)`
   border-radius: 0;
   border: none;
-  border-left: 1px solid ${({ theme }) => theme.colors.cardBorder};
   padding: 0;
-  &:first-child {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
-  }
 `
 
 export default function LeverageCell({ leverage, onChange }: { leverage: any; onChange: (value: any) => void }) {

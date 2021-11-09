@@ -70,7 +70,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
           <Flex alignItems="center">
             <Text color="textSubtle">{apyAtOne}%</Text>
             <ChevronRightIcon />
-            <Text bold>{apy}%</Text>
+            <Text bold color='secondary'>{apy}%</Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />

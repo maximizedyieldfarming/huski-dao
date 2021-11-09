@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Box } from 'husky-uikit'
 import { useTranslation } from 'contexts/Localization'
 import ActivePositionsRow from './ActivePositionsRow'
 import ActivePositionsHeaderRow from './ActivePositionsHeaderRow'
@@ -34,11 +34,13 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
 
   return (
     <StyledTable role="table" ref={tableWrapperEl}>
-      {!(isMobile || isTablet) && <ActivePositionsHeaderRow />}
+      {!(isMobile || isTablet) && positionFarmsData.length ? <ActivePositionsHeaderRow /> : null}
       {positionFarmsData.length ? (
         positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.positionId} />)
       ) : (
-        <Text textAlign="center">{t('No Active Positions')}</Text>
+        <Box padding="100px">
+          <Text textAlign="center">{t('No Active Positions')}</Text>
+        </Box>
       )}
     </StyledTable>
   )
