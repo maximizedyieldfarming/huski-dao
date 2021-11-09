@@ -38,13 +38,12 @@ const ColorBar = styled.div<BarProps>`
 const CardHeader = ({ data }) => {
   const { t } = useTranslation()
 
-  // just for testing delete later
-  const leverage = null
+  const {leverage} = data
 
   return (
     <Wrapper>
       <Flex alignItems="center" className="marketWrapper">
-        <ColorBar market={data?.marketStrategy} />
+        {/* <ColorBar market={data?.marketStrategy} /> */}
         <Text small ml="5px">
           {t(`${data?.marketStrategy} Market Strategy`)}
         </Text>
@@ -53,7 +52,7 @@ const CardHeader = ({ data }) => {
         <Flex>
           {/* <TokenPairImage token={token?.token} width={40} height={40} /> */}
           <Heading color="text" scale="lg">
-            {data?.symbol}
+            {data?.TokenInfo?.token?.symbol}
           </Heading>
         </Flex>
         <Text>{leverage}x</Text>
