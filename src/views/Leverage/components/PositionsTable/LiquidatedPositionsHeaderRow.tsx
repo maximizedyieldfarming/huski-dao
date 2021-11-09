@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
+import { Text, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
 const StyledRow = styled.div`
@@ -56,13 +57,14 @@ const StyledCell = styled(BaseCell)`
 `
 
 const LiquidatedPositionsHeaderRow = () => {
+  const { t } = useTranslation()
   const {
     targetRef: positionTargetRef,
     tooltip: positionTooltip,
     tooltipVisible: positionTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Position value = Debt Value + Equity Value + Yield</Text>
+      <Text>{t('Position value = Debt Value + Equity Value + Yield')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -72,7 +74,7 @@ const LiquidatedPositionsHeaderRow = () => {
     tooltipVisible: liquidatedEquityTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Liquidated Equity = 83.33% * Equity Value</Text>
+      <Text>{t('Liquidated Equity = 83.33% * Equity Value')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -82,7 +84,7 @@ const LiquidatedPositionsHeaderRow = () => {
     tooltipVisible: liquidationFeeTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Liquidation fee = 5% * Liquidated Equity</Text>
+      <Text>{t('Liquidation fee = 5% * Liquidated Equity')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -93,8 +95,9 @@ const LiquidatedPositionsHeaderRow = () => {
   } = useTooltip(
     <>
       <Text>
-        The position value will be converted into base tokens (BUSD or BNB). Part of it will pay back your debt, accrued
-        interest, and the liquidation fee. Then, you&apos;ll receive the remaining tokens in your wallet.
+        {t(
+          `The position value will be converted into base tokens (BUSD or BNB). Part of it will pay back your debt, accrued interest, and the liquidation fee. Then, you'll receive the remaining tokens in your wallet.`,
+        )}
       </Text>
     </>,
     { placement: 'top-start' },
@@ -108,7 +111,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <PoolCell>
         <CellContent>
           <Text small color="textSubtle">
-            Pool
+            {t('Pool')}
           </Text>
         </CellContent>
       </PoolCell>
@@ -116,7 +119,7 @@ const LiquidatedPositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Position
+              {t('Position')}
             </Text>
             {positionTooltipVisible && positionTooltip}
             <span ref={positionTargetRef}>
@@ -129,7 +132,7 @@ const LiquidatedPositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Liquidated Equity
+              {t('Liquidated Equity')}
             </Text>
             {liquidatedEquityTooltipVisible && liquidatedEquityTooltip}
             <span ref={liquidatedEquityTargetRef}>
@@ -142,7 +145,7 @@ const LiquidatedPositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Liquidation Fee
+              {t('Liquidation Fee')}
             </Text>
             {liquidationFeeTooltipVisible && liquidationFeeTooltip}
             <span ref={liquidationFeeTargetRef}>
@@ -155,7 +158,7 @@ const LiquidatedPositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Assets Returned
+              {t(' Assets Returned')}
             </Text>
             {assetsReturnedTooltipVisible && assetsReturnedTooltip}
             <span ref={assetsReturnedTargetRef}>
@@ -167,7 +170,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            TX Record
+            {t('TX Record')}
           </Text>
         </CellContent>
       </StyledCell>

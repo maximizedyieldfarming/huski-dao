@@ -25,11 +25,13 @@ const StyledCell = styled(BaseCell)`
 
 const AssetsReturnedCell = ({ assetsReturned }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Text>
-        The position value will be converted into base tokens (BUSD or BNB). Part of it will pay back your debt, accrued
-        interest, and the liquidation fee. Then, you&apos;ll receive the remaining tokens in your wallet.
+        {t(
+          `The position value will be converted into base tokens (BUSD or BNB). Part of it will pay back your debt, accrued interest, and the liquidation fee. Then, you'll receive the remaining tokens in your wallet.`,
+        )}
       </Text>
     </>,
     { placement: 'top-start' },
@@ -40,7 +42,7 @@ const AssetsReturnedCell = ({ assetsReturned }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Assets Returned
+              {t('Assets Returned')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

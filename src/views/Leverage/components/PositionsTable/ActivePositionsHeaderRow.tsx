@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
+import { Text, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
 const StyledRow = styled.div`
@@ -55,13 +56,14 @@ const StyledCell = styled(BaseCell)`
   }
 `
 const ActivePositionsHeaderRow = () => {
+  const { t } = useTranslation()
   const {
     targetRef: positionTargetRef,
     tooltip: positionTooltip,
     tooltipVisible: positionTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Position value = Debt Value + Equity Value + Yield</Text>
+      <Text>{t('Position value = Debt Value + Equity Value + Yield')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -71,9 +73,9 @@ const ActivePositionsHeaderRow = () => {
     tooltipVisible: debtTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Debt Value = Borrowed Asset + Borrowing Interest</Text>
-      <Text>Borrowed Asset:</Text>
-      <Text>Borrowing Interest: </Text>
+      <Text>{t('Debt Value = Borrowed Asset + Borrowing Interest')}</Text>
+      {/*   <Text>Borrowed Asset:</Text>
+      <Text>Borrowing Interest: </Text> */}
     </>,
     { placement: 'top-start' },
   )
@@ -83,7 +85,7 @@ const ActivePositionsHeaderRow = () => {
     tooltipVisible: equityTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Equity Value = Position Value - Debt Value</Text>
+      <Text>{t('Equity Value = Position Value - Debt Value')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -94,22 +96,22 @@ const ActivePositionsHeaderRow = () => {
   } = useTooltip(
     <>
       <Flex justifyContent="space-between">
-        <Text small>Pancake Liquitity Rewards:</Text>
+        <Text small>{t('Pancake Liquitity Rewards:')}</Text>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>Pancake Trading Fee Rewards:</Text>
+        <Text small>{t('Pancake Trading Fee Rewards:')}</Text>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>Huski Token Rewards:</Text>
+        <Text small>{t('Huski Token Rewards:')}</Text>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>Borrowing Interest:</Text>
+        <Text small>{t('Borrowing Interest:')}</Text>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>APR:</Text>
+        <Text small>{t('APR:')}</Text>
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>APY:</Text>
+        <Text small>{t('APY:')}</Text>
       </Flex>
     </>,
     { placement: 'top-start' },
@@ -120,7 +122,7 @@ const ActivePositionsHeaderRow = () => {
     tooltipVisible: debtRatioTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Debt Ratio = Debt Value / Position Value</Text>
+      <Text>{t('Debt Ratio = Debt Value / Position Value')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -130,7 +132,7 @@ const ActivePositionsHeaderRow = () => {
     tooltipVisible: liquidationThresholdTooltipVisible,
   } = useTooltip(
     <>
-      <Text>When the debt ratio exceeds liquidation ratio, your position may be liquidated.</Text>
+      <Text>{t('When the debt ratio exceeds liquidation ratio, your position may be liquidated.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -140,7 +142,7 @@ const ActivePositionsHeaderRow = () => {
     tooltipVisible: safetyBufferTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Risk Ratio = Liquidation Ratio - Debt Ratio</Text>
+      <Text>{t('Risk Ratio = Liquidation Ratio - Debt Ratio')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -150,7 +152,7 @@ const ActivePositionsHeaderRow = () => {
     tooltipVisible: profitLossTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Profit and loss information of your position</Text>
+      <Text>{t('Profit and loss information of your position')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -162,7 +164,7 @@ const ActivePositionsHeaderRow = () => {
       <PoolCell>
         <CellContent>
           <Text small color="textSubtle">
-            Pool
+            {t('Pool')}
           </Text>
         </CellContent>
       </PoolCell>
@@ -170,7 +172,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Position
+              {t('Position')}
             </Text>
             {positionTooltipVisible && positionTooltip}
             <span ref={positionTargetRef}>
@@ -183,7 +185,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Debt
+              {t('Debt')}
             </Text>
             {debtTooltipVisible && debtTooltip}
             <span ref={debtTargetRef}>
@@ -196,7 +198,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Equity
+              {t('Equity')}
             </Text>
             {equityTooltipVisible && equityTooltip}
             <span ref={equityTargetRef}>
@@ -209,7 +211,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              APY
+              {t('APY')}
             </Text>
             {apyTooltipVisible && apyTooltip}
             <span ref={apyTargetRef}>
@@ -222,7 +224,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Debt Ratio
+              {t('Debt Ratio')}
             </Text>
             {debtRatioTooltipVisible && debtRatioTooltip}
             <span ref={debtRatioTargetRef}>
@@ -235,7 +237,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Liquidation Threshold
+              {t('Liquidation Threshold')}
             </Text>
             {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
             <span ref={liquidationThresholdTargetRef}>
@@ -248,7 +250,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Safety Buffer
+              {t('Safety Buffer')}
             </Text>
             {safetyBufferTooltipVisible && safetyBufferTooltip}
             <span ref={safetyBufferTargetRef}>
@@ -261,7 +263,7 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              Profit/Loss
+              {t('Profit/Loss')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}
             <span ref={profitLossTargetRef}>

@@ -1,11 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
-
 import { useTranslation } from 'contexts/Localization'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -44,10 +40,11 @@ const ProgressCircle = () => {
 }
 
 const SafetyBufferCell = ({ safetyBuffer }) => {
+  const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Risk Ratio = Liquidation Ratio - Debt Ratio</Text>
+      <Text>{t('Risk Ratio = Liquidation Ratio - Debt Ratio')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -57,7 +54,7 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Safety Buffer
+              {t('Safety Buffer')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

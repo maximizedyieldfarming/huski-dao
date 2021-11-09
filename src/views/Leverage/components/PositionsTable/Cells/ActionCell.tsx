@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { useMatchBreakpoints, Button } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -30,6 +29,7 @@ const ActionCell = ({ posData, disabled }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
   const { data, liquidationThresholdData } = posData
+  const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
@@ -44,7 +44,7 @@ const ActionCell = ({ posData, disabled }) => {
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
         >
-          Adjust
+          {t('Adjust')}
         </Button>
         <Button
           scale="sm"
@@ -56,7 +56,7 @@ const ActionCell = ({ posData, disabled }) => {
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
         >
-          Close
+          {t('Close')}
         </Button>
       </CellContent>
     </StyledCell>

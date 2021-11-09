@@ -1,11 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
-
+import { Skeleton, Text, useMatchBreakpoints, Flex, InfoIcon, useTooltip } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -25,11 +21,12 @@ const StyledCell = styled(BaseCell)`
 
 const PositionValueCell = ({ position, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const [displayInfo, setDisplayInfo] = useState(false)
-  const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
+
+  const { t } = useTranslation()
+
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Position value = Debt Value + Equity Value + Yield</Text>
+      <Text>{t('Position value = Debt Value + Equity Value + Yield')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -39,7 +36,7 @@ const PositionValueCell = ({ position, name }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              APY
+              {t('APY')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

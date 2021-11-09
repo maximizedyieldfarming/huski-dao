@@ -83,6 +83,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
 
 export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {
   const { TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
+  const { lpAmount } = data
 
   let tokenAmountTotalNum
   let quoteTokenAmountTotalNum
@@ -100,17 +101,20 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
 
-  const { lpAmount } = data
+  const lptotalSupplyNum = new BigNumber(lptotalSupply)
+  const baseTokenAmount = Number(tokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
+  const farmTokenAmount = Number(quoteTokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
+
   const debtValueData = data.debtValue
-  const baseTokenAmount = new BigNumber(tokenAmountTotalNum).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const farmTokenAmount = new BigNumber(quoteTokenAmountTotalNum).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  // const baseTokenAmount = new BigNumber(tokenAmountTotalNum).div(new BigNumber(lptotalSupply)).times(lpAmount)
+  // const farmTokenAmount = new BigNumber(quoteTokenAmountTotalNum).div(new BigNumber(lptotalSupply)).times(lpAmount)
   const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
 
-  const basetokenlp = baseTokenAmount.toNumber()
-  const farmingtokenlp = farmTokenAmount.toNumber()
+  const basetokenlp = baseTokenAmount// .toNumber()
+  const farmingtokenlp = farmTokenAmount// .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, basetokenlp, farmingtokenlp, basetokenlpborrowed, 'tokenAmountTotal': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal': parseFloat(quoteTokenAmountTotalNum) });
+  console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
 
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
   console.info('======adjust======', farmdata);

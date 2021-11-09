@@ -1,11 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, TooltipText, InfoIcon } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -25,11 +23,12 @@ const StyledCell = styled(BaseCell)`
 
 const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Debt Value = Borrowed Asset + Borrowing Interest</Text>
-      <Text>Borrowed Asset:</Text>
-      <Text>Borrowing Interest: {borrowingInterest}%</Text>
+      <Text>{t('Debt Value = Borrowed Asset + Borrowing Interest')}</Text>
+      {/*       <Text>Borrowed Asset:</Text>
+      <Text>Borrowing Interest: {borrowingInterest}%</Text> */}
     </>,
     { placement: 'top-start' },
   )
@@ -39,7 +38,7 @@ const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Debt
+              {t('Debt')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

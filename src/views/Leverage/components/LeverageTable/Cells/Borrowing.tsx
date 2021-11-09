@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import Select from 'components/Select/Select'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -23,6 +24,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
   const quoteToken = tokenData?.TokenInfo?.quoteToken?.symbol
   const token = tokenData?.TokenInfo?.token?.symbol
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
 
   const options = () => {
     if (quoteToken === 'CAKE' || quoteToken === 'USDC' || quoteToken === 'SUSHI' || quoteToken === 'DOT') {
@@ -66,7 +68,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Borrowing
+            {t('Borrowing')}
           </Text>
         )}
         <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />

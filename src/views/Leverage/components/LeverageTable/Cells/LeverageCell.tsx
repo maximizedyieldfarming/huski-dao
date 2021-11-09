@@ -52,12 +52,14 @@ export default function LeverageCell({ leverage, onChange }: { leverage: any; on
   }, [lvgValue, onChange])
 
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
+
   return (
     <StyledCell role="cell">
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            Leverage
+            {t('Leverage')}
           </Text>
         )}
         <LeverageContainer>

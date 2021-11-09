@@ -25,22 +25,23 @@ const StyledCell = styled(BaseCell)`
 
 const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, tradingFeesRewards }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between">
-        <Text small>Pancake Liquitity Rewards:</Text>
+        <Text small>{t('Pancake Liquitity Rewards:')}</Text>
         {liquidityRewards ? <Text small>{liquidityRewards}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>Pancake Trading Fee Rewards:</Text>
+        <Text small>{t('Pancake Trading Fee Rewards:')}</Text>
         {tradingFeesRewards ? <Text small>{tradingFeesRewards}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>Huski Token Rewards:</Text>
+        <Text small>{t('Huski Token Rewards:')}</Text>
         {huskyRewards ? <Text small>{huskyRewards.toPrecision(4)}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>Borrowing Interest:</Text>
+        <Text small>{t('Borrowing Interest:')}</Text>
         {borrowingInterest ? (
           <Text small>{borrowingInterest?.toPrecision(4)}%</Text>
         ) : (
@@ -48,11 +49,11 @@ const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, 
         )}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>APR:</Text>
+        <Text small>{t('APR:')}</Text>
         {apr ? <Text small>{apr}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>APY:</Text>
+        <Text small>{t('APY:')}</Text>
         {apy ? <Text small>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
     </>,
@@ -64,7 +65,7 @@ const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, 
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Apy
+              {t('APY')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

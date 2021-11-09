@@ -1,11 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
-import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -25,9 +22,10 @@ const StyledCell = styled(BaseCell)`
 
 const DebtRatioCell = ({ debtRatio }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Debt Ratio = Debt Value / Position Value</Text>
+      <Text>{t('Debt Ratio = Debt Value / Position Value')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -37,13 +35,14 @@ const DebtRatioCell = ({ debtRatio }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Debt Ratio
+              {t('Debt Ratio')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
             </span>
-          </Flex>)}
+          </Flex>
+        )}
         {debtRatio && !debtRatio.isNaN() ? (
           <Text>{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
         ) : (

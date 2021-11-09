@@ -25,10 +25,11 @@ const StyledCell = styled(BaseCell)`
 
 const ProfitsCell = ({ profitLoss }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const { t } = useTranslation()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text>Profit and loss information of your position</Text>
+      <Text>{t('Profit and loss information of your position')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -39,7 +40,7 @@ const ProfitsCell = ({ profitLoss }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              Profit/Loss
+              {t('Profit/Loss')}
             </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>

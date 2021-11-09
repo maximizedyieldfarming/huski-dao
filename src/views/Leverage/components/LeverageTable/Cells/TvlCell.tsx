@@ -29,16 +29,15 @@ const StyledCell = styled(BaseCell)`
 `
 
 const TvlCell = ({ tvl, tokenData, lpTokens }) => {
-  const [displayInfo, setDisplayInfo] = useState(false)
-  const changeDisplayInfo = (e) => setDisplayInfo(!displayInfo)
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const {tokenPriceUsd, quoteTokenPriceUsd } = tokenData
+  const { tokenPriceUsd, quoteTokenPriceUsd } = tokenData
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token
+  const { t } = useTranslation()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text small>TVL</Text>
+      <Text small>{t('TVL')}</Text>
       {tvl && lpTokens ? (
         <Text>
           {nFormatter(tvl)}&nbsp;({nFormatter(lpTokens.toNumber())}&nbsp;LP Tokens)
@@ -50,7 +49,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
         <Box width={20} height={20} mr="5px">
           <TokenImage token={token} width={20} height={20} />
         </Box>
-        
+
         {tokenPriceUsd ? (
           <Text small>
             {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
@@ -84,7 +83,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
-            TVL
+            {t('TVL')}
           </Text>
         )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}

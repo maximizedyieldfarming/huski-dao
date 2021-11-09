@@ -38,6 +38,7 @@ const StyledButton = styled(Button)`
 const TxRecordCell = () => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
+  const { t } = useTranslation()
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -48,7 +49,7 @@ const TxRecordCell = () => {
           }}
           onClick={(e) => !account && e.preventDefault()}
         >
-          Click to view
+          {t('Click to view')}
         </Button>
       </CellContent>
     </StyledCell>
