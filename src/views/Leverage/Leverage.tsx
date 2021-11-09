@@ -128,7 +128,7 @@ const Leverage: React.FC = () => {
           </Text>
           <Button
             as={Link}
-            to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
+            to={{ pathname: '/leverage/claim', state: { farmsData } }}
             disabled={!account}
             scale="sm"
           >
