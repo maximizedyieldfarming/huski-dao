@@ -16,6 +16,7 @@ interface RewardsProps {
   name: string
   debtPoolId: number
   earnings: number
+  token: any
 }
 
 interface LocationState {
@@ -24,19 +25,18 @@ interface LocationState {
 
 const Wrapper = styled(Flex)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(550px, 100%), 1fr));
   grid-gap: 1rem;
-
 `
 const Cell = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.default};
-  gap: 1rem;
   justify-content: space-between;
+  align-items: center;
 `
 
-const Rewards: React.FC<RewardsProps> = ({ name, debtPoolId, earnings }) => {
+const Rewards: React.FC<RewardsProps> = ({ name, debtPoolId, earnings, token }) => {
   const { t } = useTranslation()
   const [isPending, setIsPending] = useState(false)
 
@@ -46,8 +46,9 @@ const Rewards: React.FC<RewardsProps> = ({ name, debtPoolId, earnings }) => {
   const { callWithGasPrice } = useCallWithGasPrice()
 
   const handleConfirm = async () => {
-
+    setIsPending(true)
     try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(claimContract, 'harvest', [debtPoolId], { gasLimit: 300000 })
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -55,24 +56,35 @@ const Rewards: React.FC<RewardsProps> = ({ name, debtPoolId, earnings }) => {
       }
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    } finally {
+      setIsPending(false)
     }
   }
 
   return (
     <Cell>
-      <Text>{t(`Rewards from positions on ${name} pairs`)}</Text>
-      <Box>
-        <Text color="textSubtle">{t('HUSKI Earned')}</Text>
-        <Text bold>{rewards.toPrecision(4)}</Text>
+      <Flex alignItems="center" flex="2">
+        <TokenImage token={token} width={30} height={30} mr="8px" />
+        <Box>
+          <Text>{t(`Rewards from positions on ${name} pairs`)}</Text>
+        </Box>
+      </Flex>
+      <Box style={{ flex: '1' }}>
+        <Text>{t('HUSKI Earned')}</Text>
+        <Text bold color="secondary">
+          {rewards.toPrecision(4)}
+        </Text>
       </Box>
-      <Button
-        disabled={isPending}
-        isLoading={isPending}
-        onClick={handleConfirm}
-        endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-      >
-        {isPending ? t('Claiming') : t('Claim')}
-      </Button>
+      <Box style={{ flex: '1' }}>
+        <Button
+          disabled={isPending || !rewards}
+          isLoading={isPending}
+          onClick={handleConfirm}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+        >
+          {isPending ? t('Claiming') : t('Claim')}
+        </Button>
+      </Box>
     </Cell>
   )
 }
@@ -89,33 +101,32 @@ const Claim: React.FC = () => {
     return cur
   }, [])
 
-
   const rewards = []
   positionsWithEarnings.forEach((pool, index) => {
     if (pool?.TokenInfo?.token?.symbol === positionsWithEarnings[index + 1]?.TokenInfo?.token?.symbol) {
       const sum =
-        Number(pool?.userData?.farmEarnings) +
-        Number(positionsWithEarnings[index + 1]?.userData?.farmEarnings)
+        Number(pool?.userData?.farmEarnings) + Number(positionsWithEarnings[index + 1]?.userData?.farmEarnings)
       rewards.push({
         name: pool?.TokenInfo?.token?.symbol,
-        earnings: sum
+        earnings: sum,
+        token: pool?.TokenInfo?.token,
       })
     }
   })
 
-
   return (
     <Page>
-      <Text bold mx="auto">
+      <Text bold mx="auto" color="secondary" fontSize="2">
         {t('Harvest')}
       </Text>
       <Wrapper>
         {positionsWithEarnings.map((pool) => (
           <Rewards
-            name={pool?.TokenInfo?.token?.symbol}
+            name={pool?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             debtPoolId={pool?.TokenInfo?.token?.debtPoolId}
             earnings={Number(pool?.userData?.farmEarnings)}
             key={pool?.TokenInfo?.token?.debtPoolId}
+            token={pool?.TokenInfo?.token}
           />
         ))}
       </Wrapper>
