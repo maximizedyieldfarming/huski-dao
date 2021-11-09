@@ -167,6 +167,7 @@ const ConverTo = ({ data }) => {
   } = useTooltip(
     <>
       <Text>PancakeSwap trading fees</Text>
+      <Text>HUSKI trading fees</Text>
     </>,
     { placement: 'top-start' },
   )

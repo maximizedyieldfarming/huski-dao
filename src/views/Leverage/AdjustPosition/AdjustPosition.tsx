@@ -471,10 +471,8 @@ const AdjustPosition = () => {
     tooltipVisible: tradingFeesTooltipVisible,
   } = useTooltip(
     <>
-      <Text>
-        Trading fee collected by Huski Finance will be distributed based on our tokenomics. Go to ‘tokenomics’ for more
-        information.
-      </Text>
+      <Text>PancakeSwap trading fees</Text>
+      <Text>HUSKI trading fees</Text>
     </>,
     { placement: 'top-start' },
   )
