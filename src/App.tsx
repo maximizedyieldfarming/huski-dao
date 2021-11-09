@@ -32,6 +32,8 @@ const ClosePosition = lazy(() => import('views/Leverage/ClosePosition/ClosePosit
 const AdjustPosition = lazy(() => import('views/Leverage/AdjustPosition/AdjustPosition'))
 const Farm = lazy(() => import('views/Leverage/Farm/Farm'))
 const FarmSA = lazy(() => import('./views/Leverage/Farm/FarmSA'))
+const AdjustPositionSA = lazy(() => import('./views/Leverage/AdjustPosition/AdjustPositionSA'))
+const ClosePositionSA = lazy(() => import('./views/Leverage/ClosePosition/ClosePositionSA'))
 const Claim = lazy(() => import('views/Leverage/Claim'))
 
 // This config is required for number formatting
@@ -81,8 +83,10 @@ const App: React.FC = () => {
             <Route exact path="/leverage/closeposition/:token" component={ClosePosition} />
             <Route exact path="/leverage/adjustPosition/:token" component={AdjustPosition} />
             <Route exact path="/leverage/farm/:token" component={Farm} />
-            <Route exact path="/farms/singleAssets/farm/:token" component={FarmSA} />
             <Route exact path="/leverage/claim" component={Claim} />
+            <Route exact path="/farms/singleAssets/farm/:token" component={FarmSA} />
+            <Route exact path="/farms/singleAssets/adjustPosition/:token" component={AdjustPositionSA} />
+            <Route exact path="/farms/singleAssets/closeposition/:token" component={ClosePositionSA} />
             <Route component={NotFound} />
           </Switch>
         </SuspenseWithChunkError>
