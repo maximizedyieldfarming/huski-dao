@@ -14,6 +14,7 @@ import {
   useMatchBreakpoints,
   AutoRenewIcon,
 } from '@pancakeswap/uikit'
+import { BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem } from 'husky-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
@@ -42,9 +43,6 @@ interface LocationParams {
 }
 
 const Section = styled(Box)`
-  &.gray {
-    background-color: ${({ theme }) => theme.colors.disabled};
-  }
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
@@ -80,12 +78,38 @@ const InputArea = styled(Flex)`
   flex: 1;
   align-items: center;
 `
+const ButtonMenu = styled(UiKitButtonMenu)`
+  background-color: unset;
+  border: unset;
+  width: 100%;
+`
+
+const ButtonMenuItem = styled(UiKitButtonMenuItem)`
+  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : '#F2F2F2')};
+  color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.text)};
+  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.colors.gold : '#F2F2F2')};
+  &:hover:not(:disabled):not(:active) {
+    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : '#F2F2F2')};
+  }
+  &:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  &:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  &:not(:last-child):not(:first-child) {
+    border-radius: 0;
+  }
+`
 
 const Farm = () => {
   const { token } = useParams<RouteParams>()
   const { t } = useTranslation()
   const { account } = useWeb3React()
 
+  BigNumber.config({ DECIMAL_PLACES: 18, EXPONENTIAL_AT: 18 })
   const {
     state: { tokenData: data, selectedLeverage, selectedBorrowing },
   } = useLocation<LocationParams>()
@@ -134,7 +158,7 @@ const Farm = () => {
     return null
   }
 
-  const [tokenInput, setTokenInput] = useState(0)
+  const [tokenInput, setTokenInput] = useState<number | BigNumber>(0)
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback(
     (event) => {
@@ -150,7 +174,7 @@ const Farm = () => {
     [userTokenBalance],
   )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number | BigNumber>(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
   const handleQuoteTokenInput = useCallback(
     (event) => {
@@ -171,26 +195,49 @@ const Farm = () => {
     setRadio(value)
   }
 
-  const setQuoteTokenInputToFraction = (e) => {
-    if (e.target.innerText === '25%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
-    } else if (e.target.innerText === '50%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
-    } else if (e.target.innerText === '75%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
-    } else if (e.target.innerText === '100%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+  const setQuoteTokenInputToFraction = (index) => {
+    if (index === 0) {
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.25
+          ? 0
+          : userQuoteTokenBalance.toNumber() * 0.25
+      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenFractionButtonIndex(index)
+    } else if (index === 1) {
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.5 ? 0 : userQuoteTokenBalance.toNumber() * 0.5
+      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenFractionButtonIndex(index)
+    } else if (index === 2) {
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.75
+          ? 0
+          : userQuoteTokenBalance.toNumber() * 0.75
+      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenFractionButtonIndex(index)
+    } else if (index === 3) {
+      const value = Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() ? 0 : userQuoteTokenBalance.toNumber()
+      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenFractionButtonIndex(index)
     }
   }
-  const setTokenInputToFraction = (e) => {
-    if (e.target.innerText === '25%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.25)
-    } else if (e.target.innerText === '50%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.5)
-    } else if (e.target.innerText === '75%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.75)
-    } else if (e.target.innerText === '100%') {
-      setTokenInput(userTokenBalance.toNumber())
+  const setTokenInputToFraction = (index) => {
+    if (index === 0) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.25 ? 0 : userTokenBalance.toNumber() * 0.25
+      setTokenInput(new BigNumber(value))
+      setTokenFractionButtonIndex(index)
+    } else if (index === 1) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.5 ? 0 : userTokenBalance.toNumber() * 0.5
+      setTokenInput(new BigNumber(value))
+      setTokenFractionButtonIndex(index)
+    } else if (index === 2) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.75 ? 0 : userTokenBalance.toNumber() * 0.75
+      setTokenInput(new BigNumber(value))
+      setTokenFractionButtonIndex(index)
+    } else if (index === 3) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() ? 0 : userTokenBalance.toNumber()
+      setTokenInput(new BigNumber(value))
+      setTokenFractionButtonIndex(index)
     }
   }
 
@@ -419,13 +466,16 @@ const Farm = () => {
   const debtRatio = 1 - principal / leverageValue
   const liquidationThreshold = Number(tokenData?.liquidationThreshold) / 100
 
+  const [tokenFractionButtonIndex, setTokenFractionButtonIndex] = useState(null)
+  const [quoteTokenFractionButtonIndex, setQuoteTokenFractionButtonIndex] = useState(null)
+
   return (
     <Page>
       <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
         {t(`Farming ${token} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="gray">
+        <Section>
           <Flex alignItems="center" justifyContent="space-between">
             <Text as="span">{t('Collateral')}</Text>
             <Text as="span" small color="textSubtle">
@@ -439,7 +489,11 @@ const Farm = () => {
                   {t('Balance:')}
                 </Text>
                 {userQuoteTokenBalance ? (
-                  <Text>{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
+                  <Text small>
+                    {Number(userQuoteTokenBalance.toNumber().toFixed(3)) < userQuoteTokenBalance.toNumber()
+                      ? `${userQuoteTokenBalance.toNumber().toFixed(3)}...`
+                      : userQuoteTokenBalance.toNumber().toFixed(3)}
+                  </Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -453,36 +507,16 @@ const Farm = () => {
                 </Flex>
                 <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
-              <Flex justifyContent="space-around">
-                <Button
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  25%
-                </Button>
-                <Button
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  50%
-                </Button>
-                <Button
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  75%
-                </Button>
-                <Button
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  100%
-                </Button>
-              </Flex>
+              <ButtonMenu
+                onItemClick={setQuoteTokenInputToFraction}
+                activeIndex={quoteTokenFractionButtonIndex}
+                disabled={userQuoteTokenBalance.toNumber() === 0}
+              >
+                <ButtonMenuItem>25%</ButtonMenuItem>
+                <ButtonMenuItem>50%</ButtonMenuItem>
+                <ButtonMenuItem>75%</ButtonMenuItem>
+                <ButtonMenuItem>100%</ButtonMenuItem>
+              </ButtonMenu>
             </Box>
             <Box>
               <Flex alignItems="center">
@@ -490,7 +524,11 @@ const Farm = () => {
                   {t('Balance:')}
                 </Text>
                 {userTokenBalance ? (
-                  <Text>{userTokenBalance.toNumber().toPrecision(3)}</Text>
+                  <Text small>
+                    {Number(userTokenBalance.toNumber().toFixed(3)) < userTokenBalance.toNumber()
+                      ? `${userTokenBalance.toNumber().toFixed(3)}...`
+                      : userTokenBalance.toNumber().toFixed(3)}
+                  </Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -504,20 +542,16 @@ const Farm = () => {
                 </Flex>
                 <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
-              <Flex justifyContent="space-around">
-                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  25%
-                </Button>
-                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  50%
-                </Button>
-                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  75%
-                </Button>
-                <Button variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  100%
-                </Button>
-              </Flex>
+              <ButtonMenu
+                onItemClick={setTokenInputToFraction}
+                activeIndex={tokenFractionButtonIndex}
+                disabled={userTokenBalance.toNumber() === 0}
+              >
+                <ButtonMenuItem>25%</ButtonMenuItem>
+                <ButtonMenuItem>50%</ButtonMenuItem>
+                <ButtonMenuItem>75%</ButtonMenuItem>
+                <ButtonMenuItem>100%</ButtonMenuItem>
+              </ButtonMenu>
             </Box>
             <Box>
               <Text color="textSubtle" small>
