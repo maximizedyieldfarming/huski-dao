@@ -1,13 +1,14 @@
-import BigNumber from 'bignumber.js'
+/* eslint-disable no-restricted-properties */
 import React, { useState } from 'react'
+import BigNumber from 'bignumber.js'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, CardRibbon, Skeleton, Button, Box } from '@pancakeswap/uikit'
+import { CardBody as UiKitCardBody, Flex, Text,  Button, Box } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { formatBigNumber } from 'state/utils'
-import Select from 'components/Select/Select'
+import { useHuskyPrice,  useCakePrice } from 'state/leverage/hooks'
+import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
 
@@ -21,12 +22,52 @@ const CardBody = styled(UiKitCardBody)`
 const SingleAssetsCard = ({ data }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
+  const huskyPrice = useHuskyPrice()
+  const cakePrice = useCakePrice()
 
-  const tvl = data?.supply
-  const apy = data?.marketCap
-  const riskLevel = data?.change
-  const dailyEarnings = data?.supplyChange
-  const avgApy = 2
+  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data
+
+
+  const getDisplayApr = (cakeRewardsApr?: number) => {
+    if (cakeRewardsApr) {
+      return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    }
+    return null
+  }
+
+  const [borrowingAsset, setBorrowingAsset] = useState(data?.TokenInfo?.token?.symbol)
+
+  const { totalTvl } = getTvl(data)
+  const huskyRewards = getHuskyRewards(data, huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(data, cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
+
+  console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
+
+
+
+  const getApr = (lvg) => {
+    const apr =
+      Number((yieldFarmData / 100) * lvg) +
+      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(huskyRewards * (lvg - 1)) -
+      Number(borrowingInterest * (lvg - 1))
+    return apr
+  }
+
+  const getApy = (lvg) => {
+    const apr = getApr(lvg)
+    const apy = Math.pow(1 + apr / 365, 365) - 1
+    return apy * 100
+  }
+
+  const tvl = totalTvl.toNumber() // data?.supply
+  const apy = getDisplayApr(getApy(leverage)) //  data?.marketCap
+  const apyOne = getDisplayApr(getApy(1))
+  const risk = parseInt(liquidationThreshold) / 100 / 100
+  const riskLevel = risk //  data?.change
+  const dailyEarnings = 11 //  data?.supplyChange
+  const avgApy = Number(apy) - Number(apyOne)
 
   return (
     <Card>
@@ -40,7 +81,7 @@ const SingleAssetsCard = ({ data }) => {
           <Flex>
             <Box>
               <Text bold fontSize="3">
-                {avgApy}%
+                {Number(avgApy).toFixed(2)}%
               </Text>
               <Text>{t(`than 1x yield farm`)}</Text>
             </Box>
@@ -54,7 +95,7 @@ const SingleAssetsCard = ({ data }) => {
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('APY')}</Text>
-            <Text>{apy}</Text>
+            <Text>{Number(apy).toFixed(2)}</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
@@ -69,7 +110,7 @@ const SingleAssetsCard = ({ data }) => {
           <Button
             scale="sm"
             as={Link}
-            to={(location) => ({ ...location, pathname: `${location.pathname}/farm/${data?.symbol}`, state: { data } })}
+            to={(location) => ({ ...location, pathname: `${location.pathname}/farm/${data?.lpSymbol}`, state: { data } })}
             disabled={!account}
             onClick={(e) => !account && e.preventDefault()}
           >

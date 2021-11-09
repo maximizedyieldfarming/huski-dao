@@ -159,6 +159,9 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
+//   const singleData = farmsData.find((f) => f.pid === 365 || f.pid === 262)
+// console.info('singleData', singleData)
+
   const reward = null
 
   // for testing purpose only
@@ -237,7 +240,7 @@ const SingleAssetsFarms: React.FC = () => {
     },
   ]
 
-  const data = null
+  // const data = null
   const [dexFilter, setDexFilter] = useState('all')
   const [pairFilter, setPairFilter] = useState('all')
   const [strategyFilter, setStrategyFilter] = useState('all')
@@ -391,8 +394,8 @@ const SingleAssetsFarms: React.FC = () => {
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {data?.map((asset) => (
-          <SingleAssetsCard data={asset} key={asset.id} />
+        {farmsData?.map((asset) => (
+          <SingleAssetsCard data={asset} key={asset.pid} />
         ))}
       </CardsWrapper>
     </Page>
