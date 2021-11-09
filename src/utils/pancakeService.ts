@@ -1,4 +1,4 @@
-export const dichotomybasetoken = (flag, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin) => {
+export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin) => {
     const price = farmingtokenBegin / basetokenBegin
     let maxnum = basetokenBalance + (basetokenBalance + farmingtokenBalance / price + basetokenLp + farmingtokenLp / price - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed
 
@@ -11,14 +11,14 @@ export const dichotomybasetoken = (flag, leverage, tradefee, basetokenBalance, f
     }
 
     let minnum = 0;
-    let data = exchangebasetoken(maxnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
+    let data = exchangebasetoken(maxnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin)
 
     let maxexc = data[0]
     if (maxexc === 0) {
         return [maxnum, data]
     }
 
-    data = exchangebasetoken(minnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
+    data = exchangebasetoken(minnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin)
 
     let minexc = data[0]
     if (minexc === 0) {
@@ -29,7 +29,7 @@ export const dichotomybasetoken = (flag, leverage, tradefee, basetokenBalance, f
 
     while (true) {
         const midnum = (maxnum + minnum) / 2
-        data = exchangebasetoken(midnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
+        data = exchangebasetoken(midnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin)
         const midexc = data[0]
 
         if (midexc === 0) {
@@ -54,7 +54,7 @@ export const dichotomybasetoken = (flag, leverage, tradefee, basetokenBalance, f
 
 };
 
-export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag) => {
+export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin) => {
 
     const basetokenEnd = basetokenBegin + exchangeValue * (1 - tradefee)
     const farmingtokenEnd = basetokenBegin * farmingtokenBegin / basetokenEnd
@@ -70,21 +70,11 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
         tradingfees = 0
     }
 
-    let paramsA
-    let paramsB
-    let paramsC
-    if (flag === 0) {// farm
-        const paramsNum = 4 * (farmingtokenNum + farmingtokenBalance) * (1 - 1 / leverage) ** 2;
-        paramsA = priceBegin;
-        paramsB = -paramsNum
-        paramsC = -paramsNum * (basetokenBalance - exchangeValue)
-    } else {// adjust
-        const params1 = (leverage - 1) * 2 * basetokenLp / leverage - basetokenLpBorrowed
-        const params2 = 4 * (farmingtokenNum + farmingtokenBalance) / priceBegin * (1 - 1 / leverage) ** 2
-        paramsA = 1
-        paramsB = -(2 * params1 + params2)
-        paramsC = params1 ** 2 - params2 * (basetokenBalance - exchangeValue)
-    }
+    const params1 = (leverage - 1) * 2 * basetokenLp / leverage - basetokenLpBorrowed
+    const params2 = 4 * (farmingtokenNum + farmingtokenBalance) / priceBegin * (1 - 1 / leverage) ** 2
+    const paramsA = 1
+    const paramsB = -(2 * params1 + params2)
+    const paramsC = params1 ** 2 - params2 * (basetokenBalance - exchangeValue)
 
     let paramsB24AC = paramsB * paramsB - 4 * paramsA * paramsC
 
@@ -110,7 +100,6 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
         basetokenLpend,
         farmingtokenLpend,
         basetokeninPosition,
-        farmingtokeninPosition,
-        flag
+        farmingtokeninPosition
     ];
 };
