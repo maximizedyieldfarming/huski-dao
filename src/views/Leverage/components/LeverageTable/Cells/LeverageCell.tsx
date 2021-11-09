@@ -37,15 +37,8 @@ const CustomButton = styled(Button)`
   }
 `
 
-// const LeverageCell = ({ leverage }) => {
 export default function LeverageCell({ leverage, onChange }: { leverage: any; onChange: (value: any) => void }) {
   const [lvgValue, setLvgValue] = useState(leverage)
-  // const increaseLvgValue = (e) => {
-  //   setLvgValue(lvgValue + 0.5)
-  // }
-  // const decreaseLvgValue = (e) => {
-  //   setLvgValue(lvgValue - 0.5)
-  // }
 
   const increaseLvgValue = useCallback(() => {
     const input = lvgValue + 0.5
