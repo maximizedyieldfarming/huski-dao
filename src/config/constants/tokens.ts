@@ -74,7 +74,7 @@ const tokens = {
     },
     config: {
       56: '0x8F8Ed54901b90c89C5817B7F67a425c0e6091284',
-      97: 'cake的没有,暂时随便写个',
+      97: '',
     },
     decimals: 18,
     projectLink: 'https://pancakeswap.finance/',
@@ -818,12 +818,19 @@ const tokens = {
   },
   sushi: {
     symbol: 'SUSHI',
+    poolId: 9,
+    debtPoolId: 8,
     address: {
       56: '0x947950BcC74888a40Ffa2593C5798F11Fc9124C4',
       97: '',
     },
+    config: {
+      56: '0x724E6748Cb1d52Ec45b77Fb82a0750A2B759c038',
+      97: '',
+    },
     decimals: 18,
     projectLink: 'https://sushi.com/',
+    coingeckoId: 'sushi',
   },
   comp: {
     symbol: 'COMP',
@@ -949,12 +956,19 @@ const tokens = {
   },
   usdc: {
     symbol: 'USDC',
+    poolId: 16,
+    debtPoolId: 15,
     address: {
       56: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
       97: '',
     },
+    config: {
+      56: '0x709b102EF4b605197C75CfEA45F455A4e7ce065B',
+      97: '',
+    },
     decimals: 18,
     projectLink: 'https://www.centre.io/usdc',
+    coingeckoId: 'usd-coin',
   },
   dai: {
     symbol: 'DAI',
@@ -985,12 +999,19 @@ const tokens = {
   },
   dot: {
     symbol: 'DOT',
+    poolId: 1,
+    debtPoolId: 6,
     address: {
       56: '0x7083609fCE4d1d8Dc0C979AAb8c869Ea2C873402',
       97: '0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5',
     },
+    config: {
+      56: '0x53dbb71303ad0F9AFa184B8f7147F9f12Bb5Dc01',
+      97: '',
+    },
     decimals: 18,
     projectLink: 'https://polkadot.network/',
+    coingeckoId: 'polkadot',
   },
   eos: {
     symbol: 'EOS',
