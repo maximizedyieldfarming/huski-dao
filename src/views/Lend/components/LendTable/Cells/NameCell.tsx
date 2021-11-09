@@ -11,7 +11,9 @@ const StyledCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 4 0 150px;
+    justify-content: flex-start;
+    align-items: center;
     // padding-left: 32px;
   }
 `
@@ -24,7 +26,7 @@ const NameCell = ({ token }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center" >
+        <Flex alignItems="center">
           <Box width={40} height={40} mr="5px">
             <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
           </Box>
@@ -33,7 +35,7 @@ const NameCell = ({ token }) => {
               {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (
-              <Text small color="textSubtle" style={{ whiteSpace: 'nowrap' }}>
+              <Text small color="textSubtle">
                 1 ib{token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
                 {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
               </Text>

@@ -7,10 +7,7 @@ import BaseCell, { CellContent } from './Cells/BaseCell'
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
-  flex-direction: column;
-  ${({ theme }) => theme.mediaQueries.lg} {
-    flex-direction: row;
-  }
+  flex-direction: row;
   //cursor: pointer;
 `
 
@@ -19,7 +16,7 @@ const NameCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 4 0 150px;
     padding-left: 32px;
   }
 `
@@ -28,14 +25,7 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
+ 
 `
 const LendHeaderRow = () => {
   const { t } = useTranslation()

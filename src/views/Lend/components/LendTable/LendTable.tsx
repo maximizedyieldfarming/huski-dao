@@ -9,6 +9,7 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
+  overflow-x: auto;
   > div:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }

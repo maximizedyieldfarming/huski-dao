@@ -14,6 +14,7 @@ const Section = styled(Flex)`
   gap: 1rem;
   border-radius: ${({ theme }) => theme.radii.default};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
+  flex-flow: row wrap;
   .container {
     background-color: ${({ theme }) => theme.colors.background};
     padding: 1rem;

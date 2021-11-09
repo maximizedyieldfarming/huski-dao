@@ -13,6 +13,9 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
+  ${CellContent} {
+    align-items: unset;
+  }
   > div {
     gap: 5px;
   }
@@ -24,14 +27,6 @@ const StyledCell = styled(BaseCell)`
     box-shadow: none;
     word-break: initial;
   }
-`
-const StyledButton = styled(Button)`
-  padding: 0.75rem;
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  box-shadow: none;
-  word-break: initial;
 `
 
 const ActionCell = ({ token }) => {

@@ -8,16 +8,22 @@ const BaseCell = styled.div`
 
   display: flex;
   flex-direction: column;
-  // justify-content: flex-start;
   justify-content: center;
 `
 
 export const CellContent = styled(Flex)`
-  flex-direction: column;
+  // flex-direction: column;
   justify-content: center;
   // max-height: 40px;
   ${Text} {
     line-height: 1;
+  }
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: column;
+    justify-content: unset;
   }
 `
 
