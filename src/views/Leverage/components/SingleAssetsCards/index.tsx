@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/chart/line' // 折线图是line,饼图改为pie,柱形图改为bar
+import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
@@ -65,12 +65,12 @@ const SingleAssetsCard = ({ data }) => {
     return apy * 100
   }
 
-  const tvl = totalTvl.toNumber() // data?.supply
-  const apy = getDisplayApr(getApy(leverage)) //  data?.marketCap
+  const tvl = totalTvl.toNumber()
+  const apy = getDisplayApr(getApy(leverage))
   const apyOne = getDisplayApr(getApy(1))
   const risk = parseInt(liquidationThreshold) / 100 / 100
-  const riskLevel = risk //  data?.change
-  const dailyEarnings = 11 //  data?.supplyChange
+  const riskLevel = risk
+  const dailyEarnings = 111111
   const avgApy = Number(apy) - Number(apyOne)
 
   const getOption = () => {
@@ -90,8 +90,7 @@ const SingleAssetsCard = ({ data }) => {
       },
       series: [
         {
-          // name:'OFO订单量',
-          type: 'line', // 这块要定义type类型，柱形图是bar,饼图是pie
+          type: 'line',
           data: [1000, 2000, 1500, 3000, 2000, 1200, 800],
         },
       ],
@@ -118,9 +117,6 @@ const SingleAssetsCard = ({ data }) => {
             {/* graph */}
             <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '200px' }} />
           </Grid>
-
-          {/* <Card title="折线图表之一"> */}
-          {/* </Card> */}
         </Box>
         <Box padding="0.5rem 0">
           <Flex justifyContent="space-between">
