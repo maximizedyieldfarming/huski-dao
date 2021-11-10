@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
@@ -34,8 +34,10 @@ const SingleAssetsCard = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
 
-  const [selectedPool, setSelectedPool] = useState(data.farmData[0])
-  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = selectedPool
+  const [selectedPool, setSelectedPool] = useState(0)
+
+  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[selectedPool]
+  console.log('selectd', selectedPool, 'data', data.farmData[selectedPool])
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -44,19 +46,19 @@ const SingleAssetsCard = ({ data }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(selectedPool?.TokenInfo?.token?.symbol)
+  const [borrowingAsset, setBorrowingAsset] = useState(data.farmData[selectedPool]?.TokenInfo?.token?.symbol)
 
-  const { totalTvl } = getTvl(selectedPool)
-  const huskyRewards = getHuskyRewards(selectedPool, huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(selectedPool, cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(selectedPool, borrowingAsset)
+  const { totalTvl } = getTvl(data.farmData[selectedPool])
+  const huskyRewards = getHuskyRewards(data.farmData[selectedPool], huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(data.farmData[selectedPool], cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(data.farmData[selectedPool], borrowingAsset)
 
   // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(((data.farmData[selectedPool].tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -75,7 +77,6 @@ const SingleAssetsCard = ({ data }) => {
   const riskLevel = risk
   const dailyEarnings = 111111
   const avgApy = Number(apy) - Number(apyOne)
-  console.log({ tvl, apy, risk, riskLevel, dailyEarnings, avgApy })
 
   const getOption = () => {
     const option = {
@@ -102,6 +103,14 @@ const SingleAssetsCard = ({ data }) => {
     return option
   }
 
+  const selectOptions = []
+  data.farmData?.forEach((item, index) => {
+    selectOptions.push({
+      label: item.lpSymbol.replace(' LP', ''),
+      value: index,
+    })
+  })
+
   return (
     <Card>
       <CardHeader data={data} pool={selectedPool} />
@@ -109,19 +118,7 @@ const SingleAssetsCard = ({ data }) => {
         <Box className="avgContainer">
           <Flex alignItems="center">
             <Text>{t('7Days Average APY')}</Text>
-            <Select
-              options={[
-                {
-                  label: data.farmData[0]?.lpSymbol.replace(' LP', ''),
-                  value: data.farmData[0],
-                },
-                {
-                  label: data.farmData[1]?.lpSymbol.replace(' LP', ''),
-                  value: data.farmData[1],
-                },
-              ]}
-              onChange={(option) => setSelectedPool(option.value)}
-            />
+            <Select options={selectOptions} onChange={(option) => setSelectedPool(option.value)} />
           </Flex>
           <Grid gridTemplateColumns="1fr 1fr">
             <Flex flexDirection="column" justifyContent="center">
@@ -149,8 +146,7 @@ const SingleAssetsCard = ({ data }) => {
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
-            <Text>{data.riskLevel}</Text>
-            {/* <Text>{riskLevel}</Text> */}
+            <Text>{riskLevel}</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earnings')}</Text>
