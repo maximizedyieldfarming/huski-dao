@@ -155,7 +155,7 @@ const SingleAssetsFarms: React.FC = () => {
   const { t } = useTranslation()
   const match = useRouteMatch()
   const { account } = useWeb3React()
-  const { data: farmsData } = useLeverageFarms()
+  let { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
@@ -195,103 +195,28 @@ singleData.map((item) => {
   })
 }
 console.info('singleNewData', singleNewData);
+  //   const singleData = farmsData.find((f) => f.pid === 365 || f.pid === 262)
+  // console.info('singleData', singleData)
 
   const reward = null
 
-  // for testing purpose only
-  let mockSingleAssetData = [
-    {
-      id: '1',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
-    },
-    {
-      id: '2',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bear',
-    },
-    {
-      id: '3',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Neutral',
-    },
-    {
-      id: '4',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
-    },
-    {
-      id: '5',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
-    },
-    {
-      id: '6',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
-    },
-  ]
-
-  // const data = null
   const [dexFilter, setDexFilter] = useState('all')
   const [pairFilter, setPairFilter] = useState('all')
   const [strategyFilter, setStrategyFilter] = useState('all')
 
   // filters
-  // if (pairFilter !== 'all') {
-  //   farmsData = farmsData.filter(
-  //     (pool) =>
-  //       pool?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
-  //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-  //   )
-  // }
-
-  // for testing change later
-  if (strategyFilter !== 'all') {
-    mockSingleAssetData = mockSingleAssetData.filter((pool) => pool?.marketStrategy.toLowerCase() === strategyFilter)
+  if (pairFilter !== 'all') {
+    farmsData = farmsData.filter(
+      (pool) => pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+      //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+    )
   }
+
+  console.log('single assets', farmsData)
+  // for testing change later
+  // if (strategyFilter !== 'all') {
+  //   mockSingleAssetData = mockSingleAssetData.filter((pool) => pool?.marketStrategy.toLowerCase() === strategyFilter)
+  // }
 
   return (
     <Page>
@@ -386,8 +311,8 @@ console.info('singleNewData', singleNewData);
             <FilterOption
               variant="tertiary"
               startIcon={<BnbIcon />}
-              isActive={pairFilter === 'wbnb'}
-              onClick={() => setPairFilter('wbnb')}
+              isActive={pairFilter === 'huski'}
+              onClick={() => setPairFilter('huski')}
             >
               HUSKI
             </FilterOption>
