@@ -258,3 +258,51 @@ export const getPriceImpact = (farm: LeverageFarm, tokenInput, tokenName?: strin
 
   return priceImpact.toNumber()
 }
+
+export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
+
+  const { TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold } = farm
+  const { lpAmount } = data
+
+  let tokenAmountTotalNum
+  let quoteTokenAmountTotalNum
+  let liquidationRisk
+  if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+    tokenAmountTotalNum = tokenAmountTotal;
+    quoteTokenAmountTotalNum = quoteTokenAmountTotal;
+    liquidationRisk = liquidationThreshold
+  } else {
+    tokenAmountTotalNum = quoteTokenAmountTotal;
+    quoteTokenAmountTotalNum = tokenAmountTotal;
+    liquidationRisk = quoteTokenLiquidationThreshold
+  }
+
+  const liquidationThresholdData = parseInt(liquidationRisk) / 100 / 100
+  const lptotalSupplyNum = new BigNumber(lptotalSupply)
+  const baseTokenAmount = Number(tokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
+  const farmTokenAmount = Number(quoteTokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
+
+  const debtValueData = data.debtValue
+  const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
+
+  const basetokenlp = baseTokenAmount
+  const farmingtokenlp = farmTokenAmount
+  const basetokenlpborrowed = debtValue.toNumber()
+
+  const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
+
+  // let drop 
+  // if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+  //   // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
+  //   drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
+  // } else {
+  //   drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
+  //   // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
+  // }
+
+  const drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
+
+  console.log({ liquidationThresholdData, drop, basetokenlp, farmingtokenlp, basetokenlpborrowed, })
+
+  return drop
+}
