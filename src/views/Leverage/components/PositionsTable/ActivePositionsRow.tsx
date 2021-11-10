@@ -5,7 +5,7 @@ import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
-import { getHuskyRewards, getYieldFarming } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getDrop } from '../../helpers'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
@@ -66,8 +66,7 @@ const ActivePositionsRow = ({ data }) => {
     liquidationThresholdValue = quoteTokenLiquidationThreshold
   }
 
-  // const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
+  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18))
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const leverage = new BigNumber(baseAmount).times(2).div((new BigNumber(baseAmount).times(2)).minus(new BigNumber(debtValueNumber)))
@@ -76,6 +75,8 @@ const ActivePositionsRow = ({ data }) => {
   const cakePrice = useCakePrice()
   const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
+  const dropData = getDrop(data.farmData, data, symbolName)
+  
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -110,7 +111,7 @@ const ActivePositionsRow = ({ data }) => {
         <DebtRatioCell debtRatio={debtRatio} />
         <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />
         <SafetyBufferCell safetyBuffer={safetyBuffer} />
-        <ProfitsCell profitLoss={profitLoss} />
+        {/* <ProfitsCell profitLoss={profitLoss} /> */}
         <ActionCell
           posData={{ data, liquidationThresholdData }}
           disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())}

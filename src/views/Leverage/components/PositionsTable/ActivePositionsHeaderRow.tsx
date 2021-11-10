@@ -259,7 +259,7 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      <StyledCell>
+      {/* <StyledCell>
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
@@ -271,7 +271,7 @@ const ActivePositionsHeaderRow = () => {
             </span>
           </Flex>
         </CellContent>
-      </StyledCell>
+      </StyledCell> */}
       <StyledCell>
         <CellContent />
       </StyledCell>
