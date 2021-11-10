@@ -3,23 +3,21 @@ import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, Button, Box } from '@pancakeswap/uikit'
+import { CardBody as UiKitCardBody, Flex, Text, Button, Box, Grid } from 'husky-uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/chart/line';  // 折线图是line,饼图改为pie,柱形图改为bar
-import 'echarts/lib/component/tooltip';
-import 'echarts/lib/component/title';
-import 'echarts/lib/component/legend';
-import 'echarts/lib/component/markPoint';
-import ReactEcharts from 'echarts-for-react';
+import 'echarts/lib/chart/line' // 折线图是line,饼图改为pie,柱形图改为bar
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/markPoint'
+import ReactEcharts from 'echarts-for-react'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
-
-
 
 const CardBody = styled(UiKitCardBody)`
   .avgContainer {
@@ -36,7 +34,6 @@ const SingleAssetsCard = ({ data }) => {
 
   const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data
 
-
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -52,8 +49,6 @@ const SingleAssetsCard = ({ data }) => {
   const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
 
   // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
-
-
 
   const getApr = (lvg) => {
     const apr =
@@ -88,23 +83,21 @@ const SingleAssetsCard = ({ data }) => {
         trigger: 'axis',
       },
       xAxis: {
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
       },
       series: [
         {
           // name:'OFO订单量',
-          type: 'line',   // 这块要定义type类型，柱形图是bar,饼图是pie
-          data: [1000, 2000, 1500, 3000, 2000, 1200, 800]
-        }
-      ]
+          type: 'line', // 这块要定义type类型，柱形图是bar,饼图是pie
+          data: [1000, 2000, 1500, 3000, 2000, 1200, 800],
+        },
+      ],
     }
     return option
   }
-
-
 
   return (
     <Card>
@@ -115,18 +108,18 @@ const SingleAssetsCard = ({ data }) => {
             <Text>{t('7Days Average APY')}</Text>
             {/* <Select option=[{ }]/> */}
           </Flex>
-          <Flex>
-            <Box>
-              <Text bold fontSize="3">
+          <Grid gridTemplateColumns="1fr 1fr">
+            <Flex flexDirection="column" justifyContent="center">
+              <Text bold fontSize="3" mb='1rem'>
                 {Number(avgApy).toFixed(2)}%
               </Text>
               <Text>{t(`than 1x yield farm`)}</Text>
-            </Box>
+            </Flex>
             {/* graph */}
-          </Flex>
+            <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '200px' }} />
+          </Grid>
 
           {/* <Card title="折线图表之一"> */}
-          <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '400px' }} />
           {/* </Card> */}
         </Box>
         <Box padding="0.5rem 0">
@@ -151,7 +144,11 @@ const SingleAssetsCard = ({ data }) => {
           <Button
             scale="sm"
             as={Link}
-            to={(location) => ({ ...location, pathname: `${location.pathname}/farm/${data?.lpSymbol}`, state: { data } })}
+            to={(location) => ({
+              ...location,
+              pathname: `${location.pathname}/farm/${data?.lpSymbol}`,
+              state: { data },
+            })}
             disabled={!account}
             onClick={(e) => !account && e.preventDefault()}
           >

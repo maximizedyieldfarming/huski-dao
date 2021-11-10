@@ -155,43 +155,42 @@ const SingleAssetsFarms: React.FC = () => {
   const { t } = useTranslation()
   const match = useRouteMatch()
   const { account } = useWeb3React()
-  let { data: farmsData } = useLeverageFarms()
+  const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
   const singleData = farmsData.filter((f) => f.singleFlag === 0)
-console.info('singleData', singleData)
+  console.info('singleData', singleData)
 
   const marketArray = [
     {
-      leverage: 2,
+      singleLeverage: 2,
       direction: 'long',
-
+      marketStrategy: 'Bull',
     },
     {
-      leverage: 2,
+      singleLeverage: 2,
       direction: 'short',
-
+      marketStrategy: 'Neutral',
     },
     {
-      leverage: 3,
+      singleLeverage: 3,
       direction: 'short',
-
-    }
-  ];
-const singleNewData = []
+      marketStrategy: 'Bear',
+    },
+  ]
+  let singleNewData = []
 
   if (singleData && singleData !== null && singleData !== undefined) {
-    marketArray.map((market) => {
-      let single
-      singleData.map((item) => {
-        single = market
-        single.data = item
+    let single
+    singleData.map((item) => {
+      marketArray.map((market) => {
+        single = { ...market, ...item }
         singleNewData.push(single)
       })
     })
   }
-console.info('singleNewData', singleNewData);
+  console.info('singleNewData', singleNewData)
   //   const singleData = farmsData.find((f) => f.pid === 365 || f.pid === 262)
   // console.info('singleData', singleData)
 
@@ -203,17 +202,17 @@ console.info('singleNewData', singleNewData);
 
   // filters
   if (pairFilter !== 'all') {
-    farmsData = farmsData.filter(
-      (pool) => pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+    singleNewData = singleNewData.filter(
+      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
       //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
-
-  console.log('single assets', farmsData)
-  // for testing change later
-  // if (strategyFilter !== 'all') {
-  //   mockSingleAssetData = mockSingleAssetData.filter((pool) => pool?.marketStrategy.toLowerCase() === strategyFilter)
-  // }
+  /* if (strategyFilter !== 'all') {
+    singleNewData = singleNewData.filter(
+      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
+    )
+  }
+ */
 
   return (
     <Page>
@@ -350,7 +349,7 @@ console.info('singleNewData', singleNewData);
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {singleData?.map((asset) => (
+        {singleNewData?.map((asset) => (
           <SingleAssetsCard data={asset} key={asset.pid} />
         ))}
       </CardsWrapper>
