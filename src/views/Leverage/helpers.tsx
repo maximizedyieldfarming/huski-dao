@@ -60,7 +60,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   let quoteTokenAmountTotalNum
   let tokenInputNum
   let quoteTokenInputNum
-  if (TokenInfo?.token?.symbol?.toLowerCase() === tokenName?.toLowerCase()) {
+  if (TokenInfo?.token?.symbol?.toLowerCase() === tokenName?.toLowerCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     tokenInputNum = Number(tokenInput);
     quoteTokenInputNum = Number(quoteTokenInput);
     tokenAmountTotalNum = tokenAmountTotal;

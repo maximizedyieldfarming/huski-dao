@@ -128,21 +128,22 @@ const FarmSA = () => {
   const {
     state: { data },
   } = useLocation<LocationParams>()
-  console.log('data', data)
-  const poolName = data?.symbol
-  const allowance = 0 // change later just for testing
 
+
+  const singleFarm = data?.farmData[0]
+  const poolName = singleFarm?.TokenInfo?.quoteToken.symbol.replace('wBNB', 'BNB')
+  const allowance = singleFarm?.userData?.quoteTokenAllowance
+  console.log('singleFarm-----', singleFarm)
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const [isPending, setIsPending] = useState(false)
 
   const { balance: bnbBalance } = useGetBnbBalance()
-  const { balance: tokenBalance } = useTokenBalance(getAddress(data?.TokenInfo?.quoteToken?.address))
-  // const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  const { balance: tokenBalance } = useTokenBalance(getAddress(singleFarm?.TokenInfo?.token?.address))
   const userTokenBalance = Number(
-    getBalanceAmount(data?.TokenInfo?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
+    getBalanceAmount(singleFarm?.TokenInfo?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
   )
-
+console.log({userTokenBalance, tokenBalance })
   const [tokenInput, setTokenInput] = useState(0)
   const [buttonIndex, setButtonIndex] = useState(null)
   const handleTokenInput = useCallback(
@@ -201,16 +202,16 @@ const FarmSA = () => {
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
+  const tokenName = singleFarm?.TokenInfo?.token?.symbol
+  const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
+  const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
 
-  const huskyRewards = getHuskyRewards(data, huskyPrice)
-  const yieldFarmData = getYieldFarming(data, cakePrice)
-
-  const { borrowingInterest } = getBorrowingInterest(data)
+  const { borrowingInterest } = getBorrowingInterest(singleFarm)
   console.log({ huskyRewards, yieldFarmData, borrowingInterest })
   const getApr = (lvg: number) => {
     const totalapr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(((singleFarm?.tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return totalapr
@@ -221,12 +222,13 @@ const FarmSA = () => {
     const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
     return totalapy * 100
   }
-  const farmingData = getLeverageFarmingData(data, data?.leverage, tokenInput, 0)
+
+  const farmingData = getLeverageFarmingData(singleFarm, data?.singleLeverage, tokenInput, tokenName)
   const farmData = farmingData ? farmingData[1] : []
-  const apy = getApy(data?.leverage)
+  const apy = getApy(data?.singleLeverage)
   const equity = null
   const positionValue = farmData[8]
-  const huskiRewardsApr = huskyRewards * (data?.leverage - 1)
+  const huskiRewardsApr = huskyRewards * (data?.singleLeverage - 1)
 
   return (
     <Page>
@@ -251,18 +253,16 @@ const FarmSA = () => {
                     <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                     <Flex alignItems="center">
                       <Box width={25} height={25} mr="5px">
-                        <TokenImage token={data?.TokenInfo.token} width={25} height={25} /> 
+                        <TokenImage token={singleFarm?.TokenInfo.token} width={25} height={25} /> 
                       </Box>
                       <Text mr="5px" small color="textSubtle">
                         {t('Balance:')}
                       </Text>
-                      {userTokenBalance ? (
+                     
                         <Text small color="textSubtle">
-                          {userTokenBalance.toPrecision(3)}
+                          {userTokenBalance?.toPrecision(3)}
                         </Text>
-                      ) : (
-                        <Skeleton width="30px" height="16px" />
-                      )}
+                     
                     </Flex>
                   </BalanceInputWrapper>
                 </InputArea>

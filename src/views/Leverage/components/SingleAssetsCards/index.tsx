@@ -31,9 +31,9 @@ const SingleAssetsCard = ({ data }) => {
   const { t } = useTranslation()
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
-
-  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[0]
-
+  const { singleLeverage } = data
+  const { liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[0]
+  console.info('data======', data)
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -66,7 +66,7 @@ const SingleAssetsCard = ({ data }) => {
   }
 
   const tvl = totalTvl.toNumber()
-  const apy = getDisplayApr(getApy(leverage))
+  const apy = getDisplayApr(getApy(singleLeverage))
   const apyOne = getDisplayApr(getApy(1))
   const risk = parseInt(liquidationThreshold) / 100 / 100
   const riskLevel = risk
