@@ -6,7 +6,7 @@ import { BIG_TEN } from 'utils/bigNumber'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, tokenName?: string) => {
   const { vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd } = farm
-  const { token, quoteToken } = TokenInfo
+  const { quoteToken } = TokenInfo
   let vaultDebtValue
   let poolHuskyPerBlock
 
@@ -26,22 +26,18 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
 }
 
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
-  const { poolWeight, TokenInfo, lpTotalInQuoteToken, tokenPriceUsd, quoteTokenPriceUsd } = farm
-  const { quoteToken } = TokenInfo
+  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd } = farm
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
 
   const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
 
-  // console.log({poolWeight, TokenInfo, lpTotalInQuoteToken, quoteTokenPriceUsd , poolWeightBigNumber,poolLiquidityUsd, yearlyCakeRewardAllocation,   yieldFarmingApr  })
-
   return yieldFarmingApr.toNumber();
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, tokenPriceUsd, quoteTokenPriceUsd } = farm
-  const { token, quoteToken } = TokenInfo
+  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
 
@@ -257,4 +253,42 @@ export const getPriceImpact = (farm: LeverageFarm, tokenInput, tokenName?: strin
   const priceImpact = new BigNumber(tokenInputNum).div(new BigNumber(baseTokenEnd))
 
   return priceImpact.toNumber()
+}
+
+export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
+
+  const { TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold } = farm
+  const { lpAmount } = data
+
+  let tokenAmountTotalNum
+  let quoteTokenAmountTotalNum
+  let liquidationRisk
+  if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+    tokenAmountTotalNum = tokenAmountTotal;
+    quoteTokenAmountTotalNum = quoteTokenAmountTotal;
+    liquidationRisk = liquidationThreshold
+  } else {
+    tokenAmountTotalNum = quoteTokenAmountTotal;
+    quoteTokenAmountTotalNum = tokenAmountTotal;
+    liquidationRisk = quoteTokenLiquidationThreshold
+  }
+
+  const liquidationThresholdData = parseInt(liquidationRisk) / 100 / 100
+  const lptotalSupplyNum = new BigNumber(lptotalSupply)
+  const baseTokenAmount = Number(tokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
+  const farmTokenAmount = Number(quoteTokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
+
+  const debtValueData = data.debtValue
+  const debtValue = new BigNumber(debtValueData).dividedBy(BIG_TEN.pow(18))
+
+  const basetokenlp = baseTokenAmount
+  const farmingtokenlp = farmTokenAmount
+  const basetokenlpborrowed = debtValue.toNumber()
+
+  const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
+
+  // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
+  const drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
+
+  return drop
 }
