@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, Button, Box, Grid } from 'husky-uikit'
+import { CardBody as UiKitCardBody, Flex, Text, Button, Box, Grid, Skeleton } from 'husky-uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
@@ -15,6 +15,8 @@ import 'echarts/lib/component/legend'
 import 'echarts/lib/component/markPoint'
 import ReactEcharts from 'echarts-for-react'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
+import nFormatter from 'utils/nFormatter'
+import Select from 'components/Select/Select'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -32,7 +34,8 @@ const SingleAssetsCard = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
 
-  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[0]
+  const [selectedPool, setSelectedPool] = useState(data.farmData[0])
+  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = selectedPool
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -41,12 +44,12 @@ const SingleAssetsCard = ({ data }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(data?.farmData[0]?.TokenInfo?.token?.symbol)
+  const [borrowingAsset, setBorrowingAsset] = useState(selectedPool?.TokenInfo?.token?.symbol)
 
-  const { totalTvl } = getTvl(data.farmData[0])
-  const huskyRewards = getHuskyRewards(data.farmData[0], huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(data.farmData[0], cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(data.farmData[0], borrowingAsset)
+  const { totalTvl } = getTvl(selectedPool)
+  const huskyRewards = getHuskyRewards(selectedPool, huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(selectedPool, cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(selectedPool, borrowingAsset)
 
   // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
 
@@ -72,6 +75,7 @@ const SingleAssetsCard = ({ data }) => {
   const riskLevel = risk
   const dailyEarnings = 111111
   const avgApy = Number(apy) - Number(apyOne)
+  console.log({ tvl, apy, risk, riskLevel, dailyEarnings, avgApy })
 
   const getOption = () => {
     const option = {
@@ -100,16 +104,28 @@ const SingleAssetsCard = ({ data }) => {
 
   return (
     <Card>
-      <CardHeader data={data} />
+      <CardHeader data={data} pool={selectedPool} />
       <CardBody>
         <Box className="avgContainer">
-          <Flex>
+          <Flex alignItems="center">
             <Text>{t('7Days Average APY')}</Text>
-            {/* <Select option=[{ }]/> */}
+            <Select
+              options={[
+                {
+                  label: data.farmData[0]?.lpSymbol.replace(' LP', ''),
+                  value: data.farmData[0],
+                },
+                {
+                  label: data.farmData[1]?.lpSymbol.replace(' LP', ''),
+                  value: data.farmData[1],
+                },
+              ]}
+              onChange={(option) => setSelectedPool(option.value)}
+            />
           </Flex>
           <Grid gridTemplateColumns="1fr 1fr">
             <Flex flexDirection="column" justifyContent="center">
-              <Text bold fontSize="3" mb='1rem'>
+              <Text bold fontSize="3" mb="1rem">
                 {Number(avgApy).toFixed(2)}%
               </Text>
               <Text>{t(`than 1x yield farm`)}</Text>
@@ -121,15 +137,20 @@ const SingleAssetsCard = ({ data }) => {
         <Box padding="0.5rem 0">
           <Flex justifyContent="space-between">
             <Text>{t('TVL')}</Text>
-            <Text>{tvl}</Text>
+            {tvl && !Number.isNaN(tvl) && tvl !== undefined ? (
+              <Text>{nFormatter(tvl)}</Text>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('APY')}</Text>
-            <Text>{Number(apy).toFixed(2)}</Text>
+            <Text>{Number(apy).toFixed(2)}%</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
-            <Text>{riskLevel}</Text>
+            <Text>{data.riskLevel}</Text>
+            {/* <Text>{riskLevel}</Text> */}
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earnings')}</Text>
