@@ -128,6 +128,7 @@ const FarmSA = () => {
   const {
     state: { data },
   } = useLocation<LocationParams>()
+  console.log('data', data)
   const poolName = data?.symbol
   const allowance = 0 // change later just for testing
 
@@ -135,7 +136,12 @@ const FarmSA = () => {
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const [isPending, setIsPending] = useState(false)
 
-  const userTokenBalance = null
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const { balance: tokenBalance } = useTokenBalance(getAddress(data?.TokenInfo?.quoteToken?.address))
+  // const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  const userTokenBalance = Number(
+    getBalanceAmount(data?.TokenInfo?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
+  )
 
   const [tokenInput, setTokenInput] = useState(0)
   const [buttonIndex, setButtonIndex] = useState(null)
@@ -193,10 +199,34 @@ const FarmSA = () => {
   //   }
   // }
 
-  const apy = null
+  const huskyPrice = useHuskyPrice()
+  const cakePrice = useCakePrice()
+
+  const huskyRewards = getHuskyRewards(data, huskyPrice)
+  const yieldFarmData = getYieldFarming(data, cakePrice)
+
+  const { borrowingInterest } = getBorrowingInterest(data)
+  console.log({ huskyRewards, yieldFarmData, borrowingInterest })
+  const getApr = (lvg: number) => {
+    const totalapr =
+      Number((yieldFarmData / 100) * lvg) +
+      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(huskyRewards * (lvg - 1)) -
+      Number(borrowingInterest * (lvg - 1))
+    return totalapr
+  }
+  const getApy = (lvg: number) => {
+    const totalapr = getApr(lvg)
+    // eslint-disable-next-line no-restricted-properties
+    const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
+    return totalapy * 100
+  }
+  const farmingData = getLeverageFarmingData(data, data?.leverage, tokenInput, 0)
+  const farmData = farmingData ? farmingData[1] : []
+  const apy = getApy(data?.leverage)
   const equity = null
-  const positionValue = null
-  const huskiRewardsApr = null
+  const positionValue = farmData[8]
+  const huskiRewardsApr = huskyRewards * (data?.leverage - 1)
 
   return (
     <Page>
@@ -220,8 +250,8 @@ const FarmSA = () => {
                   <BalanceInputWrapper alignItems="center" flex="1">
                     <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                     <Flex alignItems="center">
-                      <Box width={40} height={40} mr="5px">
-                        {/* <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} /> */}
+                      <Box width={25} height={25} mr="5px">
+                        <TokenImage token={data?.TokenInfo.token} width={25} height={25} /> 
                       </Box>
                       <Text mr="5px" small color="textSubtle">
                         {t('Balance:')}
@@ -231,7 +261,7 @@ const FarmSA = () => {
                           {userTokenBalance.toPrecision(3)}
                         </Text>
                       ) : (
-                        <Skeleton width="80px" height="16px" />
+                        <Skeleton width="30px" height="16px" />
                       )}
                     </Flex>
                   </BalanceInputWrapper>
@@ -246,7 +276,7 @@ const FarmSA = () => {
             </Box>
             <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('APY')}</Text>
-              <Text>{apy}</Text>
+              <Text>{apy.toFixed(2)}%</Text>
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('Equity')}</Text>
@@ -254,7 +284,13 @@ const FarmSA = () => {
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('Position Value')}</Text>
-              <Text>{positionValue}</Text>
+              {farmData ? (
+                <Text>
+                  {positionValue.toFixed(2)} + {farmData[9].toFixed(2)}{' '}
+                </Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('HUSKI Rewards APR')}</Text>
