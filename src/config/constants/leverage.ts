@@ -58,28 +58,8 @@ const leverageFarms: LeverageFarmConfig[] = [
       97: '',
       56: '0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE',
     },
-
+    singleFlag:0,
     TokenInfo: {
-      token: tokens.wbnb,
-      quoteToken: tokens.usdt,
-      vaultAddress: "0xd7D069493685A581d27824Fc46EdA46B7EfC0063",
-      name: "USDT-WBNB PancakeswapWorker",
-      address: "0x41867cc58aece8B570FF1A2a8aa6149014D2a94C",
-      deployedBlock: 7684420,
-      config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
-      pId: 264,
-      stakingToken: "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE",
-      stakingTokenAt: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
-      strategies: {
-        StrategyAddAllBaseToken: "0x4c7a420142ec69c7Df5c6C673D862b9E030743bf",
-        StrategyLiquidate: "0x9Da5D593d08B062063F81913a08e04594F84d438",
-        StrategyAddTwoSidesOptimal: "0xB9B8766B65636779C3B169B9a18e0A708F91c610",
-        StrategyWithdrawMinimizeTrading: "0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419",
-        StrategyPartialCloseLiquidate: "0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316",
-        StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
-      }
-    },
-    QuoteTokenInfo: {
       token: tokens.usdt,
       quoteToken: tokens.wbnb,
       vaultAddress: "0x158Da805682BdC8ee32d52833aD41E74bb951E59",
@@ -99,6 +79,27 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
+    QuoteTokenInfo: {
+      token: tokens.wbnb,
+      quoteToken: tokens.usdt,
+      vaultAddress: "0xd7D069493685A581d27824Fc46EdA46B7EfC0063",
+      name: "USDT-WBNB PancakeswapWorker",
+      address: "0x41867cc58aece8B570FF1A2a8aa6149014D2a94C",
+      deployedBlock: 7684420,
+      config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
+      pId: 264,
+      stakingToken: "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE",
+      stakingTokenAt: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
+      strategies: {
+        StrategyAddAllBaseToken: "0x4c7a420142ec69c7Df5c6C673D862b9E030743bf",
+        StrategyLiquidate: "0x9Da5D593d08B062063F81913a08e04594F84d438",
+        StrategyAddTwoSidesOptimal: "0xB9B8766B65636779C3B169B9a18e0A708F91c610",
+        StrategyWithdrawMinimizeTrading: "0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419",
+        StrategyPartialCloseLiquidate: "0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316",
+        StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
+      }
+    },
+    
 
     leverage: 3,
 
@@ -322,6 +323,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       97: '',
       56: '0xf45cd219aef8618a92baa7ad848364a158a24f33',
     },
+    singleFlag: 0,
     TokenInfo: {
       token: tokens.busd,
       quoteToken: tokens.btcb,
