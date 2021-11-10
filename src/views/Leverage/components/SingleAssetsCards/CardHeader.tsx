@@ -31,10 +31,10 @@ const ColorBar = styled.div<BarProps>`
   border-radius: 3px;
   background: ${({ theme, market }) => {
     if (market.toLowerCase() === 'bear') {
-      return '#27C73F'
+      return '#FE6057'
     }
     if (market.toLowerCase() === 'bull') {
-      return '#FE6057'
+      return '#27C73F'
     }
     if (market.toLowerCase() === 'neutral') {
       return '#FCBD2C'
@@ -43,10 +43,10 @@ const ColorBar = styled.div<BarProps>`
   }};
 `
 
-const CardHeader = ({ data }) => {
+const CardHeader = ({ data, pool }) => {
   const { t } = useTranslation()
 
-  const { leverage } = data.farmData[0]
+  const { singleLeverage } = data
 
   return (
     <Wrapper>
@@ -58,14 +58,14 @@ const CardHeader = ({ data }) => {
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" paddingTop="1rem">
         <Grid gridTemplateColumns="40px 1fr" alignItems="center">
-          <TokenImage token={data?.farmData[0]?.QuoteTokenInfo?.token} width={40} height={40} />
+          <TokenImage token={data.farmData[pool]?.QuoteTokenInfo?.token} width={40} height={40} />
           <Heading color="text" scale="lg">
-            {data?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+            {data.farmData[pool]?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
           </Heading>
         </Grid>
         <Grid gridTemplateColumns="1fr 1fr" alignItems="center">
-          <Text verticalAlign="middle">{leverage}x</Text>
-          {data.direction === 'short' ? <ArrowUpIcon color="#27C73F" /> : <ArrowDownIcon color="#FE6057" />}
+          <Text verticalAlign="middle">{singleLeverage}x</Text>
+          {data.direction === 'long' ? <ArrowUpIcon color="#27C73F" /> : <ArrowDownIcon color="#FE6057" />}
         </Grid>
       </Flex>
     </Wrapper>

@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, Button, Box, Grid } from 'husky-uikit'
+import { CardBody as UiKitCardBody, Flex, Text, Button, Box, Grid, Skeleton } from 'husky-uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
@@ -15,6 +15,8 @@ import 'echarts/lib/component/legend'
 import 'echarts/lib/component/markPoint'
 import ReactEcharts from 'echarts-for-react'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
+import nFormatter from 'utils/nFormatter'
+import Select from 'components/Select/Select'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -32,8 +34,13 @@ const SingleAssetsCard = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const { singleLeverage } = data
-  const { liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[0]
   console.info('data======', data)
+
+  const [selectedPool, setSelectedPool] = useState(0)
+
+  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[selectedPool]
+  console.log('selectd', selectedPool, 'data', data.farmData[selectedPool])
+
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -41,19 +48,19 @@ const SingleAssetsCard = ({ data }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(data?.farmData[0]?.TokenInfo?.token?.symbol)
+  const [borrowingAsset, setBorrowingAsset] = useState(data.farmData[selectedPool]?.TokenInfo?.token?.symbol)
 
-  const { totalTvl } = getTvl(data.farmData[0])
-  const huskyRewards = getHuskyRewards(data.farmData[0], huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(data.farmData[0], cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(data.farmData[0], borrowingAsset)
+  const { totalTvl } = getTvl(data.farmData[selectedPool])
+  const huskyRewards = getHuskyRewards(data.farmData[selectedPool], huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(data.farmData[selectedPool], cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(data.farmData[selectedPool], borrowingAsset)
 
   // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(((data.farmData[selectedPool].tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -98,18 +105,26 @@ const SingleAssetsCard = ({ data }) => {
     return option
   }
 
+  const selectOptions = []
+  data.farmData?.forEach((item, index) => {
+    selectOptions.push({
+      label: item.lpSymbol.replace(' LP', ''),
+      value: index,
+    })
+  })
+
   return (
     <Card>
-      <CardHeader data={data} />
+      <CardHeader data={data} pool={selectedPool} />
       <CardBody>
         <Box className="avgContainer">
-          <Flex>
+          <Flex alignItems="center">
             <Text>{t('7Days Average APY')}</Text>
-            {/* <Select option=[{ }]/> */}
+            <Select options={selectOptions} onChange={(option) => setSelectedPool(option.value)} />
           </Flex>
           <Grid gridTemplateColumns="1fr 1fr">
             <Flex flexDirection="column" justifyContent="center">
-              <Text bold fontSize="3" mb='1rem'>
+              <Text bold fontSize="3" mb="1rem">
                 {Number(avgApy).toFixed(2)}%
               </Text>
               <Text>{t(`than 1x yield farm`)}</Text>
@@ -121,11 +136,15 @@ const SingleAssetsCard = ({ data }) => {
         <Box padding="0.5rem 0">
           <Flex justifyContent="space-between">
             <Text>{t('TVL')}</Text>
-            <Text>{tvl}</Text>
+            {tvl && !Number.isNaN(tvl) && tvl !== undefined ? (
+              <Text>{nFormatter(tvl)}</Text>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('APY')}</Text>
-            <Text>{Number(apy).toFixed(2)}</Text>
+            <Text>{Number(apy).toFixed(2)}%</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
@@ -142,7 +161,7 @@ const SingleAssetsCard = ({ data }) => {
             as={Link}
             to={(location) => ({
               ...location,
-              pathname: `${location.pathname}/farm/${data?.farmData[0]?.lpSymbol}`,
+              pathname: `${location.pathname}/farm/${data?.farmData[selectedPool]?.lpSymbol}`,
               state: { data },
             })}
             disabled={!account}
