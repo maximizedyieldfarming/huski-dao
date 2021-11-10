@@ -78,6 +78,8 @@ const stakeConfig: StakeConfig[] = [
       56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
     }
   },
+
+  
   {
     name: "BTCB",
     symbol: "ibBTCB",

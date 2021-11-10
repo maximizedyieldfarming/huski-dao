@@ -6,7 +6,7 @@ import { BIG_TEN } from 'utils/bigNumber'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, tokenName?: string) => {
   const { vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd } = farm
-  const { token, quoteToken } = TokenInfo
+  const { quoteToken } = TokenInfo
   let vaultDebtValue
   let poolHuskyPerBlock
 
@@ -26,22 +26,18 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
 }
 
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
-  const { poolWeight, TokenInfo, lpTotalInQuoteToken, tokenPriceUsd, quoteTokenPriceUsd } = farm
-  const { quoteToken } = TokenInfo
+  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd } = farm
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
 
   const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
 
-  // console.log({poolWeight, TokenInfo, lpTotalInQuoteToken, quoteTokenPriceUsd , poolWeightBigNumber,poolLiquidityUsd, yearlyCakeRewardAllocation,   yieldFarmingApr  })
-
   return yieldFarmingApr.toNumber();
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, tokenPriceUsd, quoteTokenPriceUsd } = farm
-  const { token, quoteToken } = TokenInfo
+  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
 
@@ -291,18 +287,8 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 
   const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
 
-  // let drop 
-  // if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
-  //   // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
-  //   drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
-  // } else {
-  //   drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
-  //   // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
-  // }
-
+  // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
   const drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
-
-  console.log({ liquidationThresholdData, drop, basetokenlp, farmingtokenlp, basetokenlpborrowed, })
 
   return drop
 }
