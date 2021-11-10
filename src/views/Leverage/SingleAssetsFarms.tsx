@@ -180,20 +180,17 @@ console.info('singleData', singleData)
     }
   ];
 const singleNewData = []
-// const markets = {}
-if (singleData && singleData !== null && singleData !== undefined) {
-singleData.map((item) => {
-    let single
+
+  if (singleData && singleData !== null && singleData !== undefined) {
     marketArray.map((market) => {
-      single = item
-        console.info(single)
-        console.info(market)
-        // single.markets = market
-        singleNewData.push({single,market })
-      
+      let single
+      singleData.map((item) => {
+        single = market
+        single.data = item
+        singleNewData.push(single)
+      })
     })
-  })
-}
+  }
 console.info('singleNewData', singleNewData);
 
   const reward = null
