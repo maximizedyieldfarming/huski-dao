@@ -162,6 +162,12 @@ const SingleAssetsFarms: React.FC = () => {
   const singleData = farmsData.filter((f) => f.singleFlag === 0)
   console.info('singleData', singleData)
 
+  const bnbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "wBNB")
+  const btcbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "BTCB")
+  const ethArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "ETH")
+  const huskiArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "ALPACA") // HUSKI
+  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "CAKE")
+  console.log({ bnbArray, btcbArray, ethArray, huskiArray, });
   const marketArray = [
     {
       singleLeverage: 2,
@@ -179,20 +185,69 @@ const SingleAssetsFarms: React.FC = () => {
       marketStrategy: 'Bear',
     },
   ]
-  let singleNewData = []
+  // let singleNewData = []
 
-  if (singleData && singleData !== null && singleData !== undefined) {
+  // if (bnbArray && bnbArray !== null && bnbArray !== undefined) {
+  //   let single
+  //   bnbArray.map((item) => {
+  //     marketArray.map((market) => {
+  //       single = { ...market, ...item }
+  //       singleNewData.push(single)
+  //     })
+  //   })
+  // }
+
+  let singlesData = []
+
+  if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
     let single
-    singleData.map((item) => {
-      marketArray.map((market) => {
-        single = { ...market, ...item }
-        singleNewData.push(single)
-      })
+    const farmData = bnbArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
     })
   }
-  console.info('singleNewData', singleNewData)
-  //   const singleData = farmsData.find((f) => f.pid === 365 || f.pid === 262)
-  // console.info('singleData', singleData)
+  if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
+    let single
+    const farmData = btcbArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
+    let single
+    const farmData = ethArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
+    let single
+    const farmData = huskiArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
+    let single
+    const farmData = cakeArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+
+
+  console.info('aaaa', singlesData)
+
 
   const reward = null
 
@@ -202,8 +257,8 @@ const SingleAssetsFarms: React.FC = () => {
 
   // filters
   if (pairFilter !== 'all') {
-    singleNewData = singleNewData.filter(
-      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+    singlesData = singlesData.filter(
+      (pool) => pool.farmData[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
       //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
@@ -349,8 +404,11 @@ const SingleAssetsFarms: React.FC = () => {
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {singleNewData?.map((asset) => (
-          <SingleAssetsCard data={asset} key={asset.pid} />
+        {singlesData?.map((asset) => (
+          <SingleAssetsCard
+            data={asset}
+          // key={asset.pid}
+          />
         ))}
       </CardsWrapper>
     </Page>

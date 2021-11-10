@@ -78,7 +78,7 @@ const Leverage: React.FC = () => {
   const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []
-  if (positionData && positionData !== null && positionData !== undefined) {
+  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {

@@ -53,12 +53,12 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 264,
-    lpSymbol: 'USDT-BNB LP',
+    lpSymbol: 'BNB-USDT LP',
     lpAddresses: {
       97: '',
       56: '0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE',
     },
-    singleFlag:0,
+    singleFlag: 0,
     TokenInfo: {
       token: tokens.usdt,
       quoteToken: tokens.wbnb,
@@ -99,11 +99,67 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
-    
-
     leverage: 3,
 
   },
+
+  {
+    pid: 252,
+    lpSymbol: 'BNB-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16',
+    },
+    singleFlag: 0,
+    TokenInfo: {
+      token: tokens.busd,
+      quoteToken: tokens.wbnb,
+      vaultAddress: "0x158Da805682BdC8ee32d52833aD41E74bb951E59",
+      name: "WBNB-BUSD PancakeswapWorker",
+      address: "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f",
+      deployedBlock: 5926150,
+      config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
+      pId: 252,
+      stakingToken: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
+      stakingTokenAt: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
+      strategies: {
+        StrategyAddAllBaseToken: "0x4c7a420142ec69c7Df5c6C673D862b9E030743bf",
+        StrategyLiquidate: "0x9Da5D593d08B062063F81913a08e04594F84d438",
+        StrategyAddTwoSidesOptimal: "0x3fC149995021f1d7AEc54D015Dad3c7Abc952bf0",
+        StrategyWithdrawMinimizeTrading: "0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419",
+        StrategyPartialCloseLiquidate: "0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316",
+        StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
+      }
+    },
+    QuoteTokenInfo: {
+      token: tokens.wbnb,
+      quoteToken: tokens.busd,
+      vaultAddress: "0xd7D069493685A581d27824Fc46EdA46B7EfC0063",
+      name: "BUSD-WBNB PancakeswapWorker",
+      address: "0x9B07DEaEc22328EbaE132875245492D56a57F7bf",
+      deployedBlock: 7488593,
+      config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
+      pId: 252,
+      stakingToken: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
+      stakingTokenAt: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
+      strategies: {
+        StrategyAddAllBaseToken: "0x4c7a420142ec69c7Df5c6C673D862b9E030743bf",
+        StrategyLiquidate: "0x9Da5D593d08B062063F81913a08e04594F84d438",
+        StrategyAddTwoSidesOptimal: "0xB9B8766B65636779C3B169B9a18e0A708F91c610",
+        StrategyWithdrawMinimizeTrading: "0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419",
+        StrategyPartialCloseLiquidate: "0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316",
+        StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
+      }
+    },
+    leverage: 3,
+
+
+  },
+
+
+
+
+
   {
     pid: 262,
     lpSymbol: 'BTCB-BNB LP',
@@ -265,13 +321,33 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 362,
-    lpSymbol: 'BUSD-ALPACA LP',
+    lpSymbol: 'ALPACA-BUSD LP',
     lpAddresses: {
       97: '',
       56: '0x7752e1fa9f3a2e860856458517008558deb989e3',
     },
-
+    singleFlag: 0,
     TokenInfo: {
+      token: tokens.busd,
+      quoteToken: tokens.alpaca,
+      vaultAddress: "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f",
+      name: "ALPACA-BUSD PancakeswapWorker",
+      address: "0x4BfE9489937d6C0d7cD6911F1102c25c7CBc1B5A",
+      deployedBlock: 7488615,
+      config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
+      pId: 362,
+      stakingToken: "0x7752e1FA9F3a2e860856458517008558DEb989e3",
+      stakingTokenAt: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
+      strategies: {
+        StrategyAddAllBaseToken: "0x4c7a420142ec69c7Df5c6C673D862b9E030743bf",
+        StrategyLiquidate: "0x9Da5D593d08B062063F81913a08e04594F84d438",
+        StrategyAddTwoSidesOptimal: "0x3fC149995021f1d7AEc54D015Dad3c7Abc952bf0",
+        StrategyWithdrawMinimizeTrading: "0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419",
+        StrategyPartialCloseLiquidate: "0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316",
+        StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
+      }
+    },
+    QuoteTokenInfo: {
       token: tokens.alpaca,
       quoteToken: tokens.busd,
       vaultAddress: "0xf1bE8ecC990cBcb90e166b71E368299f0116d421",
@@ -292,26 +368,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       }
     },
 
-    QuoteTokenInfo: {
-      token: tokens.busd,
-      quoteToken: tokens.alpaca,
-      vaultAddress: "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f",
-      name: "ALPACA-BUSD PancakeswapWorker",
-      address: "0x4BfE9489937d6C0d7cD6911F1102c25c7CBc1B5A",
-      deployedBlock: 7488615,
-      config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
-      pId: 362,
-      stakingToken: "0x7752e1FA9F3a2e860856458517008558DEb989e3",
-      stakingTokenAt: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
-      strategies: {
-        StrategyAddAllBaseToken: "0x4c7a420142ec69c7Df5c6C673D862b9E030743bf",
-        StrategyLiquidate: "0x9Da5D593d08B062063F81913a08e04594F84d438",
-        StrategyAddTwoSidesOptimal: "0x3fC149995021f1d7AEc54D015Dad3c7Abc952bf0",
-        StrategyWithdrawMinimizeTrading: "0x55fCc2Dfb1a26e58b1c92a7C85bD2946037A9419",
-        StrategyPartialCloseLiquidate: "0x4362635a0b2F8dF98cDE4Cdde5F5f3bE96f45316",
-        StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
-      }
-    },
+
 
     leverage: 3,
 
@@ -516,7 +573,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
 
 
-  
+
 ]
 
 export default leverageFarms

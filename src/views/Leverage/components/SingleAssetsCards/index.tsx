@@ -32,7 +32,7 @@ const SingleAssetsCard = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
 
-  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data
+  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[0]
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -41,12 +41,12 @@ const SingleAssetsCard = ({ data }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(data?.TokenInfo?.token?.symbol)
+  const [borrowingAsset, setBorrowingAsset] = useState(data?.farmData[0]?.TokenInfo?.token?.symbol)
 
-  const { totalTvl } = getTvl(data)
-  const huskyRewards = getHuskyRewards(data, huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(data, cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
+  const { totalTvl } = getTvl(data.farmData[0])
+  const huskyRewards = getHuskyRewards(data.farmData[0], huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(data.farmData[0], cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(data.farmData[0], borrowingAsset)
 
   // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
 
@@ -146,7 +146,7 @@ const SingleAssetsCard = ({ data }) => {
             as={Link}
             to={(location) => ({
               ...location,
-              pathname: `${location.pathname}/farm/${data?.lpSymbol}`,
+              pathname: `${location.pathname}/farm/${data?.farmData[0]?.lpSymbol}`,
               state: { data },
             })}
             disabled={!account}
