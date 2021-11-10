@@ -91,6 +91,7 @@ export interface LeverageFarmConfig {
     earnLabel: string
     endBlock: number
   }
+  singleFlag?:number
   leverage: number
   TokenInfo: {
     token: Token

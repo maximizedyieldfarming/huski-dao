@@ -3,14 +3,23 @@ import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text,  Button, Box } from '@pancakeswap/uikit'
+import { CardBody as UiKitCardBody, Flex, Text, Button, Box } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { useHuskyPrice,  useCakePrice } from 'state/leverage/hooks'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/chart/line';  // 折线图是line,饼图改为pie,柱形图改为bar
+import 'echarts/lib/component/tooltip';
+import 'echarts/lib/component/title';
+import 'echarts/lib/component/legend';
+import 'echarts/lib/component/markPoint';
+import ReactEcharts from 'echarts-for-react';
+import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
+
+
 
 const CardBody = styled(UiKitCardBody)`
   .avgContainer {
@@ -42,7 +51,7 @@ const SingleAssetsCard = ({ data }) => {
   const yieldFarmData = getYieldFarming(data, cakePrice)
   const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
 
-  console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
+  // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
 
 
 
@@ -69,6 +78,34 @@ const SingleAssetsCard = ({ data }) => {
   const dailyEarnings = 11 //  data?.supplyChange
   const avgApy = Number(apy) - Number(apyOne)
 
+  const getOption = () => {
+    const option = {
+      // title:{
+      //   text:'',
+      //   x:'center'
+      // },
+      tooltip: {
+        trigger: 'axis',
+      },
+      xAxis: {
+        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          // name:'OFO订单量',
+          type: 'line',   // 这块要定义type类型，柱形图是bar,饼图是pie
+          data: [1000, 2000, 1500, 3000, 2000, 1200, 800]
+        }
+      ]
+    }
+    return option
+  }
+
+
+
   return (
     <Card>
       <CardHeader data={data} />
@@ -87,6 +124,10 @@ const SingleAssetsCard = ({ data }) => {
             </Box>
             {/* graph */}
           </Flex>
+
+          {/* <Card title="折线图表之一"> */}
+          <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '400px' }} />
+          {/* </Card> */}
         </Box>
         <Box padding="0.5rem 0">
           <Flex justifyContent="space-between">

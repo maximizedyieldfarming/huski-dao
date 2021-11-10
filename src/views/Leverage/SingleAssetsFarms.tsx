@@ -159,8 +159,42 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
-//   const singleData = farmsData.find((f) => f.pid === 365 || f.pid === 262)
-// console.info('singleData', singleData)
+  const singleData = farmsData.filter((f) => f.singleFlag === 0)
+console.info('singleData', singleData)
+
+  const marketArray = [
+    {
+      leverage: 2,
+      direction: 'long',
+
+    },
+    {
+      leverage: 2,
+      direction: 'short',
+
+    },
+    {
+      leverage: 3,
+      direction: 'short',
+
+    }
+  ];
+const singleNewData = []
+// const markets = {}
+if (singleData && singleData !== null && singleData !== undefined) {
+singleData.map((item) => {
+    let single
+    marketArray.map((market) => {
+      single = item
+        console.info(single)
+        console.info(market)
+        // single.markets = market
+        singleNewData.push({single,market })
+      
+    })
+  })
+}
+console.info('singleNewData', singleNewData);
 
   const reward = null
 
@@ -394,7 +428,7 @@ const SingleAssetsFarms: React.FC = () => {
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {farmsData?.map((asset) => (
+        {singleData?.map((asset) => (
           <SingleAssetsCard data={asset} key={asset.pid} />
         ))}
       </CardsWrapper>
