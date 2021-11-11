@@ -39,6 +39,7 @@ interface RouteParams {
 
 interface LocationParams {
   data?: any
+  selected?: number
 }
 
 const Section = styled(Box)`
@@ -126,11 +127,11 @@ const FarmSA = () => {
   const { account } = useWeb3React()
 
   const {
-    state: { data },
+    state: { data, selected },
   } = useLocation<LocationParams>()
 
-
-  const singleFarm = data?.farmData[0]
+  const [selectedPool, setSelectedPool] = useState(selected)
+  const singleFarm = data?.farmData[selectedPool]
   const poolName = singleFarm?.TokenInfo?.quoteToken.symbol.replace('wBNB', 'BNB')
   const allowance = singleFarm?.userData?.quoteTokenAllowance
   console.log('singleFarm-----', singleFarm)
@@ -139,11 +140,11 @@ const FarmSA = () => {
   const [isPending, setIsPending] = useState(false)
 
   const { balance: bnbBalance } = useGetBnbBalance()
-  const { balance: tokenBalance } = useTokenBalance(getAddress(singleFarm?.TokenInfo?.token?.address))
+  const { balance: tokenBalance } = useTokenBalance(getAddress(singleFarm?.QuoteTokenInfo?.token?.address))
   const userTokenBalance = Number(
-    getBalanceAmount(singleFarm?.TokenInfo?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
+    getBalanceAmount(singleFarm?.QuoteTokenInfo?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
   )
-console.log({userTokenBalance, tokenBalance })
+  console.log({ userTokenBalance, tokenBalance })
   const [tokenInput, setTokenInput] = useState(0)
   const [buttonIndex, setButtonIndex] = useState(null)
   const handleTokenInput = useCallback(
@@ -229,7 +230,13 @@ console.log({userTokenBalance, tokenBalance })
   const equity = null
   const positionValue = farmData[8]
   const huskiRewardsApr = huskyRewards * (data?.singleLeverage - 1)
-
+  const selectOptions = []
+  data.farmData?.forEach((item, index) => {
+    selectOptions.push({
+      label: item.lpSymbol.replace(' LP', ''),
+      value: index,
+    })
+  })
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
@@ -244,8 +251,7 @@ console.log({userTokenBalance, tokenBalance })
             <Box>
               <Flex>
                 <Text>{t('Collateral')}</Text>
-                {/* uncoment later with the proper options */}
-                {/* <Select options={null} /> */}
+                <Select options={selectOptions} onChange={(option) => setSelectedPool(option.value)} />
               </Flex>
               <Box>
                 <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
@@ -253,16 +259,15 @@ console.log({userTokenBalance, tokenBalance })
                     <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                     <Flex alignItems="center">
                       <Box width={25} height={25} mr="5px">
-                        <TokenImage token={singleFarm?.TokenInfo.token} width={25} height={25} /> 
+                        <TokenImage token={singleFarm?.QuoteTokenInfo.token} width={25} height={25} />
                       </Box>
                       <Text mr="5px" small color="textSubtle">
                         {t('Balance:')}
                       </Text>
-                     
-                        <Text small color="textSubtle">
-                          {userTokenBalance?.toPrecision(3)}
-                        </Text>
-                     
+
+                      <Text small color="textSubtle">
+                        {userTokenBalance?.toPrecision(3)}
+                      </Text>
                     </Flex>
                   </BalanceInputWrapper>
                 </InputArea>
