@@ -104,7 +104,7 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
               <Text>{name}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(stakedBalance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>

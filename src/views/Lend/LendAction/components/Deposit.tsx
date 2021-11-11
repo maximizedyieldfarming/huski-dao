@@ -138,6 +138,16 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
   const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
 
+  const balanceBigNumber = new BigNumber(balance)
+  let balanceNumber
+  if (balanceBigNumber.lt(1)) {
+    balanceNumber = balanceBigNumber
+      .toNumber()
+      .toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
+  } else {
+    balanceNumber = balanceBigNumber.toNumber().toFixed(2)
+  }
+
   return (
     <>
       <Section justifyContent="space-between">
@@ -151,14 +161,16 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           />
         </Box>
         <Box>
-          <Text fontWeight="bold">{t('Balance')}: {`${balance.toPrecision(4)} ${name}`}</Text>
+          <Text fontWeight="bold">
+            {t('Balance')}: {`${balanceNumber} ${name}`}
+          </Text>
 
           <MaxContainer>
             <Box>
               <Text>{name}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>

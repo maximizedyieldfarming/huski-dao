@@ -140,7 +140,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
               <Text>{name}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>

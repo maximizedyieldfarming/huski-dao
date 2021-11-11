@@ -91,6 +91,14 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
     }
   }
 
+const balanceBigNumber = new BigNumber(balance)
+  let balanceNumber
+  if (balanceBigNumber.lt(1)) {
+    balanceNumber = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
+  } else {
+    balanceNumber = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
+  }
+  
   return (
     <>
       <Section justifyContent="space-between">
@@ -105,14 +113,14 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
           />
         </Box>
         <Box>
-          <Text fontWeight="bold">{t('Balance')}: {`${balance} ib${name}`}</Text>
+          <Text fontWeight="bold">{t('Balance')}: {`${balanceNumber} ib${name}`}</Text>
 
           <MaxContainer>
             <Box>
               <Text>ib{name}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>

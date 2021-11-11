@@ -114,14 +114,14 @@ const LendAction = () => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const displayBalance = isDeposit
-    ? userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber()
-    : userTokenBalanceCalc(tokenBalanceIb).toNumber()
+    ? userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+    : userTokenBalanceCalc(tokenBalanceIb).toJSON()
 
   const [userTokenBalance, setUserTokenBalance] = useState(displayBalance)
   const [userIbTokenBalance, setUserIbTokenBalance] = useState(tokenBalanceIb)
   useEffect(() => {
-    setUserTokenBalance(userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber())
-    setUserIbTokenBalance(userTokenBalanceCalc(tokenBalanceIb).toNumber())
+    setUserTokenBalance(userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON())
+    setUserIbTokenBalance(userTokenBalanceCalc(tokenBalanceIb).toJSON())
   }, [tokenData, tokenBalance, tokenBalanceIb, tokenName, bnbBalance])
 
   return (
