@@ -161,8 +161,8 @@ const SingleAssetsCard = ({ data }) => {
             as={Link}
             to={(location) => ({
               ...location,
-              pathname: `${location.pathname}/farm/${data?.farmData[selectedPool]?.lpSymbol}`,
-              state: { data, selected: selectedPool },
+              pathname: `${location.pathname}/farm/${data?.farmData[selectedPool]?.lpSymbol.replace(' LP', '')}`,
+              state: { data: data?.farmData[selectedPool], singleLeverage: data?.singleLeverage },
             })}
             disabled={!account || !apy}
             onClick={(e) => !account && e.preventDefault()}
