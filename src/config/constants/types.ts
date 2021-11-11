@@ -13,6 +13,7 @@ export interface Token {
   address?: Address
   config?: Address
   decimals?: number
+  decimalsDigits?: number
   projectLink?: string
   busdPrice?: string
   coingeckoId?: string

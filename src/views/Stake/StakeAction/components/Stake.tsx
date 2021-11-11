@@ -113,7 +113,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const balanceBigNumber = new BigNumber(balance)
   let balanceNumer
   if (balanceBigNumber.lt(1)) {
-    balanceNumer = balanceBigNumber.toNumber().toPrecision(2)
+    balanceNumer = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits  ? tokenData?.token?.decimalsDigits : 2)
   } else {
     balanceNumer = balanceBigNumber.toNumber().toFixed(2)
   }

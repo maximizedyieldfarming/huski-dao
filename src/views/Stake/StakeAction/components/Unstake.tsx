@@ -82,16 +82,10 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
   const balanceBigNumber = new BigNumber(stakedBalance)
   let balanceNumer
   if (balanceBigNumber.lt(1)) {
-    if(balanceBigNumber.lt(0.001)){
-      balanceNumer = balanceBigNumber.toNumber().toFixed(2)
-    }else{
-      balanceNumer = balanceBigNumber.toNumber().toPrecision(2)
-    }
-    
+    balanceNumer = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
   } else {
-    balanceNumer = balanceBigNumber.toNumber().toFixed(2)
+    balanceNumer = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
   }
-
 
 
   return (
