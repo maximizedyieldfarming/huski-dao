@@ -208,6 +208,9 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   const numC = (num2 - basetokenBegin) * farmingtokenBegin
   const rationum = (0 - numB + (numB ** 2 - 4 * numA * numC) ** 0.5) / 2 / numA
 
+  const tradingfee = farmingtokenlp * rationum * PancakeTradingFee / (2 * basetokenlp - basetokenlpborrowed)
+  const priceimpact = farmingtokenlp * rationum * (1 - PancakeTradingFee) / (farmingtokenlp * rationum * (1 - PancakeTradingFee) + farmingtokenBegin)
+
   let needCloseBase
   let needCloseFarm
   let remainBase
@@ -235,7 +238,7 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   //   basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
   //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
   // });
-  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage };
+  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage };
 }
 
 

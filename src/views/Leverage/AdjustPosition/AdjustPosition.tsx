@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import { ethers } from 'ethers'
@@ -81,6 +81,8 @@ const AdjustPosition = () => {
   const { balance: quoteTokenBalance } = useTokenBalance(getAddress(TokenInfo.quoteToken.address))
   const lptotalSupplyNum = new BigNumber(lptotalSupply)
 
+  BigNumber.config({ DECIMAL_PLACES: data.farmData.TokenInfo.token.decimals, EXPONENTIAL_AT: 18 })
+  console.log("input", formatNumber(quoteTokenInput))
   let symbolName;
   let lpSymbolName;
   let tokenValue;
@@ -119,8 +121,8 @@ const AdjustPosition = () => {
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = vaultContract
-    tokenInputValue = tokenInput
-    quoteTokenInputValue = quoteTokenInput
+    tokenInputValue = formatNumber(tokenInput)
+    quoteTokenInputValue = formatNumber(quoteTokenInput)
     userTokenBalance = getBalanceAmount(
       tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
     )
@@ -147,8 +149,8 @@ const AdjustPosition = () => {
     withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = quoteTokenVaultContract
-    tokenInputValue = quoteTokenInput
-    quoteTokenInputValue = tokenInput
+    tokenInputValue = formatNumber(quoteTokenInput)
+    quoteTokenInputValue = formatNumber(tokenInput)
     userTokenBalance = getBalanceAmount(
       quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
     )
@@ -183,6 +185,8 @@ const AdjustPosition = () => {
     userTokenBalance,
     userQuoteTokenBalance,
   })
+
+  console.log('number quote', Number(quoteTokenInputValue))
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -312,19 +316,19 @@ const AdjustPosition = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('base + single + quote token input ')
-        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        farmingTokenAmount = (quoteTokenInputValue)
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        farmingTokenAmount = (quoteTokenInputValue)
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
 
-      amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+      amount = getDecimalAmount(new BigNumber((tokenInputValue)), 18).toString()
 
     } else {
       // farm token is base token
@@ -336,19 +340,19 @@ const AdjustPosition = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('farm + single +1 quote token input ')
-        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        farmingTokenAmount = (quoteTokenInputValue)
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = Number(quoteTokenInputValue).toString()
+        farmingTokenAmount = (quoteTokenInputValue)
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
 
-      amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+      amount = getDecimalAmount(new BigNumber((tokenInputValue)), 18).toString()
 
     }
 
@@ -366,8 +370,8 @@ const AdjustPosition = () => {
       tokenInputValue,
       quoteTokenInputValue,
 
-      'tokenInput': Number(tokenInput),
-      'quoteTokenInput': Number(quoteTokenInput)
+      'tokenInput': (tokenInput),
+      'quoteTokenInput': (quoteTokenInput)
     })
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
@@ -480,7 +484,7 @@ const AdjustPosition = () => {
   const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainLeverage } = getAdjustPositionRepayDebt(
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceimpact, tradingfee, remainLeverage } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
     Number(targetPositionLeverage),
@@ -719,7 +723,7 @@ const AdjustPosition = () => {
           <Text>Assets Supplied</Text>
           {farmingData ? (
             <Text>
-              {Number(tokenInputValue).toPrecision(3)} {tokenValue?.symbol} + {Number(quoteTokenInputValue).toPrecision(3)} {quoteTokenValue?.symbol}
+              {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol} + {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol}
             </Text>
           ) : (
             <Skeleton width="80px" height="16px" />
