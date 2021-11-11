@@ -282,7 +282,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {priceImpact ? <Text>{priceImpact.toPrecision(3)}%</Text> : <Skeleton height="16px" width="80px" />}
+          <Text>{priceImpact.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -292,7 +292,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {tradingFees ? <Text>{tradingFees.toPrecision(3)}%</Text> : <Skeleton height="16px" width="80px" />}
+          <Text>{tradingFees.toPrecision(3)}%</Text> 
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>

@@ -23,6 +23,7 @@ import {
   getBorrowingInterest,
   getAdjustData,
   getAdjustPositionRepayDebt,
+  getPriceImpact,
 } from '../helpers'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
@@ -78,6 +79,7 @@ const AdjustPosition = () => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const { balance: tokenBalance } = useTokenBalance(getAddress(TokenInfo.token.address))
   const { balance: quoteTokenBalance } = useTokenBalance(getAddress(TokenInfo.quoteToken.address))
+  const lptotalSupplyNum = new BigNumber(lptotalSupply)
 
   let symbolName;
   let lpSymbolName;
@@ -109,8 +111,10 @@ const AdjustPosition = () => {
     quoteTokenPrice = quoteTokenPriceUsd;
     tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
-    baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-    farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    baseTokenAmount = Number(tokenAmountTotal) / Number(lptotalSupplyNum) * lpAmount
+    farmTokenAmount = Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum) * lpAmount
+    // baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    // farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(tokenAmountTotal)
     farmingtokenBegin = parseInt(quoteTokenAmountTotal)
     workerAddress = TokenInfo.address
@@ -135,8 +139,10 @@ const AdjustPosition = () => {
     quoteTokenPrice = tokenPriceUsd;
     tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
-    baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-    farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    baseTokenAmount = Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum) * lpAmount
+    farmTokenAmount = Number(tokenAmountTotal) / Number(lptotalSupplyNum) * lpAmount
+    // baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
+    // farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(quoteTokenAmountTotal)
     farmingtokenBegin = parseInt(tokenAmountTotal)
     workerAddress = QuoteTokenInfo.address
@@ -157,6 +163,9 @@ const AdjustPosition = () => {
 
 
   console.log({
+    tokenAmountTotal,
+    lpAmount,
+    lptotalSupply,
     symbolName,
     lpSymbolName,
     tokenValue,
@@ -205,6 +214,10 @@ const AdjustPosition = () => {
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
   const assetsBorrowed = adjustData?.[3]
+
+  const priceImpactClose = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
+  const tradingFeesClose = Number(farmTokenAmount) * 0.0025
+
   let tradingFees = adjustData?.[5] * 100
   if (tradingFees < 0 || tradingFees > 1 || tradingFees.toString() === 'NaN') {
     tradingFees = 0
@@ -214,18 +227,8 @@ const AdjustPosition = () => {
     priceImpact = 0
   }
 
-  // let baseTokenInPosition
-  // let farmingTokenInPosition
-  // if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
   const baseTokenInPosition = adjustData?.[8]
   const farmingTokenInPosition = adjustData?.[9]
-  // } else {
-  //   // baseTokenInPosition = adjustData?.[9]
-  //   // farmingTokenInPosition = adjustData?.[8]
-  //   baseTokenInPosition = adjustData?.[8]
-  //   farmingTokenInPosition = adjustData?.[9]
-  // }
-
 
   // for apr
   const huskyPrice = useHuskyPrice()
@@ -290,7 +293,6 @@ const AdjustPosition = () => {
 
   const handleConfirm = async () => {
     const id = positionId
-    // const AssetsBorrowed = farmData ? farmData[3] : 0
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber() // debtValueNumber.toNumber() // farmData ? farmData[3] : 0
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
@@ -301,7 +303,6 @@ const AdjustPosition = () => {
     let strategiesAddress
     let dataStrategy
     let dataWorker
-    // let contract
 
     // base token is base token
     if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
@@ -324,9 +325,9 @@ const AdjustPosition = () => {
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      // contract = vaultContract
+
       amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
-      // workerAddress = TokenInfo.address
+
     } else {
       // farm token is base token
       // if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
@@ -348,9 +349,9 @@ const AdjustPosition = () => {
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      // contract = quoteTokenVaultContract
+
       amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
-      // workerAddress = QuoteTokenInfo.address
+
     }
 
     console.log({
@@ -450,7 +451,7 @@ const AdjustPosition = () => {
 
   const handleBorrowMoreChange = (e) => {
     const { value } = e.target
-    
+
     // const finalValue = value > balance ? balance : value
     // setBorrowingMore(finalValue)
   }
@@ -488,6 +489,7 @@ const AdjustPosition = () => {
     percentageToClose / 100,
     symbolName
   )
+
   const isConfirmDisabled =
     (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
     Number(currentPositionLeverage).toPrecision(3) === Number(targetPositionLeverage).toPrecision(3) ||
@@ -536,11 +538,12 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? (
+          {/* {adjustData ? (
             <Text color="#1DBE03">+{(priceImpact * 100).toPrecision(4)}%</Text>
           ) : (
             <Text color="#1DBE03">0.00%</Text>
-          )}
+          )} */}
+          <Text>{priceImpactClose.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -550,11 +553,12 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? (
+          {/* {adjustData ? (
             <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
           ) : (
             <Text color="#EB0303">0.00%</Text>
-          )}
+          )} */}
+          <Text>{tradingFeesClose.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Converted Position Value Assets</Text>
@@ -582,7 +586,7 @@ const AdjustPosition = () => {
           <Text>Updated Position Value Assets</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+              {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
@@ -688,7 +692,7 @@ const AdjustPosition = () => {
           <Text>Amount of Debt to Repay</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+              {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
@@ -700,7 +704,7 @@ const AdjustPosition = () => {
           <Text>Updated Position Value Assets</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition.toFixed(2)} + {farmingTokenInPosition.toFixed(2)}
+              {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
