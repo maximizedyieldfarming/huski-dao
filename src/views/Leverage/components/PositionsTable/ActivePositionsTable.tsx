@@ -34,8 +34,8 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
 
   return (
     <StyledTable role="table" ref={tableWrapperEl}>
-      {!(isMobile || isTablet) && positionFarmsData.length ? <ActivePositionsHeaderRow /> : null}
-      {positionFarmsData.length ? (
+      {!(isMobile || isTablet) && positionFarmsData?.length ? <ActivePositionsHeaderRow /> : null}
+      {positionFarmsData?.length ? (
         positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.positionId} />)
       ) : (
         <Box padding="100px">

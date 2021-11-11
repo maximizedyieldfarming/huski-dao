@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
@@ -17,6 +18,7 @@ import DebtRatioCell from './Cells/DebtRatioCell'
 import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
 import SafetyBufferCell from './Cells/SafetyBufferCell'
 import ProfitsCell from './Cells/ProfitsCell'
+import StrategyCell from './Cells/StrategyCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -34,6 +36,7 @@ const ActivePositionsRow = ({ data }) => {
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
+  const { pathname } = useLocation()
 
   const { positionId, debtValue, lpAmount, positionValueBase, vault } = data
   const {
@@ -81,7 +84,6 @@ const ActivePositionsRow = ({ data }) => {
   const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
   const dropData = getDrop(data.farmData, data, symbolName)
-  
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -106,13 +108,16 @@ const ActivePositionsRow = ({ data }) => {
           quoteToken={quoteTokenValue}
           token={tokenValue}
         />
+        {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
-        <DebtCell
-          debt={debtValueNumber}
-          borrowedAssets={null}
-          borrowingInterest={borrowingInterest.toPrecision(3)}
-          name={symbolName}
-        />
+        {pathname.includes('leverage') ? (
+          <DebtCell
+            debt={debtValueNumber}
+            borrowedAssets={null}
+            borrowingInterest={borrowingInterest.toPrecision(3)}
+            name={symbolName}
+          />
+        ) : null}
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={symbolName} />
         <ApyCell
           apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
@@ -122,8 +127,13 @@ const ActivePositionsRow = ({ data }) => {
           liquidityRewards={null}
           tradingFeesRewards={null}
         />
-        <DebtRatioCell debtRatio={debtRatio} />
-        <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />
+
+        {pathname.includes('leverage') ? (
+          <>
+            <DebtRatioCell debtRatio={debtRatio} />
+            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />{' '}
+          </>
+        ) : null}
         <SafetyBufferCell safetyBuffer={safetyBuffer} />
         {/* <ProfitsCell profitLoss={profitLoss} /> */}
         <ActionCell

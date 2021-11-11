@@ -1,24 +1,15 @@
 /* eslint-disable array-callback-return */
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
-import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
+import { Link, useRouteMatch } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { useLeverageFarms, usePollLeverageFarmsWithUserData, useCakePrice } from 'state/leverage/hooks'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, Grid } from '@pancakeswap/uikit'
 import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
-import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
-import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { useClaimFairLaunch } from 'hooks/useContract'
-import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { useGetPositions } from 'hooks/api'
-import { usePositions } from './hooks/usePositions'
-import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
-import { getYieldFarming, getTvl } from './helpers'
 import SingleAssetsCard from './components/SingleAssetsCards'
 
 const ActionButton = styled(Button)`
@@ -162,12 +153,12 @@ const SingleAssetsFarms: React.FC = () => {
   const singleData = farmsData.filter((f) => f.singleFlag === 0)
   console.info('singleData', singleData)
 
-  const bnbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "wBNB")
-  const btcbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "BTCB")
-  const ethArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "ETH")
-  const huskiArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "ALPACA") // HUSKI
-  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === "CAKE")
-  console.log({ bnbArray, btcbArray, ethArray, huskiArray, });
+  const bnbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'wBNB')
+  const btcbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'BTCB')
+  const ethArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'ETH')
+  const huskiArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'ALPACA') // HUSKI
+  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'CAKE')
+  console.log({ bnbArray, btcbArray, ethArray, huskiArray })
   const marketArray = [
     {
       singleLeverage: 2,
@@ -245,9 +236,7 @@ const SingleAssetsFarms: React.FC = () => {
     })
   }
 
-
   console.info('aaaa', singlesData)
-
 
   const reward = null
 
@@ -294,7 +283,7 @@ const SingleAssetsFarms: React.FC = () => {
             </PositionsButton>
           </Box>
         </PositionButtonsContainer>
-        {/*         {isActivePos ? <ActivePositionsTable positionFarmsData={null} /> : <LiquidatedPositionsTable data={null} />} */}
+        {isActivePos ? <ActivePositionsTable positionFarmsData={null} /> : <LiquidatedPositionsTable data={null} />}
       </StyledTableBorder>
 
       <FiltersWrapper>
@@ -407,7 +396,7 @@ const SingleAssetsFarms: React.FC = () => {
         {singlesData?.map((asset) => (
           <SingleAssetsCard
             data={asset}
-          // key={asset.pid}
+            // key={asset.pid}
           />
         ))}
       </CardsWrapper>

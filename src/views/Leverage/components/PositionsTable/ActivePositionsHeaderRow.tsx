@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Text, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
@@ -57,6 +58,8 @@ const StyledCell = styled(BaseCell)`
 `
 const ActivePositionsHeaderRow = () => {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
+
   const {
     targetRef: positionTargetRef,
     tooltip: positionTooltip,
@@ -168,6 +171,15 @@ const ActivePositionsHeaderRow = () => {
           </Text>
         </CellContent>
       </PoolCell>
+      {pathname.includes('singleAssets') ? (
+        <StyledCell>
+          <CellContent>
+            <Text small color="textSubtle">
+              {t('Strategy')}
+            </Text>
+          </CellContent>
+        </StyledCell>
+      ) : null}
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
@@ -181,19 +193,21 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      <StyledCell>
-        <CellContent>
-          <Flex alignItems="center">
-            <Text small color="textSubtle">
-              {t('Debt')}
-            </Text>
-            {debtTooltipVisible && debtTooltip}
-            <span ref={debtTargetRef}>
-              <InfoIcon ml="5px" />
-            </span>
-          </Flex>
-        </CellContent>
-      </StyledCell>
+      {pathname.includes('leverage') ? (
+        <StyledCell>
+          <CellContent>
+            <Flex alignItems="center">
+              <Text small color="textSubtle">
+                {t('Debt')}
+              </Text>
+              {debtTooltipVisible && debtTooltip}
+              <span ref={debtTargetRef}>
+                <InfoIcon ml="5px" />
+              </span>
+            </Flex>
+          </CellContent>
+        </StyledCell>
+      ) : null}
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
@@ -220,32 +234,37 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      <StyledCell>
-        <CellContent>
-          <Flex alignItems="center">
-            <Text small color="textSubtle">
-              {t('Debt Ratio')}
-            </Text>
-            {debtRatioTooltipVisible && debtRatioTooltip}
-            <span ref={debtRatioTargetRef}>
-              <InfoIcon ml="5px" />
-            </span>
-          </Flex>
-        </CellContent>
-      </StyledCell>
-      <StyledCell>
-        <CellContent>
-          <Flex alignItems="center">
-            <Text small color="textSubtle">
-              {t('Liquidation Threshold')}
-            </Text>
-            {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
-            <span ref={liquidationThresholdTargetRef}>
-              <InfoIcon ml="5px" />
-            </span>
-          </Flex>
-        </CellContent>
-      </StyledCell>
+
+      {pathname.includes('leverage') ? (
+        <>
+          <StyledCell>
+            <CellContent>
+              <Flex alignItems="center">
+                <Text small color="textSubtle">
+                  {t('Debt Ratio')}
+                </Text>
+                {debtRatioTooltipVisible && debtRatioTooltip}
+                <span ref={debtRatioTargetRef}>
+                  <InfoIcon ml="5px" />
+                </span>
+              </Flex>
+            </CellContent>
+          </StyledCell>
+          <StyledCell>
+            <CellContent>
+              <Flex alignItems="center">
+                <Text small color="textSubtle">
+                  {t('Liquidation Threshold')}
+                </Text>
+                {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
+                <span ref={liquidationThresholdTargetRef}>
+                  <InfoIcon ml="5px" />
+                </span>
+              </Flex>
+            </CellContent>
+          </StyledCell>
+        </>
+      ) : null}
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
