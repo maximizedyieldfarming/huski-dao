@@ -50,7 +50,7 @@ const Header = styled(Flex)`
   border-radius: 20px 0 20px 0;
 `
 
-const HeaderTabs = styled(Link)<Props>`
+const HeaderTabs = styled(Link) <Props>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border-top: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
@@ -86,7 +86,6 @@ const StakeAction = () => {
   const [tokenData, setTokenData] = useState(data)
   const { t } = useTranslation()
 
-  console.log('tokenData', tokenData)
   const { account } = useWeb3React()
   const { action, tokenName } = useParams<RouteParams>()
   const [isStake, setIsStake] = useState(action === 'stake')
@@ -97,15 +96,15 @@ const StakeAction = () => {
 
   const { tokenBalance } = tokenData.userData
   const { stakedBalance } = tokenData.userData
-  console.log({ tokenBalance, stakedBalance })
-  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
+
+  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).div(BIG_TEN.pow(18))
   const { allowance } = tokenData?.userData
 
-  const [userTokenBalance, setUserTokenBalance] = useState(userTokenBalanceCalc(tokenBalance).toNumber())
-  const [userStakedBalance, setStakedBalance] = useState(userTokenBalanceCalc(stakedBalance).toNumber())
+  const [userTokenBalance, setUserTokenBalance] = useState(userTokenBalanceCalc(tokenBalance).toJSON())
+  const [userStakedBalance, setStakedBalance] = useState(userTokenBalanceCalc(stakedBalance).toJSON())
   useEffect(() => {
-    setUserTokenBalance(userTokenBalanceCalc(tokenBalance).toNumber())
-    setStakedBalance(userTokenBalanceCalc(stakedBalance).toNumber())
+    setUserTokenBalance(userTokenBalanceCalc(tokenBalance).toJSON())
+    setStakedBalance(userTokenBalanceCalc(stakedBalance).toJSON())
   }, [tokenData, tokenBalance, stakedBalance])
 
   return (

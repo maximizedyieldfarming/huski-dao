@@ -59,7 +59,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
   const handleApprove = async () => {
-    toastInfo(t('Approving...'),t('Please Wait!'))
+    toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
       const tx = await claimContract.approve(claimContract, ethers.constants.MaxUint256)
@@ -106,11 +106,23 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
   }
 
   const handleConfirm = async () => {
-    console.info('amount',amount)
     const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
-    console.info('convertedStakeAmount',convertedStakeAmount.toString())
     handleStake(convertedStakeAmount)
   }
+
+  const balanceBigNumber = new BigNumber(balance)
+  let balanceNumer
+  if (balanceBigNumber.lt(1)) {
+    balanceNumer = balanceBigNumber.toNumber().toPrecision(2)
+  } else {
+    balanceNumer = balanceBigNumber.toNumber().toFixed(2)
+  }
+
+  // if (balanceBigNumber.gt(0) && balanceBigNumber.lt(0.0001)) {
+  //   return balanceBigNumber.toLocaleString()
+  // }
+
+  console.info('balanceNumer', balanceNumer)
 
   return (
     <>
@@ -121,7 +133,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
         </Box>
         <Box>
           <Text fontWeight="bold">
-            {t('Available Balance:')} {balance} {name}
+            {t('Available Balance:')} {balanceNumer} {name}
           </Text>
           <MaxContainer>
             <Box>
