@@ -9,6 +9,8 @@ interface Props {
   minimizeTradingValues: any
   quoteTokenName: string
   tokenName: string
+  baseTokenAmountValue: any
+  farmTokenAmountValue: any
 }
 
 const Wrapper = styled(Box)`
@@ -31,8 +33,10 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
   minimizeTradingValues,
   quoteTokenName,
   tokenName,
+  baseTokenAmountValue,
+  farmTokenAmountValue
 }) => {
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage } =
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm } =
     minimizeTradingValues
 
   const { percentage, setPercentage } = usePercentageToCloseContext()
@@ -84,11 +88,11 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
         <Text>Updated Position Value Assets</Text>
         <Flex>
           <Text color="textSubtle">
-            {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
+            {farmTokenAmountValue?.toFixed(3)} {quoteTokenName} + {baseTokenAmountValue?.toFixed(3)} {tokenName}
           </Text>
           <ChevronRightIcon />
           <Text>
-            {remainBorrowFarm?.toFixed(3)} {quoteTokenName} + {remainBorrowBase?.toFixed(3)} {tokenName}
+            {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
           </Text>
         </Flex>
       </Flex>

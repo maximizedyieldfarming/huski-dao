@@ -113,8 +113,6 @@ const AdjustPosition = () => {
     quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = Number(tokenAmountTotal) / Number(lptotalSupplyNum) * lpAmount
     farmTokenAmount = Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum) * lpAmount
-    // baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-    // farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(tokenAmountTotal)
     farmingtokenBegin = parseInt(quoteTokenAmountTotal)
     workerAddress = TokenInfo.address
@@ -837,6 +835,8 @@ const AdjustPosition = () => {
                   symbolName={symbolName}
                   tokenPrice={tokenPrice}
                   quoteTokenPrice={quoteTokenPrice}
+                  baseTokenAmountValue={baseTokenAmount}
+                  farmTokenAmountValue={farmTokenAmount}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
                     data.farmData,
                     data,
@@ -863,6 +863,8 @@ const AdjustPosition = () => {
                   symbolName={symbolName}
                   tokenPrice={tokenPrice}
                   quoteTokenPrice={quoteTokenPrice}
+                  baseTokenAmountValue={baseTokenAmount}
+                  farmTokenAmountValue={farmTokenAmount}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
                     data.farmData,
                     data,

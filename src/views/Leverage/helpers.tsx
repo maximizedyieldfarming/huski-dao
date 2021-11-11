@@ -213,8 +213,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   let remainBase
   let remainFarm
   let remainBorrowBase
-  let remainBorrowFarm
   let remainLeverage
+  
   if (leverage > 1) {
     needCloseBase = basetokenlp * rationum
     needCloseFarm = farmingtokenlp * rationum
@@ -222,20 +222,20 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     remainBase = basetokenlp * (1 - rationum)
     remainFarm = farmingtokenlp * (1 - rationum)
     remainBorrowBase = basetokenlpborrowed - repaydebtnum
-    remainBorrowFarm = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
     remainLeverage = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
-    // basetokenlpborrowed - repaydebtnum  
   } else if (Number(leverage) === 1) {
     needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     remainBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     remainFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     remainBorrowBase = 0
-    remainBorrowFarm = 0
     remainLeverage = 0
   }
-console.log({ needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage ,leverage, ClosePositionPercentage});
-  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage };
+  // console.log({
+  //   basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
+  //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
+  // });
+  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage };
 }
 
 

@@ -24,6 +24,8 @@ interface Props {
   symbolName: string
   tokenPrice: string
   quoteTokenPrice: string
+  baseTokenAmountValue: any
+  farmTokenAmountValue: any
   minimizeTradingValues: any
 }
 
@@ -57,6 +59,8 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
   symbolName,
   tokenPrice,
   quoteTokenPrice,
+  baseTokenAmountValue,
+  farmTokenAmountValue,
   minimizeTradingValues,
 }) => {
   const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
@@ -101,6 +105,8 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
             minimizeTradingValues={minimizeTradingValues}
             quoteTokenName={quoteTokenName}
             tokenName={tokenName}
+            baseTokenAmountValue={baseTokenAmountValue}
+            farmTokenAmountValue={farmTokenAmountValue}
           />
         )}
       </Box>

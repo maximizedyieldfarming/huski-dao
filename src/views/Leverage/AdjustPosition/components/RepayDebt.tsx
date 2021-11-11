@@ -11,6 +11,8 @@ const RepayDebt = ({
   minimizeTradingValues,
   quoteTokenName,
   tokenName,
+  baseTokenAmountValue,
+  farmTokenAmountValue
 }) => {
   const { isConvertTo, handleIsConvertTo } = useConvertToContext()
   const handleSelect = (option) => {
@@ -36,6 +38,8 @@ const RepayDebt = ({
           convertToValues={minimizeTradingValues}
           quoteTokenName={quoteTokenName}
           tokenName={tokenName}
+          baseTokenAmountValue={baseTokenAmountValue}
+          farmTokenAmountValue={farmTokenAmountValue}
         />
       ) : (
         <RepayDebtMinimizeTrading
@@ -44,6 +48,8 @@ const RepayDebt = ({
           minimizeTradingValues={minimizeTradingValues}
           quoteTokenName={quoteTokenName}
           tokenName={tokenName}
+          baseTokenAmountValue={baseTokenAmountValue}
+          farmTokenAmountValue={farmTokenAmountValue}
         />
       )}
     </>
