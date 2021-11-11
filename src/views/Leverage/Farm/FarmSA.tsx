@@ -186,8 +186,7 @@ const FarmSA = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const handleApprove = async () => {
-
-    const contract = quoteTokenApproveContract//  approveContract 
+    const contract = quoteTokenApproveContract //  approveContract
 
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
@@ -254,7 +253,6 @@ const FarmSA = () => {
     const amount = getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
     const workerAddress = singleFarm?.TokenInfo.address
 
-
     // console.log({
     //   id,
     //   workerAddress,
@@ -312,6 +310,19 @@ const FarmSA = () => {
       value: index,
     })
   })
+
+  const balanceBigNumber = new BigNumber(userTokenBalance)
+  let balanceNumber
+  if (balanceBigNumber.lt(1)) {
+    balanceNumber = balanceBigNumber
+      .toNumber()
+      .toFixed(
+        singleFarm?.TokenInfo?.quoteToken?.decimalsDigits ? singleFarm?.TokenInfo?.quoteToken?.decimalsDigits : 2,
+      )
+  } else {
+    balanceNumber = balanceBigNumber.toNumber().toFixed(2)
+  }
+
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
@@ -324,7 +335,7 @@ const FarmSA = () => {
         <Flex className="sideSection">
           <Section>
             <Box>
-              <Flex>
+              <Flex justifyContent="space-between" alignItems="center">
                 <Text>{t('Collateral')}</Text>
                 <Select options={selectOptions} onChange={(option) => setSelectedPool(option.value)} />
               </Flex>
@@ -341,12 +352,12 @@ const FarmSA = () => {
                       </Text>
 
                       <Text small color="textSubtle">
-                        {userTokenBalance?.toPrecision(3)}
+                        {balanceNumber}
                       </Text>
                     </Flex>
                   </BalanceInputWrapper>
                 </InputArea>
-                <ButtonMenu onItemClick={setTokenInputToFraction} activeIndex={buttonIndex}>
+                <ButtonMenu onItemClick={setTokenInputToFraction} activeIndex={buttonIndex} disabled={Number(userTokenBalance) === 0}>
                   <ButtonMenuItem>25%</ButtonMenuItem>
                   <ButtonMenuItem>50%</ButtonMenuItem>
                   <ButtonMenuItem>75%</ButtonMenuItem>
