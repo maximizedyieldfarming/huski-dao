@@ -16,7 +16,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import DebtRatioProgress from 'components/DebRatioProgress'
+import { TokenImage } from 'components/TokenImage'
 import {
   getHuskyRewards,
   getYieldFarming,
@@ -24,11 +24,10 @@ import {
   getAdjustData,
   getAdjustPositionRepayDebt,
 } from '../helpers'
-import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
-import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
 interface LocationParams {
   data: any
+  liquidationThresholdData: number
 }
 
 const Section = styled(Box)`
@@ -71,10 +70,11 @@ const BalanceInputWrapper = styled(Flex)`
 
 const AdjustPositionSA = () => {
   const { t } = useTranslation()
-  // const {
-  //   state: { data },
-  // } = useLocation<LocationParams>()
-  // const name = data.name
+  const {
+    state: { data },
+  } = useLocation<LocationParams>()
+  const tokenName = data?.farmData?.TokenInfo?.token?.symbol
+  const quoteTokenName = data?.farmData?.TokenInfo?.quoteToken?.symbol
 
   const leverage = 3
   const currentPositionLeverage = 3 // change values later
@@ -91,7 +91,24 @@ const AdjustPositionSA = () => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-  const userTokenBalance = 100
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const { balance: tokenBalance } = useTokenBalance(getAddress(data?.farmData?.TokenInfo?.token?.address))
+  const userTokenBalance = getBalanceAmount(
+    data?.farmData?.TokenInfo?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+  )
+  const balanceBigNumber = new BigNumber(userTokenBalance)
+  let balanceNumber
+  if (balanceBigNumber.lt(1)) {
+    balanceNumber = balanceBigNumber
+      .toNumber()
+      .toFixed(
+        data?.farmData?.TokenInfo?.quoteToken?.decimalsDigits
+          ? data?.farmData?.TokenInfo?.quoteToken?.decimalsDigits
+          : 2,
+      )
+  } else {
+    balanceNumber = balanceBigNumber.toNumber().toFixed(2)
+  }
 
   const [tokenInput, setTokenInput] = useState(0)
   const [buttonIndex, setButtonIndex] = useState(null)
@@ -108,6 +125,12 @@ const AdjustPositionSA = () => {
     },
     [userTokenBalance],
   )
+
+  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, 0)
+  const adjustData = farmingData ? farmingData[1] : []
+  console.log('adjustData', adjustData)
+  const baseTokenInPosition = adjustData?.[8]
+  const farmingTokenInPosition = adjustData?.[9]
 
   const [isRepayDebt, setIsRepayDebt] = useState(false)
   return (
@@ -143,22 +166,32 @@ const AdjustPositionSA = () => {
             <Box>
               <Flex justifyContent="space-between">
                 <Text>{t(`You're adding collateral`)}</Text>
-                <Text>{t('Balance:')}</Text>
+                <Flex>
+                  <Text>{t('Balance:')}</Text>
+                  <Text>{`${balanceNumber} ${tokenName}`}</Text>
+                </Flex>
               </Flex>
               <BalanceInputWrapper alignItems="center" flex="1" padding="0">
+                <Box width={40} height={40} mr="5px">
+                  <TokenImage token={data?.farmData?.TokenInfo.token} width={40} height={40} />
+                </Box>
                 <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
-                <Flex alignItems="center">
-                  <Box width={40} height={40} mr="5px">
-                    {/* <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} /> */}
-                  </Box>
-                  {/* <Text mr="5px" small color="textSubtle">
-                    {name}
-                </Text> */}
-                </Flex>
+                <Text mr="5px" small color="textSubtle">
+                  {tokenName}
+                </Text>
               </BalanceInputWrapper>
             </Box>
             <Flex justifyContent="space-between">
               <Text>{t('Updated Position Value Assets')}</Text>
+              {adjustData ? (
+                <Text>
+                  {baseTokenInPosition.toFixed(2)} {tokenName} + {farmingTokenInPosition.toFixed(2)} {quoteTokenName}
+                </Text>
+              ) : (
+                <Text>
+                  0.00 {tokenName} + 0.00 {quoteTokenName}
+                </Text>
+              )}
             </Flex>
             <Flex justifyContent="space-between">
               <Text>{t('Minimum Debt Repayment')}</Text>
@@ -202,6 +235,15 @@ const AdjustPositionSA = () => {
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
+                {adjustData ? (
+                  <Text>
+                    {baseTokenInPosition.toFixed(2)} {tokenName} + {farmingTokenInPosition.toFixed(2)} {quoteTokenName}
+                  </Text>
+                ) : (
+                  <Text>
+                    0.00 {tokenName} + 0.00 {quoteTokenName}
+                  </Text>
+                )}
               </Flex>
             </>
           ) : (
@@ -219,22 +261,32 @@ const AdjustPositionSA = () => {
               <Box>
                 <Flex justifyContent="space-between">
                   <Text>{t(`You're adding collateral`)}</Text>
-                  <Text>{t('Balance:')}</Text>
+                  <Flex>
+                    <Text>{t('Balance:')}</Text>
+                    <Text>{`${balanceNumber} ${tokenName}`}</Text>
+                  </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0">
+                  <Box width={40} height={40} mr="5px">
+                    <TokenImage token={data?.farmData?.TokenInfo.token} width={40} height={40} />
+                  </Box>
                   <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
-                  <Flex alignItems="center">
-                    <Box width={40} height={40} mr="5px">
-                      {/* <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} /> */}
-                    </Box>
-                    {/* <Text mr="5px" small color="textSubtle">
-                    {name}
-                </Text> */}
-                  </Flex>
+                  <Text mr="5px" small color="textSubtle">
+                    {tokenName}
+                  </Text>
                 </BalanceInputWrapper>
               </Box>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
+                {adjustData ? (
+                  <Text>
+                    {baseTokenInPosition.toFixed(2)} {tokenName} + {farmingTokenInPosition.toFixed(2)} {quoteTokenName}
+                  </Text>
+                ) : (
+                  <Text>
+                    0.00 {tokenName} + 0.00 {quoteTokenName}
+                  </Text>
+                )}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Minimum Debt Repayment')}</Text>
@@ -312,6 +364,15 @@ const AdjustPositionSA = () => {
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
+                {adjustData ? (
+                  <Text>
+                    {baseTokenInPosition.toFixed(2)} {tokenName} + {farmingTokenInPosition.toFixed(2)} {quoteTokenName}
+                  </Text>
+                ) : (
+                  <Text>
+                    0.00 {tokenName} + 0.00 {quoteTokenName}
+                  </Text>
+                )}
               </Flex>
             </>
           ) : (
@@ -329,22 +390,32 @@ const AdjustPositionSA = () => {
               <Box>
                 <Flex justifyContent="space-between">
                   <Text>{t(`You're adding collateral`)}</Text>
-                  <Text>{t('Balance:')}</Text>
+                  <Flex>
+                    <Text>{t('Balance:')}</Text>
+                    <Text>{`${balanceNumber} ${tokenName}`}</Text>
+                  </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0">
+                  <Box width={40} height={40} mr="5px">
+                    <TokenImage token={data?.farmData?.TokenInfo.token} width={40} height={40} />
+                  </Box>
                   <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
-                  <Flex alignItems="center">
-                    <Box width={40} height={40} mr="5px">
-                      {/* <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} /> */}
-                    </Box>
-                    {/* <Text mr="5px" small color="textSubtle">
-                    {name}
-                </Text> */}
-                  </Flex>
+                  <Text mr="5px" small color="textSubtle">
+                    {tokenName}
+                  </Text>
                 </BalanceInputWrapper>
               </Box>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
+                {adjustData ? (
+                  <Text>
+                    {baseTokenInPosition.toFixed(2)} {tokenName} + {farmingTokenInPosition.toFixed(2)} {quoteTokenName}
+                  </Text>
+                ) : (
+                  <Text>
+                    0.00 {tokenName} + 0.00 {quoteTokenName}
+                  </Text>
+                )}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Minimum Debt Repayment')}</Text>

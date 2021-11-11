@@ -8,6 +8,8 @@ import styled from 'styled-components'
 import { Box, Button, Flex, Text, Grid } from '@pancakeswap/uikit'
 import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
 import { useTranslation } from 'contexts/Localization'
+import { useGetPositions } from 'hooks/api'
+import { usePositions } from './hooks/usePositions'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 import SingleAssetsCard from './components/SingleAssetsCards'
@@ -238,6 +240,27 @@ const SingleAssetsFarms: React.FC = () => {
 
   console.info('aaaa', singlesData)
 
+usePollLeverageFarmsWithUserData()
+  const data = useGetPositions(account)
+  const positionData = usePositions(data)
+  console.info('positionData', positionData)
+  const positionFarmsData = []
+  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
+    positionData.map((pdata) => {
+      let pfarmData
+      farmsData.map((farm) => {
+        if (
+          farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ||
+          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()
+        ) {
+          pfarmData = pdata
+          pfarmData.farmData = farm
+          positionFarmsData.push(pfarmData)
+        }
+      })
+    })
+  }
+
   const reward = null
 
   const [dexFilter, setDexFilter] = useState('all')
@@ -283,7 +306,7 @@ const SingleAssetsFarms: React.FC = () => {
             </PositionsButton>
           </Box>
         </PositionButtonsContainer>
-        {isActivePos ? <ActivePositionsTable positionFarmsData={null} /> : <LiquidatedPositionsTable data={null} />}
+        {isActivePos ? <ActivePositionsTable positionFarmsData={positionFarmsData} /> : <LiquidatedPositionsTable data={null} />}
       </StyledTableBorder>
 
       <FiltersWrapper>
