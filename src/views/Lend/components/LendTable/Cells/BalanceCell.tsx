@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Box } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
+import { getBalanceAmount, getBalanceNumber, formatNumber } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
 import { useGetBnbBalance } from 'hooks/useTokenBalance'
 import BaseCell, { CellContent } from './BaseCell'
@@ -21,6 +21,19 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const { t } = useTranslation()
 
+  const balanceNumber = getBalanceNumber(name.toLowerCase() === 'bnb' ? bnbBalance : balance)
+  const ibBalanceNumber = getBalanceNumber(balanceIb)
+  const formatedBalance = formatNumber(balanceNumber)
+  const ibFormatedBalance = formatNumber(ibBalanceNumber)
+
+  // const formatBalance = (value) => {
+  //   const displayBalance = new BigNumber(value)
+  //   if (displayBalance.lt(0.0001)) {
+  //     return displayBalance.toFixed(4)
+  //   }
+  //   return displayBalance.toFixed(2)
+  // }
+
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -32,13 +45,10 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
         {balanceIb ? (
           <Box>
             <Text small textAlign="left">
-              {userTokenBalance(balanceIb).toNumber().toPrecision(3)} ib{name}
+              {ibFormatedBalance} ib{name}
             </Text>
             <Text small textAlign="left" color="textSubtle">
-              {userTokenBalance(name.toLowerCase() === 'bnb' ? bnbBalance : balance)
-                .toNumber()
-                .toPrecision(3)}{' '}
-              {name}
+              {formatedBalance} {name}
             </Text>
           </Box>
         ) : (
