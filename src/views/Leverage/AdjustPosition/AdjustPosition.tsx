@@ -480,7 +480,7 @@ const AdjustPosition = () => {
   const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
-  const { remainLeverage } = getAdjustPositionRepayDebt(
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainLeverage } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
     Number(targetPositionLeverage),

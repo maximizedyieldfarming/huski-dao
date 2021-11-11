@@ -110,10 +110,10 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount// .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  // console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
+  console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
 
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
-  // console.info('======adjust======', farmdata);
+  console.info('======adjust======', farmdata);
   return farmdata
 }
 
@@ -214,7 +214,7 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   let remainFarm
   let remainBorrowBase
   let remainLeverage
-  
+
   if (leverage > 1) {
     needCloseBase = basetokenlp * rationum
     needCloseFarm = farmingtokenlp * rationum

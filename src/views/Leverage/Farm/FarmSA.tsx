@@ -28,6 +28,13 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/markPoint'
+import ReactEcharts from 'echarts-for-react'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
 import Select from 'components/Select/Select'
@@ -382,6 +389,87 @@ const FarmSA = () => {
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
+  const getOption = () => {
+    const option = {
+
+      tooltip: {
+        trigger: 'axis'
+      },
+      // 图例名
+      legend: {
+        data: ['test1', 'test2',]
+      },
+      grid: {
+        left: '3%',   // 图表距边框的距离
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      // // 工具框，可以选择
+      // toolbox: {
+      //     feature: {
+      //         saveAsImage: {}
+      //     }
+      // },
+      // x轴信息样式
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        // 坐标轴颜色
+        axisLine: {
+          lineStyle: {
+            color: 'red'
+          }
+        },
+        // x轴文字旋转
+        axisLabel: {
+          rotate: 30,
+          interval: 0
+        },
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          name: '邮件营销1',
+          type: 'line',
+          symbol: 'none',// no point
+          symbolSize: 8,
+          itemStyle: {
+            normal: {
+              color: 'red',
+              borderColor: 'red',
+            }
+          },
+          data: [0, 50, 100, 150, 200, 250, 300]
+        },
+        {
+          name: '视频广告',
+          type: 'line',
+          stack: '总量',
+          symbol: 'none',
+          symbolSize: 8,
+          color: ['orange'],
+          smooth: false,   // 关键点，为true是不支持虚线的，实线就用true
+          itemStyle: {
+            normal: {
+              lineStyle: {
+                width: 2,
+                type: 'dotted'  // 'dotted'虚线 'solid'实线
+              }
+            }
+          },
+          data: [150, 232, 201, 154, 190, 330, 410]
+        },
+
+      ]
+    };
+
+    return option
+  }
+
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
@@ -390,7 +478,10 @@ const FarmSA = () => {
       <SectionWrapper>
         {/* graph goes here */}
         <Text>Graph here</Text>
+        <Flex className="sideSection" flex="1">
 
+          <ReactEcharts option={getOption()} style={{ height: '500px' }} />
+        </Flex>
         <Flex className="sideSection">
           <Section>
             <Box>
