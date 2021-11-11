@@ -77,7 +77,7 @@ const tokens = {
       97: '',
     },
     decimals: 18,
-    decimalsDigits: 5,
+    decimalsDigits: 3,
     projectLink: 'https://pancakeswap.finance/',
     coingeckoId: 'pancakeswap-token',
   },

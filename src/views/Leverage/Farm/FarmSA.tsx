@@ -133,6 +133,7 @@ const FarmSA = () => {
   const [selectedPool, setSelectedPool] = useState(selected)
   const singleFarm = data?.farmData[selectedPool]
   const poolName = singleFarm?.TokenInfo?.quoteToken.symbol.replace('wBNB', 'BNB')
+  const baseName = singleFarm?.TokenInfo?.token.symbol.replace('wBNB', 'BNB')
   const allowance = singleFarm?.userData?.quoteTokenAllowance
   console.log('singleFarm-----', singleFarm)
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -140,9 +141,9 @@ const FarmSA = () => {
   const [isPending, setIsPending] = useState(false)
 
   const { balance: bnbBalance } = useGetBnbBalance()
-  const { balance: tokenBalance } = useTokenBalance(getAddress(singleFarm?.QuoteTokenInfo?.token?.address))
+  const { balance: tokenBalance } = useTokenBalance(getAddress(singleFarm?.TokenInfo?.quoteToken?.address))
   const userTokenBalance = Number(
-    getBalanceAmount(singleFarm?.QuoteTokenInfo?.token?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
+    getBalanceAmount(singleFarm?.TokenInfo?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance),
   )
   console.log({ userTokenBalance, tokenBalance })
   const [tokenInput, setTokenInput] = useState(0)
@@ -175,31 +176,104 @@ const FarmSA = () => {
       setButtonIndex(index)
     }
   }
-  // const handleApprove = async () => {
-  //   // not sure contract param is right? but can sussess
-  //   let contract
-  //   if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
-  //     contract = approveContract // quoteTokenApproveContract
-  //   } else {
-  //     contract = quoteTokenApproveContract // approveContract
-  //   }
-  //
-  //   toastInfo(t('Approving...'), t('Please Wait!'))
-  //   setIsApproving(true)
-  //   try {
-  //     const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
-  //     const receipt = await tx.wait()
-  //     if (receipt.status) {
-  //       toastSuccess(t('Approved!'), t('Your request has been approved'))
-  //     } else {
-  //       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-  //     }
-  //   } catch (error: any) {
-  //     toastWarning(t('Error'), error.message)
-  //   } finally {
-  //     setIsApproving(false)
-  //   }
-  // }
+
+  const { vaultAddress } = singleFarm?.TokenInfo
+  const tokenAddress = getAddress(singleFarm?.TokenInfo?.token?.address)
+  const quoteTokenAddress = getAddress(singleFarm?.TokenInfo?.quoteToken?.address)
+  const approveContract = useERC20(tokenAddress)
+  const quoteTokenApproveContract = useERC20(quoteTokenAddress)
+  const vaultContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+  const [isApproving, setIsApproving] = useState<boolean>(false)
+  const handleApprove = async () => {
+
+    const contract = quoteTokenApproveContract//  approveContract 
+
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    setIsApproving(true)
+    try {
+      const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
+    }
+  }
+
+  const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    // const callOptionsBNB = {
+    //   gasLimit: 3800000,
+    //   value: amount,
+    // }
+
+    setIsPending(true)
+    try {
+      const tx = await callWithGasPrice(
+        contract,
+        'work',
+        [id, workerAddress, amount, loan, maxReturn, dataWorker],
+        callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+    } finally {
+      setIsPending(false)
+      // setTokenInput(0)
+      // setQuoteTokenInput(0)
+    }
+  }
+
+  const handleConfirm = async () => {
+    const id = 0
+    const AssetsBorrowed = farmData ? farmData[3] : 0
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
+    const maxReturn = 0
+    const abiCoder = ethers.utils.defaultAbiCoder
+
+    console.info('base + single + quote token input ')
+    const farmingTokenAmount = Number(tokenInput).toString()
+    const strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+    const contract = vaultContract
+    const amount = getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
+    const workerAddress = singleFarm?.TokenInfo.address
+
+
+    // console.log({
+    //   id,
+    //   workerAddress,
+    //   amount,
+    //   loan,
+    //   AssetsBorrowed,
+    //   maxReturn,
+    //   farmingTokenAmount,
+    //   dataWorker,
+    //   strategiesAddress,
+    //   dataStrategy,
+    //   tokenInput,
+    //   'a': Number(tokenInput),
+    //   quoteTokenInput,
+    //   'b': Number(quoteTokenInput)
+    // })
+
+    handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
@@ -224,12 +298,13 @@ const FarmSA = () => {
     return totalapy * 100
   }
 
-  const farmingData = getLeverageFarmingData(singleFarm, data?.singleLeverage, tokenInput, tokenName)
+  const farmingData = getLeverageFarmingData(singleFarm, data?.singleLeverage, 0, tokenInput, tokenName)
   const farmData = farmingData ? farmingData[1] : []
   const apy = getApy(data?.singleLeverage)
-  const equity = null
-  const positionValue = farmData[8]
-  const huskiRewardsApr = huskyRewards * (data?.singleLeverage - 1)
+  // const equity = null
+
+  // const positionValue = farmData[8]
+  // const huskiRewardsApr = huskyRewards * (data?.singleLeverage - 1)
   const selectOptions = []
   data.farmData?.forEach((item, index) => {
     selectOptions.push({
@@ -259,7 +334,7 @@ const FarmSA = () => {
                     <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                     <Flex alignItems="center">
                       <Box width={25} height={25} mr="5px">
-                        <TokenImage token={singleFarm?.QuoteTokenInfo.token} width={25} height={25} />
+                        <TokenImage token={singleFarm?.TokenInfo?.quoteToken} width={25} height={25} />
                       </Box>
                       <Text mr="5px" small color="textSubtle">
                         {t('Balance:')}
@@ -284,29 +359,35 @@ const FarmSA = () => {
               <Text>{apy.toFixed(2)}%</Text>
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
-              <Text small>{t('Equity')}</Text>
-              <Text>{equity}</Text>
+              <Text small>{t('Debt Value')}</Text>
+              {farmData ? (
+                <Text>
+                  {farmData[3]?.toFixed(2)} {baseName}
+                </Text>
+              ) : (
+                <Text>0.00 {baseName}</Text>
+              )}
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('Position Value')}</Text>
               {farmData ? (
                 <Text>
-                  {positionValue.toFixed(2)} + {farmData[9].toFixed(2)}{' '}
+                  {farmData[8].toFixed(2)} {baseName} + {farmData[9].toFixed(2)} {poolName}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
               )}
             </Flex>
-            <Flex alignItems="center" justifyContent="space-between">
+            {/* <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('HUSKI Rewards APR')}</Text>
               <Text>{huskiRewardsApr}</Text>
-            </Flex>
+            </Flex> */}
           </Section>
           {isApproved ? (
             <Button
               mx="auto"
               scale="sm"
-              // onClick={handleConfirm}
+              onClick={handleConfirm}
               isLoading={isPending}
               endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
               disabled={
@@ -323,7 +404,7 @@ const FarmSA = () => {
             <Button
               mx="auto"
               scale="sm"
-              // onClick={handleApprove}
+              onClick={handleApprove}
               isLoading={isPending}
               endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
             >
