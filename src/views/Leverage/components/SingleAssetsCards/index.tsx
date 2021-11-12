@@ -34,7 +34,7 @@ const SingleAssetsCard = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const { singleLeverage } = data
-  console.info('data======', data)
+  // console.info('data======', data)
 
   const [selectedPool, setSelectedPool] = useState(0)
 
@@ -82,10 +82,6 @@ const SingleAssetsCard = ({ data }) => {
 
   const getOption = () => {
     const option = {
-      // title:{
-      //   text:'',
-      //   x:'center'
-      // },
       tooltip: {
         trigger: 'axis',
       },
@@ -108,7 +104,7 @@ const SingleAssetsCard = ({ data }) => {
   const selectOptions = []
   data.farmData?.forEach((item, index) => {
     selectOptions.push({
-      label: item.lpSymbol.replace(' LP', ''),
+      label: item.QuoteTokenInfo?.name?.replace(' PancakeswapWorker', '').replace('WBNB', 'BNB'),
       value: index,
     })
   })

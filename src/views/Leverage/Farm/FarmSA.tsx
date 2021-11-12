@@ -136,21 +136,15 @@ const FarmSA = () => {
   const {
     state: { data, singleLeverage },
   } = useLocation<LocationParams>()
-  console.log('data', data)
 
   const singleFarm = data
   const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
   const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
 
-  const poolName = selectedToken.symbol.replace('wBNB', 'BNB')
-
-  const baseName =
-    selectedToken.symbol === singleFarm?.TokenInfo?.quoteToken.symbol
-      ? singleFarm?.TokenInfo?.token.symbol.replace('wBNB', 'BNB')
-      : singleFarm?.TokenInfo?.quoteToken.symbol.replace('wBNB', 'BNB')
-
+  const tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+  const quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
   const allowance = singleFarm?.userData?.quoteTokenAllowance
-  console.log('singleFarm-----', singleFarm)
+
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const [isPending, setIsPending] = useState(false)
@@ -160,34 +154,34 @@ const FarmSA = () => {
   const userTokenBalance = Number(
     getBalanceAmount(selectedToken.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance).toJSON(),
   )
-  console.log({ userTokenBalance, tokenBalance })
-  const [tokenInput, setTokenInput] = useState(0)
+
+  const [inputValue, setInputValue] = useState(0)
   const [buttonIndex, setButtonIndex] = useState(null)
-  const handleTokenInput = useCallback(
+  const handleInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
         const input = event.target.value
         const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
-        setTokenInput(finalValue)
+        setInputValue(finalValue)
       } else {
         event.preventDefault()
       }
     },
     [userTokenBalance],
   )
-  const setTokenInputToFraction = (index) => {
+  const setInputToFraction = (index) => {
     if (index === 0) {
-      setTokenInput(userTokenBalance * 0.25)
+      setInputValue(userTokenBalance * 0.25)
       setButtonIndex(index)
     } else if (index === 1) {
-      setTokenInput(userTokenBalance * 0.5)
+      setInputValue(userTokenBalance * 0.5)
       setButtonIndex(index)
     } else if (index === 2) {
-      setTokenInput(userTokenBalance * 0.75)
+      setInputValue(userTokenBalance * 0.75)
       setButtonIndex(index)
     } else if (index === 3) {
-      setTokenInput(userTokenBalance)
+      setInputValue(userTokenBalance)
       setButtonIndex(index)
     }
   }
@@ -203,7 +197,6 @@ const FarmSA = () => {
 
   const handleApprove = async () => {
     const contract = quoteTokenApproveContract //  approveContract
-
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
@@ -223,12 +216,10 @@ const FarmSA = () => {
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
-  const tokenName = selectedToken.symbol
-  const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
+  const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, quoteTokenName)
   const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
-
   const { borrowingInterest } = getBorrowingInterest(singleFarm)
-  console.log({ huskyRewards, yieldFarmData, borrowingInterest })
+
   const getApr = (lvg: number) => {
     const totalapr =
       Number((yieldFarmData / 100) * lvg) +
@@ -244,14 +235,21 @@ const FarmSA = () => {
     return totalapy * 100
   }
 
-  const farmingData = getLeverageFarmingData(singleFarm, singleLeverage, 0, tokenInput, tokenName)
-  const farmData = farmingData ? farmingData[1] : []
-  console.log({ farmData })
-  const apy = getApy(singleLeverage)
-  // const equity = null
+  let tokenInputValue
+  let quoteTokenInputValue
 
-  // const positionValue = farmData[8]
-  // const huskiRewardsApr = huskyRewards * (data?.singleLeverage - 1)
+  if (selectedToken.symbol.replace('wBNB', 'BNB') !== tokenName) {
+    tokenInputValue = 0;
+    quoteTokenInputValue = inputValue
+  } else {
+    tokenInputValue = inputValue
+    quoteTokenInputValue = 0;
+  }
+
+  const farmingData = getLeverageFarmingData(singleFarm, singleLeverage, tokenInputValue, quoteTokenInputValue, tokenName)
+  const farmData = farmingData ? farmingData[1] : []
+  const apy = getApy(singleLeverage)
+
   const selectOptions = []
   data.farmData?.forEach((item, index) => {
     selectOptions.push({
@@ -287,7 +285,7 @@ const FarmSA = () => {
         contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        poolName === 'BNB' ? callOptionsBNB : callOptions,
+        tokenName === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -299,7 +297,7 @@ const FarmSA = () => {
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
     } finally {
       setIsPending(false)
-      setTokenInput(0)
+      setInputValue(0)
       setButtonIndex(null)
     }
   }
@@ -310,64 +308,30 @@ const FarmSA = () => {
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
-    // let amount
-    // let workerAddress
-    // let farmingTokenAmount
-    // let strategiesAddress
-    // let dataStrategy
-    // let dataWorker
-    // let contract
 
-    // base token is base token
-    // if (radio === tokenData?.TokenInfo?.token?.symbol) {
-    // single base token
-    // if (Number(tokenInput) !== 0 && Number(tokenInput) === 0) {
-    console.info('base + single + token input ')
-    const strategiesAddress = singleFarm.TokenInfo.strategies.StrategyAddAllBaseToken
-    const dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-    const dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    // }
-    // else if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
-    //   console.info('base + single + quote token input ')
-    //   farmingTokenAmount = Number(quoteTokenInput).toString()
-    //   strategiesAddress = singleFarm.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-    //   dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
-    //   dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    // } else {
-    //   console.info('base + all ')
-    //   farmingTokenAmount = Number(quoteTokenInput).toString()
-    //   strategiesAddress = singleFarm.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-    //   dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
-    //   dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    // }
+    let farmingTokenAmount
+    let strategiesAddress
+    let dataStrategy
+    let dataWorker
+    if (selectedToken.symbol.replace('wBNB', 'BNB') === tokenName) {
+      tokenInputValue = inputValue
+      quoteTokenInputValue = 0;
+      console.info('base + single + token input ')
+      strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
+      dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+      dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+
+    } else {
+      tokenInputValue = 0;
+      quoteTokenInputValue = inputValue
+      console.info('base + single + quote token input ')
+      farmingTokenAmount = Number(quoteTokenInputValue).toString()
+      strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
+      dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
+    }
     const contract = vaultContract
-    const amount = getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
-    const workerAddress = singleFarm.TokenInfo.address
-    // }
-    // else {
-    //   // farm token is base token
-    //   if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
-    //     console.info('farm + single + token input ')
-    //     strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-    //     dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-    //     dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    //   } else if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
-    //     console.info('farm + single + quote token input ')
-    //     farmingTokenAmount = Number(tokenInput).toString()
-    //     strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-    //     dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
-    //     dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    //   } else {
-    //     console.info('farm + all ')
-    //     farmingTokenAmount = Number(tokenInput).toString()
-    //     strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-    //     dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
-    //     dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-    //   }
-    //   contract = quoteTokenVaultContract
-    //   amount = getDecimalAmount(new BigNumber(Number(quoteTokenInput)), 18).toString()
-    //   workerAddress = tokenData.QuoteTokenInfo.address
-    // }
+    const amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+    const workerAddress = singleFarm?.TokenInfo.address
 
     // console.log({
     //   id,
@@ -380,10 +344,7 @@ const FarmSA = () => {
     //   dataWorker,
     //   strategiesAddress,
     //   dataStrategy,
-    //   tokenInput,
-    //   'a': Number(tokenInput),
-    //   quoteTokenInput,
-    //   'b': Number(quoteTokenInput)
+    //   inputValue,
     // })
 
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
@@ -473,7 +434,7 @@ const FarmSA = () => {
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
-        {t(`Farming ${poolName} Pools`)}
+        {t(`Farming ${tokenName} Pools`)}
       </Text>
       <SectionWrapper>
         {/* graph goes here */}
@@ -500,7 +461,7 @@ const FarmSA = () => {
                   ]}
                   onChange={(option) => {
                     setSelectedToken(option.value)
-                    setTokenInput(0)
+                    setInputValue(0)
                     setButtonIndex(null)
                   }}
                 />
@@ -508,7 +469,7 @@ const FarmSA = () => {
               <Box>
                 <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
                   <BalanceInputWrapper alignItems="center" flex="1">
-                    <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                    <NumberInput placeholder="0.00" value={inputValue} onChange={handleInput} />
                     <Flex alignItems="center">
                       <Box width={25} height={25} mr="5px">
                         <TokenImage token={selectedToken} width={25} height={25} />
@@ -524,7 +485,7 @@ const FarmSA = () => {
                   </BalanceInputWrapper>
                 </InputArea>
                 <ButtonMenu
-                  onItemClick={setTokenInputToFraction}
+                  onItemClick={setInputToFraction}
                   activeIndex={buttonIndex}
                   disabled={Number(userTokenBalance) === 0}
                 >
@@ -543,26 +504,22 @@ const FarmSA = () => {
               <Text small>{t('Debt Value')}</Text>
               {farmData ? (
                 <Text>
-                  {farmData[3]?.toFixed(2)} {baseName}
+                  {farmData[3]?.toFixed(2)} {tokenName}
                 </Text>
               ) : (
-                <Text>0.00 {baseName}</Text>
+                <Text>0.00 {tokenName}</Text>
               )}
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
               <Text small>{t('Position Value')}</Text>
               {farmData ? (
                 <Text>
-                  {farmData[8].toFixed(2)} {baseName} + {farmData[9].toFixed(2)} {poolName}
+                  {farmData[8].toFixed(2)} {tokenName} + {farmData[9].toFixed(2)} {quoteTokenName}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
               )}
             </Flex>
-            {/* <Flex alignItems="center" justifyContent="space-between">
-              <Text small>{t('HUSKI Rewards APR')}</Text>
-              <Text>{huskiRewardsApr}</Text>
-            </Flex> */}
           </Section>
           {isApproved ? (
             <Button
@@ -574,8 +531,8 @@ const FarmSA = () => {
               disabled={
                 !account ||
                 !isApproved ||
-                (Number(tokenInput) === 0 && Number(tokenInput) === 0) ||
-                (tokenInput === undefined && tokenInput === undefined) ||
+                (Number(inputValue) === 0 && Number(inputValue) === 0) ||
+                (inputValue === undefined && inputValue === undefined) ||
                 isPending
               }
             >

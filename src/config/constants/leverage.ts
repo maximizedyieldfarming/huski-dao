@@ -53,13 +53,13 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 264,
-    lpSymbol: 'BNB-USDT LP',
+    lpSymbol: 'USDT-BNB LP',
     lpAddresses: {
       97: '',
       56: '0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE',
     },
     singleFlag: 0,
-    TokenInfo: {
+    QuoteTokenInfo: {
       token: tokens.usdt,
       quoteToken: tokens.wbnb,
       vaultAddress: "0x158Da805682BdC8ee32d52833aD41E74bb951E59",
@@ -79,7 +79,7 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
-    QuoteTokenInfo: {
+     TokenInfo: {
       token: tokens.wbnb,
       quoteToken: tokens.usdt,
       vaultAddress: "0xd7D069493685A581d27824Fc46EdA46B7EfC0063",
@@ -326,6 +326,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       97: '',
       56: '0x7752e1fa9f3a2e860856458517008558deb989e3',
     },
+    singleFlag:0,
     TokenInfo: {
       token: tokens.alpaca,
       quoteToken: tokens.busd,

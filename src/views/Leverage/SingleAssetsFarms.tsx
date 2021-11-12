@@ -155,11 +155,11 @@ const SingleAssetsFarms: React.FC = () => {
   const singleData = farmsData.filter((f) => f.singleFlag === 0)
   console.info('singleData', singleData)
 
-  const bnbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'wBNB')
-  const btcbArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'BTCB')
-  const ethArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'ETH')
-  const huskiArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'ALPACA') // HUSKI
-  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'CAKE')
+  const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
+  const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
+  const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
+  const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ALPACA') // HUSKI
+  const cakeArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'CAKE')
   console.log({ bnbArray, btcbArray, ethArray, huskiArray })
   const marketArray = [
     {
@@ -270,7 +270,7 @@ usePollLeverageFarmsWithUserData()
   // filters
   if (pairFilter !== 'all') {
     singlesData = singlesData.filter(
-      (pool) => pool.farmData[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+      (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
       //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }

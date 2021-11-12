@@ -58,9 +58,9 @@ const CardHeader = ({ data, pool }) => {
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" paddingTop="1rem">
         <Grid gridTemplateColumns="40px 1fr" alignItems="center">
-          <TokenImage token={data.farmData[pool]?.QuoteTokenInfo?.token} width={40} height={40} />
+          <TokenImage token={data.farmData[pool]?.TokenInfo?.token} width={40} height={40} />
           <Heading color="text" scale="lg">
-            {data.farmData[pool]?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+            {data.farmData[pool]?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
           </Heading>
         </Grid>
         <Grid gridTemplateColumns="1fr 1fr" alignItems="center">
