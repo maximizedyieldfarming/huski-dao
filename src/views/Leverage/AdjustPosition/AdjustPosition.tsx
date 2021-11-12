@@ -162,31 +162,31 @@ const AdjustPosition = () => {
   }
 
 
-  console.log({
-    tokenAmountTotal,
-    lpAmount,
-    lptotalSupply,
-    symbolName,
-    lpSymbolName,
-    tokenValue,
-    quoteTokenValue,
-    tokenValueSymbol,
-    quoteTokenValueSymbol,
-    baseTokenAmount,
-    farmTokenAmount,
-    basetokenBegin,
-    farmingtokenBegin,
-    workerAddress,
-    withdrawMinimizeTradingAddress,
-    partialCloseLiquidateAddress,
-    contract,
-    tokenInputValue,
-    quoteTokenInputValue,
-    userTokenBalance,
-    userQuoteTokenBalance,
-  })
+  // console.log({
+  //   tokenAmountTotal,
+  //   lpAmount,
+  //   lptotalSupply,
+  //   symbolName,
+  //   lpSymbolName,
+  //   tokenValue,
+  //   quoteTokenValue,
+  //   tokenValueSymbol,
+  //   quoteTokenValueSymbol,
+  //   baseTokenAmount,
+  //   farmTokenAmount,
+  //   basetokenBegin,
+  //   farmingtokenBegin,
+  //   workerAddress,
+  //   withdrawMinimizeTradingAddress,
+  //   partialCloseLiquidateAddress,
+  //   contract,
+  //   tokenInputValue,
+  //   quoteTokenInputValue,
+  //   userTokenBalance,
+  //   userQuoteTokenBalance,
+  // })
 
-  console.log('number quote', Number(quoteTokenInputValue))
+  // console.log('number quote', Number(quoteTokenInputValue))
 
   const datalistSteps = []
   const datalistOptions = (() => {
@@ -501,17 +501,32 @@ const AdjustPosition = () => {
   const maxValue = 1 - principal / data?.farmData?.leverage
   const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
 
-  const convertedPositionValueAssets =
-    Number(baseTokenAmount) +
-    basetokenBegin -
-    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
-
-  const amountToTrade =
-    ((basetokenBegin * farmingtokenBegin) / (basetokenBegin - debtValueNumber.toNumber() + Number(baseTokenAmount)) -
-      farmingtokenBegin) /
-    (1 - 0.0025)
-
+  // convert to 
+  const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
+
+  // minimize trading
+  let amountToTrade = 0;
+  let convertedPositionValueToken;
+  let tokenReceive = 0;
+  if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
+    amountToTrade = 0;
+  } else {
+    amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
+  }
+  const convertedPositionValueMinimize = Number(farmTokenAmount) - amountToTrade
+  if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
+    convertedPositionValueToken = baseTokenAmount
+  } else {
+    convertedPositionValueToken = debtValueNumber
+  }
+
+  if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
+    tokenReceive = Number(convertedPositionValueToken) - Number(debtValueNumber)
+  } else {
+    tokenReceive = 0;
+  }
+
 
   const convertedPositionValueMinimizeTrading = Number(farmTokenAmount) - amountToTrade
 
@@ -570,14 +585,15 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              {convertedPositionValueMinimizeTrading ? (
+              {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
+              {/* {convertedPositionValueMinimizeTrading ? (
                 <Text>
                   {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenValueSymbol} +
                   {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
                 </Text>
               ) : (
                 <Skeleton height="16px" width="80px" />
-              )}
+              )} */}
             </Text>
           )}
         </Flex>
@@ -658,8 +674,8 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? (
-            <Text color="#1DBE03">+{(priceImpact * 100).toPrecision(4)}%</Text>
+          {priceimpact ? (
+            <Text color="#1DBE03">+{(priceimpact * 100).toPrecision(4)}%</Text>
           ) : (
             <Text color="#1DBE03">0.00%</Text>
           )}
@@ -672,8 +688,8 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {adjustData ? (
-            <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
+          {tradingfee ? (
+            <Text color="#EB0303">-{(tradingfee * 100).toPrecision(4)}%</Text>
           ) : (
             <Text color="#EB0303">0.00%</Text>
           )}
@@ -686,7 +702,8 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              {convertedPositionValueMinimizeTrading.toFixed(3)} {tokenValueSymbol}
+              {/* {convertedPositionValueMinimizeTrading.toFixed(3)} {tokenValueSymbol} */}
+              {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
             </Text>
           )}
         </Flex>
