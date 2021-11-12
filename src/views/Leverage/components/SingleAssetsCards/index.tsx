@@ -82,9 +82,18 @@ const SingleAssetsCard = ({ data }) => {
       },
       xAxis: {
         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        boundaryGap: false,
+        show: false,
+        splitLine: {
+          show: false,
+        },
       },
       yAxis: {
         type: 'value',
+        show: false,
+        splitLine: {
+          show: false,
+        },
       },
       color: ['#B1EAFA'],
       series: [
@@ -92,8 +101,8 @@ const SingleAssetsCard = ({ data }) => {
           symbol: 'none', // no point
           type: 'line',
           data: [1000, 2000, 1500, 3000, 2000, 1200, 800],
-         
-          smooth: true,
+
+          smooth: 0.3,
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               {
