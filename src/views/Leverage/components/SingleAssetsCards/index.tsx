@@ -7,12 +7,7 @@ import { CardBody as UiKitCardBody, Flex, Text, Button, Box, Grid, Skeleton } fr
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
-import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/legend'
-import 'echarts/lib/component/markPoint'
+import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import nFormatter from 'utils/nFormatter'
@@ -91,10 +86,26 @@ const SingleAssetsCard = ({ data }) => {
       yAxis: {
         type: 'value',
       },
+      color: ['#B1EAFA'],
       series: [
         {
+          symbol: 'none', // no point
           type: 'line',
           data: [1000, 2000, 1500, 3000, 2000, 1200, 800],
+         
+          smooth: true,
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: '#B1EAFA',
+              },
+              {
+                offset: 1,
+                color: '#FFFFFF',
+              },
+            ]),
+          },
         },
       ],
     }
