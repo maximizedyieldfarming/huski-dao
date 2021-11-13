@@ -153,14 +153,13 @@ const SingleAssetsFarms: React.FC = () => {
   usePollLeverageFarmsWithUserData()
 
   const singleData = farmsData.filter((f) => f.singleFlag === 0)
-  console.info('singleData', singleData)
 
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
   const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
   const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ALPACA') // HUSKI
   const cakeArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'CAKE')
-  console.log({ bnbArray, btcbArray, ethArray, huskiArray })
+
   const marketArray = [
     {
       singleLeverage: 2,
@@ -238,12 +237,10 @@ const SingleAssetsFarms: React.FC = () => {
     })
   }
 
-  console.info('aaaa', singlesData)
 
 usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
-  console.info('positionData', positionData)
   const positionFarmsData = []
   if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {

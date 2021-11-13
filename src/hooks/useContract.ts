@@ -5,14 +5,9 @@ import {
   getBep20Contract,
   getCakeContract,
   getClaimFairLaunchContract,
-
   getProfileContract,
-
   getMasterchefContract,
-  getPointCenterIfoContract,
   getClaimRefundContract,
-  getTradingCompetitionContract,
-
   getErc721Contract,
   getCakeVaultContract,
   getPredictionsContract,
@@ -36,9 +31,6 @@ import { getContract } from '../utils'
 /**
  * Helper hooks to get specific contracts (by ABI)
  */
-
-
-
 
 export const useERC20 = (address: string) => {
   const { library } = useActiveWeb3React()
@@ -67,40 +59,20 @@ export const useClaimFairLaunch = () => {
   return useMemo(() => getClaimFairLaunchContract(library.getSigner()), [library])
 }
 
-
-
 export const useProfile = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getProfileContract(library.getSigner()), [library])
 }
-
 
 export const useMasterchef = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getMasterchefContract(library.getSigner()), [library])
 }
 
-
-
-
-export const usePointCenterIfoContract = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getPointCenterIfoContract(library.getSigner()), [library])
-}
-
-
-
 export const useClaimRefundContract = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getClaimRefundContract(library.getSigner()), [library])
 }
-
-export const useTradingCompetitionContract = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getTradingCompetitionContract(library.getSigner()), [library])
-}
-
-
 
 export const useCakeVaultContract = () => {
   const { library } = useActiveWeb3React()
