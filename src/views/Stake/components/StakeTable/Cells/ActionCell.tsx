@@ -2,9 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
+import {  useMatchBreakpoints, Button } from '@pancakeswap/uikit'
 
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -24,6 +22,11 @@ const StyledCell = styled(BaseCell)`
     height: auto;
     box-shadow: none;
     word-break: initial;
+  }
+  ${CellContent} {
+    ${({ theme }) => theme.mediaQueries.lg} {
+      align-items: unset;
+    }
   }
 `
 const ActionCell = ({ token }) => {

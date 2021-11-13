@@ -14,7 +14,7 @@ const StyledCell = styled(BaseCell)`
     justify-content: space-between;
     ${({ theme }) => theme.mediaQueries.lg} {
       align-items: center;
-      justify-content: unset;
+      justify-content: center;
       gap: 1rem;
     }
   }

@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton } from '@pancakeswap/uikit'
-import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { formatBigNumber } from 'state/utils'
 import nFormatter from 'utils/nFormatter'
@@ -12,14 +10,6 @@ const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
   }
 `
 

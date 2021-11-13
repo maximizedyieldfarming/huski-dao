@@ -13,6 +13,7 @@ import ActionCell from './Cells/ActionCell'
 import TotalVolumeCell from './Cells/TotalVolumeCell'
 import NameCell from './Cells/NameCell'
 import RewardsCell from './Cells/RewardsCell'
+import ClaimCell from './Cells/ClaimCell'
 import StakedCell from './Cells/StakedCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
@@ -50,10 +51,11 @@ const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
       align-items: center;
     }
     .titleContainer {
-      flex: 1;
+      flex: 5;
       padding-left: 12px;
       ${({ theme }) => theme.mediaQueries.sm} {
-        padding-left: 32px;
+        flex: 1 0 150px;
+        padding-left: calc(12px + 3rem);
       }
     }
   }
@@ -114,6 +116,7 @@ const StakeRow = ({ tokenData }) => {
               </Box>
               <StakedCell staked={userStakedBalance.toPrecision(4)} name={tokenData?.symbol} />
               <RewardsCell token={tokenData} />
+              <ClaimCell token={tokenData} />
             </Flex>
           </>
         ) : (

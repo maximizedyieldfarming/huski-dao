@@ -12,14 +12,7 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
+ 
 `
 
 const AprCell = ({ getApyData }) => {
@@ -53,7 +46,7 @@ const AprCell = ({ getApyData }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+        <Text fontSize="12px" color="textSubtle" textAlign="left" mb='auto'>
           {t('APY')}
         </Text>
         {apy ? (
