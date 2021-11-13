@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from 'husky-uikit'
 import { useTranslation } from 'contexts/Localization'
+import { PieChartProgress } from 'components/ProgressBars'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -10,26 +11,6 @@ const StyledCell = styled(BaseCell)`
     flex: 1 0 120px;
   }
 `
-const Circle = styled.div`
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  background-color: black;
-  .inner {
-    height: 10px;
-    width: 10px;
-    background-color: purple;
-    transform: rotate(180deg);
-  }
-`
-
-const ProgressCircle = () => {
-  return (
-    <Circle className="pie-wrapper pie-wrapper--solid progress-88">
-      <div className="inner" />
-    </Circle>
-  )
-}
 
 const SafetyBufferCell = ({ safetyBuffer }) => {
   const { t } = useTranslation()
@@ -57,6 +38,7 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
         {safetyBuffer ? (
           <Flex>
             <Text>{safetyBuffer}%</Text>
+            <PieChartProgress progress={safetyBuffer} size={20} />
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

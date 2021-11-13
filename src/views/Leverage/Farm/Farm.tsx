@@ -28,7 +28,7 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import DebtRatioProgress from 'components/DebRatioProgress'
+import { DebtRatioProgress } from 'components/ProgressBars'
 import { useWeb3React } from '@web3-react/core'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
 
@@ -293,7 +293,7 @@ const Farm = () => {
       }
     } catch (error) {
       console.info('error', error)
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError(t('Unsuccessfulll'),t('Something went wrong your farm request. Please try again...'))
     } finally {
       setIsPending(false)
       setTokenInput(0)
