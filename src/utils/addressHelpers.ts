@@ -20,6 +20,10 @@ export const getHuskiAddress = () => {
   return getAddress(tokens.alpaca.address)
 }
 
+export const getsHuskiAddress = () => {
+  return getAddress(tokens.salpaca.address)
+}
+
 export const getMasterChefAddress = () => {
   return getAddress(addresses.masterChef)
 }

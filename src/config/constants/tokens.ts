@@ -1492,6 +1492,17 @@ const tokens = {
     projectLink: 'https://www.alpacafinance.org/',
     coingeckoId: 'alpaca-finance',
   },
+  salpaca: {
+    symbol: 'sALPACA',
+    poolId: 5,
+    address: {
+      56: '0x6F695Bd5FFD25149176629f8491A5099426Ce7a7',
+      97: '',
+    },
+    decimals: 18,
+    projectLink: 'https://www.alpacafinance.org/',
+    coingeckoId: 'alpaca-finance',
+  },
   dfd: {
     symbol: 'DFD',
     address: {

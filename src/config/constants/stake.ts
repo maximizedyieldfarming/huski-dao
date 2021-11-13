@@ -22,6 +22,25 @@ const stakeConfig: StakeConfig[] = [
     }
   },
   {
+    name: "sALPACA",
+    symbol: "sALPACA",
+    vaultAddress: {
+      97: 'use alpaca',
+      56: "0xf1bE8ecC990cBcb90e166b71E368299f0116d421",
+    },
+    debtVaultAddress: {
+      97: 'use alpaca',
+      56: "0x11362eA137A799298306123EEa014b7809A9DB40",
+    },
+    pid: 5,
+    // pid: 11,
+    token: tokens.salpaca,
+    fairLaunchAddress: {
+      97: '',
+      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+    }
+  },
+  {
     name: 'BNB',
     symbol: "ibWBNB",
     vaultAddress: {
