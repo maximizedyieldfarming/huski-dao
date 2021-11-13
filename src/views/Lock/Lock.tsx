@@ -1,9 +1,14 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
+import BigNumber from 'bignumber.js'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'
+import { getsHuskiAddress } from 'utils/addressHelpers'
+import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
+import useTokenBalance from 'hooks/useTokenBalance'
 import { WalletIcon } from 'assets'
 import LockTable from './components/LockTable/LockTable'
 
@@ -44,8 +49,13 @@ const Section = styled(Flex)`
 
 const Lock: React.FC = () => {
   const { t } = useTranslation()
+  const { data: farmsData } = useStakes()
+  useStakeWithUserData()
+ 
+  const lockData = farmsData.filter((f) => f.pid === 5)
+  const { balance } = useTokenBalance(getsHuskiAddress())
+  const sHuskiBalance = Number(balance)/10**18 // balance ? balance.dividedBy(BIG_TEN.pow(18)) : BIG_ZERO
 
-  const sHuskiBalance = null
   const volume24 = null
   const volumeLocked = null
 
@@ -69,7 +79,7 @@ const Lock: React.FC = () => {
               <WalletIcon width="24px" height="24px" color="gold" />
               <Text>{t('My sHUSKI Balance')}</Text>
             </Flex>
-            {sHuskiBalance ? <Text>{sHuskiBalance}</Text> : <Skeleton width="80px" height="16px" />}
+            <Text>{sHuskiBalance}</Text>
           </Flex>
           <Flex alignItems="center">
             <Text>{t('Redeem your sHUSKI for HUSKI')}</Text>
@@ -79,7 +89,7 @@ const Lock: React.FC = () => {
           </Flex>
         </Section>
       </Flex>
-      <LockTable data={null} />
+      <LockTable data={lockData} />
     </Page>
   )
 }

@@ -33,7 +33,7 @@ const LockTable = ({ data }) => {
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {data?.map((token) => (
-          <LockRow lockData={token} key={token.id} />
+          <LockRow lockData={token} key={token.pid} />
         ))}
       </StyledTable>
     </StyledTableBorder>

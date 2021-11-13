@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import { useMatchBreakpoints, Flex } from '@pancakeswap/uikit'
-import useDelayedUnmount from 'hooks/useDelayedUnmount'
+import { Flex } from '@pancakeswap/uikit'
+import BigNumber from 'bignumber.js'
+import { BIG_ZERO } from 'utils/bigNumber'
+import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
+import { useHuskyPrice } from 'state/stake/hooks'
+import { getStakeApy } from '../../../Stake/helpers'
 import TotalHuskiLockedCell from './Cells/TotalHuskiLockedCell'
 import ValueLockedCell from './Cells/ValueLockedCell'
 import HuskiLockedCell from './Cells/HuskiLockedCell'
@@ -35,11 +39,17 @@ const StyledRow = styled.div`
 const LockRow = ({ lockData }) => {
   const sHuskiLocked = null
 
+  const huskyPrice = useHuskyPrice()
+ const aa =  getStakeApy(lockData, huskyPrice)
+ console.info('aaaaa',aa)
+  const reward = lockData?.userData?.earnings !== "0" ? new BigNumber(parseFloat(lockData?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL) : BIG_ZERO
+
   return (
     <StyledRow role="row">
       <Flex>
         <NameCell data={lockData} />
-        <ApyCell apy={lockData.apy} />
+        <ApyCell getApyData={getStakeApy(lockData, huskyPrice)}  />
+        {/* <ApyCell apy={lockData.apy} /> */}
         <TotalHuskiLockedCell totalsHuskiLocked={lockData.totalsHuskiLocked} />
         <ValueLockedCell totalValueLocked={lockData.totalValueLocked} />
         <LockCell data={lockData} />
@@ -47,7 +57,7 @@ const LockRow = ({ lockData }) => {
       <Flex>
         <UnlockDateCell date={lockData.unlockDate} />
         <HuskiLockedCell sHuskiLocked={lockData.sHuskiLocked} />
-        <RewardsCell rewards={lockData.rewards} />
+        <RewardsCell rewards={reward} />
         <ClaimCell data={lockData} sHuskiLocked={sHuskiLocked} />
       </Flex>
     </StyledRow>

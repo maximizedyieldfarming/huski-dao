@@ -29,7 +29,7 @@ const RewardsCell = ({ rewards }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           {t('HUSKI Rewards')}
         </Text>
-        <Text>{rewards}</Text>
+        <Text>{rewards.toNumber().toPrecision(4)}</Text>
       </CellContent>
     </StyledCell>
   )
