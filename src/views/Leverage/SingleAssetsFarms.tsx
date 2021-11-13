@@ -132,10 +132,10 @@ const StrategyIcon = styled.div<{ market: string }>`
   margin-right: 5px;
   background: ${({ theme, market }) => {
     if (market.toLowerCase() === 'bear') {
-      return '#27C73F'
+      return '#FE6057'
     }
     if (market.toLowerCase() === 'bull') {
-      return '#FE6057'
+      return '#27C73F'
     }
     if (market.toLowerCase() === 'neutral') {
       return '#FCBD2C'
