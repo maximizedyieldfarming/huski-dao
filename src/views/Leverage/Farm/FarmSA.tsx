@@ -12,8 +12,8 @@ import {
   ArrowForwardIcon,
   useMatchBreakpoints,
   AutoRenewIcon,
-} from '@pancakeswap/uikit'
-import { BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem } from 'husky-uikit'
+BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem 
+} from 'husky-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
@@ -45,6 +45,7 @@ interface RouteParams {
 interface LocationParams {
   data?: any
   singleLeverage?: number
+  marketStrategy?: string
 }
 
 const Section = styled(Box)`
@@ -73,9 +74,14 @@ const SectionWrapper = styled(Page)`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  > .sideSection {
+  > ${Flex} {
     flex-direction: column;
     gap: 1rem;
+    &.infoSide {
+      > ${Box} {
+        height: 100%;
+      }
+    }
   }
 `
 
@@ -126,6 +132,24 @@ const BalanceInputWrapper = styled(Flex)`
   }
 `
 
+const ColorBar = styled.div<{market: string}>`
+  width: 30px;
+  height: 6px;
+  border-radius: 3px;
+  background: ${({ theme, market }) => {
+    if (market.toLowerCase() === 'bear') {
+      return '#FE6057'
+    }
+    if (market.toLowerCase() === 'bull') {
+      return '#27C73F'
+    }
+    if (market.toLowerCase() === 'neutral') {
+      return '#FCBD2C'
+    }
+    return "none"
+  }};
+`
+
 const FarmSA = () => {
   const { t } = useTranslation()
   const { isMobile, isTable } = useMatchBreakpoints()
@@ -133,13 +157,14 @@ const FarmSA = () => {
   const { account } = useWeb3React()
 
   const {
-    state: { data, singleLeverage },
+    state: { data, singleLeverage, marketStrategy },
   } = useLocation<LocationParams>()
 
   const singleFarm = data
   console.log("singleFarm", singleFarm)
   const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
   const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
+  const [selectedStrategy, setSelectedStrategy] = useState<string>()
 
   const tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
   const quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
@@ -479,6 +504,8 @@ const FarmSA = () => {
     return option
   }
 
+
+  const {tooltip, targetRef, tooltipVisible} = useTooltip(<><Text>text</Text></>, {placement: 'right'})
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
@@ -489,13 +516,38 @@ const FarmSA = () => {
         )}
       </Text>
       <SectionWrapper>
-        <Flex className="sideSection" flex="1">
+        <Flex className="graphSide" flex="1">
+          <Section>
         <ReactEcharts option={getOption()} style={{ height: '500px' }} />
+          </Section>
+          <Section>
           <ReactEcharts option={getOption1()} style={{ height: '500px' }} />
+          </Section>
         </Flex>
-        <Flex className="sideSection" flex="1">
+        <Flex className="infoSide" flex="1">
           <Section>
             <Box>
+                <Flex alignItems="center" justifyContent="space-between">
+                  <Select
+                  options={[
+                    {
+                      label: t('Bear Market Strategy'),
+                      value: singleFarm?.TokenInfo?.quoteToken,
+                    },
+                    {
+                      label: t('Bull Market Strategy'),
+                      value: singleFarm?.TokenInfo?.token,
+                    },
+                    {
+                      label: t('Neutral Market Strategy'),
+                      value: singleFarm?.TokenInfo?.token,
+                    },
+                  ]}
+                  onChange={(option) => {
+                   setSelectedStrategy(option.value)
+                  }}
+                />
+                </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text>{t('Collateral')}</Text>
                 <Select
@@ -510,7 +562,7 @@ const FarmSA = () => {
                     },
                   ]}
                   onChange={(option) => {
-                    setSelectedToken(option.value)
+                   setSelectedToken(option.value)
                     setInputValue(0)
                     setButtonIndex(null)
                   }}
@@ -547,7 +599,13 @@ const FarmSA = () => {
               </Box>
             </Box>
             <Flex alignItems="center" justifyContent="space-between">
-              <Text small>{t('APY')}</Text>
+              <Flex>
+                <Text small>{t('APY')}</Text>
+                {tooltipVisible && tooltip}
+                <span ref={targetRef}>
+                  <InfoIcon ml="10px"/>
+                </span>
+              </Flex>
               <Text>{apy.toFixed(2)}%</Text>
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
