@@ -16,7 +16,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import {DebtRatioProgress} from 'components/ProgressBars'
+import { DebtRatioProgress } from 'components/ProgressBars'
 import {
   getHuskyRewards,
   getYieldFarming,
@@ -285,7 +285,7 @@ const AdjustPosition = () => {
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'),t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
     } finally {
       setIsPending(false)
       setTokenInput(0)
@@ -599,10 +599,19 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Amount of Debt to Repay')}</Text>
+          {isConvertTo ? (
+            <Text>
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+            </Text>
+          ) : (
+            <Text>
+              <Text>{amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}</Text>
+            </Text>
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Position Value Assets')}</Text>
-          {adjustData ? (
+          {/* {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
@@ -610,7 +619,10 @@ const AdjustPosition = () => {
             <Text>
               0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
             </Text>
-          )}
+          )} */}
+          <Text>
+            {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
+          </Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('You will receive approximately')}</Text>
@@ -709,19 +721,28 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Amount of Debt to Repay')}</Text>
-          {adjustData ? (
+          {/* {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
               0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
+            </Text>
+          )} */}
+          {isConvertTo ? (
+            <Text>
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+            </Text>
+          ) : (
+            <Text>
+              <Text>{amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}</Text>
             </Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Position Value Assets')}</Text>
-          {adjustData ? (
+          {/* {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
@@ -729,7 +750,12 @@ const AdjustPosition = () => {
             <Text>
               0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
             </Text>
-          )}
+          )} */}
+
+          <Text>
+            {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
+          </Text>
+
         </Flex>
       </Section>
     )
@@ -989,7 +1015,7 @@ const AdjustPosition = () => {
                 <Box>
                   <Text>{t('APR')}</Text>
                   <Text color="textSubtle" small>
-                   {t('Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR')}
+                    {t('Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR')}
                   </Text>
                 </Box>
                 {apr ? (
