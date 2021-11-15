@@ -34,7 +34,6 @@ const SingleAssetsCard = ({ data }) => {
   const [selectedPool, setSelectedPool] = useState(0)
 
   const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[selectedPool]
-  console.log('selectd', selectedPool, 'data', data.farmData[selectedPool])
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -71,7 +70,18 @@ const SingleAssetsCard = ({ data }) => {
   const apy = getDisplayApr(getApy(singleLeverage))
   const apyOne = getDisplayApr(getApy(1))
   const risk = parseInt(liquidationThreshold) / 100 / 100
-  const riskLevel = risk
+  const riskLevel = (() => {
+    if (data.marketStrategy === 'Bear') {
+      return 'High'
+    }
+    if (data.marketStrategy === 'Bull') {
+      return 'Moderate'
+    }
+    if (data.marketStrategy === 'Neutral') {
+      return 'Low'
+    }
+    return null
+  })()
   const dailyEarnings = 111111
   const avgApy = Number(apy) - Number(apyOne)
 
