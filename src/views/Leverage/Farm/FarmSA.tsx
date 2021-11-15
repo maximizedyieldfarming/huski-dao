@@ -1872,38 +1872,16 @@ const data22 = [
       tooltip: {
         trigger: 'axis'
       },
-      // 图例名
-      // legend: {
-      //   data: ['test1', 'test2',]
-      // },
       grid: {
-        left: '3%',   // 图表距边框的距离
+        left: '3%',
         right: '4%',
         bottom: '3%',
         containLabel: true
       },
-      // // 工具框，可以选择
-      // toolbox: {
-      //     feature: {
-      //         saveAsImage: {}
-      //     }
-      // },
-      // x轴信息样式
       xAxis: {
         type: 'category',
         boundaryGap: false,
         data: xAxisdata,
-        // 坐标轴颜色
-        // axisLine: {
-        //   lineStyle: {
-        //     color: 'red'
-        //   }
-        // },
-        // x轴文字旋转
-        // axisLabel: {
-        //   // rotate: 30,
-        //   interval: 0
-        // },
       },
       yAxis: {
         type: 'value'
@@ -1912,7 +1890,7 @@ const data22 = [
         {
           name: '邮件营销1',
           type: 'line',
-          symbol: 'none',// no point
+          symbol: 'none',
           symbolSize: 8,
           itemStyle: {
             normal: {
@@ -1925,22 +1903,11 @@ const data22 = [
         {
           name: '视频广告',
           type: 'line',
-          stack: '总量',
           symbol: 'none',
           symbolSize: 8,
           color: ['blue'],
-          // smooth: false,   // 关键点，为true是不支持虚线的，实线就用true
-          itemStyle: {
-            normal: {
-              // lineStyle: {
-              //   width: 2,
-              //   type: 'dotted'  // 'dotted'虚线 'solid'实线
-              // }
-            }
-          },
           data: data2
         },
-
       ]
     };
 
