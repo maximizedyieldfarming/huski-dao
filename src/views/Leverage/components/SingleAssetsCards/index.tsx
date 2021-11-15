@@ -29,12 +29,11 @@ const SingleAssetsCard = ({ data }) => {
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
   const { singleLeverage } = data
-  // console.info('data======', data)
 
   const [selectedPool, setSelectedPool] = useState(0)
-
-  const { leverage, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData[selectedPool]
-  console.log('selectd', selectedPool, 'data', data.farmData[selectedPool])
+  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData[selectedPool]
+  const tokenSymbol =   data.farmData[selectedPool]?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+  const quoteTokenSymbol =   data.farmData[selectedPool]?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -44,13 +43,10 @@ const SingleAssetsCard = ({ data }) => {
   }
 
   const [borrowingAsset, setBorrowingAsset] = useState(data.farmData[selectedPool]?.TokenInfo?.token?.symbol)
-
   const { totalTvl } = getTvl(data.farmData[selectedPool])
   const huskyRewards = getHuskyRewards(data.farmData[selectedPool], huskyPrice, borrowingAsset)
   const yieldFarmData = getYieldFarming(data.farmData[selectedPool], cakePrice)
   const { borrowingInterest } = getBorrowingInterest(data.farmData[selectedPool], borrowingAsset)
-
-  // console.log({totalTvl, huskyRewards,yieldFarmData, borrowingInterest  })
 
   const getApr = (lvg) => {
     const apr =
@@ -67,12 +63,18 @@ const SingleAssetsCard = ({ data }) => {
     return apy * 100
   }
 
+  const getDailyEarnings = (lvg) => {
+    const apr = getApr(lvg)
+    const dailyEarnings = apr / 365 * parseFloat(tokenAmountTotal) / parseFloat(quoteTokenAmountTotal)
+    return dailyEarnings
+  }
+
   const tvl = totalTvl.toNumber()
   const apy = getDisplayApr(getApy(singleLeverage))
   const apyOne = getDisplayApr(getApy(1))
   const risk = parseInt(liquidationThreshold) / 100 / 100
   const riskLevel = risk
-  const dailyEarnings = 111111
+  const dailyEarnings = getDailyEarnings(singleLeverage)
   const avgApy = Number(apy) - Number(apyOne)
 
   const getOption = () => {
@@ -168,7 +170,7 @@ const SingleAssetsCard = ({ data }) => {
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earnings')}</Text>
-            <Text>{dailyEarnings}</Text>
+            <Text>{dailyEarnings} {quoteTokenSymbol} Per {tokenSymbol}</Text>
           </Flex>
         </Box>
         <Flex justifyContent="center">
