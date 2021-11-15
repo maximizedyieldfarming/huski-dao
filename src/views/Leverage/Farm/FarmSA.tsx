@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Flex,
-  Radio,
   InfoIcon,
   Text,
   Skeleton,
@@ -35,7 +34,6 @@ import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
 import 'echarts/lib/component/markPoint'
 import ReactEcharts from 'echarts-for-react'
-import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
 import Select from 'components/Select/Select'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
@@ -96,10 +94,11 @@ const ButtonMenu = styled(UiKitButtonMenu)`
 `
 
 const ButtonMenuItem = styled(UiKitButtonMenuItem)`
-  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.textSubtle)};
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : theme.colors.text)};
+  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : '#F2F2F2')};
+  color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.text)};
+  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.colors.gold : '#F2F2F2')};
   &:hover:not(:disabled):not(:active) {
-    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.textSubtle)};
+    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : '#F2F2F2')};
   }
   &:first-child {
     border-top-right-radius: 0;
@@ -138,6 +137,7 @@ const FarmSA = () => {
   } = useLocation<LocationParams>()
 
   const singleFarm = data
+  console.log("singleFarm", singleFarm)
   const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
   const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
 
@@ -167,6 +167,7 @@ const FarmSA = () => {
       } else {
         event.preventDefault()
       }
+      setButtonIndex(null)
     },
     [userTokenBalance],
   )
@@ -320,7 +321,6 @@ const FarmSA = () => {
       strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
       dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
       dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-
     } else {
       tokenInputValue = 0;
       quoteTokenInputValue = inputValue
@@ -350,7 +350,7 @@ const FarmSA = () => {
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
-  const getOption = () => {
+ const getOption = () => {
     const option = {
 
       tooltip: {
@@ -434,16 +434,17 @@ const FarmSA = () => {
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
-        {t(`Farming ${tokenName} Pools`)}
+        {t(
+          `Farming ${singleFarm.QuoteTokenInfo.name
+            .replace('WBNB', 'BNB')
+            .replace(' PancakeswapWorker', '')} Pools`,
+        )}
       </Text>
       <SectionWrapper>
-        {/* graph goes here */}
-        <Text>Graph here</Text>
         <Flex className="sideSection" flex="1">
-
           <ReactEcharts option={getOption()} style={{ height: '500px' }} />
         </Flex>
-        <Flex className="sideSection">
+        <Flex className="sideSection" flex="1">
           <Section>
             <Box>
               <Flex justifyContent="space-between" alignItems="center">
@@ -520,35 +521,37 @@ const FarmSA = () => {
                 <Skeleton width="80px" height="16px" />
               )}
             </Flex>
+            <Flex>
+              {isApproved ? (
+                <Button
+                  mx="auto"
+                  scale="sm"
+                  onClick={handleConfirm}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                  disabled={
+                    !account ||
+                    !isApproved ||
+                    (Number(inputValue) === 0 && Number(inputValue) === 0) ||
+                    (inputValue === undefined && inputValue === undefined) ||
+                    isPending
+                  }
+                >
+                  {isPending ? t('Confirming') : t('Confirm')}
+                </Button>
+              ) : (
+                <Button
+                  mx="auto"
+                  scale="sm"
+                  onClick={handleApprove}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                >
+                  {t('Approve')}
+                </Button>
+              )}
+            </Flex>
           </Section>
-          {isApproved ? (
-            <Button
-              mx="auto"
-              scale="sm"
-              onClick={handleConfirm}
-              isLoading={isPending}
-              endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-              disabled={
-                !account ||
-                !isApproved ||
-                (Number(inputValue) === 0 && Number(inputValue) === 0) ||
-                (inputValue === undefined && inputValue === undefined) ||
-                isPending
-              }
-            >
-              {isPending ? t('Confirming') : t('Confirm')}
-            </Button>
-          ) : (
-            <Button
-              mx="auto"
-              scale="sm"
-              onClick={handleApprove}
-              isLoading={isPending}
-              endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-            >
-              {t('Approve')}
-            </Button>
-          )}
         </Flex>
       </SectionWrapper>
     </Page>
