@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
+import { useTranslation } from 'contexts/Localization'
 import { usePercentageToCloseContext } from '../context'
 
 interface Props {
@@ -38,7 +39,7 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
 }) => {
   const { needCloseBase, needCloseFarm, remainBase, remainFarm } =
     minimizeTradingValues
-
+const {t} = useTranslation()
   const { percentage, setPercentage } = usePercentageToCloseContext()
 
   return (
@@ -46,15 +47,15 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
       <GrayBox>
         <WarningIcon />
         <Text color="textSubtle">
-          We will convert the minimum required amount of tokens into {tokenName} to pay back the debt and return the remaining
-          assets to you. This can potentially save on slippage and trading fees.
+          {t(`We will convert the minimum required amount of tokens into ${tokenName} to pay back the debt and return the remaining
+          assets to you. This can potentially save on slippage and trading fees.`)}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (
         <Box>
           <Text>
-            What percentage of position value would you like to close?{' '}
-            {currentPositionLeverage !== 1 && '(After repay all debt)'}
+            {t('What percentage of position value would you like to close?')}{' '}
+            {currentPositionLeverage !== 1 && t('(After repay all debt)')}
           </Text>
           <Flex>
             <input
@@ -78,14 +79,14 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
       )}
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
-          <Text>Position Value Assets to Close</Text>
+          <Text>{t('Position Value Assets to Close')}</Text>
         </Box>
         <Text>
           {needCloseFarm?.toFixed(3)} {quoteTokenName} + {needCloseBase?.toFixed(3)} {tokenName}
         </Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text>Updated Position Value Assets</Text>
+        <Text>{t('Updated Position Value Assets')}</Text>
         <Flex>
           <Text color="textSubtle">
             {farmTokenAmountValue?.toFixed(3)} {quoteTokenName} + {baseTokenAmountValue?.toFixed(3)} {tokenName}

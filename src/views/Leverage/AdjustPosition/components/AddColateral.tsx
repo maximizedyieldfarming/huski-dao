@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
 import BigNumber from 'bignumber.js'
 import { TokenImage } from 'components/TokenImage'
+import { useTranslation } from 'contexts/Localization'
 
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
@@ -25,8 +26,10 @@ const AddColateral = ({
   setQuoteTokenInput,
   symbolName,
   tokenPrice,
-  quoteTokenPrice
+  quoteTokenPrice,
 }) => {
+  const { t } = useTranslation()
+
   BigNumber.config({ DECIMAL_PLACES: 18, EXPONENTIAL_AT: 18 })
   const handleQuoteTokenInput = useCallback(
     (event) => {
@@ -98,10 +101,10 @@ const AddColateral = ({
     <>
       <Flex alignItems="center" justifyContent="space-between">
         <Text as="span" bold>
-          Collateral
+          {t('Collateral')}
         </Text>
         <Text as="span" small color="textSubtle">
-          To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.
+          {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
         </Text>
       </Flex>
       <Flex>
@@ -110,7 +113,7 @@ const AddColateral = ({
             <Flex alignItems="center" justifyContent="space-between">
               <Flex>
                 <Text as="span" mr="1rem" small>
-                  Balance:
+                  {t('Balance')}:
                 </Text>
                 {userQuoteTokenBalance ? (
                   <Text small>
@@ -156,7 +159,7 @@ const AddColateral = ({
             <Flex alignItems="center" justifyContent="space-between">
               <Flex>
                 <Text as="span" mr="1rem" small>
-                  Balance:
+                  {t('Balance')}:
                 </Text>
                 {userTokenBalance ? (
                   <Text small>

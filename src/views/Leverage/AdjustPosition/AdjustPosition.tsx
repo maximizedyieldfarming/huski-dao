@@ -16,7 +16,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import DebtRatioProgress from 'components/DebRatioProgress'
+import {DebtRatioProgress} from 'components/ProgressBars'
 import {
   getHuskyRewards,
   getYieldFarming,
@@ -285,7 +285,7 @@ const AdjustPosition = () => {
       }
     } catch (error) {
       console.info('error', error)
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError(t('Unsuccessfulll'),t('Something went wrong your farm request. Please try again...'))
     } finally {
       setIsPending(false)
       setTokenInput(0)
@@ -392,7 +392,7 @@ const AdjustPosition = () => {
         toastSuccess(t('Successful!'), t('Your farm was successfull'))
       }
     } catch (error) {
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
     }
   }
 
@@ -426,7 +426,7 @@ const AdjustPosition = () => {
       }
     } catch (error) {
       console.info('error', error)
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
     }
   }
 
@@ -464,7 +464,7 @@ const AdjustPosition = () => {
     tooltipVisible: priceImpactTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Price impact will be calculated based on your supplied asset value and the current price.</Text>
+      <Text>{t('Price impact will be calculated based on your supplied asset value and the current price.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -474,8 +474,8 @@ const AdjustPosition = () => {
     tooltipVisible: tradingFeesTooltipVisible,
   } = useTooltip(
     <>
-      <Text>PancakeSwap trading fees</Text>
-      <Text>HUSKI trading fees</Text>
+      <Text>{t('PancakeSwap trading fees')}</Text>
+      <Text>{t('HUSKI trading fees')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -535,7 +535,7 @@ const AdjustPosition = () => {
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
-          <Text>Amount to Trade</Text>
+          <Text>{t('Amount to Trade')}</Text>
           {isConvertTo ? (
             <Text>
               {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
@@ -549,7 +549,7 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Price Impact</Text>
+            <Text>{t('Price Impact')}</Text>
             {priceImpactTooltipVisible && priceImpactTooltip}
             <span ref={priceImpactTargetRef}>
               <InfoIcon ml="10px" />
@@ -564,7 +564,7 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Trading Fees</Text>
+            <Text>{t('Trading Fees')}</Text>
             {tradingFeesTooltipVisible && tradingFeesTooltip}
             <span ref={tradingFeesTargetRef}>
               <InfoIcon ml="10px" />
@@ -578,7 +578,7 @@ const AdjustPosition = () => {
           <Text>{tradingFeesClose.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Converted Position Value Assets</Text>
+          <Text>{t('Converted Position Value Assets')}</Text>
           {isConvertTo ? (
             <Text>
               {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol}
@@ -598,10 +598,10 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Amount of Debt to Repay</Text>
+          <Text>{t('Amount of Debt to Repay')}</Text>
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Updated Position Value Assets</Text>
+          <Text>{t('Updated Position Value Assets')}</Text>
           {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
@@ -613,7 +613,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>You will receive approximately</Text>
+          <Text>{t('You will receive approximately')}</Text>
           {convertedPositionValue ? (
             <Text>
               {isConvertTo ? (
@@ -631,7 +631,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Minimum Received</Text>
+          <Text>{t('Minimum Received')}</Text>
           {convertedPositionValue ? (
             <Text>
               {isConvertTo ? (
@@ -654,7 +654,7 @@ const AdjustPosition = () => {
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
-          <Text>Amount to Trade</Text>
+          <Text>{t('Amount to Trade')}</Text>
           {isConvertTo ? (
             <Text>
               {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
@@ -668,7 +668,7 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Price Impact</Text>
+            <Text>{t('Price Impact')}</Text>
             {priceImpactTooltipVisible && priceImpactTooltip}
             <span ref={priceImpactTargetRef}>
               <InfoIcon ml="10px" />
@@ -682,7 +682,7 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Trading Fees</Text>
+            <Text>{t('Trading Fees')}</Text>
             {tradingFeesTooltipVisible && tradingFeesTooltip}
             <span ref={tradingFeesTargetRef}>
               <InfoIcon ml="10px" />
@@ -695,7 +695,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Converted Position Value Assets</Text>
+          <Text>{t('Converted Position Value Assets')}</Text>
           {isConvertTo ? (
             <Text>
               {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol}
@@ -708,7 +708,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Amount of Debt to Repay</Text>
+          <Text>{t('Amount of Debt to Repay')}</Text>
           {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
@@ -720,7 +720,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Updated Position Value Assets</Text>
+          <Text>{t('Updated Position Value Assets')}</Text>
           {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
@@ -737,7 +737,7 @@ const AdjustPosition = () => {
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
-          <Text>Assets Supplied</Text>
+          <Text>{t('Assets Supplied')}</Text>
           {farmingData ? (
             <Text>
               {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol} + {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol}
@@ -747,7 +747,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Assets Borrowed</Text>
+          <Text>{t('Assets Borrowed')}</Text>
           {adjustData ? (
             <Text>{assetsBorrowed.toFixed(3)} {symbolName}</Text>
           ) : (
@@ -756,7 +756,7 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Price Impact</Text>
+            <Text>{t('Price Impact')}</Text>
             {priceImpactTooltipVisible && priceImpactTooltip}
             <span ref={priceImpactTargetRef}>
               <InfoIcon ml="10px" />
@@ -770,7 +770,7 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Trading Fees</Text>
+            <Text>{t('Trading Fees')}</Text>
             {tradingFeesTooltipVisible && tradingFeesTooltip}
             <span ref={tradingFeesTargetRef}>
               <InfoIcon ml="10px" />
@@ -783,7 +783,7 @@ const AdjustPosition = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Updated Total Assets</Text>
+          <Text>{t('Updated Total Assets')}</Text>
           {adjustData ? (
             <Text>
               {baseTokenInPosition.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValue?.symbol}
@@ -806,11 +806,11 @@ const AdjustPosition = () => {
         >
           <Page>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
-              Adjust Position {lpSymbolName}
+              {t('Adjust Position')} {lpSymbolName}
             </Text>
             <Section>
-              <Text bold>Current Position Leverage: {currentPositionLeverage.toPrecision(3)}x</Text>
-              <Text>Target Position Leverage: {Number(targetPositionLeverage).toPrecision(3)}x</Text>
+              <Text bold>{t('Current Position Leverage')}: {currentPositionLeverage.toPrecision(3)}x</Text>
+              <Text>{t('Target Position Leverage')}: {Number(targetPositionLeverage).toPrecision(3)}x</Text>
               <Flex>
                 <input
                   type="range"
@@ -830,7 +830,7 @@ const AdjustPosition = () => {
               </Flex>
               {Number(targetPositionLeverage) > Number(currentPositionLeverage.toPrecision(3)) && (
                 <Flex justifyContent="space-between" alignItems="center">
-                  <Text>You&apos;re Borrowing More</Text>
+                  <Text>{t(`You're Borrowing More`)}</Text>
                   <NumberInput
                     placeholder="0.00"
                     onChange={handleBorrowMoreChange}
@@ -899,11 +899,11 @@ const AdjustPosition = () => {
 
             <Section>
               <Flex justifyContent="space-between">
-                <Text>Debt Assets Borrowed</Text>
+                <Text>{t('Debt Assets Borrowed')}</Text>
                 {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)} {symbolName}</Text> : <Text>0.00</Text>}
               </Flex>
               <Flex justifyContent="space-between">
-                <Text>Updated Debt</Text>
+                <Text>{t('Updated Debt')}</Text>
                 {data ? (
                   <Flex alignItems="center">
                     <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
@@ -915,7 +915,7 @@ const AdjustPosition = () => {
                 )}
               </Flex>
               <Flex justifyContent="space-between">
-                <Text>Leverage (ratio)</Text>
+                <Text>{t('Leverage (ratio)')}</Text>
                 {data ? (
                   <Flex>
                     <Text>
@@ -938,7 +938,7 @@ const AdjustPosition = () => {
             </Section>
             <Section>
               <Flex justifyContent="space-between">
-                <Text>Yields Farm APR</Text>
+                <Text>{t('Yields Farm APR')}</Text>
                 {yieldFarmAPR ? (
                   <Flex alignItems="center">
                     <Text>{yieldFarmAPR.toFixed(2)}%</Text>
@@ -950,7 +950,7 @@ const AdjustPosition = () => {
                 )}
               </Flex>
               <Flex justifyContent="space-between">
-                <Text>Trading Fees APR(7 DAYS average)</Text>
+                <Text>{t('Trading Fees APR(7 DAYS average)')}</Text>
                 {tradingFeesAPR ? (
                   <Flex alignItems="center">
                     <Text>{tradingFeesAPR.toFixed(2)}%</Text>
@@ -962,7 +962,7 @@ const AdjustPosition = () => {
                 )}
               </Flex>
               <Flex justifyContent="space-between">
-                <Text>HUSKI Rewards APR</Text>
+                <Text>{t('HUSKI Rewards APR')}</Text>
                 {huskiRewardsAPR ? (
                   <Flex alignItems="center">
                     <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
@@ -974,7 +974,7 @@ const AdjustPosition = () => {
                 )}
               </Flex>
               <Flex justifyContent="space-between">
-                <Text>Borrowing Interest APR</Text>
+                <Text>{t('Borrowing Interest APR')}</Text>
                 {borrowingInterestAPR ? (
                   <Flex alignItems="center">
                     <Text>-{borrowingInterestAPR.toFixed(2)}%</Text>
@@ -987,9 +987,9 @@ const AdjustPosition = () => {
               </Flex>
               <Flex justifyContent="space-between">
                 <Box>
-                  <Text>APR</Text>
+                  <Text>{t('APR')}</Text>
                   <Text color="textSubtle" small>
-                    Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR
+                   {t('Yields Farm APR + Trading Fess APR + HUSKI Rewards APR - Borrowing Interest APR')}
                   </Text>
                 </Box>
                 {apr ? (
@@ -1003,7 +1003,7 @@ const AdjustPosition = () => {
                 )}
               </Flex>
               <Flex justifyContent="space-between">
-                <Text>APY</Text>
+                <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
                     <Text>{(apy * 100).toFixed(2)}%</Text>
@@ -1021,11 +1021,11 @@ const AdjustPosition = () => {
             <Flex alignSelf="center">
               {isAddCollateral && (
                 <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
-                  Confirm
+                  {t('Confirm')}
                 </Button>
               )}
-              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo}>Confirm</Button>}
-              {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>Confirm</Button>}
+              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo}>{t('Confirm')}</Button>}
+              {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>{t('Confirm')}</Button>}
             </Flex>
           </Page>
         </PercentageToCloseContext.Provider>

@@ -3,6 +3,7 @@ import { Box, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'
+import { useTranslation } from 'contexts/Localization'
 import ConverTo from './components/ConverTo'
 import MinimizeTrading from './components/MinimizeTrading'
 
@@ -49,6 +50,7 @@ const Bubble = styled(Flex)`
 `
 
 const ClosePosition = (props) => {
+  const {t} = useTranslation()
 
   const {
     location: {
@@ -85,11 +87,11 @@ const ClosePosition = (props) => {
   return (
     <Page>
       <Text fontSize="36px" textTransform="capitalize" mx="auto">
-        Close Position
+        {t('Close Position')}
       </Text>
       <Flex alignItems="center">
         <Flex alignItems="center" justifySelf="flex-start" flex="1">
-          <Text mr="1rem">Which method would you like to use?</Text>
+          <Text mr="1rem">{t('Which method would you like to use?')}</Text>
         </Flex>
         <Bubble alignSelf="flex-end" alignItems="center">
           <Text>{symbolName}</Text>
@@ -113,10 +115,10 @@ const ClosePosition = (props) => {
       <TabPanel>
         <Header>
           <HeaderTabs onClick={handleDepositClick} active={isDeposit}>
-            <Text>Convert To {symbolName}</Text>
+            <Text>{t('Convert To')} {symbolName}</Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit}>
-            <Text>Minimize Trading</Text>
+            <Text>{t('Minimize Trading')}</Text>
           </HeaderTabs>
         </Header>
         <Body>

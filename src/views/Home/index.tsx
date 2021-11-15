@@ -4,6 +4,7 @@ import PageSection from 'components/PageSection'
 import { Link } from 'react-router-dom'
 import useTheme from 'hooks/useTheme'
 import { Text, Flex, Box, Button, Grid } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import background from './assets/bg.png'
 import communityImg from './assets/1.png'
 import noInvestorsImg from './assets/2.png'
@@ -88,115 +89,20 @@ const Card = styled(Flex)`
   }
 `
 
-const StrokeText = styled(Text)`
-  margin: 5% 15%;
-  @supports (-webkit-text-stroke: 1px black) {
-    -webkit-text-stroke: 1px black;
-    -webkit-text-fill-color: white;
-  }
-`
-
 const Home: React.FC = () => {
   const { theme } = useTheme()
   const HomeSectionContainerStyles = { margin: '0', width: '100%', maxWidth: '968px' }
+  const { t } = useTranslation()
 
   return (
     <>
-      {/*  <StyledHeroSection
-        innerProps={{ style: { margin: '0', width: '100%' } }}
-        background={
-          theme.isDark
-            ? 'radial-gradient(103.12% 50% at 50% 50%, #21193A 0%, #191326 100%)'
-            : 'linear-gradient(139.73deg, #E6FDFF 0%, #F3EFFF 100%)'
-        }
-        index={2}
-        hasCurvedDivider={false}
-      >
-        {account && (
-          <UserBannerWrapper>
-            <UserBanner />
-          </UserBannerWrapper>
-        )}
-        <Hero />
-      </StyledHeroSection>
-      <PageSection
-        innerProps={{ style: { margin: '0', width: '100%' } }}
-        background={
-          theme.isDark
-            ? 'linear-gradient(180deg, #09070C 22%, #201335 100%)'
-            : 'linear-gradient(180deg, #FFFFFF 22%, #D7CAEC 100%)'
-        }
-        index={2}
-        hasCurvedDivider={false}
-      >
-        <MetricsSection />
-      </PageSection>
-      <PageSection
-        innerProps={{ style: HomeSectionContainerStyles }}
-        background={theme.colors.background}
-        index={2}
-        hasCurvedDivider={false}
-      >
-        <OuterWedgeWrapper>
-          <InnerWedgeWrapper top fill={theme.isDark ? '#201335' : '#D8CBED'}>
-            <WedgeTopLeft />
-          </InnerWedgeWrapper>
-        </OuterWedgeWrapper>
-        <SalesSection {...swapSectionData} />
-      </PageSection>
-      <PageSection
-        innerProps={{ style: HomeSectionContainerStyles }}
-        background={theme.colors.gradients.cardHeader}
-        index={2}
-        hasCurvedDivider={false}
-      >
-        <OuterWedgeWrapper>
-          <InnerWedgeWrapper width="150%" top fill={theme.colors.background}>
-            <WedgeTopRight />
-          </InnerWedgeWrapper>
-        </OuterWedgeWrapper>
-        <SalesSection {...earnSectionData} />
-        <FarmsPoolsRow />
-      </PageSection>
-      <PageSection
-        innerProps={{ style: HomeSectionContainerStyles }}
-        background={
-          theme.isDark
-            ? 'linear-gradient(180deg, #0B4576 0%, #091115 100%)'
-            : 'linear-gradient(180deg, #6FB6F1 0%, #EAF2F6 100%)'
-        }
-        index={2}
-        hasCurvedDivider={false}
-      >
-        <WinSection />
-      </PageSection>
-      <PageSection
-        innerProps={{ style: HomeSectionContainerStyles }}
-        background={theme.colors.background}
-        index={2}
-        hasCurvedDivider={false}
-      >
-        <SalesSection {...cakeSectionData} />
-        <CakeDataRow />
-      </PageSection>
-      <PageSection
-        innerProps={{ style: HomeSectionContainerStyles }}
-        background="linear-gradient(180deg, #7645D9 0%, #5121B1 100%)"
-        index={2}
-        hasCurvedDivider={false}
-      >
-        <Footer />
-      </PageSection> */}
       <StyledHeroSection>
-        {/*  <StrokeText bold fontSize="6">
-          Leveraged yield farming by the Huskis For the Huskis
-        </StrokeText> */}
         <Slogan style={{ margin: '100px auto', width: '100%' }} />
       </StyledHeroSection>
       <SectionWithBgImg>
         <Flex width="100%" justifyContent="center">
           <Button variant="secondary" as={Link} to="/lend">
-            Use Huski
+            {t('Use HUSKI')}
           </Button>
           <Button
             variant="secondary"
@@ -205,10 +111,10 @@ const Home: React.FC = () => {
             to={{ pathname: 'https://docs.huski.finance/' }}
             target="_blank"
           >
-            Docs
+            {t('Docs')}
           </Button>
           <Button variant="secondary" as={Link} to={{ pathname: 'https://docs.huski.finance/faq' }} target="_blank">
-            FAQs
+            {t('FAQs')}
           </Button>
         </Flex>
       </SectionWithBgImg>
@@ -226,28 +132,28 @@ const Home: React.FC = () => {
             <Card>
               <img src={communityImg} alt="" />
             </Card>
-            <Text>Community Owned</Text>
+            <Text>{t('Community Owned')}</Text>
           </Flex>
           <Flex flexDirection="column">
             <Card>
               <img src={noInvestorsImg} alt="" />
             </Card>
-            <Text>No Investors</Text>
+            <Text>{t('No Investors')}</Text>
           </Flex>
           <Flex flexDirection="column">
             <Card>
               <img src={fairLaunchImg} alt="" />
             </Card>
-            <Text>Fair Launch</Text>
+            <Text>{t('Fair Launch')}</Text>
           </Flex>
         </Grid>
       </StyledHeroSection>
 
       <StyledHeroSection>
         <Text bold fontSize="3">
-          Learn more about{' '}
+          {t('Learn more about')}{' '}
           <Text as="span" bold fontSize="3" color="secondary">
-            HUSKI Finance
+            {t('HUSKI Finance')}
           </Text>
         </Text>
         <Grid
@@ -260,22 +166,22 @@ const Home: React.FC = () => {
         >
           <Card className="learnMore">
             <img src={introTo} alt="" />
-            <Text>Intro to HUSKI finance</Text>
+            <Text>{t('Intro to HUSKI finance')}</Text>
           </Card>
           <Card className="learnMore">
             <img src={tokenomics} alt="" />
-            <Text>Tokenomics</Text>
+            <Text>{t('Tokenomics')}</Text>
           </Card>
           <Card className="learnMore">
             <img src={roadmap} alt="" />
-            <Text>Roadmap</Text>
+            <Text>{t('Roadmap')}</Text>
           </Card>
         </Grid>
       </StyledHeroSection>
 
       <StyledHeroSection>
         <Text bold fontSize="3">
-          Our contracts have been audited by
+          {t('Our contracts have been audited by')}
         </Text>
         <Grid
           width="100%"
@@ -295,7 +201,7 @@ const Home: React.FC = () => {
 
       <StyledHeroSection>
         <Text bold fontSize="3">
-          Join our community
+          {t('Join our community')}
         </Text>
         <Grid
           width="100%"
@@ -308,55 +214,55 @@ const Home: React.FC = () => {
             <Box>
               <img src={twitter} alt="" width="30px" height="30px" />
               <Text bold fontSize="3">
-                Twitter
+                {t('Twitter')}
               </Text>
             </Box>
             <Text small color="textSubtle">
-              Follow @HUSKI.finance for the latest news and updates
+              {t('Follow @HUSKI.finance for the latest news and updates')}
             </Text>
           </Card>
           <Card className="community">
             <Box>
               <img src={telegram} alt="" width="30px" height="30px" />
               <Text bold fontSize="3">
-                Telegram
+                {t('Telegram')}
               </Text>
             </Box>
             <Text small color="textSubtle">
-              Mix and mingle with your fellow Huskis
+              {t('Mix and mingle with your fellow Huskis')}
             </Text>
           </Card>
           <Card className="community">
             <Box>
               <img src={discord} alt="" width="30px" height="30px" />
               <Text bold fontSize="3">
-                Discord
+                {t('Discord')}
               </Text>
             </Box>
             <Text small color="textSubtle">
-              Meet your fellow community members, and chat with them in real time
+              {t('Meet your fellow community members, and chat with them in real time')}
             </Text>
           </Card>
           <Card className="community">
             <Box>
               <img src={medium} alt="" width="30px" height="30px" />
               <Text bold fontSize="3">
-                Medium
+                {t('Medium')}
               </Text>
             </Box>
             <Text small color="textSubtle">
-              Read our latest blog posts
+              {t('Read our latest blog posts')}
             </Text>
           </Card>
           <Card className="community">
             <Box>
               <img src={youtube} alt="" width="30px" height="30px" />
               <Text bold fontSize="3">
-                Youtube
+                {t('Youtube')}
               </Text>
             </Box>
             <Text small color="textSubtle">
-              For the latest news and updates
+              {t('For the latest news and updates')}
             </Text>
           </Card>
         </Grid>

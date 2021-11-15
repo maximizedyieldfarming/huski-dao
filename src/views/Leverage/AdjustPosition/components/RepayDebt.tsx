@@ -1,6 +1,7 @@
 import React from 'react'
 import { Flex, Text } from '@pancakeswap/uikit'
 import Select from 'components/Select/Select'
+import { useTranslation } from 'contexts/Localization'
 import RepayDebtMinimizeTrading from './RepayDebtMinimizeTrading'
 import RepayDebtConvertTo from './RepayDebtConvertTo'
 import { useConvertToContext } from '../context'
@@ -14,6 +15,7 @@ const RepayDebt = ({
   baseTokenAmountValue,
   farmTokenAmountValue
 }) => {
+  const {t} = useTranslation()
   const { isConvertTo, handleIsConvertTo } = useConvertToContext()
   const handleSelect = (option) => {
     handleIsConvertTo(option.value === 'convertTo')
@@ -22,11 +24,11 @@ const RepayDebt = ({
   return (
     <>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text>Which method would you like to repay the debt?</Text>
+        <Text>{t('Which method would you like to repay the debt?')}</Text>
         <Select
           options={[
-            { label: `Convert To ${tokenName}`, value: 'convertTo' },
-            { label: 'Minimize Trading', value: 'minimizeTrading' },
+            { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
+            { label: `${t('Minimize Trading')}`, value: 'minimizeTrading' },
           ]}
           onChange={handleSelect}
         />

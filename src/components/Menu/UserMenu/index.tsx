@@ -36,10 +36,10 @@ const UserMenu = () => {
     return (
       <>
         <Button mr="10px" variant="secondary">
-          Buy HUSKI
+          {t('Buy HUSKI')}
         </Button>
         <Button as={Link} to="/lend">
-          Launch App
+          {t('Launch App')}
         </Button>
       </>
     )
