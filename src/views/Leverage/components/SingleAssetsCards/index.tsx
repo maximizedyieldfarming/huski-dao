@@ -32,8 +32,8 @@ const SingleAssetsCard = ({ data }) => {
 
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData[selectedPool]
-  const tokenSymbol =   data.farmData[selectedPool]?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-  const quoteTokenSymbol =   data.farmData[selectedPool]?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  const tokenSymbol = data.farmData[selectedPool]?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+  const quoteTokenSymbol = data.farmData[selectedPool]?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -65,7 +65,7 @@ const SingleAssetsCard = ({ data }) => {
 
   const getDailyEarnings = (lvg) => {
     const apr = getApr(lvg)
-    const dailyEarnings = apr / 365 * parseFloat(tokenAmountTotal) / parseFloat(quoteTokenAmountTotal)
+    const dailyEarnings = apr / 365 * parseFloat(quoteTokenAmountTotal) / parseFloat(tokenAmountTotal)
     return dailyEarnings
   }
 
