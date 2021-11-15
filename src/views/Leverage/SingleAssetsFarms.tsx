@@ -237,8 +237,6 @@ const SingleAssetsFarms: React.FC = () => {
     })
   }
 
-
-usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
   const positionFarmsData = []
