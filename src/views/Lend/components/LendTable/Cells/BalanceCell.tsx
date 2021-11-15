@@ -17,22 +17,10 @@ const StyledCell = styled(BaseCell)`
 
 const BalanceCell = ({ balance, balanceIb, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
-  const { balance: bnbBalance } = useGetBnbBalance()
   const { t } = useTranslation()
 
-  const balanceNumber = getBalanceNumber(name.toLowerCase() === 'bnb' ? bnbBalance : balance)
-  const ibBalanceNumber = getBalanceNumber(balanceIb)
-  const formatedBalance = formatNumber(balanceNumber)
-  const ibFormatedBalance = formatNumber(ibBalanceNumber)
-
-  // const formatBalance = (value) => {
-  //   const displayBalance = new BigNumber(value)
-  //   if (displayBalance.lt(0.0001)) {
-  //     return displayBalance.toFixed(4)
-  //   }
-  //   return displayBalance.toFixed(2)
-  // }
+  const formatedBalance = formatNumber(Number(balance))
+  const ibFormatedBalance = formatNumber(Number(balanceIb))
 
   return (
     <StyledCell role="cell">
