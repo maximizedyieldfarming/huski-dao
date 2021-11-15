@@ -73,8 +73,20 @@ const SingleAssetsCard = ({ data }) => {
   const apy = getDisplayApr(getApy(singleLeverage))
   const apyOne = getDisplayApr(getApy(1))
   const risk = parseInt(liquidationThreshold) / 100 / 100
-  const riskLevel = risk
   const dailyEarnings = getDailyEarnings(singleLeverage)
+  const riskLevel = (() => {
+    if (data.marketStrategy === 'Bear') {
+      return 'High'
+    }
+    if (data.marketStrategy === 'Bull') {
+      return 'Moderate'
+    }
+    if (data.marketStrategy === 'Neutral') {
+      return 'Low'
+    }
+    return null
+  })()
+
   const avgApy = Number(apy) - Number(apyOne)
 
   const getOption = () => {
@@ -170,7 +182,7 @@ const SingleAssetsCard = ({ data }) => {
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earnings')}</Text>
-            <Text>{dailyEarnings} {quoteTokenSymbol} Per {tokenSymbol}</Text>
+            <Text>{dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}</Text>
           </Flex>
         </Box>
         <Flex justifyContent="center">
