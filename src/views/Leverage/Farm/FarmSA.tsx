@@ -38,10 +38,6 @@ import { useWeb3React } from '@web3-react/core'
 import Select from 'components/Select/Select'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
 
-interface RouteParams {
-  token: string
-}
-
 interface LocationParams {
   data?: any
   singleLeverage?: number
@@ -166,8 +162,16 @@ const FarmSA = () => {
   const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
   const [selectedStrategy, setSelectedStrategy] = useState<string>()
 
-  const tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-  const quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  let tokenName
+  let quoteTokenName
+  if (marketStrategy === 'Bull') { // bull === 2x long
+    tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+    quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  } else { // 2x short || 3x short
+    tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+    quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  }
+
   const allowance = singleFarm?.userData?.quoteTokenAllowance
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -2014,7 +2018,7 @@ const data22 = [
   }
 
 
-  const {tooltip, targetRef, tooltipVisible} = useTooltip(<><Text>text</Text></>, {placement: 'right'})
+  const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, {placement: 'right'})
   return (
     <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
