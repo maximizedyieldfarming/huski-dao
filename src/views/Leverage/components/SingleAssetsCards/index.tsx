@@ -192,7 +192,11 @@ const SingleAssetsCard = ({ data }) => {
             to={(location) => ({
               ...location,
               pathname: `${location.pathname}/farm/${data?.farmData[selectedPool]?.lpSymbol.replace(' LP', '')}`,
-              state: { data: data?.farmData[selectedPool], singleLeverage: data?.singleLeverage },
+              state: {
+                data: data?.farmData[selectedPool],
+                singleLeverage: data?.singleLeverage,
+                marketStrategy: data?.marketStrategy,
+              },
             })}
             disabled={!account || !apy}
             onClick={(e) => !account && e.preventDefault()}
