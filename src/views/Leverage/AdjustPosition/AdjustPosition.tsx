@@ -207,9 +207,7 @@ const AdjustPosition = () => {
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const lvgAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValueNumber)))
   const currentPositionLeverage = lvgAdjust.toNumber()
-  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
-    Number(currentPositionLeverage.toPrecision(3)),
-  )
+  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
 
   const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
@@ -448,7 +446,8 @@ const AdjustPosition = () => {
 
   const handleSliderChange = (e) => {
     const value = e?.target?.value
-    setTargetPositionLeverage(value)
+    const finalValue = Number(value).toFixed(2) === Number(currentPositionLeverage).toFixed(2) ? currentPositionLeverage : Number(value)
+    setTargetPositionLeverage(Number(finalValue))
   }
 
   const handleBorrowMoreChange = (e) => {
@@ -499,7 +498,7 @@ const AdjustPosition = () => {
 
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
-  const updatedDebtRatio = 1 - principal / (remainLeverage || 1)
+  const updatedDebtRatio = Number(targetPositionLeverage) === Number(currentPositionLeverage) ? debtRatio.toNumber() : 1 - principal / (remainLeverage || 1)
 
   // convert to 
   const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
@@ -854,7 +853,7 @@ const AdjustPosition = () => {
                   <Text textAlign="right">{Number(targetPositionLeverage).toPrecision(3)}x</Text>
                 </Box>
               </Flex>
-              {Number(targetPositionLeverage) > Number(currentPositionLeverage.toPrecision(3)) && (
+              {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
                 <Flex justifyContent="space-between" alignItems="center">
                   <Text>{t(`You're Borrowing More`)}</Text>
                   <NumberInput
@@ -865,7 +864,7 @@ const AdjustPosition = () => {
                   />
                 </Flex>
               )}
-              {Number(targetPositionLeverage) < Number(currentPositionLeverage.toPrecision(3)) && (
+              {Number(targetPositionLeverage.toFixed(2)) < Number(currentPositionLeverage.toFixed(2)) && (
                 <AddCollateralRepayDebtContainer
                   currentPositionLeverage={Number(currentPositionLeverage)}
                   targetPositionLeverage={Number(targetPositionLeverage)}
