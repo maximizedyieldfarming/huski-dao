@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton } from 'husky-uikit'
 import { useTranslation } from 'contexts/Localization'
 import Select from 'components/Select/Select'
 import BaseCell, { CellContent } from './BaseCell'
@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
+const Borrowing = ({ tokenData, onBorrowingAssetChange, defaultBorrowing, show }) => {
   const quoteToken = tokenData?.TokenInfo?.quoteToken?.symbol
   const token = tokenData?.TokenInfo?.token?.symbol
   const { isMobile, isTablet } = useMatchBreakpoints()
@@ -31,7 +31,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
         },
       ]
     }
-    if (token === 'CAKE'|| token === 'USDC' || token === 'SUSHI' || token === 'DOT') {
+    if (token === 'CAKE' || token === 'USDC' || token === 'SUSHI' || token === 'DOT') {
       return [
         {
           label: quoteToken.replace('wBNB', 'BNB'),
@@ -45,12 +45,12 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
     }
     return [
       {
-        label: token.replace('wBNB', 'BNB'),
-        value: token,
+        label: defaultBorrowing === token ? token.replace('wBNB', 'BNB') : quoteToken.replace('wBNB', 'BNB'),
+        value: defaultBorrowing === token ? token : quoteToken,
       },
       {
-        label: quoteToken.replace('wBNB', 'BNB'),
-        value: quoteToken,
+        label: defaultBorrowing === token ? quoteToken.replace('wBNB', 'BNB') : token.replace('wBNB', 'BNB'),
+        value: defaultBorrowing === token ? quoteToken : token,
       },
     ]
   }
@@ -63,7 +63,11 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
             {t('Borrowing')}
           </Text>
         )}
-        <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
+        {show ? (
+          <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )
