@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
 import useToast from 'hooks/useToast'
-import { getDecimalAmount } from 'utils/formatBalance'
+import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
+import { getAddress } from 'utils/addressHelpers'
 import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
+import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
+import { useBurnedBalance } from 'hooks/useTokenBalance'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -41,19 +44,13 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }) => {
+const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) => {
+  usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
-  const [amount, setAmount] = useState<number>()
-
-  const handleAmountChange = (e) => {
-    const { value } = e.target
-
-    const finalValue = value > balance ? balance : value
-    setAmount(finalValue)
-  }
+  const [amount, setAmount] = useState<number | string>()
 
   const setAmountToMax = (e) => {
-    setAmount(balance)
+    setAmount(userTokenBalanceIb)
   }
 
   const { toastError, toastSuccess, toastInfo } = useToast()
@@ -62,6 +59,23 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
   const { callWithGasPrice } = useCallWithGasPrice()
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
   const [isPending, setIsPending] = useState<boolean>(false)
+
+  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
+
+  const userTokenBalanceIb = getBalanceAmount(tokenBalanceIb).toJSON()
+  const handleAmountChange = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals and allow empty string
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalanceIb) ? userTokenBalanceIb : input
+        setAmount(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userTokenBalanceIb, setAmount],
+  )
 
   const handleConfirm = () => {
     toastInfo(t('Pending Transaction...'), t('Please Wait!'))
@@ -91,14 +105,14 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
     }
   }
 
-const balanceBigNumber = new BigNumber(balance)
+  const balanceBigNumber = new BigNumber(getBalanceAmount(tokenBalanceIb))
   let balanceNumber
   if (balanceBigNumber.lt(1)) {
-    balanceNumber = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
+    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
   } else {
-    balanceNumber = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
+    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
   }
-  
+
   return (
     <>
       <Section justifyContent="space-between">
@@ -113,14 +127,21 @@ const balanceBigNumber = new BigNumber(balance)
           />
         </Box>
         <Box>
-          <Text fontWeight="bold">{t('Balance')}: {`${balanceNumber} ib${name}`}</Text>
+          <Text fontWeight="bold">
+            {t('Balance')}: {`${balanceNumber} ib${tokenName}`}
+          </Text>
 
           <MaxContainer>
             <Box>
-              <Text>ib{name}</Text>
+              <Text>ib{tokenName}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balance) === 0}>
+              <Button
+                variant="tertiary"
+                scale="xs"
+                onClick={setAmountToMax}
+                disabled={Number(userTokenBalanceIb) === 0}
+              >
                 {t('MAX')}
               </Button>
             </Box>
@@ -132,13 +153,15 @@ const balanceBigNumber = new BigNumber(balance)
         <Text textAlign="center">{t('Assets Received')}</Text>
         <Section justifyContent="space-between">
           <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
-          <Text>{name}</Text>
+          <Text>{tokenName}</Text>
         </Section>
       </Flex>
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
         <Button
           onClick={handleConfirm}
-          disabled={!account || Number(balance) === 0 || Number(amount) === 0 || amount === undefined || isPending}
+          disabled={
+            !account || Number(userTokenBalanceIb) === 0 || Number(amount) === 0 || amount === undefined || isPending
+          }
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >

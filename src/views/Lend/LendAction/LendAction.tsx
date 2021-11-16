@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
@@ -5,17 +6,16 @@ import { Box, Flex, Text } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
-import { getAddress } from 'utils/addressHelpers'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
 import { Bone, Bone2 } from 'assets'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
+import BigNumber from 'bignumber.js'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
 interface Props {
-  active: boolean
+  isActive: boolean
 }
 interface RouteParams {
   action: string
@@ -58,8 +58,8 @@ const Header = styled(Flex)`
 
 const HeaderTabs = styled(Link)<Props>`
   flex: 1;
-  background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
-  border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.card.background : theme.colors.backgroundDisabled)};
+  border-top: 2px solid ${({ isActive, theme }) => (isActive ? '#9615e7' : theme.colors.backgroundDisabled)};
   padding: 1rem;
   cursor: pointer;
   &:first-child {
@@ -91,16 +91,23 @@ const Body = styled(Flex)`
 `
 
 const LendAction = () => {
+  usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const {
-    state: { exchangeRate: excRate, token: data },
+    state: { exchangeRate, token },
   } = useLocation<LocationParams>()
 
-  const [tokenData, setTokenData] = useState(data)
-  console.log('tokenData', tokenData)
+  const { data: farmsData } = useLeverageFarms()
+  const hash = {}
+  const lendData = farmsData.reduce((cur, next) => {
+    hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+    return cur
+  }, [])
+
+  usePollLeverageFarmsWithUserData()
+  const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
   const allowance = tokenData?.userData?.allowance
-  const exchangeRate = excRate
 
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
@@ -109,20 +116,13 @@ const LendAction = () => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
-  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
-  const { balance: bnbBalance } = useGetBnbBalance()
-  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
-  const displayBalance = isDeposit
-    ? userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
-    : userTokenBalanceCalc(tokenBalanceIb).toJSON()
-
-  const [userTokenBalance, setUserTokenBalance] = useState(displayBalance)
-  const [userIbTokenBalance, setUserIbTokenBalance] = useState(tokenBalanceIb)
-  useEffect(() => {
-    setUserTokenBalance(userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON())
-    setUserIbTokenBalance(userTokenBalanceCalc(tokenBalanceIb).toJSON())
-  }, [tokenData, tokenBalance, tokenBalanceIb, tokenName, bnbBalance])
+  const balanceBigNumber = new BigNumber(getBalanceAmount(tokenData?.userData?.tokenBalanceIB))
+  let balanceNumber
+  if (balanceBigNumber.lt(1)) {
+    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
+  } else {
+    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
+  }
 
   return (
     <StyledPage>
@@ -133,7 +133,7 @@ const LendAction = () => {
         <Header>
           <HeaderTabs
             onClick={handleDepositClick}
-            active={isDeposit}
+            isActive={isDeposit}
             to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
             replace
           >
@@ -141,7 +141,7 @@ const LendAction = () => {
           </HeaderTabs>
           <HeaderTabs
             onClick={handleWithdrawClick}
-            active={!isDeposit}
+            isActive={!isDeposit}
             to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
             replace
           >
@@ -155,8 +155,6 @@ const LendAction = () => {
           </Box>
           {isDeposit ? (
             <Deposit
-              balance={userTokenBalance}
-              name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
               tokenData={tokenData}
@@ -165,8 +163,7 @@ const LendAction = () => {
             />
           ) : (
             <Withdraw
-              balance={userIbTokenBalance}
-              name={tokenName}
+              tokenName={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
               account={account}
@@ -180,7 +177,7 @@ const LendAction = () => {
       </TabPanel>
       <Balance>
         <Text>{t('Balance')}</Text>
-        <Text>{`${userTokenBalanceCalc(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
+        <Text>{`${balanceNumber} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>

@@ -1,20 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
-import { getDecimalAmount } from 'utils/formatBalance'
+import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 
 interface DepositProps {
-  balance: any
-  name: any
   allowance: any
   exchangeRate: any
   account: any
@@ -55,23 +54,12 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRate, account, tokenData, tokenName }) => {
+const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tokenData, tokenName }) => {
   const { t } = useTranslation()
-  const [amount, setAmount] = useState<number>()
-
-  const handleAmountChange = (e) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault()
-    }
-    const { value } = e.target
-
-    const finalValue = value > balance ? balance : value
-    setAmount(finalValue)
-  }
+  const [amount, setAmount] = useState<number | string>()
 
   const setAmountToMax = (e) => {
-    setAmount(balance)
+    setAmount(Number(userTokenBalance))
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -80,9 +68,28 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   const approveContract = useERC20(tokenAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+  const isApproved: boolean = Number(allowance) > 0
   const [isPending, setIsPending] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
+
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  const { balance: bnbBalance } = useGetBnbBalance()
+
+  const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+
+  const handleAmountChange = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals and allow empty string
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        setAmount(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userTokenBalance, setAmount],
+  )
 
   const handleApprove = async () => {
     toastInfo(t('Approving...'), t('Please Wait!'))
@@ -138,7 +145,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
   const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
 
-  const balanceBigNumber = new BigNumber(balance)
+  const balanceBigNumber = new BigNumber(userTokenBalance)
   let balanceNumber
   if (balanceBigNumber.lt(1)) {
     balanceNumber = balanceBigNumber
@@ -162,15 +169,15 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
         </Box>
         <Box>
           <Text fontWeight="bold">
-            {t('Balance')}: {`${balanceNumber} ${name}`}
+            {t('Balance')}: {`${balanceNumber} ${tokenName}`}
           </Text>
 
           <MaxContainer>
             <Box>
-              <Text>{name}</Text>
+              <Text>{tokenName}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balance) === 0}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balanceNumber) === 0}>
                 {t('MAX')}
               </Button>
             </Box>
@@ -182,7 +189,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
         <Text textAlign="center">{t('Assets Received')}</Text>
         <Section justifyContent="space-between">
           <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
-          <Text>ib{name}</Text>
+          <Text>ib{tokenName}</Text>
         </Section>
       </Flex>
       <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
@@ -203,7 +210,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
             !isApproved ||
             Number(amount) === 0 ||
             amount === undefined ||
-            Number(balance) === 0 ||
+            Number(balanceNumber) === 0 ||
             isPending
           }
           isLoading={isPending}
