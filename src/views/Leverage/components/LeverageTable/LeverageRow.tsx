@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
@@ -47,67 +47,15 @@ const LeverageRow = ({ tokenData }) => {
     setChildLeverage(val)
   }
 
-  // check which borrowing asset gives bigger apy
-
-  const yieldFarmData = getYieldFarming(tokenData, cakePrice)
-  const { tokensLP, totalTvl } = getTvl(tokenData)
-
-  const getBorrowingAsset = useCallback(
-    (lvg: number) => {
-      const { token, quoteToken } = tokenData?.TokenInfo
-      const tokenHuskyRewards = getHuskyRewards(tokenData, huskyPrice, token.symbol)
-      const quoteTokenHuskyRewards = getHuskyRewards(tokenData, huskyPrice, quoteToken.symbol)
-      const { borrowingInterest: tokenBorrowingInterest } = getBorrowingInterest(tokenData, token.symbol)
-      const { borrowingInterest: quoteTokenBorrowingInterest } = getBorrowingInterest(tokenData, quoteToken.symbol)
-      console.log({
-        tokenBorrowingInterest,
-        quoteTokenBorrowingInterest,
-        tokenHuskyRewards,
-        quoteTokenHuskyRewards,
-        yieldFarmData,
-        lvg,
-      })
-      const tokenApr =
-        Number((yieldFarmData / 100) * lvg) +
-        Number(((tokenData.tradeFee * 365) / 100) * lvg) +
-        Number(tokenHuskyRewards * (lvg - 1)) -
-        Number(tokenBorrowingInterest * (lvg - 1))
-      const quoteTokenApr =
-        Number((yieldFarmData / 100) * lvg) +
-        Number(((tokenData.tradeFee * 365) / 100) * lvg) +
-        Number(quoteTokenHuskyRewards * (lvg - 1)) -
-        Number(quoteTokenBorrowingInterest * (lvg - 1))
-      console.log('tokenApr', tokenApr, 'quoteTokenApr', quoteTokenApr)
-      if (
-        quoteToken.symbol === 'CAKE' ||
-        quoteToken.symbol === 'USDC' ||
-        quoteToken.symbol === 'SUSHI' ||
-        quoteToken.symbol === 'DOT'
-      ) {
-        return token.symbol
-      }
-      if (token.symbol === 'CAKE' || token.symbol === 'USDC' || token.symbol === 'SUSHI' || token.symbol === 'DOT') {
-        return quoteToken.symbol
-      }
-
-      if (Number(tokenApr) > Number(quoteTokenApr)) {
-        return token.symbol
-      }
-      return quoteToken.symbol
-    },
-    [huskyPrice, tokenData, yieldFarmData],
-  )
-
-  const [borrowingAsset, setBorrowingAsset] = useState(getBorrowingAsset(leverage))
-  useEffect(() => {
-    setBorrowingAsset(getBorrowingAsset(leverage))
-  }, [leverage, getBorrowingAsset])
-  console.log('pool', tokenData.lpSymbol, 'borrowingAsset', borrowingAsset)
+  const [borrowingAsset, setBorrowingAsset] = useState(tokenData?.TokenInfo?.token?.symbol)
   const onBorrowingAssetChange = (asset) => {
     setBorrowingAsset(asset)
   }
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(tokenData, cakePrice)
+  const { tokensLP, totalTvl } = getTvl(tokenData)
+
   const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
   const getApr = (lvg) => {
@@ -150,12 +98,7 @@ const LeverageRow = ({ tokenData }) => {
           borrowingInterest={borrowingInterest * 100 * (childLeverage - 1)}
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} />
-        <Borrowing
-          tokenData={tokenData}
-          onBorrowingAssetChange={onBorrowingAssetChange}
-          defaultBorrowing={getBorrowingAsset(leverage)}
-          show={!!getApy(childLeverage)}
-        />
+        <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} />
         <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />
       </StyledRow>
