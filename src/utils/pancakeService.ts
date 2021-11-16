@@ -103,3 +103,113 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
         farmingtokeninPosition
     ];
 };
+
+export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList, lpAprList, PriceList, BaseTokenName, leverageOpen, DayNum) => {
+    let debtNum = 10000  // 假设债务数量 仅用作计算 该值大小不会对结果产生影响
+    const lpValueToken1 = 0.0
+    const lpValueToken0 = 0.0
+    const risk = 0.0
+    const winlossToken1 = 0.0
+    const winlossToken0 = 0.0
+
+    let tokenNum0
+    let tokenNum1
+    let baseToken
+    let tokenInitNum0
+    let tokenInitNum1
+    // let dataList
+
+    if (BaseTokenName === Token0Name) {
+        tokenNum0 = debtNum * leverageOpen / (leverageOpen - 1) / 2  // LP初始状态
+        tokenNum1 = tokenNum0 * PriceList[0]
+        baseToken = 'token0'
+        tokenInitNum0 = tokenNum0 * 2 - debtNum  // 客户初始资金
+        tokenInitNum1 = tokenNum1 * 2 - debtNum * PriceList[0]
+    } else if (BaseTokenName === Token1Name) {
+        tokenNum1 = debtNum * leverageOpen / (leverageOpen - 1) / 2
+        tokenNum0 = tokenNum1 / PriceList[0]
+        baseToken = 'token1'
+        tokenInitNum0 = tokenNum0 * 2 - debtNum / PriceList[0]
+        tokenInitNum1 = tokenNum1 * 2 - debtNum
+
+    } else {
+        return;
+    }
+    let dataList;
+    dataList = [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1]  // 为了引用传参
+    for (let i = 0; i < DayNum; i++) {
+        if (dataList[4] < RiskKillThreshold) {
+            debtNum += debtNum * BorrowingInterestList[i] / 365
+            dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList[i], dataList)
+        }
+        console.log({ '日期': i, '价格': PriceList[i], '损益比例( + 计价)': Token0Name, 'dataList': dataList[5], '损益比例 + 计价)': Token1Name, '66': dataList[6] })
+        //  print('日期', i, '价格', PriceList[i], '损益比例(' + Token0Name + '计价)', dataList[5], '损益比例(' + Token1Name + '计价)', dataList[6])
+    }
+};
+
+
+export const func = (LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtTokenNum, i, tokenPrice, ReinvestMinute, LP_APR, dataList) => {
+
+    let tokenNum0
+    let tokenNum1
+    let earnings
+    // let lpValueToken1
+    // let lpValueToken0
+    let risk
+
+    tokenNum0 = (dataList[0] * dataList[1] / tokenPrice) ** 0.5
+    tokenNum1 = dataList[0] * dataList[1] / tokenNum0
+    if (ReinvestMinute > 0) {
+        earnings = (1 + LP_APR * ReinvestMinute / 365 / 24 / 60) ** (24 * 60 / ReinvestMinute)
+    } else {
+        earnings = (1 + LP_APR / 365)
+    }
+    tokenNum0 *= earnings
+    tokenNum1 *= earnings
+    const lpValueToken1 = (tokenNum1 + tokenNum0 * tokenPrice)
+    const lpValueToken0 = (tokenNum1 / tokenPrice + tokenNum0)
+    if (baseToken === 'token0') {
+        risk = debtTokenNum / lpValueToken0
+    } else {
+        risk = debtTokenNum / lpValueToken1
+    }
+    let winlossToken1
+    let winlossToken0
+
+    if (risk < RiskKillThreshold) {
+
+        if (baseToken === 'token0') {
+            winlossToken1 = (lpValueToken0 - debtTokenNum) * tokenPrice / tokenInitNum1 - 1
+            winlossToken0 = (lpValueToken0 - debtTokenNum) / tokenInitNum0 - 1
+        } else {
+            winlossToken1 = (lpValueToken1 + debtTokenNum) / tokenInitNum1 - 1
+            winlossToken0 = (lpValueToken1 + debtTokenNum) / tokenPrice / tokenInitNum0 - 1
+        }
+
+    } else if (dataList[4] < RiskKillThreshold) {
+        if (baseToken === 'token0') {
+            winlossToken1 = (lpValueToken0 * (1 - LiquidationRewards) - debtTokenNum) * tokenPrice / tokenInitNum1 - 1
+            winlossToken0 = (lpValueToken0 * (1 - LiquidationRewards) - debtTokenNum) / tokenInitNum0 - 1
+        } else {
+            winlossToken1 = (lpValueToken1 * (1 - LiquidationRewards) + debtTokenNum) / tokenInitNum1 - 1
+            winlossToken0 = (lpValueToken1 * (1 - LiquidationRewards) + debtTokenNum) / tokenPrice / tokenInitNum0 - 1
+        }
+
+    } else {
+        winlossToken0 = dataList[5]
+        winlossToken1 = dataList[6]
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    // dataList = [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1] 
+    return [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1]
+
+    // dataList[0] = tokenNum0
+    // dataList[1] = tokenNum1
+    // dataList[2] = lpValueToken0
+    // dataList[3] = lpValueToken1
+    // dataList[4] = risk
+    // dataList[5] = winlossToken0
+    // dataList[6] = winlossToken1
+
+};
