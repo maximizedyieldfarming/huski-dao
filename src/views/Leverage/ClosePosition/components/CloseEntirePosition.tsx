@@ -342,13 +342,7 @@ const CloseEntirePosition = ({ data }) => {
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>{t('You will receive approximately')}</Text>
-          {convertedPositionValue ? (
-            <Text>
-              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol}
-            </Text>
-          ) : (
-            <Skeleton height="16px" width="80px" />
-          )}
+          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -358,13 +352,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {convertedPositionValue ? (
-            <Text>
-              {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol}
-            </Text>
-          ) : (
-            <Skeleton height="16px" width="80px" />
-          )}
+          {convertedPositionValue ? <Text>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}     </Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Button onClick={handleConfirm}>{t('Close Position')}</Button>
       </Section>
