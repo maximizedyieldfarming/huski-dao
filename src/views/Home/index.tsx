@@ -1,25 +1,23 @@
 import React from 'react'
 import styled from 'styled-components'
-import PageSection from 'components/PageSection'
 import { Link } from 'react-router-dom'
-import useTheme from 'hooks/useTheme'
 import { Text, Flex, Box, Button, Grid } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import background from './assets/bg.png'
-import communityImg from './assets/1.png'
-import noInvestorsImg from './assets/2.png'
-import fairLaunchImg from './assets/3.png'
-import introTo from './assets/introTo.png'
-import tokenomics from './assets/tokenomics.png'
-import roadmap from './assets/roadmap.png'
-import peckShieldLogo from './assets/peckShieldLogo.png'
-import certikLogo from './assets/certikLogo.png'
+import { Slogan } from 'assets'
+import background from './assets/bg@2x.png'
+import communityImg from './assets/1@2x.png'
+import noInvestorsImg from './assets/2@2x.png'
+import fairLaunchImg from './assets/3@2x.png'
+import introTo from './assets/introTo@2x.png'
+import tokenomics from './assets/tokenomics@2x.png'
+import roadmap from './assets/roadmap@2x.png'
+import peckShieldLogo from './assets/peckShieldLogo@2x.png'
+import certikLogo from './assets/certikLogo@2x.png'
 import twitter from './assets/Twitter@2x.png'
 import telegram from './assets/telegram@2x.png'
 import discord from './assets/discord@2x.png'
 import medium from './assets/Medium@2x.png'
 import youtube from './assets/youtube@2x.png'
-import { ReactComponent as Slogan } from './assets/HuskiSlogan10-25.svg'
 
 const StyledHeroSection = styled(Box)`
   padding: 16px;
@@ -38,14 +36,13 @@ const StyledHeroSection = styled(Box)`
   ${({ theme }) => theme.mediaQueries.md} {
     padding: 48px;
   }
-`
-
-const SectionWithBgImg = styled(StyledHeroSection)`
-  height: 445px;
-  background-image: url(${background});
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  .hasBgImg {
+    height: 445px;
+    background-image: url(${background});
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
 `
 
 const Card = styled(Flex)`
@@ -90,8 +87,6 @@ const Card = styled(Flex)`
 `
 
 const Home: React.FC = () => {
-  const { theme } = useTheme()
-  const HomeSectionContainerStyles = { margin: '0', width: '100%', maxWidth: '968px' }
   const { t } = useTranslation()
 
   return (
@@ -99,7 +94,7 @@ const Home: React.FC = () => {
       <StyledHeroSection>
         <Slogan style={{ margin: '100px auto', width: '100%' }} />
       </StyledHeroSection>
-      <SectionWithBgImg>
+      <StyledHeroSection className="hasBgImg">
         <Flex width="100%" justifyContent="center">
           <Button variant="secondary" as={Link} to="/lend">
             {t('Use HUSKI')}
@@ -117,7 +112,7 @@ const Home: React.FC = () => {
             {t('FAQs')}
           </Button>
         </Flex>
-      </SectionWithBgImg>
+      </StyledHeroSection>
 
       <StyledHeroSection>
         <Grid
