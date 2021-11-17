@@ -482,7 +482,7 @@ const AdjustPosition = () => {
   const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
   const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
-
+console.info('isConvertTo ', isConvertTo)
   const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceimpact, tradingfee, remainLeverage } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
@@ -501,8 +501,12 @@ const AdjustPosition = () => {
   const updatedDebtRatio = Number(targetPositionLeverage) === Number(currentPositionLeverage) ? debtRatio.toNumber() : 1 - principal / (remainLeverage || 1)
 
   // convert to 
-  const convertedPositionValueAssets = Number(baseTokenAmount) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
+  const convertedPositionValueAssets = Number(needCloseBase) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(needCloseFarm) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
+
+
+console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, farmTokenAmount  })
+
 
   // minimize trading
   let amountToTrade = 0;
@@ -531,6 +535,7 @@ const AdjustPosition = () => {
 
   let lastSection
   if (!isAddCollateral && Number(targetPositionLeverage) === 1) {
+    console.info('11111111', isConvertTo)
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
@@ -541,8 +546,7 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              {amountToTrade.toPrecision(4)}
-              {quoteTokenValueSymbol}
+              {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -662,18 +666,18 @@ const AdjustPosition = () => {
       </Section>
     )
   } else if (!isAddCollateral && Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2))) {
+    console.info('222222', isConvertTo)
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
           <Text>{t('Amount to Trade')}</Text>
           {isConvertTo ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+              {Number(needCloseFarm).toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
-              {amountToTrade.toPrecision(4)}
-              {quoteTokenValueSymbol}
+              {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -722,6 +726,7 @@ const AdjustPosition = () => {
           <Text>{t('Amount of Debt to Repay')}</Text>
           {/* {adjustData ? (
             <Text>
+            // zongdde - shangmian 
               {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
             </Text>
           ) : (
@@ -731,7 +736,8 @@ const AdjustPosition = () => {
           )} */}
           {isConvertTo ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+              {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
+              {/* {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol} */}
             </Text>
           ) : (
             <Text>
@@ -933,7 +939,7 @@ const AdjustPosition = () => {
                   <Flex alignItems="center">
                     <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                     <ChevronRightIcon />
-                    <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed(3) : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
+                    <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed() : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />

@@ -142,7 +142,7 @@ export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, 
             debtNum += debtNum * BorrowingInterestList[i] / 365
             dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList[i], dataList)
         }
-        console.log({ '日期': i, '价格': PriceList[i], '损益比例( + 计价)': Token0Name, 'dataList': dataList[5], '损益比例 + 计价)': Token1Name, '66': dataList[6] })
+        // console.log({ '日期': i, '价格': PriceList[i], '损益比例( + 计价)': Token0Name, 'dataList': dataList[5], '损益比例 + 计价)': Token1Name, '66': dataList[6] })
         //  print('日期', i, '价格', PriceList[i], '损益比例(' + Token0Name + '计价)', dataList[5], '损益比例(' + Token1Name + '计价)', dataList[6])
     }
 };
