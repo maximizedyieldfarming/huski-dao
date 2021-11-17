@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { getDecimalAmount } from 'utils/formatBalance'
@@ -8,6 +8,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -27,26 +28,30 @@ const MaxContainer = styled(Flex)`
   }
 `
 
-const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
+const Unstake = ({ account, userStakedBalance, name, allowance, tokenData }) => {
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number>()
   const { callWithGasPrice } = useCallWithGasPrice()
   const claimContract = useClaimFairLaunch()
   const { toastError, toastSuccess } = useToast()
   const [isPending, setIsPending] = useState<boolean>(false)
-  const handleAmountChange = (e) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault()
-    }
-    const { value } = e.target
 
-    const finalValue = value > stakedBalance ? stakedBalance : value
-    setAmount(finalValue)
-  }
+  const handleAmountChange = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals and allow empty string
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userStakedBalance) ? userStakedBalance : input
+        setAmount(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userStakedBalance, setAmount],
+  )
 
   const setAmountToMax = (e) => {
-    setAmount(stakedBalance)
+    setAmount(userStakedBalance)
   }
 
   const handleUnStake = async (convertedStakeAmount: BigNumber) => {
@@ -79,15 +84,6 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
     handleUnStake(convertedStakeAmount)
   }
 
-  const balanceBigNumber = new BigNumber(stakedBalance)
-  let balanceNumer
-  if (balanceBigNumber.lt(1)) {
-    balanceNumer = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
-  } else {
-    balanceNumer = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
-  }
-
-
   return (
     <>
       <Flex justifyContent="space-between">
@@ -97,14 +93,14 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
         </Box>
         <Box>
           <Text fontWeight="bold">
-            {t('Staked Balance:')} {balanceNumer} {name}
+            {t('Staked Balance:')} {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)} {name}
           </Text>
           <MaxContainer>
             <Box>
               <Text>{name}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(stakedBalance) === 0}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(userStakedBalance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>
@@ -116,7 +112,7 @@ const Unstake = ({ account, stakedBalance, name, allowance, tokenData }) => {
         <Button
           onClick={handleConfirm}
           disabled={
-            !account || Number(amount) === 0 || amount === undefined || Number(stakedBalance) === 0 || isPending
+            !account || Number(amount) === 0 || amount === undefined || Number(userStakedBalance) === 0 || isPending
           }
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}

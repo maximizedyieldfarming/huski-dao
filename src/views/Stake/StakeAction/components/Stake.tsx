@@ -1,15 +1,16 @@
 import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
 import NumberInput from 'components/NumberInput'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { getDecimalAmount } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { ethers } from 'ethers'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useClaimFairLaunch, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useTranslation } from 'contexts/Localization'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -28,31 +29,32 @@ const MaxContainer = styled(Flex)`
   }
 `
 
-const Stake = ({ account, balance, name, allowance, tokenData }) => {
+const Stake = ({ account, userTokenBalance, name, allowance, tokenData }) => {
   const { t } = useTranslation()
 
   const [amount, setAmount] = useState<number>()
   const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
 
-  const handleAmountChange = (e) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault()
-    }
-    const { value } = e.target
-
-    const finalValue = value > balance ? balance : value
-    setAmount(finalValue)
-  }
+  const handleAmountChange = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals and allow empty string
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        setAmount(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userTokenBalance, setAmount],
+  )
 
   const setAmountToMax = (e) => {
-    setAmount(balance)
+    setAmount(userTokenBalance)
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenAddress = getAddress(tokenData.token.address)
-  const vaultAddress = getAddress(tokenData.vaultAddress)
-  const approveContract = useERC20(tokenAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
   const claimContract = useClaimFairLaunch()
   const [isPending, setIsPending] = useState<boolean>(false)
@@ -65,14 +67,11 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       const tx = await claimContract.approve(claimContract, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
-        console.log('receipt', receipt.status)
         toastSuccess(t('Approved!'), t('Your request has been approved'))
       } else {
-        console.log('receipt', receipt.status)
         toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       }
     } catch (error: any) {
-      console.log('error', error)
       toastWarning(t('Error'), error.message)
     } finally {
       setIsApproving(false)
@@ -110,20 +109,6 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
     handleStake(convertedStakeAmount)
   }
 
-  const balanceBigNumber = new BigNumber(balance)
-  let balanceNumer
-  if (balanceBigNumber.lt(1)) {
-    balanceNumer = balanceBigNumber.toNumber().toFixed(tokenData?.token?.decimalsDigits  ? tokenData?.token?.decimalsDigits : 2)
-  } else {
-    balanceNumer = balanceBigNumber.toNumber().toFixed(2)
-  }
-
-  // if (balanceBigNumber.gt(0) && balanceBigNumber.lt(0.0001)) {
-  //   return balanceBigNumber.toLocaleString()
-  // }
-
-  console.info('balanceNumer', balanceNumer)
-
   return (
     <>
       <Flex justifyContent="space-between">
@@ -133,14 +118,15 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
         </Box>
         <Box>
           <Text fontWeight="bold">
-            {t('Available Balance:')} {balanceNumer} {name}
+            {t('Available Balance:')} {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}{' '}
+            {name}
           </Text>
           <MaxContainer>
             <Box>
               <Text>{name}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balance) === 0}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(userTokenBalance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>
@@ -149,7 +135,7 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
       </Flex>
 
       <ButtonGroup flexDirection="column">
-        {isApproved ? null : (
+        {Number(allowance) > 0 ? null : (
           <Button
             onClick={handleApprove}
             disabled={!account || isApproving}
@@ -163,10 +149,10 @@ const Stake = ({ account, balance, name, allowance, tokenData }) => {
           onClick={handleConfirm}
           disabled={
             !account ||
-            !isApproved ||
+            !(Number(allowance) > 0) ||
             Number(amount) === 0 ||
             amount === undefined ||
-            Number(balance) === 0 ||
+            Number(userTokenBalance) === 0 ||
             isPending
           }
           isLoading={isPending}
