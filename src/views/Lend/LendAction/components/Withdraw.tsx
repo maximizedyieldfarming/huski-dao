@@ -11,7 +11,7 @@ import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
 import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
-import { useBurnedBalance } from 'hooks/useTokenBalance'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
@@ -60,9 +60,7 @@ const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) =>
   const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
   const [isPending, setIsPending] = useState<boolean>(false)
 
-  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
-
-  const userTokenBalanceIb = getBalanceAmount(tokenBalanceIb).toJSON()
+  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
   const handleAmountChange = useCallback(
     (event) => {
       // check if input is a number and includes decimals and allow empty string
@@ -105,14 +103,6 @@ const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) =>
     }
   }
 
-  const balanceBigNumber = new BigNumber(getBalanceAmount(tokenBalanceIb))
-  let balanceNumber
-  if (balanceBigNumber.lt(1)) {
-    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
-  } else {
-    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
-  }
-
   return (
     <>
       <Section justifyContent="space-between">
@@ -128,7 +118,8 @@ const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) =>
         </Box>
         <Box>
           <Text fontWeight="bold">
-            {t('Balance')}: {`${balanceNumber} ib${tokenName}`}
+            {t('Balance')}:{' '}
+            {`${formatDisplayedBalance(userTokenBalanceIb, tokenData.TokenInfo?.token?.decimalsDigits)} ib${tokenName}`}
           </Text>
 
           <MaxContainer>

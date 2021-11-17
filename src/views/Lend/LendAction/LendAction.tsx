@@ -11,6 +11,7 @@ import { useTranslation } from 'contexts/Localization'
 import { Bone, Bone2 } from 'assets'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import BigNumber from 'bignumber.js'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
@@ -107,7 +108,7 @@ const LendAction = () => {
 
   usePollLeverageFarmsWithUserData()
   const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
-  const allowance = tokenData?.userData?.allowance
+  const allowance = token?.userData?.allowance
 
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
@@ -116,13 +117,7 @@ const LendAction = () => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const balanceBigNumber = new BigNumber(getBalanceAmount(tokenData?.userData?.tokenBalanceIB))
-  let balanceNumber
-  if (balanceBigNumber.lt(1)) {
-    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
-  } else {
-    balanceNumber = balanceBigNumber.toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2, 1)
-  }
+  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
 
   return (
     <StyledPage>
@@ -177,7 +172,10 @@ const LendAction = () => {
       </TabPanel>
       <Balance>
         <Text>{t('Balance')}</Text>
-        <Text>{`${balanceNumber} ib${tokenName}`}</Text>
+        <Text>{`${formatDisplayedBalance(
+          userTokenBalanceIb,
+          tokenData.TokenInfo?.token?.decimalsDigits,
+        )} ib${tokenName}`}</Text>
       </Balance>
       <Box>
         <Text>

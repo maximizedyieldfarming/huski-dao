@@ -61,6 +61,7 @@ const LendRow = ({ tokenData }) => {
           balance={userTokenBalance}
           balanceIb={userIbTokenBalance}
           name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+          decimals={TokenInfo?.token?.decimalsDigits}
         />
         <ActionCell token={tokenData} />
       </StyledRow>

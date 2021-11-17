@@ -12,6 +12,7 @@ import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 interface DepositProps {
   allowance: any
@@ -59,7 +60,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   const [amount, setAmount] = useState<number | string>()
 
   const setAmountToMax = (e) => {
-    setAmount(Number(userTokenBalance))
+    setAmount(userTokenBalance)
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -76,6 +77,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   const { balance: bnbBalance } = useGetBnbBalance()
 
   const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+  console.log('userTokenBalance', userTokenBalance)
 
   const handleAmountChange = useCallback(
     (event) => {
@@ -143,33 +145,20 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
     handleDeposit(convertedStakeAmount)
   }
 
-  const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
-
-  const balanceBigNumber = new BigNumber(userTokenBalance)
-  let balanceNumber
-  if (balanceBigNumber.lt(1)) {
-    balanceNumber = balanceBigNumber
-      .toNumber()
-      .toFixed(tokenData?.token?.decimalsDigits ? tokenData?.token?.decimalsDigits : 2)
-  } else {
-    balanceNumber = balanceBigNumber.toNumber().toFixed(2)
-  }
+  const assetsReceived = new BigNumber(amount).div(exchangeRate).toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
+  console.log('assetsReceived', new BigNumber(amount).div(exchangeRate).toString())
 
   return (
     <>
       <Section justifyContent="space-between">
         <Box>
           <Text fontWeight="bold">{t('Amount')}</Text>
-          <NumberInput
-            placeholder="0.00"
-            onChange={handleAmountChange}
-            value={amount}
-            style={{ backgroundColor: 'transparent' }}
-          />
+          <NumberInput placeholder="0.00" onChange={handleAmountChange} value={amount} />
         </Box>
         <Box>
           <Text fontWeight="bold">
-            {t('Balance')}: {`${balanceNumber} ${tokenName}`}
+            {t('Balance')}:{' '}
+            {`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${tokenName}`}
           </Text>
 
           <MaxContainer>
@@ -177,7 +166,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
               <Text>{tokenName}</Text>
             </Box>
             <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(balanceNumber) === 0}>
+              <Button variant="tertiary" scale="xs" onClick={setAmountToMax} disabled={Number(userTokenBalance) === 0}>
                 {t('MAX')}
               </Button>
             </Box>
@@ -210,7 +199,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             !isApproved ||
             Number(amount) === 0 ||
             amount === undefined ||
-            Number(balanceNumber) === 0 ||
+            Number(userTokenBalance) === 0 ||
             isPending
           }
           isLoading={isPending}

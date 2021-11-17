@@ -4,6 +4,7 @@ import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Box } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { getBalanceAmount, getBalanceNumber, formatNumber } from 'utils/formatBalance'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useTranslation } from 'contexts/Localization'
 import { useGetBnbBalance } from 'hooks/useTokenBalance'
 import BaseCell, { CellContent } from './BaseCell'
@@ -15,12 +16,12 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const BalanceCell = ({ balance, balanceIb, name }) => {
+const BalanceCell = ({ balance, balanceIb, name, decimals }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { t } = useTranslation()
 
-  const formatedBalance = formatNumber(Number(balance))
-  const ibFormatedBalance = formatNumber(Number(balanceIb))
+  const formatedBalance = formatDisplayedBalance(balance, decimals)
+  const ibFormatedBalance = formatDisplayedBalance(balanceIb, decimals)
 
   return (
     <StyledCell role="cell">
@@ -30,7 +31,7 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
             {t('My Balance')}
           </Text>
         )}
-        {balanceIb ? (
+        {balanceIb && balance && !Number.isNaN(Number(ibFormatedBalance)) && !Number.isNaN(formatedBalance) ? (
           <Box>
             <Text small textAlign="left">
               {ibFormatedBalance} ib{name}
