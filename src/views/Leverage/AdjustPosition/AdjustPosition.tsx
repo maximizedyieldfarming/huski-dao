@@ -15,7 +15,7 @@ import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import NumberInput from 'components/NumberInput'
+import { TokenImage } from 'components/TokenImage'
 import { DebtRatioProgress } from 'components/ProgressBars'
 import {
   getHuskyRewards,
@@ -58,6 +58,21 @@ const Section = styled(Box)`
     -webkit-appearance: auto;
   }
 `
+
+const BorrowingMoreContainer = styled(Flex)`
+border: 1px solid ${({ theme }) => theme.colors.text};
+  border-radius: ${({ theme }) => theme.radii.card};
+  padding: 10px;
+  gap: 1.5rem;
+  input {
+    border: none;
+    box-shadow: none;
+    &:focus:not(:disabled) {
+      box-shadow: none;
+    }
+  }
+`
+
 const AdjustPosition = () => {
   const {
     state: { data, liquidationThresholdData },
@@ -862,12 +877,15 @@ console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, far
               {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
                 <Flex justifyContent="space-between" alignItems="center">
                   <Text>{t(`You're Borrowing More`)}</Text>
-                  <NumberInput
-                    placeholder="0.00"
-                    onChange={handleBorrowMoreChange}
-                    value={assetsBorrowed?.toPrecision(3)}
-                    style={{ width: '10%' }}
-                  />
+                  <BorrowingMoreContainer alignItems="center">
+                    <Flex>
+                      <Box width={24} height={24} mr="4px" >
+                        <TokenImage token={tokenValue} width={24} height={24}/>
+                      </Box>
+                      <Text>{assetsBorrowed.toFixed(2)}</Text>
+                    </Flex>
+                    <Text>{symbolName}</Text>
+                  </BorrowingMoreContainer>
                 </Flex>
               )}
               {Number(targetPositionLeverage.toFixed(2)) < Number(currentPositionLeverage.toFixed(2)) && (
