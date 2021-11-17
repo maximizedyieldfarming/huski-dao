@@ -244,25 +244,30 @@ const CloseEntirePosition = ({ data }) => {
             <BusdPriceContainer>
               <Flex alignItems="center">
                 <Box width={18} height={18} mr="5px">
-                  <TokenImage token={quoteTokenValue} width={20} height={20} />
+                  <TokenImage token={TokenInfo?.token} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{quoteTokenValueSymbol}
+                  1&nbsp;{TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}&nbsp;=&nbsp;
+                  {new BigNumber(tokenPriceUsd).toFixed(2, 1)}&nbsp;
+                  {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
               <Flex alignItems="center">
                 <Box width={18} height={18} mr="5px">
-                  <TokenImage token={tokenValue} width={20} height={20} />
+                  <TokenImage token={TokenInfo?.quoteToken} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{quoteTokenValueSymbol}
+                  1&nbsp;{TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;=&nbsp;
+                  {new BigNumber(quoteTokenPriceUsd).toFixed(2, 1)}&nbsp;
+                  {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
             </BusdPriceContainer>
           </Box>
           {baseTokenAmount ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} + {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+              {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -276,7 +281,9 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          <Text>{amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}</Text>
+          <Text>
+            {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
+          </Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -286,7 +293,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          <Text>{priceImpact.toPrecision(3)}%</Text>
+          <Text color={priceImpact > 0 ? "#2ECC8E" : "#EB0303"}>{priceImpact.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -306,7 +313,14 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? (
+            <Text>
+              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+              {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol}{' '}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -316,13 +330,25 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {debtValueNumber ? <Text>{debtValueNumber.toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
+          {debtValueNumber ? (
+            <Text>
+              {debtValueNumber.toPrecision(4)} {tokenValueSymbol}{' '}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
       </Section>
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>{t('You will receive approximately')}</Text>
-          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? (
+            <Text>
+              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -332,7 +358,13 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {convertedPositionValue ? <Text>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}     </Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? (
+            <Text>
+              {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
         <Button onClick={handleConfirm}>{t('Close Position')}</Button>
       </Section>

@@ -236,18 +236,22 @@ const ConverTo = ({ data }) => {
             <BusdPriceContainer>
               <Flex alignItems="center">
                 <Box width={18} height={18} mr="5px">
-                  <TokenImage token={quoteTokenValue} width={20} height={20} />
+                  <TokenImage token={TokenInfo?.token} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{quoteTokenValueSymbol}
+                  1&nbsp;{TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}&nbsp;=&nbsp;
+                  {new BigNumber(tokenPriceUsd).toFixed(2, 1)}&nbsp;
+                  {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
               <Flex alignItems="center">
                 <Box width={18} height={18} mr="5px">
-                  <TokenImage token={tokenValue} width={20} height={20} />
+                  <TokenImage token={TokenInfo?.quoteToken} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{quoteTokenValueSymbol}
+                  1&nbsp;{TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;=&nbsp;
+                  {new BigNumber(quoteTokenPriceUsd).toFixed(2, 1)}&nbsp;
+                  {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
             </BusdPriceContainer>
@@ -285,7 +289,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          <Text>{priceImpact.toPrecision(3)}%</Text>
+          <Text color={priceImpact > 0 ? "#2ECC8E" : "#EB0303"}>{priceImpact.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>

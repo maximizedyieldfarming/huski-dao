@@ -27,7 +27,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
       <GrayBox background="backgroundDisabled">
         <Text small color="textSubtle">
           {t(
-            'We will convert the minimum required amount of tokens into {symbolName} to pay back the debt and return the remaining assets to you. This can potentially save on slippage and trading fees.',
+            `We will convert the minimum required amount of tokens into ${symbolName} to pay back the debt and return the remaining assets to you. This can potentially save on slippage and trading fees.`,
           )}
         </Text>
       </GrayBox>
