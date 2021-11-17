@@ -132,19 +132,24 @@ export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, 
         tokenInitNum0 = tokenNum0 * 2 - debtNum / PriceList[0]
         tokenInitNum1 = tokenNum1 * 2 - debtNum
 
-    } else {
-        return;
     }
+    // else {
+    //     return;
+    // }
     let dataList;
+
     dataList = [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1]  // 为了引用传参
     for (let i = 0; i < DayNum; i++) {
         if (dataList[4] < RiskKillThreshold) {
             debtNum += debtNum * BorrowingInterestList[i] / 365
             dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList[i], dataList)
         }
+
         // console.log({ '日期': i, '价格': PriceList[i], '损益比例( + 计价)': Token0Name, 'dataList': dataList[5], '损益比例 + 计价)': Token1Name, '66': dataList[6] })
-        //  print('日期', i, '价格', PriceList[i], '损益比例(' + Token0Name + '计价)', dataList[5], '损益比例(' + Token1Name + '计价)', dataList[6])
+
     }
+    console.info(' dataList  ', dataList)
+    return dataList
 };
 
 
