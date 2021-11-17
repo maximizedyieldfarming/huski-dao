@@ -15,7 +15,7 @@ const RepayDebt = ({
   baseTokenAmountValue,
   farmTokenAmountValue
 }) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const { isConvertTo, handleIsConvertTo } = useConvertToContext()
   const handleSelect = (option) => {
     handleIsConvertTo(option.value === 'convertTo')
@@ -25,13 +25,24 @@ const RepayDebt = ({
     <>
       <Flex justifyContent="space-between" alignItems="center">
         <Text>{t('Which method would you like to repay the debt?')}</Text>
-        <Select
-          options={[
-            { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
-            { label: `${t('Minimize Trading')}`, value: 'minimizeTrading' },
-          ]}
-          onChange={handleSelect}
-        />
+        {
+          Number(targetPositionLeverage) === 1 ?
+            <Select
+              options={[
+                { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
+                { label: `${t('Minimize Trading')}`, value: 'minimizeTrading' },
+              ]}
+              onChange={handleSelect}
+            />
+            :
+            <Select
+              options={[
+                { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
+              ]}
+              onChange={handleSelect}
+            />
+        }
+
       </Flex>
       {isConvertTo ? (
         <RepayDebtConvertTo
