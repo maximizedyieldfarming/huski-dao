@@ -768,7 +768,7 @@ console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, far
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
-          <Text>{t('Assets Supplied')}</Text>
+          <Text>{t('Position Value Assets')}</Text>
           {farmingData ? (
             <Text>
               {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol} + {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol}
@@ -778,7 +778,7 @@ console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, far
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>{t('Assets Borrowed')}</Text>
+          <Text>{t('Assets to be Borrowed')}</Text>
           {adjustData ? (
             <Text>{assetsBorrowed.toFixed(3)} {symbolName}</Text>
           ) : (
@@ -930,7 +930,7 @@ console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, far
 
             <Section>
               <Flex justifyContent="space-between">
-                <Text>{t('Debt Assets Borrowed')}</Text>
+                <Text>{t('Asset to be Borrowed')}</Text>
                 {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)} {symbolName}</Text> : <Text>0.00</Text>}
               </Flex>
               <Flex justifyContent="space-between">
