@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'GenJyuuGothic';
+  src: url('./GenJyuuGothic-P-Regular.woff2') format('woff2'), url('./GenJyuuGothic-P-Regular.woff') format('woff');
+  font-display: swap;
+}
+* {
+  font-family: 'GenJyuuGothic', sans-serif;
+}
