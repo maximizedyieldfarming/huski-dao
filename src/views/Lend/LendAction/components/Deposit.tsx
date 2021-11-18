@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
+import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
@@ -56,10 +57,11 @@ const StyledArrowDown = styled(ArrowDownIcon)`
 `
 
 const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tokenData, tokenName }) => {
+  usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
 
-  const setAmountToMax = (e) => {
+  const setAmountToMax = () => {
     setAmount(userTokenBalance)
   }
 
@@ -77,7 +79,6 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   const { balance: bnbBalance } = useGetBnbBalance()
 
   const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
-  console.log('userTokenBalance', userTokenBalance)
 
   const handleAmountChange = useCallback(
     (event) => {
@@ -146,7 +147,6 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   }
 
   const assetsReceived = new BigNumber(amount).div(exchangeRate).toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
-  console.log('assetsReceived', new BigNumber(amount).div(exchangeRate).toString())
 
   return (
     <>
@@ -200,7 +200,8 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             Number(amount) === 0 ||
             amount === undefined ||
             Number(userTokenBalance) === 0 ||
-            isPending
+            isPending ||
+            exchangeRate.isNaN()
           }
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}

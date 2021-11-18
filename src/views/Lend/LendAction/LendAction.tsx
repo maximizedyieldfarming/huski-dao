@@ -25,7 +25,6 @@ interface RouteParams {
 
 interface LocationParams {
   token?: any
-  exchangeRate?: any
 }
 
 const StyledPage = styled(Page)`
@@ -96,7 +95,7 @@ const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const {
-    state: { exchangeRate, token },
+    state: { token },
   } = useLocation<LocationParams>()
 
   const { data: farmsData } = useLeverageFarms()
@@ -107,6 +106,7 @@ const LendAction = () => {
   }, [])
 
   usePollLeverageFarmsWithUserData()
+
   const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
   const allowance = token?.userData?.allowance
 
@@ -118,6 +118,11 @@ const LendAction = () => {
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
   const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
+
+  const exchangeRate =
+    token.totalToken && token.totalSupply
+      ? new BigNumber(token.totalToken).div(token.totalSupply)
+      : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   return (
     <StyledPage>

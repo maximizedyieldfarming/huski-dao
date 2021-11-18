@@ -2,8 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from '@pancakeswap/uikit'
+import { Button } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -30,11 +29,9 @@ const StyledCell = styled(BaseCell)`
 `
 
 const ActionCell = ({ token }) => {
-  const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
-  // const tokenData = token
   const name = token?.TokenInfo.token?.symbol
-  const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
+  const exchangeRate = new BigNumber(token.totalToken).div(token.totalSupply)
   const { t } = useTranslation()
 
   return (
@@ -44,17 +41,17 @@ const ActionCell = ({ token }) => {
           as={Link}
           to={{
             pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
-            state: { exchangeRate, token },
+            state: { token },
           }}
-          disabled={!token?.userData?.tokenBalanceIB || !account}
+          disabled={!token?.userData?.tokenBalanceIB || !account || exchangeRate.isNaN()}
           onClick={(e) => !account && e.preventDefault()}
         >
           {t('Deposit')}
         </Button>
         <Button
           as={Link}
-          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { exchangeRate, token } }}
-          disabled={!token?.userData?.tokenBalanceIB || !account}
+          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { token } }}
+          disabled={!token?.userData?.tokenBalanceIB || !account || exchangeRate.isNaN()}
           onClick={(e) => !account && e.preventDefault()}
         >
           {t('Withdraw')}

@@ -6,11 +6,10 @@ import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
 import useToast from 'hooks/useToast'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
-import { getAddress } from 'utils/addressHelpers'
+import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useVault } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
-import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 const ButtonGroup = styled(Flex)`
@@ -49,7 +48,7 @@ const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) =>
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
 
-  const setAmountToMax = (e) => {
+  const setAmountToMax = () => {
     setAmount(userTokenBalanceIb)
   }
 
@@ -57,10 +56,14 @@ const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) =>
   const { vaultAddress } = tokenData.TokenInfo
   const withdrawContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-  const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
+  const assetsReceived = new BigNumber(amount)
+    .times(exchangeRate)
+    .toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
   const [isPending, setIsPending] = useState<boolean>(false)
 
-  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
+  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).isNaN()
+    ? 0.0
+    : getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
   const handleAmountChange = useCallback(
     (event) => {
       // check if input is a number and includes decimals and allow empty string
@@ -151,7 +154,12 @@ const Withdraw = ({ tokenName, exchangeRate, account, tokenData, allowance }) =>
         <Button
           onClick={handleConfirm}
           disabled={
-            !account || Number(userTokenBalanceIb) === 0 || Number(amount) === 0 || amount === undefined || isPending
+            !account ||
+            Number(userTokenBalanceIb) === 0 ||
+            Number(amount) === 0 ||
+            amount === undefined ||
+            isPending ||
+            exchangeRate.isNaN()
           }
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
