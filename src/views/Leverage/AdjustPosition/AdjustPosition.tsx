@@ -222,12 +222,28 @@ const AdjustPosition = () => {
   const currentPositionLeverage = lvgAdjust.toNumber()
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
 
-  const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
-  const adjustData = farmingData ? farmingData[0] : []
+  const { farmingData , repayDebtData} = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
+  const adjustData = farmingData ? farmingData[1] : []
+console.info(' farmingData====== ',farmingData )
+// console.info(' adjustData====== ',adjustData )
+  let assetsBorrowed
+  let baseTokenInPosition
+  let farmingTokenInPosition
 
+  if(adjustData?.[3] === 0 && farmingData[0] === 0){// use adjustData is ok ,add farmingData to strengthen the validation 
+    // use repayDebtData
+    assetsBorrowed = repayDebtData?.[4]
+    baseTokenInPosition = repayDebtData?.[2]
+    farmingTokenInPosition = repayDebtData?.[3]
+  }else{
+    assetsBorrowed = adjustData?.[3]
+     baseTokenInPosition = adjustData?.[8]
+     farmingTokenInPosition = adjustData?.[9]
+
+
+
+  }
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
-  const assetsBorrowed = adjustData?.[3]
-
   const priceImpactClose = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
   const tradingFeesClose = Number(farmTokenAmount) * 0.0025
 
@@ -240,8 +256,7 @@ const AdjustPosition = () => {
     priceImpact = 0
   }
 
-  const baseTokenInPosition = adjustData?.[8]
-  const farmingTokenInPosition = adjustData?.[9]
+
 
   // for apr
   const huskyPrice = useHuskyPrice()
@@ -367,23 +382,23 @@ const AdjustPosition = () => {
 
     }
 
-    console.log({
-      id,
-      workerAddress,
-      amount,
-      loan,
-      AssetsBorrowed,
-      maxReturn,
-      farmingTokenAmount,
-      dataWorker,
-      strategiesAddress,
-      dataStrategy,
-      tokenInputValue,
-      quoteTokenInputValue,
+    // console.log({
+    //   id,
+    //   workerAddress,
+    //   amount,
+    //   loan,
+    //   AssetsBorrowed,
+    //   maxReturn,
+    //   farmingTokenAmount,
+    //   dataWorker,
+    //   strategiesAddress,
+    //   dataStrategy,
+    //   tokenInputValue,
+    //   quoteTokenInputValue,
 
-      'tokenInput': (tokenInput),
-      'quoteTokenInput': (quoteTokenInput)
-    })
+    //   'tokenInput': (tokenInput),
+    //   'quoteTokenInput': (quoteTokenInput)
+    // })
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
