@@ -76,10 +76,13 @@ export const usePriceList = (coingeckoId) => {
         const responseData = await res.json();
 
         const priceList = [];
-        responseData.prices.map((price) => {
-          priceList.push(price[1])
-        })
-
+        for(let i =1; i< responseData.prices.length;i++){
+          priceList.push(responseData.prices[i][1]) // 8.20 --- 11.19  升序
+        }
+        // responseData.prices.map((price) => {
+        //   priceList.push(price[1])
+        // })
+// console.info('priceList',priceList)
         setData(priceList)
       } catch (error) {
         console.error('Unable to fetch data:', error)
