@@ -66,12 +66,12 @@ export const usePriceList = (coingeckoId) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const start = moment().format('YYYY-MM-DD 08:00:00');
-        const end = moment().subtract(90, 'days').format('YYYY-MM-DD 08:00:00');
+        const start = moment().format('YYYY-MM-DD 00:00:00');
+        const end = moment().subtract(91, 'days').format('YYYY-MM-DD 00:00:00');
         const startDate =   moment(start).unix()
         const endDate =  moment(end).unix()
 
-        const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/${coingeckoId}/market_chart/range?vs_currency=usd&from=${startDate}&to=${endDate}`;
+        const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/${coingeckoId}/market_chart/range?vs_currency=usd&from=${endDate}&to=${startDate}`;
         const res = await fetch(cakePriceCoinGeckoApi);
         const responseData = await res.json();
 
