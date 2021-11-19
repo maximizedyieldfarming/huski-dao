@@ -77,7 +77,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   return farmdata
 }
 
-export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {
+export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput, tokenName?: string, flag?: boolean) => {
   const { TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
   const { lpAmount } = data
 
@@ -112,7 +112,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
 
   console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
 
-  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
+  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), flag)
   console.info('======adjust======', farmdata);
   return farmdata
 }
@@ -308,312 +308,40 @@ export const getRunLogic = () => {
   const ReinvestMinute = 30 // 复投时长（分钟）0为按日复投
   const Token0Name = 'BNB' // token0名称
   const Token1Name = 'USD' // token1名称
-  const BorrowingInterestList = [
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-  ]
-  const LPAPRList = [
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-  ] // LP历史日均年化
-  const PriceList1 = [
-    1000,
-    1005.55555555556,
-    1011.11111111111,
-    1016.66666666667,
-    1022.22222222222,
-    1027.77777777778,
-    1033.33333333333,
-    1038.88888888889,
-    1044.44444444444,
-    1050,
-    1055.55555555556,
-    1061.11111111111,
-    1066.66666666667,
-    1072.22222222222,
-    1077.77777777778,
-    1083.33333333333,
-    1088.88888888889,
-    1094.44444444444,
-    1100,
-    1105.55555555556,
-    1111.11111111111,
-    1116.66666666667,
-    1122.22222222222,
-    1127.77777777778,
-    1133.33333333333,
-    1138.88888888889,
-    1144.44444444444,
-    1150,
-    1155.55555555556,
-    1161.11111111111,
-    1166.66666666667,
-    1172.22222222222,
-    1177.77777777778,
-    1183.33333333333,
-    1188.88888888889,
-    1194.44444444444,
-    1200,
-    1205.55555555556,
-    1211.11111111111,
-    1216.66666666667,
-    1222.22222222222,
-    1227.77777777778,
-    1233.33333333333,
-    1238.88888888889,
-    1244.44444444444,
-    1250,
-    1255.55555555556,
-    1261.11111111111,
-    1266.66666666667,
-    1272.22222222222,
-    1277.77777777778,
-    1283.33333333333,
-    1288.88888888889,
-    1294.44444444444,
-    1300,
-    1305.55555555556,
-    1311.11111111111,
-    1316.66666666667,
-    1322.22222222222,
-    1327.77777777778,
-    1333.33333333333,
-    1338.88888888889,
-    1344.44444444444,
-    1350,
-    1355.55555555556,
-    1361.11111111111,
-    1366.66666666667,
-    1372.22222222222,
-    1377.77777777778,
-    1383.33333333333,
-    1388.88888888889,
-    1394.44444444444,
-    1400,
-    1405.55555555556,
-    1411.11111111111,
-    1416.66666666667,
-    1422.22222222222,
-    1427.77777777778,
-    1433.33333333333,
-    1438.88888888889,
-    1444.44444444444,
-    1450,
-    1455.55555555556,
-    1461.11111111111,
-    1466.66666666667,
-    1472.22222222222,
-    1477.77777777778,
-    1483.33333333333,
-    1488.88888888889,
-    1494.44444444444,
-  ] // 历史日均价格 token0_usd / token1_usd
+  const BorrowingInterestList = 0.05
+  const LPAPRList = 0.5 // LP历史日均年化
+  // 历史日均价格 token0_usd / token1_usd
   // 注意三个List的长度一致
   const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
   const LeverageOpen = 2 // 初始杠杆
-  const DayNum = LPAPRList.length // 时间长度（天）
-  
-  for (let m = 1; m < 300; m++) {
+  const DayNum = 90 // LPAPRList.length // 时间长度（天） 换成价格list的长度
+
+  // const priceRiseFall = []
+  const profitLossRatioToken0 = []
+  const profitLossRatioToken1 = []
+
+  for (let m = 1; m <= 300; m++) {
     const PriceList = [];
     for (let n = 1; n <= DayNum; n++) {
       PriceList.push(1000 + 1000 * n * (m / 100 - 1) / DayNum)
     }
-  
 
-  // console.log({
-  //   RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
-  //   LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
-  // })
- const dataList =  RunLogic(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
-    LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
-
+    const dataList = RunLogic(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
+      LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
+    profitLossRatioToken0.push(dataList[5])
+    profitLossRatioToken1.push(dataList[6])
     // console.log({'111111====':dataList, m})
-    console.log({ '涨跌幅': m/100 - 1, '价格': 1000 * m / 100, Token0Name , '损益比例(计价)': dataList[5], Token1Name , '损益比例+ 计价)' : dataList[6]  })
+    // console.log({ '涨跌幅': m / 100 - 1, '价格': 1000 * m / 100, Token0Name, '损益比例(计价)': dataList[5], Token1Name, '损益比例+ 计价)': dataList[6] })
 
   }
+  // console.log({ profitLossRatioToken0, profitLossRatioToken1 })
   return 11
 
 
 
 
   // print('涨跌幅', m/100 - 1, '价格', 1000 * m / 100, '损益比例(' + Token0Name + '计价)', datalist[5], '损益比例(' + Token1Name + '计价)', datalist[6])
-    
+
 }
 
 
@@ -904,14 +632,14 @@ export const getRunLogic1 = () => {
   // 注意三个List的长度一致
   const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
   const LeverageOpen = 3 // 初始杠杆
-  const DayNum = LPAPRList.length // 时间长度（天）
+  const DayNum = PriceList.length // 时间长度（天）
 
   // console.log({
   //   RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
   //   LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
   // })
-  RunLogic(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
-    LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
+  // RunLogic(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
+  //   LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
 
   return 11
 }

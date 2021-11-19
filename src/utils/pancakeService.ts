@@ -1,13 +1,35 @@
-export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin) => {
-    const price = farmingtokenBegin / basetokenBegin
-    let maxnum = basetokenBalance + (basetokenBalance + farmingtokenBalance / price + basetokenLp + farmingtokenLp / price - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed
+export const adjustRun = (leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag?) => {
+ let data ;
+ let aa ;
+    if(flag && flag === false){
+        data = dichotomybasetoken(leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
+    //  aa =  adjustPositionRepayDebt(basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, TargetPositionLeverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
 
+
+    }else{
+        data = dichotomybasetoken(leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
+
+    }
+
+}
+
+
+
+export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag?) => {
+    const price = farmingtokenBegin / basetokenBegin
+    let maxnum
     // addvalue > 0 ,go on~
     const addvalue = basetokenLpBorrowed / (leverage - 1) - (basetokenLp + farmingtokenLp / price - basetokenLpBorrowed)
 
-    if (maxnum < 0) {
-        console.info('添加的资金不足');
-        return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    if(flag && flag === false){
+        maxnum = basetokenBalance
+    }else{
+        maxnum = basetokenBalance + (basetokenBalance + farmingtokenBalance / price + basetokenLp + farmingtokenLp / price - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed
+
+        if (maxnum < 0) {
+            console.info('添加的资金不足');
+            return [-1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        }
     }
 
     let minnum = 0;
@@ -53,6 +75,51 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
     }
 
 };
+
+export const adjustPositionRepayDebt = (basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, TargetPositionLeverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee) => {
+
+    const num0 = (TargetPositionLeverage - 1) / TargetPositionLeverage * (basetokenLp + farmingtokenLp / farmingtokenBegin * basetokenBegin)
+    const num1 = (basetokenLp * (1 - ClosePosFee) - num0)
+    const num2 = num0 - basetokenLpBorrowed + basetokenBegin
+    const num3 = farmingtokenLp * (1 - ClosePosFee) * (1 - PancakeTradingFee)
+    const numA = num1 * num3
+    const numB = (num1 * farmingtokenBegin + num3 * num2)
+    const numC = (num2 - basetokenBegin) * farmingtokenBegin
+    const rationum = (0 - numB + (numB ** 2 - 4 * numA * numC) ** 0.5) / 2 / numA
+
+    const tradingfee = farmingtokenLp * rationum * PancakeTradingFee / (2 * basetokenLp - basetokenLpBorrowed)
+    const priceimpact = farmingtokenLp * rationum * (1 - PancakeTradingFee) / (farmingtokenLp * rationum * (1 - PancakeTradingFee) + farmingtokenBegin)
+
+    let needCloseBase
+    let needCloseFarm
+    let remainBase
+    let remainFarm
+    let remainBorrowBase
+    let remainLeverage
+
+    if (TargetPositionLeverage > 1) {
+        needCloseBase = basetokenLp * rationum
+        needCloseFarm = farmingtokenLp * rationum
+        const repaydebtnum = basetokenLp * rationum * (1 - ClosePosFee) + basetokenBegin - farmingtokenBegin * basetokenBegin / (farmingtokenLp * rationum * (1 - ClosePosFee) * (1 - PancakeTradingFee) + farmingtokenBegin)
+        remainBase = basetokenLp * (1 - rationum)
+        remainFarm = farmingtokenLp * (1 - rationum)
+        remainBorrowBase = basetokenLpBorrowed - repaydebtnum
+        remainLeverage = (basetokenLpBorrowed - repaydebtnum) / (basetokenLp * (1 - rationum) + farmingtokenLp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenLpBorrowed - repaydebtnum)) + 1
+    } else if (Number(TargetPositionLeverage) === 1) {
+        needCloseBase = basetokenLp * (rationum + (1 - rationum) * ClosePositionPercentage)
+        needCloseFarm = farmingtokenLp * (rationum + (1 - rationum) * ClosePositionPercentage)
+        remainBase = basetokenLp - needCloseBase
+        remainFarm = farmingtokenLp - needCloseFarm
+        remainBorrowBase = 0
+        remainLeverage = 1
+    }
+
+    return [
+        needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage
+    ];
+
+
+}
 
 export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin) => {
 
@@ -141,14 +208,14 @@ export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, 
     dataList = [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1]  // 为了引用传参
     for (let i = 0; i < DayNum; i++) {
         if (dataList[4] < RiskKillThreshold) {
-            debtNum += debtNum * BorrowingInterestList[i] / 365
-            dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList[i], dataList)
+            debtNum += debtNum * BorrowingInterestList / 365
+            dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList, dataList)
         }
 
         // console.log({ '日期': i, '价格': PriceList[i], '损益比例( + 计价)': Token0Name, 'dataList': dataList[5], '损益比例 + 计价)': Token1Name, '66': dataList[6] })
 
     }
-    console.info(' dataList  ', dataList)
+    // console.info(' dataList  ', dataList)
     return dataList
 };
 
