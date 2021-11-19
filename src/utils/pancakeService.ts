@@ -168,6 +168,11 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
     const basetokeninPosition = basetokenBalance + assetsborrowed - exchangeValue + basetokenLpend;
     const farmingtokeninPosition = farmingtokenNum + farmingtokenBalance + farmingtokenLpend;
 
+    const totalFarmingTokenLpEnd = farmingtokenNum + farmingtokenBalance + farmingtokenLpend
+    const totalBaseTokenLpEnd = basetokenBalance + assetsborrowed - exchangeValue + basetokenLpend
+    const totalBorrowed = assetsborrowed + basetokenLpBorrowed
+    const leverageAfter = 1 + totalBorrowed / (2 * (totalFarmingTokenLpEnd * totalBaseTokenLpEnd / priceBegin) ** 0.5 - totalBorrowed)
+
     return [
         exc,
         price,
@@ -178,7 +183,8 @@ export const exchangebasetoken = (exchangeValue, leverage, tradefee, basetokenBa
         basetokenLpend,
         farmingtokenLpend,
         basetokeninPosition,
-        farmingtokeninPosition
+        farmingtokeninPosition,
+        leverageAfter
     ];
 };
 
