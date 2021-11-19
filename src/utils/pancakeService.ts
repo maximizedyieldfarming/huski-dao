@@ -51,8 +51,11 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
     if (minexc === 0) {
         return [minnum, data]
     }
-    if (maxexc * minexc > 0)
+    if (maxexc * minexc > 0){
+        console.info('kkkkkk')
         return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    }
+
 
     while (true) {
         const midnum = (maxnum + minnum) / 2
@@ -74,6 +77,7 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
             maxexc = midexc
         }
         else {
+            console.info('fffff')
             return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         }
 

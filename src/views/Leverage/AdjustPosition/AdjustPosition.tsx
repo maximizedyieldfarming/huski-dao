@@ -224,21 +224,20 @@ const AdjustPosition = () => {
 
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
-  console.info(' farmingData====== ', farmingData)
-  // console.info(' adjustData====== ',adjustData )
+
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
   let assetsBorrowedUp
   let UpdatedDebt
 
-  if (adjustData?.[3] === 0 && farmingData[0] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation 
+  if (adjustData?.[3] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
     // use repayDebtData
     assetsBorrowed = repayDebtData?.[4]
     baseTokenInPosition = repayDebtData?.[2]
     farmingTokenInPosition = repayDebtData?.[3]
     assetsBorrowedUp = 0
-    UpdatedDebt = repayDebtData?.[4]
+    UpdatedDebt = Number(debtValueNumber) - repayDebtData?.[4]
 
   } else {
     assetsBorrowed = adjustData?.[3]
@@ -585,11 +584,6 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {/* {adjustData ? (
-            <Text color="#1DBE03">+{(priceImpact * 100).toPrecision(4)}%</Text>
-          ) : (
-            <Text color="#1DBE03">0.00%</Text>
-          )} */}
           <Text>{priceImpactClose.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
@@ -600,11 +594,6 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {/* {adjustData ? (
-            <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
-          ) : (
-            <Text color="#EB0303">0.00%</Text>
-          )} */}
           <Text>{tradingFeesClose.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
@@ -616,14 +605,6 @@ const AdjustPosition = () => {
           ) : (
             <Text>
               {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
-              {/* {convertedPositionValueMinimizeTrading ? (
-                <Text>
-                  {Number(convertedPositionValueMinimizeTrading).toPrecision(4)} {quoteTokenValueSymbol} +
-                  {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
-                </Text>
-              ) : (
-                <Skeleton height="16px" width="80px" />
-              )} */}
             </Text>
           )}
         </Flex>
@@ -641,15 +622,6 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Position Value Assets')}</Text>
-          {/* {adjustData ? (
-            <Text>
-              {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
-            </Text>
-          ) : (
-            <Text>
-              0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
-            </Text>
-          )} */}
           <Text>
             {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
           </Text>
@@ -744,27 +716,15 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              {/* {convertedPositionValueMinimizeTrading.toFixed(3)} {tokenValueSymbol} */}
               {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
             </Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Amount of Debt to Repay')}</Text>
-          {/* {adjustData ? (
-            <Text>
-            // zongdde - shangmian 
-              {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
-            </Text>
-          ) : (
-            <Text>
-              0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
-            </Text>
-          )} */}
           {isConvertTo ? (
             <Text>
               {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
-              {/* {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol} */}
             </Text>
           ) : (
             <Text>
@@ -774,16 +734,6 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Position Value Assets')}</Text>
-          {/* {adjustData ? (
-            <Text>
-              {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
-            </Text>
-          ) : (
-            <Text>
-              0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
-            </Text>
-          )} */}
-
           <Text>
             {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
           </Text>
@@ -807,7 +757,7 @@ const AdjustPosition = () => {
         <Flex justifyContent="space-between">
           <Text>{t('Assets to be Borrowed')}</Text>
           {adjustData ? (
-            <Text>{assetsBorrowed.toFixed(3)} {symbolName}</Text>
+            <Text>{assetsBorrowed?.toFixed(3)} {symbolName}</Text>
           ) : (
             <Text>{debtValueNumber.toNumber().toPrecision(3)} {symbolName}</Text>
           )}
@@ -844,7 +794,7 @@ const AdjustPosition = () => {
           <Text>{t('Updated Total Assets')}</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValue?.symbol}
+              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition?.toFixed(2)} {quoteTokenValue?.symbol}
             </Text>
           ) : (
             <Text>
@@ -969,8 +919,7 @@ const AdjustPosition = () => {
                   <Flex alignItems="center">
                     <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                     <ChevronRightIcon />
-                    <Text> {UpdatedDebt.toFixed(3)} {symbolName}</Text>
-                    {/* <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed() : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text> */}
+                    <Text> {UpdatedDebt?.toFixed(3)} {symbolName}</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
