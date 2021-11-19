@@ -222,25 +222,30 @@ const AdjustPosition = () => {
   const currentPositionLeverage = lvgAdjust.toNumber()
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
 
-  const { farmingData , repayDebtData} = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
+  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
-console.info(' farmingData====== ',farmingData )
-// console.info(' adjustData====== ',adjustData )
+  console.info(' farmingData====== ', farmingData)
+  // console.info(' adjustData====== ',adjustData )
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
+  let assetsBorrowedUp
+  let UpdatedDebt
 
-  if(adjustData?.[3] === 0 && farmingData[0] === 0){// use adjustData is ok ,add farmingData to strengthen the validation 
+  if (adjustData?.[3] === 0 && farmingData[0] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation 
     // use repayDebtData
     assetsBorrowed = repayDebtData?.[4]
     baseTokenInPosition = repayDebtData?.[2]
     farmingTokenInPosition = repayDebtData?.[3]
-  }else{
+    assetsBorrowedUp = 0
+    UpdatedDebt = repayDebtData?.[4]
+
+  } else {
     assetsBorrowed = adjustData?.[3]
-     baseTokenInPosition = adjustData?.[8]
-     farmingTokenInPosition = adjustData?.[9]
-
-
+    baseTokenInPosition = adjustData?.[8]
+    farmingTokenInPosition = adjustData?.[9]
+    assetsBorrowedUp = adjustData?.[3]
+    UpdatedDebt = adjustData?.[3] + Number(debtValueNumber)
 
   }
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
@@ -887,7 +892,7 @@ console.info(' farmingData====== ',farmingData )
                   <BorrowingMoreContainer alignItems="center">
                     <Flex>
                       <Box width={24} height={24} mr="4px" >
-                        <TokenImage token={tokenValue} width={24} height={24}/>
+                        <TokenImage token={tokenValue} width={24} height={24} />
                       </Box>
                       <Text>{assetsBorrowed.toFixed(2)}</Text>
                     </Flex>
@@ -956,7 +961,7 @@ console.info(' farmingData====== ',farmingData )
             <Section>
               <Flex justifyContent="space-between">
                 <Text>{t('Asset to be Borrowed')}</Text>
-                {adjustData ? <Text>{assetsBorrowed?.toPrecision(3)} {symbolName}</Text> : <Text>0.00</Text>}
+                {adjustData ? <Text>{assetsBorrowedUp?.toPrecision(3)} {symbolName}</Text> : <Text>0.00</Text>}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
@@ -964,7 +969,8 @@ console.info(' farmingData====== ',farmingData )
                   <Flex alignItems="center">
                     <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
                     <ChevronRightIcon />
-                    <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed() : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
+                    <Text> {UpdatedDebt.toFixed(3)} {symbolName}</Text>
+                    {/* <Text> {adjustData ? (assetsBorrowed + Number(debtValueNumber)).toFixed() : debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text> */}
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />

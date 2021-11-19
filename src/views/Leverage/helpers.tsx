@@ -112,20 +112,21 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
 
   console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
 
+  const tradeFee = 0.0025
   const ClosePosFee = 5 / 100 / 100;
   const PancakeTradingFee = 0.25 / 100;
   const ClosePositionPercentage = 0;
 
   let farmingData;
   let repayDebtData = [];
-  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
+  const farmdata = dichotomybasetoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
 
   // const farmdata = dichotomybasetoken(1.6, 0.0025, 10, 0, 88.44, 115.46, 115.92, 88.44 * 1000 * 1000, 115.46 * 1000 * 1000, true)
   // console.info('======adjust======', farmdata);
   farmingData = farmdata;
   if (farmdata[0] === -1 && farmdata[1][3] === 0) {
 
-    const { data: fData, repayDebt } =  adjustRun(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
+    const { data: fData, repayDebt } =  adjustRun(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
     // const { data: fData, repayDebt } = adjustRun(1.6, 0.0025, 10, 0, 88.44, 115.46, 115.92, 88.44 * 1000 * 1000, 115.46 * 1000 * 1000, false, 1.6, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
 
     farmingData = fData;
