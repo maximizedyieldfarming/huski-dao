@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
-import { dichotomybasetoken, RunLogic } from 'utils/pancakeService'
+import { dichotomybasetoken, RunLogic, adjustRun } from 'utils/pancakeService'
 import { BIG_TEN } from 'utils/bigNumber'
 
 export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, tokenName?: string) => {
@@ -77,7 +77,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   return farmdata
 }
 
-export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput, tokenName?: string, flag?: boolean) => {
+export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {// , flag?: boolean
   const { TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = farm
   const { lpAmount } = data
 
@@ -110,11 +110,31 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount// .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
+  // console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
 
-  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), flag)
+  const ClosePosFee = 5 / 100 / 100;
+  const PancakeTradingFee = 0.25 / 100;
+  const ClosePositionPercentage = 0;
+
+  let farmingData;
+  let repayDebtData = [];
+  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
+
+  // const farmdata = dichotomybasetoken(1.6, 0.0025, 10, 0, 88.44, 115.46, 115.92, 88.44 * 1000 * 1000, 115.46 * 1000 * 1000, true)
   console.info('======adjust======', farmdata);
-  return farmdata
+  farmingData = farmdata;
+  if (farmdata[0] === -1 && farmdata[1][3] === 0) {
+
+    const { data: fData, repayDebt } =  adjustRun(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
+
+    // const { data: fData, repayDebt } = adjustRun(1.6, 0.0025, 10, 0, 88.44, 115.46, 115.92, 88.44 * 1000 * 1000, 115.46 * 1000 * 1000, false, 1.6, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
+    console.log({ fData, repayDebt })
+
+    farmingData = fData;
+    repayDebtData = repayDebt
+  }
+
+  return  { farmingData , repayDebtData}
 }
 
 const mathematics1 = 0.1;
@@ -234,10 +254,10 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     remainBorrowBase = 0
     remainLeverage = 1 // 0
   }
-  console.log({
-    basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
-    quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
-  });
+  // console.log({
+  //   basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
+  //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
+  // });
 
   return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage };
 }

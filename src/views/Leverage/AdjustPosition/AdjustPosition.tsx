@@ -97,7 +97,7 @@ const AdjustPosition = () => {
   const lptotalSupplyNum = new BigNumber(lptotalSupply)
 
   BigNumber.config({ DECIMAL_PLACES: data.farmData.TokenInfo.token.decimals, EXPONENTIAL_AT: 18 })
-  console.log("input", formatNumber(quoteTokenInput))
+
   let symbolName;
   let lpSymbolName;
   let tokenValue;
@@ -201,8 +201,6 @@ const AdjustPosition = () => {
   //   userQuoteTokenBalance,
   // })
 
-  // console.log('number quote', Number(quoteTokenInputValue))
-
   const datalistSteps = []
   const datalistOptions = (() => {
     for (let i = 1; i < leverage / 0.5; i++) {
@@ -225,7 +223,7 @@ const AdjustPosition = () => {
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
 
   const farmingData = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
-  const adjustData = farmingData ? farmingData[1] : []
+  const adjustData = farmingData ? farmingData[0] : []
 
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
   const assetsBorrowed = adjustData?.[3]
@@ -497,7 +495,7 @@ const AdjustPosition = () => {
   const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
   const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
-console.info('isConvertTo ', isConvertTo)
+
   const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceimpact, tradingfee, remainLeverage } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
@@ -519,10 +517,6 @@ console.info('isConvertTo ', isConvertTo)
   const convertedPositionValueAssets = Number(needCloseBase) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(needCloseFarm) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
-
-console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, farmTokenAmount  })
-
-
   // minimize trading
   let amountToTrade = 0;
   let convertedPositionValueToken;
@@ -532,7 +526,7 @@ console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, far
   } else {
     amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
   }
-  const convertedPositionValueMinimize = Number(farmTokenAmount) - amountToTrade
+
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
     convertedPositionValueToken = baseTokenAmount
   } else {
@@ -545,12 +539,10 @@ console.log({ adjustData, baseTokenAmount, basetokenBegin,farmingtokenBegin, far
     tokenReceive = 0;
   }
 
-
   const convertedPositionValueMinimizeTrading = Number(farmTokenAmount) - amountToTrade
 
   let lastSection
   if (!isAddCollateral && Number(targetPositionLeverage) === 1) {
-    console.info('11111111', isConvertTo)
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
