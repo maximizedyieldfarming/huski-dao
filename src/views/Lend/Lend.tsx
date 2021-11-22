@@ -38,9 +38,9 @@ const Lend: React.FC = () => {
   }, [])
 
   console.log({ lendData })
-  const env = process.env.REACT_APP_ENV;
+  const env = process.env.NODE_ENV;
   console.info('process.env', process.env)
-  console.info('env', env)
+  console.info('env---', env)
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()

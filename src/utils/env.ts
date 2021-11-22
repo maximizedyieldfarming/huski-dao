@@ -74,7 +74,7 @@ export default function getDomain() {
             break;
         case 'production':
         default:
-            domain = DefaultRPC;
+            domain = TestRPC // DefaultRPC;
             break;
     }
     return domain;
