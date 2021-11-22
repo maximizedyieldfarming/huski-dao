@@ -20,7 +20,7 @@ const NameCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 150px;
+    flex: 1 0 150px;
     padding-left: 32px;
   }
   ${CellContent} {
@@ -30,7 +30,7 @@ const NameCell = styled(BaseCell)`
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 150px;
   }
   ${CellContent} {
     flex-direction: row;
@@ -47,41 +47,45 @@ const LeverageHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text style={{marginRight:'auto'}} small color="textSubtle">
             {t('Pool')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text style={{marginRight:'auto'}} small color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text style={{marginRight:'auto'}} small color="textSubtle">
             {t('TVL')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text style={{marginRight:'auto'}} small color="textSubtle">
             {t('Borrowing')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text style={{marginRight:'auto'}} small color="textSubtle">
             {t('Leverage')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
-        <CellContent />
+        <CellContent>
+          <Text style={{marginLeft:'auto'}} small color="textSubtle">
+            {t('Action')}
+          </Text>
+        </CellContent>
       </StyledCell>
     </StyledRow>
   )

@@ -35,6 +35,7 @@ import YouTube from './assets/Youtube.svg'
 import Discord from './assets/Discord.svg'
 import dog from './assets/Dog.png'
 import icons from './assets/Group8800.png'
+import ItemBox from './ItemBox'
 
 const StyledHeroSection = styled(Box)`
   padding: 16px; 
@@ -172,6 +173,7 @@ const StrokeText = styled(Text)`
     -webkit-text-fill-color: white;
   }
 `
+
 
 const Home: React.FC = () => {
   const { theme } = useTheme()
@@ -426,7 +428,43 @@ const Home: React.FC = () => {
               </Box>
               <Box style={{ background: '#22282E', borderRadius: '50%' }}><img src={hand} alt="" /></Box>
             </Flex>
-            <img src={icons} alt="" />
+            
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Wault_BNW.png' text = 'Wault Finance' />
+              <ItemBox src='/images/partner/PancakeSwap_BNW.png' text = 'PancakeSwap' />
+              <ItemBox src='/images/partner/ChainLink_BNW.png' text = 'Chainlink' />
+              <ItemBox src='/images/partner/TUSD_BNW.png' text = 'TUSD' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Immunefi_BNW.png' text = 'Immunefi' />
+              <ItemBox src='/images/partner/Nexus_BNW.png' text = 'Nexus Mutural' />
+              <ItemBox src='/images/partner/DODO_BNW.png' text = 'DODO' />
+              <ItemBox src='/images/partner/BELT_BNW.png' text = 'Belt' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Scientix_BNW.png' text = 'Scientix' />
+              <ItemBox src='/images/partner/Orbs_BNW.png' text = 'Orbs' />
+              <ItemBox src='/images/partner/Multiplier_BNW.png' text = 'Multiplier' />
+              <ItemBox src='/images/partner/Boring Dao_BNW.png' text = 'Boring Dao' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Farmation_BNW.png' text = 'Farmation' />
+              <ItemBox src='/images/partner/Seascape_BNW.png' text = 'Seascape' />
+              <ItemBox src='/images/partner/Swingby_BNW.png' text = 'Swingby' />
+              <ItemBox src='/images/partner/Oddz_BNW.png' text = 'Oddz' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Berry Data_BNW.png' text = 'Berry Data' />
+              <ItemBox src='/images/partner/Itam_BNW.png' text = 'Itam' />
+              <ItemBox src='/images/partner/polychain monsters_BNW.png' text = 'Polychain monsters' />
+              <ItemBox src='/images/partner/phala_BNW.png' text = 'Phala' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Alium_BNW.png' text = 'Alium Finance' />
+              <ItemBox src='/images/partner/Kalata_BNW.png' text = 'Kalata' />
+              <ItemBox src='/images/partner/NAOS_BNW.png' text = 'NAOS finance' />
+              <div style={{width:'320px'}} />
+            </Flex>
           </div>
         </div>
       </StyledHeroSection>

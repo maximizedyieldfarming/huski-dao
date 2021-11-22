@@ -9,9 +9,10 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
+  align-itmes:start;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 150px;
+    flex: 1 0 150px;
     padding-left: 32px;
   }
   ${CellContent} {

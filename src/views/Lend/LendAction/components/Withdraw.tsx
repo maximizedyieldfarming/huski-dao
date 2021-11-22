@@ -1,36 +1,52 @@
 import React, { useState } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
-import useToast from 'hooks/useToast'
 import { getDecimalAmount } from 'utils/formatBalance'
-import { useVault } from 'hooks/useContract'
+import { getAddress } from 'utils/addressHelpers'
+import { ethers } from 'ethers'
+import { useVault, useERC20 } from 'hooks/useContract'
+import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
 
+interface DepositProps {
+  balance: any
+  name: any
+  allowance: any
+  exchangeRate: any
+  account: any
+  tokenData: any
+  tokenName: string
+}
+
 const ButtonGroup = styled(Flex)`
   gap: 10px;
+  align-items:center;
 `
 const Section = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
+  background-color: #F7F7F8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
 `
+
 const MaxContainer = styled(Flex)`
   align-items: center;
   justify-content: center;
+  height:100%;
   ${Box} {
     padding: 0 5px;
     &:first-child {
-      border-right: 2px solid ${({ theme }) => theme.colors.text};
+     // border-right: 2px solid ${({ theme }) => theme.colors.text};
     }
     &:last-child {
       // border-left: 1px solid purple;
     }
   }
 `
+
 const StyledArrowDown = styled(ArrowDownIcon)`
   fill: ${({ theme }) => theme.colors.text};
   width: 20px;
@@ -41,11 +57,15 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }) => {
+const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRate, account, tokenData, tokenName }) => {
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number>()
 
   const handleAmountChange = (e) => {
+    const invalidChars = ['-', '+', 'e']
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault()
+    }
     const { value } = e.target
 
     const finalValue = value > balance ? balance : value
@@ -56,89 +76,165 @@ const Withdraw = ({ balance, name, exchangeRate, account, tokenData, allowance }
     setAmount(balance)
   }
 
-  const { toastError, toastSuccess, toastInfo } = useToast()
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const { vaultAddress } = tokenData.TokenInfo
-  const withdrawContract = useVault(vaultAddress)
+  const approveContract = useERC20(tokenAddress)
+  const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-  const assetsReceived = (Number(amount) * exchangeRate)?.toPrecision(3)
+  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const [isPending, setIsPending] = useState<boolean>(false)
+  const [isApproving, setIsApproving] = useState<boolean>(false)
 
-  const handleConfirm = () => {
-    toastInfo(t('Pending Transaction...'), t('Please Wait!'))
-    const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
-    handleWithdrawal(convertedStakeAmount)
-  }
-
-  const callOptions = {
-    gasLimit: 380000,
-  }
-
-  const handleWithdrawal = async (convertedStakeAmount: BigNumber) => {
-    setIsPending(true)
-    // .toString() being called to fix a BigNumber error in prod
-    // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
+  const handleApprove = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    setIsApproving(true)
     try {
-      const tx = await callWithGasPrice(withdrawContract, 'withdraw', [convertedStakeAmount.toString()], callOptions)
+      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your withdraw was successfull'))
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
+    }
+  }
+
+  const handleDeposit = async (convertedStakeAmount: BigNumber) => {
+    const callOptions = {
+      gasLimit: 380000,
+    }
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: convertedStakeAmount.toString(),
+    }
+    setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [convertedStakeAmount.toString()],
+        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
       }
     } catch (error) {
-      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       setIsPending(false)
       setAmount(0)
     }
   }
 
+  const handleConfirm = async () => {
+    const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
+    handleDeposit(convertedStakeAmount)
+  }
+
+  const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
+
   return (
     <>
+      <Flex justifyContent="space-between">
+        <Text fontWeight="bold" color="#1A1D1F">{t('From')}</Text>
+        <Text >{t('Balance')}: <span style={{ color: '#1a1d1f', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+      </Flex>
       <Section justifyContent="space-between">
         <Box>
-          <Text fontWeight="bold">{t('Amount')}</Text>
-          <NumberInput
-            placeholder="0.00"
-            onChange={handleAmountChange}
-            step="0.01"
-            value={amount}
-            style={{ backgroundColor: 'transparent' }}
-          />
+          <Text
+            style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}
+          >{amount}</Text>
         </Box>
         <Box>
-          <Text fontWeight="bold">{t('Balance')}: {`${balance} ib${name}`}</Text>
 
           <MaxContainer>
             <Box>
-              <Text>ib{name}</Text>
-            </Box>
-            <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+              <button type="button" style={{ borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
                 {t('MAX')}
-              </Button>
+              </button>
+            </Box>
+            <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+            <Box>
+              <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>{name}</Text>
             </Box>
           </MaxContainer>
         </Box>
       </Section>
       <Flex flexDirection="column">
-        <StyledArrowDown style={{ margin: '0 auto' }} />
-        <Text textAlign="center">{t('Assets Received')}</Text>
+        <StyledArrowDown style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+
+        <Flex justifyContent="space-between">
+          <Text fontWeight="bold" style={{ color: '#1A1D1F' }}>{t('Recieve (Estimated)')}</Text>
+          <Text >{t('Balance')}: <span style={{ color: '#1a1d1f', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+        </Flex>
         <Section justifyContent="space-between">
-          <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
-          <Text>{name}</Text>
+          <Box>
+            <Text
+              style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}
+            >{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
+          </Box>
+          <Box>
+
+            <MaxContainer>
+
+              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+              <Box>
+                <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>ib{name}</Text>
+              </Box>
+            </MaxContainer>
+          </Box>
         </Section>
       </Flex>
-      <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
+      <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
+        <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
+          <img src="/images/Cheveron.svg" alt="" />
+          <Text style={{ height: '100%' }}>Back</Text>
+        </Flex>
+        {isApproved ? null : (
+          <Button
+            style={{ width: '160px' ,height:'57px'}}
+            onClick={handleApprove}
+            disabled={!account || isApproving}
+            isLoading={isApproving}
+            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          >
+            {isPending ? t('Approving') : t('Approve')}
+          </Button>
+        )}
         <Button
+          style={{ width: '160px' ,height:'57px'}}
+          onClick={handleApprove}
+          disabled
+          isLoading={isApproving}
+          endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+        >
+          {isPending ? t('Approving') : t('Transfer')}
+        </Button>
+        {/* <Button
           onClick={handleConfirm}
-          disabled={!account || Number(balance) === 0 || Number(amount) === 0 || amount === undefined || isPending}
+          disabled={
+            !account ||
+            !isApproved ||
+            Number(amount) === 0 ||
+            amount === undefined ||
+            Number(balance) === 0 ||
+            isPending
+          }
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
           {isPending ? t('Confirming') : t('Confirm')}
-        </Button>
+        </Button> */}
       </ButtonGroup>
     </>
   )
 }
 
-export default Withdraw
+export default Deposit

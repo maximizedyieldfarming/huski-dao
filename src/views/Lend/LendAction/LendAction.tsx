@@ -10,6 +10,7 @@ import { useTranslation } from 'contexts/Localization'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import Switch from "react-switch";
 import { Bone, Bone2 } from 'assets'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
@@ -53,21 +54,25 @@ const Balance = styled(Flex)`
 `
 
 const Header = styled(Flex)`
-  border-radius: 20px 0 20px 0;
+  border-radius: 12px 0 12px 0;
+  padding:20px;
 `
 
-const HeaderTabs = styled(Link)<Props>`
+const HeaderTabs = styled(Link) <Props>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
   padding: 1rem;
   cursor: pointer;
   &:first-child {
-    border-top-left-radius: 20px;
+    border-top-left-radius: 12px;
   }
   &:last-child {
-    border-top-right-radius: 20px;
+    border-top-right-radius: 12px;
   }
+`
+const HeaderButton = styled(Link)`
+
 `
 
 const Body = styled(Flex)`
@@ -96,6 +101,9 @@ const LendAction = () => {
   const {
     state: { exchangeRate: excRate, token: data },
   } = useLocation<LocationParams>()
+
+  const [withDraw, setWithDraw] = useState(false);
+  const [deposit, setDeposit] = useState(false);
 
   const [tokenData, setTokenData] = useState(data)
   console.log('tokenData', tokenData)
@@ -126,12 +134,15 @@ const LendAction = () => {
 
   return (
     <StyledPage>
-      <Text fontSize="36px" textTransform="capitalize">
-        {t(`${action}`)} {tokenName}
-      </Text>
+      <div style={{textAlign:'center'}}>
+        <img src="/images/HuskiPaw.png" alt="" />
+        <Text fontSize="36px" textTransform="capitalize">
+          {t(`${action}`)} {tokenName}
+        </Text>
+      </div>
       <TabPanel>
         <Header>
-          <HeaderTabs
+          {/* <HeaderTabs
             onClick={handleDepositClick}
             active={isDeposit}
             to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
@@ -146,13 +157,43 @@ const LendAction = () => {
             replace
           >
             <Text>{t('Withdraw')}</Text>
-          </HeaderTabs>
+          </HeaderTabs> */}
+          {isDeposit ?
+            (<Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
+              <Flex style={{ width: '98%', height: '52px' }}>
+                <HeaderButton
+                  to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
+                  style={{
+                    borderRadius: '12px', fontWeight: 700,
+                    textAlign: 'center', marginLeft: '4px', paddingRight: '4px', marginTop: '4px', paddingTop: '18px', width: '50%', backgroundColor: 'white',
+                    color: '#1A1D1F', boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
+                  }}>Deposit</HeaderButton>
+                <HeaderButton
+                  onClick={handleWithdrawClick}
+                  to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
+                  style={{ width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Withdraw</HeaderButton>
+              </Flex>
+            </Box>) :
+            (<Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
+              <Flex style={{ width: '98%', height: '52px' }}>
+                <HeaderButton
+                  onClick={handleDepositClick}
+                  to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
+                  style={{ width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Deposit</HeaderButton>
+                <HeaderButton
+                  to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
+                  style={{
+                    borderRadius: '12px', fontWeight: 700,
+                    textAlign: 'center', marginLeft: '4px', marginTop: '4px', paddingTop: '18px', width: '50%', backgroundColor: 'white',
+                    color: '#1A1D1F', boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
+                  }}>Withdraw</HeaderButton>
+              </Flex>
+            </Box>)}
+
         </Header>
 
         <Body>
-          <Box className="imageContainer">
-            <img src={Bone2} alt="" />
-          </Box>
+
           {isDeposit ? (
             <Deposit
               balance={userTokenBalance}
@@ -171,16 +212,15 @@ const LendAction = () => {
               exchangeRate={exchangeRate}
               account={account}
               tokenData={tokenData}
+              tokenName={tokenName}
             />
           )}
-          <Box className="imageContainer">
-            <img src={Bone} alt="" />
-          </Box>
+
         </Body>
       </TabPanel>
       <Balance>
-        <Text>{t('Balance')}</Text>
-        <Text>{`${userTokenBalanceCalc(tokenBalanceIb).toNumber().toPrecision(4)} ib${tokenName}`}</Text>
+        <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{t('Deposit APY')}</Text>
+        <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{t('53.64%')}</Text>
       </Balance>
       <Box>
         <Text>

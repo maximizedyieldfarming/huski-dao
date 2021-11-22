@@ -25,13 +25,17 @@ const StyledCell = styled(BaseCell)`
     word-break: initial;
   }
 `
-const StyledButton = styled(Button)`
-  background:#7B3FE4;
+interface Props {
+  disabled: boolean
+}
+const StyledButton = styled(Button)<Props>`
+  background:${({ disabled }) => (disabled?'#FFFFFF':'#7B3FE4')};
   border-radius:12px;
-  color: white;
+  color: ${({disabled}) => (!disabled?'white':'#6F767E')};
   text-align: center;
   width:110px;
   height:40px;
+  border:${({disabled}) => (disabled?'1px solid #EFEFEF':'none')}
 `
 
 const ActionCell = ({ token }) => {

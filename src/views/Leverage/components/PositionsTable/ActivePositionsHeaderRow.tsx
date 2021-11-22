@@ -172,12 +172,12 @@ const ActivePositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              {t('Position')}
+              {t('Position Value')}
             </Text>
             {positionTooltipVisible && positionTooltip}
-            <span ref={positionTargetRef}>
+            {/* <span ref={positionTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -188,9 +188,9 @@ const ActivePositionsHeaderRow = () => {
               {t('Debt')}
             </Text>
             {debtTooltipVisible && debtTooltip}
-            <span ref={debtTargetRef}>
+            {/* <span ref={debtTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -201,9 +201,9 @@ const ActivePositionsHeaderRow = () => {
               {t('Equity')}
             </Text>
             {equityTooltipVisible && equityTooltip}
-            <span ref={equityTargetRef}>
+            {/* <span ref={equityTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -214,9 +214,9 @@ const ActivePositionsHeaderRow = () => {
               {t('APY')}
             </Text>
             {apyTooltipVisible && apyTooltip}
-            <span ref={apyTargetRef}>
+            {/* <span ref={apyTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -227,9 +227,9 @@ const ActivePositionsHeaderRow = () => {
               {t('Debt Ratio')}
             </Text>
             {debtRatioTooltipVisible && debtRatioTooltip}
-            <span ref={debtRatioTargetRef}>
+            {/* <span ref={debtRatioTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -240,9 +240,9 @@ const ActivePositionsHeaderRow = () => {
               {t('Liquidation Threshold')}
             </Text>
             {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
-            <span ref={liquidationThresholdTargetRef}>
+            {/* <span ref={liquidationThresholdTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -253,9 +253,9 @@ const ActivePositionsHeaderRow = () => {
               {t('Safety Buffer')}
             </Text>
             {safetyBufferTooltipVisible && safetyBufferTooltip}
-            <span ref={safetyBufferTargetRef}>
+            {/* <span ref={safetyBufferTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -266,14 +266,24 @@ const ActivePositionsHeaderRow = () => {
               {t('Profit/Loss')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}
-            <span ref={profitLossTargetRef}>
+            {/* <span ref={profitLossTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
       <StyledCell>
-        <CellContent />
+        <CellContent >
+        <Flex alignItems="center" justifyContent="flex-end">
+            <Text small color="textSubtle">
+              {t('Action')}
+            </Text>
+            {profitLossTooltipVisible && profitLossTooltip}
+            {/* <span ref={profitLossTargetRef}>
+              <InfoIcon ml="5px" />
+            </span> */}
+          </Flex>
+        </CellContent>
       </StyledCell>
     </StyledRow>
   )

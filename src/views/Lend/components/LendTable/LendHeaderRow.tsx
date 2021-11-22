@@ -17,10 +17,11 @@ const StyledRow = styled.div`
 const NameCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
-  padding-left: 12px;
+  
+  justify-content:start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
-    padding-left: 32px;
+    flex: 1 0 350;
+    // padding-left: 20px;
   }
 `
 const StyledCell = styled(BaseCell)`
@@ -30,8 +31,8 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -42,11 +43,15 @@ const LendHeaderRow = () => {
   return (
     <StyledRow>
       <NameCell>
-        <CellContent />
+        <CellContent >
+          <Text small style={{marginRight:'auto'}} color="textSubtle">
+            {t('POOL Name')}
+          </Text>
+        </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text small style={{marginLeft:'32px'}} color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>

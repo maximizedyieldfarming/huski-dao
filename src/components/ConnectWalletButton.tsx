@@ -9,7 +9,7 @@ const StyledButton = styled(Button)<any>`
   border-radius:10px;
   margin-bottom:-10px;
   height:55px;
-  margin-right:45px;
+  margin-right:67px;
   margin-left:15px;
 `
 

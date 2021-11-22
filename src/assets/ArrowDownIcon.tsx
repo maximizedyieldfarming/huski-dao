@@ -3,12 +3,12 @@ import { Svg, SvgProps } from 'husky-uikit'
 
 const Icon: React.FC<SvgProps> = (props) => {
   return (
-    <Svg viewBox="0 0 1024 1024" {...props}>
-      <path
-        d="M517.688889 796.444444c-45.511111 0-85.333333-17.066667-119.466667-51.2L73.955556 381.155556c-22.755556-22.755556-17.066667-56.888889 5.688888-79.644445 22.755556-22.755556 56.888889-17.066667 79.644445 5.688889l329.955555 364.088889c5.688889 5.688889 17.066667 11.377778 28.444445 11.377778s22.755556-5.688889 34.133333-17.066667l312.888889-364.088889c22.755556-22.755556 56.888889-28.444444 79.644445-5.688889 22.755556 22.755556 28.444444 56.888889 5.688888 79.644445L637.155556 739.555556c-28.444444 39.822222-68.266667 56.888889-119.466667 56.888888 5.688889 0 0 0 0 0z"
-        p-id="6026"
-      />
-    </Svg>
+    // <Svg viewBox="0 0 24 24" {...props}>
+    <svg style={{marginLeft:'auto',marginRight:'auto',marginBottom:'20px'}} width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fillRule="evenodd" clipRule="evenodd" d="M1 13V13C1 6.372 6.372 1 13 1V1C19.628 1 25 6.372 25 13V13C25 19.628 19.628 25 13 25V25C6.372 25 1 19.628 1 13Z" stroke="#9D9D9D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.0002 18.3333V7.66663" stroke="#9D9D9D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 14.3334L13 18.3334L9 14.3334" stroke="#9D9D9D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   )
 }
 

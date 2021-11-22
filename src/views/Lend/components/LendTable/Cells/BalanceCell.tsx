@@ -40,7 +40,7 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
         )}
         {balanceIb ? (
           <Box>
-            <Text small textAlign="left">
+            <Text small textAlign="left" style={{fontWeight:600,color:'#131313'}}>
               {userTokenBalance(balanceIb).toNumber().toPrecision(3)} ib{name}
             </Text>
             <Text small textAlign="left" color="textSubtle">

@@ -11,7 +11,7 @@ const GlobalSettings = () => {
         <CogIcon height={22} width={22} color="textSubtle" />
       </IconButton>
       <IconButton onClick={onPresentSettingsModal} variant="text" scale="sm" mr="8px">
-        <NotificationIcon height={22} width={22} color="textSubtle" />
+        <NotificationIcon height={48} width={48} color="textSubtle" />
       </IconButton>
     </Flex>
   )

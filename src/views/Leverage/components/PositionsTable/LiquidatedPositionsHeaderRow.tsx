@@ -106,7 +106,11 @@ const LiquidatedPositionsHeaderRow = () => {
   return (
     <StyledRow>
       <StyledCell>
-        <CellContent />
+        <CellContent>
+          <Text small color="textSubtle">
+            {t('Name')}
+          </Text>
+        </CellContent>
       </StyledCell>
       <PoolCell>
         <CellContent>
@@ -119,12 +123,12 @@ const LiquidatedPositionsHeaderRow = () => {
         <CellContent>
           <Flex alignItems="center">
             <Text small color="textSubtle">
-              {t('Position')}
+              {t('Position Value')}
             </Text>
             {positionTooltipVisible && positionTooltip}
-            <span ref={positionTargetRef}>
+            {/* <span ref={positionTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -135,9 +139,9 @@ const LiquidatedPositionsHeaderRow = () => {
               {t('Liquidated Equity')}
             </Text>
             {liquidatedEquityTooltipVisible && liquidatedEquityTooltip}
-            <span ref={liquidatedEquityTargetRef}>
+            {/* <span ref={liquidatedEquityTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -148,9 +152,9 @@ const LiquidatedPositionsHeaderRow = () => {
               {t('Liquidation Fee')}
             </Text>
             {liquidationFeeTooltipVisible && liquidationFeeTooltip}
-            <span ref={liquidationFeeTargetRef}>
+            {/* <span ref={liquidationFeeTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
@@ -161,16 +165,16 @@ const LiquidatedPositionsHeaderRow = () => {
               {t(' Assets Returned')}
             </Text>
             {assetsReturnedTooltipVisible && assetsReturnedTooltip}
-            <span ref={assetsReturnedTargetRef}>
+            {/* <span ref={assetsReturnedTargetRef}>
               <InfoIcon ml="5px" />
-            </span>
+            </span> */}
           </Flex>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
           <Text small color="textSubtle">
-            {t('TX Record')}
+            {t('Transaction Record')}
           </Text>
         </CellContent>
       </StyledCell>

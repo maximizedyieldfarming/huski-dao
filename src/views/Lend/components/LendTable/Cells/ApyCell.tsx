@@ -13,7 +13,7 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: column;
@@ -70,11 +70,11 @@ const ApyCell = ({ getApyData, token }) => {
         )}
         {apy ? (
           <Flex alignItems="center">
-            <Text>{apyCell(apy)}</Text>
+            <Text style={{fontWeight:600,fontSize:'16px',color:'#131313'}}>{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
-            <span ref={targetRef}>
+            {/* <span ref={targetRef}>
               <InfoIcon ml="5px" color="textSubtle" />
-            </span>
+            </span> */}
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

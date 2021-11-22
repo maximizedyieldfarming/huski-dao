@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -24,9 +24,10 @@ interface DepositProps {
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
+  align-items:center;
 `
 const Section = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
+  background-color: #F7F7F8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
 `
@@ -34,10 +35,11 @@ const Section = styled(Flex)`
 const MaxContainer = styled(Flex)`
   align-items: center;
   justify-content: center;
+  height:100%;
   ${Box} {
     padding: 0 5px;
     &:first-child {
-      border-right: 2px solid ${({ theme }) => theme.colors.text};
+     // border-right: 2px solid ${({ theme }) => theme.colors.text};
     }
     &:last-child {
       // border-left: 1px solid purple;
@@ -140,42 +142,64 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
   return (
     <>
+      <Flex justifyContent="space-between">
+        <Text fontWeight="bold" color="#1A1D1F">{t('From')}</Text>
+        <Text >{t('Balance')}: <span style={{ color: '#1a1d1f', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+      </Flex>
       <Section justifyContent="space-between">
         <Box>
-          <Text fontWeight="bold">{t('Amount')}</Text>
-          <NumberInput
-            placeholder="0.00"
-            onChange={handleAmountChange}
-            value={amount}
-            style={{ backgroundColor: 'transparent' }}
-          />
+          <Text
+            style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}
+          >{amount}</Text>
         </Box>
         <Box>
-          <Text fontWeight="bold">{t('Balance')}: {`${balance.toPrecision(4)} ${name}`}</Text>
 
           <MaxContainer>
             <Box>
-              <Text>{name}</Text>
-            </Box>
-            <Box>
-              <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
+              <button type="button" style={{ borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
                 {t('MAX')}
-              </Button>
+              </button>
+            </Box>
+            <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+            <Box>
+              <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>{name}</Text>
             </Box>
           </MaxContainer>
         </Box>
       </Section>
       <Flex flexDirection="column">
-        <StyledArrowDown style={{ margin: '0 auto' }} />
-        <Text textAlign="center">{t('Assets Received')}</Text>
+        <StyledArrowDown style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+
+        <Flex justifyContent="space-between">
+          <Text fontWeight="bold" style={{ color: '#1A1D1F' }}>{t('Recieve (Estimated)')}</Text>
+          <Text >{t('Balance')}: <span style={{ color: '#1a1d1f', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+        </Flex>
         <Section justifyContent="space-between">
-          <Text>{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
-          <Text>ib{name}</Text>
+          <Box>
+            <Text
+              style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}
+            >{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
+          </Box>
+          <Box>
+
+            <MaxContainer>
+
+              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+              <Box>
+                <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>ib{name}</Text>
+              </Box>
+            </MaxContainer>
+          </Box>
         </Section>
       </Flex>
-      <ButtonGroup flexDirection="column" justifySelf="flex-end" mt="20%">
+      <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
+        <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
+          <img src="/images/Cheveron.svg" alt="" />
+          <Text style={{ height: '100%' }}>Back</Text>
+        </Flex>
         {isApproved ? null : (
           <Button
+            style={{ width: '160px' ,height:'57px'}}
             onClick={handleApprove}
             disabled={!account || isApproving}
             isLoading={isApproving}
@@ -185,6 +209,15 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           </Button>
         )}
         <Button
+          style={{ width: '160px' ,height:'57px'}}
+          onClick={handleApprove}
+          disabled
+          isLoading={isApproving}
+          endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+        >
+          {isPending ? t('Approving') : t('Transfer')}
+        </Button>
+        {/* <Button
           onClick={handleConfirm}
           disabled={
             !account ||
@@ -198,7 +231,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
           {isPending ? t('Confirming') : t('Confirm')}
-        </Button>
+        </Button> */}
       </ButtonGroup>
     </>
   )

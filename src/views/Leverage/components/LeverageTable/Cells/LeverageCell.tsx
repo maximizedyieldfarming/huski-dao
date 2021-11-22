@@ -9,12 +9,12 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 150px;
   }
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -71,7 +71,7 @@ export default function LeverageCell({ leverage, onChange }: { leverage: any; on
         )}
         <LeverageContainer>
           <Flex padding="1rem">
-            <Text>{lvgValue.toFixed(2)}</Text>
+            <Text style={{fontWeight:700,color:'#131313'}}>{lvgValue.toFixed(2)}</Text>
           </Flex>
           <Flex flexDirection="column">
             <CustomButton scale="xs" variant="secondary" onClick={increaseLvgValue} disabled={lvgValue === leverage}>

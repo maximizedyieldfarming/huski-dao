@@ -19,6 +19,7 @@ import ActivePositionsTable from './components/PositionsTable/ActivePositionsTab
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 import { getYieldFarming, getTvl } from './helpers'
 
+
 const ActionButton = styled(Button)`
   padding: 0.75rem 2rem;
   font-size: 14px;
@@ -38,7 +39,42 @@ const PositionsButton = styled(ActionButton)`
     margin-right: 1rem;
   }
 `
-
+const StyledButton = styled(Button)`
+  background: #FFFFFF;
+  border: 1px solid #EFEFEF;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 114px;
+  height: 32px;
+  text-align:center;
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+`
+const Section = styled(Flex)`
+  background-color: 'transparent';
+  padding: 0.5rem;
+  gap: 0.5rem;
+  border-radius: ${({ theme }) => theme.radii.default};
+  height:224px;
+  .container {
+    background-color: ${({ theme }) => theme.colors.background};
+    padding: 1rem;
+    border-radius: ${({ theme }) => theme.radii.small};
+  }
+  .block {
+    background-color: ${({ theme }) => theme.colors.background};
+    flex: 1;
+    border-radius: ${({ theme }) => theme.radii.small};
+  }
+`
+const SBBox = styled(Box)`
+  border-radius:15px!important;
+  background-image: url('/images/leverage.png');
+  background-position: right;
+  background-size: cover;
+  background-repeat: no-repeat;
+`
 const RewardsContainer = styled(Box)`
   flex-direction: row;
   position: relative;
@@ -120,22 +156,30 @@ const Leverage: React.FC = () => {
 
   return (
     <Page>
-      <RewardsContainer>
-        <Text mb="8px">{t('HUSKI Rewards')}</Text>
-        <Flex justifyContent="space-between" alignItems="flex-end" style={{ gap: '4rem' }}>
-          <Text color="secondary" bold fontSize="2">
-            {reward.toPrecision(3)}
-          </Text>
-          <Button
-            as={Link}
-            to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
-            disabled={!account}
-            scale="sm"
-          >
-            {t('Claim')}
-          </Button>
+      <Section>
+        <SBBox className="block" style={{ position: 'relative', marginRight: '30px', display: 'flex', alignItems: 'center' }}>
+          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>Huski<br /> Finance</h2>
+        </SBBox>
+        
+        <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-evenly', background: '#E3F0F6', borderRadius: '15px', width: '20%' }}>
+          <img src="/images/crown.png" width='48px' height='48px' alt="" />
+          <Text  fontSize="16px">{t('HUSKI Rewards')}</Text>
+          <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start" >
+            <Text style={{color:'#1A1D1F'}} bold fontSize="36px">
+              {reward.toPrecision(3)}
+            </Text>
+            <StyledButton
+              as={Link}
+              to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
+              disabled={!account}
+              scale="sm"
+            ><Text>
+              {t('Claim')}
+              </Text>
+            </StyledButton>
+          </Flex>
         </Flex>
-      </RewardsContainer>
+      </Section>
 
       <StyledTableBorder>
         <PositionButtonsContainer>

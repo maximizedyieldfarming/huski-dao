@@ -6,6 +6,8 @@ import { useTranslation } from 'contexts/Localization'
 
 const StyledInput = styled(Input)`
   border-radius: 16px;
+  border: none;
+  background:#F4F4F4;
   margin-left: auto;
 `
 

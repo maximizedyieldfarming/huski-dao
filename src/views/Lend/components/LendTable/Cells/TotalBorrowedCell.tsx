@@ -39,7 +39,7 @@ const TotalBorrowedCell = ({ borrowed, borrowedUSD }) => {
         )}
         {borrowed ? (
           <Box>
-            <Text>{nFormatter(formatedBorrowed)}</Text>
+            <Text style={{fontWeight:600,fontSize:'16px',color:'#131313'}}>{nFormatter(formatedBorrowed)}</Text>
             <Text small color="textSubtle">{`($${nFormatter(formatedBorrowedUSD)})`}</Text>
           </Box>
         ) : (

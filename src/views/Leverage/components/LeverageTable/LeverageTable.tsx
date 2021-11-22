@@ -38,16 +38,24 @@ const StyledTableBorder = styled.div`
   box-shadow: ${({ theme }) => theme.card.boxShadow};
 `
 
-const FilterOption = styled(Button)`
+const FilterOption = styled(Button)<{ isActive: boolean}>`
   padding: 5px;
-  background-color: transparent;
-  border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme }) => theme.colors.text};
-  border-radius: unset;
+  font-size:13px;
+  background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
+  // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
+  color: ${({ theme, isActive }) => (isActive ? '#FFFFFF!important' :"#9D9D9D!important")};
+  border-radius: 10px;
+  color:#9D9D9D;
   margin: 0 5px;
+  > img {
+    height: 26px;
+    width: 26px;
+    margin-right:10px;
+  }
   > svg {
-    height: 28px;
-    width: 28px;
+    height: 26px;
+    width: 26px;
+    margin-right:10px;
     path {
       height: auto;
       width: 100%;
@@ -80,6 +88,7 @@ const FiltersWrapper = styled(Flex)`
     }
   }
   .searchSortContainer {
+    width:30%;
     flex-direction: column;
     ${({ theme }) => theme.mediaQueries.lg} {
       margin-left: auto;
@@ -167,7 +176,7 @@ const LeverageTable = ({ leverageData }) => {
               <Flex overflowX="auto">
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<AllFilterIcon className="allFilter" />}
+                  style={{ width: '60px', height: '30px', justifySelf: 'flex-end', }}
                   isActive={dexFilter === 'all'}
                   onClick={() => setDexFilter('all')}
                 >
@@ -175,20 +184,30 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end',}}
                   startIcon={<PancakeSwapIcon />}
                   isActive={dexFilter === 'pancake_swap'}
                   onClick={() => setDexFilter('pancake_swap')}
                 >
                   PancakeSwap
                 </FilterOption>
+                <FilterOption
+                  variant="tertiary"
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end',}}
+                  startIcon={<img src="/images/BUSD.svg" width='32px' height='32px' alt="" />}
+                  isActive={dexFilter === 'wault_swap'}
+                  onClick={() => setDexFilter('wault_swap')}
+                >
+                  WaultSwap
+                </FilterOption>
               </Flex>
             </Flex>
             <Flex alignItems="center" className="tokenFilter">
-              <Text>{t('Paired Assets:')}</Text>
+              <Text style={{fontWeight:700,color:'#131313'}}>{t('Paired Assets:')}</Text>
               <Flex>
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<AllFilterIcon className="allFilter" />}
+                  style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px', }}
                   isActive={pairFilter === 'all'}
                   onClick={() => setPairFilter('all')}
                 >
@@ -196,6 +215,16 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
+                  startIcon={<BnbIcon />}
+                  isActive={pairFilter === 'huski'}
+                  onClick={() => setPairFilter('huski')}
+                >
+                  Huski
+                </FilterOption>
+                <FilterOption
+                  variant="tertiary"
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
                   startIcon={<BnbIcon />}
                   isActive={pairFilter === 'wbnb'}
                   onClick={() => setPairFilter('wbnb')}
@@ -204,7 +233,8 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<BusdIcon />}
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
+                  startIcon={<BnbIcon />}
                   isActive={pairFilter === 'busd'}
                   onClick={() => setPairFilter('busd')}
                 >
@@ -212,7 +242,8 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<BtcbIcon />}
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
+                  startIcon={<BnbIcon />}
                   isActive={pairFilter === 'btcb'}
                   onClick={() => setPairFilter('btcb')}
                 >
@@ -220,7 +251,8 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
                 <FilterOption
                   variant="tertiary"
-                  startIcon={<EthIcon />}
+                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
+                  startIcon={<BnbIcon />}
                   isActive={pairFilter === 'eth'}
                   onClick={() => setPairFilter('eth')}
                 >
@@ -229,7 +261,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
             </Flex>
             <Flex className="searchSortContainer">
-              <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+              <Text style={{fontWeight:700,color:'#131313',width:'100px',paddingTop:'7px'}}>Sort by</Text>
               <Select
                 options={[
                   {
@@ -251,6 +283,7 @@ const LeverageTable = ({ leverageData }) => {
                 ]}
                 onChange={handleSortOptionChange}
               />
+              <SearchInput onChange={handleChangeQuery} placeholder="Search" />
             </Flex>
           </FiltersWrapper>
           {!(isMobile || isTablet) && <LeverageHeaderRow />}

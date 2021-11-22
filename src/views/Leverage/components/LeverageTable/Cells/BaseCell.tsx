@@ -5,7 +5,7 @@ const BaseCell = styled.div`
   color: black;
 
   padding: 24px 8px;
-
+  align-items:start;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

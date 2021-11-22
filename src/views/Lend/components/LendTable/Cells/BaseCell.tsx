@@ -9,11 +9,11 @@ const BaseCell = styled.div`
   display: flex;
   flex-direction: column;
   // justify-content: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
 `
 
 export const CellContent = styled(Flex)`
-  flex-direction: column;
+  flex-direction: row;
   justify-content: left;
   // max-height: 40px;
   ${Text} {

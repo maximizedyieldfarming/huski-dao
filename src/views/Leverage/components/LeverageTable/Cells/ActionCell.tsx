@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   justify-content: center;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 150px;
   }
   > div {
     gap: 5px;
@@ -35,20 +35,51 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button
-          scale="sm"
-          as={Link}
+      {(!token?.totalSupply || !account)?
+        (<Link
+          style={{
+            background: '#7B3FE4',
+            border: '1px solid #EFEFEF',
+            boxSizing: 'border-box',
+            borderRadius: '10px',
+            width: '114px',
+            height: '40px',
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            cursor:'pointer',
+            color:'white'
+          }}
           to={{
             pathname: `/leverage/farm/${token?.lpSymbol}`,
             state: { tokenData: token, selectedLeverage, selectedBorrowing },
           }}
-          disabled={!token?.totalSupply || !account}
           onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
         >
           {t('Farm')}
-        </Button>
+        </Link>):(
+          <div
+          style={{
+            background: '#D3D3D3',
+            border: '1px solid #EFEFEF',
+            boxSizing: 'border-box',
+            borderRadius: '10px',
+            width: '114px',
+            height: '40px',
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            cursor:'pointer',
+            color:'white'
+          }}
+         
+       
+        >
+          {t('Farm')}
+        </div>
+        )}
       </CellContent>
-    </StyledCell>
+    </StyledCell >
   )
 }
 

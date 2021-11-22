@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router'
 import { Menu as UikitMenu } from 'husky-uikit1.0'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
@@ -25,13 +26,15 @@ const Menu = (props) => {
   const { profile } = useProfile()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
+  const { pathname } = useLocation()
+  const isHome = pathname === '/';
 
   return (
     <UikitMenu
       certikLogo={isDark?(<CertikLogo />):(<CertikLogo1 />)}
       userMenu={<UserMenu />}
       account={account}
-      globalMenu={<GlobalSettings />}
+      globalMenu={!isHome?<GlobalSettings />:null}
       isDark={isDark}
       toggleTheme={toggleTheme}
       currentLang={currentLanguage.code}

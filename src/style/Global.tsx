@@ -10,7 +10,7 @@ declare module 'styled-components' {
 const GlobalStyle = createGlobalStyle`
   * {
     // font-family: 'Kanit', sans-serif;
-   font-family: 'GenJyuuGothic', sans-serif;
+   font-family: 'inter', sans-serif;
   }
   body {
     background-color: ${({ theme }) => theme.colors.background};

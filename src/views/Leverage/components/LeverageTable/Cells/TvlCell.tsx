@@ -16,12 +16,12 @@ interface InfoParams {
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 150px;
   }
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -90,7 +90,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
         <Flex alignItems="center">
           {tvl ? (
             <>
-              <Text>{nFormatter(tvl)}</Text>
+              <Text style={{fontWeight:700,color:'#131313'}}>{nFormatter(tvl)}</Text>
               {tooltipVisible && tooltip}
               <span ref={targetRef}>
                 <InfoIcon ml="10px" />

@@ -40,7 +40,7 @@ const TotalSupplyCell = ({ supply, supplyUSD }) => {
         )}
         {supply ? (
           <Box>
-            <Text>{nFormatter(formatedSupply)}</Text>
+            <Text style={{fontWeight:600,fontSize:'16px',color:'#131313'}}>{nFormatter(formatedSupply)}</Text>
             <Text small color="textSubtle">{`($${nFormatter(formatedSupplyUSD)})`}</Text>
           </Box>
         ) : (

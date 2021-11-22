@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints ,Flex} from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Select from 'components/Select/Select'
+import { BnbIcon } from 'assets'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 150px;
   }
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -71,7 +72,10 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
             {t('Borrowing')}
           </Text>
         )}
-        <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
+        <Flex>
+          <BnbIcon />
+          <Select  options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
+        </Flex>
       </CellContent>
     </StyledCell>
   )

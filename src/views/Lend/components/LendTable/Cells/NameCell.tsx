@@ -9,10 +9,10 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
-  padding-left: 12px;
+  justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
-    // padding-left: 32px;
+    flex: 1 0 350;
+    //  padding-left: 32px;
   }
 `
 
@@ -29,7 +29,7 @@ const NameCell = ({ token }) => {
             <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
           </Box>
           <Box>
-            <Text bold={!isMobile} small={isMobile} mb="5px">
+            <Text bold={!isMobile} small={isMobile} mb="5px" style={{fontWeight:600,color:'#131313'}}>
               {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (

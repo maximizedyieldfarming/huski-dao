@@ -11,6 +11,7 @@ import headerBg from './BG.png'
 
 const Section = styled(Flex)`
   background-color: 'transparent';
+  font-family:inter;
   padding: 0.5rem;
   gap: 0.5rem;
   border-radius: ${({ theme }) => theme.radii.default};
@@ -55,9 +56,10 @@ const Lend: React.FC = () => {
     <Page>
       <Section>
         <SBBox className="block" style={{position:'relative',marginRight:'30px',display:'flex',alignItems:'center' }}>
-          <h2 style={{color:'white',fontSize:'60px',marginLeft:'80px',fontWeight:800}}>Huski Finance</h2>
+          <h2 style={{color:'white',fontSize:'60px',marginLeft:'80px',fontWeight:800}}>Huski<br /> Finance</h2>
         </SBBox>
-        <Flex className="container" style={{flexDirection:'column',justifyContent:'space-evenly', background:'#D6C7F0',borderRadius:'15px',width:'20%',marginRight:'30px'}}>
+        <Flex className="container" style={{padding:'30px',flexDirection:'column',justifyContent:'space-evenly', background:'#D6C7F0',borderRadius:'15px',width:'20%',marginRight:'30px'}}>
+          <img src="/images/8825.svg" width='70px' height='70px' alt="" />
           <Text color="textSubtle" style={{color:'#4B4B4B',marginTop:'30px'}}>{t(`Total Volume 24H:`)}</Text>
           {volume24 ? (
             <Text fontSize="30px" style={{color:'#4B4B4B'}}>
@@ -66,13 +68,14 @@ const Lend: React.FC = () => {
           ) : (
             // <Skeleton width="180px" height="30px" />
             <Text fontSize="30px" style={{color:'#4B4B4B',fontWeight:1000}}>
-              ${12312312}
+              $123,123,126
             </Text>
           )}
           <Text fontSize="30px">{volume24}</Text>
         </Flex>
-        <Flex className="container" style={{flexDirection:'column',justifyContent:'space-evenly',background:'#E3F0F6',borderRadius:'15px',width:'20%'}}>
-          <Text color="textSubtle" style={{color:'#4B4B4B'}}>{t('Total Value Locked:')}</Text>
+        <Flex className="container" style={{padding:'30px', flexDirection:'column',justifyContent:'space-evenly',background:'#E3F0F6',borderRadius:'15px',width:'20%'}}>
+          <img src="/images/8826.svg" width='70px' height='70px' alt="" />
+          <Text color="textSubtle" style={{color:'#4B4B4B',marginTop:'30px'}}>{t('Total Value Locked:')}</Text>
           {lendTotalSupply ? (
             <Text fontSize="30px" style={{color:'#4B4B4B',fontWeight:1000}}>{`$${lendTotalSupply}`}</Text>
           ) : (
