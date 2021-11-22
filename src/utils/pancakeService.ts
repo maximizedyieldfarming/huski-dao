@@ -28,9 +28,11 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
     const addvalue = basetokenLpBorrowed / (leverage - 1) - (basetokenLp + farmingtokenLp / price - basetokenLpBorrowed)
 
     if (!flag) {
+        console.info('222')
         maxnum = basetokenBalance
     } else {
         maxnum = basetokenBalance + (basetokenBalance + farmingtokenBalance / price + basetokenLp + farmingtokenLp / price - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed
+        console.info('111', farmingtokenBalance)
         if (maxnum < 0) {
             console.info('添加的资金不足');
             return [-1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
@@ -51,7 +53,9 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
     if (minexc === 0) {
         return [minnum, data]
     }
-    if (maxexc * minexc > 0){
+    console.info('maxexc', maxexc)
+    console.info('minexc', maxnum)
+    if (maxexc * minexc > 0) {
         console.info('kkkkkk')
         return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
     }
@@ -221,9 +225,7 @@ export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, 
         tokenInitNum1 = tokenNum1 * 2 - debtNum
 
     }
-    // else {
-    //     return;
-    // }
+
     let dataList;
 
     dataList = [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1]  // 为了引用传参
@@ -236,10 +238,58 @@ export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, 
         // console.log({ '日期': i, '价格': PriceList[i], '损益比例( + 计价)': Token0Name, 'dataList': dataList[5], '损益比例 + 计价)': Token1Name, '66': dataList[6] })
 
     }
-    // console.info(' dataList  ', dataList)
     return dataList
 };
 
+
+export const RunLogic1 = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList, lpAprList, PriceList, BaseTokenName, leverageOpen, DayNum) => {
+    let debtNum = 10000  // 假设债务数量 仅用作计算 该值大小不会对结果产生影响
+    const lpValueToken1 = 0.0
+    const lpValueToken0 = 0.0
+    const risk = 0.0
+    const winlossToken1 = 0.0
+    const winlossToken0 = 0.0
+
+    let tokenNum0
+    let tokenNum1
+    let baseToken
+    let tokenInitNum0
+    let tokenInitNum1
+
+    if (BaseTokenName === Token0Name) {
+        tokenNum0 = debtNum * leverageOpen / (leverageOpen - 1) / 2  // LP初始状态
+        tokenNum1 = tokenNum0 * PriceList[0]
+        baseToken = 'token0'
+        tokenInitNum0 = tokenNum0 * 2 - debtNum  // 客户初始资金
+        tokenInitNum1 = tokenNum1 * 2 - debtNum * PriceList[0]
+    } else if (BaseTokenName === Token1Name) {
+        tokenNum1 = debtNum * leverageOpen / (leverageOpen - 1) / 2
+        tokenNum0 = tokenNum1 / PriceList[0]
+        baseToken = 'token1'
+        tokenInitNum0 = tokenNum0 * 2 - debtNum / PriceList[0]
+        tokenInitNum1 = tokenNum1 * 2 - debtNum
+
+    }
+
+    let dataList;
+    const dateList = []
+    const profitLossRatioToken0 = []
+    const profitLossRatioToken1 = []
+
+    dataList = [tokenNum0, tokenNum1, lpValueToken0, lpValueToken1, risk, winlossToken0, winlossToken1]  // 为了引用传参
+    for (let i = 0; i < DayNum; i++) {
+        if (dataList[4] < RiskKillThreshold) {
+            debtNum += debtNum * BorrowingInterestList / 365
+            dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList, dataList)
+            dateList.push(i)
+            profitLossRatioToken0.push(dataList[5])
+            profitLossRatioToken1.push(dataList[6])
+        }
+
+    }
+
+    return { dateList, profitLossRatioToken0, profitLossRatioToken1 } // dataList
+};
 
 export const func = (LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtTokenNum, i, tokenPrice, ReinvestMinute, LP_APR, dataList) => {
 

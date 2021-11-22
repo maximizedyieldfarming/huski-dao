@@ -231,7 +231,7 @@ const AdjustPosition = () => {
   let assetsBorrowedUp
   let UpdatedDebt
 
-  if (adjustData?.[3] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
+  if (adjustData?.[3] === 0 && farmingData[0] === -1) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
     // use repayDebtData
     assetsBorrowed = repayDebtData?.[4]
     baseTokenInPosition = repayDebtData?.[2]

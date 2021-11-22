@@ -61,36 +61,33 @@ export const useGetPositions = (account) => {
 
 
 export const usePriceList = (coingeckoId) => {
-  const [data, setData] = useState([])
+  const [priceList, setPriceList] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const start = moment().format('YYYY-MM-DD 00:00:00');
         const end = moment().subtract(91, 'days').format('YYYY-MM-DD 00:00:00');
-        const startDate =   moment(start).unix()
-        const endDate =  moment(end).unix()
+        const startDate = moment(start).unix()
+        const endDate = moment(end).unix()
 
         const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/${coingeckoId}/market_chart/range?vs_currency=usd&from=${endDate}&to=${startDate}`;
         const res = await fetch(cakePriceCoinGeckoApi);
         const responseData = await res.json();
 
-        const priceList = [];
-        for(let i =1; i< responseData.prices.length;i++){
-          priceList.push(responseData.prices[i][1]) // 8.20 --- 11.19  升序
+        const priceListValue = [];
+        for (let i = 1; i < responseData.prices.length; i++) {
+          priceListValue.push(responseData.prices[i][1])
         }
-        // responseData.prices.map((price) => {
-        //   priceList.push(price[1])
-        // })
-// console.info('priceList',priceList)
-        setData(priceList)
+
+        setPriceList(priceListValue)
       } catch (error) {
         console.error('Unable to fetch data:', error)
       }
     }
 
     fetchData()
-  }, [coingeckoId, setData])
+  }, [coingeckoId, setPriceList])
 
-  return data
+  return priceList
 }
