@@ -63,6 +63,8 @@ export function getPancakeMasterChef() {
 export default function getDomain() {
     let domain = DefaultRPC;
     const env = process.env.REACT_APP_ENV;
+    console.info('process.env', process.env)
+    console.info('env', env)
     switch (env) {
         case 'dev':
             domain = DevRPC;
