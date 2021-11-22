@@ -39,15 +39,15 @@ const fetchFarmsTradeFeesForTest = async (farms) => {
 const fetchFarmsTradeFees = async (farms) => {
 
   let farmsWithTradeFees;
-  const env = process.env.REACT_APP_ENV;
+  const env = process.env.NODE_ENV;
   switch (env) {
-    case 'dev':
+    case 'development':
       farmsWithTradeFees = fetchFarmsTradeFeesForAlpaca(farms)
       break;
     case 'test':
       farmsWithTradeFees = fetchFarmsTradeFeesForTest(farms);
       break;
-    case 'prod':
+    case 'production':
     default:
       farmsWithTradeFees = fetchFarmsTradeFeesForTest(farms);
       // farmsWithTradeFees = fetchFarmsTradeFeesForAlpaca(farms);

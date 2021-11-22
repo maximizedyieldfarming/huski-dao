@@ -8,15 +8,15 @@ const DefaultRPC = 'https://bsc-dataseed.binance.org/'; // main net
 
 export function getFairLaunch() {
     let address: any = 0;
-    const env = process.env.REACT_APP_ENV;
+    const env = process.env.NODE_ENV;
     switch (env) {
-        case 'dev':
+        case 'development':
             address = 0;
             break;
         case 'test':
             address = testnet.FairLaunch.address;
             break;
-        case 'prod':
+        case 'production':
         default:
             address = mainnet.FairLaunch.address;
             break;
@@ -26,15 +26,15 @@ export function getFairLaunch() {
 
 export function getHusky() {
     let address: any = 0;
-    const env = process.env.REACT_APP_ENV;
+    const env = process.env.NODE_ENV;
     switch (env) {
-        case 'dev':
+        case 'development':
             address = 0;
             break;
         case 'test':
             address = testnet.Tokens.ALPACA;
             break;
-        case 'prod':
+        case 'production':
         default:
             address = mainnet.Tokens.ALPACA;
             break;
@@ -44,15 +44,15 @@ export function getHusky() {
 
 export function getPancakeMasterChef() {
     let address: any = 0;
-    const env = process.env.REACT_APP_ENV;
+    const env = process.env.NODE_ENV;
     switch (env) {
-        case 'dev':
+        case 'development':
             address = 0;
             break;
         case 'test':
             address = testnet.Exchanges.Pancakeswap.MasterChef;
             break;
-        case 'prod':
+        case 'production':
         default:
             address = mainnet.Exchanges.Pancakeswap.MasterChef;
             break;
@@ -62,17 +62,17 @@ export function getPancakeMasterChef() {
 
 export default function getDomain() {
     let domain = DefaultRPC;
-    const env = process.env.REACT_APP_ENV;
+    const env = process.env.NODE_ENV// REACT_APP_ENV;
     console.info('process.env', process.env)
     console.info('env', env)
     switch (env) {
-        case 'dev':
+        case 'development':
             domain = DevRPC;
             break;
         case 'test':
             domain = TestRPC;
             break;
-        case 'prod':
+        case 'production':
         default:
             domain = DefaultRPC;
             break;
