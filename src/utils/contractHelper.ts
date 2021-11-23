@@ -3,7 +3,7 @@ import Web3 from 'web3'
 import FairLaunchABI from 'config/abi/fairLaunch.json'
 import MasterChefABI from 'config/abi/pancakeMasterChef.json'
 import VaultABI from 'config/abi/vault.json'
-import getDomain, { getFairLaunch, getPancakeMasterChef } from './env'
+import getDomain, { getFairLaunch } from './env'
 
 const minABI = [
     {
@@ -51,14 +51,14 @@ export const getWeb3FairLaunchContract = () => {
 };
 
 
-export const getMasterChefContract = () => {
-    return getContract(MasterChefABI, getPancakeMasterChef(), provider.getSigner());
-};
+// export const getMasterChefContract = () => {
+//     return getContract(MasterChefABI, getPancakeMasterChef(), provider.getSigner());
+// };
 
-export const getWeb3MasterChefContract = () => {
-    const masterChef = new web3.eth.Contract(MasterChefABI as any, getPancakeMasterChef());
-    return masterChef;
-};
+// export const getWeb3MasterChefContract = () => {
+//     const masterChef = new web3.eth.Contract(MasterChefABI as any, getPancakeMasterChef());
+//     return masterChef;
+// };
 
 // export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
 //     return getContract(VaultABI, address, signer)

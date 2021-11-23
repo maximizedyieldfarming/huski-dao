@@ -10,7 +10,7 @@ const mathematics1 = 0.4; // Less than 50% utilization
 const mathematics2 = 0; // Between 50% and 90%
 const mathematics3 = 13;
 
-const web3 = new Web3(getDomain());
+// const web3 = new Web3(getDomain());
 
 export async function getBalanceOf(param: any) {
   const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);

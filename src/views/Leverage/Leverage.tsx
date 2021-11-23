@@ -74,7 +74,7 @@ const Leverage: React.FC = () => {
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
-  const data = useGetPositions(account)
+  const data = [] // useGetPositions(account)
   const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []

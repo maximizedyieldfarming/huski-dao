@@ -4,12 +4,12 @@ import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
 import { dichotomybasetoken, RunLogic, RunLogic1, adjustRun } from 'utils/pancakeService'
 import { BIG_TEN } from 'utils/bigNumber'
 
-export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, tokenName?: string) => {
+export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, tokenName?: string) => {
   const { vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const { quoteToken } = TokenInfo
   let vaultDebtValue
   let poolHuskyPerBlock
-
+console.log({ huskiPriceBusd, vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd })
   if (tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     vaultDebtValue = quoteTokenVaultDebtVal
     poolHuskyPerBlock = quoteTokenPoolPerBlock
@@ -19,16 +19,16 @@ export const getHuskyRewards = (farm: LeverageFarm, cakePriceBusd: BigNumber, to
   }
 
   const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() ? quoteTokenPriceUsd : tokenPriceUsd;
-  const huskyPrice: any = cakePriceBusd;
+  const huskiPrice: any = huskiPriceBusd;
 
-  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskyPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
+  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskiPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
   return huskyRewards.toNumber();
 }
 
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
-  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd } = farm
+  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd ,pid} = farm
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
-
+// console.log({poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd , cakePrice, pid})
   const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
@@ -40,7 +40,7 @@ export const getTvl = (farm: LeverageFarm) => {
   const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
-
+// console.log({tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd })
   const tokensLP = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
   const lpTokenRatio = new BigNumber(tokenUserInfoLP).div(new BigNumber(lptotalSupply))
   const tokenNum = new BigNumber(tokenAmountTotal).times(lpTokenRatio)
