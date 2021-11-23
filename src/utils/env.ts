@@ -8,7 +8,7 @@ const DefaultRPC = 'https://bsc-dataseed.binance.org/'; // main net
 
 export function getFairLaunch() {
     let address: any = 0;
-    const env = process.env.NODE_ENV;
+    const env = process.env.REACT_APP_ENV;
     switch (env) {
         case 'development':
             address = testnet.FairLaunch.address;
@@ -62,7 +62,7 @@ export function getFairLaunch() {
 
 export default function getDomain() {
     let domain = DefaultRPC;
-    const env = process.env.NODE_ENV// REACT_APP_ENV;
+    const env = process.env.REACT_APP_ENV// REACT_APP_ENV;
     console.info('process.env00000', process.env)
     console.info('env00000', env)
     switch (env) {

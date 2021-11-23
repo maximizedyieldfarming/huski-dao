@@ -1,10 +1,14 @@
 export default {
   fairLaunch: {
-    97: '',
+    97: '0x4D60aB5c2065a6010967091F12A3fe494bECceE9',
     56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
   },
+  // fairLaunchTest: {
+  //   97: '0x4D60aB5c2065a6010967091F12A3fe494bECceE9',
+  //   56: "0x4D60aB5c2065a6010967091F12A3fe494bECceE9",
+  // },
   masterChef: {
-    97: '0x1d32c2945C8FDCBc7156c553B7cEa4325a17f4f9',
+    97: '0xbCC50b0B0AFD19Ee83a6E79e6c01D51b16090A0B', // 
     56: '0x73feaa1eE314F8c655E354234017bE2193C9E24E',
   },
   multiCall: {
