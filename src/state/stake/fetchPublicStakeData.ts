@@ -16,7 +16,7 @@ type PublicFarmData = {
 }
 
 const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
-  const { pid, vaultAddress, token } = stake
+  const { pid, vaultAddress } = stake
   const vaultAddresses = getAddress(vaultAddress)
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [

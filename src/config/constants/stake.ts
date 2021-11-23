@@ -3,7 +3,7 @@ import { StakeConfig } from './types'
 
 const stakeConfig: StakeConfig[] = [
   {
-    name: "ALPACA",
+    name: "HUSKI",
     symbol: "ibALPACA",
     vaultAddress: {
       97: '',

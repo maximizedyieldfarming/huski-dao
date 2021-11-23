@@ -3,7 +3,7 @@ import { SerializedBigNumber, TranslatableText } from 'state/types'
 
 export interface Address {
   97?: string
-  56: string
+  56?: string
 }
 
 export interface Token {
@@ -100,11 +100,11 @@ export interface LeverageFarmConfig {
     vaultAddress: string
     name: string
     address: string
-    deployedBlock: number
+    deployedBlock?: number
     config: string
     pId: number
-    stakingToken: string
-    stakingTokenAt: string
+    stakingToken?: string
+    stakingTokenAt?: string
     strategies: {
       StrategyAddAllBaseToken: string
       StrategyLiquidate: string
@@ -120,11 +120,11 @@ export interface LeverageFarmConfig {
     vaultAddress: string
     name: string
     address: string
-    deployedBlock: number
+    deployedBlock?: number
     config: string
     pId: number
-    stakingToken: string
-    stakingTokenAt: string
+    stakingToken?: string
+    stakingTokenAt?: string
     strategies: {
       StrategyAddAllBaseToken: string
       StrategyLiquidate: string
