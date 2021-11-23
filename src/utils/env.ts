@@ -11,54 +11,54 @@ export function getFairLaunch() {
     const env = process.env.NODE_ENV;
     switch (env) {
         case 'development':
-            address = 0;
+            address = testnet.FairLaunch.address;
             break;
         case 'test':
             address = testnet.FairLaunch.address;
             break;
         case 'production':
         default:
-            address = mainnet.FairLaunch.address;
+            address = testnet.FairLaunch.address;
             break;
     }
     return address;
 }
 
-export function getHusky() {
-    let address: any = 0;
-    const env = process.env.NODE_ENV;
-    switch (env) {
-        case 'development':
-            address = 0;
-            break;
-        case 'test':
-            address = testnet.Tokens.ALPACA;
-            break;
-        case 'production':
-        default:
-            address = mainnet.Tokens.ALPACA;
-            break;
-    }
-    return address;
-}
+// export function getHusky() {
+//     let address: any = 0;
+//     const env = process.env.NODE_ENV;
+//     switch (env) {
+//         case 'development':
+//             address = 0;
+//             break;
+//         case 'test':
+//             address = testnet.Tokens.ALPACA;
+//             break;
+//         case 'production':
+//         default:
+//             address = mainnet.Tokens.ALPACA;
+//             break;
+//     }
+//     return address;
+// }
 
-export function getPancakeMasterChef() {
-    let address: any = 0;
-    const env = process.env.NODE_ENV;
-    switch (env) {
-        case 'development':
-            address = 0;
-            break;
-        case 'test':
-            address = testnet.Exchanges.Pancakeswap.MasterChef;
-            break;
-        case 'production':
-        default:
-            address = mainnet.Exchanges.Pancakeswap.MasterChef;
-            break;
-    }
-    return address;
-}
+// export function getPancakeMasterChef() {
+//     let address: any = 0;
+//     const env = process.env.NODE_ENV;
+//     switch (env) {
+//         case 'development':
+//             address = testnet.Exchanges.Pancakeswap.MasterChef;
+//             break;
+//         case 'test':
+//             address = testnet.Exchanges.Pancakeswap.MasterChef;
+//             break;
+//         case 'production':
+//         default:
+//             address = mainnet.Exchanges.Pancakeswap.MasterChef;
+//             break;
+//     }
+//     return address;
+// }
 
 export default function getDomain() {
     let domain = DefaultRPC;
@@ -67,7 +67,7 @@ export default function getDomain() {
     console.info('env00000', env)
     switch (env) {
         case 'development':
-            domain = DevRPC;
+            domain = TestRPC // DevRPC;
             break;
         case 'test':
             domain = TestRPC;

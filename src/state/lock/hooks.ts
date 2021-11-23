@@ -85,39 +85,39 @@ export const useBusdPriceFromPid = (pid: number): BigNumber => {
   return farm && new BigNumber(farm.token.busdPrice)
 }
 
-export const useLpTokenPrice = (symbol: string) => {
-  const farm = useFarmFromLpSymbol(symbol)
-  const farmTokenPriceInUsd = useBusdPriceFromPid(farm.pid)
-  let lpTokenPrice = BIG_ZERO
+// export const useLpTokenPrice = (symbol: string) => {
+//   const farm = useFarmFromLpSymbol(symbol)
+//   const farmTokenPriceInUsd = useBusdPriceFromPid(farm.pid)
+//   let lpTokenPrice = BIG_ZERO
 
-  if (farm.lpTotalSupply && farm.lpTotalInQuoteToken) {
-    // Total value of base token in LP
-    const valueOfBaseTokenInFarm = farmTokenPriceInUsd.times(farm.tokenAmountTotal)
-    // Double it to get overall value in LP
-    const overallValueOfAllTokensInFarm = valueOfBaseTokenInFarm.times(2)
-    // Divide total value of all tokens, by the number of LP tokens
-    const totalLpTokens = getBalanceAmount(new BigNumber(farm.lpTotalSupply))
-    lpTokenPrice = overallValueOfAllTokensInFarm.div(totalLpTokens)
-  }
+//   if (farm.lpTotalSupply && farm.lpTotalInQuoteToken) {
+//     // Total value of base token in LP
+//     const valueOfBaseTokenInFarm = farmTokenPriceInUsd.times(farm.tokenAmountTotal)
+//     // Double it to get overall value in LP
+//     const overallValueOfAllTokensInFarm = valueOfBaseTokenInFarm.times(2)
+//     // Divide total value of all tokens, by the number of LP tokens
+//     const totalLpTokens = getBalanceAmount(new BigNumber(farm.lpTotalSupply))
+//     lpTokenPrice = overallValueOfAllTokensInFarm.div(totalLpTokens)
+//   }
 
-  return lpTokenPrice
-}
+//   return lpTokenPrice
+// }
 
 // /!\ Deprecated , use the BUSD hook in /hooks
 
-export const usePriceBnbBusd = (): BigNumber => {
-  const bnbBusdFarm = useFarmFromPid(252)
-  return new BigNumber(bnbBusdFarm.quoteToken.busdPrice)
-}
+// export const usePriceBnbBusd = (): BigNumber => {
+//   const bnbBusdFarm = useFarmFromPid(252)
+//   return new BigNumber(bnbBusdFarm.quoteToken.busdPrice)
+// }
 
-export const usePriceCakeBusd = (): BigNumber => {
-  const cakeBnbFarm = useFarmFromPid(251)
+// export const usePriceCakeBusd = (): BigNumber => {
+//   const cakeBnbFarm = useFarmFromPid(251)
 
-  const cakePriceBusdAsString = cakeBnbFarm.token.busdPrice
+//   const cakePriceBusdAsString = cakeBnbFarm.token.busdPrice
 
-  const cakePriceBusd = useMemo(() => {
-    return new BigNumber(cakePriceBusdAsString)
-  }, [cakePriceBusdAsString])
+//   const cakePriceBusd = useMemo(() => {
+//     return new BigNumber(cakePriceBusdAsString)
+//   }, [cakePriceBusdAsString])
 
-  return cakePriceBusd
-}
+//   return cakePriceBusd
+// }
