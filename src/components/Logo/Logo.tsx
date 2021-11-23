@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HelpIcon } from '@pancakeswap/uikit'
+import { HelpIcon } from 'husky-uikit1.0'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}
 

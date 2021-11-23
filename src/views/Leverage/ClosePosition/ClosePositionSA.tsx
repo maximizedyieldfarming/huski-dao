@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router'
-import { Box, Flex, Text, useTooltip, InfoIcon } from '@pancakeswap/uikit'
+import { Box, Flex, Text, useTooltip, InfoIcon } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'

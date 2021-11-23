@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Box, Text } from '@pancakeswap/uikit'
+import { Box, Text } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import CloseEntirePosition from './CloseEntirePosition'
 

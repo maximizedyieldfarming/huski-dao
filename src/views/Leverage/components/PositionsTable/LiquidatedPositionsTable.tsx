@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
 import LiquidatedPositionsHeaderRow from './LiquidatedPositionsHeaderRow'
@@ -44,13 +44,18 @@ const LiquidatedPositionsTable = ({ data }) => {
   return (
     <StyledTable role="table" ref={tableWrapperEl}>
       {!(isMobile || isTablet) && <LiquidatedPositionsHeaderRow />}
-      {data ? (
+      {/* this is commented for testing //////////////////////////////////////////////////////     */}
+      {/* {data ? (
         <LiquidatedPositionsRow data={data} />
       ) : (
         <Box padding="100px 0">
           <Text textAlign="center">{t('No Liquidated Positions')}</Text>
         </Box>
-      )}
+      )} */}
+      
+        <LiquidatedPositionsRow data={null} />
+      
+
     </StyledTable>
   )
 }

@@ -1,17 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Skeleton, Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
+import { Flex, Skeleton, Text, useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 5;
+  flex:2;
   flex-direction: row;
   justify-content: flex-start;
+    align-items: start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 350;
+    // flex: 1 0 350;
     //  padding-left: 32px;
   }
 `

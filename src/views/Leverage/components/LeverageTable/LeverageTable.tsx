@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/Select'
 import {
@@ -172,7 +172,7 @@ const LeverageTable = ({ leverageData }) => {
         <StyledTable role="table" ref={tableWrapperEl}>
           <FiltersWrapper>
             <Flex alignItems="center" className="dexFilter">
-              <Text>DEX:</Text>
+              <Text bold >DEX:</Text>
               <Flex overflowX="auto">
                 <FilterOption
                   variant="tertiary"
@@ -261,7 +261,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
             </Flex>
             <Flex className="searchSortContainer">
-              <Text style={{fontWeight:700,color:'#131313',width:'100px',paddingTop:'7px'}}>Sort by</Text>
+              <Text style={{fontWeight:400,color:'#131313',width:'100px',paddingTop:'7px'}}>Sort by</Text>
               <Select
                 options={[
                   {
@@ -283,7 +283,7 @@ const LeverageTable = ({ leverageData }) => {
                 ]}
                 onChange={handleSortOptionChange}
               />
-              <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+              <SearchInput  onChange={handleChangeQuery} placeholder="Search" />
             </Flex>
           </FiltersWrapper>
           {!(isMobile || isTablet) && <LeverageHeaderRow />}

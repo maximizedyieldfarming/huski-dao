@@ -1,4 +1,4 @@
-import { Toast } from '@pancakeswap/uikit'
+import { Toast } from 'husky-uikit1.0'
 
 type ToastSignature = (title: Toast['title'], description?: Toast['description']) => void
 

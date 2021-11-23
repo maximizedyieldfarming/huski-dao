@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton } from '@pancakeswap/uikit'
+import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton } from 'husky-uikit1.0'
 
 interface TooltipWrapperParams {
   isTop?: boolean

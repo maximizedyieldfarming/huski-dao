@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
-import { useMatchBreakpoints } from '@pancakeswap/uikit'
+import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'

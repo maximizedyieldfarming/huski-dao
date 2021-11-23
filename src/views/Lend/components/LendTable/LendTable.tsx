@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Button, ChevronUpIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import LendRow from './LendRow'
 import LendHeaderRow from './LendHeaderRow'

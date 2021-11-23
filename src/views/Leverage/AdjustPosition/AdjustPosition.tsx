@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'

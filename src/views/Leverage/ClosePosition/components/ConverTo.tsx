@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, Skeleton, InfoIcon, useTooltip } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton, InfoIcon, useTooltip } from 'husky-uikit1.0'
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'

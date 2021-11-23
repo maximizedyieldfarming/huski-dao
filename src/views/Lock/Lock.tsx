@@ -1,6 +1,6 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Text, Button, Flex, Box, Skeleton } from '@pancakeswap/uikit'
+import { Text, Button, Flex, Box, Skeleton } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'

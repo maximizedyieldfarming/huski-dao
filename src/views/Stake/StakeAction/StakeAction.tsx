@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
-import { Box, Button, Flex, Input, Text } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Input, Text } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import useTokenBalance from 'hooks/useTokenBalance'
 import styled from 'styled-components'

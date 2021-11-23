@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'

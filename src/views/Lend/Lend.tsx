@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import React from 'react'
-import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
 import { useLendTotalSupply } from 'state/lend/hooks'

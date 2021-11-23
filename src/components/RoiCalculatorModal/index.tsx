@@ -11,7 +11,7 @@ import {
   HelpIcon,
   ButtonMenuItem,
   useTooltip,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'

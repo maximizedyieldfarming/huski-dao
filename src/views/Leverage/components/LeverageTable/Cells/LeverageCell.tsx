@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { ChevronDownIcon, ChevronUpIcon, Flex, Input, Text, useMatchBreakpoints, Box, Button } from '@pancakeswap/uikit'
+import { ChevronDownIcon, ChevronUpIcon, Flex, Input, Text, useMatchBreakpoints, Box, Button } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -9,11 +9,11 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 150px;
+    flex: 1 0 100px;
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;

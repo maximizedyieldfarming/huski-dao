@@ -10,7 +10,7 @@ import {
   ModalContainer,
   ModalHeader as UIKitModalHeader,
   ModalTitle,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'

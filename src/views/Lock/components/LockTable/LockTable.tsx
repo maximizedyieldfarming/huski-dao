@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { useMatchBreakpoints } from '@pancakeswap/uikit'
+import { useMatchBreakpoints } from 'husky-uikit1.0'
 import LockRow from './LockRow'
 
 const StyledTable = styled.div`

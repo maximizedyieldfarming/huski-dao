@@ -1,17 +1,19 @@
 import React, { useState, useMemo } from 'react'
-import { Input } from '@pancakeswap/uikit'
+import { Input ,Flex, SearchIcon} from 'husky-uikit1.0'
 import styled from 'styled-components'
 import debounce from 'lodash/debounce'
 import { useTranslation } from 'contexts/Localization'
 
 const StyledInput = styled(Input)`
-  border-radius: 16px;
-  border: none;
-  background:#F4F4F4;
-  margin-left: auto;
+border: none;
+background:#F4F4F4;
+margin-left: auto;
+padding-left:30px;
 `
 
-const InputWrapper = styled.div`
+const InputWrapper = styled(Flex)`
+  border-radius: 16px;
+  width:240px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.sm} {
     display: block;
@@ -41,6 +43,7 @@ const SearchInput: React.FC<Props> = ({ onChange: onChangeCallback, placeholder 
   return (
     <InputWrapper>
       <StyledInput value={searchText} onChange={onChange} placeholder={t(placeholder)} />
+      <SearchIcon style={{position:'absolute',top:10,left:5,width:'19px',height:'19px'}} />
     </InputWrapper>
   )
 }

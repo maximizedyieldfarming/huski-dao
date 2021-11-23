@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -22,7 +22,7 @@ const DepositCell = ({ deposit }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           Deposit
         </Text>
-        <Text>{deposit}</Text>
+        <Text color="text" fontWeight="700" fontSize="16px">{deposit}</Text>
       </CellContent>
     </StyledCell>
   )

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Flex, Text, useMatchBreakpoints, Box } from '@pancakeswap/uikit'
+import { Flex, Text, useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 
 import { BIG_ZERO } from 'utils/bigNumber'

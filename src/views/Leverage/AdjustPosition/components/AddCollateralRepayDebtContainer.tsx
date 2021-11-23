@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Flex } from '@pancakeswap/uikit'
+import { Box, Button, Flex } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import AddColateral from './AddColateral'
 import RepayDebt from './RepayDebt'

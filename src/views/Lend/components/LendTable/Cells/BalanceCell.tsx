@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Box } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Box } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
@@ -9,15 +9,16 @@ import { useGetBnbBalance } from 'hooks/useTokenBalance'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  // flex: 1 0 50px;
+  flex:1;
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex: 1 0 120px;
+    // flex: 1 0 120px;
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    text-align: left;
+    justify-content: flex-start;
+    align-items: start;
+   
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: column;
     }
@@ -40,10 +41,10 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
         )}
         {balanceIb ? (
           <Box>
-            <Text small textAlign="left" style={{fontWeight:600,color:'#131313'}}>
+            <Text small textAlign="left" fontSize="12px" bold style={{color:'#131313',marginBottom:'7px'}}>
               {userTokenBalance(balanceIb).toNumber().toPrecision(3)} ib{name}
             </Text>
-            <Text small textAlign="left" color="textSubtle">
+            <Text small textAlign="left" fontSize="12px" bold color="text">
               {userTokenBalance(name.toLowerCase() === 'bnb' ? bnbBalance : balance)
                 .toNumber()
                 .toPrecision(3)}{' '}

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { Box, Flex, Text, Input, CheckmarkIcon, PencilIcon, IconButton } from '@pancakeswap/uikit'
+import { Box, Flex, Text, Input, CheckmarkIcon, PencilIcon, IconButton } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import { CalculatorMode, RoiCalculatorReducerState } from './useRoiCalculatorReducer'
 

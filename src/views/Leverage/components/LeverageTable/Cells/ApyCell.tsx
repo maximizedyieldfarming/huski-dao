@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, ChevronRightIcon, useTooltip } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, ChevronRightIcon, useTooltip } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 

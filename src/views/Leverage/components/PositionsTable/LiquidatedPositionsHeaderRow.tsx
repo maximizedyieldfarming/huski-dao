@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
+import { Text, useTooltip, InfoIcon, Flex } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
@@ -16,15 +16,20 @@ const StyledRow = styled.div`
 `
 
 const NameCell = styled(BaseCell)`
-  // flex: 5;
+flex: 1 0 50px;
+${({ theme }) => theme.mediaQueries.md} {
+  flex: 1 0 120px;
+}
+${CellContent} {
   flex-direction: row;
-  padding-left: 12px;
-  ${({ theme }) => theme.mediaQueries.sm} {
-    // flex: 1 0 150px;
-    padding-left: 32px;
+  justify-content: flex-start;
+  align-items: start;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: column;
   }
+}
 `
-const PoolCell = styled(BaseCell)`
+const TransactionCell = styled(BaseCell)`
   flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 2 0 150px;
@@ -34,26 +39,44 @@ const PoolCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
   }
 `
-const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+
+const PoolCell = styled(BaseCell)`
+flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
-  }
+  flex: 2 0 150px;
+}
+  ${Text} {
+  white - space: nowrap;
+}
   ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
+    flex-direction: column;
   }
+}
+`
+const StyledCell = styled(BaseCell)`
+flex: 1 0 50px;
+  ${({ theme }) => theme.mediaQueries.md} {
+  flex: 1 0 120px;
+}
+  ${CellContent} {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: start;
+    ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: column;
+  }
+}
 `
 
 const LiquidatedPositionsHeaderRow = () => {
@@ -96,33 +119,33 @@ const LiquidatedPositionsHeaderRow = () => {
     <>
       <Text>
         {t(
-          `The position value will be converted into base tokens (BUSD or BNB). Part of it will pay back your debt, accrued interest, and the liquidation fee. Then, you'll receive the remaining tokens in your wallet.`,
+          `The position value will be converted into base tokens(BUSD or BNB).Part of it will pay back your debt, accrued interest, and the liquidation fee.Then, you'll receive the remaining tokens in your wallet.`,
         )}
-      </Text>
+      </Text >
     </>,
     { placement: 'top-start' },
   )
 
   return (
     <StyledRow>
-      <StyledCell>
+      <NameCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text small bold color="textSubtle">
             {t('Name')}
           </Text>
         </CellContent>
-      </StyledCell>
-      <PoolCell>
+      </NameCell>
+      <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text small bold color="textSubtle" style={{marginLeft:'-10px'}}>
             {t('Pool')}
           </Text>
         </CellContent>
-      </PoolCell>
+      </StyledCell>
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text small bold color="textSubtle">
               {t('Position Value')}
             </Text>
             {positionTooltipVisible && positionTooltip}
@@ -135,7 +158,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text small bold color="textSubtle">
               {t('Liquidated Equity')}
             </Text>
             {liquidatedEquityTooltipVisible && liquidatedEquityTooltip}
@@ -148,7 +171,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text small bold color="textSubtle">
               {t('Liquidation Fee')}
             </Text>
             {liquidationFeeTooltipVisible && liquidationFeeTooltip}
@@ -161,7 +184,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text small bold color="textSubtle">
               {t(' Assets Returned')}
             </Text>
             {assetsReturnedTooltipVisible && assetsReturnedTooltip}
@@ -171,13 +194,15 @@ const LiquidatedPositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      <StyledCell>
+      <TransactionCell>
         <CellContent>
-          <Text small color="textSubtle">
-            {t('Transaction Record')}
-          </Text>
+          <Flex justifyContent='end' alignItems="end"> 
+            <Text small bold color="textSubtle" >
+              {t('Transaction Record')}
+            </Text>
+          </Flex>
         </CellContent>
-      </StyledCell>
+      </TransactionCell>
     </StyledRow>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import { useMatchBreakpoints, Flex } from '@pancakeswap/uikit'
+import { useMatchBreakpoints, Flex } from 'husky-uikit1.0'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import TotalHuskiLockedCell from './Cells/TotalHuskiLockedCell'
 import ValueLockedCell from './Cells/ValueLockedCell'

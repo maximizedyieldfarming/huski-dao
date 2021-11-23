@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Flex, Text } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'

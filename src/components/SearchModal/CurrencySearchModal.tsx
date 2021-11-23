@@ -10,7 +10,7 @@ import {
   InjectedModalProps,
   Heading,
   Button,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import styled from 'styled-components'
 import usePrevious from 'hooks/usePreviousValue'
 import { TokenList } from '@uniswap/token-lists'

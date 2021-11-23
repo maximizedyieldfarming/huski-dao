@@ -1,5 +1,5 @@
 import React from 'react'
-import { CardHeader as UiKitCardHeader, Heading, Text, Flex } from '@pancakeswap/uikit'
+import { CardHeader as UiKitCardHeader, Heading, Text, Flex } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage, TokenPairImage } from 'components/TokenImage'

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
@@ -20,8 +20,20 @@ const NameCell = styled(BaseCell)`
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 1 0 200px;
     padding-left: 32px;
+  }
+  ${CellContent} {
+    flex: 1;
+  }
+`
+const StyledCellLever = styled(BaseCell)`
+  flex: 5;
+  flex-direction: row;
+  // padding-left: 12px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex: 1 0 100px;
+   // padding-left: 32px;
   }
   ${CellContent} {
     flex: 1;
@@ -34,8 +46,8 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -47,42 +59,42 @@ const LeverageHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text style={{marginRight:'auto'}} small color="textSubtle">
+          <Text style={{marginRight:'auto',marginLeft:'-10px'}} bold small color="textSubtle">
             {t('Pool')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text style={{marginRight:'auto'}} small color="textSubtle">
+          <Text style={{marginRight:'auto'}} bold small color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text style={{marginRight:'auto'}} small color="textSubtle">
+          <Text style={{marginRight:'auto'}} bold small color="textSubtle">
             {t('TVL')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text style={{marginRight:'auto'}} small color="textSubtle">
+          <Text style={{marginRight:'auto'}} bold small color="textSubtle">
             {t('Borrowing')}
           </Text>
         </CellContent>
       </StyledCell>
-      <StyledCell>
+      <StyledCellLever>
         <CellContent>
-          <Text style={{marginRight:'auto'}} small color="textSubtle">
+          <Text style={{marginLeft:'20px'}} bold small color="textSubtle">
             {t('Leverage')}
           </Text>
         </CellContent>
-      </StyledCell>
+      </StyledCellLever>
       <StyledCell>
-        <CellContent>
-          <Text style={{marginLeft:'auto'}} small color="textSubtle">
+        <CellContent >
+          <Text style={{width:'200px',textAlign:'right'}} bold small color="textSubtle">
             {t('Action')}
           </Text>
         </CellContent>

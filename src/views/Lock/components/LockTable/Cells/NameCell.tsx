@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Flex, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'

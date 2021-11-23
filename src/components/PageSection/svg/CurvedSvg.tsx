@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { css, DefaultTheme } from 'styled-components'
-import { Box } from '@pancakeswap/uikit'
+import { Box } from 'husky-uikit1.0'
 import { ClipFill } from '../types'
 
 interface CurveProps {

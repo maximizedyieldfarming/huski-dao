@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
-import { Box, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Flex, Text } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'

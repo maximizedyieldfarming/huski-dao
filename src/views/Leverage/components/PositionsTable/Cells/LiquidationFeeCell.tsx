@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -15,8 +15,8 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -46,7 +46,7 @@ const LiquidationFeeCell = ({ fee }) => {
             </span>
           </Flex>
         )}
-        {fee ? <Text>{fee}</Text> : <Skeleton width="80px" height="16px" />}
+        {fee ? <Text style={{marginTop:'15px'}} color="text" fontWeight="700" fontSize="16px">{fee}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

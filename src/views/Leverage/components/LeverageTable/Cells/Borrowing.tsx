@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints ,Flex} from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints ,Flex} from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import Select from 'components/Select/Select'
 import { BnbIcon } from 'assets'

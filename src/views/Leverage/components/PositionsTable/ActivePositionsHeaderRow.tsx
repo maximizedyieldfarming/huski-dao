@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useTooltip, InfoIcon, Flex } from '@pancakeswap/uikit'
+import { Text, useTooltip, InfoIcon, Flex } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
@@ -16,12 +16,20 @@ const StyledRow = styled.div`
 `
 
 const NameCell = styled(BaseCell)`
-  // flex: 5;
-  flex-direction: row;
-  padding-left: 12px;
-  ${({ theme }) => theme.mediaQueries.sm} {
-    // flex: 1 0 150px;
-    padding-left: 32px;
+  flex: 1 0 50px;
+  flex-direction: column;
+  // padding-left: 12px;
+  ${({ theme }) => theme.mediaQueries.md} {
+     flex: 1 0 120px;
+    // padding-left: 32px;
+  }
+  ${CellContent} {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: start;
+    ${({ theme }) => theme.mediaQueries.md} {
+      flex-direction: column;
+    }
   }
 `
 const PoolCell = styled(BaseCell)`
@@ -34,8 +42,8 @@ const PoolCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -48,8 +56,8 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -158,12 +166,16 @@ const ActivePositionsHeaderRow = () => {
   )
   return (
     <StyledRow>
-      <StyledCell>
-        <CellContent />
-      </StyledCell>
+      <NameCell>
+        <CellContent>
+          <Text fontSize='13px' bold color="textSubtle">
+            {t('Name')}
+          </Text>
+        </CellContent>
+      </NameCell>
       <PoolCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text fontSize='13px' style={{marginLeft:'-10px'}} bold color="textSubtle">
             {t('Pool')}
           </Text>
         </CellContent>
@@ -171,7 +183,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('Position Value')}
             </Text>
             {positionTooltipVisible && positionTooltip}
@@ -184,7 +196,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('Debt')}
             </Text>
             {debtTooltipVisible && debtTooltip}
@@ -197,7 +209,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('Equity')}
             </Text>
             {equityTooltipVisible && equityTooltip}
@@ -210,7 +222,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('APY')}
             </Text>
             {apyTooltipVisible && apyTooltip}
@@ -223,7 +235,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('Debt Ratio')}
             </Text>
             {debtRatioTooltipVisible && debtRatioTooltip}
@@ -235,8 +247,8 @@ const ActivePositionsHeaderRow = () => {
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Flex alignItems="center">
-            <Text small color="textSubtle">
+          <Flex alignItems="left">
+            <Text fontSize='13px' bold color="textSubtle" style={{paddingRight:'40px'}}>
               {t('Liquidation Threshold')}
             </Text>
             {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
@@ -249,7 +261,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('Safety Buffer')}
             </Text>
             {safetyBufferTooltipVisible && safetyBufferTooltip}
@@ -262,7 +274,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small color="textSubtle">
+            <Text fontSize='13px' bold color="textSubtle">
               {t('Profit/Loss')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}
@@ -274,8 +286,8 @@ const ActivePositionsHeaderRow = () => {
       </StyledCell>
       <StyledCell>
         <CellContent >
-        <Flex alignItems="center" justifyContent="flex-end">
-            <Text small color="textSubtle">
+          <Flex alignItems="center" justifyContent="flex-end">
+            <Text fontSize='13px' style={{width:'230px',textAlign:'right'}} bold color="textSubtle">
               {t('Action')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}

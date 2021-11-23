@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
-import { useMatchBreakpoints } from '@pancakeswap/uikit'
+import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHuskyPrice } from 'state/leverage/hooks'
 import NameCell from './Cells/NameCell'
 import { getAprData } from '../../helpers'
@@ -34,13 +34,16 @@ const LendRow = ({ tokenData }) => {
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
-  const { totalToken, vaultDebtVal, userData, TokenInfo , tokenPriceUsd } = tokenData
+  const { totalToken, vaultDebtVal, userData, TokenInfo, tokenPriceUsd } = tokenData
   const totalSupplyUSD = Number(totalToken) * Number(tokenPriceUsd)
   const totalBorrowedUSD = Number(vaultDebtVal) * Number(tokenPriceUsd)
+  const [isShown, setIsShown] = useState(false);
   
   return (
     <>
-      <StyledRow role="row" onClick={toggleExpanded}>
+      <StyledRow 
+        onMouseEnter={() => setIsShown(true)}
+        onMouseLeave={() => setIsShown(false)} role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
         <ApyCell getApyData={getAprData(tokenData, huskyPrice)} token={tokenData} />
         <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />

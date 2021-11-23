@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text } from '@pancakeswap/uikit'
+import { Flex, Text } from 'husky-uikit1.0'
 import Select from 'components/Select/Select'
 import RepayDebtMinimizeTrading from './RepayDebtMinimizeTrading'
 import RepayDebtConvertTo from './RepayDebtConvertTo'

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Box } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Box } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import nFormatter from 'utils/nFormatter'
@@ -9,14 +9,15 @@ import { formatBigNumber } from '../../../../../state/utils'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex:1;
+  // flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex: 1 0 120px;
+    // flex: 1 0 120px;
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: column;
     }
@@ -39,7 +40,7 @@ const TotalBorrowedCell = ({ borrowed, borrowedUSD }) => {
         )}
         {borrowed ? (
           <Box>
-            <Text style={{fontWeight:600,fontSize:'16px',color:'#131313'}}>{nFormatter(formatedBorrowed)}</Text>
+            <Text bold color="text" fontSize="16px" style={{marginBottom:'7px'}}>{nFormatter(formatedBorrowed)}</Text>
             <Text small color="textSubtle">{`($${nFormatter(formatedBorrowedUSD)})`}</Text>
           </Box>
         ) : (

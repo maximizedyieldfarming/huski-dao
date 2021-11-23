@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Box, Button, Flex, Text, Skeleton } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, Skeleton } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
 import BigNumber from 'bignumber.js'

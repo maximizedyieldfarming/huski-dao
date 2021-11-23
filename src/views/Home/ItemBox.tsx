@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { Text, Flex, Box } from '@pancakeswap/uikit'
+import { Text, Flex, Box } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 
 

@@ -202,7 +202,7 @@ export const light = {
     "text": "#4B4B4B",
     "textSecondary": "#9615E7",
     "textDisabled": "#BDC2C4",
-    "textSubtle": "#9D9D9D",
+    "textSubtle": "#6F767E",
     "disabled": "#E9EAEB",
     "gradients": {
       "bubblegum": "linear-gradient(139.73deg, #E5FDFF 0%, #F3EFFF 100%)",

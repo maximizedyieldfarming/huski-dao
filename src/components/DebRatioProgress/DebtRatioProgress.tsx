@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Flex } from '@pancakeswap/uikit'
+import { Box, Flex } from 'husky-uikit1.0'
 
 interface DotProps {
   text: string

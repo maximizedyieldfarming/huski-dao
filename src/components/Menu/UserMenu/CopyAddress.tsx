@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, CopyIcon, Flex, FlexProps, IconButton } from '@pancakeswap/uikit'
+import { Box, CopyIcon, Flex, FlexProps, IconButton } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 

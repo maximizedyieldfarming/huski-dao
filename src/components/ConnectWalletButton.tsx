@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Button , Cards } from 'husky-uikit1.0'
-import {useWalletModal} from '@pancakeswap/uikit'
+import { Button , Cards ,useWalletModal} from 'husky-uikit1.0'
+
 import useAuth from 'hooks/useAuth'
 import { useTranslation } from 'contexts/Localization'
 

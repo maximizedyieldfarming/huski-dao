@@ -13,7 +13,7 @@ import {
   ArrowForwardIcon,
   useMatchBreakpoints,
   AutoRenewIcon,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'

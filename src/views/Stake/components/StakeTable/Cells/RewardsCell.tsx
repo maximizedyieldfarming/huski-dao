@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { Text, Button, Flex, Skeleton, AutoRenewIcon } from '@pancakeswap/uikit'
+import { Text, Button, Flex, Skeleton, AutoRenewIcon } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'

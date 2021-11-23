@@ -13,7 +13,7 @@ import {
   ArrowForwardIcon,
   useMatchBreakpoints,
   AutoRenewIcon,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import { BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem } from 'husky-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'

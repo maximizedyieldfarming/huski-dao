@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton, useTooltip } from '@pancakeswap/uikit'
+import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton, useTooltip } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import { TokenPairImage, TokenImage } from 'components/TokenImage'
 import nFormatter from 'utils/nFormatter'
@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   align-itmes:start;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 1 0 200px;
     padding-left: 32px;
   }
   ${CellContent} {
@@ -34,8 +34,8 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
             variant="inverted"
             primaryToken={quoteToken}
             secondaryToken={token}
-            width={40}
-            height={40}
+            width={24}
+            height={24}
             mr="8px"
           />
           {/*   {(isMobile || isTablet) && (

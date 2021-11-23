@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from '@pancakeswap/uikit'
+import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { usePercentageToCloseContext } from '../context'
 

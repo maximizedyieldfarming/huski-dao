@@ -8,7 +8,7 @@ import {
   UserMenuDivider,
   UserMenuItem,
   Button,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import useAuth from 'hooks/useAuth'
 import { useProfile } from 'state/profile/hooks'
 import ConnectWalletButton from 'components/ConnectWalletButton'

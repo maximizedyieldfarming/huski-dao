@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled, { keyframes, css } from 'styled-components'
-import { useMatchBreakpoints, Flex, Text, Box } from '@pancakeswap/uikit'
+import { useMatchBreakpoints, Flex, Text, Box } from 'husky-uikit1.0'
 import { useHuskyPrice } from 'state/stake/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { ChevronDownIcon, ChevronUpIcon } from 'husky-uikit'

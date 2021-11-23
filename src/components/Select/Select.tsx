@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ArrowDropDownIcon, Text } from '@pancakeswap/uikit'
+import { ArrowDropDownIcon, Text } from 'husky-uikit1.0'
 
 const DropDownHeader = styled.div`
   width: 100%;
@@ -30,7 +30,7 @@ const DropDownListContainer = styled.div`
   width: 100%;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 168px;
+    min-width: 110px;
   }
 `
 
@@ -41,11 +41,12 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   background: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
   height: 40px;
-  min-width: 136px;
+  min-width: 110px;
+  width:110px;
   user-select: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 168px;
+    min-width: 110px;
   }
 
   ${(props) =>

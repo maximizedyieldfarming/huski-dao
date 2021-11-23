@@ -9,7 +9,7 @@ import {
   TimerIcon,
   BlockIcon,
   VoteIcon,
-} from '@pancakeswap/uikit'
+} from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 
 const CoreTag: React.FC<TagProps> = (props) => {

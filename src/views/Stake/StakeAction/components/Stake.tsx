@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, AutoRenewIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text, AutoRenewIcon } from 'husky-uikit1.0'
 import NumberInput from 'components/NumberInput'
 import React, { useState } from 'react'
 import styled from 'styled-components'

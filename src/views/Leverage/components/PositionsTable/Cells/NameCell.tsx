@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenPairImage } from 'components/TokenImage'
@@ -14,8 +14,8 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -29,7 +29,7 @@ const NameCell = ({ name, positionId }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text bold={!isMobile} small={isMobile}>
+      <Text color="text" fontWeight="700" fontSize="16px" bold={!isMobile} small={isMobile}>
           {name}
         </Text>
         <Text>#{positionId}</Text>

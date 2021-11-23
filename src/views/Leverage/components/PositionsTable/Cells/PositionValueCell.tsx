@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Skeleton, Text, useMatchBreakpoints, Flex, InfoIcon, useTooltip } from '@pancakeswap/uikit'
+import { Skeleton, Text, useMatchBreakpoints, Flex, InfoIcon, useTooltip } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -11,8 +11,8 @@ const StyledCell = styled(BaseCell)`
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -45,7 +45,7 @@ const PositionValueCell = ({ position, name }) => {
           </Flex>
         )}
         {position && !position.isNaN() ? (
-          <Text>
+          <Text style={{marginTop:'15px'}} color="text" fontWeight="700" fontSize="16px">
             {position.toNumber().toFixed(3)} {name}
           </Text>
         ) : (

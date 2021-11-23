@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from '@pancakeswap/uikit'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  // flex: 1 0 50px;
+  flex:1;
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex: 1 0 120px;
+    // flex: 1 0 120px;
   }
   ${CellContent} {
     flex-direction: row;
     justify-content: flex-start;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: column;
     }
