@@ -12,22 +12,6 @@ export const getCakeAddress = () => {
   return getAddress(tokens.cake.address)
 }
 export const getFairLaunchAddress = () => {
-
-  // let address: Address;
-  // const env = process.env.NODE_ENV;
-  // switch (env) {
-  //   case 'development':
-  //     address = addresses.fairLaunch;
-  //     break;
-  //   case 'test':
-  //     address = addresses.fairLaunchTest;
-  //     break;
-  //   case 'production':
-  //   default:
-  //     address = addresses.fairLaunchTest;
-  //     break;
-  // }
-
   return getAddress(addresses.fairLaunch)
 }
 export const getHuskiAddress = () => {

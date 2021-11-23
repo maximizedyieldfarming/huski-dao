@@ -10,55 +10,22 @@ export function getFairLaunch() {
     let address: any = 0;
     const env = process.env.REACT_APP_ENV;
     switch (env) {
-        case 'development':
+        case 'dev':
             address = testnet.FairLaunch.address;
             break;
         case 'test':
             address = testnet.FairLaunch.address;
             break;
-        case 'production':
+        case 'prod':
         default:
-            address = testnet.FairLaunch.address;
+            address = mainnet.FairLaunch.address;
             break;
     }
     return address;
 }
 
-// export function getHusky() {
-//     let address: any = 0;
-//     const env = process.env.NODE_ENV;
-//     switch (env) {
-//         case 'development':
-//             address = 0;
-//             break;
-//         case 'test':
-//             address = testnet.Tokens.ALPACA;
-//             break;
-//         case 'production':
-//         default:
-//             address = mainnet.Tokens.ALPACA;
-//             break;
-//     }
-//     return address;
-// }
+// mainnet
 
-// export function getPancakeMasterChef() {
-//     let address: any = 0;
-//     const env = process.env.NODE_ENV;
-//     switch (env) {
-//         case 'development':
-//             address = testnet.Exchanges.Pancakeswap.MasterChef;
-//             break;
-//         case 'test':
-//             address = testnet.Exchanges.Pancakeswap.MasterChef;
-//             break;
-//         case 'production':
-//         default:
-//             address = mainnet.Exchanges.Pancakeswap.MasterChef;
-//             break;
-//     }
-//     return address;
-// }
 
 export default function getDomain() {
     let domain = DefaultRPC;
@@ -66,15 +33,15 @@ export default function getDomain() {
     console.info('process.env00000', process.env)
     console.info('env00000', env)
     switch (env) {
-        case 'development':
+        case 'dev':
             domain = TestRPC // DevRPC;
             break;
         case 'test':
             domain = TestRPC;
             break;
-        case 'production':
+        case 'prod':
         default:
-            domain = TestRPC // DefaultRPC;
+            domain = DefaultRPC // DefaultRPC;
             break;
     }
     return domain;

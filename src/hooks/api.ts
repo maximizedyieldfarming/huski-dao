@@ -29,13 +29,13 @@ export const useGetPositions = (account) => {
         let response;
         const env = process.env.REACT_APP_ENV;
         switch (env) {
-          case 'development':
+          case 'dev':
             response = `https://api.huski.finance/api/v1/positions/get?owner=${account}`;
             break;
           case 'test':
             response = `https://api.huski.finance/api/v1/positions/get?owner=${account}`;
             break;
-          case 'production':
+          case 'prod':
           default:
             response = `https://api.huski.finance/api/v1/positions/get?owner=${account}`;
             break;
