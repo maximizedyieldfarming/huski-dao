@@ -9,7 +9,7 @@ export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, t
   const { quoteToken } = TokenInfo
   let vaultDebtValue
   let poolHuskyPerBlock
-console.log({ huskiPriceBusd, vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd })
+// console.log({ huskiPriceBusd, vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd })
   if (tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     vaultDebtValue = quoteTokenVaultDebtVal
     poolHuskyPerBlock = quoteTokenPoolPerBlock
@@ -71,8 +71,8 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
-
-  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum))
+// console.log({ leverage,  tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum':parseFloat(quoteTokenAmountTotalNum)  })
+  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
   // console.info('======farmdata======', farmdata);
   return farmdata
 }
