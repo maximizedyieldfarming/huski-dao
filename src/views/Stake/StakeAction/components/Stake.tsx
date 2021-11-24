@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
-import { getAddress } from 'utils/addressHelpers'
+import { getAddress, getFairLaunchAddress } from 'utils/addressHelpers'
 import { ethers } from 'ethers'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useClaimFairLaunch, useERC20 } from 'hooks/useContract'
@@ -54,9 +54,12 @@ const Stake = ({ account, userTokenBalance, name, allowance, tokenData }) => {
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const tokenAddress = getAddress(tokenData.token.address)
+  // const tokenAddress = getAddress(tokenData.token.address)
   const { callWithGasPrice } = useCallWithGasPrice()
   const claimContract = useClaimFairLaunch()
+  const vaultIbAddress = getAddress(tokenData.vaultAddress)
+  const approveContract = useERC20(vaultIbAddress)
+  const fairLaunchAddress = getFairLaunchAddress()
   const [isPending, setIsPending] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
@@ -64,7 +67,7 @@ const Stake = ({ account, userTokenBalance, name, allowance, tokenData }) => {
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
-      const tx = await claimContract.approve(claimContract, ethers.constants.MaxUint256)
+      const tx = await approveContract.approve(fairLaunchAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
