@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import farmsConfig from 'config/constants/farms'
+import farmsConfig from 'config/constants/leverage'
 import isArchivedPid from 'utils/farmHelpers'
-import { FarmsState } from '../types'
+import { LeverageFarmsState } from '../types'
 
 const noAccountFarmConfig = farmsConfig.map((farm) => ({
   ...farm,
@@ -13,11 +13,11 @@ const noAccountFarmConfig = farmsConfig.map((farm) => ({
   },
 }))
 
-const initialState: FarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false }
+const initialState: LeverageFarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false }
 
 export const nonArchivedFarms = farmsConfig.filter(({ pid }) => !isArchivedPid(pid))
 
-export const farmsSlice = createSlice({
+export const lendSlice = createSlice({
   name: 'Farms',
   initialState,
   reducers: {
@@ -30,6 +30,6 @@ export const farmsSlice = createSlice({
 })
 
 // Actions
-export const { setLoadArchivedFarmsData } = farmsSlice.actions
+export const { setLoadArchivedFarmsData } = lendSlice.actions
 
-export default farmsSlice.reducer
+export default lendSlice.reducer
