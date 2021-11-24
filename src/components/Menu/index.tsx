@@ -3,7 +3,7 @@ import { Menu as UikitMenu } from 'husky-uikit'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
-import { usePriceCakeBusd } from 'state/farms/hooks'
+import { useCakePrice } from 'state/leverage/hooks'
 import { useProfile } from 'state/profile/hooks'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
@@ -16,7 +16,7 @@ const Logo = () => <img src={huskiLogo} height="100%" width="50px" alt="HUSKI Lo
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
-  const cakePriceUsd = usePriceCakeBusd()
+  const cakePriceUsd = useCakePrice()
   const { profile } = useProfile()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
@@ -35,13 +35,13 @@ const Menu = (props) => {
       links={config(t)}
       logo={<Logo />}
       huskiPriceUsd={null}
-     /*  profile={{
-        username: profile?.username,
-        image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
-        profileLink: '/profile',
-        noProfileLink: '/profile',
-        showPip: !profile?.username,
-      }} */
+      /*  profile={{
+         username: profile?.username,
+         image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
+         profileLink: '/profile',
+         noProfileLink: '/profile',
+         showPip: !profile?.username,
+       }} */
       {...props}
     />
   )
