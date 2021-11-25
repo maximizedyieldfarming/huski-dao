@@ -284,7 +284,7 @@ const Farm = () => {
         contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+        tokenName.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -293,7 +293,7 @@ const Farm = () => {
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'),t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
     } finally {
       setIsPending(false)
       setTokenInput(0)
@@ -309,6 +309,7 @@ const Farm = () => {
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
     let workerAddress
+    let tokenAmount
     let farmingTokenAmount
     let strategiesAddress
     let dataStrategy
@@ -316,13 +317,14 @@ const Farm = () => {
     let contract
 
     // base token is base token
-    if (radio === tokenData?.TokenInfo?.token?.symbol) {
+    if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
       // single base token
       if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
         console.info('base + single + token input ')
+        farmingTokenAmount = Number(quoteTokenInput).toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+        dataStrategy = abiCoder.encode(['uint256'], ['1'])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
         console.info('base + single + quote token input ')
         farmingTokenAmount = Number(quoteTokenInput).toString()
@@ -337,15 +339,16 @@ const Farm = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
-      amount = getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
+      tokenAmount = Number(tokenInput).toString()
+      amount = ethers.utils.parseEther(tokenAmount) // getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
       workerAddress = tokenData.TokenInfo.address
     } else {
       // farm token is base token
       if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
         console.info('farm + single + token input ')
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+        dataStrategy = abiCoder.encode(['uint256'], ['1'])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
         console.info('farm + single + quote token input ')
         farmingTokenAmount = Number(tokenInput).toString()
@@ -360,7 +363,8 @@ const Farm = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
-      amount = getDecimalAmount(new BigNumber(Number(quoteTokenInput)), 18).toString()
+      tokenAmount = Number(quoteTokenInput).toString()
+      amount = ethers.utils.parseEther(tokenAmount)
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
@@ -420,7 +424,7 @@ const Farm = () => {
   )
 
   let allowance = '0'
-  if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+  if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
     allowance = tokenData.userData?.quoteTokenAllowance
   } else {
     allowance = tokenData.userData?.tokenAllowance
@@ -435,7 +439,7 @@ const Farm = () => {
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
     let contract
-    if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+    if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
       contract = approveContract // quoteTokenApproveContract
     } else {
       contract = quoteTokenApproveContract // approveContract
