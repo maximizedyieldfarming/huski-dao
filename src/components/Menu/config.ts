@@ -14,12 +14,12 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     initialOpenState: true,
     items: [
       {
-        label: 'Single Assets',
-        href: '/farms/singleAssets'
+        label: t('Single Assets'),
+        href: '/singleAssets'
       },
       {
-        label: 'Advanced Farm',
-        href: '/leverage'
+        label: t('Advanced Farm'),
+        href: '/farms'
       },]
 
   },

@@ -110,7 +110,7 @@ const ActivePositionsRow = ({ data }) => {
         />
         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
-        {pathname.includes('leverage') ? (
+        {pathname.includes('farms') ? (
           <DebtCell
             debt={debtValueNumber}
             borrowedAssets={null}
@@ -128,7 +128,7 @@ const ActivePositionsRow = ({ data }) => {
           tradingFeesRewards={null}
         />
 
-        {pathname.includes('leverage') ? (
+        {pathname.includes('farms') ? (
           <>
             <DebtRatioCell debtRatio={debtRatio} />
             <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />{' '}

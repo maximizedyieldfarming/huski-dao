@@ -38,10 +38,10 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
         <Button
           scale="sm"
           as={Link}
-          to={{
-            pathname: `/leverage/farm/${token?.lpSymbol}`,
+          to={(location) => ({
+            pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
             state: { tokenData: token, selectedLeverage, selectedBorrowing },
-          }}
+          })}
           disabled={!token?.totalSupply || !account}
           onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
         >

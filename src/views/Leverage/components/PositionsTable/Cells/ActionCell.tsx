@@ -40,17 +40,10 @@ const ActionCell = ({ posData, disabled }) => {
         <Button
           scale="sm"
           as={Link}
-          to={(location) =>
-            location.pathname.includes('leverage')
-              ? {
-                  pathname: `${location.pathname}/adjustPosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
-                  state: { data, liquidationThresholdData },
-                }
-              : {
-                  pathname: `${location.pathname}/adjustPosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
-                  state: { data, liquidationThresholdData },
-                }
-          }
+          to={(location) => ({
+            pathname: `${location.pathname}/adjustPosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
+            state: { data, liquidationThresholdData },
+          })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
         >
@@ -59,17 +52,10 @@ const ActionCell = ({ posData, disabled }) => {
         <Button
           scale="sm"
           as={Link}
-          to={(location) =>
-            location.pathname.includes('leverage')
-              ? {
-                  pathname: `${location.pathname}/closePosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
-                  state: { data },
-                }
-              : {
-                  pathname: `${location.pathname}/closePosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
-                  state: { data },
-                }
-          }
+          to={(location) => ({
+            pathname: `${location.pathname}/closePosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
+            state: { data },
+          })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
           disabled={disabled}
         >

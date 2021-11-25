@@ -74,19 +74,19 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/lock/:token" component={LockAction} />
 
-            <Route exact path="/leverage">
+            <Route exact path="/farms">
               <Leverage />
             </Route>
-            <Route exact path="/farms/singleAssets">
+            <Route exact path="/singleAssets">
               <SingleAssetsFarms />
             </Route>
-            <Route exact path="/leverage/closeposition/:token" component={ClosePosition} />
-            <Route exact path="/leverage/adjustPosition/:token" component={AdjustPosition} />
-            <Route exact path="/leverage/farm/:token" component={Farm} />
-            <Route exact path="/leverage/claim" component={Claim} />
-            <Route exact path="/farms/singleAssets/farm/:token" component={FarmSA} />
-            <Route exact path="/farms/singleAssets/adjustPosition/:token" component={AdjustPositionSA} />
-            <Route exact path="/farms/singleAssets/closeposition/:token" component={ClosePositionSA} />
+            <Route exact path="/farms/closeposition/:token" component={ClosePosition} />
+            <Route exact path="/farms/adjustPosition/:token" component={AdjustPosition} />
+            <Route exact path="/farms/farm/:token" component={Farm} />
+            <Route exact path="/farms/claim" component={Claim} />
+            <Route exact path="/singleAssets/farm/:token" component={FarmSA} />
+            <Route exact path="/singleAssets/adjustPosition/:token" component={AdjustPositionSA} />
+            <Route exact path="/singleAssets/closeposition/:token" component={ClosePositionSA} />
             <Route component={NotFound} />
           </Switch>
         </SuspenseWithChunkError>

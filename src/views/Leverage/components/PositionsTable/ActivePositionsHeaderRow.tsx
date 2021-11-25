@@ -193,7 +193,7 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      {pathname.includes('leverage') ? (
+      {pathname.includes('farms') ? (
         <StyledCell>
           <CellContent>
             <Flex alignItems="center">
@@ -235,7 +235,7 @@ const ActivePositionsHeaderRow = () => {
         </CellContent>
       </StyledCell>
 
-      {pathname.includes('leverage') ? (
+      {pathname.includes('farms') ? (
         <>
           <StyledCell>
             <CellContent>
