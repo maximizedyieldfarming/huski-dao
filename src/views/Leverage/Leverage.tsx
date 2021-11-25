@@ -3,21 +3,17 @@ import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { useLeverageFarms, usePollLeverageFarmsWithUserData, useCakePrice } from 'state/leverage/hooks'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
-import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { useClaimFairLaunch } from 'hooks/useContract'
-import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useGetPositions } from 'hooks/api'
 import { usePositions } from './hooks/usePositions'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
-import { getYieldFarming, getTvl } from './helpers'
 
 const ActionButton = styled(Button)`
   padding: 0.75rem 2rem;
@@ -74,7 +70,7 @@ const Leverage: React.FC = () => {
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
-  const data = [] // useGetPositions(account)
+  const data = useGetPositions(account)
   const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []
@@ -128,7 +124,7 @@ const Leverage: React.FC = () => {
           </Text>
           <Button
             as={Link}
-            to={{ pathname: '/leverage/claim', state: { farmsData } }}
+            to={(position) => ({ pathname: `${position.pathname}/claim`, state: { farmsData } })}
             disabled={!account}
             scale="sm"
           >
