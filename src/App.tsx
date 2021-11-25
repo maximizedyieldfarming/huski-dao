@@ -87,7 +87,10 @@ const App: React.FC = () => {
             <Route exact path="/singleAssets/farm/:token" component={FarmSA} />
             <Route exact path="/singleAssets/adjustPosition/:token" component={AdjustPositionSA} />
             <Route exact path="/singleAssets/closeposition/:token" component={ClosePositionSA} />
-            <Route component={NotFound} />
+            {/*             <Route component={NotFound} /> */}
+            <Route path="*">
+              <Redirect to="/lend" />
+            </Route>
           </Switch>
         </SuspenseWithChunkError>
       </Menu>
