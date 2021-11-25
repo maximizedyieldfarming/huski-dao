@@ -165,7 +165,7 @@ const Farm = () => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = Number(input) > Number(userTokenBalance) ? input : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -181,7 +181,7 @@ const Farm = () => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? input : input
         setQuoteTokenInput(finalValue)
       } else {
         event.preventDefault()
