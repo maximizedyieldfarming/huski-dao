@@ -1492,6 +1492,23 @@ const tokens = {
     projectLink: 'https://www.alpacafinance.org/',
     coingeckoId: 'alpaca-finance',
   },
+  huski: {
+    symbol: 'HUSKI',
+    poolId: 11,
+    debtPoolId: 10,
+    address: {
+      56: '0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F',
+      97: '',
+    },
+    config: {
+      56: '0x8F8Ed54901b90c89C5817B7F67a425c0e6091284',
+      97: '',
+    },
+    decimals: 18,
+    decimalsDigits: 3,
+    projectLink: 'https://www.alpacafinance.org/',
+    coingeckoId: 'alpaca-finance',
+  },
   salpaca: {
     symbol: 'sALPACA',
     poolId: 5,
