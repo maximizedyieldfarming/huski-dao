@@ -15,7 +15,14 @@ export const getFairLaunchAddress = () => {
   return getAddress(addresses.fairLaunch)
 }
 export const getHuskiAddress = () => {
-  return getAddress(tokens.alpaca.address)
+
+  let address
+  if (process.env.REACT_APP_CHAIN_ID === '97') {
+    address = getAddress(tokens.huski.address)
+  } else {
+    address = getAddress(tokens.alpaca.address)
+  }
+  return address
 }
 export const getsHuskiAddress = () => {
   return getAddress(tokens.salpaca.address)
