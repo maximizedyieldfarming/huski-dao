@@ -294,7 +294,7 @@ export const exchangefarmingtoken = (exchangeValue, leverage, tradefee, basetoke
     const farmingtokenLpend = farmingtokenLp * farmingtokenEnd / farmingtokenBegin
 
     const exc = assetsborrowed + basetokenBalance + basetokenNum - (farmingtokenBalance - exchangeValue) / price
-    const basetokeninPosition =  basetokenNum + basetokenBalance + assetsborrowed + basetokenLpend;
+    const basetokeninPosition = basetokenNum + basetokenBalance + assetsborrowed + basetokenLpend;
     const farmingtokeninPosition = farmingtokenBalance - exchangeValue + farmingtokenLpend;
 
     const totalFarmingTokenLpEnd = farmingtokenBalance - exchangeValue + farmingtokenLpend
