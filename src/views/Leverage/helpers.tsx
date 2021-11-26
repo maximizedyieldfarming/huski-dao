@@ -418,19 +418,19 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 }
 
 
-export const getRunLogic = () => { // sheet1
+export const getRunLogic = (riskKillThreshold,lpApr, leverage) => { // sheet1
 
-  const RiskKillThreshold = 0.85 // 清算风险度
+  const RiskKillThreshold = Number(riskKillThreshold) // 0.85 // 清算风险度
   const LiquidationRewards = 0.05 // 清算罚金
-  const ReinvestMinute = 30 // 复投时长（分钟）0为按日复投
+  const ReinvestMinute = 60 // 复投时长（分钟）0为按日复投
   const Token0Name = 'BNB' // token0名称
   const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = 0
-  const LPAPRList = 0.5 // LP历史日均年化
+  const LPAPRList = lpApr // 0.5 // LP历史日均年化
   const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
-  const LeverageOpen = 2 // 初始杠杆
+  const LeverageOpen = leverage // 初始杠杆
   const DayNum = 90 // priceList.length // 时间长度（天） 换成价格list的长度
-
+console.log({ RiskKillThreshold, LPAPRList,  LeverageOpen })
   // const priceRiseFall = []
   const profitLossRatioSheet1Token0 = []
   const profitLossRatioSheet1Token1 = []
@@ -463,24 +463,24 @@ export const getRunLogic = () => { // sheet1
 }
 
 
-export const getRunLogic1 = (priceList) => {
-  const RiskKillThreshold = 0.85 // 清算风险度
+export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest,lpApr, leverage) => {
+  const RiskKillThreshold = Number(riskKillThreshold) // 清算风险度
   const LiquidationRewards = 0.05 // 清算罚金
   const ReinvestMinute = 60 // 复投时长（分钟）0为按日复投
   const Token0Name = 'BNB' // token0名称
   const Token1Name = 'USD' // token1名称
-  const BorrowingInterestList = 0.05
-  const LPAPRList = 0.5// LP历史日均年化
+  const BorrowingInterestList = borrowingInterest // 0.05
+  const LPAPRList = lpApr // LP历史日均年化
   const PriceList = priceList // 历史日均价格 token0_usd / token1_usd
   // 注意三个List的长度一致
   const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
-  const LeverageOpen = 3 // 初始杠杆
+  const LeverageOpen = leverage // 初始杠杆
   const DayNum = PriceList.length // 时间长度（天）
 
-  // console.log({
-  //   RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
-  //   LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
-  // })
+  console.log({
+    RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
+    LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
+  })
 
   const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = RunLogic1(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
     LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)

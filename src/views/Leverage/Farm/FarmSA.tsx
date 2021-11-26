@@ -9,7 +9,6 @@ import {
   Text,
   Skeleton,
   useTooltip,
-  ArrowForwardIcon,
   useMatchBreakpoints,
   AutoRenewIcon,
   BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
@@ -129,23 +128,6 @@ const BalanceInputWrapper = styled(Flex)`
   }
 `
 
-const ColorBar = styled.div<{ market: string }>`
-  width: 30px;
-  height: 6px;
-  border-radius: 3px;
-  background: ${({ theme, market }) => {
-    if (market.toLowerCase() === 'bear') {
-      return '#FE6057'
-    }
-    if (market.toLowerCase() === 'bull') {
-      return '#27C73F'
-    }
-    if (market.toLowerCase() === 'neutral') {
-      return '#FCBD2C'
-    }
-    return "none"
-  }};
-`
 
 const FarmSA = () => {
   const { t } = useTranslation()
@@ -158,20 +140,26 @@ const FarmSA = () => {
   } = useLocation<LocationParams>()
 
   const singleFarm = data
-  const priceList = usePriceList('binance-eth')
-  // console.info('priceList', priceList);
+  console.info('singleFarm', singleFarm)
+  const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+  const priceList = usePriceList(coingeckoId)
+
   const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
   const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
   const [selectedStrategy, setSelectedStrategy] = useState<string>()
 
   let tokenName
   let quoteTokenName
+  let riskKillThreshold
+
   if (marketStrategy === 'Bull') { // bull === 2x long
     tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    riskKillThreshold = singleFarm?.quoteTokenLiquidationThreshold
   } else { // 2x short || 3x short
     tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    riskKillThreshold = singleFarm?.liquidationThreshold
   }
 
   const allowance = singleFarm?.userData?.quoteTokenAllowance
@@ -260,9 +248,10 @@ const FarmSA = () => {
 
   const huskyPrice = useHuskyPrice()
   const cakePrice = useCakePrice()
-  const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, quoteTokenName)
+  const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
   const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(singleFarm)
+  const { borrowingInterest } = getBorrowingInterest(singleFarm, tokenName)
+  const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
 
   const getApr = (lvg: number) => {
     const totalapr =
@@ -419,9 +408,15 @@ const FarmSA = () => {
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
-  const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic()
-  const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList)
+  let borrowingInterestParam
+  if (marketStrategy === 'Bull') { // bull === 2x long
+    borrowingInterestParam = borrowingInterestQuoteToken
+  } else { // 2x short || 3x short
+    borrowingInterestParam = borrowingInterest
+  }
 
+  const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage)
+  const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterestParam, getApr(1), singleLeverage)
 
   // for test data
   const xAxisdata = dateList
