@@ -94,13 +94,14 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
 
 export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag?) => {
     const price = farmingtokenBegin / basetokenBegin
-    let maxnum = farmingtokenBegin
+    let maxnum = farmingtokenBalance
 
     let minnum = 0;
     let data = exchangefarmingtoken(maxnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
 
     let maxexc = data[0]
     if (maxexc === 0) {
+        console.info('farm token maxexc === 0')
         return [maxnum, data]
     }
 
@@ -108,10 +109,12 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
 
     let minexc = data[0]
     if (minexc === 0) {
+        console.info('farm token minexc === 0')
         return [minnum, data]
     }
 
     if (maxexc * minexc > 0) {
+        console.info('farm token kkkkk')
         return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 0]
     }
 
@@ -122,9 +125,11 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
         const midexc = data[0]
 
         if (midexc === 0) {
+            console.info('farm token 1111')
             return [midnum, data]
         }
         if (maxnum - minnum < 1 / 10 ** 8) {
+            console.info('farm token 222222')
             return [midnum, data]
         }
 
@@ -136,6 +141,7 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
             maxexc = midexc
         }
         else {
+            console.info('farm token 333333')
             return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 0]
         }
     }
@@ -288,7 +294,7 @@ export const exchangefarmingtoken = (exchangeValue, leverage, tradefee, basetoke
     const farmingtokenLpend = farmingtokenLp * farmingtokenEnd / farmingtokenBegin
 
     const exc = assetsborrowed + basetokenBalance + basetokenNum - (farmingtokenBalance - exchangeValue) / price
-    const basetokeninPosition = basetokenNum - basetokenBalance + assetsborrowed + basetokenLpend;
+    const basetokeninPosition =  basetokenNum + basetokenBalance + assetsborrowed + basetokenLpend;
     const farmingtokeninPosition = farmingtokenBalance - exchangeValue + farmingtokenLpend;
 
     const totalFarmingTokenLpEnd = farmingtokenBalance - exchangeValue + farmingtokenLpend
