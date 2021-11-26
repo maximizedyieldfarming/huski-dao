@@ -251,7 +251,7 @@ const AdjustPosition = () => {
   const priceImpactClose = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
   const tradingFeesClose = Number(farmTokenAmount) * 0.0025
 
-  let tradingFees = adjustData?.[5] * 100
+  let tradingFees = adjustData?.[5]
   if (tradingFees < 0 || tradingFees > 1 || tradingFees.toString() === 'NaN') {
     tradingFees = 0
   }
@@ -670,7 +670,6 @@ const AdjustPosition = () => {
       </Section>
     )
   } else if (!isAddCollateral && Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2))) {
-    console.info('222222', isConvertTo)
     lastSection = (
       <Section>
         <Flex justifyContent="space-between">
