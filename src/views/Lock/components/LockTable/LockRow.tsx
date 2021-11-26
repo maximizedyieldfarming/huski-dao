@@ -4,7 +4,7 @@ import { Flex } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { useHuskyPrice } from 'state/stake/hooks'
+import { useHuskiPrice } from 'hooks/api'
 import { getStakeApy } from '../../../Stake/helpers'
 import TotalHuskiLockedCell from './Cells/TotalHuskiLockedCell'
 import ValueLockedCell from './Cells/ValueLockedCell'
@@ -39,7 +39,7 @@ const StyledRow = styled.div`
 const LockRow = ({ lockData }) => {
   const sHuskiLocked = null
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
  const aa =  getStakeApy(lockData, huskyPrice)
  console.info('aaaaa',aa)
   const reward = lockData?.userData?.earnings !== "0" ? new BigNumber(parseFloat(lockData?.userData?.earnings)).div(DEFAULT_TOKEN_DECIMAL) : BIG_ZERO

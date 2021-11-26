@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled, { keyframes, css } from 'styled-components'
 import { useMatchBreakpoints, Flex, Text, Box } from '@pancakeswap/uikit'
-import { useHuskyPrice } from 'state/stake/hooks'
+import { useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { ChevronDownIcon, ChevronUpIcon } from 'husky-uikit'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
@@ -85,7 +85,7 @@ const StakeRow = ({ tokenData }) => {
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const { t } = useTranslation()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
