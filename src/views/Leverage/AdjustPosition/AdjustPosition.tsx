@@ -225,6 +225,9 @@ const AdjustPosition = () => {
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
 
+  const leverageAfter = new BigNumber(adjustData[10]).toFixed(2, 1)
+  // console.log("lvg after", adjustData[10], "target", targetPositionLeverage, "current", currentPositionLeverage)
+
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
@@ -823,7 +826,7 @@ const AdjustPosition = () => {
             </Text>
             <Section>
               <Text bold>{t('Current Position Leverage')}: {currentPositionLeverage.toPrecision(3)}x</Text>
-              <Text>{t('Target Position Leverage')}: {Number(targetPositionLeverage).toPrecision(3)}x</Text>
+              <Text>{t('Target Position Leverage')}: {tokenInput || quoteTokenInput ? leverageAfter : Number(targetPositionLeverage).toPrecision(3)}x</Text>
               <Flex>
                 <input
                   type="range"
