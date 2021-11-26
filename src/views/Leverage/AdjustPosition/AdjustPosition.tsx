@@ -526,7 +526,7 @@ const AdjustPosition = () => {
   const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceimpact, tradingfee, remainLeverage } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
-    Number(targetPositionLeverage),
+    Number(tokenInput || quoteTokenInput ? leverageAfter : targetPositionLeverage),
     percentageToClose / 100,
     symbolName
   )
@@ -940,7 +940,7 @@ const AdjustPosition = () => {
                       {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
                     </Text>
                     <ChevronRightIcon />
-                    <Text>{(updatedDebtRatio * 100).toFixed(2)}% ({Number(targetPositionLeverage).toFixed(2)}X)</Text>
+                    <Text>{(updatedDebtRatio * 100).toFixed(2)}% ({tokenInput || quoteTokenInput ? leverageAfter : Number(targetPositionLeverage).toFixed(2)}X)</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
