@@ -3,7 +3,6 @@ import React from 'react'
 import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
-import { useLendTotalSupply } from 'state/lend/hooks'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
 import LendTable from './components/LendTable/LendTable'
@@ -29,7 +28,7 @@ const Section = styled(Flex)`
 
 const Lend: React.FC = () => {
   const { t } = useTranslation()
-  const lendTotalSupply = useLendTotalSupply()
+  const lendTotalSupply = 10
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
