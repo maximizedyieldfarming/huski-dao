@@ -272,8 +272,8 @@ const AdjustPosition = () => {
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
-console.info('data?.farmData',data?.farmData)
-console.info(' cakePrice',cakePrice)
+// console.info('data?.farmData',data?.farmData)
+// console.info(' cakePrice',cakePrice)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)
