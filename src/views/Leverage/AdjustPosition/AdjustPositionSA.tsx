@@ -14,8 +14,7 @@ import {
   AutoRenewIcon,
 } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import { useHuskyPrice } from 'state/leverage/hooks'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
@@ -214,7 +213,7 @@ const AdjustPositionSA = () => {
     Number(currentPositionLeverage.toPrecision(3)),
   )
   // for apr
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100

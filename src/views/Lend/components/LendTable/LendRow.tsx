@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useHuskyPrice } from 'state/leverage/hooks'
+import { useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
@@ -31,7 +31,7 @@ const LendRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const { lendApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice)
 
   const toggleExpanded = () => {

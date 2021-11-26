@@ -5,8 +5,7 @@ import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { useHuskyPrice } from 'state/leverage/hooks'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getDrop } from '../../helpers'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
@@ -80,7 +79,7 @@ const ActivePositionsRow = ({ data }) => {
     .times(2)
     .div(new BigNumber(baseAmount).times(2).minus(new BigNumber(debtValueNumber)))
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)

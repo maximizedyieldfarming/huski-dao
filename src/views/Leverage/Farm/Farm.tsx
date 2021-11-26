@@ -17,8 +17,7 @@ import {
 import { BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem } from 'husky-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import { useHuskyPrice } from 'state/leverage/hooks'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
@@ -147,7 +146,7 @@ const Farm = () => {
     tokenData?.TokenInfo?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
   )
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, radio)

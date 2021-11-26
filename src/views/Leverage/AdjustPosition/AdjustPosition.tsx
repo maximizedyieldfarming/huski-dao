@@ -4,8 +4,7 @@ import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import { useHuskyPrice } from 'state/leverage/hooks'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
@@ -271,7 +270,7 @@ const AdjustPosition = () => {
 
 
   // for apr
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100

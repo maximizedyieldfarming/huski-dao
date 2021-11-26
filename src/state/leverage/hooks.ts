@@ -85,26 +85,26 @@ export const useBusdPriceFromPid = (pid: number): BigNumber => {
   return farm && new BigNumber(farm.tokenPriceUsd)
 }
 
-export const useHuskyPrice = (): BigNumber => {
-  const huskyFarm = useFarmFromPid(362)
-  const huskyPriceAsString = huskyFarm.tokenPriceUsd
-  const huskyPrice = useMemo(() => {
-    return new BigNumber(huskyPriceAsString)
-  }, [huskyPriceAsString])
+// export const useHuskyPrice = (): BigNumber => {
+//   const huskyFarm = useFarmFromPid(362)
+//   const huskyPriceAsString = huskyFarm.tokenPriceUsd
+//   const huskyPrice = useMemo(() => {
+//     return new BigNumber(huskyPriceAsString)
+//   }, [huskyPriceAsString])
 
-  return huskyPrice
-}
+//   return huskyPrice
+// }
 
-export const useCakePrice = (): BigNumber => {
-  const cakeFarm = useFarmFromPid(251)
-  const cakePriceAsString = cakeFarm.quoteTokenPriceUsd
+// export const useCakePrice = (): BigNumber => {
+//   const cakeFarm = useFarmFromPid(251)
+//   const cakePriceAsString = cakeFarm.quoteTokenPriceUsd
 
-  const cakePrice = useMemo(() => {
-    return new BigNumber(cakePriceAsString)
-  }, [cakePriceAsString])
+//   const cakePrice = useMemo(() => {
+//     return new BigNumber(cakePriceAsString)
+//   }, [cakePriceAsString])
 
-  return cakePrice
-}
+//   return cakePrice
+// }
 
 export const useHuskyPerBlock = (): number => {
   const huskyFarm = useFarmFromPid(362)

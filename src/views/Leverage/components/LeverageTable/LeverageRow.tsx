@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useHuskyPrice } from 'state/leverage/hooks'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
@@ -31,7 +30,7 @@ const LeverageRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const [childLeverage, setChildLeverage] = useState(leverage)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)

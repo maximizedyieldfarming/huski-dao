@@ -91,7 +91,6 @@ export const usePriceList = (coingeckoId) => {
   return priceList
 }
 
-
 export const useCakePrice = () => {
   const [cakePrice, setCakePrice] = useState()
 
@@ -109,7 +108,29 @@ export const useCakePrice = () => {
     }
 
     fetchData()
-  }, [setCakePrice ])
+  }, [setCakePrice])
 
   return cakePrice
+}
+
+export const useHuskiPrice = () => {
+  const [huskiPrice, setHuskiPrice] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/markets?ids=alpaca-finance&vs_currency=usd`;
+        const res = await fetch(cakePriceCoinGeckoApi);
+        const responseData = await res.json();
+        setHuskiPrice(responseData[0].current_price)
+
+      } catch (error) {
+        console.error('Unable to fetch data:', error)
+      }
+    }
+
+    fetchData()
+  }, [setHuskiPrice])
+
+  return huskiPrice
 }

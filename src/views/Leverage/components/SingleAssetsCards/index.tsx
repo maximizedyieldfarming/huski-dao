@@ -9,8 +9,7 @@ import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
-import { useHuskyPrice } from 'state/leverage/hooks'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import nFormatter from 'utils/nFormatter'
 import Select from 'components/Select/Select'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
@@ -27,7 +26,7 @@ const CardBody = styled(UiKitCardBody)`
 const SingleAssetsCard = ({ data }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const { singleLeverage } = data
 
