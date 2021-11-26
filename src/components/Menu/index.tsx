@@ -3,7 +3,8 @@ import { Menu as UikitMenu } from 'husky-uikit'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
-import { useCakePrice } from 'state/leverage/hooks'
+// import { useCakePrice } from 'state/leverage/hooks'
+import { useCakePrice } from 'hooks/api'
 import { useProfile } from 'state/profile/hooks'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
@@ -31,7 +32,7 @@ const Menu = (props) => {
       currentLang={currentLanguage.code}
       langs={languageList}
       setLang={setLanguage}
-      cakePriceUsd={cakePriceUsd.toNumber()}
+      cakePriceUsd={cakePriceUsd}
       links={config(t)}
       logo={<Logo />}
       huskiPriceUsd={null}

@@ -11,11 +11,11 @@ import {
   useTooltip,
   useMatchBreakpoints,
   AutoRenewIcon,
-  BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
+  ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
 } from 'husky-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
+import { useHuskyPrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
@@ -24,7 +24,7 @@ import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
-import { usePriceList } from 'hooks/api'
+import { usePriceList, useCakePrice } from 'hooks/api'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import echarts from 'echarts/lib/echarts'

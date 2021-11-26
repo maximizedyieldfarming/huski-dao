@@ -14,7 +14,8 @@ import {
   AutoRenewIcon,
 } from '@pancakeswap/uikit'
 import styled from 'styled-components'
-import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
+import { useHuskyPrice } from 'state/leverage/hooks'
+import { useCakePrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'

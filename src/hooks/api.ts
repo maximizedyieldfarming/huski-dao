@@ -90,3 +90,26 @@ export const usePriceList = (coingeckoId) => {
 
   return priceList
 }
+
+
+export const useCakePrice = () => {
+  const [cakePrice, setCakePrice] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/markets?ids=pancakeswap-token&vs_currency=usd`;
+        const res = await fetch(cakePriceCoinGeckoApi);
+        const responseData = await res.json();
+        setCakePrice(responseData[0].current_price)
+
+      } catch (error) {
+        console.error('Unable to fetch data:', error)
+      }
+    }
+
+    fetchData()
+  }, [setCakePrice ])
+
+  return cakePrice
+}
