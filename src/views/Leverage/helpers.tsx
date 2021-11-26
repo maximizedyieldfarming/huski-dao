@@ -137,10 +137,10 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
     repayDebtData = repayDebt
 
   } else if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
-    console.info('==yong   farm2')
+    console.info('==yong   farm token dichotomyfarmingtoken')
     farmingData = farmdata2;
   } else {
-    console.info('yong   farm1')
+    console.info('yong   base token  dichotomybasetoken')
     farmingData = farmdata1;
   }
 
