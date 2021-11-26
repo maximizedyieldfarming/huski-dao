@@ -32,7 +32,7 @@ const StyledRow = styled.div`
 `
 
 const ActivePositionsRow = ({ data }) => {
-  console.log('active Positions data', data)
+  // console.log('active Positions data', data)
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
@@ -139,6 +139,7 @@ const ActivePositionsRow = ({ data }) => {
         <ActionCell
           posData={{ data, liquidationThresholdData }}
           disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())}
+          name={lpSymbolName.replace(' PancakeswapWorker', '')}
         />
       </StyledRow>
     </>

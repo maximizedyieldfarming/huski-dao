@@ -28,7 +28,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const ActionCell = ({ posData, disabled }) => {
+const ActionCell = ({ posData, disabled, name }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
   const { data, liquidationThresholdData } = posData
@@ -41,7 +41,7 @@ const ActionCell = ({ posData, disabled }) => {
           scale="sm"
           as={Link}
           to={(location) => ({
-            pathname: `${location.pathname}/adjustPosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
+            pathname: `${location.pathname}/adjustPosition/${name}`,
             state: { data, liquidationThresholdData },
           })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
@@ -53,7 +53,7 @@ const ActionCell = ({ posData, disabled }) => {
           scale="sm"
           as={Link}
           to={(location) => ({
-            pathname: `${location.pathname}/closePosition/${data?.farmData?.lpSymbol.replace(' LP', '')}`,
+            pathname: `${location.pathname}/closePosition/${name}`,
             state: { data },
           })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
