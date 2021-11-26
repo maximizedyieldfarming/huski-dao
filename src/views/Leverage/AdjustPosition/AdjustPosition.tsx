@@ -231,7 +231,7 @@ const AdjustPosition = () => {
   let assetsBorrowedUp
   let UpdatedDebt
 
-  if (adjustData?.[3] === 0 && farmingData[0] === -1) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
+  if (adjustData?.[3] === 0 && adjustData?.[11] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
     // use repayDebtData
     assetsBorrowed = repayDebtData?.[4]
     baseTokenInPosition = repayDebtData?.[2]
@@ -243,7 +243,7 @@ const AdjustPosition = () => {
     assetsBorrowed = adjustData?.[3]
     baseTokenInPosition = adjustData?.[8]
     farmingTokenInPosition = adjustData?.[9]
-    assetsBorrowedUp = adjustData?.[3]
+    assetsBorrowedUp = adjustData?.[3] < 0.0000001 ? 0 : adjustData?.[3]
     UpdatedDebt = adjustData?.[3] + Number(debtValueNumber)
 
   }
@@ -260,6 +260,10 @@ const AdjustPosition = () => {
     priceImpact = 0
   }
 
+  if (assetsBorrowed < 0.0000001) {
+    assetsBorrowed = 0
+  }
+
 
 
   // for apr
@@ -268,7 +272,8 @@ const AdjustPosition = () => {
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
-
+console.info('data?.farmData',data?.farmData)
+console.info(' cakePrice',cakePrice)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)
