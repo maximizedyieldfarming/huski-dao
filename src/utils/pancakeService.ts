@@ -28,37 +28,29 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
     const addvalue = basetokenLpBorrowed / (leverage - 1) - (basetokenLp + farmingtokenLp / price - basetokenLpBorrowed)
 
     if (!flag) {
-        // console.info('222-----11-flag')
         maxnum = basetokenBalance
     } else {
         maxnum = basetokenBalance + (basetokenBalance + farmingtokenBalance / price + basetokenLp + farmingtokenLp / price - basetokenLpBorrowed) * (leverage - 1) - basetokenLpBorrowed
-        // console.info('111----11-', farmingtokenBalance)
         if (maxnum < 0) {
-            console.info('添加的资金不足');
+            // console.info('添加的资金不足');
             return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 0]
         }
     }
 
     let minnum = 0;
     let data = exchangebasetoken(maxnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
-    console.info('data---', data)
     let maxexc = data[0]
     if (maxexc === 0) {
-        console.info('aaaa');
         return [maxnum, data]
     }
 
     data = exchangebasetoken(minnum, leverage, tradefee, basetokenBalance, farmingtokenBalance, basetokenLp, farmingtokenLp, basetokenLpBorrowed, basetokenBegin, farmingtokenBegin, flag)
-    console.info('data', data)
     let minexc = data[0]
     if (minexc === 0) {
-        console.info('ddddddd');
         return [minnum, data]
     }
-    console.info('maxexc', maxexc)
-    console.info('minexc', minexc)
+
     if (maxexc * minexc > 0) {
-        console.info('kkkkkk')
         return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 0]
     }
 
@@ -69,11 +61,9 @@ export const dichotomybasetoken = (leverage, tradefee, basetokenBalance, farming
         const midexc = data[0]
 
         if (midexc === 0) {
-            console.info('vvvvv');
             return [midnum, data]
         }
         if (maxnum - minnum < 1 / 10 ** 8) {
-            console.info('zzzzzz');
             return [midnum, data]
         }
 
@@ -101,7 +91,6 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
 
     let maxexc = data[0]
     if (maxexc === 0) {
-        console.info('farm token maxexc === 0')
         return [maxnum, data]
     }
 
@@ -109,12 +98,10 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
 
     let minexc = data[0]
     if (minexc === 0) {
-        console.info('farm token minexc === 0')
         return [minnum, data]
     }
 
     if (maxexc * minexc > 0) {
-        console.info('farm token kkkkk')
         return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 0]
     }
 
@@ -125,11 +112,9 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
         const midexc = data[0]
 
         if (midexc === 0) {
-            console.info('farm token 1111')
             return [midnum, data]
         }
         if (maxnum - minnum < 1 / 10 ** 8) {
-            console.info('farm token 222222')
             return [midnum, data]
         }
 
@@ -141,7 +126,6 @@ export const dichotomyfarmingtoken = (leverage, tradefee, basetokenBalance, farm
             maxexc = midexc
         }
         else {
-            console.info('farm token 333333')
             return [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 0]
         }
     }
