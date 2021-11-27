@@ -1,18 +1,12 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
-// import farmsReducer from './farms'
 import leverageReducer from './leverage'
 import stakeReducer from './stake'
-// import poolsReducer from './pools'
 import predictionsReducer from './predictions'
 import profileReducer from './profile'
-// import teamsReducer from './teams'
-// import achievementsReducer from './achievements'
 import blockReducer from './block'
-// import collectiblesReducer from './collectibles'
 import votingReducer from './voting'
-// import lotteryReducer from './lottery'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
 import transactions from './transactions/reducer'
@@ -27,18 +21,12 @@ const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
   reducer: {
-    // achievements: achievementsReducer,
     block: blockReducer,
-    // farms: farmsReducer,
     leverage: leverageReducer,
     stake: stakeReducer,
-    // pools: poolsReducer,
     predictions: predictionsReducer,
     profile: profileReducer,
-    // teams: teamsReducer,
-    // collectibles: collectiblesReducer,
     voting: votingReducer,
-    // lottery: lotteryReducer,
 
     // Exchange
     user,

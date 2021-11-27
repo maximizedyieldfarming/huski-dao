@@ -2,7 +2,7 @@
 import mainnet from '../mainnet.json';
 import testnet from '../testnet.json';
 
-const DevRPC = 'http://localhost:8545';
+const DevRPC = 'http://localhost:6699';
 const TestRPC = 'https://data-seed-prebsc-1-s3.binance.org:8545'; // test net
 const DefaultRPC = 'https://bsc-dataseed.binance.org/'; // main net
 
@@ -58,8 +58,6 @@ export default function getDomain() {
     // }
 
     const chainId = process.env.REACT_APP_CHAIN_ID;
-    // console.info('process.env00000', process.env)
-    // console.info('env00000', env)
     switch (chainId) {
         case '56':
             domain = DefaultRPC
