@@ -33,7 +33,6 @@ type PublicFarmData = {
   quoteTokenLiquidationThreshold: SerializedBigNumber
   tokenMinDebtSize: SerializedBigNumber
   quoteTokenMinDebtSize: SerializedBigNumber
-  name: string
   pooPerBlock: number
   quoteTokenPoolPerBlock: number
   poolLendPerBlock: number
@@ -90,12 +89,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       }
     ])
 
-  const [name, totalSupply, totalToken, vaultDebtVal] =
+  const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
-      {
-        address: vaultAddresses,
-        name: 'name',
-      },
       {
         address: vaultAddresses,
         name: 'totalSupply',
@@ -269,7 +264,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const poolLendPerBlock = alpacaPerBlockLend * infoLend.allocPoint / totalAllocPointLend;
 
   return {
-    name,
     lptotalSupply: lptotalSupply[0]._hex,
     quoteTokenTotalSupply: quoteTokenTotalSupply[0]._hex,
     quoteTokenTotal: quoteTokenTotal[0]._hex,
