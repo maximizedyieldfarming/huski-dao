@@ -5,6 +5,7 @@ import NumberInput from 'components/NumberInput'
 import BigNumber from 'bignumber.js'
 import { TokenImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
@@ -34,7 +35,7 @@ const AddColateral = ({
   const handleQuoteTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals and allow empty string
-      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
         const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
         setQuoteTokenInput(finalValue)
@@ -46,23 +47,16 @@ const AddColateral = ({
   )
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      const value =
-        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.25
-          ? 0
-          : userQuoteTokenBalance.toNumber() * 0.25
+      const value = userQuoteTokenBalance.toNumber() * 0.25
       setQuoteTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '50%') {
-      const value =
-        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.5 ? 0 : userQuoteTokenBalance.toNumber() * 0.5
+      const value = userQuoteTokenBalance.toNumber() * 0.5
       setQuoteTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '75%') {
-      const value =
-        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.75
-          ? 0
-          : userQuoteTokenBalance.toNumber() * 0.75
+      const value = userQuoteTokenBalance.toNumber() * 0.75
       setQuoteTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '100%') {
-      const value = Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() ? 0 : userQuoteTokenBalance.toNumber()
+      const value = userQuoteTokenBalance.toNumber()
       setQuoteTokenInput(new BigNumber(value))
     }
   }
@@ -70,7 +64,7 @@ const AddColateral = ({
   const handleTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
         const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
         setTokenInput(finalValue)
@@ -83,16 +77,16 @@ const AddColateral = ({
 
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.25 ? 0 : userTokenBalance.toNumber() * 0.25
+      const value = userTokenBalance.toNumber() * 0.25
       setTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '50%') {
-      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.5 ? 0 : userTokenBalance.toNumber() * 0.5
+      const value = userTokenBalance.toNumber() * 0.5
       setTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '75%') {
-      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.75 ? 0 : userTokenBalance.toNumber() * 0.75
+      const value = userTokenBalance.toNumber() * 0.75
       setTokenInput(new BigNumber(value))
     } else if (e.target.innerText === '100%') {
-      const value = Number(tokenInput) === userTokenBalance.toNumber() ? 0 : userTokenBalance.toNumber()
+      const value = userTokenBalance.toNumber()
       setTokenInput(new BigNumber(value))
     }
   }
@@ -116,11 +110,7 @@ const AddColateral = ({
                   {t('Balance')}:
                 </Text>
                 {userQuoteTokenBalance ? (
-                  <Text small>
-                    {userQuoteTokenBalance.toNumber().toFixed(3) < userQuoteTokenBalance.toNumber()
-                      ? `${userQuoteTokenBalance.toNumber().toFixed(3)}...`
-                      : userQuoteTokenBalance.toNumber().toFixed(3)}
-                  </Text>
+                  <Text small>{formatDisplayedBalance(userQuoteTokenBalance, quoteToken?.decimalsDigits)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
@@ -163,9 +153,7 @@ const AddColateral = ({
                 </Text>
                 {userTokenBalance ? (
                   <Text small>
-                    {userTokenBalance.toNumber().toFixed(3) < userTokenBalance.toNumber()
-                      ? `${userTokenBalance.toNumber().toFixed(3)}...`
-                      : userTokenBalance.toNumber().toFixed(3)}
+                    {formatDisplayedBalance(userTokenBalance, token?.decimalsDigits)}
                   </Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
