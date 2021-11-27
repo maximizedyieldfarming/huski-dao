@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
-import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR } from 'config'
+import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE } from 'config'
 import { dichotomybasetoken, dichotomyfarmingtoken, RunLogic, RunLogic1, adjustRun, adjustPositionRepayDebt } from 'utils/pancakeService'
 import { BIG_TEN } from 'utils/bigNumber'
 
@@ -9,7 +9,6 @@ export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, t
   const { quoteToken } = TokenInfo
   let vaultDebtValue
   let poolHuskyPerBlock
-  // console.log({ huskiPriceBusd, vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd })
   if (tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() || tokenName?.toUpperCase() === quoteToken?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
     vaultDebtValue = quoteTokenVaultDebtVal
     poolHuskyPerBlock = quoteTokenPoolPerBlock
@@ -26,9 +25,8 @@ export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, t
 }
 
 export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
-  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd, pid } = farm
+  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd } = farm
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
-  // console.log({poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd , cakePrice, pid})
   const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
@@ -40,7 +38,6 @@ export const getTvl = (farm: LeverageFarm) => {
   const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
-  // console.log({tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd })
   const tokensLP = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
   const lpTokenRatio = new BigNumber(tokenUserInfoLP).div(new BigNumber(lptotalSupply))
   const tokenNum = new BigNumber(tokenAmountTotal).times(lpTokenRatio)
@@ -418,11 +415,11 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 }
 
 
-export const getRunLogic = (riskKillThreshold,lpApr, leverage) => { // sheet1
+export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
 
-  const RiskKillThreshold = Number(riskKillThreshold) // 0.85 // 清算风险度
-  const LiquidationRewards = 0.05 // 清算罚金
-  const ReinvestMinute = 60 // 复投时长（分钟）0为按日复投
+  const RiskKillThreshold = Number(riskKillThreshold) / 10000 // 清算风险度
+  const LiquidationRewards = LIQUIDATION_REWARDS // 清算罚金
+  const ReinvestMinute = REINVEST_MINUTE // 复投时长（分钟）0为按日复投
   const Token0Name = 'BNB' // token0名称
   const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = 0
@@ -430,12 +427,11 @@ export const getRunLogic = (riskKillThreshold,lpApr, leverage) => { // sheet1
   const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = 90 // priceList.length // 时间长度（天） 换成价格list的长度
-console.log({ RiskKillThreshold, LPAPRList,  LeverageOpen })
-  // const priceRiseFall = []
+
   const profitLossRatioSheet1Token0 = []
   const profitLossRatioSheet1Token1 = []
   const priceRiseFall = []
-  // const priceFirst = priceList[0]
+
 
   for (let m = 1; m <= 300; m++) {
     const PriceList = [];
@@ -456,17 +452,15 @@ console.log({ RiskKillThreshold, LPAPRList,  LeverageOpen })
   return { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 }
 
 
-
-
   // print('涨跌幅', m/100 - 1, '价格', 1000 * m / 100, '损益比例(' + Token0Name + '计价)', datalist[5], '损益比例(' + Token1Name + '计价)', datalist[6])
 
 }
 
 
-export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest,lpApr, leverage) => {
-  const RiskKillThreshold = Number(riskKillThreshold) // 清算风险度
-  const LiquidationRewards = 0.05 // 清算罚金
-  const ReinvestMinute = 60 // 复投时长（分钟）0为按日复投
+export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest, lpApr, leverage) => {
+  const RiskKillThreshold = Number(riskKillThreshold) / 10000  // 清算风险度
+  const LiquidationRewards = LIQUIDATION_REWARDS // 清算罚金
+  const ReinvestMinute = REINVEST_MINUTE // 复投时长（分钟）0为按日复投
   const Token0Name = 'BNB' // token0名称
   const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = borrowingInterest // 0.05
@@ -477,10 +471,10 @@ export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest,lpA
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = PriceList.length // 时间长度（天）
 
-  console.log({
-    RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
-    LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
-  })
+  // console.log({
+  //   RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
+  //   LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
+  // })
 
   const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = RunLogic1(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
     LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
