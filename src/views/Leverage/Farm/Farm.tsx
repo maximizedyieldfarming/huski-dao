@@ -645,9 +645,9 @@ const Farm = () => {
             <Flex justifyContent="space-between">
               <Text>{t('Assets Supplied')}</Text>
               <Text>
-                {radio === tokenName ? Number(tokenInput)?.toPrecision(4) : Number(quoteTokenInput)?.toPrecision(4)}{' '}
+                {radio === tokenName ? Number(tokenInput || 0)?.toFixed(3) : Number(quoteTokenInput || 0)?.toFixed(3)}{' '}
                 {radio.replace('wBNB', 'BNB')} +{' '}
-                {radio === tokenName ? Number(quoteTokenInput)?.toPrecision(4) : Number(tokenInput)?.toPrecision(4)}{' '}
+                {radio === tokenName ? Number(quoteTokenInput || 0)?.toFixed(3) : Number(tokenInput || 0)?.toFixed(3)}{' '}
                 {
                   radio === tokenName
                     ? quoteTokenName.replace('wBNB', 'BNB')
