@@ -56,13 +56,13 @@ export const formatPercentage = (value) => {
 };
 
 
-export const sumTokenData = (data) => {
-      let finalResult;
-      // eslint-disable-next-line prefer-const
-      finalResult = data
-            // eslint-disable-next-line no-useless-escape
-            .map((pool) => parseFloat(formatBigNumber(pool).replace(/\,/g, '')))
-            .reduce((cur, acc) => cur + acc)
-            .toLocaleString()
-      return finalResult;
-  };
+// export const sumTokenData = (data) => {
+//       let finalResult;
+//       // eslint-disable-next-line prefer-const
+//       finalResult = data
+//             // eslint-disable-next-line no-useless-escape
+//             .map((pool) => parseFloat(formatBigNumber(pool).replace(/\,/g, '')))
+//             .reduce((cur, acc) => cur + acc)
+//             .toLocaleString()
+//       return finalResult;
+//   };

@@ -1,24 +1,5 @@
-/* eslint-disable array-callback-return */
 import { useEffect, useState } from 'react'
 import moment from 'moment'
-import VaultABI from 'config/abi/vault.json'
-import WorkerABI from 'config/abi/PancakeswapV2Worker.json'
-import { getAddress } from 'utils/addressHelpers'
-import multicall from 'utils/multicall'
-import { useWeb3React } from '@web3-react/core'
-import { constant } from 'lodash'
-
-/* eslint-disable camelcase */
-export interface PositionsResponse {
-  id: string
-  chain: string
-  name: string
-  site_url: string
-  logo_url: string
-  has_supported_portfolio: boolean
-  tvl: number
-}
-
 
 export const useGetPositions = (account) => {
   const [data, setData] = useState([])
