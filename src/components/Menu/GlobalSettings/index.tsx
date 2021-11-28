@@ -10,8 +10,8 @@ const GlobalSettings = () => {
       <IconButton style={{marginLeft:'5px',marginRight:'-7px', width:'32px'}} onClick={onPresentSettingsModal} variant="text" scale="sm" >
         <CogIcon height={22} width={22} color="textSubtle" />
       </IconButton>
-      <IconButton onClick={onPresentSettingsModal} style={{width:'48px'}} variant="text" scale="sm" mr="8px">
-        <NotificationIcon height={48} width={48} color="textSubtle" />
+      <IconButton onClick={onPresentSettingsModal} style={{width:'45px',marginLeft:'6px'}} variant="text" scale="sm" mr="8px">
+        <NotificationIcon height={45} width={45} color="textSubtle" />
       </IconButton>
     </Flex>
   )

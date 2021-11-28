@@ -136,11 +136,11 @@ const LendAction = () => {
     <StyledPage>
       <div style={{textAlign:'center'}}>
         <img src="/images/HuskiPaw.png" alt="" />
-        <Text fontSize="36px" textTransform="capitalize">
+        <Text fontSize="25px" color="fontFarm" fontWeight="600" textTransform="capitalize">
           {t(`${action}`)} {tokenName}
         </Text>
       </div>
-      <TabPanel>
+      <TabPanel style={{width:'500px',height:'560px'}}>
         <Header>
           {/* <HeaderTabs
             onClick={handleDepositClick}
@@ -164,6 +164,7 @@ const LendAction = () => {
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
                   style={{
+                    fontSize:'15px',
                     borderRadius: '12px', fontWeight: 700,
                     textAlign: 'center', marginLeft: '4px', paddingRight: '4px', marginTop: '4px', paddingTop: '18px', width: '50%', backgroundColor: 'white',
                     color: '#1A1D1F', boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
@@ -171,7 +172,7 @@ const LendAction = () => {
                 <HeaderButton
                   onClick={handleWithdrawClick}
                   to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
-                  style={{ width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Withdraw</HeaderButton>
+                  style={{fontSize:'15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Withdraw</HeaderButton>
               </Flex>
             </Box>) :
             (<Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
@@ -179,10 +180,11 @@ const LendAction = () => {
                 <HeaderButton
                   onClick={handleDepositClick}
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
-                  style={{ width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Deposit</HeaderButton>
+                  style={{fontSize:'15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Deposit</HeaderButton>
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
                   style={{
+                    fontSize:'15px',
                     borderRadius: '12px', fontWeight: 700,
                     textAlign: 'center', marginLeft: '4px', marginTop: '4px', paddingTop: '18px', width: '50%', backgroundColor: 'white',
                     color: '#1A1D1F', boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',

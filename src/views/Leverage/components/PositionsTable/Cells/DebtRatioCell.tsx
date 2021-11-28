@@ -44,9 +44,9 @@ const DebtRatioCell = ({ debtRatio }) => {
           </Flex>
         )}
         {debtRatio && !debtRatio.isNaN() ? (
-          <Text color="text" fontWeight="700" fontSize="16px">{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">56.23%</Text>
         )}
       </CellContent>
     </StyledCell>

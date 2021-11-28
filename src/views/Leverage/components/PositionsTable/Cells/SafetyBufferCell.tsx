@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
+import { LinearProgress } from '@material-ui/core';
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -17,6 +18,12 @@ const StyledCell = styled(BaseCell)`
       flex-direction: column;
     }
   }
+`
+const SBLinearProgress = styled(LinearProgress)`
+  .MuiLinearProgress-barColorPrimary {
+    background-color:#7B3FE4!important;
+  }
+
 `
 const Circle = styled.div`
   height: 10px;
@@ -63,11 +70,30 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
           </Flex>
         )}
         {safetyBuffer ? (
-          <Flex>
-            <Text color="text" fontWeight="700" fontSize="16px">{safetyBuffer}%</Text>
-          </Flex>
+          <>
+            <Flex alignItems='center' style={{ gap: '10px' }} mt="8px">
+              <Text color="text" fontWeight="600" fontSize="16px">{safetyBuffer}%</Text>
+              <SBLinearProgress
+                variant="determinate"
+                value={safetyBuffer}
+                style={{ height: '6px', width: '40px', color: '#7B3FE4', background: '#CCCCCC', borderRadius: 6 }}
+              />
+            </Flex>
+            <div style={{ marginLeft: '15px', marginTop: '4px', background: '#FFFEFE', borderRadius: '10px', color: '#4B4B4B', fontSize: '9px' }}>Debt Ratio - 43.60%</div>
+          </>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <>
+            <Flex alignItems='center' style={{ gap: '10px' }} mt="8px">
+              <Text color="text" fontWeight="600" fontSize="16px">53.4%</Text>
+              <SBLinearProgress
+                variant="determinate"
+
+                value={53.4}
+                style={{ height: '6px', width: '40px', color: '#7B3FE4', background: '#CCCCCC', borderRadius: 6 }}
+              />
+            </Flex>
+            <div style={{ marginLeft: '15px', marginTop: '4px', background: '#FFFEFE', borderRadius: '10px', color: '#4B4B4B', fontSize: '9px' }}>Debt Ratio - 43.60%</div>
+          </>
         )}
       </CellContent>
     </StyledCell>

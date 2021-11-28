@@ -21,6 +21,7 @@ import ProfitsCell from './Cells/ProfitsCell'
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
+  padding-top:15px;
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;

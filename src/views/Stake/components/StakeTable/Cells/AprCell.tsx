@@ -15,7 +15,7 @@ const StyledCell = styled(BaseCell)`
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -53,16 +53,18 @@ const AprCell = ({ getApyData }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
-          {t('APY')}
-        </Text>
+        <Flex justifyContent="center" alignItems ="center">
+          <Text fontSize="12px" color="textSubtle" textAlign="left" mr='5px'>
+            {t('APY')}
+          </Text>
+          <span ref={targetRef}>
+            <InfoIcon color="textSubtle" stroke='1px'  />
+          </span>
+        </Flex>
         {apy ? (
           <Flex alignItems="center">
-            <Text>{apyCell(apy)}</Text>
+            <Text color="text" >{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
-            <span ref={targetRef}>
-              <InfoIcon ml="10px" />
-            </span>
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

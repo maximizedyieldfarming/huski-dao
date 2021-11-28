@@ -7,6 +7,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
+  padding-top:29px;
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 100px;
@@ -22,6 +23,7 @@ const StyledCell = styled(BaseCell)`
 `
 const LeverageContainer = styled(Flex)`
   border-radius: 10px;
+  height:40px;
   text-align: center;
   align-items: center;
   border: 1px solid ${({ theme }) => theme.colors.cardBorder};
@@ -63,7 +65,7 @@ export default function LeverageCell({ leverage, onChange }: { leverage: any; on
 
   return (
     <StyledCell role="cell">
-      <CellContent>
+      <CellContent >
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             {t('Leverage')}
@@ -71,7 +73,7 @@ export default function LeverageCell({ leverage, onChange }: { leverage: any; on
         )}
         <LeverageContainer>
           <Flex padding="1rem">
-            <Text style={{fontWeight:700,color:'#131313'}}>{lvgValue.toFixed(2)}</Text>
+            <Text color='text' fontWeight="500">{lvgValue.toFixed(2)}</Text>
           </Flex>
           <Flex flexDirection="column">
             <CustomButton scale="xs" variant="secondary" onClick={increaseLvgValue} disabled={lvgValue === leverage}>

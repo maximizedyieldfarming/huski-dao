@@ -12,10 +12,10 @@ const StyledCell = styled(BaseCell)`
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: end;
     ${({ theme }) => theme.mediaQueries.md} {
       // flex-direction: column;
-      justify-content: center;
+      justify-content: end;
       gap: 1rem;
     }
   }
@@ -27,9 +27,10 @@ const HuskiLockedCell = ({ sHuskiLocked }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          {t('sHUSKI Locked')}
+          {t('sHUSKI Locked-')}
         </Text>
-        <Text>{sHuskiLocked}</Text>
+        <Text fontWeight='600' color='text'>{sHuskiLocked}</Text>
+        <Text fontWeight='600' color='text'>44.03</Text>
       </CellContent>
     </StyledCell>
   )

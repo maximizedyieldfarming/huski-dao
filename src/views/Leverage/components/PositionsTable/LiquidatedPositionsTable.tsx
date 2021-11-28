@@ -7,14 +7,14 @@ import LiquidatedPositionsHeaderRow from './LiquidatedPositionsHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  overflow: auto;
+  overflow: hidden;
   height: 300px;
   ${({ theme }) => theme.mediaQueries.lg} {
     height: unset;
   }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+    // border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   ::-webkit-scrollbar {
     height: 8px;

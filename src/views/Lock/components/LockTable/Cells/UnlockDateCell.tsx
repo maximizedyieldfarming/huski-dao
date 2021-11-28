@@ -6,8 +6,9 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
+ 
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 3 0 120px;
+    flex: 1 0 100px;
   }
   ${CellContent} {
     flex-direction: row;
@@ -15,7 +16,7 @@ const StyledCell = styled(BaseCell)`
     align-items: center;
     ${({ theme }) => theme.mediaQueries.md} {
       // flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       gap: 1rem;
     }
   }
@@ -30,6 +31,7 @@ const UnlockDateCell = ({ date }) => {
           {t('My HUSKI unlock date')}
         </Text>
         <Text>{date}</Text>
+        <Text fontWeight='600'>July 13th, 2020</Text>
       </CellContent>
     </StyledCell>
   )

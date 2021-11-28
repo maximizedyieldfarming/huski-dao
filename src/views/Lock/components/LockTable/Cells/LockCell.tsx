@@ -8,9 +8,9 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
-  align-items: center;
+  align-items: end;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 50px;
   }
   a {
     padding: 0.75rem;
@@ -33,6 +33,7 @@ const LockCell = ({ data }) => {
     <StyledCell role="cell">
       <CellContent>
         <Button
+          width='114px' height='40px'
           as={Link}
           to={{
             pathname: `/lock/${name}`,

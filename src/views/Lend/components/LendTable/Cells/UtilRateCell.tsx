@@ -38,7 +38,7 @@ const UtilRateCell = ({ utilRate }) => {
             {t('Utilization')}
           </Text>
         )}
-        {utilRate ? <Text style={{fontWeight:600,fontSize:'16px',color:'#131313'}}>{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}
+        {utilRate ? <Text style={{fontWeight:600,fontSize:'16px', marginTop:'10px'}} color="text">{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

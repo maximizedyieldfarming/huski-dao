@@ -71,7 +71,7 @@ const ApyCell = ({ getApyData, token }) => {
         )}
         {apy ? (
           <Flex alignItems="center">
-            <Text style={{fontWeight:600,fontSize:'16px',color:'#131313'}}>{apyCell(apy)}</Text>
+            <Text style={{fontWeight:600,fontSize:'16px',marginTop:'10px'}} color="text">{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
             {/* <span ref={targetRef}>
               <InfoIcon ml="5px" color="textSubtle" />

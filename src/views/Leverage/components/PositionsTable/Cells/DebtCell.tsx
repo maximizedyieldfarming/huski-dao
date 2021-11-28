@@ -47,11 +47,13 @@ const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
           </Flex>
         )}
         {debt ? (
-          <Text color="text" fontWeight="700" fontSize="16px">
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
             {debt.toNumber().toFixed(3)} {name}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            10BNB
+          </Text>
         )}
       </CellContent>
     </StyledCell>

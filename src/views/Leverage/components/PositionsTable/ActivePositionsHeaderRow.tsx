@@ -8,7 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: none !important;
+  border-bottom: 2px solid #EFEFEF;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -20,7 +20,7 @@ const NameCell = styled(BaseCell)`
   flex-direction: column;
   // padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.md} {
-     flex: 1 0 120px;
+     flex: 1 0 100px;
     // padding-left: 32px;
   }
   ${CellContent} {
@@ -33,9 +33,10 @@ const NameCell = styled(BaseCell)`
   }
 `
 const PoolCell = styled(BaseCell)`
+  align-items:start;
   flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 2 0 150px;
+    flex: 2 0 170px;
   }
   ${Text} {
     white-space: nowrap;
@@ -51,6 +52,7 @@ const PoolCell = styled(BaseCell)`
 `
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
+  padding-bottom:10px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }

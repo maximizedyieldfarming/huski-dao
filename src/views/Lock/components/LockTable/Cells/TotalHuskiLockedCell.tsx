@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -27,7 +27,8 @@ const TotalHuskiLockedCell = ({ totalsHuskiLocked }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           {t('Total sHUSKI Locked')}
         </Text>
-        <Text>{totalsHuskiLocked}</Text>
+        {totalsHuskiLocked?<Text>{totalsHuskiLocked}</Text>:<Text fontWeight="600" mt='10px'>1744.23</Text>}
+        
       </CellContent>
     </StyledCell>
   )

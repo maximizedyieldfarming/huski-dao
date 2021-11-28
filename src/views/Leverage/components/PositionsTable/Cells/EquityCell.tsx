@@ -44,11 +44,13 @@ const EquityCell = ({ equity, name }) => {
           </Flex>
         )}
         {equity ? (
-         <Text color="text" fontWeight="700" fontSize="16px">
+         <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
             {equity.toFixed(3)} {name}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            10.23BNB
+          </Text>
         )}
       </CellContent>
     </StyledCell>

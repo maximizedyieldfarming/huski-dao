@@ -10,7 +10,7 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 100px;
   }
   ${CellContent} {
     flex-direction: row;
@@ -29,10 +29,10 @@ const NameCell = ({ name, positionId }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-      <Text color="text" fontWeight="700" fontSize="16px" bold={!isMobile} small={isMobile}>
+      <Text color="text" fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
           {name}
         </Text>
-        <Text>#{positionId}</Text>
+        <Text color="textSubtle" fontSize="12px" mt='9px'>#{positionId}</Text>
       </CellContent>
     </StyledCell>
   )

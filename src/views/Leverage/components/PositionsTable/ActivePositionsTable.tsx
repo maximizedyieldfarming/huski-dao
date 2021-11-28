@@ -14,7 +14,7 @@ const StyledTable = styled.div`
   }
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+    // border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   ::-webkit-scrollbar {
     height: 8px;
@@ -137,8 +137,8 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
           "StrategyPartialCloseMinimizeTrading": "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
         }
       },
-      liquidationThreshold: 234234,
-      quoteTokenLiquidationThreshold: 234234234
+      liquidationThreshold: 67.23,
+      quoteTokenLiquidationThreshold: 45.26
     },
     positionId: "test1",
     quoteTokenValue: '234wertwer',
@@ -146,12 +146,12 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
     symbolName: 'Husky',
     debtValueNumber: 345345435,
     borrowingInterest: 234234.34,
-    totalPositionValueInToken: 234234234,
+    totalPositionValueInToken: 87.34,
     yieldFarmData: 345,
     leverage: 324234,
     huskyRewards: 234234,
     debtRatio: 234234,
-    liquidationThresholdData: 234234,
+    liquidationThresholdData: 56.34,
     safetyBuffer: '234234',
     profitLoss: '23423'
   },
@@ -263,8 +263,8 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
           "StrategyPartialCloseMinimizeTrading": "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
         }
       },
-      liquidationThreshold: 234234,
-      quoteTokenLiquidationThreshold: 234234234
+      liquidationThreshold: 67.23,
+      quoteTokenLiquidationThreshold: 1435.26
     },
     positionId: "test1",
     quoteTokenValue: '234wertwer',

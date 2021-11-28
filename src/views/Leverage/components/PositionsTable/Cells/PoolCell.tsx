@@ -8,18 +8,21 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-flex: 1 0 50px;
-${({ theme }) => theme.mediaQueries.md} {
-  flex: 1 0 120px;
-}
-${CellContent} {
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: start;
+flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: column;
+    flex: 2 0 170px;
   }
-}
+  ${Text} {
+    white-space: nowrap;
+  }
+  ${CellContent} {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: start;
+    ${({ theme }) => theme.mediaQueries.md} {
+      flex-direction: column;
+    }
+  }
 `
 
 const PoolCell = ({ pool, quoteToken, token }) => {
@@ -34,7 +37,7 @@ const PoolCell = ({ pool, quoteToken, token }) => {
             {t('Pool')}
           </Text>
         )}
-        <Grid style={{marginTop:'5px'}} alignItems="center" gridTemplateColumns="50px 1fr">
+        <Grid  alignItems="center" gridTemplateColumns="50px 1fr">
           <TokenPairImage
             variant="inverted"
             primaryToken={quoteToken}
@@ -43,10 +46,10 @@ const PoolCell = ({ pool, quoteToken, token }) => {
             height={24}
             mr="8px"
           />
-          <Text color="text" style={{marginLeft:'-10px'}} fontWeight="700" fontSize="16px" bold={!isMobile} small={isMobile}>
+          <Text color="text" ml='-10px' mt='-12px' fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
             {pool}
           </Text>
-          <Text fontSize="12px" style={{marginLeft:'40px'}}>Pancakeswap</Text>
+          <Text fontSize="12px" ml='40px' mt='-3px' color="textSubtle">Pancakeswap</Text>
         </Grid>
       </CellContent>
     </StyledCell>

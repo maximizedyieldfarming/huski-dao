@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components'
 // eslint-disable-next-line import/no-unresolved
 import { PancakeTheme } from 'husky-uikit1.0/dist/theme'
 
+
 declare module 'styled-components' {
   /* eslint-disable @typescript-eslint/no-empty-interface */
   export interface DefaultTheme extends PancakeTheme {}
@@ -10,7 +11,7 @@ declare module 'styled-components' {
 const GlobalStyle = createGlobalStyle`
   * {
     // font-family: 'Kanit', sans-serif;
-   font-family: 'inter', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   body {
     background-color: ${({ theme }) => theme.colors.background};

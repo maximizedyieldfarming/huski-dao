@@ -8,10 +8,10 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
-  padding-left: 12px;
+ 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 1 0 120px;
-    padding-left: 32px;
+    
   }
 `
 const NameCell = ({ data }) => {
@@ -20,10 +20,13 @@ const NameCell = ({ data }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        {/*   <TokenImage token={token?.token} width={40} height={40} mr="8px" /> */}
-        <Text bold={!isMobile} small={isMobile}>
-          {data.name}
-        </Text>
+        <Flex alignItems='center'>
+          {/* <TokenImage token={token?.token} width={40} height={40} mr="8px" /> */}
+          <img width='44px' src="/images/lock/sHuski.png" alt="" />
+          <Text color="text" fontWeight="600" bold={!isMobile} small={isMobile} ml='15px'> 
+            {data.name}
+          </Text>
+        </Flex>
       </CellContent>
     </StyledCell>
   )

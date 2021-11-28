@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Text, useMatchBreakpoints ,Flex} from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
-import Select from 'components/Select/Select'
+import Select from 'components/Select/CustomSelect'
 import { BnbIcon } from 'assets'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
+  padding-top:25px;
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 150px;
@@ -66,15 +67,14 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
 
   return (
     <StyledCell role="cell">
-      <CellContent>
+      <CellContent pt='5px'>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             {t('Borrowing')}
           </Text>
         )}
-        <Flex>
-          <BnbIcon />
-          <Select  options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
+        <Flex >
+          <Select icon={<BnbIcon />}  options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
         </Flex>
       </CellContent>
     </StyledCell>

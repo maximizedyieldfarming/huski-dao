@@ -36,7 +36,8 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-      {(!token?.totalSupply || !account)?
+      {/* {(!token?.totalSupply || !account)? */}
+        {true?
         (<Link
           style={{
             background: '#7B3FE4',

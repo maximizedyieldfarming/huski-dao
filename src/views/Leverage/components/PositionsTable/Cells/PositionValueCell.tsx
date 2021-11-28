@@ -45,11 +45,13 @@ const PositionValueCell = ({ position, name }) => {
           </Flex>
         )}
         {position && !position.isNaN() ? (
-          <Text style={{marginTop:'15px'}} color="text" fontWeight="700" fontSize="16px">
+          <Text  color="text" fontWeight="600" fontSize="16px" mt="8px">
             {position.toNumber().toFixed(3)} {name}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            {8.01} BNB
+          </Text>
         )}
       </CellContent>
     </StyledCell>

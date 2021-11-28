@@ -29,7 +29,7 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems="center">
+        <Flex alignItems="start" mt="18px">
           <TokenPairImage
             variant="inverted"
             primaryToken={quoteToken}
@@ -43,10 +43,11 @@ const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
               Pool
             </Text>
           )} */}
-          <Flex flex="1" alignItems="center">
-            <Text bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }}>
+          <Flex flex="1" alignItems="start" flexDirection="column">
+            <Text mt='-3px' bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
               {pool}
             </Text>
+            <Text fontSize="12px"  mt='5px' color="textSubtle">Pancakeswap</Text>
           </Flex>
         </Flex>
       </CellContent>

@@ -41,8 +41,8 @@ const TxRecordCell = () => {
   const { t } = useTranslation()
   return (
     <StyledCell role="cell">
-      <Flex flexDirection="row">
-        <CellContent>
+      <Flex flexDirection="row" >
+        <CellContent style={{marginTop:'-2px'}}>
           <Button
             style={{width:'114px',height:'40px'}}
             as={Link}
@@ -54,7 +54,7 @@ const TxRecordCell = () => {
             {t('Click to view')}
           </Button>
         </CellContent>
-        <img style={{marginLeft:'90px',marginTop:'-20px'}} src="/images/sitting_huski.svg" alt="" />
+        <img style={{marginLeft:'90px',marginTop:'-15px'}} src="/images/sitting_huski.svg" alt="" />
       </Flex>
     </StyledCell>
   )

@@ -8,7 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: none !important;
+  border-bottom: 2px solid #EFEFEF;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -16,9 +16,9 @@ const StyledRow = styled.div`
 `
 
 const NameCell = styled(BaseCell)`
-flex: 1 0 50px;
+flex: 0.2 0 50px;
 ${({ theme }) => theme.mediaQueries.md} {
-  flex: 1 0 120px;
+  flex: 0.2 0 80px;
 }
 ${CellContent} {
   flex-direction: row;
@@ -130,14 +130,14 @@ const LiquidatedPositionsHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text small bold color="textSubtle">
+          <Text fontSize="13px" bold color="textSubtle">
             {t('Name')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text small bold color="textSubtle" style={{marginLeft:'-10px'}}>
+          <Text fontSize="13px" bold color="textSubtle" style={{marginLeft:'-10px'}}>
             {t('Pool')}
           </Text>
         </CellContent>
@@ -145,7 +145,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Position Value')}
             </Text>
             {positionTooltipVisible && positionTooltip}
@@ -158,7 +158,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Liquidated Equity')}
             </Text>
             {liquidatedEquityTooltipVisible && liquidatedEquityTooltip}
@@ -171,7 +171,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Liquidation Fee')}
             </Text>
             {liquidationFeeTooltipVisible && liquidationFeeTooltip}
@@ -184,7 +184,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text small bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t(' Assets Returned')}
             </Text>
             {assetsReturnedTooltipVisible && assetsReturnedTooltip}
@@ -197,7 +197,7 @@ const LiquidatedPositionsHeaderRow = () => {
       <TransactionCell>
         <CellContent>
           <Flex justifyContent='end' alignItems="end"> 
-            <Text small bold color="textSubtle" >
+            <Text fontSize="13px" bold color="textSubtle" >
               {t('Transaction Record')}
             </Text>
           </Flex>

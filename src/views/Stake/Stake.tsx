@@ -21,25 +21,39 @@ const StyledButton = styled(Button)`
   font-size: 14px;
   font-weight: 400;
   box-shadow: none;
+  width:114px;
+  height:32px;
+  margin-left:75px;
 `
 const RewardsSummarySection = styled(Flex)`
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
   }
-  gap: 2rem;
-  background-color: ${({ theme }) => theme.card.background};
+   gap: 2rem;
+  background-color: transparent;
+  overflow:hidden;
+  height:220px;
   border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem;
-  box-shadow: ${({ theme }) => theme.card.boxShadow};
-  > ${Grid} {
+  // padding: 1rem;
+  // box-shadow: ${({ theme }) => theme.card.boxShadow};
+  > ${Flex} {
     &:first-child {
-      background-color: #3ed3dd;
-      padding: 1rem;
+      background: url('/images/stake/header_bg.png');
+      background-repeat:no-repeat;
+      background-size:cover;
+      flex:1.5 0 900px;
+      padding-right:45px;
       padding-bottom: 0;
       border-radius: ${({ theme }) => theme.radii.card};
-      grid-template-columns: 1fr 1fr;
-      flex: 1;
+      // grid-template-columns: 1fr 1fr;
+      
+    }
+    &:nth-child(2) {
+      flex:1 0 645px;
+      background: url('/images/stake/withdog.png');
+      background-repeat:no-repeat;
+      border-radius: 12px;
     }
   }
 
@@ -128,39 +142,76 @@ const Stake: React.FC = () => {
 
   return (
     <Page>
-      <RewardsSummarySection padding="10px 8px 0 32px">
-        <Grid>
-          <Box>
-            <Text color="white">{t('HUSKI earned:')}</Text>
-            {reward ? (
-              <Text color="white" bold fontSize="3">
-                {reward.toPrecision(3)}
-              </Text>
-            ) : (
-              <Skeleton width="80px" height="16px" />
-            )}
-          </Box>
-          <Box position="relative">
+      <RewardsSummarySection >
+        <Flex justifyContent="space-around">
+          <Flex position="relative" flex='1.8' pt="31px" pl='21px'>
             <figure>
-              <img src={FlexingHuski} alt="" />
+              <img width='210px' height="190px" src={FlexingHuski} alt="" />
             </figure>
-          </Box>
-        </Grid>
-        <Grid flex="2">
-          <Flex className="balanceLockedWrapper">
-            <Flex flexDirection="column">
-              <Flex flexDirection={isSmallScreen ? 'column' : 'row'} mb="1rem">
-                <WalletIcon width="24px" height="24px" color="gold" />
-                <Text ml={isSmallScreen ? '0px' : '5px'}>{t('My HUSKI Wallet Balance')}</Text>
+          </Flex>
+          <Flex flex='2' flexDirection="column" justifyContent="space-between" mt='35px' mb='35px' pr="50px" ml="30px" style={{ borderRight: '2px solid white' }}>
+            <Flex>
+              <Flex>
+                <img src="/images/stake/BNB.svg" alt="" />
               </Flex>
-              {alpacaBalance ? (
-                <Text color="secondary" bold fontSize="3">
-                  {alpacaBalance.toNumber().toPrecision(3)}
-                </Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
+              <Flex flexDirection="column">
+                <Text ml="25px" color="white" fontSize="13px">{t('HUSKI earned:')}</Text>
+                {reward ? (
+                  <Text fontSize="28px" color="white" bold ml="25px">
+                    {reward.toPrecision(3)}
+                  </Text>
+                ) : (
+                  // <Skeleton width="80px" height="16px" />
+                  <Text fontSize="28px" color="white" bold ml="25px">
+                    964,342.49
+                  </Text>
+                )}
+              </Flex>
             </Flex>
+            <Flex flexDirection="row" >
+              <Flex>
+                <img src="/images/stake/Wallet.svg" alt="" />
+              </Flex>
+              <Flex flexDirection="column">
+                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>{t('My HUSKI Wallet Balance')}</Text>
+                {alpacaBalance ? (
+                  <Text fontSize="28px" color="white" bold ml="25px">
+                    {alpacaBalance.toNumber().toPrecision(3)}
+                  </Text>
+                ) : (
+                  <Text fontSize="28px" color="white" bold ml="25px">
+                    964,342.49
+                  </Text>
+                )}
+              </Flex>
+
+            </Flex>
+          </Flex>
+          <Flex flex='2' justifyContent="space-between" mt='35px' mb='45px' pr="50px" ml="20px"  flexDirection="column" alignItems="center">
+            <Flex ml="25px">
+              <img src="/images/stake/Lock.svg" alt="" />
+              <Flex flexDirection="column">
+                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>{t('Unstaked Rewards')}</Text>
+                <Text fontSize="28px" color="white" bold ml="25px">
+                  964,342.49
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex>
+              <StyledButton
+                onClick={handleConfirmClick}
+                isLoading={isPending}
+                disabled={!account || Number(unlockedRewards) === 0}
+                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+              >
+                {isPending ? t('Claiming') : t('Claim')}
+              </StyledButton>
+            </Flex>
+          </Flex>
+        </Flex>
+
+        {/* <Flex className="balanceLockedWrapper">
+
             <Flex flexDirection="column">
               <Flex flexDirection={isSmallScreen ? 'column' : 'row'} mb="1rem">
                 <LockIcon width="24px" height="24px" color="gold" />
@@ -170,22 +221,13 @@ const Stake: React.FC = () => {
                 {remainingLockedAmount.toPrecision(3)}
               </Text>
             </Flex>
-          </Flex>
-          <Flex justifyContent="space-between" alignItems="center" padding="1rem">
-            <Text>{t('Unstaked Rewards')}</Text>
-            <Text color="secondary" bold fontSize="3">
-              {unlockedRewards.toPrecision(3)}
-            </Text>
-            <StyledButton
-              onClick={handleConfirmClick}
-              isLoading={isPending}
-              disabled={!account || Number(unlockedRewards) === 0}
-              endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-            >
-              {isPending ? t('Claiming') : t('Claim')}
-            </StyledButton>
-          </Flex>
-        </Grid>
+          </Flex> */}
+        <Flex flexDirection="row" alignItems="center">
+          <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">{t('Huski Finance Advertisement')}</Text>
+
+        </Flex>
+
+
       </RewardsSummarySection>
 
       <StakeTable stakeData={farmsData} />

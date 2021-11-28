@@ -87,13 +87,13 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
           </Text>
         )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
-        <Flex alignItems="center">
+        <Flex alignItems="center" style={{marginTop:'15px'}}>
           {tvl ? (
             <>
-              <Text style={{fontWeight:700,color:'#131313'}}>{nFormatter(tvl)}</Text>
+              <Text color="text" fontWeight='600'>{nFormatter(tvl)}</Text>
               {tooltipVisible && tooltip}
               <span ref={targetRef}>
-                <InfoIcon ml="10px" />
+                <InfoIcon ml="7px"  color="textSubtle" />
               </span>
             </>
           ) : (

@@ -8,6 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  border-bottom:2px solid #EFEFEF;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -46,49 +47,49 @@ const LendHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent >
-          <Text small  color="textSubtle">
+          <Text fontWeight="600" fontSize="16px"  color="textSubtle">
             {t('POOL Name')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text small  color="textSubtle">
+          <Text fontWeight="600" fontSize="16px"  color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text fontWeight="600" fontSize="16px" color="textSubtle">
             {t('Total Supply')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text fontWeight="600" fontSize="16px" color="textSubtle">
             {t('Total Borrowed')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text fontWeight="600" fontSize="16px" color="textSubtle">
             {t('Utilization')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small color="textSubtle">
+          <Text fontWeight="600" fontSize="16px" color="textSubtle">
             {t('My Balance')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text small style={{width:'290px',textAlign:'right'}} color="textSubtle">
+          <Text fontWeight="600" fontSize="16px" style={{width:'290px',textAlign:'right'}} color="textSubtle">
             {t('Action')}
           </Text>
         </CellContent>

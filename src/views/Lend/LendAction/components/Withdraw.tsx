@@ -11,6 +11,7 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
+import Page from '../../../../components/Layout/Page'
 
 interface DepositProps {
   balance: any
@@ -141,38 +142,40 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
 
   return (
-    <>
-      <Flex justifyContent="space-between">
-        <Text fontWeight="bold" color="#1A1D1F">{t('From')}</Text>
-        <Text >{t('Balance')}: <span style={{ color: '#1a1d1f', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
-      </Flex>
-      <Section justifyContent="space-between">
-        <Box>
-          <Text
-            style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}
-          >{amount}</Text>
-        </Box>
-        <Box>
+    <Page style={{ padding: 0 }}>
+      <Flex flexDirection="column">
+        <Flex justifyContent="space-between" mb='10px'>
+          <Text fontWeight="700" color="textFarm" fontSize="14px">{t('From')}</Text>
+          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance} ${name}`}</span></Text>
+        </Flex>
+        <Section justifyContent="space-between">
+          <Box>
+            <Text
+              style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, }} color="textFarm"
+            >{amount}</Text>
+          </Box>
+          <Box>
 
-          <MaxContainer>
-            <Box>
-              <button type="button" style={{ borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
-                {t('MAX')}
-              </button>
-            </Box>
-            <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
-            <Box>
-              <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>{name}</Text>
-            </Box>
-          </MaxContainer>
-        </Box>
-      </Section>
+            <MaxContainer>
+              <Box>
+                <button type="button" style={{ borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
+                  {t('MAX')}
+                </button>
+              </Box>
+              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+              <Box>
+                <Text color="textFarm" style={{ fontWeight: 700, }}>{name}</Text>
+              </Box>
+            </MaxContainer>
+          </Box>
+        </Section>
+      </Flex>
       <Flex flexDirection="column">
         <StyledArrowDown style={{ marginLeft: 'auto', marginRight: 'auto' }} />
 
-        <Flex justifyContent="space-between">
-          <Text fontWeight="bold" style={{ color: '#1A1D1F' }}>{t('Recieve (Estimated)')}</Text>
-          <Text >{t('Balance')}: <span style={{ color: '#1a1d1f', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+        <Flex justifyContent="space-between" mb="10px">
+          <Text fontWeight="700" color="textFarm" fontSize="14px">{t('Recieve (Estimated)')}</Text>
+          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance} ${name}`}</span></Text>
         </Flex>
         <Section justifyContent="space-between">
           <Box>
@@ -181,9 +184,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
             >{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
           </Box>
           <Box>
-
             <MaxContainer>
-
               <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
               <Box>
                 <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>ib{name}</Text>
@@ -195,11 +196,11 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
       <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
-          <Text style={{ height: '100%' }}>Back</Text>
+          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>Back</Text>
         </Flex>
         {isApproved ? null : (
           <Button
-            style={{ width: '160px' ,height:'57px'}}
+            style={{ width: '160px', height: '57px', borderRadius: '16px' }}
             onClick={handleApprove}
             disabled={!account || isApproving}
             isLoading={isApproving}
@@ -209,7 +210,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           </Button>
         )}
         <Button
-          style={{ width: '160px' ,height:'57px'}}
+          style={{ width: '160px', height: '57px', borderRadius: '16px' }}
           onClick={handleApprove}
           disabled
           isLoading={isApproving}
@@ -233,7 +234,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
           {isPending ? t('Confirming') : t('Confirm')}
         </Button> */}
       </ButtonGroup>
-    </>
+    </Page>
   )
 }
 

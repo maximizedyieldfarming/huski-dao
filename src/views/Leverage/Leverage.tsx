@@ -87,7 +87,7 @@ const RewardsContainer = styled(Box)`
 
 const PositionButtonsContainer = styled(Box)`
   > div {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
+    // border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
   }
   ${({ theme }) => theme.mediaQueries.md} {
     order: 1;
@@ -161,11 +161,11 @@ const Leverage: React.FC = () => {
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>Huski<br /> Finance</h2>
         </SBBox>
         
-        <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-evenly', background: '#E3F0F6', borderRadius: '15px', width: '20%' }}>
+        <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-between', background: '#E3F0F6', borderRadius: '15px', width: '20%' }}>
           <img src="/images/crown.png" width='48px' height='48px' alt="" />
-          <Text  fontSize="16px">{t('HUSKI Rewards')}</Text>
+          <Text mt="10px"  fontSize="13px" fontWeight="600">{t('HUSKI Rewards')}</Text>
           <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start" >
-            <Text style={{color:'#1A1D1F'}} bold fontSize="36px">
+            <Text mb='5px' color="textFarm" fontWeight="700" fontSize="28px">
               {reward.toPrecision(3)}
             </Text>
             <StyledButton
@@ -173,7 +173,7 @@ const Leverage: React.FC = () => {
               to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
               disabled={!account}
               scale="sm"
-            ><Text>
+            ><Text color="textSubtle">
               {t('Claim')}
               </Text>
             </StyledButton>

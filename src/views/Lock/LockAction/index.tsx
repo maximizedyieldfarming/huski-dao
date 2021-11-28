@@ -19,13 +19,18 @@ interface LocationParams {
 
 const StyledPage = styled(Page)`
   align-items: center;
-  justify-content: center;
-  gap: 2rem;
+  justify-content: start;
+  gap: 20px;
+`
+
+const ButtonGroup = styled(Flex)`
+  gap: 10px;
+  align-items:center;
 `
 const Container = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
-  border-radius: 20px;
+  border-radius: 12px;
   width: 510px;
   max-height: 528px;
   padding: 1rem;
@@ -43,12 +48,29 @@ const Container = styled(Box)`
     }
   }
 `
-
+const MaxContainer = styled(Flex)`
+  align-items: center;
+  justify-content: center;
+  height:100%;
+  ${Box} {
+    padding: 0 5px;
+    &:first-child {
+     // border-right: 2px solid ${({ theme }) => theme.colors.text};
+    }
+    &:last-child {
+      // border-left: 1px solid purple;
+    }
+  }
+`
 const Section = styled(Flex)`
-  background-color: ${({ theme }) => theme.card.background};
-  padding: 1rem;
+  background-color: ${({ theme }) => theme.colors.background};
+  
   border-radius: ${({ theme }) => theme.radii.small};
   justify-content: space-between;
+  span {
+    color: ${({ theme }) => theme.colors.text};
+    font-weight:600;
+  }
   &.gray {
     background-color: ${({ theme }) => theme.colors.backgroundDisabled};
   }
@@ -100,23 +122,40 @@ const LockAction = () => {
 
   return (
     <StyledPage>
-      <Text fontSize="3" bold>{`${t('Lock')} ${name}`}</Text>
+       <img src="/images/HuskiPaw.png" alt="" />
+      <Text fontSize="3" bold>{`${t('Lock')} HUSKI UP`}</Text>
       <Container>
         <Section className="gray" mt="1rem">
-          <Box>
-            <Text color="textSubtle">{t('Amount')}</Text>
-            <NumberInput placeholder="0.00" onChange={handleAmountChange} step="0.01" value={amount} />
+          <Flex justifyContent='space-between' flex='1'>
+            <Text fontSize='14px' color="text" fontWeight="700">{t('Amount')}</Text>
+            <Text fontSize="12px" color="textSubtle" >
+              {t('Balance')}: <span>200.90 HUSKI</span>
+            </Text>
+          </Flex>
+
+        </Section>
+        <Section justifyContent="space-between" pt='30px' pb='30px'>
+          <Box ml='10px'>
+            <Text
+              style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, }} color="textFarm"
+            >{amount}</Text>
           </Box>
           <Box>
-            <Text color="textSubtle" fontWeight="bold">
-              {t('Balance')}: {balance} {name}
-            </Text>
-            <Button variant="tertiary" scale="xs" onClick={setAmountToMax}>
-              {t('MAX')}
-            </Button>
+
+            <MaxContainer>
+              <Box>
+                <button type="button" style={{ width: '48px', height: '34px', borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
+                  {t('MAX')}
+                </button>
+              </Box>
+              <img src="/images/lock/sHuski.png" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+              <Box>
+                <Text color="textFarm" style={{ fontWeight: 700, }}>{name}</Text>
+              </Box>
+            </MaxContainer>
           </Box>
         </Section>
-        <Box>
+        {/* <Box>
           <Text color="textSubtle">{t('Unlock Date')}</Text>
           <Section className="gray">
             <Text>{displayDate}</Text>
@@ -135,29 +174,55 @@ const LockAction = () => {
               {t('1 year')}
             </Button>
           </Flex>
-        </Box>
-        <Flex justifyContent="space-between" padding="0 2rem">
-          <Text color="textSubtle">{t('APY')}</Text>
-          <Text>{apy}%</Text>
+        </Box> */}
+        <Flex justifyContent="space-around">
+          <Text color='textFarm' fontWeight='700'>Lock HUSKI for</Text>
+          <Text style={{ textDecoration: 'underline' }} color='textSecondary' bold>3 weeks + 3 Days</Text>
+          <Text>&</Text>
+          <Text style={{ textDecoration: 'underline' }} color='textSecondary' bold>Auto-Relock Monthly</Text>
         </Flex>
-        <Flex justifyContent="space-between" padding="0 2rem">
-          <Text color="textSubtle">{t(`You'll receive`)}</Text>
-          <Text>{receiveAmount} sHUSKI</Text>
+        <Flex justifyContent="space-between" >
+          <Text color="textFarm" mt='10px'>{t('APY')}</Text>
+          <Text fontWeight='700'>{apy}%</Text>
         </Flex>
-        <Button
+        <Flex justifyContent="space-between" >
+          <Text color="textFarm" mt='10px'>{t('Unlock Date Monthly')}</Text>
+          <Text fontWeight='700'>14th Oct</Text>
+        </Flex>
+        {/* <Button
           disabled={Number(amount) === 0 || amount === undefined || Number(balance) === 0 || isPending}
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           width="100%"
         >
           {isPending ? t('Confirming') : t('Confirm')}
-        </Button>
+        </Button> */}
+        <ButtonGroup flexDirection="row" justifySelf="space-between" justifyContent="space-evenly" mb="20px" mt="30px">
+          <Flex flex='1' style={{ alignItems: 'center', cursor: 'pointer' }}>
+            <img src="/images/Cheveron.svg" alt="" />
+            <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>Back</Text>
+          </Flex>
+
+          <Button
+            style={{ width: '160px', height: '57px', borderRadius: '16px' }}
+          >
+            Confirm
+          </Button>
+          <Button
+            style={{ color: '#6F767E', backgroundColor: '#F4F4F4', width: '160px', height: '57px', borderRadius: '16px' }} disabled
+          >
+            Lock
+          </Button>
+        </ButtonGroup>
       </Container>
       <Container className="locked">
-        <Text color="textSubtle" mr="2rem">
-          {t('Locked')}
+        <Text color="text" fontWeight='700' mr="2rem">
+          {t('Staked')}
         </Text>
-        <Text color="textSubtle">{locked}</Text>
+        <Flex>
+        <img src="/images/lock/sHuski.png" style={{ marginLeft: '20px', marginRight: '15px' }} width='24px' alt="" />
+          <Text color="text" fontWeight='700'>56.324 sHUSKI</Text>
+        </Flex>
       </Container>
     </StyledPage>
   )

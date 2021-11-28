@@ -30,11 +30,11 @@ const NameCell = ({ token }) => {
             <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
           </Box>
           <Box>
-            <Text bold={!isMobile} small={isMobile} mb="5px" style={{fontWeight:600,color:'#131313'}}>
+            <Text bold={!isMobile} small={isMobile} mb="5px" color="text">
               {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (
-              <Text small color="textSubtle" style={{ whiteSpace: 'nowrap' }}>
+              <Text small color="textSubtle" fontWeight="500" fontSize="12px" style={{ whiteSpace: 'nowrap' }}>
                 1 ib{token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
                 {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
               </Text>

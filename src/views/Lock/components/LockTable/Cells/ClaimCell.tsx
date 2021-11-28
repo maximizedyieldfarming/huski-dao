@@ -7,10 +7,10 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
-  align-items: center;
+  flex: 1 0 30px;
+  align-items: end;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 30px;
   }
   a {
     padding: 0.75rem;
@@ -35,8 +35,10 @@ const ClaimCell = ({ data, sHuskiLocked }) => {
         <Button
           disabled={!account || !sHuskiLocked}
           onClick={(e) => !account && e.preventDefault()}
+          width='114px' height='40px'
+          
         >
-          {t('Claim')}
+           <Text color='textSubtle' style={{border:'1px solid #EFEFEF'}}> {t('Claim')}</Text>
         </Button>
       </CellContent>
     </StyledCell>

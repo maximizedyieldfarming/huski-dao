@@ -11,10 +11,10 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
-  padding-left: 12px;
+  // padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 1 0 150px;
-    padding-left: 32px;
+    padding-left: 12px;
   }
   ${CellContent} {
     display: flex;
@@ -33,7 +33,7 @@ const NameCell = ({ token }) => {
         <Box width={40} height={40}>
           <TokenImage token={token?.token} width={40} height={40} mr="8px" />
         </Box>
-        <Text bold={!isMobile} small={isMobile} color="secondary">
+        <Text bold={!isMobile} small={isMobile} color="textFarm">
           {token?.symbol.replace('WBNB', 'BNB')}
         </Text>
       </CellContent>

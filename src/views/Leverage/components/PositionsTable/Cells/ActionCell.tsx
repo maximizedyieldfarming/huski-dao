@@ -15,7 +15,7 @@ const StyledCell = styled(BaseCell)`
   > div {
     gap: 5px;
   }
-  margin-bottom:15px!important;
+  
   padding-top:15px!important;
   a {
     padding: 0.75rem;

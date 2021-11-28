@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import NameCell from './Cells/NameCell'
-import PoolCell from './Cells/PoolCell'
+import NameCellPosition from './Cells/NameCellPosition'
+import PoolCellPosition from './Cells/PoolCellPosition'
 import PositionValueCell from './Cells/PositionValueCell'
 import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
 import LiquidationFeeCell from './Cells/LiquidationFeeCell'
@@ -12,6 +12,9 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  padding-top: 15px;
+    margin-bottom: -10px;
+    overflow:hidden;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -143,8 +146,8 @@ const token = {
 return (
   <>
     <StyledRow role="row">
-      <NameCell name="test" positionId="234234erre" />
-      <PoolCell pool="HUSKI_BNB" quoteToken={quoteToken} token={token} />
+      <NameCellPosition name="test" positionId="21843" />
+      <PoolCellPosition pool="HUSKI_BNB" quoteToken={quoteToken} token={token} />
       <PositionValueCell position={null} name="BNB" />
       <LiquidatedEquityCell liqEquity="10BNB" />
       <LiquidationFeeCell fee="0.53BNB" />
@@ -152,8 +155,8 @@ return (
       <TxRecordCell />
     </StyledRow>
     <StyledRow role="row">
-      <NameCell name="test" positionId="234234erre" />
-      <PoolCell pool="HUSKI_BNB" quoteToken={quoteToken} token={token} />
+      <NameCellPosition name="test" positionId="21678" />
+      <PoolCellPosition pool="HUSKI_BNB" quoteToken={quoteToken} token={token} />
       <PositionValueCell position={null} name="BNB" />
       <LiquidatedEquityCell liqEquity="10BNB" />
       <LiquidationFeeCell fee="0.53BNB" />

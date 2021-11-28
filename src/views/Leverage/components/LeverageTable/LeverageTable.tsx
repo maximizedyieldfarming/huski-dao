@@ -24,10 +24,10 @@ const StyledTable = styled.div`
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+    // border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   > div:first-child {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
+    // border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
   }
 `
 
@@ -88,8 +88,9 @@ const FiltersWrapper = styled(Flex)`
     }
   }
   .searchSortContainer {
-    width:30%;
+    width:25%;
     flex-direction: column;
+    align-items:center;
     ${({ theme }) => theme.mediaQueries.lg} {
       margin-left: auto;
       flex-direction: row;
@@ -202,7 +203,7 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
               </Flex>
             </Flex>
-            <Flex alignItems="center" className="tokenFilter">
+            <Flex alignItems="center" className="tokenFilter" ml='50px'>
               <Text style={{fontWeight:700,color:'#131313'}}>{t('Paired Assets:')}</Text>
               <Flex>
                 <FilterOption
@@ -260,8 +261,8 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
               </Flex>
             </Flex>
-            <Flex className="searchSortContainer">
-              <Text style={{fontWeight:400,color:'#131313',width:'100px',paddingTop:'7px'}}>Sort by</Text>
+            <Flex className="searchSortContainer" >
+              <Text color="textSubtle" style={{fontWeight:400, width:'80px'}}>Sort by</Text>
               <Select
                 options={[
                   {

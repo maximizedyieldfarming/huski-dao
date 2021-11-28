@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import { useMatchBreakpoints, Flex } from 'husky-uikit1.0'
+import { useMatchBreakpoints, Flex, Box } from 'husky-uikit1.0'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import TotalHuskiLockedCell from './Cells/TotalHuskiLockedCell'
 import ValueLockedCell from './Cells/ValueLockedCell'
@@ -14,12 +14,17 @@ import ClaimCell from './Cells/ClaimCell'
 
 const StyledRow = styled.div`
   background-color: ${({ theme }) => theme.card.background};
-  border-left: 2px solid ${({ theme }) => theme.colors.secondary};
+  // border-left: 2px solid ${({ theme }) => theme.colors.secondary};
   display: flex;
   flex-direction: column;
   border-radius: ${({ theme }) => theme.radii.small};
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex-direction: row;
+  }
+  > ${Box} >${Flex} {
+    &:first-child {
+      border-bottom 2px solid ${({ theme }) => theme.colors.disabled};
+    }
   }
   > ${Flex} {
     flex-direction: column;
@@ -37,19 +42,21 @@ const LockRow = ({ lockData }) => {
 
   return (
     <StyledRow role="row">
-      <Flex>
-        <NameCell data={lockData} />
-        <ApyCell apy={lockData.apy} />
-        <TotalHuskiLockedCell totalsHuskiLocked={lockData.totalsHuskiLocked} />
-        <ValueLockedCell totalValueLocked={lockData.totalValueLocked} />
-        <LockCell data={lockData} />
-      </Flex>
-      <Flex>
-        <UnlockDateCell date={lockData.unlockDate} />
-        <HuskiLockedCell sHuskiLocked={lockData.sHuskiLocked} />
-        <RewardsCell rewards={lockData.rewards} />
-        <ClaimCell data={lockData} sHuskiLocked={sHuskiLocked} />
-      </Flex>
+      <Box ml='20px' mr='20px'>
+        <Flex>
+          <NameCell data={lockData} />
+          <ApyCell apy={lockData.apy} />
+          <TotalHuskiLockedCell totalsHuskiLocked={lockData.totalsHuskiLocked} />
+          <ValueLockedCell totalValueLocked={lockData.totalValueLocked} />
+          <LockCell data={lockData} />
+        </Flex>
+        <Flex>
+          <UnlockDateCell date={lockData.unlockDate} />
+          <HuskiLockedCell sHuskiLocked={lockData.sHuskiLocked} />
+          <RewardsCell rewards={lockData.rewards} />
+          <ClaimCell data={lockData} sHuskiLocked={sHuskiLocked} />
+        </Flex>
+      </Box>
     </StyledRow>
   )
 }

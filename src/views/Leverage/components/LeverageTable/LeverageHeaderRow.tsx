@@ -8,7 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: none !important;
+  border-bottom: 1px solid #EFEFEF;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }

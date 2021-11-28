@@ -27,7 +27,7 @@ const ValueLockedCell = ({ totalValueLocked }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           {t('Total Value Locked')}
         </Text>
-        <Text>{`$${totalValueLocked}`}</Text>
+        <Text fontWeight="text" >{`$${totalValueLocked}`}</Text>
       </CellContent>
     </StyledCell>
   )

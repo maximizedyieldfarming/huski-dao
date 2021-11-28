@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -35,10 +35,10 @@ const ApyCell = ({ apy }) => {
           </Text>
           {tooltipVisible && tooltip}
           <span ref={targetRef}>
-            <InfoIcon ml="10px" />
+            <InfoIcon color='textSubtle' style={{width:'16.6px'}} ml="10px" />
           </span>
         </Flex>
-        <Text>{apy}%</Text>
+        {apy ? <Text color="text"  mt='5px' fontWeight='600'>{apy}%</Text> : <Text color="text" mt='3px' fontWeight='600'>234.34%</Text>}
       </CellContent>
     </StyledCell>
   )
