@@ -31,13 +31,13 @@ const AddColateral = ({
 }) => {
   const { t } = useTranslation()
 
-  BigNumber.config({ DECIMAL_PLACES: 18, EXPONENTIAL_AT: 18 })
+  BigNumber.config({ EXPONENTIAL_AT: 1e9 })
   const handleQuoteTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? Number(userQuoteTokenBalance) : input
         setQuoteTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -48,16 +48,16 @@ const AddColateral = ({
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       const value = userQuoteTokenBalance.toNumber() * 0.25
-      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '50%') {
       const value = userQuoteTokenBalance.toNumber() * 0.5
-      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '75%') {
       const value = userQuoteTokenBalance.toNumber() * 0.75
-      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '100%') {
       const value = userQuoteTokenBalance.toNumber()
-      setQuoteTokenInput(new BigNumber(value))
+      setQuoteTokenInput(new BigNumber(value).toNumber())
     }
   }
 
@@ -66,7 +66,7 @@ const AddColateral = ({
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = Number(input) > Number(userTokenBalance) ? Number(userTokenBalance) : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -78,16 +78,16 @@ const AddColateral = ({
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       const value = userTokenBalance.toNumber() * 0.25
-      setTokenInput(new BigNumber(value))
+      setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '50%') {
       const value = userTokenBalance.toNumber() * 0.5
-      setTokenInput(new BigNumber(value))
+      setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '75%') {
       const value = userTokenBalance.toNumber() * 0.75
-      setTokenInput(new BigNumber(value))
+      setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '100%') {
       const value = userTokenBalance.toNumber()
-      setTokenInput(new BigNumber(value))
+      setTokenInput(new BigNumber(value).toNumber())
     }
   }
 
@@ -117,7 +117,7 @@ const AddColateral = ({
               </Flex>
               <Flex>
                 <Text small>
-                  1 {quoteTokenName} = {quoteTokenPrice} {symbolName}
+                  1 {quoteTokenName} = {quoteTokenPrice} BUSD
                 </Text>
               </Flex>
             </Flex>
@@ -152,16 +152,14 @@ const AddColateral = ({
                   {t('Balance')}:
                 </Text>
                 {userTokenBalance ? (
-                  <Text small>
-                    {formatDisplayedBalance(userTokenBalance, token?.decimalsDigits)}
-                  </Text>
+                  <Text small>{formatDisplayedBalance(userTokenBalance, token?.decimalsDigits)}</Text>
                 ) : (
                   <Skeleton width="80px" height="16px" />
                 )}
               </Flex>
               <Flex>
                 <Text small>
-                  1 {tokenName} = {tokenPrice} {symbolName}
+                  1 {tokenName} = {tokenPrice} BUSD
                 </Text>
               </Flex>
             </Flex>

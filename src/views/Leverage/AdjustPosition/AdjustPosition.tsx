@@ -74,13 +74,14 @@ border: 1px solid ${({ theme }) => theme.colors.text};
 `
 
 const AdjustPosition = () => {
+  BigNumber.config({ EXPONENTIAL_AT: 1e9 })
   const {
     state: { data, liquidationThresholdData },
   } = useLocation<LocationParams>()
 
   const { t } = useTranslation()
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
-  const [tokenInput, setTokenInput] = useState(0)
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number>()
+  const [tokenInput, setTokenInput] = useState<number>()
   const [borrowingMore, setBorrowingMore] = useState<number>()
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
@@ -136,8 +137,8 @@ const AdjustPosition = () => {
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = vaultContract
-    tokenInputValue = formatNumber(tokenInput)
-    quoteTokenInputValue = formatNumber(quoteTokenInput)
+    tokenInputValue = tokenInput || 0 // formatNumber(tokenInput)
+    quoteTokenInputValue = quoteTokenInput || 0 // formatNumber(quoteTokenInput)
     userTokenBalance = getBalanceAmount(
       tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
     )
@@ -164,8 +165,8 @@ const AdjustPosition = () => {
     withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = quoteTokenVaultContract
-    tokenInputValue = formatNumber(quoteTokenInput)
-    quoteTokenInputValue = formatNumber(tokenInput)
+    tokenInputValue = quoteTokenInput || 0 // formatNumber(quoteTokenInput)
+    quoteTokenInputValue = tokenInput || 0 // formatNumber(tokenInput)
     userTokenBalance = getBalanceAmount(
       quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
     )
@@ -201,13 +202,6 @@ const AdjustPosition = () => {
   //   userQuoteTokenBalance,
   // })
 
-  const datalistSteps = []
-  const datalistOptions = (() => {
-    for (let i = 1; i < leverage / 0.5; i++) {
-      datalistSteps.push(1 + 0.5 * (-1 + i))
-    }
-    return datalistSteps.map((value) => <option value={value} label={value} />)
-  })()
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -219,7 +213,7 @@ const AdjustPosition = () => {
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const lvgAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValueNumber)))
-  const currentPositionLeverage = lvgAdjust.toNumber()
+  const currentPositionLeverage = Number(lvgAdjust.toFixed(2, 1)) // lvgAdjust.toNumber()
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
 
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
@@ -228,6 +222,7 @@ const AdjustPosition = () => {
   const leverageAfter = new BigNumber(adjustData[10]).toFixed(2, 1)
   // console.log("lvg after", adjustData[10], "target", targetPositionLeverage, "current", currentPositionLeverage)
 
+  const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
@@ -247,9 +242,11 @@ const AdjustPosition = () => {
     baseTokenInPosition = adjustData?.[8]
     farmingTokenInPosition = adjustData?.[9]
     assetsBorrowedUp = adjustData?.[3] < 0.0000001 ? 0 : adjustData?.[3]
-    UpdatedDebt = adjustData?.[3] + Number(debtValueNumber)
+    UpdatedDebt = isAddCollateral || targetPositionLeverage > currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
 
   }
+  console.log("my condition is", adjustData?.[3] === 0 && adjustData?.[11] === 0)
+  console.log("repay 4", repayDebtData[4], 'debtVal', Number(debtValueNumber), "updated debt", UpdatedDebt, 'adjust data 3', adjustData?.[3], 'debt', debtValueNumber.toNumber())
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
   const priceImpactClose = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
   const tradingFeesClose = Number(farmTokenAmount) * 0.0025
@@ -488,6 +485,9 @@ const AdjustPosition = () => {
     const value = e?.target?.value
     const finalValue = Number(value).toFixed(2) === Number(currentPositionLeverage).toFixed(2) ? currentPositionLeverage : Number(value)
     setTargetPositionLeverage(Number(finalValue))
+    if (Number(targetPositionLeverage) >= Number(currentPositionLeverage)) {
+      setIsAddCollateral(true)
+    }
   }
 
   const handleBorrowMoreChange = (e) => {
@@ -519,7 +519,6 @@ const AdjustPosition = () => {
     { placement: 'top-start' },
   )
 
-  const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
   const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
@@ -530,11 +529,13 @@ const AdjustPosition = () => {
     percentageToClose / 100,
     symbolName
   )
+  
 
   const isConfirmDisabled =
     (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
-    Number(currentPositionLeverage).toPrecision(3) === Number(targetPositionLeverage).toPrecision(3) ||
-    (!Number(tokenInput) && !Number(quoteTokenInput))
+    Number(currentPositionLeverage).toFixed(2) === Number(targetPositionLeverage).toFixed(2)
+    // ||
+    // (!Number(tokenInput) && !Number(quoteTokenInput))
 
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
@@ -618,15 +619,9 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Amount of Debt to Repay')}</Text>
-          {isConvertTo ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+              {UpdatedDebt?.toFixed(3)} {symbolName}
             </Text>
-          ) : (
-            <Text>
-              <Text>{amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}</Text>
-            </Text>
-          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Position Value Assets')}</Text>
@@ -696,9 +691,11 @@ const AdjustPosition = () => {
             </span>
           </Flex>
           {priceimpact ? (
-            <Text color="#1DBE03">+{(priceimpact * 100).toPrecision(4)}%</Text>
+            <Text color={new BigNumber((priceImpact * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
+              +{(priceimpact * 100).toPrecision(4)}%
+            </Text>
           ) : (
-            <Text color="#1DBE03">0.00%</Text>
+            <Text>0.00%</Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
@@ -710,9 +707,11 @@ const AdjustPosition = () => {
             </span>
           </Flex>
           {tradingfee ? (
-            <Text color="#EB0303">-{(tradingfee * 100).toPrecision(4)}%</Text>
+            <Text color={new BigNumber((tradingFees * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
+              -{(tradingfee * 100).toPrecision(4)}%
+            </Text>
           ) : (
-            <Text color="#EB0303">0.00%</Text>
+            <Text>0.00%</Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
@@ -723,52 +722,101 @@ const AdjustPosition = () => {
             </Text>
           ) : (
             <Text>
-              {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
+              {convertedPositionValue ? (
+                <Text>
+                  {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+                  {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol}{' '}
+                </Text>
+              ) : (
+                <Skeleton height="16px" width="80px" />
+              )}
             </Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Amount of Debt to Repay')}</Text>
-          {isConvertTo ? (
+         
             <Text>
-              {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
+              {UpdatedDebt?.toFixed(3)} {symbolName}
             </Text>
-          ) : (
-            <Text>
-              <Text>{amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}</Text>
-            </Text>
-          )}
+          
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Position Value Assets')}</Text>
           <Text>
             {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
           </Text>
-
         </Flex>
       </Section>
     )
   } else {
     lastSection = (
       <Section>
-        <Flex justifyContent="space-between">
-          <Text>{t('Position Value Assets')}</Text>
-          {farmingData ? (
+        {/*         {Number(targetPositionLeverage) > Number(currentPositionLeverage.toFixed(2)) ? null : (
+          <Flex justifyContent="space-between">
+            <Text>{t('Position Value Assets')}</Text>
+            {farmingData ? (
+              <Text>
+                {Number(tokenInputValue) > Number(Number(tokenInputValue)?.toFixed(3))
+                  ? `${Number(tokenInputValue?.toFixed(3))}...`
+                  : Number(tokenInputValue)?.toFixed(3)}{' '}
+                {tokenValue?.symbol} +{' '}
+                {Number(quoteTokenInputValue) > Number(quoteTokenInputValue?.toFixed(3))
+                  ? `${Number(tokenInputValue?.toFixed(3))}...`
+                  : Number(quoteTokenInputValue)?.toFixed(3)}{' '}
+                {quoteTokenValue?.symbol}
+              </Text>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
+          </Flex>
+        )} */}
+        {Number(targetPositionLeverage) < Number(currentPositionLeverage) && isAddCollateral ? (
+          <>
+            <Flex justifyContent="space-between">
+              <Text>{t('Collateral to be Added')}</Text>
+              {farmingData ? (
+                <Text>
+                  {Number(tokenInputValue) > Number(Number(tokenInputValue)?.toFixed(3))
+                    ? `${Number(tokenInputValue?.toFixed(3))}...`
+                    : Number(tokenInputValue)?.toFixed(3)}{' '}
+                  {tokenValue?.symbol} +{' '}
+                  {Number(quoteTokenInputValue) > Number(quoteTokenInputValue?.toFixed(3))
+                    ? `${Number(tokenInputValue?.toFixed(3))}...`
+                    : Number(quoteTokenInputValue)?.toFixed(3)}{' '}
+                  {quoteTokenValue?.symbol}
+                </Text>
+              ) : (
+                <Skeleton width="80px" height="16px" />
+              )}
+            </Flex>
+          </>
+        ) : null}
+        {Number(targetPositionLeverage) > Number(currentPositionLeverage) ? (
+          <>
+            <Flex justifyContent="space-between">
+              <Text>{t('Assets to be borrowed')}</Text>
+               {adjustData ? (
+                      <Text>
+                        {assetsBorrowed?.toFixed(3)} {symbolName}
+                      </Text>
+                    ) : (
+                      <Text>
+                        {debtValueNumber.toNumber().toPrecision(3)} {symbolName}
+                      </Text>
+                    )}
+            </Flex>
+          </>
+        ) : null}
+        {/*           {adjustData ? (
             <Text>
-              {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol} + {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol}
+              {assetsBorrowed?.toFixed(3)} {symbolName}
             </Text>
           ) : (
-            <Skeleton width="80px" height="16px" />
-          )}
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Text>{t('Assets to be Borrowed')}</Text>
-          {adjustData ? (
-            <Text>{assetsBorrowed?.toFixed(3)} {symbolName}</Text>
-          ) : (
-            <Text>{debtValueNumber.toNumber().toPrecision(3)} {symbolName}</Text>
-          )}
-        </Flex>
+            <Text>
+              {debtValueNumber.toNumber().toPrecision(3)} {symbolName}
+            </Text>
+          )} */}
         <Flex justifyContent="space-between">
           <Flex>
             <Text>{t('Price Impact')}</Text>
@@ -778,9 +826,14 @@ const AdjustPosition = () => {
             </span>
           </Flex>
           {adjustData ? (
-            <Text color="#1DBE03">+{(priceImpact * 100).toPrecision(4)}%</Text>
+            <Text color={new BigNumber((priceImpact * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
+              {new BigNumber((priceImpact * 100).toFixed(2)).gt(0)
+                ? `+${new BigNumber(priceImpact * 100).toFixed(2, 1)}`
+                : `0.00`}
+              %
+            </Text>
           ) : (
-            <Text color="#1DBE03">0.00%</Text>
+            <Text>0.00%</Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
@@ -792,16 +845,23 @@ const AdjustPosition = () => {
             </span>
           </Flex>
           {adjustData ? (
-            <Text color="#EB0303">-{(tradingFees * 100).toPrecision(4)}%</Text>
+            <Text color={new BigNumber((tradingFees * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
+              {new BigNumber((tradingFees * 100).toFixed(2)).gt(0)
+                ? `+${new BigNumber(tradingFees * 100).toFixed(2, 1)}`
+                : `0.00`}
+              %
+            </Text>
           ) : (
-            <Text color="#EB0303">0.00%</Text>
+            /*             <Text color="#EB0303">-{(tradingFees * 100).toFixed(2)}%</Text> */
+            <Text>0.00%</Text>
           )}
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Updated Total Assets')}</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition?.toFixed(2)} {quoteTokenValue?.symbol}
+              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition?.toFixed(2)}{' '}
+              {quoteTokenValue?.symbol}
             </Text>
           ) : (
             <Text>
@@ -812,6 +872,20 @@ const AdjustPosition = () => {
       </Section>
     )
   }
+
+const datalistSteps = []
+const datalistOptions = (() => {
+  for (
+    let i = 1;
+    i <
+    (leverage < Number(currentPositionLeverage) ? new BigNumber(currentPositionLeverage).toFixed(2, 1) : leverage) /
+      0.5;
+    i++
+  ) {
+    datalistSteps.push(1 + 0.5 * (-1 + i))
+  }
+  return datalistSteps.map((value) => <option value={value} label={value} />)
+})()
 
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
@@ -824,13 +898,22 @@ const AdjustPosition = () => {
               {t('Adjust Position')} {lpSymbolName}
             </Text>
             <Section>
-              <Text bold>{t('Current Position Leverage')}: {currentPositionLeverage.toPrecision(3)}x</Text>
-              <Text>{t('Target Position Leverage')}: {tokenInput || quoteTokenInput ? leverageAfter : Number(targetPositionLeverage).toPrecision(3)}x</Text>
+              <Text bold>
+                {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
+              </Text>
+              <Text>
+                {t('Target Position Leverage')}:{' '}
+                {tokenInput || quoteTokenInput ? leverageAfter : new BigNumber(targetPositionLeverage).toFixed(2, 1)}x
+              </Text>
               <Flex>
                 <input
                   type="range"
                   min="1.0"
-                  max={leverage}
+                  max={
+                    leverage < Number(currentPositionLeverage)
+                      ? new BigNumber(currentPositionLeverage).toFixed(2, 1)
+                      : leverage
+                  }
                   step="0.01"
                   name="leverage"
                   value={targetPositionLeverage}
@@ -840,7 +923,7 @@ const AdjustPosition = () => {
                 />
                 <datalist id="leverage">{datalistOptions}</datalist>
                 <Box ml="auto">
-                  <Text textAlign="right">{Number(targetPositionLeverage).toPrecision(3)}x</Text>
+                  <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
                 </Box>
               </Flex>
               {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
@@ -848,7 +931,7 @@ const AdjustPosition = () => {
                   <Text>{t(`You're Borrowing More`)}</Text>
                   <BorrowingMoreContainer alignItems="center">
                     <Flex>
-                      <Box width={24} height={24} mr="4px" >
+                      <Box width={24} height={24} mr="4px">
                         <TokenImage token={tokenValue} width={24} height={24} />
                       </Box>
                       <Text>{assetsBorrowed.toFixed(2)}</Text>
@@ -861,19 +944,29 @@ const AdjustPosition = () => {
                 <AddCollateralRepayDebtContainer
                   currentPositionLeverage={Number(currentPositionLeverage)}
                   targetPositionLeverage={Number(targetPositionLeverage)}
-                  userQuoteTokenBalance={userQuoteTokenBalance}
-                  userTokenBalance={userTokenBalance}
-                  quoteTokenName={quoteTokenValueSymbol}
-                  tokenName={tokenValueSymbol}
-                  quoteToken={quoteTokenValue}
-                  token={tokenValue}
+                  userQuoteTokenBalance={
+                    isAddCollateral
+                      ? getBalanceAmount(
+                          quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
+                        )
+                      : userQuoteTokenBalance
+                  }
+                  userTokenBalance={
+                    isAddCollateral
+                      ? getBalanceAmount(tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+                      : userTokenBalance
+                  }
+                  quoteTokenName={isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol}
+                  tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
+                  quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
+                  token={isAddCollateral ? token : tokenValue}
                   tokenInput={tokenInput}
                   quoteTokenInput={quoteTokenInput}
                   setTokenInput={setTokenInput}
                   setQuoteTokenInput={setQuoteTokenInput}
                   symbolName={symbolName}
-                  tokenPrice={tokenPrice}
-                  quoteTokenPrice={quoteTokenPrice}
+                  tokenPrice={tokenPriceUsd}
+                  quoteTokenPrice={quoteTokenPriceUsd}
                   baseTokenAmountValue={baseTokenAmount}
                   farmTokenAmountValue={farmTokenAmount}
                   minimizeTradingValues={getAdjustPositionRepayDebt(
@@ -881,7 +974,7 @@ const AdjustPosition = () => {
                     data,
                     Number(targetPositionLeverage),
                     percentageToClose / 100,
-                    symbolName
+                    symbolName,
                   )}
                 />
               )}
@@ -909,7 +1002,7 @@ const AdjustPosition = () => {
                     data,
                     Number(targetPositionLeverage),
                     percentageToClose / 100,
-                    symbolName
+                    symbolName,
                   )}
                 />
               )}
@@ -917,16 +1010,88 @@ const AdjustPosition = () => {
 
             <Section>
               <Flex justifyContent="space-between">
-                <Text>{t('Asset to be Borrowed')}</Text>
-                {adjustData ? <Text>{assetsBorrowedUp?.toPrecision(3)} {symbolName}</Text> : <Text>0.00</Text>}
+                {Number(targetPositionLeverage) < Number(currentPositionLeverage) && isAddCollateral && (
+                  <>
+                    <Text>{t('Collateral to be Added')}</Text>
+                    {farmingData ? (
+                      <Text>
+                        {Number(tokenInputValue) > Number(Number(tokenInputValue).toFixed(3))
+                          ? `${Number(tokenInputValue.toFixed(3))}...`
+                          : Number(tokenInputValue).toFixed(3)}{' '}
+                        {tokenValue?.symbol} +{' '}
+                        {Number(quoteTokenInputValue) > Number(quoteTokenInputValue.toFixed(3))
+                          ? `${Number(tokenInputValue.toFixed(3))}...`
+                          : Number(quoteTokenInputValue).toFixed(3)}{' '}
+                        {quoteTokenValue?.symbol}
+                      </Text>
+                    ) : (
+                      <Skeleton width="80px" height="16px" />
+                    )}
+                  </>
+                )}
+                {Number(targetPositionLeverage) === Number(currentPositionLeverage) && (
+                  <>
+                    <Text>{t('Collateral to be Added')}</Text>
+                    {farmingData ? (
+                      <Text>
+                        {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol} +{' '}
+                        {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol}
+                      </Text>
+                    ) : (
+                      <Skeleton width="80px" height="16px" />
+                    )}
+                  </>
+                )}
+                {Number(targetPositionLeverage) < Number(currentPositionLeverage) && !isAddCollateral && (
+                  <>
+                    <Text>{t('Debt to be Repaid')}</Text>
+                    {/*  {isConvertTo ? (
+                      <Text>
+                        {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
+                      </Text>
+                    ) : (
+                      <Text>
+                        <Text>
+                          {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
+                        </Text>
+                      </Text>
+                    )} */}
+                    {repayDebtData ? (
+                        <Text>
+                      {UpdatedDebt?.toFixed(3)} {symbolName}
+                    </Text>
+                    ) : (
+                      <Skeleton width="80px" height="16px" />
+                    )}
+                  </>
+                )}
+                {Number(targetPositionLeverage) > Number(currentPositionLeverage) && (
+                  <>
+                    <Text>{t('Assets to be borrowed')}</Text>
+                    {adjustData ? (
+                      <Text>
+                        {assetsBorrowed?.toFixed(3)} {symbolName}
+                      </Text>
+                    ) : (
+                      <Text>
+                        {debtValueNumber.toNumber().toPrecision(3)} {symbolName}
+                      </Text>
+                    )}
+                  </>
+                )}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
-                {data ? (
+                {repayDebtData ? (
                   <Flex alignItems="center">
-                    <Text> {debtValueNumber.toNumber().toFixed(3)} {symbolName}</Text>
+                    <Text>
+                      {' '}
+                      {debtValueNumber.toNumber().toFixed(3)} {symbolName}
+                    </Text>
                     <ChevronRightIcon />
-                    <Text> {UpdatedDebt?.toFixed(3)} {symbolName}</Text>
+                    {isAddCollateral ? <Text>
+                      {UpdatedDebt?.toFixed(3)} {symbolName}
+                    </Text>:<Text>{new BigNumber(debtValueNumber).minus(UpdatedDebt).toFixed(2, 1)} {tokenValueSymbol}</Text>}
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -934,13 +1099,16 @@ const AdjustPosition = () => {
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Leverage (ratio)')}</Text>
-                {data ? (
+                {repayDebtData ? (
                   <Flex>
                     <Text>
                       {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
                     </Text>
                     <ChevronRightIcon />
-                    <Text>{(updatedDebtRatio * 100).toFixed(2)}% ({tokenInput || quoteTokenInput ? leverageAfter : Number(targetPositionLeverage).toFixed(2)}X)</Text>
+                    <Text>
+                      {(updatedDebtRatio * 100).toFixed(2)}% (
+                      {tokenInput || quoteTokenInput ? leverageAfter : Number(targetPositionLeverage).toFixed(2)}X)
+                    </Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -1036,7 +1204,7 @@ const AdjustPosition = () => {
 
             {lastSection}
 
-            <Flex alignSelf="center">
+            <Box mx="auto">
               {isAddCollateral && (
                 <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
                   {t('Confirm')}
@@ -1044,7 +1212,7 @@ const AdjustPosition = () => {
               )}
               {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo}>{t('Confirm')}</Button>}
               {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>{t('Confirm')}</Button>}
-            </Flex>
+            </Box>
           </Page>
         </PercentageToCloseContext.Provider>
       </ConvertToContext.Provider>
