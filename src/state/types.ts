@@ -493,14 +493,14 @@ export interface LotteryResponse extends LotteryRoundGenerics {
   rewardsBreakdown: SerializedBigNumber[]
 }
 
-export interface LotteryState {
-  currentLotteryId: string
-  maxNumberTicketsPerBuyOrClaim: string
-  isTransitioning: boolean
-  currentRound: LotteryResponse & { userTickets?: LotteryRoundUserTickets }
-  lotteriesData?: LotteryRoundGraphEntity[]
-  userLotteryData?: LotteryUserGraphEntity
-}
+// export interface LotteryState {
+//   currentLotteryId: string
+//   maxNumberTicketsPerBuyOrClaim: string
+//   isTransitioning: boolean
+//   currentRound: LotteryResponse & { userTickets?: LotteryRoundUserTickets }
+//   lotteriesData?: LotteryRoundGraphEntity[]
+//   userLotteryData?: LotteryUserGraphEntity
+// }
 
 export interface LotteryRoundGraphEntity {
   id: string
@@ -545,5 +545,5 @@ export interface State {
   teams: TeamsState
   collectibles: CollectiblesState
   voting: VotingState
-  lottery: LotteryState
+  // lottery: LotteryState
 }

@@ -1,14 +1,7 @@
 import BigNumber from 'bignumber.js'
 import farmTokens from 'config/constants/farmTokens'
 import { BIG_ONE, BIG_ZERO } from 'utils/bigNumber'
-import { filterFarmsByQuoteToken } from 'utils/farmsPriceHelpers'
 import { LeverageFarm } from 'state/types'
-
-// const getFarmFromTokenSymbol = (farms: LeverageFarm[], tokenSymbol: string, preferredQuoteTokens?: string[]): LeverageFarm => {
-//   const farmsWithTokenSymbol = farms.filter((farm) => farm.token.symbol === tokenSymbol)
-//   const filteredFarm = filterFarmsByQuoteToken(farmsWithTokenSymbol, preferredQuoteTokens)
-//   return filteredFarm
-// }
 
 const getFarmBaseTokenPrice = (farm: LeverageFarm, coingeckoPrices: any): BigNumber => {
   let baseTokenPrice = BIG_ZERO

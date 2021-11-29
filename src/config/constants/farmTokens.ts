@@ -63,6 +63,16 @@ const farmTokens: Token[] = [
     coingeckoId: 'alpaca-finance',
   },
   {
+    symbol: 'sALPACA',
+    address: {
+      56: '0x6F695Bd5FFD25149176629f8491A5099426Ce7a7',
+      97: '',
+    },
+    decimals: 18,
+    projectLink: 'https://www.alpacafinance.org/',
+    coingeckoId: 'alpaca-finance',
+  },
+  {
     symbol: 'BUSD',
     address: {
       56: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
