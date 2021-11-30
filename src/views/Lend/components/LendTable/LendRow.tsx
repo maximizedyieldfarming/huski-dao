@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
-import { useHuskyPrice } from 'state/leverage/hooks'
+import { useHuskiPrice } from 'hooks/api'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { getAddress } from 'utils/addressHelpers'
+import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
 import NameCell from './Cells/NameCell'
 import { getAprData } from '../../helpers'
 import UtilRateCell from './Cells/UtilRateCell'
@@ -28,7 +31,7 @@ const LendRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const { lendApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice)
 
   const toggleExpanded = () => {
@@ -39,6 +42,13 @@ const LendRow = ({ tokenData }) => {
   const totalBorrowedUSD = Number(vaultDebtVal) * Number(tokenPriceUsd)
   const [isShown, setIsShown] = useState(false);
   
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
+  const userTokenBalance = getBalanceAmount(
+    TokenInfo.token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
+  ).toJSON()
+  const userIbTokenBalance = getBalanceAmount(tokenBalanceIb).toJSON()
   return (
     <>
       <StyledRow 
@@ -50,9 +60,10 @@ const LendRow = ({ tokenData }) => {
         <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} />
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
         <BalanceCell
-          balance={userData.tokenBalance}
-          balanceIb={userData.tokenBalanceIB}
+          balance={userTokenBalance}
+          balanceIb={userIbTokenBalance}
           name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+          decimals={TokenInfo?.token?.decimalsDigits}
         />
         <ActionCell token={tokenData} />
       </StyledRow>

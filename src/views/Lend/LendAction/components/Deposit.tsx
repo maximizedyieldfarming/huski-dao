@@ -1,26 +1,27 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Box, Button, Flex, Text, AutoRenewIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
-import { getDecimalAmount } from 'utils/formatBalance'
+import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
+import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import Page from '../../../../components/Layout/Page'
 
 interface DepositProps {
-  balance: any
   name: any
   allowance: any
   exchangeRate: any
   account: any
   tokenData: any
-  tokenName: string
 }
 
 const ButtonGroup = styled(Flex)`
@@ -58,23 +59,13 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRate, account, tokenData, tokenName }) => {
+const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tokenData, name }) => {
+  usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
-  const [amount, setAmount] = useState<number>()
+  const [amount, setAmount] = useState<number | string>()
 
-  const handleAmountChange = (e) => {
-    const invalidChars = ['-', '+', 'e']
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault()
-    }
-    const { value } = e.target
-
-    const finalValue = value > balance ? balance : value
-    setAmount(finalValue)
-  }
-
-  const setAmountToMax = (e) => {
-    setAmount(balance)
+  const setAmountToMax = () => {
+    setAmount(userTokenBalance)
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -83,9 +74,28 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
   const approveContract = useERC20(tokenAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+  const isApproved: boolean = Number(allowance) > 0
   const [isPending, setIsPending] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
+
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  const { balance: bnbBalance } = useGetBnbBalance()
+
+  const userTokenBalance = getBalanceAmount(name.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+
+  const handleAmountChange = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals and allow empty string
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        setAmount(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userTokenBalance, setAmount],
+  )
 
   const handleApprove = async () => {
     toastInfo(t('Approving...'), t('Please Wait!'))
@@ -120,7 +130,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
         depositContract,
         'deposit',
         [convertedStakeAmount.toString()],
-        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+        name === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -138,15 +148,15 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
     const convertedStakeAmount = getDecimalAmount(new BigNumber(amount), 18)
     handleDeposit(convertedStakeAmount)
   }
+  const assetsReceived = new BigNumber(amount).div(exchangeRate).toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
 
-  const assetsReceived = (Number(amount) / exchangeRate)?.toPrecision(3)
 
   return (
     <Page style={{ padding: 0 }}>
       <Flex flexDirection="column">
         <Flex justifyContent="space-between" mb='10px'>
           <Text fontWeight="700" color="textFarm" fontSize="14px">{t('From')}</Text>
-          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}</span></Text>
         </Flex>
         <Section justifyContent="space-between">
           <Box>
@@ -175,7 +185,7 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
 
         <Flex justifyContent="space-between" mb="10px">
           <Text fontWeight="700" color="textFarm" fontSize="14px">{t('Recieve (Estimated)')}</Text>
-          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance.toPrecision(4)} ${name}`}</span></Text>
+          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}</span></Text>
         </Flex>
         <Section justifyContent="space-between">
           <Box>
@@ -201,38 +211,28 @@ const Deposit: React.FC<DepositProps> = ({ balance, name, allowance, exchangeRat
         {isApproved ? null : (
           <Button
             style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-            onClick={handleApprove}
-            disabled={!account || isApproving}
-            isLoading={isApproving}
-            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-          >
-            {isPending ? t('Approving') : t('Approve')}
-          </Button>
-        )}
-        <Button
-          style={{ width: '160px', height: '57px', borderRadius: '16px' }}
           onClick={handleApprove}
           disabled
           isLoading={isApproving}
           endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
           {isPending ? t('Approving') : t('Transfer')}
-        </Button>
-        {/* <Button
+        </Button>)}
+        <Button
           onClick={handleConfirm}
           disabled={
             !account ||
             !isApproved ||
             Number(amount) === 0 ||
             amount === undefined ||
-            Number(balance) === 0 ||
+            Number(userTokenBalance) === 0 ||
             isPending
           }
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
           {isPending ? t('Confirming') : t('Confirm')}
-        </Button> */}
+        </Button> 
       </ButtonGroup>
     </Page>
   )

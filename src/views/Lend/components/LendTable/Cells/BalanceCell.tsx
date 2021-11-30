@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Box } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
-import { getBalanceAmount, getBalanceNumber } from 'utils/formatBalance'
+import { getBalanceAmount, getBalanceNumber, formatNumber } from 'utils/formatBalance'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useTranslation } from 'contexts/Localization'
 import { useGetBnbBalance } from 'hooks/useTokenBalance'
 import BaseCell, { CellContent } from './BaseCell'
@@ -25,11 +26,12 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const BalanceCell = ({ balance, balanceIb, name }) => {
+const BalanceCell = ({ balance, balanceIb, name, decimals }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const userTokenBalance = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
-  const { balance: bnbBalance } = useGetBnbBalance()
   const { t } = useTranslation()
+
+  const formatedBalance = formatDisplayedBalance(balance, decimals)
+  const ibFormatedBalance = formatDisplayedBalance(balanceIb, decimals)
 
   return (
     <StyledCell role="cell">
@@ -42,13 +44,10 @@ const BalanceCell = ({ balance, balanceIb, name }) => {
         {balanceIb ? (
           <Box>
             <Text small textAlign="left" fontSize="12px" bold style={{color:'#131313',marginBottom:'7px'}}>
-              {userTokenBalance(balanceIb).toNumber().toPrecision(3)} ib{name}
+              {ibFormatedBalance} ib{name}
             </Text>
             <Text small textAlign="left" fontSize="12px" bold color="text">
-              {userTokenBalance(name.toLowerCase() === 'bnb' ? bnbBalance : balance)
-                .toNumber()
-                .toPrecision(3)}{' '}
-              {name}
+              {formatedBalance} {name}
             </Text>
           </Box>
         ) : (

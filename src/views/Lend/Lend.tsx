@@ -3,7 +3,7 @@ import React from 'react'
 import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
-import { useLendTotalSupply } from 'state/lend/hooks'
+// import { useLendTotalSupply } from 'state/lend/hooks'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
 import LendTable from './components/LendTable/LendTable'
@@ -37,7 +37,7 @@ const SBBox = styled(Box)`
 
 const Lend: React.FC = () => {
   const { t } = useTranslation()
-  const lendTotalSupply = useLendTotalSupply()
+  const lendTotalSupply = null // useLendTotalSupply()
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
@@ -46,7 +46,6 @@ const Lend: React.FC = () => {
   }, [])
 
   console.log({ lendData })
-
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()

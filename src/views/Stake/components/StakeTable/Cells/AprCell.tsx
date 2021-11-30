@@ -27,6 +27,7 @@ const AprCell = ({ getApyData }) => {
   const { t } = useTranslation()
 
   const { stakeApr, apy } = getApyData
+  console.log('AprCell', getApyData)
 
   const apyCell = (e) => {
     const value = e * 100

@@ -11,15 +11,22 @@ export const getAddress = (address: Address): string => {
 export const getCakeAddress = () => {
   return getAddress(tokens.cake.address)
 }
-
 export const getFairLaunchAddress = () => {
   return getAddress(addresses.fairLaunch)
 }
-
 export const getHuskiAddress = () => {
-  return getAddress(tokens.alpaca.address)
-}
 
+  let address
+  if (process.env.REACT_APP_CHAIN_ID === '97') {
+    address = getAddress(tokens.huski.address)
+  } else {
+    address = getAddress(tokens.alpaca.address)
+  }
+  return address
+}
+export const getsHuskiAddress = () => {
+  return getAddress(tokens.salpaca.address)
+}
 export const getMasterChefAddress = () => {
   return getAddress(addresses.masterChef)
 }
@@ -32,20 +39,11 @@ export const getWbnbAddress = () => {
 export const getPancakeProfileAddress = () => {
   return getAddress(addresses.pancakeProfile)
 }
-export const getBunnyFactoryAddress = () => {
-  return getAddress(addresses.bunnyFactory)
-}
 export const getClaimRefundAddress = () => {
   return getAddress(addresses.claimRefund)
 }
-export const getPointCenterIfoAddress = () => {
-  return getAddress(addresses.pointCenterIfo)
-}
 export const getBunnySpecialAddress = () => {
   return getAddress(addresses.bunnySpecial)
-}
-export const getTradingCompetitionAddress = () => {
-  return getAddress(addresses.tradingCompetition)
 }
 export const getEasterNftAddress = () => {
   return getAddress(addresses.easterNft)
@@ -58,15 +56,6 @@ export const getPredictionsAddress = () => {
 }
 export const getChainlinkOracleAddress = () => {
   return getAddress(addresses.chainlinkOracle)
-}
-export const getBunnySpecialCakeVaultAddress = () => {
-  return getAddress(addresses.bunnySpecialCakeVault)
-}
-export const getBunnySpecialPredictionAddress = () => {
-  return getAddress(addresses.bunnySpecialPrediction)
-}
-export const getBunnySpecialLotteryAddress = () => {
-  return getAddress(addresses.bunnySpecialLottery)
 }
 export const getFarmAuctionAddress = () => {
   return getAddress(addresses.farmAuction)

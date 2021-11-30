@@ -60,12 +60,13 @@ export const useFarmUser = (pid) => {
 }
 
 
-export const useHuskyPrice = (): BigNumber => {
-  const huskyFarm = useFarmFromPid(11)
-  const huskyPriceAsString = huskyFarm.token.busdPrice
-  const huskyPrice = useMemo(() => {
-    return new BigNumber(huskyPriceAsString)
-  }, [huskyPriceAsString])
+// export const useHuskyPrice = (): BigNumber => {
+//   const huskiConfig = stakeConfig.find((item) => item.name === 'HUSKI')
+//   const huskyFarm = useFarmFromPid(huskiConfig.pid)
+//   const huskyPriceAsString = huskyFarm.token.busdPrice
+//   const huskyPrice = useMemo(() => {
+//     return new BigNumber(huskyPriceAsString)
+//   }, [huskyPriceAsString])
 
-  return huskyPrice
-}
+//   return huskyPrice
+// }

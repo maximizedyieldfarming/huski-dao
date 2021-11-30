@@ -8,9 +8,7 @@ import {
   getCakeAddress,
   getFairLaunchAddress,
   getMasterChefAddress,
-  getPointCenterIfoAddress,
   getClaimRefundAddress,
-  getTradingCompetitionAddress,
   getCakeVaultAddress,
   getPredictionsAddress,
   getChainlinkOracleAddress,
@@ -26,10 +24,8 @@ import vaultAbi from 'config/abi/vault.json'
 import erc721Abi from 'config/abi/erc721.json'
 import lpTokenAbi from 'config/abi/lpToken.json'
 import cakeAbi from 'config/abi/cake.json'
-import pointCenterIfo from 'config/abi/pointCenterIfo.json'
 import masterChef from 'config/abi/masterchef.json'
 import claimRefundAbi from 'config/abi/claimRefund.json'
-import tradingCompetitionAbi from 'config/abi/tradingCompetition.json'
 import cakeVaultAbi from 'config/abi/cakeVault.json'
 import predictionsAbi from 'config/abi/predictions.json'
 import chainlinkOracleAbi from 'config/abi/chainlinkOracle.json'
@@ -55,16 +51,12 @@ export const getErc721Contract = (address: string, signer?: ethers.Signer | ethe
 export const getLpContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(lpTokenAbi, address, signer)
 }
-export const getPointCenterIfoContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(pointCenterIfo, getPointCenterIfoAddress(), signer)
-}
 export const getCakeContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(cakeAbi, getCakeAddress(), signer)
 }
 export const getClaimFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(fairLaunchAbi, getFairLaunchAddress(), signer)
 }
-
 export const getProfileContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(profileABI, getPancakeProfileAddress(), signer)
 }
@@ -74,16 +66,12 @@ export const getMasterchefContract = (signer?: ethers.Signer | ethers.providers.
 export const getClaimRefundContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(claimRefundAbi, getClaimRefundAddress(), signer)
 }
-export const getTradingCompetitionContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(tradingCompetitionAbi, getTradingCompetitionAddress(), signer)
-}
 export const getCakeVaultContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(cakeVaultAbi, getCakeVaultAddress(), signer)
 }
 export const getPredictionsContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(predictionsAbi, getPredictionsAddress(), signer) as PredictionsContract
 }
-
 export const getChainlinkOracleContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(chainlinkOracleAbi, getChainlinkOracleAddress(), signer) as ChainLinkOracleContract
 }

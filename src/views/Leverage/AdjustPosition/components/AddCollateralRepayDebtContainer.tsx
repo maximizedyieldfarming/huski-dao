@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Button, Flex } from 'husky-uikit1.0'
 import styled from 'styled-components'
+import { useTranslation } from 'contexts/Localization'
 import AddColateral from './AddColateral'
 import RepayDebt from './RepayDebt'
 import { useAddCollateralContext } from '../context'
@@ -24,13 +25,15 @@ interface Props {
   symbolName: string
   tokenPrice: string
   quoteTokenPrice: string
+  baseTokenAmountValue: any
+  farmTokenAmountValue: any
   minimizeTradingValues: any
 }
 
 const Header = styled(Flex)`
   // border-radius: 20px 0 20px 0;
 `
-const HeaderTab = styled(Button) <HeaderProps>`
+const HeaderTab = styled(Button)<HeaderProps>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
@@ -57,9 +60,13 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
   symbolName,
   tokenPrice,
   quoteTokenPrice,
+  baseTokenAmountValue,
+  farmTokenAmountValue,
   minimizeTradingValues,
 }) => {
   const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
+  const { t } = useTranslation()
+
   return (
     <Box>
       <Header>
@@ -68,13 +75,13 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
           onClick={() => handleIsAddCollateral(true)}
           disabled={currentPositionLeverage === 1}
         >
-          Add Collateral
+          {t('Add Collateral')}
         </HeaderTab>
         <HeaderTab
           active={!isAddCollateral || currentPositionLeverage === 1}
           onClick={() => handleIsAddCollateral(false)}
         >
-          {currentPositionLeverage === 1 ? 'Partially Close Your Position' : 'Repay Debt'}
+          {currentPositionLeverage === 1 ? t('Partially Close Your Position') : t('Repay Debt')}
         </HeaderTab>
       </Header>
       <Box padding="1rem">
@@ -101,6 +108,8 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
             minimizeTradingValues={minimizeTradingValues}
             quoteTokenName={quoteTokenName}
             tokenName={tokenName}
+            baseTokenAmountValue={baseTokenAmountValue}
+            farmTokenAmountValue={farmTokenAmountValue}
           />
         )}
       </Box>

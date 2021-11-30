@@ -35,7 +35,11 @@ const BusdPriceContainer = styled(Flex)`
 `
 const CloseEntirePosition = ({ data }) => {
   const { positionId, debtValue, lpAmount, vault } = data
-  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+  const {
+    TokenInfo,
+    QuoteTokenInfo,
+    tokenPriceUsd,
+    quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
 
   const { t } = useTranslation()
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -137,7 +141,7 @@ const CloseEntirePosition = ({ data }) => {
       }
     } catch (error) {
       console.info('error', error)
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
     }
   }
 
@@ -161,7 +165,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: positionValueTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Total value of your farming position calculated from PancakeSwap pool’s reserve.</Text>
+      <Text>{t('Total value of your farming position calculated from PancakeSwap pool’s reserve.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -171,7 +175,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: amountToTradeTooltipVisible,
   } = useTooltip(
     <>
-      <Text>The amount that will be traded to BNB based on your selected method.</Text>
+      <Text>{t('The amount that will be traded to BNB based on your selected method.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -181,7 +185,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: priceImpactTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Impact to price due to trade size.</Text>
+      <Text>{t('Impact to price due to trade size.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -191,7 +195,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: tradingFeesTooltipVisible,
   } = useTooltip(
     <>
-      <Text>PancakeSwap trading fees</Text>
+      <Text>{t('PancakeSwap trading fees')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -201,7 +205,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: convertedPositionValueTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Assets you will have after converting the required amount into BNB</Text>
+      <Text>{t('Assets you will have after converting the required amount into BNB')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -211,7 +215,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: debtValueTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Debt Value = Borrowed Asset + Borrowing Interest</Text>
+      <Text>{t('Debt Value = Borrowed Asset + Borrowing Interest')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -221,7 +225,7 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: minimumReceivedTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.</Text>
+      <Text>{t('Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.')}</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -231,7 +235,7 @@ const CloseEntirePosition = ({ data }) => {
         <Flex justifyContent="space-between">
           <Box>
             <Flex>
-              <Text>Position Value Assets</Text>
+              <Text>{t('Position Value Assets')}</Text>
               {positionValueTooltipVisible && positionValueTooltip}
               <span ref={positionValueRef}>
                 <InfoIcon ml="10px" />
@@ -240,25 +244,30 @@ const CloseEntirePosition = ({ data }) => {
             <BusdPriceContainer>
               <Flex alignItems="center">
                 <Box width={18} height={18} mr="5px">
-                  <TokenImage token={quoteTokenValue} width={20} height={20} />
+                  <TokenImage token={TokenInfo?.token} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{quoteTokenValueSymbol}&nbsp;=&nbsp;{quoteTokenPrice}&nbsp;{quoteTokenValueSymbol}
+                  1&nbsp;{TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}&nbsp;=&nbsp;
+                  {new BigNumber(tokenPriceUsd).toFixed(2, 1)}&nbsp;
+                  {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
               <Flex alignItems="center">
                 <Box width={18} height={18} mr="5px">
-                  <TokenImage token={tokenValue} width={20} height={20} />
+                  <TokenImage token={TokenInfo?.quoteToken} width={20} height={20} />
                 </Box>
                 <Text small color="textSubtle">
-                  1&nbsp;{tokenValueSymbol}&nbsp;=&nbsp;{tokenPrice}&nbsp;{quoteTokenValueSymbol}
+                  1&nbsp;{TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;=&nbsp;
+                  {new BigNumber(quoteTokenPriceUsd).toFixed(2, 1)}&nbsp;
+                  {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
             </BusdPriceContainer>
           </Box>
           {baseTokenAmount ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} + {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
+              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+              {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -266,63 +275,78 @@ const CloseEntirePosition = ({ data }) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Amount to Trade</Text>
+            <Text>{t('Amount to Trade')}</Text>
             {amountToTradeTooltipVisible && amountToTradeTooltip}
             <span ref={amountToTradeRef}>
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          <Text>{amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}</Text>
+          <Text>
+            {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
+          </Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Price Impact</Text>
+            <Text>{t('Price Impact')}</Text>
             {priceImpactTooltipVisible && priceImpactTooltip}
             <span ref={priceImpactRef}>
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {priceImpact ? <Text>{priceImpact.toPrecision(3)}%</Text> : <Skeleton height="16px" width="80px" />}
+          <Text color={priceImpact > 0 ? "#2ECC8E" : "#EB0303"}>{priceImpact.toPrecision(3)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Trading Fees</Text>
+            <Text>{t('Trading Fees')}</Text>
             {tradingFeesTooltipVisible && tradingFeesTooltip}
             <span ref={tradingFeesRef}>
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {tradingFees ? <Text>{tradingFees.toPrecision(3)}%</Text> : <Skeleton height="16px" width="80px" />}
+          <Text>{tradingFees.toPrecision(3)}%</Text> 
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Converted Position Value Assets</Text>
+            <Text>{t('Converted Position Value Assets')}</Text>
             {convertedPositionValueTooltipVisible && convertedPositionValueTooltip}
             <span ref={convertedPositionValueRef}>
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? (
+            <Text>
+              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+              {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol}{' '}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Debt Value</Text>
+            <Text>{t('Debt Value')}</Text>
             {debtValueTooltipVisible && debtValueTooltip}
             <span ref={debtValueRef}>
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {debtValueNumber ? <Text>{debtValueNumber.toPrecision(4)} {tokenValueSymbol} </Text> : <Skeleton height="16px" width="80px" />}
+          {debtValueNumber ? (
+            <Text>
+              {debtValueNumber.toPrecision(4)} {tokenValueSymbol}{' '}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
       </Section>
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
-          <Text>You will receive approximately</Text>
-          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}    </Text> : <Skeleton height="16px" width="80px" />}
+          <Text>{t('You will receive approximately')}</Text>
+          {convertedPositionValue ? <Text>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}</Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
-            <Text>Minimum Received</Text>
+            <Text>{t('Minimum Received')}</Text>
             {minimumReceivedTooltipVisible && minimumReceivedTooltip}
             <span ref={minimumReceivedRef}>
               <InfoIcon ml="10px" />
@@ -330,7 +354,7 @@ const CloseEntirePosition = ({ data }) => {
           </Flex>
           {convertedPositionValue ? <Text>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}     </Text> : <Skeleton height="16px" width="80px" />}
         </Flex>
-        <Button onClick={handleConfirm}>Close Position</Button>
+        <Button onClick={handleConfirm}>{t('Close Position')}</Button>
       </Section>
     </>
   )

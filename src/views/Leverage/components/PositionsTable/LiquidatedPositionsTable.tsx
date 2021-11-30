@@ -43,19 +43,14 @@ const LiquidatedPositionsTable = ({ data }) => {
 
   return (
     <StyledTable role="table" ref={tableWrapperEl}>
-      {!(isMobile || isTablet) && <LiquidatedPositionsHeaderRow />}
-      {/* this is commented for testing //////////////////////////////////////////////////////     */}
-      {/* {data ? (
+      {!(isMobile || isTablet) && data && <LiquidatedPositionsHeaderRow />}
+      {data ? (
         <LiquidatedPositionsRow data={data} />
       ) : (
-        <Box padding="100px 0">
+        <Box padding="100px">
           <Text textAlign="center">{t('No Liquidated Positions')}</Text>
         </Box>
-      )} */}
-      
-        <LiquidatedPositionsRow data={null} />
-      
-
+      )}
     </StyledTable>
   )
 }

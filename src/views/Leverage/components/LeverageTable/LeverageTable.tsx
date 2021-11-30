@@ -3,13 +3,7 @@ import styled from 'styled-components'
 import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/Select'
-import {
-  useLeverageFarms,
-  usePollLeverageFarmsWithUserData,
-  useHuskyPrice,
-  useHuskyPerBlock,
-  useCakePrice,
-} from 'state/leverage/hooks'
+import { useCakePrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
@@ -119,8 +113,6 @@ const LeverageTable = ({ leverageData }) => {
   }
 
   // sort feature
-  const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
   const cakePrice = useCakePrice()
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {

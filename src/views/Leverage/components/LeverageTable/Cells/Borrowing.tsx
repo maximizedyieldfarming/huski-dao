@@ -29,7 +29,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
   const { t } = useTranslation()
 
   const options = () => {
-    if (quoteToken === 'CAKE') {
+    if (quoteToken === 'CAKE' || quoteToken === 'USDC' || quoteToken === 'SUSHI' || quoteToken === 'DOT') {
       return [
         {
           label: token.replace('wBNB', 'BNB'),
@@ -41,7 +41,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
         },
       ]
     }
-    if (token === 'CAKE') {
+    if (token === 'CAKE'|| token === 'USDC' || token === 'SUSHI' || token === 'DOT') {
       return [
         {
           label: quoteToken.replace('wBNB', 'BNB'),

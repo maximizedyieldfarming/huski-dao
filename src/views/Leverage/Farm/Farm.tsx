@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
@@ -13,10 +13,11 @@ import {
   ArrowForwardIcon,
   useMatchBreakpoints,
   AutoRenewIcon,
+ BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem 
 } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
@@ -29,9 +30,9 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import DebtRatioProgress from 'components/DebRatioProgress'
+// import { DebtRatioProgress } from 'components/ProgressBars'
 import { useWeb3React } from '@web3-react/core'
-// import { Range } from 'react-range';
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
 
 interface RouteParams {
@@ -207,8 +208,34 @@ const RangeInput = styled.input`
   
 `
 
+const ButtonMenu = styled(UiKitButtonMenu)`
+  background-color: unset;
+  border: unset;
+  width: 100%;
+`
+
+const ButtonMenuItem = styled(UiKitButtonMenuItem)`
+  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : '#F2F2F2')};
+  color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.text)};
+  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.colors.gold : '#F2F2F2')};
+  &:hover:not(:disabled):not(:active) {
+    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : '#F2F2F2')};
+  }
+  &:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  &:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  &:not(:last-child):not(:first-child) {
+    border-radius: 0;
+  }
+`
 
 const Farm = () => {
+  BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { token } = useParams<RouteParams>()
   const { t } = useTranslation()
   const { account } = useWeb3React()
@@ -224,7 +251,6 @@ const Farm = () => {
   const [radio, setRadio] = useState(selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
-  const [testvalues, setTestValues] = useState([50]);
   const handleSliderChange = (e) => {
     const value = e?.target?.value
     setLeverageValue(value)
@@ -248,7 +274,7 @@ const Farm = () => {
     tokenData?.TokenInfo?.quoteToken?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
   )
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, radio)
@@ -261,14 +287,14 @@ const Farm = () => {
     return null
   }
 
-  const [tokenInput, setTokenInput] = useState(0)
+  const [tokenInput, setTokenInput] = useState<number | string>()
   const tokenInputRef = useRef<HTMLInputElement>()
   const handleTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = Number(input) > Number(userTokenBalance) ? input : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -277,14 +303,14 @@ const Farm = () => {
     [userTokenBalance],
   )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
   const quoteTokenInputRef = useRef<HTMLInputElement>()
   const handleQuoteTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? input : input
         setQuoteTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -298,50 +324,53 @@ const Farm = () => {
     setRadio(value)
   }
 
-  const setQuoteTokenInputToFraction = (e: any) => {
-    if (e.target.id === '1') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25);
-
-    } else if (e.target.id === '2') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5);
-
-
-    } else if (e.target.id === '3') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75);
-
-    } else if (e.target.id === '4') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber());
-
+  const setQuoteTokenInputToFraction = (index) => {
+    if (index === 0) {
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.25
+          ? 0
+          : userQuoteTokenBalance.toNumber() * 0.25
+      setQuoteTokenInput(new BigNumber(value).toJSON())
+      setQuoteTokenFractionButtonIndex(index)
+    } else if (index === 1) {
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.5 ? 0 : userQuoteTokenBalance.toNumber() * 0.5
+      setQuoteTokenInput(new BigNumber(value).toJSON())
+      setQuoteTokenFractionButtonIndex(index)
+    } else if (index === 2) {
+      const value =
+        Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() * 0.75
+          ? 0
+          : userQuoteTokenBalance.toNumber() * 0.75
+      setQuoteTokenInput(new BigNumber(value).toJSON())
+      setQuoteTokenFractionButtonIndex(index)
+    } else if (index === 3) {
+      const value = Number(quoteTokenInput) === userQuoteTokenBalance.toNumber() ? 0 : userQuoteTokenBalance.toNumber()
+      setQuoteTokenInput(new BigNumber(value).toJSON())
+      setQuoteTokenFractionButtonIndex(index)
     }
   }
-  const [Token, setToken] = useState(1);
-  const setTokenInputToFraction = (e) => {
-    if (e.target.innerText === '25%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.25)
-    } else if (e.target.innerText === '50%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.5)
-    } else if (e.target.innerText === '75%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.75)
-    } else if (e.target.innerText === '100%') {
-      setTokenInput(userTokenBalance.toNumber())
+  const setTokenInputToFraction = (index) => {
+    if (index === 0) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.25 ? 0 : userTokenBalance.toNumber() * 0.25
+      setTokenInput(new BigNumber(value).toJSON())
+      setTokenFractionButtonIndex(index)
+    } else if (index === 1) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.5 ? 0 : userTokenBalance.toNumber() * 0.5
+      setTokenInput(new BigNumber(value).toJSON())
+      setTokenFractionButtonIndex(index)
+    } else if (index === 2) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() * 0.75 ? 0 : userTokenBalance.toNumber() * 0.75
+      setTokenInput(new BigNumber(value).toJSON())
+      setTokenFractionButtonIndex(index)
+    } else if (index === 3) {
+      const value = Number(tokenInput) === userTokenBalance.toNumber() ? 0 : userTokenBalance.toNumber()
+      setTokenInput(new BigNumber(value).toJSON())
+      setTokenFractionButtonIndex(index)
     }
   }
 
-  const options = () => {
-
-    return [
-      {
-        label: 'BNB',
-        value: 'BNB',
-      },
-      {
-        label: 'wBNB',
-        value: 'wBNB',
-      },
-    ]
-  }
-
-  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
+  const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput || 0, quoteTokenInput || 0, radio)
   const farmData = farmingData ? farmingData[1] : []
   const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
 
@@ -384,20 +413,20 @@ const Farm = () => {
         contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+        tokenName.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your farm was successful'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError(t('Unsuccessful'), t('Something went wrong your farm request. Please try again...'))
     } finally {
       setIsPending(false)
-      setTokenInput(0)
-      setQuoteTokenInput(0)
+      setTokenInput('')
+      setQuoteTokenInput('')
     }
   }
 
@@ -409,6 +438,7 @@ const Farm = () => {
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
     let workerAddress
+    let tokenAmount
     let farmingTokenAmount
     let strategiesAddress
     let dataStrategy
@@ -416,51 +446,54 @@ const Farm = () => {
     let contract
 
     // base token is base token
-    if (radio === tokenData?.TokenInfo?.token?.symbol) {
+    if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
       // single base token
-      if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
+      if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('base + single + token input ')
-        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      } else if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
-        console.info('base + single + quote token input ')
         farmingTokenAmount = Number(quoteTokenInput).toString()
+        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
+        dataStrategy = abiCoder.encode(['uint256'], ['1'])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
+        console.info('base + single + quote token input ')
+        farmingTokenAmount = Number(quoteTokenInput || 0).toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = Number(quoteTokenInput).toString()
+        farmingTokenAmount = Number(quoteTokenInput || 0).toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
-      amount = getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
+      tokenAmount = Number(tokenInput || 0).toString()
+      amount = ethers.utils.parseEther(tokenAmount) // getDecimalAmount(new BigNumber(Number(tokenInput)), 18).toString()
       workerAddress = tokenData.TokenInfo.address
     } else {
       // farm token is base token
-      if (Number(tokenInput) === 0 && Number(quoteTokenInput) !== 0) {
+      if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('farm + single + token input ')
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      } else if (Number(tokenInput) !== 0 && Number(quoteTokenInput) === 0) {
+        dataStrategy = abiCoder.encode(['uint256'], ['1'])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+      } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('farm + single + quote token input ')
-        farmingTokenAmount = Number(tokenInput).toString()
+        farmingTokenAmount = Number(tokenInput || 0).toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = Number(tokenInput).toString()
+        farmingTokenAmount = Number(tokenInput || 0).toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
-      amount = getDecimalAmount(new BigNumber(Number(quoteTokenInput)), 18).toString()
+      tokenAmount = Number(quoteTokenInput || 0).toString()
+      amount = ethers.utils.parseEther(tokenAmount)
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
@@ -476,9 +509,9 @@ const Farm = () => {
     //   strategiesAddress,
     //   dataStrategy,
     //   tokenInput,
-    //   'a': Number(tokenInput),
+    //   a: Number(tokenInput || 0),
     //   quoteTokenInput,
-    //   'b': Number(quoteTokenInput)
+    //   b: Number(quoteTokenInput || 0),
     // })
 
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
@@ -520,7 +553,7 @@ const Farm = () => {
   )
 
   let allowance = '0'
-  if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+  if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
     allowance = tokenData.userData?.quoteTokenAllowance
   } else {
     allowance = tokenData.userData?.tokenAllowance
@@ -535,7 +568,7 @@ const Farm = () => {
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
     let contract
-    if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+    if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
       contract = approveContract // quoteTokenApproveContract
     } else {
       contract = quoteTokenApproveContract // approveContract
@@ -566,146 +599,104 @@ const Farm = () => {
   const debtRatio = 1 - principal / leverageValue
   const liquidationThreshold = Number(tokenData?.liquidationThreshold) / 100
 
-  const targetRef = useRef<any>();
-  const [moveVal, setMoveVal] = useState({ width: 0, height: 0 });
-  const [margin, setMargin] = useState(0);
-  useLayoutEffect(() => {
-    if (targetRef.current !== null && targetRef.current !== undefined) {
-      setMoveVal({
-        width: targetRef?.current?.offsetWidth,
-        height: targetRef?.current?.offsetHeight
-      });
-    }
+  const [tokenFractionButtonIndex, setTokenFractionButtonIndex] = useState(null)
+  const [quoteTokenFractionButtonIndex, setQuoteTokenFractionButtonIndex] = useState(null)
 
-  }, [leverageValue,]);
-
-  useEffect(() => {
-
-    const tt = (leverageValue - 1) / 2 * (moveVal.width);
-    if (tt === 0) {
-      setMargin(tt - leverageValue * 9 + 10);
-    }else{
-      setMargin(tt - leverageValue * 9);
-    }
-
-  }, [leverageValue, moveVal.width])
   return (
     <Page>
-      <Text as="span" fontWeight="bold" fontSize="25px" style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}>
-        {/* {t(`Farming ${token} Pools`)} */}
-        {t(`Farming PancakeSwap BTCB-ETH Pool`)}
+      <Text as="span" fontWeight="bold" style={{ alignSelf: 'center' }}>
+        {t(`Farming ${token} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="gray" >
+        <Section>
           <Flex alignItems="center" justifyContent="space-between">
-            <Text bold fontSize="18px" color="textFarm" as="span">{t('Collateral')}</Text>
-            <Text as="span" fontSize="12px" mt='3px' color="textSubtle">
+            <Text as="span">{t('Collateral')}</Text>
+            <Text as="span" small color="textSubtle">
               {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
             </Text>
           </Flex>
-          <div style={{ display: 'flex' }} >
-            <Text as="span" mr="1rem" color="textSubtle">
-              {t('Balance:')}
-            </Text>
-            {userQuoteTokenBalance ? (
-              <Text color="textFarm">{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
-            ) : (
-              <Skeleton width="80px" height="16px" />
-            )}
-          </div>
           <Flex flexDirection="column" justifyContent="space-between" flex="1">
             <Box>
-              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt" style={{ borderRadius: '12px' }}>
+              <Flex alignItems="center">
+                <Text as="span" mr="1rem">
+                  {t('Balance:')}
+                </Text>
+                {userQuoteTokenBalance ? (
+                  <Text small>
+                    {formatDisplayedBalance(
+                      userQuoteTokenBalance.toJSON(),
+                      tokenData?.TokenInfo.quoteToken?.decimalsDigits,
+                    )}
+                  </Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
                 <Flex alignItems="center" flex="1">
-                  <Box width={40} height={40} mr="5px" ml="10px">
+                  <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.TokenInfo.quoteToken} width={40} height={40} />
                   </Box>
-                  <StyledNumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
+                  <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
                 </Flex>
-                <Text color="textFarm" mr="10px" fontWeight="700">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
+                <Text>{quoteTokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
-              <ButtonArea justifyContent="space-between" background="backgroundAlt">
-                <StyledButton
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  25%
-                </StyledButton>
-                <StyledButton
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  50%
-                </StyledButton>
-                <StyledButton
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  75%
-                </StyledButton>
-                <StyledButton
-                  variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
-                  onClick={setQuoteTokenInputToFraction}
-                >
-                  100%
-                </StyledButton>
-              </ButtonArea>
+              <ButtonMenu
+                onItemClick={setQuoteTokenInputToFraction}
+                activeIndex={quoteTokenFractionButtonIndex}
+                disabled={userQuoteTokenBalance.toNumber() === 0}
+              >
+                <ButtonMenuItem>25%</ButtonMenuItem>
+                <ButtonMenuItem>50%</ButtonMenuItem>
+                <ButtonMenuItem>75%</ButtonMenuItem>
+                <ButtonMenuItem>100%</ButtonMenuItem>
+              </ButtonMenu>
             </Box>
-
-            <div style={{ display: 'flex', marginTop: '50px' }} >
-              <Text as="span" mr="1rem" color="textSubtle">
-                {t('Balance:')}
-              </Text>
-              {userTokenBalance ? (
-                <Text color="textFarm">{userTokenBalance.toNumber().toPrecision(3)}</Text>
-              ) : (
-                <Skeleton width="80px" height="16px" />
-              )}
-            </div>
             <Box>
-              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0" style={{ borderRadius: '12px' }}>
+              <Flex alignItems="center">
+                <Text as="span" mr="1rem">
+                  {t('Balance:')}
+                </Text>
+                {userTokenBalance ? (
+                  <Text small>
+                    {formatDisplayedBalance(userTokenBalance.toJSON(), tokenData?.TokenInfo.token?.decimalsDigits)}
+                  </Text>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0">
                 <Flex alignItems="center" flex="1">
-                  <Box width={40} height={40} mr="5px" ml="10px">
+                  <Box width={40} height={40} mr="5px">
                     <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
                   </Box>
-                  <StyledNumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                 </Flex>
-                <Text mr="10px" fontWeight="700">{tokenName.replace('wBNB', 'BNB')}</Text>
+                <Text>{tokenName.replace('wBNB', 'BNB')}</Text>
               </InputArea>
-              <ButtonArea justifyContent="space-between">
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  25%
-                </StyledButton>
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  50%
-                </StyledButton>
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  75%
-                </StyledButton>
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
-                  100%
-                </StyledButton>
-              </ButtonArea>
+              <ButtonMenu
+                onItemClick={setTokenInputToFraction}
+                activeIndex={tokenFractionButtonIndex}
+                disabled={userTokenBalance.toNumber() === 0}
+              >
+                <ButtonMenuItem>25%</ButtonMenuItem>
+                <ButtonMenuItem>50%</ButtonMenuItem>
+                <ButtonMenuItem>75%</ButtonMenuItem>
+                <ButtonMenuItem>100%</ButtonMenuItem>
+              </ButtonMenu>
             </Box>
-            <Flex alignItems="center" justifyContent="space-between" mt="50px" mb="50px">
-              <Text fontWeight="500">{t('Target Position Leverage')}</Text>
-              <Text color="textSubtle">{t('3.00X')}</Text>
-            </Flex>
             <Box>
-              {/* <Text color="textSubtle" small>
+              <Text color="textSubtle" small>
                 {t(
                   'You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields and higher risk,vice versa.',
                 )}
-              </Text> */}
-              <MoveBox move={margin} >
-                <Text color="#7B3FE4" bold>{leverageValue}x</Text>
-              </MoveBox>
-              <Box ref={targetRef} style={{ width: '100%' }}>
-                <RangeInput
+              </Text>
+              <Flex alignItems="center">
+                <Text bold>{t('Increase or decrease leverage')}</Text>
+              </Flex>
+
+              <Flex>
+                <input
                   type="range"
                   min="1.0"
                   max={leverage}
@@ -714,29 +705,20 @@ const Farm = () => {
                   value={leverageValue}
                   onChange={handleSliderChange}
                   list="leverage"
-                  style={{ width: '100%' }}
+                  style={{ width: '90%' }}
                 />
-              </Box>
-              <Flex justifyContent="space-between" mt="-22px" mb="10px">
-                <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />
-                {leverageValue < 1.5 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
-                  <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                {leverageValue < 2 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
-                  <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                {leverageValue < 2.5 ? <div style={{ borderRadius: '50%',width: '12px', height:'12px',background:'#E7E7E7'}} />:
-                <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <datalist id="leverage">{datalistOptions}</datalist>
+                <Box ml="auto">
+                  <Text textAlign="right">{leverageValue}X</Text>
+                </Box>
               </Flex>
-              <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} id="leverage">{datalistOptions}</datalist>
-
-
             </Box>
           </Flex>
 
           <Box>
-            <Text fontWeight='500' color="textFarm" fontSize="12px">{t('Which asset would you like to borrow?')}</Text>
-            <Flex mt="20px">
-              {/* {quoteTokenName.toLowerCase() !== 'cake' && (
+            <Text bold>{t('Which asset would you like to borrow?')}</Text>
+            <Flex>
+              {quoteTokenName.toLowerCase() !== 'cake' && (
                 <Flex alignItems="center" marginRight="10px">
                   <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
                   <Radio
@@ -759,140 +741,86 @@ const Farm = () => {
                     checked={radio === tokenName}
                   />
                 </Flex>
-              )} */}
-
-              <Select
-                icon={<BnbIcon />}
-                options={options()} />
-            </Flex>
-            <Flex justifyContent="space-evenly" mt='20px'>
-              {isApproved ? null : <Button style={{ width: '290px', height: '60px', borderRadius: '16px' }} onClick={handleApprove}>{t('Confirm')}</Button>}
-              {/* <Button
-                onClick={handleConfirm}
-                isLoading={isPending}
-                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                disabled={
-                  !account ||
-                  !isApproved ||
-                  (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
-                  (tokenInput === undefined && quoteTokenInput === undefined) ||
-                  isPending
-                }
-              >
-                {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
-              </Button> */}
+              )}
             </Flex>
           </Box>
-          {/* <Box>
+          <Box>
             <Text small color="failure">
               {t(
                 'Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.',
               )}
             </Text>
-          </Box> */}
+          </Box>
         </Section>
 
-        <Flex className="sideSection" justifyContent="space-between">
+        <Flex className="sideSection" justifyContent="space-around">
           <Section>
-            <Text small color="text" fontSize="16px" >
-              {t(
-                'My Debt Status',
-              )}
-            </Text>
-            <Flex height="150px" alignItems="center" style={{ border: 'none' }}>
-              <DebtRatioProgress
+            <Flex height="100px" alignItems="center">
+             {/*  <DebtRatioProgress
                 debtRatio={debtRatio * 100}
                 liquidationThreshold={liquidationThreshold}
                 max={maxValue * 100}
-
-              />
+              /> */}
             </Flex>
-            <Text small color="textSubtle" mt="50px">
+            <Text small color="failure">
               {t(
-                'Keep in mind: when the price of BNB against BUSD decreases 60%, the debtratio will exceed the',
+                'Keep in mind: when the price of BNB against BUSD decreases 60%, the debt ratio will exceed the liquidation ratio, your assets might encounter liquidation.',
               )}
             </Text>
           </Section>
 
           <Section>
             <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('APR')}</Text><span> <InfoIcon color="textSubtle" ml="10px" /></span></Flex>
-              {/* {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : ( */}
-              <Text fontWeight="700">150.98% </Text>
-              {/* )} */}
-            </Flex>
-
-            <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('APR')}</Text><span> <InfoIcon color="textSubtle" ml="10px" /></span></Flex>
-              {/* {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : ( */}
-              <Text fontWeight="700">150.98% </Text>
-              {/* )} */}
+              <Text>{t('Assets Supplied')}</Text>
+              <Text>
+                {radio === tokenName ? Number(tokenInput || 0)?.toFixed(3) : Number(quoteTokenInput || 0)?.toFixed(3)}{' '}
+                {radio.replace('wBNB', 'BNB')} +{' '}
+                {radio === tokenName ? Number(quoteTokenInput || 0)?.toFixed(3) : Number(tokenInput || 0)?.toFixed(3)}{' '}
+                {
+                  radio === tokenName
+                    ? quoteTokenName.replace('wBNB', 'BNB')
+                    : tokenName.replace('wBNB', 'BNB') /* radioQuote.replace('wBNB', 'BNB') */
+                }
+              </Text>
             </Flex>
             <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('Asset Borrowed')}</Text></Flex>
-              {/* {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : ( */}
-              <Text fontWeight="700">2044.38BUSD </Text>
-              {/* )} */}
+              <Text>{t('Assets Borrowed')}</Text>
+              {farmData ? (
+                <Text>
+                  {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
+                </Text>
+              ) : (
+                <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
+              )}
             </Flex>
-            <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('Assets Supplied')}</Text></Flex>
-              {/* {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : ( */}
-              <Text fontWeight="700">51168...BUSD+1.74...bnb </Text>
-              {/* )} */}
-            </Flex>
-
             <Flex justifyContent="space-between">
               <Flex>
                 <Text>{t('Price Impact')}</Text>
                 {priceImpactTooltipVisible && priceImpactTooltip}
                 <span ref={priceImpactTargetRef}>
-                  <InfoIcon color="textSubtle" ml="10px" />
+                  <InfoIcon ml="10px" />
                 </span>
               </Flex>
-              <Text fontWeight="700">150.98% </Text>
+              {farmData ? (
+                <Text color="#1DBE03">+{(farmData[4] * 100).toPrecision(3)} %</Text>
+              ) : (
+                <Text color="#1DBE03"> 0.00 %</Text>
+              )}
             </Flex>
             <Flex justifyContent="space-between">
               <Flex>
                 <Text>{t('Trading Fees')}</Text>
                 {tradingFeesTooltipVisible && tradingFeesTooltip}
                 <span ref={tradingFeesTargetRef}>
-                  <InfoIcon color="textSubtle" ml="10px" />
+                  <InfoIcon ml="10px" />
                 </span>
               </Flex>
-              <Text color="#1DBE03">+{tradingFeesfarm.toPrecision(3)} %</Text>
+              <Text color="#EB0303">-{tradingFeesfarm.toPrecision(3)} %</Text>
             </Flex>
             <Flex justifyContent="space-between">
               <Text>{t('Position Value')}</Text>
               {farmData ? (
-                <Text fontWeight="700">
+                <Text>
                   {farmData[8].toFixed(2)} {radio.replace('wBNB', 'BNB')} + {farmData[9].toFixed(2)}{' '}
                   {radio === tokenName ? quoteTokenName.replace('wBNB', 'BNB') : tokenName.replace('wBNB', 'BNB')}
                 </Text>
@@ -900,7 +828,7 @@ const Farm = () => {
                 <Skeleton width="80px" height="16px" />
               )}
             </Flex>
-            {/* <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between">
               <Text>{t('APR')}</Text>
               <Text>{totalAprDisplay.toFixed(2)}%</Text>
             </Flex>
@@ -911,11 +839,27 @@ const Farm = () => {
                 <ArrowForwardIcon />
                 <Text>{getDisplayApr(getApy(leverageValue))}%</Text>
               </Flex>
-            </Flex> */}
+            </Flex>
           </Section>
         </Flex>
       </SectionWrapper>
-
+      <Flex justifyContent="space-evenly">
+        {isApproved ? null : <Button onClick={handleApprove}>{t('Approve')}</Button>}
+        <Button
+          onClick={handleConfirm}
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          disabled={
+            !account ||
+            !isApproved ||
+            (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+            (tokenInput === undefined && quoteTokenInput === undefined) ||
+            isPending
+          }
+        >
+          {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
+        </Button>
+      </Flex>
     </Page>
   )
 }

@@ -49,9 +49,7 @@ const PositionValueCell = ({ position, name }) => {
             {position.toNumber().toFixed(3)} {name}
           </Text>
         ) : (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
-            {8.01} BNB
-          </Text>
+           <Skeleton width="80px" height="16px" />
         )}
       </CellContent>
     </StyledCell>

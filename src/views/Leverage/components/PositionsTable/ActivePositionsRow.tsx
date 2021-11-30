@@ -4,8 +4,9 @@ import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
-import { getHuskyRewards, getYieldFarming } from '../../helpers'
+import { useLocation } from 'react-router-dom'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
+import { getHuskyRewards, getYieldFarming, getDrop } from '../../helpers'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
@@ -17,6 +18,7 @@ import DebtRatioCell from './Cells/DebtRatioCell'
 import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
 import SafetyBufferCell from './Cells/SafetyBufferCell'
 import ProfitsCell from './Cells/ProfitsCell'
+// import StrategyCell from './Cells/StrategyCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -31,52 +33,58 @@ const StyledRow = styled.div`
 `
 
 const ActivePositionsRow = ({ data }) => {
-  console.log('active Positions data', data)
+  // console.log('active Positions data', data)
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
-  const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-
-  const toggleExpanded = () => {
-    setExpanded((prev) => !prev)
-  }
+  const { pathname } = useLocation()
 
   const { positionId, debtValue, lpAmount, positionValueBase, vault } = data
-  const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, QuoteTokenInfo, liquidationThreshold, quoteTokenLiquidationThreshold } = data.farmData
+  const {
+    lptotalSupply,
+    tokenAmountTotal,
+    quoteTokenAmountTotal,
+    TokenInfo,
+    QuoteTokenInfo,
+    liquidationThreshold,
+    quoteTokenLiquidationThreshold,
+  } = data.farmData
 
-  let symbolName;
-  let lpSymbolName;
-  let tokenValue;
-  let quoteTokenValue;
-  let baseAmount;
-  let liquidationThresholdValue;
+  let symbolName
+  let lpSymbolName
+  let tokenValue
+  let quoteTokenValue
+  let baseAmount
+  let liquidationThresholdValue
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
-    tokenValue = TokenInfo?.token;
-    quoteTokenValue = TokenInfo?.quoteToken;
+    tokenValue = TokenInfo?.token
+    quoteTokenValue = TokenInfo?.quoteToken
     baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = liquidationThreshold
   } else {
     symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
-    tokenValue = TokenInfo?.quoteToken;
-    quoteTokenValue = TokenInfo?.token;
+    tokenValue = TokenInfo?.quoteToken
+    quoteTokenValue = TokenInfo?.token
     baseAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     liquidationThresholdValue = quoteTokenLiquidationThreshold
   }
 
-  // const baseAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
-  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18)) // positionValueBaseNumber
+  const totalPositionValueInToken = new BigNumber(positionValueBase).dividedBy(BIG_TEN.pow(18))
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
-  const leverage = new BigNumber(baseAmount).times(2).div((new BigNumber(baseAmount).times(2)).minus(new BigNumber(debtValueNumber)))
+  const leverage = new BigNumber(baseAmount)
+    .times(2)
+    .div(new BigNumber(baseAmount).times(2).minus(new BigNumber(debtValueNumber)))
 
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
   const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
+  const dropData = getDrop(data.farmData, data, symbolName)
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -94,11 +102,23 @@ const ActivePositionsRow = ({ data }) => {
 
   return (
     <>
-      <StyledRow role="row" onClick={toggleExpanded}>
+      <StyledRow role="row">
         <NameCell name={symbolName} positionId={positionId} />
-        <PoolCell pool={lpSymbolName.replace(' PancakeswapWorker', '')} quoteToken={quoteTokenValue} token={tokenValue} />
+        <PoolCell
+          pool={lpSymbolName.replace(' PancakeswapWorker', '')}
+          quoteToken={quoteTokenValue}
+          token={tokenValue}
+        />
+{/*         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} */}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
-        <DebtCell debt={debtValueNumber} borrowedAssets={null} borrowingInterest={borrowingInterest.toPrecision(3)} name={symbolName} />
+        {pathname.includes('farms') ? (
+          <DebtCell
+            debt={debtValueNumber}
+            borrowedAssets={null}
+            borrowingInterest={borrowingInterest.toPrecision(3)}
+            name={symbolName}
+          />
+        ) : null}
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={symbolName} />
         <ApyCell
           apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
@@ -108,13 +128,19 @@ const ActivePositionsRow = ({ data }) => {
           liquidityRewards={null}
           tradingFeesRewards={null}
         />
-        <DebtRatioCell debtRatio={debtRatio} />
-        <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />
+
+        {pathname.includes('farms') ? (
+          <>
+            <DebtRatioCell debtRatio={debtRatio} />
+            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />{' '}
+          </>
+        ) : null}
         <SafetyBufferCell safetyBuffer={safetyBuffer} />
-        <ProfitsCell profitLoss={profitLoss} />
+        {/* <ProfitsCell profitLoss={profitLoss} /> */}
         <ActionCell
           posData={{ data, liquidationThresholdData }}
           disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())}
+          name={lpSymbolName.replace(' PancakeswapWorker', '')}
         />
       </StyledRow>
     </>

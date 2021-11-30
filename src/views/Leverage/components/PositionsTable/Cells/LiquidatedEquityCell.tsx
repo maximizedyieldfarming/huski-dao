@@ -47,7 +47,13 @@ const LiquidatedEquityCell = ({ liqEquity }) => {
             </span>
           </Flex>
         )}
-        {liqEquity ? <Text  color="text" fontWeight="600" fontSize="16px" mt='8px'>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}
+        {liqEquity ? (
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            {liqEquity}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )
