@@ -1,11 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-<<<<<<< HEAD
 import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from 'husky-uikit1.0'
-=======
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from '@pancakeswap/uikit'
->>>>>>> v1/master
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -17,7 +13,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-<<<<<<< HEAD
   ${CellContent} {
     flex-direction: row;
     justify-content: flex-start;
@@ -26,8 +21,6 @@ const StyledCell = styled(BaseCell)`
       flex-direction: column;
     }
   }
-=======
->>>>>>> v1/master
 `
 
 const LiquidatedEquityCell = ({ liqEquity }) => {
@@ -54,11 +47,13 @@ const LiquidatedEquityCell = ({ liqEquity }) => {
             </span>
           </Flex>
         )}
-<<<<<<< HEAD
-        {liqEquity ? <Text  color="text" fontWeight="600" fontSize="16px" mt='8px'>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}
-=======
-        {liqEquity ? <Text>{liqEquity}</Text> : <Skeleton width="80px" height="16px" />}
->>>>>>> v1/master
+        {liqEquity ? (
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            {liqEquity}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

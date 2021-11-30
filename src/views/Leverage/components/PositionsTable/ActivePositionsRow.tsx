@@ -18,7 +18,7 @@ import DebtRatioCell from './Cells/DebtRatioCell'
 import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
 import SafetyBufferCell from './Cells/SafetyBufferCell'
 import ProfitsCell from './Cells/ProfitsCell'
-import StrategyCell from './Cells/StrategyCell'
+// import StrategyCell from './Cells/StrategyCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -109,7 +109,7 @@ const ActivePositionsRow = ({ data }) => {
           quoteToken={quoteTokenValue}
           token={tokenValue}
         />
-        {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null}
+{/*         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} */}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
         {pathname.includes('farms') ? (
           <DebtCell

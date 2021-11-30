@@ -35,7 +35,7 @@ const collapseAnimation = keyframes`
   }
 `
 
-const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
@@ -46,7 +46,7 @@ const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
         `};
   .expandedArea {
     flex-direction: column;
-    padding:30px 20px;
+    padding: 30px 20px;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row;
       align-items: center;
@@ -61,40 +61,40 @@ const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
   }
 `
 const StakeContainer = styled(Flex)`
-  flex:1 0 460px;
+  flex: 1 0 460px;
 `
 
 interface Props {
   disabled: boolean
 }
-const StyledButton = styled(Button) <Props>`
-  background:${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
-  border-radius:10px;
+const StyledButton = styled(Button)<Props>`
+  background: ${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
+  border-radius: 10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
   text-align: center;
-  width:140px;
-  height:48px;
-  border:${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
-  `
+  width: 140px;
+  height: 48px;
+  border: ${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
+`
 
 const MaxContainer = styled(Flex)`
   align-items: center;
   justify-content: space-between;
-  height:100%;
-  background:${({ theme }) => theme.colors.background};
-  border-radius:12px;
-  padding:6px;
+  height: 100%;
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 12px;
+  padding: 6px;
   ${Box} {
     padding: 0 5px;
     &:first-child {
-     // border-right: 2px solid ${({ theme }) => theme.colors.text};
+      // border-right: 2px solid ${({ theme }) => theme.colors.text};
     }
     &:last-child {
       // border-left: 1px solid purple;
     }
   }
 `
-const StyledRow = styled.div<{ huski?: boolean ,expanded?:boolean}>`
+const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
   background-color: ${({ theme }) => theme.card.background};
   border-left: ${({ theme, huski }) => (huski ? `2px solid  ${theme.colors.secondary}` : 'unset')};
   display: flex;
@@ -111,7 +111,7 @@ const StyledRow = styled.div<{ huski?: boolean ,expanded?:boolean}>`
     }
   }
   > ${Flex}:first-child {
-    border-bottom: 2px solid ${({ theme,expanded }) =>expanded? theme.colors.disabled : 'transparent'};
+    border-bottom: 2px solid ${({ theme, expanded }) => (expanded ? theme.colors.disabled : 'transparent')};
   }
 `
 
@@ -121,6 +121,7 @@ const StakeRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskiPrice()
+  console.log({ huskyPrice })
   const { t } = useTranslation()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)

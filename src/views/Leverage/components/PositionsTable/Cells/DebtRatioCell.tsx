@@ -1,10 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-<<<<<<< HEAD
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
-=======
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from '@pancakeswap/uikit'
->>>>>>> v1/master
 
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -14,7 +10,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-<<<<<<< HEAD
   ${CellContent} {
     flex-direction: row;
     justify-content: flex-start;
@@ -23,8 +18,6 @@ const StyledCell = styled(BaseCell)`
       flex-direction: column;
     }
   }
-=======
->>>>>>> v1/master
 `
 
 const DebtRatioCell = ({ debtRatio }) => {
@@ -51,15 +44,9 @@ const DebtRatioCell = ({ debtRatio }) => {
           </Flex>
         )}
         {debtRatio && !debtRatio.isNaN() ? (
-<<<<<<< HEAD
           <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
         ) : (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">56.23%</Text>
-=======
-          <Text>{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
-        ) : (
-          <Skeleton width="80px" height="16px" />
->>>>>>> v1/master
+           <Skeleton width="80px" height="16px" />
         )}
       </CellContent>
     </StyledCell>

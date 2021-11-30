@@ -71,7 +71,6 @@
     "multicodec": "^2.0.0",
     "multihashes": "^3.0.1",
     "node-fetch": "^2.6.1",
-    "pancake-uikit": "file:./pancakeswap-uikit-0.49.16.tgz",
     "qs": "^6.9.4",
     "react": "^17.0.1",
     "react-countup": "^4.3.3",

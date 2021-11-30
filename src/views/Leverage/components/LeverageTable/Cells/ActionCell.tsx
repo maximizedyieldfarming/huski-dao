@@ -56,7 +56,7 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
             pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
             state: { tokenData: token, selectedLeverage, selectedBorrowing },
           })}
-          disabled={!token?.totalSupply || !account}
+          // disabled={!token?.totalSupply || !account}
           onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
         >
           {t('Farm')}

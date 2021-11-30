@@ -4,7 +4,7 @@ import { Menu as UikitMenu } from 'husky-uikit1.0'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
-import { usePriceCakeBusd } from 'state/farms/hooks'
+// import { usePriceCakeBusd } from 'state/farms/hooks'
 import { useProfile } from 'state/profile/hooks'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
@@ -24,7 +24,7 @@ const CertikLogo1 = () => <img src={certikLogo1} style={{paddingLeft:'30px',padd
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
-  const cakePriceUsd = usePriceCakeBusd()
+  // const cakePriceUsd = usePriceCakeBusd()
   const { profile } = useProfile()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
@@ -42,7 +42,7 @@ const Menu = (props) => {
       currentLang={currentLanguage.code}
       langs={languageList}
       setLang={setLanguage}
-      cakePriceUsd={cakePriceUsd.toNumber()}
+      cakePriceUsd={null}
       links={config(t)}
       logo={isHome?<Logo1 />:<Logo />}
       huskiPriceUsd={null}

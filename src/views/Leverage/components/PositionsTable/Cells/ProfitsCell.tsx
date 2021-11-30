@@ -1,11 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-<<<<<<< HEAD
 import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, TooltipText, InfoIcon } from 'husky-uikit1.0'
-=======
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, TooltipText, InfoIcon } from '@pancakeswap/uikit'
->>>>>>> v1/master
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -17,7 +13,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-<<<<<<< HEAD
   ${CellContent} {
     flex-direction: row;
     justify-content: flex-start;
@@ -26,8 +21,6 @@ const StyledCell = styled(BaseCell)`
       flex-direction: column;
     }
   }
-=======
->>>>>>> v1/master
 `
 
 const ProfitsCell = ({ profitLoss }) => {
@@ -55,7 +48,6 @@ const ProfitsCell = ({ profitLoss }) => {
             </span>
           </Flex>
         )}
-<<<<<<< HEAD
         {profitLoss ?
           <Text color="text" fontWeight="700" fontSize="16px">{profitLoss}</Text> :
           <Flex alignItems='center'>
@@ -63,9 +55,6 @@ const ProfitsCell = ({ profitLoss }) => {
             <img src="/images/husky2.svg" alt="" width="24px" height="24px" style={{marginTop:'8px'}} />
           </Flex>
         }
-=======
-        {profitLoss ? <Text>{profitLoss}</Text> : <Skeleton width="80px" height="16px" />}
->>>>>>> v1/master
       </CellContent>
     </StyledCell>
   )

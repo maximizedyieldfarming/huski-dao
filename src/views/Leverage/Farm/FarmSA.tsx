@@ -17,7 +17,7 @@ import {
 import { BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem } from 'husky-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
+// import { useHuskyPrice, useCakePrice } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
