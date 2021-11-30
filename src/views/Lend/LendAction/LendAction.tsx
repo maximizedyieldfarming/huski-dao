@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
@@ -12,6 +13,9 @@ import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import Switch from "react-switch";
 import { Bone, Bone2 } from 'assets'
+import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
+import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
@@ -25,7 +29,6 @@ interface RouteParams {
 
 interface LocationParams {
   token?: any
-  exchangeRate?: any
 }
 
 const StyledPage = styled(Page)`
@@ -98,17 +101,24 @@ const Body = styled(Flex)`
 const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const {
-    state: { exchangeRate: excRate, token: data },
+   const {
+    state: { token },
   } = useLocation<LocationParams>()
 
   const [withDraw, setWithDraw] = useState(false);
   const [deposit, setDeposit] = useState(false);
 
-  const [tokenData, setTokenData] = useState(data)
-  console.log('tokenData', tokenData)
-  const allowance = tokenData?.userData?.allowance
-  const exchangeRate = excRate
+  const { data: farmsData } = useLeverageFarms()
+  const hash = {}
+  const lendData = farmsData.reduce((cur, next) => {
+    hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+    return cur
+  }, [])
+
+  usePollLeverageFarmsWithUserData()
+
+  const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
+  const allowance = token?.userData?.allowance
 
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
@@ -117,20 +127,10 @@ const LendAction = () => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
-  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
-  const { balance: bnbBalance } = useGetBnbBalance()
-  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
-  const displayBalance = isDeposit
-    ? userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber()
-    : userTokenBalanceCalc(tokenBalanceIb).toNumber()
-
-  const [userTokenBalance, setUserTokenBalance] = useState(displayBalance)
-  const [userIbTokenBalance, setUserIbTokenBalance] = useState(tokenBalanceIb)
-  useEffect(() => {
-    setUserTokenBalance(userTokenBalanceCalc(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toNumber())
-    setUserIbTokenBalance(userTokenBalanceCalc(tokenBalanceIb).toNumber())
-  }, [tokenData, tokenBalance, tokenBalanceIb, tokenName, bnbBalance])
+const exchangeRate =
+  token.totalToken && token.totalSupply
+    ? new BigNumber(token.totalToken).div(token.totalSupply)
+    : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   return (
     <StyledPage>
@@ -145,6 +145,20 @@ const LendAction = () => {
           {/* <HeaderTabs
             onClick={handleDepositClick}
             active={isDeposit}
+  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
+
+  
+
+  return (
+    <StyledPage>
+      <Text fontSize="36px" textTransform="capitalize">
+        {t(`${action}`)} {tokenName}
+      </Text>
+      <TabPanel>
+        <Header>
+          <HeaderTabs
+            onClick={handleDepositClick}
+            isActive={isDeposit}
             to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
             replace
           >
@@ -198,23 +212,19 @@ const LendAction = () => {
 
           {isDeposit ? (
             <Deposit
-              balance={userTokenBalance}
               name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
               tokenData={tokenData}
               account={account}
-              tokenName={tokenName}
             />
           ) : (
             <Withdraw
-              balance={userIbTokenBalance}
               name={tokenName}
               allowance={allowance}
               exchangeRate={exchangeRate}
               account={account}
               tokenData={tokenData}
-              tokenName={tokenName}
             />
           )}
 

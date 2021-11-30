@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
+import { useTranslation } from 'contexts/Localization'
 import { usePercentageToCloseContext } from '../context'
 
 interface Props {
@@ -9,6 +10,8 @@ interface Props {
   convertToValues: any
   quoteTokenName: string
   tokenName: string
+  baseTokenAmountValue: any
+  farmTokenAmountValue: any
 }
 const Wrapper = styled(Box)`
   margin-top: 1rem;
@@ -30,24 +33,27 @@ const RepayDebtConvertTo: React.FC<Props> = ({
   convertToValues,
   tokenName,
   quoteTokenName,
+  baseTokenAmountValue,
+  farmTokenAmountValue
 }) => {
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainBorrowFarm, remainLeverage } =
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm } =
     convertToValues
 
+    const {t} = useTranslation()
   const { percentage, setPercentage } = usePercentageToCloseContext()
   return (
     <Wrapper>
       <GrayBox>
         <WarningIcon />
         <Text color="textSubtle">
-          Your position value will all be converted to {tokenName} and returned to you after paying back the debt.
+         {t(`Your position value will all be converted to ${tokenName} and returned to you after paying back the debt.`)}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (
         <Box>
           <Text>
-            What percentage of position value would you like to close?{' '}
-            {currentPositionLeverage !== 1 && '(After repay all debt)'}
+            {t('What percentage of position value would you like to close?')}{' '}
+            {currentPositionLeverage !== 1 && t('(After repay all debt)')}
           </Text>
           <Flex>
             <input
@@ -71,21 +77,21 @@ const RepayDebtConvertTo: React.FC<Props> = ({
       )}
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
-          <Text>Position Value Assets to Close</Text>
+          <Text>{t('Position Value Assets to Close')}</Text>
         </Box>
         <Text>
           {needCloseFarm?.toFixed(3)} {quoteTokenName} + {needCloseBase?.toFixed(3)} {tokenName}
         </Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text>Updated Position Value Assets</Text>
+        <Text>{t('Updated Position Value Assets')}</Text>
         <Flex>
           <Text color="textSubtle">
-            {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
+            {farmTokenAmountValue?.toFixed(3)} {quoteTokenName} + {baseTokenAmountValue?.toFixed(3)} {tokenName}
           </Text>
           <ChevronRightIcon />
           <Text>
-            {remainBorrowFarm?.toFixed(3)} {quoteTokenName} + {remainBorrowBase?.toFixed(3)} {tokenName}
+            {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
           </Text>
         </Flex>
       </Flex>

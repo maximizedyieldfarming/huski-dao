@@ -139,10 +139,10 @@ const StrategyIcon = styled.div<{ market: string }>`
   margin-right: 5px;
   background: ${({ theme, market }) => {
     if (market.toLowerCase() === 'bear') {
-      return '#27C73F'
+      return '#FE6057'
     }
     if (market.toLowerCase() === 'bull') {
-      return '#FE6057'
+      return '#27C73F'
     }
     if (market.toLowerCase() === 'neutral') {
       return '#FCBD2C'
@@ -159,102 +159,129 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
-  const reward = null
+  const singleData = farmsData.filter((f) => f.singleFlag === 0)
 
-  // for testing purpose only
-  let mockSingleAssetData = [
+  const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
+  const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
+  const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
+  const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ALPACA') // HUSKI
+  const cakeArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'CAKE')
+
+  const marketArray = [
     {
-      id: '1',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
+      singleLeverage: 2,
+      direction: 'long',
       marketStrategy: 'Bull',
     },
     {
-      id: '2',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bear',
-    },
-    {
-      id: '3',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
+      singleLeverage: 2,
+      direction: 'short',
       marketStrategy: 'Neutral',
     },
     {
-      id: '4',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
-    },
-    {
-      id: '5',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
-    },
-    {
-      id: '6',
-      name: 'Cake',
-      symbol: 'CAKE',
-      supply: '1000000000',
-      price: '0.00',
-      marketCap: '0.00',
-      change: '0.00',
-      changePercent: '0.00',
-      supplyChange: '0.00',
-      marketStrategy: 'Bull',
+      singleLeverage: 3,
+      direction: 'short',
+      marketStrategy: 'Bear',
     },
   ]
+  // let singleNewData = []
 
-  const data = null
+  // if (bnbArray && bnbArray !== null && bnbArray !== undefined) {
+  //   let single
+  //   bnbArray.map((item) => {
+  //     marketArray.map((market) => {
+  //       single = { ...market, ...item }
+  //       singleNewData.push(single)
+  //     })
+  //   })
+  // }
+
+  let singlesData = []
+
+  if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
+    let single
+    const farmData = bnbArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
+    let single
+    const farmData = btcbArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
+    let single
+    const farmData = ethArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
+    let single
+    const farmData = huskiArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+  if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
+    let single
+    const farmData = cakeArray
+    marketArray.map((item) => {
+      const newObject = { farmData }
+      single = { ...newObject, ...item }
+      singlesData.push(single)
+    })
+  }
+
+  const data = useGetPositions(account)
+  const positionData = usePositions(data)
+  const positionFarmsData = []
+  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
+    positionData.map((pdata) => {
+      let pfarmData
+      farmsData.map((farm) => {
+        if (
+          farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ||
+          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()
+        ) {
+          pfarmData = pdata
+          pfarmData.farmData = farm
+          positionFarmsData.push(pfarmData)
+        }
+      })
+    })
+  }
+
+  const reward = null
+
   const [dexFilter, setDexFilter] = useState('all')
   const [pairFilter, setPairFilter] = useState('all')
   const [strategyFilter, setStrategyFilter] = useState('all')
 
   // filters
-  // if (pairFilter !== 'all') {
-  //   farmsData = farmsData.filter(
-  //     (pool) =>
-  //       pool?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
-  //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-  //   )
-  // }
-
-  // for testing change later
-  if (strategyFilter !== 'all') {
-    mockSingleAssetData = mockSingleAssetData.filter((pool) => pool?.marketStrategy.toLowerCase() === strategyFilter)
+  if (pairFilter !== 'all') {
+    singlesData = singlesData.filter(
+      (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
+      //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+    )
   }
+  /* if (strategyFilter !== 'all') {
+    singleNewData = singleNewData.filter(
+      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
+    )
+  }
+ */
 
   return (
     <Page>
@@ -281,7 +308,7 @@ const SingleAssetsFarms: React.FC = () => {
             </PositionsButton>
           </Box>
         </PositionButtonsContainer>
-        {/*         {isActivePos ? <ActivePositionsTable positionFarmsData={null} /> : <LiquidatedPositionsTable data={null} />} */}
+        {isActivePos ? <ActivePositionsTable positionFarmsData={positionFarmsData} /> : <LiquidatedPositionsTable data={null} />}
       </StyledTableBorder>
 
       <FiltersWrapper>
@@ -349,8 +376,8 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               startIcon={<BnbIcon />}
-              isActive={pairFilter === 'wbnb'}
-              onClick={() => setPairFilter('wbnb')}
+              isActive={pairFilter === 'huski'}
+              onClick={() => setPairFilter('huski')}
             >
               HUSKI
             </FilterOption>
@@ -391,8 +418,11 @@ const SingleAssetsFarms: React.FC = () => {
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {data?.map((asset) => (
-          <SingleAssetsCard data={asset} key={asset.id} />
+        {singlesData?.map((asset) => (
+          <SingleAssetsCard
+            data={asset}
+            // key={asset.pid}
+          />
         ))}
       </CardsWrapper>
     </Page>

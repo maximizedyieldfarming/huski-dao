@@ -4,12 +4,14 @@ import { useParams } from 'react-router'
 import { Box, Button, Flex, Input, Text } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import useTokenBalance from 'hooks/useTokenBalance'
+import { getBalanceAmount, formatNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { getFullDisplayBalance } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useTranslation } from 'contexts/Localization'
+import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import Stake from './components/Stake'
 import Unstake from './components/Unstake'
 
@@ -81,32 +83,26 @@ const StakedContainer = styled(Flex)`
 
 const StakeAction = () => {
   const {
-    state: { token: data },
+    state: { token },
   } = useLocation<LocationParams>()
-  const [tokenData, setTokenData] = useState(data)
   const { t } = useTranslation()
 
-  console.log('tokenData', tokenData)
+  const { data: farmsData } = useStakes()
+  useStakeWithUserData()
+  const tokenData = farmsData.find((item) => item?.pid === token?.pid)
+
   const { account } = useWeb3React()
   const { action, tokenName } = useParams<RouteParams>()
   const [isStake, setIsStake] = useState(action === 'stake')
 
-  const handleUnstakeClick = (e) => isStake && setIsStake(false)
+  const handleUnstakeClick = () => isStake && setIsStake(false)
 
-  const handleStakeClick = (e) => !isStake && setIsStake(true)
+  const handleStakeClick = () => !isStake && setIsStake(true)
 
-  const { tokenBalance } = tokenData.userData
-  const { stakedBalance } = tokenData.userData
-  console.log({ tokenBalance, stakedBalance })
-  const userTokenBalanceCalc = (userBalance) => new BigNumber(userBalance).dividedBy(BIG_TEN.pow(18))
-  const { allowance } = tokenData?.userData
+  const allowance = token?.userData?.allowance
 
-  const [userTokenBalance, setUserTokenBalance] = useState(userTokenBalanceCalc(tokenBalance).toNumber())
-  const [userStakedBalance, setStakedBalance] = useState(userTokenBalanceCalc(stakedBalance).toNumber())
-  useEffect(() => {
-    setUserTokenBalance(userTokenBalanceCalc(tokenBalance).toNumber())
-    setStakedBalance(userTokenBalanceCalc(stakedBalance).toNumber())
-  }, [tokenData, tokenBalance, stakedBalance])
+  const userTokenBalance = getBalanceAmount(new BigNumber(tokenData.userData.tokenBalance)).toJSON()
+  const userStakedBalance = getBalanceAmount(new BigNumber(tokenData.userData.stakedBalance)).toJSON()
 
   return (
     <StyledPage>
@@ -136,8 +132,8 @@ const StakeAction = () => {
         <Body>
           {isStake ? (
             <Stake
+              userTokenBalance={userTokenBalance}
               account={account}
-              balance={userTokenBalance}
               name={tokenName}
               allowance={allowance}
               tokenData={tokenData}
@@ -145,7 +141,7 @@ const StakeAction = () => {
           ) : (
             <Unstake
               account={account}
-              stakedBalance={userStakedBalance}
+              userStakedBalance={userStakedBalance}
               name={tokenName}
               allowance={allowance}
               tokenData={tokenData}
@@ -155,7 +151,7 @@ const StakeAction = () => {
       </TabPanel>
       <StakedContainer>
         <Text>{t('Staked')}</Text>
-        <Text>{userStakedBalance}</Text>
+        <Text>{`${formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)} ${tokenName}`}</Text>
       </StakedContainer>
     </StyledPage>
   )

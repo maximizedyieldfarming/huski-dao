@@ -51,9 +51,7 @@ const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
             {debt.toNumber().toFixed(3)} {name}
           </Text>
         ) : (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
-            10BNB
-          </Text>
+           <Skeleton width="80px" height="16px" />
         )}
       </CellContent>
     </StyledCell>

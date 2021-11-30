@@ -46,7 +46,7 @@ const LiquidationThresholdCell = ({ liquidationThreshold }) => {
             </span>
           </Flex>
         )}
-        {liquidationThreshold ? <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{liquidationThreshold}%</Text> : <Text color="text" fontWeight="600" fontSize="16px" mt="8px">86.3%</Text>}
+        {liquidationThreshold ? <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{liquidationThreshold}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

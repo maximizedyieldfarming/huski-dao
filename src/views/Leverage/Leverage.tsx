@@ -114,7 +114,7 @@ const Leverage: React.FC = () => {
   const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []
-  if (positionData && positionData !== null && positionData !== undefined) {
+  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
@@ -157,25 +157,42 @@ const Leverage: React.FC = () => {
   return (
     <Page>
       <Section>
-        <SBBox className="block" style={{ position: 'relative', marginRight: '30px', display: 'flex', alignItems: 'center' }}>
-          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>Huski<br /> Finance</h2>
+        <SBBox
+          className="block"
+          style={{ position: 'relative', marginRight: '30px', display: 'flex', alignItems: 'center' }}
+        >
+          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
+            Huski
+            <br /> Finance
+          </h2>
         </SBBox>
-        
-        <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-between', background: '#E3F0F6', borderRadius: '15px', width: '20%' }}>
-          <img src="/images/crown.png" width='48px' height='48px' alt="" />
-          <Text mt="10px"  fontSize="13px" fontWeight="600">{t('HUSKI Rewards')}</Text>
-          <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start" >
-            <Text mb='5px' color="textFarm" fontWeight="700" fontSize="28px">
+
+        <Flex
+          className="container"
+          style={{
+            padding: '30px',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            background: '#E3F0F6',
+            borderRadius: '15px',
+            width: '20%',
+          }}
+        >
+          <img src="/images/crown.png" width="48px" height="48px" alt="" />
+          <Text mt="10px" fontSize="13px" fontWeight="600">
+            {t('HUSKI Rewards')}
+          </Text>
+          <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
+            <Text mb="5px" color="textFarm" fontWeight="700" fontSize="28px">
               {reward.toPrecision(3)}
             </Text>
             <StyledButton
               as={Link}
-              to={{ pathname: '/leverage/claim', state: { positionFarmsData, farmsData } }}
+              to={(location) => ({ pathname: `${location.pathname}/claim`, state: { farmsData } })}
               disabled={!account}
               scale="sm"
-            ><Text color="textSubtle">
-              {t('Claim')}
-              </Text>
+            >
+              <Text color="textSubtle">{t('Claim')}</Text>
             </StyledButton>
           </Flex>
         </Flex>

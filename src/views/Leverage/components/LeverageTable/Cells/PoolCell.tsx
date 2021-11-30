@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints, Box, InfoIcon, Skeleton, useTooltip } from 'husky-uikit1.0'
-import { useTranslation } from 'contexts/Localization'
+import { Flex, Text, useMatchBreakpoints, Box } from 'husky-uikit'
 import { TokenPairImage, TokenImage } from 'components/TokenImage'
-import nFormatter from 'utils/nFormatter'
+import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -20,7 +19,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const PoolCell = ({ pool, tokenData, tvl, lpTokens }) => {
+const PoolCell = ({ pool, tokenData,}) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const quoteToken = tokenData?.TokenInfo.quoteToken

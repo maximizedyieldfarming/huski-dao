@@ -73,7 +73,7 @@ const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, 
             </span>
           </Flex>
         )}
-        {apy ? <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{apy}%</Text> : <Text color="text" fontWeight="600" fontSize="16px" mt="8px">236.22%</Text>}
+        {apy ? <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{apy}%</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

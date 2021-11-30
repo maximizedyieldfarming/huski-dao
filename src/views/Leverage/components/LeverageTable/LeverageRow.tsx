@@ -1,11 +1,9 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
-import { useHuskyPrice, useHuskyPerBlock, useCakePrice } from 'state/leverage/hooks'
-import { getAddress } from 'utils/addressHelpers'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
@@ -32,8 +30,7 @@ const LeverageRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const [childLeverage, setChildLeverage] = useState(leverage)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-  const huskyPrice = useHuskyPrice()
-  const huskyPerBlock = useHuskyPerBlock()
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
@@ -76,15 +73,22 @@ const LeverageRow = ({ tokenData }) => {
     return apy * 100
   }
 
+  // const apyarray = [];
+  // const newLeverage = leverage
+  // for (let i = 1; i <= leverage; i++) {
+  //   // if (getApy(i) >= getApy(i + 1)) {
+  //     // newLeverage = i;
+  //     apyarray.push(getApy(i))
+  //   // }
+  //   // break;
+  // }
+
+  // console.log({'newLeverage--': apyarray, 'lpSymbol': lpSymbol, childLeverage })
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
-        <PoolCell
-          pool={lpSymbol.replace(' LP', '')}
-          tokenData={tokenData}
-          tvl={totalTvl.toNumber()}
-          lpTokens={tokensLP}
-        />
+        <PoolCell pool={lpSymbol.replace(' LP', '')} tokenData={tokenData} />
         <ApyCell
           apyAtOne={getDisplayApr(getApy(1))}
           apy={getDisplayApr(getApy(childLeverage))}
@@ -93,7 +97,7 @@ const LeverageRow = ({ tokenData }) => {
           huskyRewards={huskyRewards * 100 * (childLeverage - 1)}
           borrowingInterest={borrowingInterest * 100 * (childLeverage - 1)}
         />
-        <TvlCell  tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} />
+        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} />
         <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} />
         <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />

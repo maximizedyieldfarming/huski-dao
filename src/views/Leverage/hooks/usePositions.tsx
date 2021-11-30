@@ -7,6 +7,7 @@ import WorkerABI from 'config/abi/PancakeswapV2Worker.json'
 
 
 export const usePositions = (data) => {
+  BigNumber.config({EXPONENTIAL_AT: 1e9})
 
   const [positionData, setPositionData] = useState([])
 

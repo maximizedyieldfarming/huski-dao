@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled, { keyframes, css } from 'styled-components'
 import { useMatchBreakpoints, Flex, Text, Box, ChevronDownIcon, ChevronUpIcon, Button } from 'husky-uikit1.0'
-import { useHuskyPrice } from 'state/stake/hooks'
+import { useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
@@ -11,9 +11,9 @@ import { getStakeApy } from '../../helpers'
 import AprCell from './Cells/AprCell'
 import ActionCell from './Cells/ActionCell'
 import TotalVolumeCell from './Cells/TotalVolumeCell'
-import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
 import RewardsCell from './Cells/RewardsCell'
+import ClaimCell from './Cells/ClaimCell'
 import StakedCell from './Cells/StakedCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
@@ -74,8 +74,7 @@ const StyledButton = styled(Button) <Props>`
   text-align: center;
   width:140px;
   height:48px;
-  border:${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')}
-  
+  border:${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
   `
 
 const MaxContainer = styled(Flex)`
@@ -121,7 +120,7 @@ const StakeRow = ({ tokenData }) => {
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
-  const huskyPrice = useHuskyPrice()
+  const huskyPrice = useHuskiPrice()
   const { t } = useTranslation()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
@@ -134,20 +133,16 @@ const StakeRow = ({ tokenData }) => {
   const userStakedBalance = userTokenBalanceCalc(stakedBalance).toNumber()
 
   return (
-    <StyledRow role="row" huski={tokenData?.symbol.toLowerCase() === 'shuski'} expanded= {expanded}>
-      <Flex onClick={toggleExpanded} mr='20px' ml='20px'>
+    <StyledRow role="row" huski={tokenData?.symbol.toLowerCase() === 'shuski'}>
+      <Flex>
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
-        {/* ================================fake data================================== */}
-        <MyPosCell supply={9345345} />
-        {/* ================================fake data================================== */}
         <TotalVolumeCell supply={parseInt(totalToken)} />
         <TotalValueCell supply={parseInt(totalToken)} />
-        {/* <ActionCell token={tokenData} /> */}
-        {shouldRenderActionPanel ? <ChevronUpIcon mr="10px" /> : <ChevronDownIcon mr="10px" />}
+        <ActionCell token={tokenData} />
       </Flex>
-      <StyledActionPanel flexDirection="column" expanded={expanded} >
-        {/* {shouldRenderActionPanel ? (
+      <StyledActionPanel flexDirection="column" onClick={toggleExpanded} expanded={expanded}>
+        {shouldRenderActionPanel ? (
           <>
             <ChevronUpIcon mx="auto" />
             <Flex className="expandedArea">
@@ -161,80 +156,6 @@ const StakeRow = ({ tokenData }) => {
           </>
         ) : (
           <ChevronDownIcon mx="auto" />
-        )} */}
-        {shouldRenderActionPanel ? (
-          <>
-            <Flex className="expandedArea" >
-              <StakeContainer flexDirection='column'>
-                <Flex alignItems='center' justifyContent='space-between'>
-                  <Text color="text" fontSize="14px" fontWeight='700'>{t('I Want to stake')}</Text>
-                  <Text color="textSubtle" fontSize='12px'>balance:<span style={{ color: '#1A1D1F', fontSize: '12px', fontWeight: 700 }}>200.908897 iBNB</span></Text>
-                </Flex>
-                <MaxContainer>
-                  <Text
-                    color="textFarm" fontSize='28px' fontWeight='700'
-                  >1.55</Text>
-                  <Flex alignItems='center'>
-                    <Box >
-                      <button type="button" style={{ width: '48px', height: '48px', borderRadius: '8px', border: '1px solid #DDDFE0', background: '#FFFFFF', cursor: 'pointer' }} >
-                        {t('MAX')}
-                      </button>
-                    </Box>
-                    <StyledButton
-                    >
-                      {t('Stake')}
-                    </StyledButton>
-                  </Flex>
-                </MaxContainer>
-              </StakeContainer>
-              <StakeContainer flexDirection='column' mr='60px' ml='30px'>
-                <Flex alignItems='center' justifyContent='space-between'>
-                  <Text color="text" fontSize="14px" fontWeight='700'>{t('I Want to Unstake')}</Text>
-                  <Text color="textSubtle" fontSize='12px'>balance:<span style={{ color: '#1A1D1F', fontSize: '12px', fontWeight: 700 }}>200.908897 iBNB</span></Text>
-                </Flex>
-                <MaxContainer>
-                  <Text
-                    color="textFarm" fontSize='28px' fontWeight='700'
-                  >1.55</Text>
-                  <Flex alignItems='center'>
-                    <Box >
-                      <button type="button" style={{ width: '48px', height: '48px', borderRadius: '8px', border: '1px solid #DDDFE0', background: '#FFFFFF', cursor: 'pointer' }} >
-                        {t('MAX')}
-                      </button>
-                    </Box>
-                    <StyledButton
-                    >
-                      {t('Stake')}
-                    </StyledButton>
-                  </Flex>
-                </MaxContainer>
-              </StakeContainer>
-              <StakeContainer flexDirection='column' pl='60px' style={{ borderLeft: '2px solid #EFEFEF' }}>
-                <Flex alignItems='center' justifyContent='space-between'>
-                  <Text color="text" fontSize="14px" fontWeight='700'>{t('HUSKI Rewards')}</Text>
-
-                </Flex>
-                <MaxContainer>
-                  <Text
-                    color="textFarm" fontSize='28px' fontWeight='700'
-                  >1.55</Text>
-                  <Flex alignItems='center'>
-                    <Box >
-                      <button type="button" style={{ width: '48px', height: '48px', borderRadius: '8px', border: '1px solid #DDDFE0', background: '#FFFFFF', cursor: 'pointer' }} >
-                        {t('MAX')}
-                      </button>
-                    </Box>
-                    <StyledButton
-                    >
-                      {t('Stake')}
-                    </StyledButton>
-                  </Flex>
-                </MaxContainer>
-              </StakeContainer>
-            </Flex>
-          </>
-        ) : (
-          <div />
         )}
       </StyledActionPanel>
     </StyledRow>

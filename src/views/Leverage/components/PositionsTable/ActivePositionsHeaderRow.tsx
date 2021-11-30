@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Text, useTooltip, InfoIcon, Flex } from 'husky-uikit1.0'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 

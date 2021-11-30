@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Flex, Box, Text, Button, AutoRenewIcon } from 'husky-uikit'
@@ -13,11 +14,12 @@ import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 
 interface RewardsProps {
   name: string
+  debtPoolId: number
   earnings: number
+  token: any
 }
 
 interface LocationState {
-  positionFarmsData: any
   farmsData: any
 }
 
@@ -39,26 +41,55 @@ const Cell = styled(Flex)`
   justify-content: space-between;
 `
 
-const Rewards: React.FC<RewardsProps> = ({ name, earnings }) => {
+const Rewards: React.FC<RewardsProps> = ({ name, earnings, token, debtPoolId }) => {
   const { t } = useTranslation()
   const [isPending, setIsPending] = useState(false)
 
   const rewards = new BigNumber(earnings).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const claimContract = useClaimFairLaunch()
+  const { callWithGasPrice } = useCallWithGasPrice()
+
+  const handleConfirm = async () => {
+    setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(claimContract, 'harvest', [debtPoolId], { gasLimit: 300000 })
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Bounty collected!'), t('bounty has been sent to your wallet.'))
+      }
+    } catch (error) {
+      toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+    } finally {
+      setIsPending(false)
+    }
+  }
 
   return (
     <Cell>
-      <Text>{t(`Rewards from positions on ${name} pairs`)}</Text>
-      <Box>
-        <Text color="textSubtle">{t('HUSKI Earned')}</Text>
-        <Text bold>{rewards.toPrecision(4)}</Text>
+      <Flex alignItems="center" flex="2">
+        <TokenImage token={token} width={30} height={30} mr="8px" />
+        <Box>
+          <Text>{t(`Rewards from positions on ${name} pairs`)}</Text>
+        </Box>
+      </Flex>
+      <Box style={{ flex: '1' }}>
+        <Text>{t('HUSKI Earned')}</Text>
+        <Text bold color="secondary">
+          {rewards.toPrecision(4)}
+        </Text>
       </Box>
-      <Button
-        disabled={isPending}
-        isLoading={isPending}
-        endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-      >
-        {isPending ? t('Claiming') : t('Claim')}
-      </Button>
+      <Box style={{ flex: '1' }}>
+        <Button
+          disabled={isPending || !rewards}
+          isLoading={isPending}
+          onClick={handleConfirm}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+        >
+          {isPending ? t('Claiming') : t('Claim')}
+        </Button>
+      </Box>
     </Cell>
   )
 }
@@ -66,60 +97,41 @@ const Rewards: React.FC<RewardsProps> = ({ name, earnings }) => {
 const Claim: React.FC = () => {
   const { t } = useTranslation()
   const {
-    state: { positionFarmsData, farmsData },
+    state: { farmsData },
   } = useLocation<LocationState>()
-  console.log({ positionFarmsData, farmsData })
 
-  /* const cells = farmsData.filter(
-    (pool, index, array) => array.findIndex((pools) => pools.token.symbol === pool.token.symbol) === index,
-  ) */
-  const positionsWithEarnings = positionFarmsData.filter((pool) => Number(pool?.farmData?.userData?.farmEarnings) > 0)
-
-  console.log({ positionsWithEarnings })
+  const hash = {}
+  const positionsWithEarnings = farmsData.reduce((cur, next) => {
+    hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+    return cur
+  }, [])
 
   const rewards = []
   positionsWithEarnings.forEach((pool, index) => {
-    if (pool?.farmData?.TokenInfo?.token?.symbol === positionsWithEarnings[index + 1]?.farmData?.TokenInfo?.token?.symbol) {
+    if (pool?.TokenInfo?.token?.symbol === positionsWithEarnings[index + 1]?.TokenInfo?.token?.symbol) {
       const sum =
-        Number(pool?.farmData?.userData?.farmEarnings) +
-        Number(positionsWithEarnings[index + 1]?.farmData?.userData?.farmEarnings)
+        Number(pool?.userData?.farmEarnings) + Number(positionsWithEarnings[index + 1]?.userData?.farmEarnings)
       rewards.push({
-        name: pool?.farmData?.TokenInfo?.token?.symbol,
+        name: pool?.TokenInfo?.token?.symbol,
         earnings: sum,
+        token: pool?.TokenInfo?.token,
       })
     }
   })
 
-  console.log({ rewards })
-
-  // start farm page : claim
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const claimContract = useClaimFairLaunch()
-  const { callWithGasPrice } = useCallWithGasPrice()
-  const handleConfirm = async () => {
-    // try {
-    //   const tx = await callWithGasPrice(claimContract, 'harvest', [这里要用debtPoolId], { gasLimit: 300000 })
-    //   const receipt = await tx.wait()
-    //   if (receipt.status) {
-    //     toastSuccess(t('Bounty collected!'), t('CAKE bounty has been sent to your wallet.'))
-    //   }
-    // } catch (error) {
-    //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-    // }
-  }
-  // end
-
   return (
     <Page>
-      <Text bold mx="auto">
+      <Text bold mx="auto" color="secondary" fontSize="2">
         {t('Harvest')}
       </Text>
       <Wrapper>
         {positionsWithEarnings.map((pool) => (
           <Rewards
-            name={pool?.farmData?.TokenInfo?.token?.symbol}
-            earnings={Number(pool?.farmData?.userData?.farmEarnings)}
-            key={pool?.pid}
+            name={pool?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+            debtPoolId={pool?.TokenInfo?.token?.debtPoolId}
+            earnings={Number(pool?.userData?.farmEarnings)}
+            key={pool?.TokenInfo?.token?.debtPoolId}
+            token={pool?.TokenInfo?.token}
           />
         ))}
       </Wrapper>
