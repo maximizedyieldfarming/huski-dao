@@ -105,17 +105,17 @@ const leverageFarms: LeverageFarmConfig[] = [
 
   {
     pid: 252,
-    lpSymbol: 'BNB-BUSD LP',
+    lpSymbol: 'BUSD-BNB LP',
     lpAddresses: {
       97: '',
       56: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16',
     },
-    singleFlag: 1,
-    TokenInfo: {
+    singleFlag: 0,
+    QuoteTokenInfo : {
       token: tokens.busd,
       quoteToken: tokens.wbnb,
       vaultAddress: "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f",
-      name: "WBNB-BUSD PancakeswapWorker",
+      name: "BUSD-WBNB PancakeswapWorker",
       address: "0x51782E39A0aF33f542443419c223434Bb4A5a695",
       deployedBlock: 5926150,
       config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",
@@ -131,11 +131,11 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x8dcEC5e136B6321a50F8567588c2f25738D286C2"
       }
     },
-    QuoteTokenInfo: {
+    TokenInfo  : {
       token: tokens.wbnb,
       quoteToken: tokens.busd,
       vaultAddress: "0xd7D069493685A581d27824Fc46EdA46B7EfC0063",
-      name: "BUSD-WBNB PancakeswapWorker",
+      name: "WBNB-BUSD PancakeswapWorker",
       address: "0x9B07DEaEc22328EbaE132875245492D56a57F7bf",
       deployedBlock: 7488593,
       config: "0xADaBC5FC5da42c85A84e66096460C769a151A8F8",

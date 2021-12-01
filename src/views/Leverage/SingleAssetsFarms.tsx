@@ -193,7 +193,7 @@ const SingleAssetsFarms: React.FC = () => {
   const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
   const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ALPACA') // HUSKI
   const cakeArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'CAKE')
-
+console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
   const marketArray = [
     {
       singleLeverage: 2,
@@ -228,53 +228,53 @@ const SingleAssetsFarms: React.FC = () => {
   //   })
   // }
 
-  let singlesData = []
+  // let singlesData = []
 
-  if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
-    let single
-    const farmData = bnbArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
-    let single
-    const farmData = btcbArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
-    let single
-    const farmData = ethArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
-    let single
-    const farmData = huskiArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
-    let single
-    const farmData = cakeArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
+  // if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
+  //   let single
+  //   const farmData = bnbArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
+  //   let single
+  //   const farmData = btcbArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
+  //   let single
+  //   const farmData = ethArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
+  //   let single
+  //   const farmData = huskiArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
+  //   let single
+  //   const farmData = cakeArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
 
   const data = useGetPositions(account)
   const positionData = usePositions(data)
@@ -315,21 +315,21 @@ const SingleAssetsFarms: React.FC = () => {
   const [strategyFilter, setStrategyFilter] = useState<string>()
 
   // filters
-  if (pairFilter !== 'all') {
-    singlesData = singlesData.filter(
-      (pool) =>
-        pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
-        pool.farmData[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-    )
-  }
+  // if (pairFilter !== 'all') {
+  //   singlesData = singlesData.filter(
+  //     (pool) =>
+  //       pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
+  //       pool.farmData[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+  //   )
+  // }
 
-  console.log({ singlesData })
-  const hash = {}
-  const newSinglesData = singlesData.reduce((cur, next) => {
-    // eslint-disable-next-line no-unused-expressions
-    hash[next?.farmData[0].pid] ? '' : (hash[next?.farmData[0].pid] = true && cur.push(next))
-    return cur
-  }, [])
+  // console.log({ singlesData })
+  // const hash = {}
+  // const newSinglesData = singlesData.reduce((cur, next) => {
+  //   // eslint-disable-next-line no-unused-expressions
+  //   hash[next?.farmData[0].pid] ? '' : (hash[next?.farmData[0].pid] = true && cur.push(next))
+  //   return cur
+  // }, [])
 
   // singlesData.forEach(
   //   (item, index) => {
