@@ -370,6 +370,7 @@ const Farm = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
+  console.log(farmData);
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -585,7 +586,7 @@ const Farm = () => {
     const tt = (leverageValue - 1) / 2 * (moveVal.width);
     if (tt === 0) {
       setMargin(tt - leverageValue * 9 + 10);
-    }else{
+    } else {
       setMargin(tt - leverageValue * 9);
     }
 
@@ -724,8 +725,8 @@ const Farm = () => {
                   <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
                 {leverageValue < 2 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
                   <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                {leverageValue < 2.5 ? <div style={{ borderRadius: '50%',width: '12px', height:'12px',background:'#E7E7E7'}} />:
-                <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
+                {leverageValue < 2.5 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
+                  <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
                 <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
               </Flex>
               <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} id="leverage">{datalistOptions}</datalist>
@@ -767,7 +768,7 @@ const Farm = () => {
                 options={options()} />
             </Flex>
             <Flex justifyContent="space-evenly" mt='20px'>
-              {isApproved ? null : <Button style={{ width: '290px', height: '60px', borderRadius: '16px' }} onClick={handleApprove}>{t('Confirm')}</Button>}
+              {isApproved ? null : <Button style={{ width: '290px', height: '60px', borderRadius: '16px' }} onClick={handleApprove}>{t('Approve')}</Button>}
               <Button
                 width='290px'
                 height='60px'
@@ -820,56 +821,52 @@ const Farm = () => {
           <Section>
             <Flex justifyContent="space-between">
               <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('APR')}</Text><span> <InfoIcon color="textSubtle" ml="10px" /></span></Flex>
-              {/* {farmData ? (
+              {farmData ? (
                 <>
                   <Text>
                     {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                   </Text>
 
                 </>
-              ) : ( */}
-              <Text fontWeight="700">150.98% </Text>
-              {/* )} */}
+              ) : (
+                "")}
             </Flex>
 
             <Flex justifyContent="space-between">
               <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('APR')}</Text><span> <InfoIcon color="textSubtle" ml="10px" /></span></Flex>
-              {/* {farmData ? (
+              {farmData ? (
                 <>
                   <Text>
                     {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                   </Text>
 
                 </>
-              ) : ( */}
-              <Text fontWeight="700">150.98% </Text>
-              {/* )} */}
+              ) : (
+                "")}
             </Flex>
             <Flex justifyContent="space-between">
               <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('Asset Borrowed')}</Text></Flex>
-              {/* {farmData ? (
+              {farmData ? (
                 <>
                   <Text>
                     {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                   </Text>
 
                 </>
-              ) : ( */}
-              <Text fontWeight="700">2044.38BUSD </Text>
-              {/* )} */}
+              ) : (
+                "")}
             </Flex>
             <Flex justifyContent="space-between">
               <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('Assets Supplied')}</Text></Flex>
-              {/* {farmData ? (
+              {farmData ? (
                 <>
                   <Text>
                     {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
                   </Text>
 
                 </>
-              ) : ( */}
-              <Text fontWeight="700">51168...BUSD+1.74...bnb </Text>
-              {/* )} */}
+              ) : (
+                "")}
             </Flex>
 
             <Flex justifyContent="space-between">
@@ -880,7 +877,11 @@ const Farm = () => {
                   <InfoIcon color="textSubtle" ml="10px" />
                 </span>
               </Flex>
-              <Text fontWeight="700">150.98% </Text>
+              {farmData ? (
+                <Text color="#1DBE03">+{(farmData[4] * 100).toPrecision(3)} %</Text>
+              ) : (
+                <Text color="#1DBE03"> 0.00 %</Text>
+              )}
             </Flex>
             <Flex justifyContent="space-between">
               <Flex>
