@@ -11,14 +11,16 @@ type PublicFarmData = {
   totalSupply: SerializedBigNumber
   totalToken: SerializedBigNumber
   vaultDebtVal: SerializedBigNumber
+  totalValueStaked: SerializedBigNumber
   poolWeight: SerializedBigNumber
   pooPerBlock: number
 }
 
 const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
-  const { pid, vaultAddress } = stake
+  const { pid, vaultAddress, fairLaunchAddress } = stake
   const vaultAddresses = getAddress(vaultAddress)
-  const [totalSupply, totalToken, vaultDebtVal] =
+  const fairLaunchAddresses = getAddress(fairLaunchAddress)
+  const [totalSupply, totalToken, vaultDebtVal, totalValueStaked] =
     await multicall(VaultABI, [
       {
         address: vaultAddresses,
@@ -32,8 +34,13 @@ const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
         address: vaultAddresses,
         name: 'vaultDebtVal',
       },
+      {
+        address: vaultAddresses,
+        name: 'balanceOf',
+        params: [fairLaunchAddresses],
+      }
     ])
-
+  console.info('totalValueStaked', totalValueStaked)
   const [info, alpacaPerBlock, totalAllocPoint] =
     pid || pid === 0
       ? await multicall(fairLaunchABI, [
@@ -61,6 +68,7 @@ const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
     totalSupply: totalSupply[0]._hex,
     totalToken: totalToken[0]._hex,
     vaultDebtVal: vaultDebtVal[0]._hex,
+    totalValueStaked: totalValueStaked[0]._hex,
     poolWeight: poolWeight.toJSON(),
     pooPerBlock,
   }
