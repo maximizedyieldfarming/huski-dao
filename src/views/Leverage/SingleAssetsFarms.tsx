@@ -210,6 +210,11 @@ const SingleAssetsFarms: React.FC = () => {
       direction: 'short',
       marketStrategy: 'Bear',
     },
+    {
+      singleLeverage: 3,
+      direction: 'long',
+      marketStrategy: 'Bull',
+    },
   ]
   // let singleNewData = []
 

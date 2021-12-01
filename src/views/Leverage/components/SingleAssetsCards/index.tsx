@@ -104,7 +104,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       },
       {
         value: 'bear',
-        name: 'Bear strategy 2x',
+        name: 'Bear strategy 3x',
         singleLeverage: 3,
         direction: 'short',
         riskLevel: 'High',
@@ -126,7 +126,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const [selectedStrategy, setSelectedStrategy] = useState(
     data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
   )
-  // console.log('selectedStrategy', selectedStrategy)
 
   const getSelectOptions = React.useCallback(() => {
     if (strategyFilter === 'neutral') {
@@ -223,10 +222,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
   }, [strategyFilter])
-  // console.log('selOptions', selOptions)
 
   const { singleLeverage, direction, riskLevel } = getStrategyInfo(selectedStrategy)
-  // console.log('token', data?.TokenInfo?.token?.symbol, 'selected strategy', selectedStrategy)
 
   const tvl = totalTvl.toNumber()
   const apy = getDisplayApr(getApy(singleLeverage))
@@ -236,7 +233,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   const avgApy = Number(apy) - Number(apyOne)
   const apyPercentageDiff = new BigNumber(avgApy).div(apyOne).times(100).toFixed(2, 1)
-  // console.log('apyPercentageDiff', apyPercentageDiff)
 
   const getOption = () => {
     const option = {
