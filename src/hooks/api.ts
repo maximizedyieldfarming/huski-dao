@@ -72,6 +72,34 @@ export const usePriceList = (coingeckoId) => {
   return priceList
 }
 
+export const useTokenPriceList = (coingeckoId) => {
+  const [tokenPriceList, setTokenPriceList] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const start = moment().format('YYYY-MM-DD 00:00:00');
+        const end = moment().subtract(500, 'days').format('YYYY-MM-DD 00:00:00');
+        const startDate = moment(start).unix()
+        const endDate = moment(end).unix()
+
+        const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/${coingeckoId}/market_chart/range?vs_currency=usd&from=${endDate}&to=${startDate}`;
+        const res = await fetch(cakePriceCoinGeckoApi);
+        const responseData = await res.json();
+
+        setTokenPriceList(responseData.prices)
+      } catch (error) {
+        console.error('Unable to fetch data:', error)
+      }
+    }
+
+    fetchData()
+  }, [coingeckoId, setTokenPriceList])
+
+  return tokenPriceList
+}
+
+
 export const useCakePrice = () => {
   const [cakePrice, setCakePrice] = useState()
 
