@@ -40,7 +40,7 @@ const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
         params: [fairLaunchAddresses],
       }
     ])
-  console.info('totalValueStaked', totalValueStaked)
+
   const [info, alpacaPerBlock, totalAllocPoint] =
     pid || pid === 0
       ? await multicall(fairLaunchABI, [
