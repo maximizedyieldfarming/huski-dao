@@ -9,8 +9,8 @@ export const Card = styled(UiKitCard)`
   align-self: baseline;
   position: relative;
   color: ${({ theme }) => theme.colors.secondary};
-  background: unset;
-  padding: 0;
+  background: ${({ theme }) => theme.card.background};
+  padding: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
 

@@ -110,7 +110,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       97: '',
       56: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16',
     },
-    singleFlag: 0,
+    singleFlag: 1,
     TokenInfo: {
       token: tokens.busd,
       quoteToken: tokens.wbnb,
@@ -377,7 +377,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       97: '',
       56: '0xf45cd219aef8618a92baa7ad848364a158a24f33',
     },
-    singleFlag: 0,
+    singleFlag: 1,
     TokenInfo: {
       token: tokens.busd,
       quoteToken: tokens.btcb,

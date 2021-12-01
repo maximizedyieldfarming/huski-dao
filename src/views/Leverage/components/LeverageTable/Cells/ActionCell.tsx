@@ -57,7 +57,7 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
             state: { tokenData: token, selectedLeverage, selectedBorrowing },
           })}
           // disabled={!token?.totalSupply || !account}
-          onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
+          // onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
         >
           {t('Farm')}
         </Link>):(

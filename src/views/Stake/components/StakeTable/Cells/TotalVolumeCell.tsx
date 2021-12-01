@@ -35,7 +35,7 @@ const TotalVolumeCell = ({ supply }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           {t('Total Value Staked')}
         </Text>
-        {supply ? <Text mt='10px'>{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}
+        {supply ? <Text fontWeight='500' mt='10px'>{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}
       </CellContent>
     </StyledCell>
   )

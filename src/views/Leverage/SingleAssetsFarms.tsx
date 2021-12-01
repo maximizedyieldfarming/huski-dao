@@ -1,19 +1,19 @@
 /* eslint-disable array-callback-return */
 import Page from 'components/Layout/Page'
-import React, { useState } from 'react'
-import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
+import React, { useState, forwardRef, useImperativeHandle } from 'react'
+import { Link, useRouteMatch } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Grid, CardsLayout as UikitCardLayout } from 'husky-uikit1.0'
 import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
-import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
-import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
+import BigNumber from 'bignumber.js'
+import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { usePositions } from './hooks/usePositions'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
@@ -70,9 +70,10 @@ const StyledTableBorder = styled.div`
   padding: 1rem 1.5rem;
 `
 
-const CardsWrapper = styled(Grid)`
-  grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
-  justify-content: space-between;
+const CardsLayout = styled(UikitCardLayout)`
+  ${({ theme }) => theme.mediaQueries.lg} {
+    grid-gap: 100px;
+  }
 `
 
 const FilterOption = styled(Button)`
@@ -132,6 +133,31 @@ const FiltersWrapper = styled(Flex)`
     }
   }
 `
+
+const Section = styled(Flex)`
+  // background-color: ${({ theme }) => theme.card.background};
+  // padding: 1rem;
+  gap: 1rem;
+  // border-radius: ${({ theme }) => theme.radii.default};
+  // box-shadow: ${({ theme }) => theme.card.boxShadow};
+  flex-flow: row wrap;
+  .rewardsContainer {
+    flex-direction: row;
+    align-self: flex-end;
+    background-color: ${({ theme }) => theme.card.background};
+    border-radius: ${({ theme }) => theme.radii.card};
+    padding: 1rem;
+    box-shadow: ${({ theme }) => theme.card.boxShadow};
+  }
+  .adContainer {
+    background-color: ${({ theme }) => theme.card.background};
+    border-radius: ${({ theme }) => theme.radii.card};
+    padding: 1rem;
+    box-shadow: ${({ theme }) => theme.card.boxShadow};
+    flex: 1;
+  }
+`
+
 const StrategyIcon = styled.div<{ market: string }>`
   width: 8px;
   height: 8px;
@@ -160,6 +186,7 @@ const SingleAssetsFarms: React.FC = () => {
   usePollLeverageFarmsWithUserData()
 
   const singleData = farmsData.filter((f) => f.singleFlag === 0)
+  console.log('singleData', singleData)
 
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
@@ -247,7 +274,13 @@ const SingleAssetsFarms: React.FC = () => {
   const data = useGetPositions(account)
   const positionData = usePositions(data)
   const positionFarmsData = []
-  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
+  if (
+    positionData &&
+    positionData !== null &&
+    positionData !== undefined &&
+    positionData !== [] &&
+    positionData.length !== 0
+  ) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
@@ -263,39 +296,60 @@ const SingleAssetsFarms: React.FC = () => {
     })
   }
 
-  const reward = null
+  let reward = 0
+  positionFarmsData.map((farm) => {
+    const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
+      .div(DEFAULT_TOKEN_DECIMAL)
+      .toNumber()
+    reward += farmEarnings
+    return reward
+  })
 
   const [dexFilter, setDexFilter] = useState('all')
   const [pairFilter, setPairFilter] = useState('all')
-  const [strategyFilter, setStrategyFilter] = useState('all')
+  const [strategyFilter, setStrategyFilter] = useState<string>()
 
   // filters
   if (pairFilter !== 'all') {
     singlesData = singlesData.filter(
-      (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
-      //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+      (pool) =>
+        pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
+        pool.farmData[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
-  /* if (strategyFilter !== 'all') {
-    singleNewData = singleNewData.filter(
-      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
-    )
-  }
- */
+
+  console.log({ singlesData })
+  const hash = {}
+  const newSinglesData = singlesData.reduce((cur, next) => {
+    // eslint-disable-next-line no-unused-expressions
+    hash[next?.farmData[0].pid] ? '' : (hash[next?.farmData[0].pid] = true && cur.push(next))
+    return cur
+  }, [])
+
+  // singlesData.forEach(
+  //   (item, index) => {
+  //     if (item?.farmData[0].pid === singlesData[index + 1]?.farmData[0].pid)
+  //     newSinglesData.push(item)
+  //   }
+  // )
+  // console.log({ newSinglesData })
 
   return (
     <Page>
-      <RewardsContainer>
-        <Text mb="8px">{t('HUSKI Rewards')}</Text>
-        <Flex justifyContent="space-between" alignItems="flex-end" style={{ gap: '4rem' }}>
-          <Text color="secondary" bold fontSize="2">
-            {reward?.toPrecision(3)}
-          </Text>
-          <Button as={Link} to={{ pathname: '/leverage/claim' }} disabled={!account} scale="sm">
-            {t('Claim')}
-          </Button>
-        </Flex>
-      </RewardsContainer>
+      <Section>
+        <Box className="adContainer" />
+        <Box className="rewardsContainer">
+          <Text mb="8px">{t('HUSKI Rewards')}</Text>
+          <Flex justifyContent="space-between" alignItems="flex-end" style={{ gap: '4rem' }}>
+            <Text color="secondary" bold fontSize="5">
+              {reward?.toPrecision(3)}
+            </Text>
+            <Button as={Link} to={{ pathname: '/leverage/claim' }} disabled={!account} scale="sm">
+              {t('Claim')}
+            </Button>
+          </Flex>
+        </Box>
+      </Section>
 
       <StyledTableBorder>
         <PositionButtonsContainer>
@@ -308,7 +362,11 @@ const SingleAssetsFarms: React.FC = () => {
             </PositionsButton>
           </Box>
         </PositionButtonsContainer>
-        {isActivePos ? <ActivePositionsTable positionFarmsData={positionFarmsData} /> : <LiquidatedPositionsTable data={null} />}
+        {isActivePos ? (
+          <ActivePositionsTable positionFarmsData={positionFarmsData} />
+        ) : (
+          <LiquidatedPositionsTable data={null} />
+        )}
       </StyledTableBorder>
 
       <FiltersWrapper>
@@ -338,27 +396,24 @@ const SingleAssetsFarms: React.FC = () => {
           <Flex>
             <FilterOption
               variant="tertiary"
-              isActive={strategyFilter === 'bull'}
-              onClick={() => setStrategyFilter('bull')}
+              onClick={(e) => setStrategyFilter('bull2x')}
               startIcon={<StrategyIcon market="bull" />}
             >
-              Bull Market
+              Bull Strategy
             </FilterOption>
             <FilterOption
               variant="tertiary"
-              isActive={strategyFilter === 'bear'}
-              onClick={() => setStrategyFilter('bear')}
+              onClick={(e) => setStrategyFilter('bear')}
               startIcon={<StrategyIcon market="bear" />}
             >
-              Bear Market
+              Bear Strategy
             </FilterOption>
             <FilterOption
               variant="tertiary"
-              isActive={strategyFilter === 'neutral'}
-              onClick={() => setStrategyFilter('neutral')}
+              onClick={(e) => setStrategyFilter('neutral')}
               startIcon={<StrategyIcon market="neutral" />}
             >
-              Market Neutral
+              Neutral Strategy
             </FilterOption>
           </Flex>
         </Flex>
@@ -416,15 +471,11 @@ const SingleAssetsFarms: React.FC = () => {
           </Flex>
         </Flex>
       </FiltersWrapper>
-      <CardsWrapper>
-        {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {singlesData?.map((asset) => (
-          <SingleAssetsCard
-            data={asset}
-            // key={asset.pid}
-          />
+      <CardsLayout>
+        {singleData?.map((asset) => (
+          <SingleAssetsCard data={asset} key={asset?.pid} strategyFilter={strategyFilter} />
         ))}
-      </CardsWrapper>
+      </CardsLayout>
     </Page>
   )
 }

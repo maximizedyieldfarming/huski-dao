@@ -27,7 +27,6 @@ const AprCell = ({ getApyData }) => {
   const { t } = useTranslation()
 
   const { stakeApr, apy } = getApyData
-  console.log('AprCell', getApyData)
 
   const apyCell = (e) => {
     const value = e * 100
@@ -64,7 +63,7 @@ const AprCell = ({ getApyData }) => {
         </Flex>
         {apy ? (
           <Flex alignItems="center">
-            <Text color="text" >{apyCell(apy)}</Text>
+            <Text fontWeight='500' color="text" >{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
           </Flex>
         ) : (

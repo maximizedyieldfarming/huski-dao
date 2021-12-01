@@ -82,7 +82,7 @@ const AdjustPosition = () => {
   const { t } = useTranslation()
   const [quoteTokenInput, setQuoteTokenInput] = useState<number>()
   const [tokenInput, setTokenInput] = useState<number>()
-  const [borrowingMore, setBorrowingMore] = useState<number>()
+
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
   const { quoteToken, token } = TokenInfo
@@ -245,8 +245,8 @@ const AdjustPosition = () => {
     UpdatedDebt = isAddCollateral || targetPositionLeverage > currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
 
   }
-  console.log("my condition is", adjustData?.[3] === 0 && adjustData?.[11] === 0)
-  console.log("repay 4", repayDebtData[4], 'debtVal', Number(debtValueNumber), "updated debt", UpdatedDebt, 'adjust data 3', adjustData?.[3], 'debt', debtValueNumber.toNumber())
+  // console.log("my condition is", adjustData?.[3] === 0 && adjustData?.[11] === 0)
+  // console.log("repay 4", repayDebtData[4], 'debtVal', Number(debtValueNumber), "updated debt", UpdatedDebt, 'adjust data 3', adjustData?.[3], 'debt', debtValueNumber.toNumber())
   const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
   const priceImpactClose = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
   const tradingFeesClose = Number(farmTokenAmount) * 0.0025
@@ -490,12 +490,6 @@ const AdjustPosition = () => {
     }
   }
 
-  const handleBorrowMoreChange = (e) => {
-    const { value } = e.target
-
-    // const finalValue = value > balance ? balance : value
-    // setBorrowingMore(finalValue)
-  }
 
   const {
     targetRef: priceImpactTargetRef,
@@ -522,7 +516,7 @@ const AdjustPosition = () => {
   const [isConvertTo, setIsConvertTo] = useState<boolean>(true)
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceimpact, tradingfee, remainLeverage } = getAdjustPositionRepayDebt(
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceimpact, tradingfee, remainLeverage, AmountToTradeMinimize, AmountToTradeConvert } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
     Number(tokenInput || quoteTokenInput ? leverageAfter : targetPositionLeverage),
@@ -534,8 +528,6 @@ const AdjustPosition = () => {
   const isConfirmDisabled =
     (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
     Number(currentPositionLeverage).toFixed(2) === Number(targetPositionLeverage).toFixed(2)
-    // ||
-    // (!Number(tokenInput) && !Number(quoteTokenInput))
 
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
@@ -577,11 +569,11 @@ const AdjustPosition = () => {
           <Text>{t('Amount to Trade')}</Text>
           {isConvertTo ? (
             <Text>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+              {Number(AmountToTradeConvert).toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Text>
-              {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
+              {Number(AmountToTradeMinimize).toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           )}
         </Flex>
@@ -1045,17 +1037,6 @@ const datalistOptions = (() => {
                 {Number(targetPositionLeverage) < Number(currentPositionLeverage) && !isAddCollateral && (
                   <>
                     <Text>{t('Debt to be Repaid')}</Text>
-                    {/*  {isConvertTo ? (
-                      <Text>
-                        {Number(debtValueNumber).toPrecision(4)} {tokenValueSymbol}
-                      </Text>
-                    ) : (
-                      <Text>
-                        <Text>
-                          {amountToTrade.toPrecision(4)} {quoteTokenValueSymbol}
-                        </Text>
-                      </Text>
-                    )} */}
                     {repayDebtData ? (
                         <Text>
                       {UpdatedDebt?.toFixed(3)} {symbolName}

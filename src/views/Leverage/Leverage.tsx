@@ -1,4 +1,5 @@
 /* eslint-disable array-callback-return */
+/* eslint-disable no-unused-expressions */
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -112,7 +113,7 @@ const Leverage: React.FC = () => {
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
-  console.info('positionData', positionData)
+  // console.info('positionData', positionData)
   const positionFarmsData = []
   if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {
@@ -143,16 +144,22 @@ const Leverage: React.FC = () => {
   //   })
   // }
 
-  console.info('farmsData', farmsData)
+  // console.info('farmsData', farmsData)
 
   let reward = 0
-  positionFarmsData.map((farm) => {
-    const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
-      .div(DEFAULT_TOKEN_DECIMAL)
-      .toNumber()
-    reward += farmEarnings
-    return reward
-  })
+ const hash = {}
+ const positionsWithEarnings = farmsData.reduce((cur, next) => {
+   hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+   return cur
+ }, [])
+ positionsWithEarnings.map((farm) => {
+   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   // @ts-ignore
+   const farmEarnings = new BigNumber(parseFloat(farm?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+   console.info('farmEarnings', farmEarnings)
+   reward += farmEarnings
+   return reward
+ })
 
   return (
     <Page>
@@ -184,7 +191,7 @@ const Leverage: React.FC = () => {
           </Text>
           <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
             <Text mb="5px" color="textFarm" fontWeight="700" fontSize="28px">
-              {reward.toPrecision(3)}
+              {new BigNumber(reward).toFixed(3, 1)}
             </Text>
             <StyledButton
               as={Link}

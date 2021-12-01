@@ -204,7 +204,7 @@ export const light = {
     "tertiary": "#EFF4F5",
     "text": "#131313",
     "textSecondary": "#9615E7",
-    "textDisabled": "#EFEFEF",
+    "textDisabled": "#6F767E",
     "textSubtle": "#6F767E",
     "textFarm":"#1A1D1F",
     "textNeutral":"#33383F",

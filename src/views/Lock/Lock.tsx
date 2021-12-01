@@ -90,7 +90,7 @@ const RewardsSummarySection = styled(Flex)`
 
 const Section = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
-  padding: 2rem;
+  padding: 40px 1rem;
   gap: 1rem;
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.card.boxShadow};

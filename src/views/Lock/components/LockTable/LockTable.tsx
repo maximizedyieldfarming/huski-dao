@@ -9,7 +9,7 @@ const StyledTable = styled.div`
   // background-color: ${({ theme }) => theme.card.background};
   > div:not(:last-child) {
     // border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
   }
 `
 
@@ -76,6 +76,8 @@ const LockTable = ({ data }) => {
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {/* {data?.map((token) => ( */}
+          <LockRow lockData={tempData} key={tempData.pid} />
+          <LockRow lockData={tempData} key={tempData.pid} />
           <LockRow lockData={tempData} key={tempData.pid} />
         {/* ))} */}
       </StyledTable>

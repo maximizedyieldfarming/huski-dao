@@ -132,48 +132,44 @@ const ClosePositionSA = () => {
     (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
-  // const [isPending, setIsPending] = useState<boolean>(false)
-  //
-  // const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
-  //   const callOptions = {
-  //     gasLimit: 3800000,
-  //   }
-  //   const callOptionsBNB = {
-  //     gasLimit: 3800000,
-  //     value: amount,
-  //   }
-  //   setIsPending(true)
-  //   try {
-  //     const tx = await callWithGasPrice(
-  //       contract,
-  //       'work',
-  //       [id, address, amount, loan, maxReturn, dataWorker],
-  //       symbolName === 'BNB' ? callOptionsBNB : callOptions,
-  //     )
-  //     const receipt = await tx.wait()
-  //     if (receipt.status) {
-  //       toastSuccess(t('Successful!'), t('Your Position was closed successfully'))
-  //     }
-  //   } catch (error) {
-  //     toastError('Unsuccessful', 'Something went wrong your Close Position request. Please try again...')
-  //   } finally {
-  //     setIsPending(false)
-  //   }
-  // }
-  //
-  // const handleConfirm = async () => {
-  //   const id = positionId
-  //   const amount = 0
-  //   const loan = 0
-  //   const maxReturn = ethers.constants.MaxUint256
-  //   const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
-  //   const abiCoder = ethers.utils.defaultAbiCoder
-  //   const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)])
-  //   const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
-  //   // console.log({symbolName, id, workerAddress, amount, loan,convertedPositionValue,withdrawMinimizeTradingAddress, minbasetoken, maxReturn, dataWorker})
-  //   handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
-  // }
-  //
+  const [isPending, setIsPending] = useState<boolean>(false)
+
+  const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount,
+    }
+    try {
+      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        console.info('receipt', receipt)
+        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+      }
+    } catch (error) {
+      console.error('error', error)
+      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+    }
+  }
+
+  const handleConfirm = async () => {
+    const id = positionId
+    const amount = 0
+    const loan = 0
+    const maxReturn = ethers.constants.MaxUint256;
+    const minfarmtoken = (Number(convertedPositionValue) * 0.995).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder;
+
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+
+    console.log({symbolName, id, workerAddress, amount, loan,convertedPositionValue,withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker})
+    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
   return (
     <Page>
       <Text fontSize="36px" textTransform="capitalize" mx="auto">
@@ -233,14 +229,14 @@ const ClosePositionSA = () => {
           </Section>
         </Container>
       </Box>
-      {/*  <Button
+      <Button
         onClick={handleConfirm}
         isLoading={isPending}
         endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         mx="auto"
       >
         {isPending ? t('Closing Position...') : t('Close Position')}
-      </Button> */}
+      </Button>
     </Page>
   )
 }

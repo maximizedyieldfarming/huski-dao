@@ -27,7 +27,7 @@ const UnlockDateCell = ({ date }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+        <Text fontSize="16px" color="textSubtle" textAlign="left">
           {t('My HUSKI unlock date')}
         </Text>
         <Text>{date}</Text>
