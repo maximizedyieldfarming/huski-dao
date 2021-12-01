@@ -113,7 +113,7 @@ const Leverage: React.FC = () => {
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
-  // console.info('positionData', positionData)
+console.info('positionData', positionData)
   const positionFarmsData = []
   if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {
@@ -144,7 +144,7 @@ const Leverage: React.FC = () => {
   //   })
   // }
 
-  // console.info('farmsData', farmsData)
+   console.info('farmsData', farmsData)
 
   let reward = 0
  const hash = {}
@@ -156,7 +156,7 @@ const Leverage: React.FC = () => {
    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
    // @ts-ignore
    const farmEarnings = new BigNumber(parseFloat(farm?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
-   console.info('farmEarnings', farmEarnings)
+   // console.info('farmEarnings', farmEarnings)
    reward += farmEarnings
    return reward
  })

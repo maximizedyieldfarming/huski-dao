@@ -42,7 +42,15 @@ import HighchartsReact from 'highcharts-react-official';
 // import ReactHighstock from 'react-highcharts/bundle/ReactHighstock.src';
 import { useWeb3React } from '@web3-react/core'
 import Select from 'components/Select/Select'
-import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
+import {
+  getHuskyRewards,
+  getYieldFarming,
+  getLeverageFarmingData,
+  getBorrowingInterest,
+  getRunLogic,
+  getRunLogic1,
+} from '../helpers'
+
 
 interface RouteParams {
   token: string
