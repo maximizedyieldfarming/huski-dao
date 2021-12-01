@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
@@ -11,6 +11,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
 import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import styled from 'styled-components'
 import Page from '../../../../components/Layout/Page'
@@ -59,7 +60,7 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Withdraw = ({ name, exchangeRate, account, tokenData, allowance }) => {
+const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userTokenBalanceIb }) => {
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
@@ -77,9 +78,11 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance }) => {
     .toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
   const [isPending, setIsPending] = useState<boolean>(false)
 
-  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).isNaN()
-    ? 0.0
-    : getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
+    // const { balance: tokenBalance } = useTokenBalance(tokenData.TokenInfo.vaultAddress)
+    // const [userTokenBalanceIb, setBalance] = useState(
+    //   getBalanceAmount(tokenBalance).isNaN() ? 0.0 : getBalanceAmount(tokenBalance).toJSON(),
+    // )
+
   const handleAmountChange = useCallback(
     (event) => {
       // check if input is a number and includes decimals and allow empty string
@@ -137,9 +140,12 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance }) => {
         </Flex>
         <Section justifyContent="space-between">
           <Box>
-            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700 }} color="textFarm">
-              {amount}
-            </Text>
+            <Input
+                    pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+                    placeholder="0.00"
+                    onChange={handleAmountChange}
+                    value={amount}
+                  />
           </Box>
           <Box>
             <MaxContainer>
@@ -198,20 +204,10 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance }) => {
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
           <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>
-            Back
+            {t('Back')}
           </Text>
         </Flex>
-        {/*  {isApproved ? null : (
-          <Button
-            style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-            onClick={handleApprove}
-            disabled={!account || isApproving}
-            isLoading={isApproving}
-            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-          >
-            {isPending ? t('Approving') : t('Approve')}
-          </Button>
-        )} */}
+       
         <Button
           style={{ width: '160px', height: '57px', borderRadius: '16px' }}
           onClick={handleConfirm}
@@ -228,21 +224,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance }) => {
         >
           {isPending ? t('Approving') : t('Transfer')}
         </Button>
-        {/* <Button
-          onClick={handleConfirm}
-          disabled={
-            !account ||
-            !isApproved ||
-            Number(amount) === 0 ||
-            amount === undefined ||
-            Number(balance) === 0 ||
-            isPending
-          }
-          isLoading={isPending}
-          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-        >
-          {isPending ? t('Confirming') : t('Confirm')}
-        </Button> */}
+       
       </ButtonGroup>
     </Page>
   )

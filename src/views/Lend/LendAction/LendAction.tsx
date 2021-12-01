@@ -11,7 +11,7 @@ import { useTranslation } from 'contexts/Localization'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
-import Switch from "react-switch";
+import Switch from 'react-switch'
 import { Bone, Bone2 } from 'assets'
 import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
@@ -58,10 +58,10 @@ const Balance = styled(Flex)`
 
 const Header = styled(Flex)`
   border-radius: 12px 0 12px 0;
-  padding:20px;
+  padding: 20px;
 `
 
-const HeaderTabs = styled(Link) <Props>`
+const HeaderTabs = styled(Link)<Props>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
@@ -74,9 +74,7 @@ const HeaderTabs = styled(Link) <Props>`
     border-top-right-radius: 12px;
   }
 `
-const HeaderButton = styled(Link)`
-
-`
+const HeaderButton = styled(Link)``
 
 const Body = styled(Flex)`
   padding: 1rem;
@@ -101,12 +99,12 @@ const Body = styled(Flex)`
 const LendAction = () => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-   const {
+  const {
     state: { token },
   } = useLocation<LocationParams>()
 
-  const [withDraw, setWithDraw] = useState(false);
-  const [deposit, setDeposit] = useState(false);
+  const [withDraw, setWithDraw] = useState(false)
+  const [deposit, setDeposit] = useState(false)
 
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
@@ -127,89 +125,96 @@ const LendAction = () => {
 
   const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
 
-const exchangeRate =
-  token.totalToken && token.totalSupply
-    ? new BigNumber(token.totalToken).div(token.totalSupply)
-    : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
+  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
+  const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+  console.log('ib balance', getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toString())
+
+  const exchangeRate =
+    token.totalToken && token.totalSupply
+      ? new BigNumber(token.totalToken).div(token.totalSupply)
+      : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   return (
     <StyledPage>
-      <div style={{textAlign:'center'}}>
+      <div style={{ textAlign: 'center' }}>
         <img src="/images/HuskiPaw.png" alt="" />
         <Text fontSize="25px" color="fontFarm" fontWeight="600" textTransform="capitalize">
           {t(`${action}`)} {tokenName}
         </Text>
       </div>
-      <TabPanel style={{width:'500px',height:'560px'}}>
+      <TabPanel style={{ width: '500px', height: '560px' }}>
         <Header>
-          {/* <HeaderTabs
-            onClick={handleDepositClick}
-            active={isDeposit}
-  const userTokenBalanceIb = getBalanceAmount(tokenData?.userData?.tokenBalanceIB).toJSON()
-
-  
-
-  return (
-    <StyledPage>
-      <Text fontSize="36px" textTransform="capitalize">
-        {t(`${action}`)} {tokenName}
-      </Text>
-      <TabPanel>
-        <Header>
-          <HeaderTabs
-            onClick={handleDepositClick}
-            isActive={isDeposit}
-            to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
-            replace
-          >
-            <Text>{t('Deposit')}</Text>
-          </HeaderTabs>
-          <HeaderTabs
-            onClick={handleWithdrawClick}
-            active={!isDeposit}
-            to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
-            replace
-          >
-            <Text>{t('Withdraw')}</Text>
-          </HeaderTabs> */}
-          {isDeposit ?
-            (<Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
+          {isDeposit ? (
+            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
               <Flex style={{ width: '98%', height: '52px' }}>
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
+                  replace
                   style={{
-                    fontSize:'15px',
-                    borderRadius: '12px', fontWeight: 700,
-                    textAlign: 'center', marginLeft: '4px', paddingRight: '4px', marginTop: '4px', paddingTop: '18px', width: '50%', backgroundColor: 'white',
-                    color: '#1A1D1F', boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
-                  }}>Deposit</HeaderButton>
+                    fontSize: '15px',
+                    borderRadius: '12px',
+                    fontWeight: 700,
+                    textAlign: 'center',
+                    marginLeft: '4px',
+                    paddingRight: '4px',
+                    marginTop: '4px',
+                    paddingTop: '18px',
+                    width: '50%',
+                    backgroundColor: 'white',
+                    color: '#1A1D1F',
+                    boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
+                  }}
+                >
+                  {t('Deposit')}
+                </HeaderButton>
                 <HeaderButton
                   onClick={handleWithdrawClick}
                   to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
-                  style={{fontSize:'15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Withdraw</HeaderButton>
+                  replace
+                  style={{ fontSize: '15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}
+                >
+                  {t('Withdraw')}
+                </HeaderButton>
               </Flex>
-            </Box>) :
-            (<Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
+            </Box>
+          ) : (
+            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
               <Flex style={{ width: '98%', height: '52px' }}>
                 <HeaderButton
                   onClick={handleDepositClick}
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
-                  style={{fontSize:'15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}>Deposit</HeaderButton>
+                  replace
+                  style={{ fontSize: '15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}
+                >
+                  {t('Deposit')}
+                </HeaderButton>
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
+                  replace
                   style={{
-                    fontSize:'15px',
-                    borderRadius: '12px', fontWeight: 700,
-                    textAlign: 'center', marginLeft: '4px', marginTop: '4px', paddingTop: '18px', width: '50%', backgroundColor: 'white',
-                    color: '#1A1D1F', boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
-                  }}>Withdraw</HeaderButton>
+                    fontSize: '15px',
+                    borderRadius: '12px',
+                    fontWeight: 700,
+                    textAlign: 'center',
+                    marginLeft: '4px',
+                    marginTop: '4px',
+                    paddingTop: '18px',
+                    width: '50%',
+                    backgroundColor: 'white',
+                    color: '#1A1D1F',
+                    boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
+                  }}
+                >
+                  {t('Withdraw')}
+                </HeaderButton>
               </Flex>
-            </Box>)}
-
+            </Box>
+          )}
         </Header>
 
         <Body>
-
           {isDeposit ? (
             <Deposit
               name={tokenName}
@@ -217,6 +222,7 @@ const exchangeRate =
               exchangeRate={exchangeRate}
               tokenData={tokenData}
               account={account}
+              userTokenBalance={userTokenBalance}
             />
           ) : (
             <Withdraw
@@ -225,9 +231,9 @@ const exchangeRate =
               exchangeRate={exchangeRate}
               account={account}
               tokenData={tokenData}
+              userTokenBalanceIb={userTokenBalanceIb}
             />
           )}
-
         </Body>
       </TabPanel>
       <Balance>

@@ -14,11 +14,11 @@ export interface BigNumberToJson {
 export type TranslatableText =
   | string
   | {
-      key: string
-      data?: {
-        [key: string]: string | number
-      }
+    key: string
+    data?: {
+      [key: string]: string | number
     }
+  }
 
 export type SerializedBigNumber = string
 
@@ -42,8 +42,8 @@ export interface Farm extends FarmConfig {
 export interface LeverageFarm extends LeverageFarmConfig {
   tokenAmountTotal?: SerializedBigNumber
   quoteTokenAmountTotal?: SerializedBigNumber
-  tokenBalanceLP?:SerializedBigNumber
-  quoteTokenBalanceLP?:SerializedBigNumber
+  tokenBalanceLP?: SerializedBigNumber
+  quoteTokenBalanceLP?: SerializedBigNumber
   tokenReserve?: SerializedBigNumber
   quoteTokenReserve?: SerializedBigNumber
   lpTotalInQuoteToken?: SerializedBigNumber
@@ -84,8 +84,9 @@ export interface Stake extends StakeConfig {
     unlockedRewards: string
   }
   totalSupply?: SerializedBigNumber
-  totalToken?: SerializedBigNumber,
+  totalToken?: SerializedBigNumber
   vaultDebtVal?: SerializedBigNumber
+  totalValueStaked?: SerializedBigNumber
   pooPerBlock?: number
 }
 

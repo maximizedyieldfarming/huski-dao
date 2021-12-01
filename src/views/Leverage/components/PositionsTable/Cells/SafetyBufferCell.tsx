@@ -46,7 +46,7 @@ const ProgressCircle = () => {
   )
 }
 
-const SafetyBufferCell = ({ safetyBuffer }) => {
+const SafetyBufferCell = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
@@ -55,6 +55,27 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
     </>,
     { placement: 'top-start' },
   )
+   const {
+     targetRef: bufferTargetRef,
+     tooltip: bufferTooltip,
+     tooltipVisible: bufferTooltipVisible,
+   } = useTooltip(
+     <>
+       <Text style={{ borderBottom: '1px solid black' }}>
+         {t(
+           'At the current safety buffer, %quoteTokenName% price can drop -%priceDrop%% against %tokenName% before your position would be in danger of liquidation.',
+           { quoteTokenName, tokenName, priceDrop },
+         )}
+       </Text>
+       <Text>
+         <Text bold>{t('Disclaimer: ')}</Text>
+         {t(
+           'This is only an estimate and the actual liquidation price can vary based on other factors such as your position size relative to the pools liquidity.',
+         )}
+       </Text>
+     </>,
+     { placement: 'top-start' },
+   )
   return (
     <StyledCell role="cell">
       <CellContent>
@@ -71,29 +92,33 @@ const SafetyBufferCell = ({ safetyBuffer }) => {
         )}
         {safetyBuffer ? (
           <>
-            <Flex alignItems='center' style={{ gap: '10px' }} mt="8px">
-              <Text color="text" fontWeight="600" fontSize="16px">{safetyBuffer}%</Text>
+            {bufferTooltipVisible && bufferTooltip}
+
+            <Flex alignItems="center" style={{ gap: '10px' }} mt="8px" ref={bufferTargetRef}>
+              <Text color="text" fontWeight="600" fontSize="16px">
+                {safetyBuffer}%
+              </Text>
               <SBLinearProgress
                 variant="determinate"
                 value={safetyBuffer}
                 style={{ height: '6px', width: '40px', color: '#7B3FE4', background: '#CCCCCC', borderRadius: 6 }}
               />
             </Flex>
-            <div style={{ marginLeft: '15px', marginTop: '4px', background: '#FFFEFE', borderRadius: '10px', color: '#4B4B4B', fontSize: '9px' }}>Debt Ratio - 43.60%</div>
+            {/*  <div
+              style={{
+                marginLeft: '15px',
+                marginTop: '4px',
+                background: '#FFFEFE',
+                borderRadius: '10px',
+                color: '#4B4B4B',
+                fontSize: '9px',
+              }}
+            >
+              Debt Ratio - 43.60%
+            </div> */}
           </>
         ) : (
-          <>
-            <Flex alignItems='center' style={{ gap: '10px' }} mt="8px">
-              <Text color="text" fontWeight="600" fontSize="16px">53.4%</Text>
-              <SBLinearProgress
-                variant="determinate"
-
-                value={53.4}
-                style={{ height: '6px', width: '40px', color: '#7B3FE4', background: '#CCCCCC', borderRadius: 6 }}
-              />
-            </Flex>
-            <div style={{ marginLeft: '15px', marginTop: '4px', background: '#FFFEFE', borderRadius: '10px', color: '#4B4B4B', fontSize: '9px' }}>Debt Ratio - 43.60%</div>
-          </>
+          <Skeleton width="80px" height="16px" />
         )}
       </CellContent>
     </StyledCell>

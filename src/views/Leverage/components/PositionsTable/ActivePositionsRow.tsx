@@ -109,7 +109,7 @@ const ActivePositionsRow = ({ data }) => {
           quoteToken={quoteTokenValue}
           token={tokenValue}
         />
-{/*         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} */}
+        {/*         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} */}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
         {pathname.includes('farms') ? (
           <DebtCell
@@ -135,7 +135,12 @@ const ActivePositionsRow = ({ data }) => {
             <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />{' '}
           </>
         ) : null}
-        <SafetyBufferCell safetyBuffer={safetyBuffer} />
+        <SafetyBufferCell
+          safetyBuffer={safetyBuffer}
+          tokenName={tokenValue?.symbol}
+          quoteTokenName={quoteTokenValue?.symbol}
+          priceDrop={new BigNumber(dropData).toFixed(2, 1)}
+        />
         {/* <ProfitsCell profitLoss={profitLoss} /> */}
         <ActionCell
           posData={{ data, liquidationThresholdData }}

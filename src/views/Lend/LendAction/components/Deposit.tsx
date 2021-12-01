@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input } from 'husky-uikit1.0'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -22,14 +23,15 @@ interface DepositProps {
   exchangeRate: any
   account: any
   tokenData: any
+  userTokenBalance: any
 }
 
 const ButtonGroup = styled(Flex)`
   gap: 10px;
-  align-items:center;
+  align-items: center;
 `
 const Section = styled(Flex)`
-  background-color: #F7F7F8;
+  background-color: #f7f7f8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
 `
@@ -37,11 +39,11 @@ const Section = styled(Flex)`
 const MaxContainer = styled(Flex)`
   align-items: center;
   justify-content: center;
-  height:100%;
+  height: 100%;
   ${Box} {
     padding: 0 5px;
     &:first-child {
-     // border-right: 2px solid ${({ theme }) => theme.colors.text};
+      // border-right: 2px solid ${({ theme }) => theme.colors.text};
     }
     &:last-child {
       // border-left: 1px solid purple;
@@ -59,10 +61,11 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tokenData, name }) => {
+const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tokenData, name, userTokenBalance }) => {
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
+  // const { history } = useHistory<any>()
 
   const setAmountToMax = () => {
     setAmount(userTokenBalance)
@@ -78,10 +81,10 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   const [isPending, setIsPending] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
 
-  const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
-  const { balance: bnbBalance } = useGetBnbBalance()
+  // const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
+  // const { balance: bnbBalance } = useGetBnbBalance()
 
-  const userTokenBalance = getBalanceAmount(name.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+  // const userTokenBalance = getBalanceAmount(name.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
 
   const handleAmountChange = useCallback(
     (event) => {
@@ -150,31 +153,46 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   }
   const assetsReceived = new BigNumber(amount).div(exchangeRate).toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
 
-
   return (
     <Page style={{ padding: 0 }}>
       <Flex flexDirection="column">
-        <Flex justifyContent="space-between" mb='10px'>
-          <Text fontWeight="700" color="textFarm" fontSize="14px">{t('From')}</Text>
-          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}</span></Text>
+        <Flex justifyContent="space-between" mb="10px">
+          <Text fontWeight="700" color="textFarm" fontSize="14px">
+            {t('From')}
+          </Text>
+          <Text color="textSubtle" fontSize="12px">
+            {t('Balance')}:{' '}
+            <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+              userTokenBalance,
+              tokenData.TokenInfo?.token?.decimalsDigits,
+            )} ${name}`}</span>
+          </Text>
         </Flex>
         <Section justifyContent="space-between">
           <Box>
-            <Text
-              style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, }} color="textFarm"
-            >{amount}</Text>
+            <Input pattern="^[0-9]*[.,]?[0-9]{0,18}$" placeholder="0.00" onChange={handleAmountChange} value={amount} />
           </Box>
           <Box>
-
             <MaxContainer>
               <Box>
-                <button type="button" style={{ borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
+                <button
+                  type="button"
+                  style={{
+                    borderRadius: '8px',
+                    border: '1px solid #DDDFE0',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                  }}
+                  onClick={setAmountToMax}
+                >
                   {t('MAX')}
                 </button>
               </Box>
-              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
               <Box>
-                <Text color="textFarm" style={{ fontWeight: 700, }}>{name}</Text>
+                <Text color="textFarm" style={{ fontWeight: 700 }}>
+                  {name}
+                </Text>
               </Box>
             </MaxContainer>
           </Box>
@@ -184,20 +202,28 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
         <StyledArrowDown style={{ marginLeft: 'auto', marginRight: 'auto' }} />
 
         <Flex justifyContent="space-between" mb="10px">
-          <Text fontWeight="700" color="textFarm" fontSize="14px">{t('Recieve (Estimated)')}</Text>
-          <Text color="textSubtle" fontSize="12px">{t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}</span></Text>
+          <Text fontWeight="700" color="textFarm" fontSize="14px">
+            {t('Recieve (Estimated)')}
+          </Text>
+          <Text color="textSubtle" fontSize="12px">
+            {t('Balance')}:{' '}
+            <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+              userTokenBalance,
+              tokenData.TokenInfo?.token?.decimalsDigits,
+            )} ${name}`}</span>
+          </Text>
         </Flex>
         <Section justifyContent="space-between">
           <Box>
-            <Text
-              style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}
-            >{assetsReceived !== 'NaN' ? assetsReceived : 0}</Text>
+            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}>
+              {assetsReceived !== 'NaN' ? assetsReceived : 0}
+            </Text>
           </Box>
           <Box>
             <MaxContainer>
-              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
+              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
               <Box>
-                <Text style={{ color: '#1A1D1F', fontWeight: 700, }}>ib{name}</Text>
+                <Text style={{ color: '#1A1D1F', fontWeight: 700 }}>ib{name}</Text>
               </Box>
             </MaxContainer>
           </Box>
@@ -206,18 +232,27 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
       <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
-          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>Back</Text>
+          <Text
+            color="textSubtle"
+            fontWeight="bold"
+            fontSize="16px"
+            style={{ height: '100%' }}
+            // onClick={() => history.push('/lend')}
+          >
+            {t('Back')}
+          </Text>
         </Flex>
         {isApproved ? null : (
           <Button
             style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-          onClick={handleApprove}
-          disabled
-          isLoading={isApproving}
-          endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-        >
-          {isPending ? t('Approving') : t('Transfer')}
-        </Button>)}
+            onClick={handleApprove}
+            disabled
+            isLoading={isApproving}
+            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          >
+            {isPending ? t('Approving') : t('Transfer')}
+          </Button>
+        )}
         <Button
           onClick={handleConfirm}
           disabled={
@@ -232,7 +267,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
           {isPending ? t('Confirming') : t('Confirm')}
-        </Button> 
+        </Button>
       </ButtonGroup>
     </Page>
   )
