@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Box, Button, Flex, Input, Text, AutoRenewIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Input, Text, AutoRenewIcon,useMatchBreakpoints } from 'husky-uikit1.0'
 import NumberInput from 'components/NumberInput'
 import Page from 'components/Layout/Page'
 import useTokenBalance from 'hooks/useTokenBalance'
@@ -11,7 +11,7 @@ import { getFullDisplayBalance } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useTranslation } from 'contexts/Localization'
-import { useMatchBreakpoints } from 'husky-uikit'
+
 
 interface LocationParams {
   data?: any
@@ -38,6 +38,8 @@ const Container = styled(Box)`
     margin: 1rem 0;
   }
   &.locked {
+    padding-top:30px;
+    padding-bottom:30px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -70,6 +72,7 @@ const Section = styled(Flex)`
   span {
     color: ${({ theme }) => theme.colors.text};
     font-weight:600;
+    font-size:12px;
   }
   &.gray {
     background-color: ${({ theme }) => theme.colors.backgroundDisabled};
@@ -122,8 +125,8 @@ const LockAction = () => {
 
   return (
     <StyledPage>
-       <img src="/images/HuskiPaw.png" alt="" />
-      <Text fontSize="3" bold>{`${t('Lock')} HUSKI UP`}</Text>
+      <img src="/images/HuskiPaw.png" alt="" />
+      <Text fontSize="25px" mb='20px' bold>{`${t('Lock')} HUSKI UP`}</Text>
       <Container>
         <Section className="gray" mt="1rem">
           <Flex justifyContent='space-between' flex='1'>
@@ -198,7 +201,7 @@ const LockAction = () => {
           {isPending ? t('Confirming') : t('Confirm')}
         </Button> */}
         <ButtonGroup flexDirection="row" justifySelf="space-between" justifyContent="space-evenly" mb="20px" mt="30px">
-          <Flex flex='1' style={{ alignItems: 'center', cursor: 'pointer' }}>
+          <Flex flex='0.8' style={{ alignItems: 'center', cursor: 'pointer' }}>
             <img src="/images/Cheveron.svg" alt="" />
             <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>Back</Text>
           </Flex>
@@ -220,7 +223,7 @@ const LockAction = () => {
           {t('Staked')}
         </Text>
         <Flex>
-        <img src="/images/lock/sHuski.png" style={{ marginLeft: '20px', marginRight: '15px' }} width='24px' alt="" />
+          <img src="/images/lock/sHuski.png" style={{ marginLeft: '20px', marginRight: '15px' }} width='24px' alt="" />
           <Text color="text" fontWeight='700'>56.324 sHUSKI</Text>
         </Flex>
       </Container>

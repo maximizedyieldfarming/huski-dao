@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Box, Text, Button, AutoRenewIcon } from 'husky-uikit'
+import { Flex, Box, Text, Button, AutoRenewIcon } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'

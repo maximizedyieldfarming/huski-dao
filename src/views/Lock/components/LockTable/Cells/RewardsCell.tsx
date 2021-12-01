@@ -16,7 +16,7 @@ const StyledCell = styled(BaseCell)`
     ${({ theme }) => theme.mediaQueries.md} {
       // flex-direction: column;
       justify-content: end;
-      gap: 1rem;
+      gap: 2rem;
     }
   }
 `
@@ -26,7 +26,7 @@ const RewardsCell = ({ rewards }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+      <Text fontSize="16px" color="textSubtle" textAlign="left">
           {t('HUSKI Rewards')}
         </Text>
         <Text color='textSecondary' fontWeight="700">0.234</Text>

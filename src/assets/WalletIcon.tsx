@@ -1,5 +1,5 @@
 import React from 'react'
-import { Svg, SvgProps } from 'husky-uikit'
+import { Svg, SvgProps } from 'husky-uikit1.0'
 
 const Icon: React.FC<SvgProps> = (props) => {
   return (
