@@ -331,6 +331,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   let remainFarm
   let remainBorrowBase
   let remainLeverage
+  let AmountToTradeMinimize = 0;
+  let AmountToTradeConvert = 0;
 
   if (leverage > 1) {
     needCloseBase = basetokenlp * rationum
@@ -347,13 +349,20 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     remainFarm = farmingtokenlp - needCloseFarm // farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
     remainBorrowBase = 0
     remainLeverage = 1 // 0
+
+    // Minimize Trading
+    AmountToTradeMinimize = farmingtokenlp * rationum
+    // Convert To basetoken
+    AmountToTradeConvert = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) 
+
+   
   }
   // console.log({
   //   basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
   //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
   // });
 
-  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage };
+  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage, AmountToTradeMinimize, AmountToTradeConvert };
 }
 
 
