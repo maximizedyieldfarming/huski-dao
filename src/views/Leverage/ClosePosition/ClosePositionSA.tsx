@@ -92,13 +92,13 @@ const ClosePositionSA = () => {
   let lpSymbolName
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
-    symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+    symbolName = TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     tokenValue = TokenInfo?.token
     quoteTokenValue = TokenInfo?.quoteToken
     tokenPrice = tokenPriceUsd
     quoteTokenPrice = quoteTokenPriceUsd
-    tokenValueSymbol = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-    quoteTokenValueSymbol = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    tokenValueSymbol = TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    quoteTokenValueSymbol = TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
     baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     farmTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(tokenAmountTotal)
@@ -108,13 +108,13 @@ const ClosePositionSA = () => {
     contract = vaultContract
     lpSymbolName = TokenInfo?.name
   } else {
-    symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    symbolName = TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
     tokenValue = TokenInfo?.quoteToken
     quoteTokenValue = TokenInfo?.token
     tokenPrice = quoteTokenPriceUsd
     quoteTokenPrice = tokenPriceUsd
-    tokenValueSymbol = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
-    quoteTokenValueSymbol = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+    tokenValueSymbol = TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    quoteTokenValueSymbol = TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     farmTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
     basetokenBegin = parseInt(quoteTokenAmountTotal)
@@ -223,9 +223,9 @@ const ClosePositionSA = () => {
             </Flex>
           </Flex>
           <Section className="gray" mt="1rem" justifyContent="center">
-            {convertedPositionValueAssets ? (
+            {convertedPositionValue ? (
               <Text>
-                {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol}
+                {convertedPositionValue.toFixed(3)} {tokenValueSymbol}
               </Text>
             ) : (
               <Skeleton height="16px" width="80px" />

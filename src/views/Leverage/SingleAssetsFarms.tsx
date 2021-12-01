@@ -362,59 +362,7 @@ const SingleAssetsFarms: React.FC = () => {
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex alignItems="center" className="tokenFilter">
-          <Text>{t('Paired Assets:')}</Text>
-          <Flex>
-            <FilterOption
-              variant="tertiary"
-              startIcon={<AllFilterIcon className="allFilter" />}
-              isActive={pairFilter === 'all'}
-              onClick={() => setPairFilter('all')}
-            >
-              {t('All')}
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              startIcon={<BnbIcon />}
-              isActive={pairFilter === 'huski'}
-              onClick={() => setPairFilter('huski')}
-            >
-              HUSKI
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              startIcon={<BnbIcon />}
-              isActive={pairFilter === 'wbnb'}
-              onClick={() => setPairFilter('wbnb')}
-            >
-              BNB
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              startIcon={<BusdIcon />}
-              isActive={pairFilter === 'busd'}
-              onClick={() => setPairFilter('busd')}
-            >
-              BUSD
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              startIcon={<BtcbIcon />}
-              isActive={pairFilter === 'btcb'}
-              onClick={() => setPairFilter('btcb')}
-            >
-              BTCB
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              startIcon={<EthIcon />}
-              isActive={pairFilter === 'eth'}
-              onClick={() => setPairFilter('eth')}
-            >
-              ETH
-            </FilterOption>
-          </Flex>
-        </Flex>
+       
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
