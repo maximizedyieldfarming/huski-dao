@@ -23,11 +23,11 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const MyPosCell = ({ supply }) => {
+const MyPosCell = ({ staked }) => {
     const { isMobile } = useMatchBreakpoints()
 
     const { t } = useTranslation()
-    const formatedSupply = supply && parseFloat(formatBigNumber(supply).replace(/,/g, ''))
+    // const formatedSupply = supply && Number(formatBigNumber(supply).replace(/,/g, ''))
 
     return (
         <StyledCell role="cell">
@@ -36,7 +36,7 @@ const MyPosCell = ({ supply }) => {
                     {t('My Position')}
                 </Text>
                
-                    {supply ? <Text mt="10px" fontSize="18px" fontWeight='700' color="secondary">1744.23iBNB</Text> : <Skeleton width="80px" height="16px" />}
+          {staked ? <Text mt="10px" fontSize="18px" fontWeight='700' color="secondary">{staked}</Text> : <Skeleton width="80px" height="16px" />}
                
             </CellContent>
         </StyledCell>
