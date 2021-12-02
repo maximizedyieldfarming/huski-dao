@@ -599,7 +599,86 @@ const FarmSA = () => {
         return option
     }
 
-
+const getSelectOptions = () => {
+  if (marketStrategy === 'neutral') {
+    return [
+      {
+        value: 'neutral',
+        label: 'Neutral strategy 2x',
+      },
+      {
+        value: 'bear',
+        label: 'Bear strategy 2x',
+      },
+      {
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+      {
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+    ]
+  }
+  if (marketStrategy === 'bear') {
+    return [
+      {
+        value: 'bear',
+        label: 'Bear strategy 2x',
+      },
+      {
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+      {
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+      {
+        value: 'neutral',
+        label: 'Neutral strategy 2x',
+      },
+    ]
+  }
+  if (marketStrategy === 'bull2x') {
+    return [
+      {
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+      {
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+      {
+        value: 'bear',
+        label: 'Bear strategy 2x',
+      },
+      {
+        value: 'neutral',
+        label: 'Neutral strategy 2x',
+      },
+    ]
+  }
+  return [
+    {
+      value: 'bull3x',
+      label: 'Bull Strategy 3x',
+    },
+    {
+      value: 'bull2x',
+      label: 'Bull Strategy 2x',
+    },
+    {
+      value: 'bear',
+      label: 'Bear strategy 2x',
+    },
+    {
+      value: 'neutral',
+      label: 'Neutral strategy 2x',
+    },
+  ]
+}
 
 
     const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, { placement: 'right' })
@@ -629,20 +708,7 @@ const FarmSA = () => {
                         <Box>
                             <Flex alignItems="center" justifyContent="space-between">
                                 <Select
-                                    options={[
-                                        {
-                                            label: t('Bear Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.quoteToken,
-                                        },
-                                        {
-                                            label: t('Bull Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                        {
-                                            label: t('Neutral Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                    ]}
+                                    options={getSelectOptions()}
                                     onChange={(option) => {
                                         setSelectedStrategy(option.value)
                                     }}

@@ -367,8 +367,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               pathname: `${location.pathname}/farm/${data?.lpSymbol.replace(' LP', '')}`,
               state: {
                 data,
-                // singleLeverage: data?.singleLeverage,
-                // marketStrategy: data?.marketStrategy,
+                singleLeverage,
+                marketStrategy: selectedStrategy,
               },
             })}
             disabled={!account || !apy}
