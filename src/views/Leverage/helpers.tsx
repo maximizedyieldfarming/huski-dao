@@ -282,7 +282,7 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
 }
 
 
-export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage, tokenName?: string) => {
+export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, ClosePositionPercentage, tokenName?: string, isConvertTo?) => {
 
   const { lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, TokenInfo } = farm
   const { quoteToken } = TokenInfo
@@ -308,10 +308,13 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   const farmingtokenlp = farmTokenAmount // .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  const ClosePosFee = 5 / 100 / 100;
+  const ClosePosFee = 5 / 100 / 100; // 咱们是万5， alpaca是0
   const PancakeTradingFee = 0.25 / 100;
   const basetokenBegin = parseFloat(tokenAmountTotalValue)
   const farmingtokenBegin = parseFloat(quoteTokenAmountTotalValue)
+
+  const MinimumReceivedPercentage = 1 - 5 / 1000
+  const MaximumSoldPercentage = 1 + 4 / 1000
 
   const num0 = (leverage - 1) / leverage * (basetokenlp + farmingtokenlp / farmingtokenBegin * basetokenBegin)
   const num1 = (basetokenlp * (1 - ClosePosFee) - num0)
@@ -320,21 +323,31 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   const numA = num1 * num3
   const numB = (num1 * farmingtokenBegin + num3 * num2)
   const numC = (num2 - basetokenBegin) * farmingtokenBegin
-  const rationum = (0 - numB + (numB ** 2 - 4 * numA * numC) ** 0.5) / 2 / numA
+  let rationum
+  rationum = (0 - numB + (numB ** 2 - 4 * numA * numC) ** 0.5) / 2 / numA
 
-  const tradingfee = farmingtokenlp * rationum * PancakeTradingFee / (2 * basetokenlp - basetokenlpborrowed)
-  const priceimpact = farmingtokenlp * rationum * (1 - PancakeTradingFee) / (farmingtokenlp * rationum * (1 - PancakeTradingFee) + farmingtokenBegin)
-
+  let tradingFeesClose // = farmingtokenlp * rationum * PancakeTradingFee / (2 * basetokenlp - basetokenlpborrowed)
+  let priceImpactClose  // = farmingtokenlp * rationum * (1 - PancakeTradingFee) / (farmingtokenlp * rationum * (1 - PancakeTradingFee) + farmingtokenBegin)
   let needCloseBase
   let needCloseFarm
   let remainBase
   let remainFarm
-  let remainBorrowBase
-  let remainLeverage
-  let AmountToTradeMinimize = 0;
-  let AmountToTradeConvert = 0;
+  let remainBorrowBase = 0;
+  let remainLeverage = 0;
+  // let AmountToTradeMinimize = 0;
+  // let AmountToTradeConvert = 0;
+  let AmountToTrade = 0;
+  let willReceive = 0
+  let minimumReceived = 0
+  let willReceivebase = 0
+  let willReceivefarm = 0
+  let minimumReceivedbase = 0
+  let minimumReceivedfarm = 0
+
 
   if (leverage > 1) {
+    tradingFeesClose = AmountToTrade * PancakeTradingFee * basetokenBegin / farmingtokenBegin / (2 * basetokenlp - basetokenlpborrowed)
+    priceImpactClose = farmingtokenlp * rationum * (1 - PancakeTradingFee) / (farmingtokenlp * rationum * (1 - PancakeTradingFee) + farmingtokenBegin)
     needCloseBase = basetokenlp * rationum
     needCloseFarm = farmingtokenlp * rationum
     const repaydebtnum = basetokenlp * rationum * (1 - ClosePosFee) + basetokenBegin - farmingtokenBegin * basetokenBegin / (farmingtokenlp * rationum * (1 - ClosePosFee) * (1 - PancakeTradingFee) + farmingtokenBegin)
@@ -343,26 +356,109 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     remainBorrowBase = basetokenlpborrowed - repaydebtnum
     remainLeverage = (basetokenlpborrowed - repaydebtnum) / (basetokenlp * (1 - rationum) + farmingtokenlp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenlpborrowed - repaydebtnum)) + 1
   } else if (Number(leverage) === 1) {
-    needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
-    needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
-    remainBase = basetokenlp - needCloseBase // basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
-    remainFarm = farmingtokenlp - needCloseFarm // farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
-    remainBorrowBase = 0
-    remainLeverage = 1 // 0
+    // needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    // needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    // remainBase = basetokenlp - needCloseBase // basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    // remainFarm = farmingtokenlp - needCloseFarm // farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+    // remainBorrowBase = 0
+    // remainLeverage = 1 // 0
 
-    // Minimize Trading
-    AmountToTradeMinimize = farmingtokenlp * rationum
-    // Convert To basetoken
-    AmountToTradeConvert = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) 
+    // // Minimize Trading
+    // AmountToTradeMinimize = farmingtokenlp * rationum
+    // // Convert To basetoken
+    // AmountToTradeConvert = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) 
 
-   
+    if (isConvertTo) {
+
+      const params1 = farmingtokenlp * (1 - ClosePosFee) * (1 - PancakeTradingFee)
+      const paramsa = 0 - basetokenlp * (1 - ClosePosFee) * params1 * (1 - ClosePositionPercentage)
+      const paramsb = basetokenlpborrowed * params1 * (1 - ClosePositionPercentage) - basetokenBegin * params1 - basetokenlp * (1 - ClosePosFee) * (params1 * ClosePositionPercentage + farmingtokenBegin)
+      const paramsc = basetokenlpborrowed * (params1 * ClosePositionPercentage + farmingtokenBegin)
+      rationum = (0 - paramsb - (paramsb ** 2 - 4 * paramsa * paramsc) ** 0.5) / 2 / paramsa
+
+      needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+      needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+      remainBase = basetokenlp * (1 - rationum) * (1 - ClosePositionPercentage)
+      remainFarm = farmingtokenlp * (1 - rationum) * (1 - ClosePositionPercentage)
+      //  remainBorrowBase = 0
+      //  remainLeverage = 0
+      AmountToTrade = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee)
+
+      tradingFeesClose = AmountToTrade * PancakeTradingFee * basetokenBegin / farmingtokenBegin / (2 * basetokenlp - basetokenlpborrowed)
+
+      console.info('111', tradingFeesClose)
+      priceImpactClose = AmountToTrade * (1 - PancakeTradingFee) / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin)
+      const bastokennum = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) + (basetokenBegin - basetokenBegin * farmingtokenBegin / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin))
+      willReceive = bastokennum - basetokenlpborrowed
+      minimumReceived = bastokennum * MinimumReceivedPercentage - basetokenlpborrowed
+
+    } else {
+
+      // const num0 = (TargetPositionLeverage - 1) / TargetPositionLeverage * (basetokenlp + farmingtokenlp / farmingtokenBegin * basetokenBegin)
+      // const num1 = (basetokenlp * (1 - ClosePosFee) - num0)
+      // const num2 = num0 - basetokenlpborrowed + basetokenBegin
+      // const num3 = farmingtokenlp * (1 - ClosePosFee) * (1 - PancakeTradingFee)
+      // const numa = num1 * num3
+      // const numb = (num1 * farmingtokenBegin + num3 * num2)
+      // const numc = (num2 - basetokenBegin) * farmingtokenBegin
+      // const rationum = (0 - numb + (numb ** 2 - 4 * numa * numc) ** 0.5) / 2 / numa
+
+      needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+      needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
+
+      const remainingdebt = basetokenlpborrowed - basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee)
+      if (remainingdebt <= 0) {
+        AmountToTrade = 0
+      } else {
+        AmountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - remainingdebt) - farmingtokenBegin) / (1 - PancakeTradingFee)
+      }
+
+      remainBase = basetokenlp * (1 - rationum) * (1 - ClosePositionPercentage)
+      remainFarm = farmingtokenlp * (1 - rationum) * (1 - ClosePositionPercentage)
+
+      // print('偿还全部债务：', basetokenlpborrowed, basetoken_name)
+      tradingFeesClose = AmountToTrade * PancakeTradingFee * basetokenBegin / farmingtokenBegin / (2 * basetokenlp - basetokenlpborrowed)
+      priceImpactClose = AmountToTrade * (1 - PancakeTradingFee) / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin)
+      const bastokennum = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) + (basetokenBegin - basetokenBegin * farmingtokenBegin / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin))
+
+      if (remainingdebt <= 0) {
+        willReceivebase = -remainingdebt
+        willReceivefarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee)
+        minimumReceivedbase = -remainingdebt
+        minimumReceivedfarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee)
+      } else {
+        willReceivebase = 0
+        willReceivefarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) - AmountToTrade
+        minimumReceivedbase = 0
+        minimumReceivedfarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) - AmountToTrade * MaximumSoldPercentage
+      }
+    }
+
   }
-  // console.log({
-  //   basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
-  //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
-  // });
 
-  return { needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage, AmountToTradeMinimize, AmountToTradeConvert };
+  if (priceImpactClose < 0.000001) {
+    priceImpactClose = 0
+  }
+  if (tradingFeesClose < 0.000001) {
+    tradingFeesClose = 0
+  }
+
+
+  console.log({
+    basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
+    willReceive,
+    minimumReceived,
+    willReceivebase,
+    willReceivefarm,
+    minimumReceivedbase, 'aaaaaaaaa--priceImpactClose': priceImpactClose, tradingFeesClose,
+    minimumReceivedfarm,
+    quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
+  });
+
+  return {
+    needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
+    AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm
+  }; // ,AmountToTradeMinimize, AmountToTradeConvert 
 }
 
 
