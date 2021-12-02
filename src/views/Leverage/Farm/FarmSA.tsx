@@ -88,9 +88,14 @@ const SectionWrapper = styled(Page)`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  > .sideSection {
+  > ${Flex} {
     flex-direction: column;
     gap: 1rem;
+    &.infoSide {
+      > ${Box} {
+       // height:;
+      }
+    }
   }
 `
 
@@ -680,8 +685,44 @@ const getSelectOptions = () => {
   ]
 }
 
+  const yieldFarming = yieldFarmData * singleLeverage
+  const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
+  const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
+  const dailyApr = apr / 365
 
-    const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, { placement: 'right' })
+    const { tooltip, targetRef, tooltipVisible } = useTooltip(
+      <>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Yield Farming')}</Text>
+          <Text>{yieldFarming?.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Trading Fees')}</Text>
+          <Text>{tradingFees.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Huski Rewards')}</Text>
+          <Text>{huskyRewards.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Borrowing Interest')}</Text>
+          <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Total APR')}</Text>
+          <Text>{apr.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Total APY')}</Text>
+          <Text>{apy.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Daily APR')}</Text>
+          <Text>{dailyApr.toFixed(2)}%</Text>
+        </Flex>
+      </>,
+      { placement: 'right' },
+    )
     return (
         <Page>
             <Text bold fontSize="3" color="secondary" mx="auto">
