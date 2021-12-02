@@ -666,7 +666,8 @@ const AdjustPositionSA = () => {
         ) : null}
 
         {/* if target is 1 */}
-        {targetPositionLeverage === 1 ? (
+        {targetPositionLeverage === 1 &&
+        Number(targetPositionLeverage) !== Number(currentPositionLeverage.toFixed(2)) ? (
           isRepayDebt ? (
             <>
               <Text>
