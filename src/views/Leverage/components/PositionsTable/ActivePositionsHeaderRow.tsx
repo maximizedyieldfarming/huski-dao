@@ -9,7 +9,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid #EFEFEF;
+  border-bottom: 2px solid #efefef;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -21,7 +21,7 @@ const NameCell = styled(BaseCell)`
   flex-direction: column;
   // padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.md} {
-     flex: 1 0 100px;
+    flex: 1 0 100px;
     // padding-left: 32px;
   }
   ${CellContent} {
@@ -34,7 +34,7 @@ const NameCell = styled(BaseCell)`
   }
 `
 const PoolCell = styled(BaseCell)`
-  align-items:start;
+  align-items: start;
   flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 2 0 170px;
@@ -53,7 +53,7 @@ const PoolCell = styled(BaseCell)`
 `
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
-  padding-bottom:10px;
+  padding-bottom: 10px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -68,6 +68,8 @@ const StyledCell = styled(BaseCell)`
 `
 const ActivePositionsHeaderRow = () => {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
+
   const {
     targetRef: positionTargetRef,
     tooltip: positionTooltip,
@@ -171,23 +173,32 @@ const ActivePositionsHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text fontSize='13px' bold color="textSubtle">
+          <Text fontSize="13px" bold color="textSubtle">
             {t('Name')}
           </Text>
         </CellContent>
       </NameCell>
       <PoolCell>
         <CellContent>
-          <Text fontSize='13px' style={{marginLeft:'-10px'}} bold color="textSubtle">
+          <Text fontSize="13px" style={{ marginLeft: '-10px' }} bold color="textSubtle">
             {t('Pool')}
           </Text>
         </CellContent>
       </PoolCell>
+      {pathname.includes('singleAssets') ? (
+        <StyledCell>
+          <CellContent>
+            <Text small color="textSubtle">
+              {t('Strategy')}
+            </Text>
+          </CellContent>
+        </StyledCell>
+      ) : null}
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
-              {t('Position Value')}
+            <Text fontSize="13px" bold color="textSubtle">
+              {t('Position')}
             </Text>
             {positionTooltipVisible && positionTooltip}
             {/* <span ref={positionTargetRef}>
@@ -196,23 +207,25 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      <StyledCell>
-        <CellContent>
-          <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
-              {t('Debt')}
-            </Text>
-            {debtTooltipVisible && debtTooltip}
-            {/* <span ref={debtTargetRef}>
+      {pathname.includes('farms') ? (
+        <StyledCell>
+          <CellContent>
+            <Flex alignItems="center">
+              <Text fontSize="13px" bold color="textSubtle">
+                {t('Debt')}
+              </Text>
+              {debtTooltipVisible && debtTooltip}
+              {/* <span ref={debtTargetRef}>
               <InfoIcon ml="5px" />
             </span> */}
-          </Flex>
-        </CellContent>
-      </StyledCell>
+            </Flex>
+          </CellContent>
+        </StyledCell>
+      ) : null}
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Equity')}
             </Text>
             {equityTooltipVisible && equityTooltip}
@@ -225,7 +238,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('APY')}
             </Text>
             {apyTooltipVisible && apyTooltip}
@@ -235,36 +248,40 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
+      {pathname.includes('farms') ? (
+        <>
+          <StyledCell>
+            <CellContent>
+              <Flex alignItems="center">
+                <Text fontSize="13px" bold color="textSubtle">
+                  {t('Debt Ratio')}
+                </Text>
+                {debtRatioTooltipVisible && debtRatioTooltip}
+                {/* <span ref={debtRatioTargetRef}>
+              <InfoIcon ml="5px" />
+            </span> */}
+              </Flex>
+            </CellContent>
+          </StyledCell>
+          <StyledCell>
+            <CellContent>
+              <Flex alignItems="left">
+                <Text fontSize="13px" bold color="textSubtle" style={{ paddingRight: '40px' }}>
+                  {t('Liquidation Threshold')}
+                </Text>
+                {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
+                {/* <span ref={liquidationThresholdTargetRef}>
+              <InfoIcon ml="5px" />
+            </span> */}
+              </Flex>
+            </CellContent>
+          </StyledCell>
+        </>
+      ) : null}
       <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
-              {t('Debt Ratio')}
-            </Text>
-            {debtRatioTooltipVisible && debtRatioTooltip}
-            {/* <span ref={debtRatioTargetRef}>
-              <InfoIcon ml="5px" />
-            </span> */}
-          </Flex>
-        </CellContent>
-      </StyledCell>
-      <StyledCell>
-        <CellContent>
-          <Flex alignItems="left">
-            <Text fontSize='13px' bold color="textSubtle" style={{paddingRight:'40px'}}>
-              {t('Liquidation Threshold')}
-            </Text>
-            {liquidationThresholdTooltipVisible && liquidationThresholdTooltip}
-            {/* <span ref={liquidationThresholdTargetRef}>
-              <InfoIcon ml="5px" />
-            </span> */}
-          </Flex>
-        </CellContent>
-      </StyledCell>
-      <StyledCell>
-        <CellContent>
-          <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Safety Buffer')}
             </Text>
             {safetyBufferTooltipVisible && safetyBufferTooltip}
@@ -274,23 +291,23 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-      <StyledCell>
+     {/*  <StyledCell>
         <CellContent>
           <Flex alignItems="center">
-            <Text fontSize='13px' bold color="textSubtle">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Profit/Loss')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}
-            {/* <span ref={profitLossTargetRef}>
+           <span ref={profitLossTargetRef}>
               <InfoIcon ml="5px" />
-            </span> */}
+            </span> 
           </Flex>
         </CellContent>
-      </StyledCell>
+      </StyledCell> */}
       <StyledCell>
-        <CellContent >
+        <CellContent>
           <Flex alignItems="center" justifyContent="flex-end">
-            <Text fontSize='13px' style={{width:'230px',textAlign:'right'}} bold color="textSubtle">
+            <Text fontSize="13px" style={{ width: '230px', textAlign: 'right' }} bold color="textSubtle">
               {t('Action')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}

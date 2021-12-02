@@ -2,8 +2,16 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core'
 import BaseCell, { CellContent } from './BaseCell'
+
+interface Props {
+  safetyBuffer: number
+  quoteTokenName: string
+  tokenName: string
+  priceDrop: number | string
+  noDebt?: boolean
+}
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
@@ -21,9 +29,8 @@ const StyledCell = styled(BaseCell)`
 `
 const SBLinearProgress = styled(LinearProgress)`
   .MuiLinearProgress-barColorPrimary {
-    background-color:#7B3FE4!important;
+    background-color: #7b3fe4 !important;
   }
-
 `
 const Circle = styled.div`
   height: 10px;
@@ -46,7 +53,7 @@ const ProgressCircle = () => {
   )
 }
 
-const SafetyBufferCell = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop }) => {
+const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop, noDebt }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
@@ -55,27 +62,36 @@ const SafetyBufferCell = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop }
     </>,
     { placement: 'top-start' },
   )
-   const {
-     targetRef: bufferTargetRef,
-     tooltip: bufferTooltip,
-     tooltipVisible: bufferTooltipVisible,
-   } = useTooltip(
-     <>
-       <Text style={{ borderBottom: '1px solid black' }}>
-         {t(
-           'At the current safety buffer, %quoteTokenName% price can drop -%priceDrop%% against %tokenName% before your position would be in danger of liquidation.',
-           { quoteTokenName, tokenName, priceDrop },
-         )}
-       </Text>
-       <Text>
-         <Text bold>{t('Disclaimer: ')}</Text>
-         {t(
-           'This is only an estimate and the actual liquidation price can vary based on other factors such as your position size relative to the pools liquidity.',
-         )}
-       </Text>
-     </>,
-     { placement: 'top-start' },
-   )
+  const {
+    targetRef: bufferTargetRef,
+    tooltip: bufferTooltip,
+    tooltipVisible: bufferTooltipVisible,
+  } = useTooltip(
+    <>
+      <Text style={{ borderBottom: '1px solid black' }}>
+        {t(
+          'At the current safety buffer, %quoteTokenName% price can drop -%priceDrop%% against %tokenName% before your position would be in danger of liquidation.',
+          { quoteTokenName, tokenName, priceDrop },
+        )}
+      </Text>
+      <Text>
+        <Text bold>{t('Disclaimer: ')}</Text>
+        {t(
+          'This is only an estimate and the actual liquidation price can vary based on other factors such as your position size relative to the pools liquidity.',
+        )}
+      </Text>
+    </>,
+    { placement: 'top-start' },
+  )
+  if (noDebt) {
+    return (
+      <StyledCell role="cell">
+        <CellContent>
+          <Text>{t('No Debt')}</Text>
+        </CellContent>
+      </StyledCell>
+    )
+  }
   return (
     <StyledCell role="cell">
       <CellContent>
