@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Box, Button, Flex, Text, AutoRenewIcon, Input } from 'husky-uikit1.0'
+import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
@@ -64,6 +65,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
+  const history = useHistory()
 
   const setAmountToMax = () => {
     setAmount(userTokenBalanceIb)
@@ -203,7 +205,9 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
       <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
-          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>
+          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}
+            onClick={() => history.goBack()}
+          >
             {t('Back')}
           </Text>
         </Flex>
@@ -222,7 +226,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
           isLoading={isPending}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
         >
-          {isPending ? t('Approving') : t('Transfer')}
+          {isPending ? t('Confirming') : t('Confirm')}
         </Button>
        
       </ButtonGroup>
