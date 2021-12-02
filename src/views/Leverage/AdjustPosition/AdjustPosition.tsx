@@ -220,13 +220,12 @@ const AdjustPosition = () => {
   const adjustData = farmingData ? farmingData[1] : []
 
   const leverageAfter = new BigNumber(adjustData[10]).toFixed(2, 1)
-  // console.log("lvg after", adjustData[10], "target", targetPositionLeverage, "current", currentPositionLeverage)
 
   const [isAddCollateral, setIsAddCollateral] = useState(Number(currentPositionLeverage) !== 1)
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
-  let assetsBorrowedUp
+  // let assetsBorrowedUp
   let UpdatedDebt
 
   if (adjustData?.[3] === 0 && adjustData?.[11] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
@@ -234,22 +233,17 @@ const AdjustPosition = () => {
     assetsBorrowed = repayDebtData?.[4]
     baseTokenInPosition = repayDebtData?.[2]
     farmingTokenInPosition = repayDebtData?.[3]
-    assetsBorrowedUp = 0
+    // assetsBorrowedUp = 0
     UpdatedDebt = Number(debtValueNumber) - repayDebtData?.[4]
 
   } else {
     assetsBorrowed = adjustData?.[3]
     baseTokenInPosition = adjustData?.[8]
     farmingTokenInPosition = adjustData?.[9]
-    assetsBorrowedUp = adjustData?.[3] < 0.0000001 ? 0 : adjustData?.[3]
+    // assetsBorrowedUp = adjustData?.[3] < 0.0000001 ? 0 : adjustData?.[3]
     UpdatedDebt = isAddCollateral || targetPositionLeverage >= currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
 
   }
-  // console.log("my condition is", adjustData?.[3] === 0 && adjustData?.[11] === 0)
-  // console.log("repay 4", repayDebtData[4], 'debtVal', Number(debtValueNumber), "updated debt", UpdatedDebt, 'adjust data 3', adjustData?.[3], 'debt', debtValueNumber.toNumber())
-  // const debtAssetsBorrowed = adjustData ? adjustData[3] - debtValueNumber.toNumber() : 0
-  // const priceImpactClose = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
-  // const tradingFeesClose = Number(farmTokenAmount) * 0.0025
 
   let tradingFees = adjustData?.[5]
   if (tradingFees < 0 || tradingFees > 1 || tradingFees.toString() === 'NaN') {
@@ -675,11 +669,9 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {/* {priceImpactClose ? ( */}
           <Text color={new BigNumber((priceImpactClose * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
             +{(priceImpactClose * 100).toPrecision(4)}%
           </Text>
-
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -689,11 +681,9 @@ const AdjustPosition = () => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {/* {tradingFeesClose ? ( */}
           <Text color={new BigNumber((tradingFeesClose * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
             -{(tradingFeesClose * 100).toPrecision(4)}%
           </Text>
-
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Converted Position Value Assets')}</Text>
