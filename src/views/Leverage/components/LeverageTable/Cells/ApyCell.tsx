@@ -67,14 +67,14 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
           </Text>
         )}
         {apy ? (
-          <Flex alignItems="center" style={{marginTop:'17px'}}>
-            <Text style={{fontWeight:700}} color="text">{apyAtOne}%</Text>
+          <Flex alignItems="center" style={{ marginTop: '17px' }}>
+            <Text style={{ fontWeight: 700 }} color="text">{apyAtOne}%</Text>
             <ChevronRightIcon />
             <Text bold fontSize='20px' mt="-3px" color="primaryPurple">{apy}%</Text>
             {tooltipVisible && tooltip}
-            {/* <span ref={targetRef}>
+            <span ref={targetRef}>
               <InfoIcon ml="10px" />
-            </span> */}
+            </span>
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />
