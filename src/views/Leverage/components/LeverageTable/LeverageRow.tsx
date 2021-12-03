@@ -5,9 +5,10 @@ import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
+import PoolCell from './Cells/PoolCell'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
-import PoolCell from './Cells/PoolCell'
+import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import LeverageCell from './Cells/LeverageCell'
 import TvlCell from './Cells/TvlCell'
 import Borrowing from './Cells/Borrowing'
@@ -55,8 +56,8 @@ const LeverageRow = ({ tokenData }) => {
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, borrowingAsset)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const { tokensLP, totalTvl } = getTvl(tokenData)
-
-  const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
+  const { borrowingInterest } = useFarmsWithToken(tokenData, borrowingAsset)
+  // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
   const getApr = (lvg) => {
     const apr =

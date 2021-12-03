@@ -36,6 +36,7 @@ import {
   getAdjustData,
   getAdjustPositionRepayDebt,
 } from '../helpers'
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
 interface LocationParams {
   data: any
@@ -224,8 +225,8 @@ const AdjustPositionSA = () => {
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
-  const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
-
+  // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
+  const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)

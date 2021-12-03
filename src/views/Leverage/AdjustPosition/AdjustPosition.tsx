@@ -25,6 +25,7 @@ import {
   getAdjustPositionRepayDebt,
   getPriceImpact,
 } from '../helpers'
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
@@ -263,7 +264,8 @@ const AdjustPosition = () => {
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
-  const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
+  const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
+  // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)

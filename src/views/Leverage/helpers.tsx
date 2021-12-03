@@ -277,7 +277,7 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
   }
 
   const borrowingInterest = lendRate / (utilization * 100) / (1 - 0.16)
-
+console.info('borrowingInterest----',borrowingInterest)
   return { borrowingInterest };
 }
 

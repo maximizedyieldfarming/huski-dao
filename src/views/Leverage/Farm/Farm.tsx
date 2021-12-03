@@ -35,6 +35,7 @@ import { useWeb3React } from '@web3-react/core'
 // import { Range } from 'react-range';
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
 interface RouteParams {
   token: string
@@ -341,7 +342,8 @@ const Farm = () => {
 
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
-  const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
+  // const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
+  const { borrowingInterest } = useFarmsWithToken(tokenData, radio)
 
   const getApr = (lvg) => {
     const totalapr =

@@ -51,7 +51,7 @@ import {
     getRunLogic,
     getRunLogic1,
 } from '../helpers'
-
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
 interface RouteParams {
     token: string
@@ -272,8 +272,12 @@ const FarmSA = () => {
     const cakePrice = useCakePrice()
     const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
     const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
-    const { borrowingInterest } = getBorrowingInterest(singleFarm, tokenName)
-    const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
+    // const { borrowingInterest } = getBorrowingInterest(singleFarm, tokenName)
+    // const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
+
+    const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
+    const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
+
 
     const getApr = (lvg: number) => {
         const totalapr =

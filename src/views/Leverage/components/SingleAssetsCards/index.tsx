@@ -14,6 +14,7 @@ import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import nFormatter from 'utils/nFormatter'
+import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -58,7 +59,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { totalTvl } = getTvl(singleData)
   const huskyRewards = getHuskyRewards(singleData, huskyPrice, borrowingAsset)
   const yieldFarmData = getYieldFarming(singleData, cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
+  // const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
+  const { borrowingInterest } = useFarmsWithToken(singleData, borrowingAsset)
 
   const getApr = (lvg) => {
     const apr =
