@@ -174,13 +174,13 @@ const FarmSA = () => {
     let quoteTokenName
     let riskKillThreshold
 
-    if (marketStrategy === 'Bull') { // bull === 2x long
-        tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-        quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    if (marketStrategy.includes('bull')) { // bull === 2x long
+        tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+        quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
         riskKillThreshold = singleFarm?.quoteTokenLiquidationThreshold
     } else { // 2x short || 3x short
-        tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-        quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+        tokenName = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+        quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
         riskKillThreshold = singleFarm?.liquidationThreshold
     }
 
@@ -245,7 +245,7 @@ const FarmSA = () => {
 
     const handleApprove = async () => {
         let contract
-        if (marketStrategy === 'Bull') {
+        if (marketStrategy.includes('bull')) {
             contract = approveContract
         } else {
             contract = quoteTokenApproveContract //  approveContract
@@ -293,7 +293,7 @@ const FarmSA = () => {
     let tokenInputValue
     let quoteTokenInputValue
 
-    if (selectedToken.symbol.replace('wBNB', 'BNB') !== tokenName) {
+    if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
         tokenInputValue = 0;
         quoteTokenInputValue = inputValue
     } else {
@@ -371,15 +371,17 @@ const FarmSA = () => {
         let contract
         let amount
         let workerAddress
-
-        if (marketStrategy === 'Bull') { // bull === 2x long
-            if (selectedToken.symbol.replace('wBNB', 'BNB') === tokenName) {  // token is farm token
+console.info('111',marketStrategy)
+        if (marketStrategy.includes('bull') ) { // bull === 2x long
+            console.info('1111bull')
+            if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')=== tokenName) {  // token is farm token
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
                 dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
+                console.info('!== tokenName')
                 tokenInputValue = 0;
                 quoteTokenInputValue = inputValue
                 farmingTokenAmount = Number(quoteTokenInputValue).toString()
@@ -393,7 +395,7 @@ const FarmSA = () => {
             workerAddress = singleFarm?.QuoteTokenInfo.address
 
         } else { // 2x short || 3x short
-            if (selectedToken.symbol.replace('wBNB', 'BNB') === tokenName) {
+            if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
@@ -431,7 +433,7 @@ const FarmSA = () => {
     }
 
     let borrowingInterestParam
-    if (marketStrategy === 'Bull') { // bull === 2x long
+    if (marketStrategy.includes('bull')) { // bull === 2x long
         borrowingInterestParam = borrowingInterestQuoteToken
     } else { // 2x short || 3x short
         borrowingInterestParam = borrowingInterest
@@ -557,8 +559,7 @@ const FarmSA = () => {
 
         const option = {
             rangeSelector: {
-
-                buttons: [{ // 时间范围按钮数组
+                buttons: [{
                     type: 'month',
                     count: 1,
                     text: '1m'
@@ -582,11 +583,7 @@ const FarmSA = () => {
                     text: 'All'
                 }],
                 selected: 1  // 默认选中的范围，值为上面 buttons 数组的下标（从 0 开始）
-                // selected: 2
             },
-            // title: {
-            //     text: 'asdasdasdas'
-            // },
             plotOptions: {
                 series: {
                     showInLegend: true
@@ -731,8 +728,7 @@ const getSelectOptions = () => {
         <Page>
             <Text bold fontSize="3" color="secondary" mx="auto">
                 {t(
-                    `Farming ${singleFarm.QuoteTokenInfo.name
-                        .replace('WBNB', 'BNB')
+                    `Farming ${singleFarm.QuoteTokenInfo.name.toUpperCase().replace('WBNB', 'BNB')
                         .replace(' PancakeswapWorker', '')} Pools`,
                 )}
             </Text>
@@ -740,7 +736,7 @@ const getSelectOptions = () => {
                 <Flex className="graphSide" flex="1">
                     <Section style={{ height: "500px" }}>
                        {/*  <TradingViewWidget
-                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}USD`}
+                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')}USD`}
                             theme={Themes.DARK}
                             locale="fr"
                             autosize
@@ -771,12 +767,12 @@ const getSelectOptions = () => {
                                     options={[
                                         {
                                             icon: singleFarm?.TokenInfo?.quoteToken,
-                                            label: singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB'),
+                                            label: singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
                                             value: singleFarm?.TokenInfo?.quoteToken,
                                         },
                                         {
                                             icon: singleFarm?.TokenInfo?.token,
-                                            label: singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB'),
+                                            label: singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
                                             value: singleFarm?.TokenInfo?.token,
                                         },
                                     ]}
@@ -805,7 +801,7 @@ const getSelectOptions = () => {
                                         <NumberInput fontSize="16px" fontWeight="bold" placeholder="0.00" value={inputValue} onChange={handleInput} style={{ background: "unset" }} />
 
                                         <Text fontSize="16px" fontWeight="bold" mr="5px">
-                                            {selectedToken.symbol}
+                                            {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
