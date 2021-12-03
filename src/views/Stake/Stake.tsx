@@ -143,7 +143,7 @@ const Stake: React.FC = () => {
   return (
     <Page>
       <RewardsSummarySection >
-        <Flex justifyContent="space-around">
+        <Flex justifyContent="space-between">
           <Flex position="relative" flex='1.8' pt="31px" pl='21px'>
             <figure>
               <img width='210px' height="190px" src={FlexingHuski} alt="" />
@@ -187,7 +187,7 @@ const Stake: React.FC = () => {
 
             </Flex>
           </Flex>
-          <Flex flex='2' justifyContent="space-between" mt='35px' mb='45px' pr="50px" ml="20px"  flexDirection="column" alignItems="center">
+          <Flex flex='2' justifyContent="space-between" mt='35px' mb='45px' pr="50px" ml="20px" flexDirection="column" alignItems="center">
             <Flex ml="25px">
               <img src="/images/stake/Lock.svg" alt="" />
               <Flex flexDirection="column">

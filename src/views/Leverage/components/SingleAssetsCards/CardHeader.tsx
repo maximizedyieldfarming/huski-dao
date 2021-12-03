@@ -23,9 +23,9 @@ const CardHeader = ({ data, pool }) => {
     <Wrapper>
       <Flex alignItems="center" className="marketWrapper">
         <Grid gridTemplateColumns="40px 1fr" alignItems="center">
-          <TokenImage token={data.farmData[pool]?.TokenInfo?.token} width={40} height={40} />
+          <TokenImage token={data?.TokenInfo?.token} width={40} height={40} />
           <Heading color="text" scale="lg" paddingLeft="10px" fontWeight="bold">
-            {data.farmData[pool]?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+            {data?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
           </Heading>
         </Grid>
       </Flex>

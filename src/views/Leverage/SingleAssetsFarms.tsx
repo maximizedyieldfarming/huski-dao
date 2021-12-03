@@ -210,7 +210,8 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
-  const singleData = farmsData.filter((f) => f.singleFlag === 0)
+  const singleData = farmsData.filter((f) => f.singleFlag === 0);
+  console.log(singleData);
 
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
@@ -247,53 +248,53 @@ const SingleAssetsFarms: React.FC = () => {
   //   })
   // }
 
-  let singlesData = []
+  // let singlesData = []
 
-  if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
-    let single
-    const farmData = bnbArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
-    let single
-    const farmData = btcbArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
-    let single
-    const farmData = ethArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
-    let single
-    const farmData = huskiArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
-  if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
-    let single
-    const farmData = cakeArray
-    marketArray.map((item) => {
-      const newObject = { farmData }
-      single = { ...newObject, ...item }
-      singlesData.push(single)
-    })
-  }
+  // if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
+  //   let single
+  //   const farmData = bnbArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
+  //   let single
+  //   const farmData = btcbArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
+  //   let single
+  //   const farmData = ethArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
+  //   let single
+  //   const farmData = huskiArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
+  // if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
+  //   let single
+  //   const farmData = cakeArray
+  //   marketArray.map((item) => {
+  //     const newObject = { farmData }
+  //     single = { ...newObject, ...item }
+  //     singlesData.push(single)
+  //   })
+  // }
 
   const data = useGetPositions(account)
   const positionData = usePositions(data)
@@ -326,15 +327,15 @@ const SingleAssetsFarms: React.FC = () => {
 
   const [dexFilter, setDexFilter] = useState('all')
   const [pairFilter, setPairFilter] = useState('all')
-  const [strategyFilter, setStrategyFilter] = useState('all')
+  const [strategyFilter, setStrategyFilter] = useState<string>()
 
   // filters
-  if (pairFilter !== 'all') {
-    singlesData = singlesData.filter(
-      (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
-      //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-    )
-  }
+  // if (pairFilter !== 'all') {
+  //   singlesData = singlesData.filter(
+  //     (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
+  //     //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+  //   )
+  // }
   /* if (strategyFilter !== 'all') {
     singleNewData = singleNewData.filter(
       (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
@@ -439,18 +440,18 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               style={{ height: '30px' }}
               variant="tertiary"
-              isActive={strategyFilter === 'bull'}
-              onClick={() => setStrategyFilter('bull')}
-              startIcon={<StrategyIcon market="bull" />}
+              isActive={strategyFilter === 'bear'}
+              onClick={() => setStrategyFilter('bear')}
+              startIcon={<StrategyIcon market="bear" />}
             >
               Bear
             </FilterOption>
             <FilterOption
               variant="tertiary"
               style={{ height: '30px' }}
-              isActive={strategyFilter === 'bear'}
-              onClick={() => setStrategyFilter('bear')}
-              startIcon={<StrategyIcon market="bear" />}
+              isActive={strategyFilter === 'bull'}
+              onClick={() => setStrategyFilter('bull')}
+              startIcon={<StrategyIcon market="bull" />}
             >
               Bull
             </FilterOption>
@@ -526,10 +527,11 @@ const SingleAssetsFarms: React.FC = () => {
       </FiltersWrapper>
       <CardsWrapper>
         {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {singlesData?.map((asset) => (
+        {singleData?.map((asset) => (
           <SingleAssetsCard
             data={asset}
-          // key={asset.pid}
+            key={asset?.pid}
+            strategyFilter={strategyFilter}
           />
         ))}
       </CardsWrapper>

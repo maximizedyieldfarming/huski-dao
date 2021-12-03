@@ -2,18 +2,18 @@ import React, { useState, useCallback, useRef } from 'react'
 import { useParams, useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
-  Box,
-  Button,
-  Flex,
-  Radio,
-  InfoIcon,
-  Text,
-  Skeleton,
-  useTooltip,
-  ArrowForwardIcon,
-  useMatchBreakpoints,
-  AutoRenewIcon,
-  BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem 
+    Box,
+    Button,
+    Flex,
+    Radio,
+    InfoIcon,
+    Text,
+    Skeleton,
+    useTooltip,
+    ArrowForwardIcon,
+    useMatchBreakpoints,
+    AutoRenewIcon,
+    BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
 } from 'husky-uikit1.0'
 
 import styled from 'styled-components'
@@ -38,22 +38,23 @@ import 'echarts/lib/component/markPoint'
 import ReactEcharts from 'echarts-for-react'
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
+import TradingViewWidget, { Themes } from 'react-tradingview-widget';
 
 // import ReactHighstock from 'react-highcharts/bundle/ReactHighstock.src';
 import { useWeb3React } from '@web3-react/core'
-import Select from 'components/Select/Select'
+import SingleFarmSelect from 'components/Select/SingleFarmSelect'
 import {
-  getHuskyRewards,
-  getYieldFarming,
-  getLeverageFarmingData,
-  getBorrowingInterest,
-  getRunLogic,
-  getRunLogic1,
+    getHuskyRewards,
+    getYieldFarming,
+    getLeverageFarmingData,
+    getBorrowingInterest,
+    getRunLogic,
+    getRunLogic1,
 } from '../helpers'
 
 
 interface RouteParams {
-  token: string
+    token: string
 }
 
 interface LocationParams {
@@ -88,11 +89,17 @@ const SectionWrapper = styled(Page)`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  > .sideSection {
+  > ${Flex} {
     flex-direction: column;
     gap: 1rem;
+    &.infoSide {
+      > ${Box} {
+        height: 100%;
+      }
+    }
   }
 `
+
 
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
@@ -103,14 +110,15 @@ const InputArea = styled(Flex)`
 `
 
 const ButtonMenu = styled(UiKitButtonMenu)`
-  background-color: unset;
+  background-color: #F4F4F4;
+  border-radius: 12px;
   border: unset;
   width: 100%;
 `
 
 const ButtonMenuItem = styled(UiKitButtonMenuItem)`
-  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.textSubtle)};
   color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : theme.colors.text)};
+  box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
   &:hover:not(:disabled):not(:active) {
     background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.textSubtle)};
   }
@@ -128,9 +136,10 @@ const ButtonMenuItem = styled(UiKitButtonMenuItem)`
 `
 
 const BalanceInputWrapper = styled(Flex)`
-  border: 1px solid ${({ theme }) => theme.colors.text};
-  border-radius: ${({ theme }) => theme.radii.card};
+  border-radius: 12px;
   padding: 5px;
+  height : 80px;
+  background : #F7F7F8;
   input {
     border: none;
     box-shadow: none;
@@ -153,10 +162,10 @@ const FarmSA = () => {
     const singleFarm = data
     console.info('singleFarm', singleFarm)
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+    console.log("coingeckoId", coingeckoId);
     const priceList = usePriceList(coingeckoId)
 
     const tokenPriceList = useTokenPriceList(coingeckoId)
-
     const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
     const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
     const [selectedStrategy, setSelectedStrategy] = useState<string>()
@@ -599,9 +608,6 @@ const FarmSA = () => {
         return option
     }
 
-
-
-
     const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, { placement: 'right' })
     return (
         <Page>
@@ -614,8 +620,14 @@ const FarmSA = () => {
             </Text>
             <SectionWrapper>
                 <Flex className="graphSide" flex="1">
-                    <Section>
-                        <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} />
+                    <Section style={{ height: "500px" }}>
+                        <TradingViewWidget
+                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}USD`}
+                            theme={Themes.DARK}
+                            locale="fr"
+                            autosize
+                        />
+                        {/* <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} /> */}
                     </Section>
                     <Section>
                         <ReactEcharts option={getOption()} style={{ height: '500px' }} />
@@ -628,17 +640,20 @@ const FarmSA = () => {
                     <Section>
                         <Box>
                             <Flex alignItems="center" justifyContent="space-between">
-                                <Select
+                                <SingleFarmSelect
                                     options={[
                                         {
+                                            icon: "bear",
                                             label: t('Bear Market Strategy'),
                                             value: singleFarm?.TokenInfo?.quoteToken,
                                         },
                                         {
+                                            icon: "bull",
                                             label: t('Bull Market Strategy'),
                                             value: singleFarm?.TokenInfo?.token,
                                         },
                                         {
+                                            icon: "neutral",
                                             label: t('Neutral Market Strategy'),
                                             value: singleFarm?.TokenInfo?.token,
                                         },
@@ -646,17 +661,20 @@ const FarmSA = () => {
                                     onChange={(option) => {
                                         setSelectedStrategy(option.value)
                                     }}
+                                    width="calc(80%)"
                                 />
                             </Flex>
-                            <Flex justifyContent="space-between" alignItems="center">
+                            <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
                                 <Text>{t('Collateral')}</Text>
-                                <Select
+                                <SingleFarmSelect
                                     options={[
                                         {
+                                            icon: singleFarm?.TokenInfo?.quoteToken,
                                             label: singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB'),
                                             value: singleFarm?.TokenInfo?.quoteToken,
                                         },
                                         {
+                                            icon: singleFarm?.TokenInfo?.token,
                                             label: singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB'),
                                             value: singleFarm?.TokenInfo?.token,
                                         },
@@ -666,24 +684,28 @@ const FarmSA = () => {
                                         setInputValue(0)
                                         setButtonIndex(null)
                                     }}
+                                    width="140px"
                                 />
                             </Flex>
                             <Box>
+                                <Flex>
+                                    <Text mr="5px" small color="textSubtle">
+                                        {t('Balance:')}
+                                    </Text>
+                                    <Text small color="textSubtle">
+                                        {balanceNumber}
+                                    </Text>
+                                </Flex>
                                 <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
                                     <BalanceInputWrapper alignItems="center" flex="1">
-                                        <NumberInput placeholder="0.00" value={inputValue} onChange={handleInput} />
-                                        <Flex alignItems="center">
-                                            <Box width={25} height={25} mr="5px">
-                                                <TokenImage token={selectedToken} width={25} height={25} />
-                                            </Box>
-                                            <Text mr="5px" small color="textSubtle">
-                                                {t('Balance:')}
-                                            </Text>
+                                        <Box width={50} height={50} ml="5px" mt="15px">
+                                            <TokenImage token={selectedToken} width={50} height={50} />
+                                        </Box>
+                                        <NumberInput fontSize="16px" fontWeight="bold" placeholder="0.00" value={inputValue} onChange={handleInput} style={{ background: "unset" }} />
 
-                                            <Text small color="textSubtle">
-                                                {balanceNumber}
-                                            </Text>
-                                        </Flex>
+                                        <Text fontSize="16px" fontWeight="bold" mr="5px">
+                                            {selectedToken.symbol}
+                                        </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
                                 <ButtonMenu
@@ -698,30 +720,31 @@ const FarmSA = () => {
                                 </ButtonMenu>
                             </Box>
                         </Box>
+                        <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
                         <Flex alignItems="center" justifyContent="space-between">
                             <Flex>
-                                <Text small>{t('APY')}</Text>
+                                <Text  >{t('APY')}</Text>
                                 {tooltipVisible && tooltip}
                                 <span ref={targetRef}>
-                                    <InfoIcon ml="10px" />
+                                    <InfoIcon ml="10px" width="25px" height="25px" />
                                 </span>
                             </Flex>
-                            <Text>{apy.toFixed(2)}%</Text>
+                            <Text fontWeight="bold">{apy.toFixed(2)}%</Text>
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between">
-                            <Text small>{t('Debt Value')}</Text>
+                            <Text small>{t('Equity')}</Text>
                             {farmData ? (
-                                <Text>
+                                <Text fontWeight="bold">
                                     {farmData[3]?.toFixed(2)} {tokenName}
                                 </Text>
                             ) : (
-                                <Text>0.00 {tokenName}</Text>
+                                <Text fontWeight="bold">0.00 {tokenName}</Text>
                             )}
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between">
                             <Text small>{t('Position Value')}</Text>
                             {farmData ? (
-                                <Text>
+                                <Text fontWeight="bold">
                                     {farmData[8].toFixed(2)} {tokenName} + {farmData[9].toFixed(2)} {quoteTokenName}
                                 </Text>
                             ) : (
@@ -749,7 +772,8 @@ const FarmSA = () => {
                             ) : (
                                 <Button
                                     mx="auto"
-                                    scale="sm"
+                                    scale="md"
+                                    width="70%"
                                     onClick={handleApprove}
                                     isLoading={isPending}
                                     endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}

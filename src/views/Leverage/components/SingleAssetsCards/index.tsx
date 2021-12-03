@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-properties */
 import BigNumber from 'bignumber.js'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { CardBody as UiKitCardBody, Flex, Text, CardRibbon, Skeleton, Button, Box, Grid, ChevronDownIcon, ArrowUpIcon } from 'husky-uikit1.0'
@@ -18,7 +18,10 @@ import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '
 import { Card } from './Card'
 import CardHeader from './CardHeader'
 
-
+interface Props {
+  data: any
+  strategyFilter: string
+}
 
 const CardBody = styled(UiKitCardBody)`
   .avgContainer {
@@ -28,17 +31,17 @@ const CardBody = styled(UiKitCardBody)`
 `
 const AssetSelect = styled(Flex)`
 `
-const SingleAssetsCard = ({ data }) => {
+const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  const { singleLeverage } = data
+  // const { singleLeverage } = data
 
   const [selectedPool, setSelectedPool] = useState(0)
-  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData[selectedPool]
-  const tokenSymbol = data.farmData[selectedPool]?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-  const quoteTokenSymbol = data.farmData[selectedPool]?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = data
+  const tokenSymbol = data?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
+  const quoteTokenSymbol = data?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -47,16 +50,16 @@ const SingleAssetsCard = ({ data }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(data.farmData[selectedPool]?.TokenInfo?.token?.symbol)
-  const { totalTvl } = getTvl(data.farmData[selectedPool])
-  const huskyRewards = getHuskyRewards(data.farmData[selectedPool], huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(data.farmData[selectedPool], cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(data.farmData[selectedPool], borrowingAsset)
+  const [borrowingAsset, setBorrowingAsset] = useState(data.TokenInfo?.token?.symbol)
+  const { totalTvl } = getTvl(data)
+  const huskyRewards = getHuskyRewards(data, huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(data, cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data.farmData[selectedPool].tradeFee * 365) / 100) * lvg) +
+      Number(((data.tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -70,38 +73,174 @@ const SingleAssetsCard = ({ data }) => {
 
   const getDailyEarnings = (lvg) => {
     const apr = getApr(lvg)
-    const dailyEarnings = apr / 365 * parseFloat(quoteTokenAmountTotal) / parseFloat(tokenAmountTotal)
+    const dailyEarnings = ((apr / 365) * parseFloat(quoteTokenAmountTotal)) / parseFloat(tokenAmountTotal)
     return dailyEarnings
   }
+
+  const strategies = React.useMemo(
+    () => [
+      {
+        value: 'bull2x',
+        name: 'Bull Strategy 2x',
+        singleLeverage: 2,
+        direction: 'long',
+        riskLevel: 'Moderate',
+      },
+      {
+        value: 'bull3x',
+        name: 'Bull Strategy 3x',
+        singleLeverage: 3,
+        direction: 'long',
+        riskLevel: 'High',
+      },
+      {
+        value: 'neutral',
+        name: 'Neutral strategy 2x',
+        singleLeverage: 2,
+        direction: 'short',
+        riskLevel: 'Moderate',
+      },
+      {
+        value: 'bear',
+        name: 'Bear strategy 3x',
+        singleLeverage: 3,
+        direction: 'short',
+        riskLevel: 'High',
+      },
+      {
+        value: 'bull',
+        name: 'Bull strategy 1x',
+        singleLeverage: 1,
+        direction: 'short',
+        riskLevel: 'Low',
+      },
+    ],
+    [],
+  )
+
+  const getStrategyInfo = (strategy: string) => {
+    const currStrat = strategies.find((s) => s.value === strategy)
+    return {
+      name: currStrat?.name,
+      singleLeverage: currStrat?.singleLeverage,
+      direction: currStrat?.direction,
+      riskLevel: currStrat?.riskLevel,
+    }
+  }
+
+  const [selectedStrategy, setSelectedStrategy] = useState(
+    data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
+  )
+
+  const getSelectOptions = React.useCallback(() => {
+    if (strategyFilter === 'neutral') {
+      return [
+        {
+          value: 'neutral',
+          label: 'Neutral strategy 2x',
+        },
+        {
+          value: 'bear',
+          label: 'Bear strategy 2x',
+        },
+        {
+          value: 'bull2x',
+          label: 'Bull Strategy 2x',
+        },
+        {
+          value: 'bull3x',
+          label: 'Bull Strategy 3x',
+        },
+      ]
+    }
+    if (strategyFilter === 'bear') {
+      return [
+        {
+          value: 'bear',
+          label: 'Bear strategy 2x',
+        },
+        {
+          value: 'bull2x',
+          label: 'Bull Strategy 2x',
+        },
+        {
+          value: 'bull3x',
+          label: 'Bull Strategy 3x',
+        },
+        {
+          value: 'neutral',
+          label: 'Neutral strategy 2x',
+        },
+      ]
+    }
+    if (strategyFilter === 'bull2x') {
+      return [
+        {
+          value: 'bull2x',
+          label: 'Bull Strategy 2x',
+        },
+        {
+          value: 'bull3x',
+          label: 'Bull Strategy 3x',
+        },
+        {
+          value: 'bear',
+          label: 'Bear strategy 2x',
+        },
+        {
+          value: 'neutral',
+          label: 'Neutral strategy 2x',
+        },
+      ]
+    }
+
+    if (data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA') {
+      return [
+        {
+          value: 'neutral',
+          label: 'Neutral strategy 2x',
+        },
+        {
+          value: 'bear',
+          label: 'Bear strategy 2x',
+        },
+        {
+          value: 'bull2x',
+          label: 'Bull Strategy 2x',
+        },
+        {
+          value: 'bull3x',
+          label: 'Bull Strategy 3x',
+        },
+      ]
+    }
+    const selOptions = []
+    strategies.forEach((strat) => {
+      selOptions.push({
+        label: strat.name,
+        value: strat.value,
+      })
+    })
+    return selOptions
+  }, [strategies, data, strategyFilter])
+
+  useEffect(() => {
+    setSelectedStrategy((prevState) => strategyFilter || prevState)
+    console.log(strategyFilter);
+  }, [strategyFilter])
+
+  const { singleLeverage, direction, riskLevel } = getStrategyInfo(selectedStrategy)
 
   const tvl = totalTvl.toNumber()
   const apy = getDisplayApr(getApy(singleLeverage))
   const apyOne = getDisplayApr(getApy(1))
   const risk = parseInt(liquidationThreshold) / 100 / 100
   const dailyEarnings = getDailyEarnings(singleLeverage)
-  const riskLevel = (() => {
-    if (data.marketStrategy === 'Bear') {
-      return 'High'
-    }
-    if (data.marketStrategy === 'Bull') {
-      return 'Moderate'
-    }
-    if (data.marketStrategy === 'Neutral') {
-      return 'Low'
-    }
-    return null
-  })()
 
   const avgApy = Number(apy) - Number(apyOne)
-  let tcolor;
-  if (data.marketStrategy === "Bull")
-    tcolor = "#83BF6E";
-  if (data.marketStrategy === "Bear")
-    tcolor = "#FE7D5E";
-  if (data.marketStrategy === "Neutral")
-    tcolor = "#F0B90B";
-  const getOption = () => {
+  const apyPercentageDiff = new BigNumber(avgApy).div(apyOne).times(100).toFixed(2, 1)
 
+  const getOption = () => {
     const option = {
       tooltip: {
         trigger: 'axis',
@@ -121,7 +260,7 @@ const SingleAssetsCard = ({ data }) => {
           show: false,
         },
       },
-      color: [tcolor],
+      color: [color],
       series: [
         {
           symbol: 'none', // no point
@@ -133,7 +272,8 @@ const SingleAssetsCard = ({ data }) => {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
-                color: tcolor,
+                // eslint-disable-next-line object-shorthand
+                color: color,
               },
               {
                 offset: 1,
@@ -143,29 +283,42 @@ const SingleAssetsCard = ({ data }) => {
           },
         },
       ],
+      grid: {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+      },
     }
     return option
   }
 
-  const selectOptions = []
-  data.farmData?.forEach((item, index) => {
-    selectOptions.push({
-      label: item.QuoteTokenInfo?.name?.replace(' PancakeswapWorker', ' Pancakeswap').replace('WBNB', 'BNB'),
-      value: index,
-    })
-  })
+  const color = (() => {
+    if (selectedStrategy.includes('bull')) {
+      return '#27C73F'
+    }
+    if (selectedStrategy === 'bear') {
+      return '#FE6057'
+    }
+    return '#FCBD2C'
+  })()
+
+  const handleSelectChange = (option) => {
+    setSelectedStrategy(option.value)
+  }
+
   return (
     <Card>
       <CardHeader data={data} pool={selectedPool} />
       <CardBody>
         <Box className="avgContainer">
           <Flex alignItems="center" flexDirection="column">
-            <Flex width="100%" background={`${tcolor}1A`} height="80px" border={`1px solid  ${tcolor}`} borderRadius="10px" justifyContent="space-between">
+            <Flex width="100%" background={`${color}1A`} height="80px" border={`1px solid  ${color}`} borderRadius="10px" justifyContent="space-between">
               <Flex alignItems="center" width="calc(100% - 20px)">
                 <TokenPairImage
                   variant="inverted"
-                  primaryToken={data.farmData[0].QuoteTokenInfo.token}
-                  secondaryToken={data.farmData[0].QuoteTokenInfo.quoteToken}
+                  primaryToken={data.QuoteTokenInfo.token}
+                  secondaryToken={data.QuoteTokenInfo.quoteToken}
                   width={44}
                   height={44}
                   primaryImageProps={{ style: { marginLeft: "20px" } }}
@@ -173,7 +326,7 @@ const SingleAssetsCard = ({ data }) => {
                 />
                 <Flex flexDirection="column" marginLeft="30px">
                   <Text color="#131313" fontSize="18px" fontWeight="600">{data.marketStrategy} Strategy <span style={{ fontSize: "20px", fontWeight: "normal" }}>{singleLeverage}x</span></Text>
-                  <Text color="#6F767E" fontSize="12px" fontWeight="500">{selectOptions && selectOptions[0].label}</Text>
+                  <Text color="#6F767E" fontSize="12px" fontWeight="500">{getSelectOptions()[0].label}</Text>
                 </Flex>
               </Flex>
               <Flex marginRight="5px"><ChevronDownIcon width="25px" /></Flex>
@@ -187,8 +340,8 @@ const SingleAssetsCard = ({ data }) => {
                 {Number(avgApy).toFixed(2)}%
               </Text>
               <Flex alignItems="center" >
-                <ArrowUpIcon width="13px" color={tcolor} />
-                <Text fontSize="13px" color={tcolor}>
+                <ArrowUpIcon width="13px" color={color} />
+                <Text fontSize="13px" color={color}>
                   {Number(avgApy).toFixed(2)}%
                 </Text>
                 <Text fontSize="13px">{t(` than 1x yield farm`)}</Text>
@@ -210,7 +363,7 @@ const SingleAssetsCard = ({ data }) => {
 
           <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
-            <Text color={tcolor} fontWeight="bold">{riskLevel}</Text>
+            <Text color={color} fontWeight="bold">{riskLevel}</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earn')}</Text>
@@ -223,9 +376,9 @@ const SingleAssetsCard = ({ data }) => {
             as={Link}
             to={(location) => ({
               ...location,
-              pathname: `${location.pathname}/farm/${data?.farmData[selectedPool]?.lpSymbol.replace(' LP', '')}`,
+              pathname: `${location.pathname}/farm/${data?.lpSymbol.replace(' LP', '')}`,
               state: {
-                data: data?.farmData[selectedPool],
+                data,
                 singleLeverage: data?.singleLeverage,
                 marketStrategy: data?.marketStrategy,
               },
