@@ -213,6 +213,10 @@ const SingleAssetsFarms: React.FC = () => {
   const singleData = farmsData.filter((f) => f.singleFlag === 0);
   console.log(singleData);
 
+
+
+
+
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
   const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
@@ -236,6 +240,7 @@ const SingleAssetsFarms: React.FC = () => {
       marketStrategy: 'Bear',
     },
   ]
+
   // let singleNewData = []
 
   // if (bnbArray && bnbArray !== null && bnbArray !== undefined) {
@@ -248,53 +253,82 @@ const SingleAssetsFarms: React.FC = () => {
   //   })
   // }
 
-  // let singlesData = []
+  const singlesData = []
 
-  // if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
-  //   let single
-  //   const farmData = bnbArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
-  //   let single
-  //   const farmData = btcbArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
-  //   let single
-  //   const farmData = ethArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
-  //   let single
-  //   const farmData = huskiArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
-  //   let single
-  //   const farmData = cakeArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
+  if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
+
+    const tokenObject = {
+      name: 'BNB',
+      singleArray: bnbArray
+    }
+    singlesData.push(tokenObject)
+
+    // let single
+    // const farmData = bnbArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+  }
+  if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
+
+    const tokenObject = {
+      name: 'BTCB',
+      singleArray: btcbArray
+    }
+    singlesData.push(tokenObject)
+    // let single
+    // const farmData = btcbArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+  }
+  if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
+    // let single
+    // const farmData = ethArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+    const tokenObject = {
+      name: 'ETH',
+      singleArray: ethArray
+    }
+    singlesData.push(tokenObject)
+  }
+  if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
+    const tokenObject = {
+      name: 'ALPACA',
+      singleArray: huskiArray
+    }
+    singlesData.push(tokenObject)
+
+    // let single
+    // const farmData = huskiArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+  }
+  if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
+    // let single
+    // const farmData = cakeArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+    const tokenObject = {
+      name: 'CAKE',
+      singleArray: cakeArray
+    }
+    singlesData.push(tokenObject)
+  }
 
   const data = useGetPositions(account)
   const positionData = usePositions(data)
@@ -342,7 +376,7 @@ const SingleAssetsFarms: React.FC = () => {
     )
   }
  */
-
+  console.info('singlesData', singlesData)
   return (
     <Page>
       <Section>
@@ -526,11 +560,10 @@ const SingleAssetsFarms: React.FC = () => {
         </Flex>
       </FiltersWrapper>
       <CardsWrapper>
-        {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {singleData?.map((asset) => (
+        {singlesData?.map((asset) => (
           <SingleAssetsCard
             data={asset}
-            key={asset?.pid}
+            key={asset?.name}
             strategyFilter={strategyFilter}
           />
         ))}

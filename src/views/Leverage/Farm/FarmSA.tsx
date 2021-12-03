@@ -729,7 +729,7 @@ const getSelectOptions = () => {
             <Text bold fontSize="3" color="secondary" mx="auto">
                 {t(
                     `Farming ${singleFarm.QuoteTokenInfo.name.toUpperCase().replace('WBNB', 'BNB')
-                        .replace(' PancakeswapWorker', '')} Pools`,
+                        .replace(' PANCAKESWAPWORKER', '')} Pools`,
                 )}
             </Text>
             <SectionWrapper>

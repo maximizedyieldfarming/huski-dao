@@ -36,12 +36,16 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { t } = useTranslation()
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  // const { singleLeverage } = data
+  const singleData = data?.singleArray[0]
+
+  console.info('data',data)
+  console.info('singleData',singleData)
+
 
   const [selectedPool, setSelectedPool] = useState(0)
-  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = data
-  const tokenSymbol = data?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-  const quoteTokenSymbol = data?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
+  const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  const quoteTokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -50,16 +54,16 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(data.TokenInfo?.token?.symbol)
-  const { totalTvl } = getTvl(data)
-  const huskyRewards = getHuskyRewards(data, huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(data, cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
+  const [borrowingAsset, setBorrowingAsset] = useState(singleData.TokenInfo?.token?.symbol)
+  const { totalTvl } = getTvl(singleData)
+  const huskyRewards = getHuskyRewards(singleData, huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(singleData, cakePrice)
+  const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(((singleData.tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -122,7 +126,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   }
 
   const [selectedStrategy, setSelectedStrategy] = useState(
-    data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
+    singleData?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
   )
 
   const getSelectOptions = React.useCallback(() => {
@@ -187,7 +191,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ]
     }
 
-    if (data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA') {
+    if (singleData?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA') {
       return [
         {
           value: 'neutral',
@@ -215,7 +219,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       })
     })
     return selOptions
-  }, [strategies, data, strategyFilter])
+  }, [strategies, singleData, strategyFilter])
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
@@ -256,7 +260,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       color: [color],
       series: [
         {
-          symbol: 'none', // no point
+          symbol: 'none',
           type: 'line',
           data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
           smooth: 0.3,
@@ -301,7 +305,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   return (
     <Card>
-      <CardHeader data={data} pool={selectedPool} />
+      <CardHeader data={singleData} pool={selectedPool} />
       <CardBody>
         <Box className="avgContainer">
         {/*   <Flex alignItems="center" flexDirection="column">
@@ -316,15 +320,15 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               <Flex alignItems="center" width="calc(100% - 20px)">
                 <TokenPairImage
                   variant="inverted"
-                  primaryToken={data.QuoteTokenInfo.token}
-                  secondaryToken={data.QuoteTokenInfo.quoteToken}
+                  primaryToken={singleData.QuoteTokenInfo.token}
+                  secondaryToken={singleData.QuoteTokenInfo.quoteToken}
                   width={44}
                   height={44}
                   primaryImageProps={{ style: { marginLeft: '20px' } }}
                   ml="20px"
                 />
                  <Flex flexDirection="column" marginLeft="30px">
-                  <Text color="#131313" fontSize="18px" fontWeight="600">{data.marketStrategy} Strategy <span style={{ fontSize: "20px", fontWeight: "normal" }}>{singleLeverage}x</span></Text>
+                  <Text color="#131313" fontSize="18px" fontWeight="600">{singleData.marketStrategy} Strategy <span style={{ fontSize: "20px", fontWeight: "normal" }}>{singleLeverage}x</span></Text>
                   <Text color="#6F767E" fontSize="12px" fontWeight="500">{getSelectOptions()[0].label}</Text>
                 </Flex> 
               </Flex>
@@ -382,9 +386,9 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
             as={Link}
             to={(location) => ({
               ...location,
-              pathname: `${location.pathname}/farm/${data?.lpSymbol.replace(' LP', '')}`,
+              pathname: `${location.pathname}/farm/${singleData?.lpSymbol.replace(' LP', '')}`,
               state: {
-                data,
+                singleData,
                 singleLeverage,
                 marketStrategy: selectedStrategy,
               },
