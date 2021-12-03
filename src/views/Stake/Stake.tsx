@@ -142,59 +142,81 @@ const Stake: React.FC = () => {
 
   return (
     <Page>
-      <RewardsSummarySection >
-        <Flex justifyContent="space-between">
-          <Flex position="relative" flex='1.8' pt="31px" pl='21px'>
+      <RewardsSummarySection>
+        <Flex justifyContent="space-around">
+          <Flex position="relative" flex="1.8" pt="31px" pl="21px">
             <figure>
-              <img width='210px' height="190px" src={FlexingHuski} alt="" />
+              <img width="210px" height="190px" src={FlexingHuski} alt="" />
             </figure>
           </Flex>
-          <Flex flex='2' flexDirection="column" justifyContent="space-between" mt='35px' mb='35px' pr="50px" ml="30px" style={{ borderRight: '2px solid white' }}>
+          <Flex
+            flex="2"
+            flexDirection="column"
+            justifyContent="space-between"
+            mt="35px"
+            mb="35px"
+            pr="50px"
+            ml="30px"
+            style={{ borderRight: '2px solid white' }}
+          >
             <Flex>
               <Flex>
                 <img src="/images/stake/BNB.svg" alt="" />
               </Flex>
               <Flex flexDirection="column">
-                <Text ml="25px" color="white" fontSize="13px">{t('HUSKI earned:')}</Text>
+                <Text ml="25px" color="white" fontSize="13px">
+                  {t('HUSKI earned:')}
+                </Text>
                 {reward ? (
                   <Text fontSize="28px" color="white" bold ml="25px">
-                    {reward.toPrecision(3)}
+                    {new BigNumber(reward).toFixed(3, 1)}
                   </Text>
                 ) : (
-                  // <Skeleton width="80px" height="16px" />
-                  <Text fontSize="28px" color="white" bold ml="25px">
-                    964,342.49
-                  </Text>
+                  <Skeleton width="80px" height="16px"  ml={isSmallScreen ? '0px' : '25px'}/>
                 )}
               </Flex>
             </Flex>
-            <Flex flexDirection="row" >
+            <Flex flexDirection="row">
               <Flex>
                 <img src="/images/stake/Wallet.svg" alt="" />
               </Flex>
               <Flex flexDirection="column">
-                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>{t('My HUSKI Wallet Balance')}</Text>
+                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>
+                  {t('My HUSKI Wallet Balance')}
+                </Text>
                 {alpacaBalance ? (
                   <Text fontSize="28px" color="white" bold ml="25px">
                     {alpacaBalance.toNumber().toPrecision(3)}
                   </Text>
                 ) : (
-                  <Text fontSize="28px" color="white" bold ml="25px">
-                    964,342.49
-                  </Text>
+                  <Skeleton width="80px" height="16px"  ml={isSmallScreen ? '0px' : '25px'}/>
                 )}
               </Flex>
-
             </Flex>
           </Flex>
-          <Flex flex='2' justifyContent="space-between" mt='35px' mb='45px' pr="50px" ml="20px" flexDirection="column" alignItems="center">
+          <Flex
+            flex="2"
+            justifyContent="space-between"
+            mt="35px"
+            mb="45px"
+            pr="50px"
+            ml="20px"
+            flexDirection="column"
+            alignItems="center"
+          >
             <Flex ml="25px">
               <img src="/images/stake/Lock.svg" alt="" />
               <Flex flexDirection="column">
-                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>{t('Unstaked Rewards')}</Text>
-                <Text fontSize="28px" color="white" bold ml="25px">
-                  964,342.49
+                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>
+                  {t('Unstaked Rewards')}
                 </Text>
+                {unlockedRewards ? (
+                  <Text fontSize="28px" color="white" bold ml="25px">
+                    {new BigNumber(unlockedRewards).toFixed(3, 1)}
+                  </Text>
+                ) : (
+                  <Skeleton width="80px" height="16px"  ml={isSmallScreen ? '0px' : '25px'}/>
+                )}
               </Flex>
             </Flex>
             <Flex>
@@ -223,11 +245,10 @@ const Stake: React.FC = () => {
             </Flex>
           </Flex> */}
         <Flex flexDirection="row" alignItems="center">
-          <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">{t('Huski Finance Advertisement')}</Text>
-
+          <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">
+            {t('Huski Finance Advertisement')}
+          </Text>
         </Flex>
-
-
       </RewardsSummarySection>
 
       <StakeTable stakeData={farmsData} />

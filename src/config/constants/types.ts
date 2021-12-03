@@ -87,6 +87,7 @@ export interface LeverageFarmConfig {
   pid: number
   lpSymbol: string
   lpAddresses: Address
+  lpExchange?:string
   dual?: {
     rewardPerBlock: number
     earnLabel: string

@@ -16,6 +16,8 @@ import { Bone, Bone2 } from 'assets'
 import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
+import { useHuskiPrice } from 'hooks/api'
+import { getAprData } from '../helpers'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
@@ -129,12 +131,19 @@ const LendAction = () => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
   const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
-  console.log('ib balance', getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toString())
+  console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
 
   const exchangeRate =
     token.totalToken && token.totalSupply
       ? new BigNumber(token.totalToken).div(token.totalSupply)
       : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
+
+  const huskyPrice = useHuskiPrice()
+  const {apy} = getAprData(tokenData, huskyPrice)
+const apyCell = (e) => {
+    const value = e * 100
+    return `${value.toFixed(2)}%`
+  }
 
   return (
     <StyledPage>
@@ -238,7 +247,7 @@ const LendAction = () => {
       </TabPanel>
       <Balance>
         <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{t('Deposit APY')}</Text>
-        <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{t('53.64%')}</Text>
+        <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{apyCell(apy)}</Text>
       </Balance>
       <Box>
         <Text>

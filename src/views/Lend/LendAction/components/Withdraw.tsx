@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Box, Button, Flex, Text, AutoRenewIcon, Input } from 'husky-uikit1.0'
+import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
@@ -64,6 +65,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
+  const history = useHistory()
 
   const setAmountToMax = () => {
     setAmount(userTokenBalanceIb)
@@ -78,10 +80,10 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
     .toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
   const [isPending, setIsPending] = useState<boolean>(false)
 
-  // const { balance: tokenBalance } = useTokenBalance(tokenData.TokenInfo.vaultAddress)
-  // const [userTokenBalanceIb, setBalance] = useState(
-  //   getBalanceAmount(tokenBalance).isNaN() ? 0.0 : getBalanceAmount(tokenBalance).toJSON(),
-  // )
+    // const { balance: tokenBalance } = useTokenBalance(tokenData.TokenInfo.vaultAddress)
+    // const [userTokenBalanceIb, setBalance] = useState(
+    //   getBalanceAmount(tokenBalance).isNaN() ? 0.0 : getBalanceAmount(tokenBalance).toJSON(),
+    // )
 
   const handleAmountChange = useCallback(
     (event) => {
@@ -141,11 +143,11 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
         <Section justifyContent="space-between">
           <Box>
             <Input
-              pattern="^[0-9]*[.,]?[0-9]{0,18}$"
-              placeholder="0.00"
-              onChange={handleAmountChange}
-              value={amount}
-            />
+                    pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+                    placeholder="0.00"
+                    onChange={handleAmountChange}
+                    value={amount}
+                  />
           </Box>
           <Box>
             <MaxContainer>
@@ -203,28 +205,15 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
       <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
-          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>
+          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}
+            onClick={() => history.goBack()}
+          >
             {t('Back')}
           </Text>
         </Flex>
-
-        {/* <Button
-          style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-          onClick={handleConfirm}
-          disabled={
-            !account ||
-            Number(userTokenBalanceIb) === 0 ||
-            Number(amount) === 0 ||
-            amount === undefined ||
-            isPending ||
-            exchangeRate.isNaN()
-          }
-          isLoading={isPending}
-          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-        >
-          {isPending ? t('Approving') : t('Transfer')}
-        </Button> */}
+       
         <Button
+          style={{ width: '160px', height: '57px', borderRadius: '16px' }}
           onClick={handleConfirm}
           disabled={
             !account ||
@@ -239,6 +228,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
         >
           {isPending ? t('Confirming') : t('Confirm')}
         </Button>
+       
       </ButtonGroup>
     </Page>
   )

@@ -22,8 +22,8 @@ import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { BnbIcon, BtcbIcon, BusdIcon, } from 'assets'
-import Select from 'components/Select/CustomSelect'
+import { BnbIcon, BtcbIcon, BusdIcon } from 'assets'
+import Select from 'components/Select/Select'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault, useERC20 } from 'hooks/useContract'
@@ -33,7 +33,9 @@ import NumberInput from 'components/NumberInput'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
 // import { Range } from 'react-range';
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
 interface RouteParams {
   token: string
@@ -72,12 +74,12 @@ const SectionWrapper = styled(Page)`
     flex-direction: row;
   }
   > .gray {
-    width:850px;
-    height:915px;
+    width: 850px;
+    height: 915px;
   }
   > .sideSection {
-    width:500px;
-    height:915px;
+    width: 500px;
+    height: 915px;
     flex-direction: column;
     gap: 1rem;
   }
@@ -86,81 +88,80 @@ const SectionWrapper = styled(Page)`
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.background};
   border-radius: '12px';
-  height:80px;
+  height: 80px;
   padding: 0.5rem;
   flex: 1;
   align-items: center;
 `
 const customBotton = styled(Button)`
-  background:transparent;
-  border:none;
-  color:#6f767e!important;
-  width:25%;
-  margin-top:4px;
-    margin-bottom:4px;
+  background: transparent;
+  border: none;
+  color: #6f767e !important;
+  width: 25%;
+  margin-top: 4px;
+  margin-bottom: 4px;
 `
 const StyledButton = styled(customBotton)`
-
   &:focus {
-    width:25%;
-    border-color:transparent!important;
-    background:white;
-    margin-top:4px;
-    margin-bottom:4px;
-    border-radius:12px;
-    color:#FF6A55!important;
-    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
+    width: 25%;
+    border-color: transparent !important;
+    background: white;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 12px;
+    color: #ff6a55 !important;
+    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04),
+      inset 0px 2px 0px rgba(255, 255, 255, 0.25);
   }
   &:visited {
-    width:25%;
-    border-color:transparent!important;
-    background:white;
-    margin-top:4px;
-    margin-bottom:4px;
-    border-radius:12px;
-    color:#FF6A55!important;
-    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
+    width: 25%;
+    border-color: transparent !important;
+    background: white;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 12px;
+    color: #ff6a55 !important;
+    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04),
+      inset 0px 2px 0px rgba(255, 255, 255, 0.25);
   }
 `
 interface MoveProps {
-  move: number;
+  move: number
 }
 
-
-const MoveBox = styled(Box) <MoveProps>`
-  margin-left:${({ move }) => move}px;
-  margin-top:-20px;
-  margin-bottom:10px;
-  color:#7B3FE4;
+const MoveBox = styled(Box)<MoveProps>`
+  margin-left: ${({ move }) => move}px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+  color: #7b3fe4;
 `
 const ButtonArea = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.background};
-  border-radius:12px;
-  padding-left:4px;
-  padding-right:4px;
+  border-radius: 12px;
+  padding-left: 4px;
+  padding-right: 4px;
 `
 const StyledNumberInput = styled(NumberInput)`
   background: transparent;
-  border:none;
-  box-shadow:none;
-  font-size:16px;
-  font-weight:700;
+  border: none;
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 700;
   &:focus {
-    box-shadow:none!important;
+    box-shadow: none !important;
   }
-  
 `
 
 const makeLongShadow = (color: any, size: any) => {
-  let i = 2;
-  let shadow = `${i}px 0 0 ${size} ${color}`;
+  let i = 2
+  let shadow = `${i}px 0 0 ${size} ${color}`
 
   for (; i < 856; i++) {
-    shadow = `${shadow}, ${i}px 0 0 ${size} ${color}`;
+    shadow = `${shadow}, ${i}px 0 0 ${size} ${color}`
   }
 
-  return shadow;
-};
+  return shadow
+}
 const RangeInput = styled.input`
   overflow: hidden;
   display: block;
@@ -168,48 +169,45 @@ const RangeInput = styled.input`
   max-width: 850px;
   width: 100%;
   margin: 0;
-  height:32px;
-  
+  height: 32px;
+
   cursor: pointer;
 
   &::-webkit-slider-runnable-track {
     width: 100%;
-    height:32px;
-    background: linear-gradient(to right, #B488FF, #3A009E) 100% 50% / 100% 4px no-repeat transparent;
+    height: 32px;
+    background: linear-gradient(to right, #b488ff, #3a009e) 100% 50% / 100% 4px no-repeat transparent;
   }
 
-  
   &:focus {
     outline: none;
   }
- 
+
   &::-webkit-slider-thumb {
     position: relative;
-    appearance: none!important;
+    appearance: none !important;
     height: 32px;
     width: 28px;
-    
+
     background-image: url('/images/RangeHandle.png');
     background-position: center center;
     background-repeat: no-repeat;
-    
+
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', "-13px")};
+    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
       width: 32px;
-      background:red!important;
+      background: red !important;
     }
   }
- 
-  
 `
 
-
 const Farm = () => {
+  BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { token } = useParams<RouteParams>()
   const { t } = useTranslation()
   const { account } = useWeb3React()
@@ -225,7 +223,7 @@ const Farm = () => {
   const [radio, setRadio] = useState(selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
-  const [testvalues, setTestValues] = useState([50]);
+  const [testvalues, setTestValues] = useState([50])
   const handleSliderChange = (e) => {
     const value = e?.target?.value
     setLeverageValue(value)
@@ -300,22 +298,17 @@ const Farm = () => {
   }
 
   const setQuoteTokenInputToFraction = (e: any) => {
-    if (e.target.id === '1') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25);
-
-    } else if (e.target.id === '2') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5);
-
-
-    } else if (e.target.id === '3') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75);
-
-    } else if (e.target.id === '4') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber());
-
+    if (e.target.innerText === '25%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+    } else if (e.target.innerText === '50%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+    } else if (e.target.innerText === '75%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+    } else if (e.target.innerText === '100%') {
+      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
     }
   }
-  const [Token, setToken] = useState(1);
+  const [Token, setToken] = useState(1)
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
       setTokenInput(userTokenBalance.toNumber() * 0.25)
@@ -329,22 +322,94 @@ const Farm = () => {
   }
 
   const options = () => {
-
+    if (
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'CAKE' ||
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'USDC' ||
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'SUSHI' ||
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'DOT'
+    ) {
+      return [
+        {
+          label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.token.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+        },
+        {
+          label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.token.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+        },
+      ]
+    }
+    if (
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'CAKE' ||
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'USDC' ||
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'SUSHI' ||
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'DOT'
+    ) {
+      return [
+        {
+          label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.quoteToken.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+        },
+        {
+          label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.quoteToken.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+        },
+      ]
+    }
     return [
       {
-        label: 'BNB',
-        value: 'BNB',
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol
+            : tokenData?.TokenInfo?.quoteToken?.symbol,
+        icon: (
+          <TokenImage
+            token={
+              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                ? tokenData?.TokenInfo.token
+                : tokenData?.TokenInfo?.quoteToken
+            }
+            width={20}
+            height={20}
+          />
+        ),
       },
       {
-        label: 'wBNB',
-        value: 'wBNB',
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol
+            : tokenData?.TokenInfo?.token?.symbol,
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        icon: (
+          <TokenImage
+            token={
+              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                ? tokenData?.TokenInfo.quoteToken
+                : tokenData?.TokenInfo?.token
+            }
+            width={20}
+            height={20}
+          />
+        ),
       },
     ]
   }
 
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
-  const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
+  // const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
+  const { borrowingInterest } = useFarmsWithToken(tokenData, radio)
 
   const getApr = (lvg) => {
     const totalapr =
@@ -370,7 +435,7 @@ const Farm = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
-  console.log(farmData);
+  console.log(farmData)
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -568,63 +633,89 @@ const Farm = () => {
   const debtRatio = 1 - principal / leverageValue
   const liquidationThreshold = Number(tokenData?.liquidationThreshold) / 100
 
-  const targetRef = useRef<any>();
-  const [moveVal, setMoveVal] = useState({ width: 0, height: 0 });
-  const [margin, setMargin] = useState(0);
+  const targetRef = useRef<any>()
+  const [moveVal, setMoveVal] = useState({ width: 0, height: 0 })
+  const [margin, setMargin] = useState(0)
   useLayoutEffect(() => {
     if (targetRef.current !== null && targetRef.current !== undefined) {
       setMoveVal({
         width: targetRef?.current?.offsetWidth,
-        height: targetRef?.current?.offsetHeight
-      });
+        height: targetRef?.current?.offsetHeight,
+      })
     }
-
-  }, [leverageValue,]);
+  }, [leverageValue])
 
   useEffect(() => {
-
-    const tt = (leverageValue - 1) / 2 * (moveVal.width);
+    const tt = ((leverageValue - 1) / 2) * moveVal.width
     if (tt === 0) {
-      setMargin(tt - leverageValue * 9 + 10);
+      setMargin(tt - leverageValue * 9 + 10)
     } else {
-      setMargin(tt - leverageValue * 9);
+      setMargin(tt - leverageValue * 9)
     }
-
   }, [leverageValue, moveVal.width])
+
+  const getSelectedToken = (name: string) => {
+    let selectedToken
+    if (tokenData?.TokenInfo?.token?.symbol.toUpperCase() === name.toUpperCase()) {
+      selectedToken = tokenData?.TokenInfo?.token
+    } else {
+      selectedToken = tokenData?.TokenInfo?.quoteToken
+    }
+    return { selectedToken }
+  }
+  const { selectedToken } = getSelectedToken(radio)
   return (
     <Page>
-      <Text as="span" fontWeight="bold" fontSize="25px" style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}>
-        {/* {t(`Farming ${token} Pools`)} */}
-        {t(`Farming PancakeSwap BTCB-ETH Pool`)}
+      <Text
+        as="span"
+        fontWeight="bold"
+        fontSize="25px"
+        style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}
+      >
+        {t(`Farming ${token} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="gray" >
+        <Section className="gray">
           <Flex alignItems="center" justifyContent="space-between">
-            <Text bold fontSize="18px" color="textFarm" as="span">{t('Collateral')}</Text>
-            <Text as="span" fontSize="12px" mt='3px' color="textSubtle">
+            <Text bold fontSize="18px" color="textFarm" as="span">
+              {t('Collateral')}
+            </Text>
+            <Text as="span" fontSize="12px" mt="3px" color="textSubtle">
               {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
             </Text>
           </Flex>
-          <div style={{ display: 'flex' }} >
+          <div style={{ display: 'flex' }}>
             <Text as="span" mr="1rem" color="textSubtle">
               {t('Balance:')}
             </Text>
             {userQuoteTokenBalance ? (
-              <Text color="textFarm">{userQuoteTokenBalance.toNumber().toPrecision(3)}</Text>
+              <Text color="textFarm">
+                {formatDisplayedBalance(
+                  userQuoteTokenBalance.toJSON(),
+                  tokenData?.TokenInfo.quoteToken?.decimalsDigits,
+                )}
+              </Text>
             ) : (
               <Skeleton width="80px" height="16px" />
             )}
           </div>
           <Flex flexDirection="column" justifyContent="space-between" flex="1">
             <Box>
-              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt" style={{ borderRadius: '12px' }}>
+              <InputArea
+                justifyContent="space-between"
+                mb="1rem"
+                background="backgroundAlt"
+                style={{ borderRadius: '12px' }}
+              >
                 <Flex alignItems="center" flex="1">
                   <Box width={40} height={40} mr="5px" ml="10px">
                     <TokenImage token={tokenData?.TokenInfo.quoteToken} width={40} height={40} />
                   </Box>
                   <StyledNumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
                 </Flex>
-                <Text color="textFarm" mr="10px" fontWeight="700">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
+                <Text color="textFarm" mr="10px" fontWeight="700">
+                  {quoteTokenName.replace('wBNB', 'BNB')}
+                </Text>
               </InputArea>
               <ButtonArea justifyContent="space-between" background="backgroundAlt">
                 <StyledButton
@@ -658,37 +749,62 @@ const Farm = () => {
               </ButtonArea>
             </Box>
 
-            <div style={{ display: 'flex', marginTop: '50px' }} >
+            <div style={{ display: 'flex', marginTop: '50px' }}>
               <Text as="span" mr="1rem" color="textSubtle">
                 {t('Balance:')}
               </Text>
               {userTokenBalance ? (
-                <Text color="textFarm">{userTokenBalance.toNumber().toPrecision(3)}</Text>
+                <Text color="textFarm">
+                  {formatDisplayedBalance(userTokenBalance.toJSON(), tokenData?.TokenInfo.token?.decimalsDigits)}
+                </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
               )}
             </div>
             <Box>
-              <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0" style={{ borderRadius: '12px' }}>
+              <InputArea
+                justifyContent="space-between"
+                mb="1rem"
+                background="backgroundAlt.0"
+                style={{ borderRadius: '12px' }}
+              >
                 <Flex alignItems="center" flex="1">
                   <Box width={40} height={40} mr="5px" ml="10px">
                     <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
                   </Box>
                   <StyledNumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
                 </Flex>
-                <Text mr="10px" fontWeight="700">{tokenName.replace('wBNB', 'BNB')}</Text>
+                <Text mr="10px" fontWeight="700">
+                  {tokenName.replace('wBNB', 'BNB')}
+                </Text>
               </InputArea>
               <ButtonArea justifyContent="space-between">
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
+                <StyledButton
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setTokenInputToFraction}
+                >
                   25%
                 </StyledButton>
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
+                <StyledButton
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setTokenInputToFraction}
+                >
                   50%
                 </StyledButton>
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
+                <StyledButton
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setTokenInputToFraction}
+                >
                   75%
                 </StyledButton>
-                <StyledButton variant="secondary" scale={isMobileOrTable ? 'sm' : 'md'} onClick={setTokenInputToFraction}>
+                <StyledButton
+                  variant="secondary"
+                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  onClick={setTokenInputToFraction}
+                >
                   100%
                 </StyledButton>
               </ButtonArea>
@@ -703,8 +819,10 @@ const Farm = () => {
                   'You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields and higher risk,vice versa.',
                 )}
               </Text> */}
-              <MoveBox move={margin} >
-                <Text color="#7B3FE4" bold>{leverageValue}x</Text>
+              <MoveBox move={margin}>
+                <Text color="#7B3FE4" bold>
+                  {leverageValue}x
+                </Text>
               </MoveBox>
               <Box ref={targetRef} style={{ width: '100%' }}>
                 <RangeInput
@@ -720,23 +838,49 @@ const Farm = () => {
                 />
               </Box>
               <Flex justifyContent="space-between" mt="-22px" mb="10px">
-                <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />
-                {leverageValue < 1.5 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
-                  <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                {leverageValue < 2 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
-                  <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                {leverageValue < 2.5 ? <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} /> :
-                  <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }} />}
-                <div className="middle" style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div
+                  className="middle"
+                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                />
+                {leverageValue < 1.5 ? (
+                  <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                ) : (
+                  <div
+                    className="middle"
+                    style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                  />
+                )}
+                {leverageValue < 2 ? (
+                  <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                ) : (
+                  <div
+                    className="middle"
+                    style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                  />
+                )}
+                {leverageValue < 2.5 ? (
+                  <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                ) : (
+                  <div
+                    className="middle"
+                    style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                  />
+                )}
+                <div
+                  className="middle"
+                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
+                />
               </Flex>
-              <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} id="leverage">{datalistOptions}</datalist>
-
-
+              <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} id="leverage">
+                {datalistOptions}
+              </datalist>
             </Box>
           </Flex>
 
           <Box>
-            <Text fontWeight='500' color="textFarm" fontSize="12px">{t('Which asset would you like to borrow?')}</Text>
+            <Text fontWeight="500" color="textFarm" fontSize="12px">
+              {t('Which asset would you like to borrow?')}
+            </Text>
             <Flex mt="20px">
               {/* {quoteTokenName.toLowerCase() !== 'cake' && (
                 <Flex alignItems="center" marginRight="10px">
@@ -764,14 +908,19 @@ const Farm = () => {
               )} */}
 
               <Select
-                icon={<BnbIcon />}
-                options={options()} />
+                options={options()}
+                onChange={(option) => setRadio(option.value)}
+              />
             </Flex>
-            <Flex justifyContent="space-evenly" mt='20px'>
-              {isApproved ? null : <Button style={{ width: '290px', height: '60px', borderRadius: '16px' }} onClick={handleApprove}>{t('Approve')}</Button>}
+            {/*   <Flex justifyContent="space-evenly" mt="20px">
+              {isApproved ? null : (
+                <Button style={{ width: '290px', height: '60px', borderRadius: '16px' }} onClick={handleApprove}>
+                  {t('Confirm')}
+                </Button>
+              )}
               <Button
-                width='290px'
-                height='60px'
+                width="290px"
+                height="60px"
                 onClick={handleConfirm}
                 isLoading={isPending}
                 endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
@@ -785,7 +934,7 @@ const Farm = () => {
               >
                 {isPending ? t('Confirming') : t(`Confirm`)}
               </Button>
-            </Flex>
+            </Flex> */}
           </Box>
           {/* <Box>
             <Text small color="failure">
@@ -798,75 +947,80 @@ const Farm = () => {
 
         <Flex className="sideSection" justifyContent="space-between">
           <Section>
-            <Text small color="text" fontSize="16px" >
-              {t(
-                'My Debt Status',
-              )}
+            <Text small color="text" fontSize="16px">
+              {t('My Debt Status')}
             </Text>
             <Flex height="150px" alignItems="center" style={{ border: 'none' }}>
               <DebtRatioProgress
                 debtRatio={debtRatio * 100}
                 liquidationThreshold={liquidationThreshold}
                 max={maxValue * 100}
-
               />
             </Flex>
             <Text small color="textSubtle" mt="50px">
-              {t(
-                'Keep in mind: when the price of BNB against BUSD decreases 60%, the debtratio will exceed the',
-              )}
+              {t('Keep in mind: when the price of BNB against BUSD decreases 60%, the debtratio will exceed the')}
             </Text>
           </Section>
 
           <Section>
             <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('APR')}</Text><span> <InfoIcon color="textSubtle" ml="10px" /></span></Flex>
-              {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : (
-                "")}
+              <Flex alignItems="center">
+                <Text color="text" fontWeight="500">
+                  {t('APR')}
+                </Text>
+                <span>
+                  {' '}
+                  <InfoIcon color="textSubtle" ml="10px" />
+                </span>
+              </Flex>
+              <Text>{totalAprDisplay.toFixed(2)}%</Text>
             </Flex>
 
             <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('APR')}</Text><span> <InfoIcon color="textSubtle" ml="10px" /></span></Flex>
-              {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : (
-                "")}
+              <Flex alignItems="center">
+                <Text color="text" fontWeight="500">
+                  {t('APY')}
+                </Text>
+                <span>
+                  <InfoIcon color="textSubtle" ml="10px" />
+                </span>
+              </Flex>
+              <Flex>
+                <Text>{getDisplayApr(getApy(1))}%</Text>
+                <ArrowForwardIcon />
+                <Text>{getDisplayApr(getApy(leverageValue))}%</Text>
+              </Flex>
             </Flex>
             <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('Asset Borrowed')}</Text></Flex>
+              <Flex alignItems="center">
+                <Text color="text" fontWeight="500">
+                  {t('Asset Borrowed')}
+                </Text>
+              </Flex>
               {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
+                <Text>
+                  {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
+                </Text>
               ) : (
-                "")}
+                <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
+              )}
             </Flex>
             <Flex justifyContent="space-between">
-              <Flex alignItems="center"><Text color="text" fontWeight="500" >{t('Assets Supplied')}</Text></Flex>
-              {farmData ? (
-                <>
-                  <Text>
-                    {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
-                  </Text>
-
-                </>
-              ) : (
-                "")}
+              <Flex alignItems="center">
+                <Text color="text" fontWeight="500">
+                  {t('Assets Supplied')}
+                </Text>
+              </Flex>
+              <Text>
+                {radio === tokenName ? Number(tokenInput || 0)?.toFixed(3) : Number(quoteTokenInput || 0)?.toFixed(3)}{' '}
+                {radio.replace('wBNB', 'BNB')} +{' '}
+                {radio === tokenName ? Number(quoteTokenInput || 0)?.toFixed(3) : Number(tokenInput || 0)?.toFixed(3)}{' '}
+                {
+                  radio === tokenName
+                    ? quoteTokenName.replace('wBNB', 'BNB')
+                    : tokenName.replace('wBNB', 'BNB') /* radioQuote.replace('wBNB', 'BNB') */
+                }
+              </Text>
             </Flex>
 
             <Flex justifyContent="space-between">
@@ -874,14 +1028,10 @@ const Farm = () => {
                 <Text>{t('Price Impact')}</Text>
                 {priceImpactTooltipVisible && priceImpactTooltip}
                 <span ref={priceImpactTargetRef}>
-                  <InfoIcon color="textSubtle" ml="10px" />
+                  <InfoIcon ml="10px" />
                 </span>
               </Flex>
-              {farmData ? (
-                <Text color="#1DBE03">+{(farmData[4] * 100).toPrecision(3)} %</Text>
-              ) : (
-                <Text color="#1DBE03"> 0.00 %</Text>
-              )}
+              {farmData ? <Text>{(farmData[4] * 100).toPrecision(3)}%</Text> : <Text> 0.00%</Text>}
             </Flex>
             <Flex justifyContent="space-between">
               <Flex>
@@ -891,7 +1041,7 @@ const Farm = () => {
                   <InfoIcon color="textSubtle" ml="10px" />
                 </span>
               </Flex>
-              <Text color="#1DBE03">+{tradingFeesfarm.toPrecision(3)} %</Text>
+              <Text>{tradingFeesfarm.toPrecision(3)}%</Text>
             </Flex>
             <Flex justifyContent="space-between">
               <Text>{t('Position Value')}</Text>
@@ -919,7 +1069,23 @@ const Farm = () => {
           </Section>
         </Flex>
       </SectionWrapper>
-
+      <Flex justifyContent="space-evenly">
+        {isApproved ? null : <Button onClick={handleApprove}>{t('Approve')}</Button>}
+        <Button
+          onClick={handleConfirm}
+          isLoading={isPending}
+          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          disabled={
+            !account ||
+            !isApproved ||
+            (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+            (tokenInput === undefined && quoteTokenInput === undefined) ||
+            isPending
+          }
+        >
+          {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
+        </Button>
+      </Flex>
     </Page>
   )
 }

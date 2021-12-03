@@ -36,6 +36,7 @@ import {
   getAdjustData,
   getAdjustPositionRepayDebt,
 } from '../helpers'
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
 interface LocationParams {
   data: any
@@ -224,8 +225,8 @@ const AdjustPositionSA = () => {
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
-  const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
-
+  // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
+  const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)
@@ -401,7 +402,7 @@ const AdjustPositionSA = () => {
         </Flex>
 
         {/* default always show add collateral */}
-        {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) ? (
+        {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
               <Text>
@@ -721,13 +722,13 @@ const AdjustPositionSA = () => {
           ) : (
             <>
               <Text>
-                {t('You can customize your position with partially')}{' '}
+                {t('You can customize your position with ')}{' '}
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
                   style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 >
-                  {t('repay your debt')}
+                  {t('Partially Close Your Position')}
                 </Text>
               </Text>
               <Box>

@@ -303,7 +303,7 @@ export const exchangefarmingtoken = (exchangeValue, leverage, tradefee, basetoke
 };
 
 export const RunLogic = (RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList, lpAprList, PriceList, BaseTokenName, leverageOpen, DayNum) => {
-    let debtNum = 10000  // 假设债务数量 仅用作计算 该值大小不会对结果产生影响
+    let debtNum = 10000  // Assuming data , that the value is only used to calculate the size does not affect the result
     const lpValueToken1 = 0.0
     const lpValueToken0 = 0.0
     const risk = 0.0

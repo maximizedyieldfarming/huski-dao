@@ -23,19 +23,25 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalVolumeCell = ({ supply }) => {
+const TotalVolumeCell = ({ volumeLocked }) => {
   const { isMobile } = useMatchBreakpoints()
 
   const { t } = useTranslation()
-  const formatedSupply = supply && parseFloat(formatBigNumber(supply).replace(/,/g, ''))
+  const formatedSupply = volumeLocked && parseFloat(formatBigNumber(Number(volumeLocked)).replace(/,/g, ''))
 
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="12px" color="textSubtle" textAlign="left">
-          {t('Total Value Staked')}
+          {t('Total Volume Locked')}
         </Text>
-        {supply ? <Text fontWeight='500' mt='10px'>{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}
+        {volumeLocked ? (
+          <Text fontWeight="500" mt="10px">
+            {nFormatter(formatedSupply) || '0.00'}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

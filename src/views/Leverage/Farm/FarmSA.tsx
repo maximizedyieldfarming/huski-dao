@@ -15,7 +15,7 @@ import {
     AutoRenewIcon,
     BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
 } from 'husky-uikit1.0'
-
+import Select from 'components/Select/Select'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -38,7 +38,7 @@ import 'echarts/lib/component/markPoint'
 import ReactEcharts from 'echarts-for-react'
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
-import TradingViewWidget, { Themes } from 'react-tradingview-widget';
+// import TradingViewWidget, { Themes } from 'react-tradingview-widget';
 
 // import ReactHighstock from 'react-highcharts/bundle/ReactHighstock.src';
 import { useWeb3React } from '@web3-react/core'
@@ -51,14 +51,14 @@ import {
     getRunLogic,
     getRunLogic1,
 } from '../helpers'
-
+import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
 interface RouteParams {
     token: string
 }
 
 interface LocationParams {
-    data?: any
+    singleData?: any
     singleLeverage?: number
     marketStrategy?: string
 }
@@ -94,7 +94,7 @@ const SectionWrapper = styled(Page)`
     gap: 1rem;
     &.infoSide {
       > ${Box} {
-        height: 100%;
+       // height:;
       }
     }
   }
@@ -156,7 +156,7 @@ const FarmSA = () => {
     const { account } = useWeb3React()
 
     const {
-        state: { data, singleLeverage, marketStrategy },
+        state: { singleData: data, singleLeverage, marketStrategy },
     } = useLocation<LocationParams>()
 
     const singleFarm = data
@@ -174,13 +174,13 @@ const FarmSA = () => {
     let quoteTokenName
     let riskKillThreshold
 
-    if (marketStrategy === 'Bull') { // bull === 2x long
-        tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-        quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+    if (marketStrategy.includes('bull')) { // bull === 2x long
+        tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+        quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
         riskKillThreshold = singleFarm?.quoteTokenLiquidationThreshold
     } else { // 2x short || 3x short
-        tokenName = singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-        quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+        tokenName = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+        quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
         riskKillThreshold = singleFarm?.liquidationThreshold
     }
 
@@ -245,7 +245,7 @@ const FarmSA = () => {
 
     const handleApprove = async () => {
         let contract
-        if (marketStrategy === 'Bull') {
+        if (marketStrategy.includes('bull')) {
             contract = approveContract
         } else {
             contract = quoteTokenApproveContract //  approveContract
@@ -272,8 +272,12 @@ const FarmSA = () => {
     const cakePrice = useCakePrice()
     const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
     const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
-    const { borrowingInterest } = getBorrowingInterest(singleFarm, tokenName)
-    const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
+    // const { borrowingInterest } = getBorrowingInterest(singleFarm, tokenName)
+    // const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
+
+    const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
+    const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
+
 
     const getApr = (lvg: number) => {
         const totalapr =
@@ -293,7 +297,7 @@ const FarmSA = () => {
     let tokenInputValue
     let quoteTokenInputValue
 
-    if (selectedToken.symbol.replace('wBNB', 'BNB') !== tokenName) {
+    if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
         tokenInputValue = 0;
         quoteTokenInputValue = inputValue
     } else {
@@ -371,15 +375,17 @@ const FarmSA = () => {
         let contract
         let amount
         let workerAddress
-
-        if (marketStrategy === 'Bull') { // bull === 2x long
-            if (selectedToken.symbol.replace('wBNB', 'BNB') === tokenName) {  // token is farm token
+console.info('111',marketStrategy)
+        if (marketStrategy.includes('bull') ) { // bull === 2x long
+            console.info('1111bull')
+            if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')=== tokenName) {  // token is farm token
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
                 dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
+                console.info('!== tokenName')
                 tokenInputValue = 0;
                 quoteTokenInputValue = inputValue
                 farmingTokenAmount = Number(quoteTokenInputValue).toString()
@@ -393,7 +399,7 @@ const FarmSA = () => {
             workerAddress = singleFarm?.QuoteTokenInfo.address
 
         } else { // 2x short || 3x short
-            if (selectedToken.symbol.replace('wBNB', 'BNB') === tokenName) {
+            if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
@@ -431,7 +437,7 @@ const FarmSA = () => {
     }
 
     let borrowingInterestParam
-    if (marketStrategy === 'Bull') { // bull === 2x long
+    if (marketStrategy.includes('bull')) { // bull === 2x long
         borrowingInterestParam = borrowingInterestQuoteToken
     } else { // 2x short || 3x short
         borrowingInterestParam = borrowingInterest
@@ -557,8 +563,7 @@ const FarmSA = () => {
 
         const option = {
             rangeSelector: {
-
-                buttons: [{ // 时间范围按钮数组
+                buttons: [{
                     type: 'month',
                     count: 1,
                     text: '1m'
@@ -582,11 +587,7 @@ const FarmSA = () => {
                     text: 'All'
                 }],
                 selected: 1  // 默认选中的范围，值为上面 buttons 数组的下标（从 0 开始）
-                // selected: 2
             },
-            // title: {
-            //     text: 'asdasdasdas'
-            // },
             plotOptions: {
                 series: {
                     showInLegend: true
@@ -608,26 +609,143 @@ const FarmSA = () => {
         return option
     }
 
-    const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, { placement: 'right' })
+const getSelectOptions = () => {
+  if (marketStrategy === 'neutral') {
+    return [
+      {
+        value: 'neutral',
+        label: 'Neutral strategy 2x',
+      },
+      {
+        value: 'bear',
+        label: 'Bear strategy 2x',
+      },
+      {
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+      {
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+    ]
+  }
+  if (marketStrategy === 'bear') {
+    return [
+      {
+        value: 'bear',
+        label: 'Bear strategy 2x',
+      },
+      {
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+      {
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+      {
+        value: 'neutral',
+        label: 'Neutral strategy 2x',
+      },
+    ]
+  }
+  if (marketStrategy === 'bull2x') {
+    return [
+      {
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+      {
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+      {
+        value: 'bear',
+        label: 'Bear strategy 2x',
+      },
+      {
+        value: 'neutral',
+        label: 'Neutral strategy 2x',
+      },
+    ]
+  }
+  return [
+    {
+      value: 'bull3x',
+      label: 'Bull Strategy 3x',
+    },
+    {
+      value: 'bull2x',
+      label: 'Bull Strategy 2x',
+    },
+    {
+      value: 'bear',
+      label: 'Bear strategy 2x',
+    },
+    {
+      value: 'neutral',
+      label: 'Neutral strategy 2x',
+    },
+  ]
+}
+
+  const yieldFarming = yieldFarmData * singleLeverage
+  const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
+  const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
+  const dailyApr = apr / 365
+
+    const { tooltip, targetRef, tooltipVisible } = useTooltip(
+      <>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Yield Farming')}</Text>
+          <Text>{yieldFarming?.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Trading Fees')}</Text>
+          <Text>{tradingFees.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Huski Rewards')}</Text>
+          <Text>{huskyRewards.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Borrowing Interest')}</Text>
+          <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Total APR')}</Text>
+          <Text>{apr.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Total APY')}</Text>
+          <Text>{apy.toFixed(2)}%</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text small>{t('Daily APR')}</Text>
+          <Text>{dailyApr.toFixed(2)}%</Text>
+        </Flex>
+      </>,
+      { placement: 'right' },
+    )
     return (
         <Page>
             <Text bold fontSize="3" color="secondary" mx="auto">
                 {t(
-                    `Farming ${singleFarm.QuoteTokenInfo.name
-                        .replace('WBNB', 'BNB')
-                        .replace(' PancakeswapWorker', '')} Pools`,
+                    `Farming ${singleFarm.QuoteTokenInfo.name.toUpperCase().replace('WBNB', 'BNB')
+                        .replace(' PANCAKESWAPWORKER', '')} Pools`,
                 )}
             </Text>
             <SectionWrapper>
                 <Flex className="graphSide" flex="1">
                     <Section style={{ height: "500px" }}>
-                        <TradingViewWidget
-                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}USD`}
+                       {/*  <TradingViewWidget
+                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')}USD`}
                             theme={Themes.DARK}
                             locale="fr"
                             autosize
-                        />
-                        {/* <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} /> */}
+                        /> */}
+                         <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} /> 
                     </Section>
                     <Section>
                         <ReactEcharts option={getOption()} style={{ height: '500px' }} />
@@ -640,28 +758,11 @@ const FarmSA = () => {
                     <Section>
                         <Box>
                             <Flex alignItems="center" justifyContent="space-between">
-                                <SingleFarmSelect
-                                    options={[
-                                        {
-                                            icon: "bear",
-                                            label: t('Bear Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.quoteToken,
-                                        },
-                                        {
-                                            icon: "bull",
-                                            label: t('Bull Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                        {
-                                            icon: "neutral",
-                                            label: t('Neutral Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                    ]}
+                                <Select
+                                    options={getSelectOptions()}
                                     onChange={(option) => {
                                         setSelectedStrategy(option.value)
                                     }}
-                                    width="calc(80%)"
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
@@ -670,12 +771,12 @@ const FarmSA = () => {
                                     options={[
                                         {
                                             icon: singleFarm?.TokenInfo?.quoteToken,
-                                            label: singleFarm?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB'),
+                                            label: singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
                                             value: singleFarm?.TokenInfo?.quoteToken,
                                         },
                                         {
                                             icon: singleFarm?.TokenInfo?.token,
-                                            label: singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB'),
+                                            label: singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
                                             value: singleFarm?.TokenInfo?.token,
                                         },
                                     ]}
@@ -704,7 +805,7 @@ const FarmSA = () => {
                                         <NumberInput fontSize="16px" fontWeight="bold" placeholder="0.00" value={inputValue} onChange={handleInput} style={{ background: "unset" }} />
 
                                         <Text fontSize="16px" fontWeight="bold" mr="5px">
-                                            {selectedToken.symbol}
+                                            {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>

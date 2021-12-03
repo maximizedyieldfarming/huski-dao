@@ -10,3 +10,4 @@ export {default as ArrowDownIcon} from './ArrowDownIcon';
 export {default as FlexingHuski} from './stake_rewards_img.png'
 export {default as Bone} from './bone1-1x.png'
 export {default as Bone2} from './bone2-1x.png'
+export {default as HuskiIcon} from './HuskiIcon'

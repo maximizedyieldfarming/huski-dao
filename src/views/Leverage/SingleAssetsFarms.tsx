@@ -7,7 +7,7 @@ import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/levera
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
+import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
@@ -210,8 +210,12 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
-  const singleData = farmsData.filter((f) => f.singleFlag === 0);
+  let singleData = farmsData.filter((f) => f.singleFlag === 0);
   console.log(singleData);
+
+
+
+
 
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
@@ -236,6 +240,7 @@ const SingleAssetsFarms: React.FC = () => {
       marketStrategy: 'Bear',
     },
   ]
+
   // let singleNewData = []
 
   // if (bnbArray && bnbArray !== null && bnbArray !== undefined) {
@@ -248,53 +253,82 @@ const SingleAssetsFarms: React.FC = () => {
   //   })
   // }
 
-  // let singlesData = []
+  const singlesData = []
 
-  // if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
-  //   let single
-  //   const farmData = bnbArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
-  //   let single
-  //   const farmData = btcbArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
-  //   let single
-  //   const farmData = ethArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
-  //   let single
-  //   const farmData = huskiArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
-  // if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
-  //   let single
-  //   const farmData = cakeArray
-  //   marketArray.map((item) => {
-  //     const newObject = { farmData }
-  //     single = { ...newObject, ...item }
-  //     singlesData.push(single)
-  //   })
-  // }
+  if (bnbArray && bnbArray !== null && bnbArray !== undefined && bnbArray !== [] && bnbArray.length !== 0) {
+
+    const tokenObject = {
+      name: 'BNB',
+      singleArray: bnbArray
+    }
+    singlesData.push(tokenObject)
+
+    // let single
+    // const farmData = bnbArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+  }
+  if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
+
+    const tokenObject = {
+      name: 'BTCB',
+      singleArray: btcbArray
+    }
+    singlesData.push(tokenObject)
+    // let single
+    // const farmData = btcbArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+  }
+  if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
+    // let single
+    // const farmData = ethArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+    const tokenObject = {
+      name: 'ETH',
+      singleArray: ethArray
+    }
+    singlesData.push(tokenObject)
+  }
+  if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
+    const tokenObject = {
+      name: 'ALPACA',
+      singleArray: huskiArray
+    }
+    singlesData.push(tokenObject)
+
+    // let single
+    // const farmData = huskiArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+  }
+  if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
+    // let single
+    // const farmData = cakeArray
+    // marketArray.map((item) => {
+    //   const newObject = { farmData }
+    //   single = { ...newObject, ...item }
+    //   singlesData.push(single)
+    // })
+    const tokenObject = {
+      name: 'CAKE',
+      singleArray: cakeArray
+    }
+    singlesData.push(tokenObject)
+  }
 
   const data = useGetPositions(account)
   const positionData = usePositions(data)
@@ -330,19 +364,20 @@ const SingleAssetsFarms: React.FC = () => {
   const [strategyFilter, setStrategyFilter] = useState<string>()
 
   // filters
-  // if (pairFilter !== 'all') {
-  //   singlesData = singlesData.filter(
-  //     (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
-  //     //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-  //   )
-  // }
-  /* if (strategyFilter !== 'all') {
-    singleNewData = singleNewData.filter(
-      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
+   if (pairFilter !== 'all') {
+     singleData = singleData.filter(
+       (pool) => pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter || pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+     )
+   }
+ 
+ if (dexFilter !== 'all') {
+    singleData = singleData.filter(
+      (pool) =>
+        pool?.lpExchange === dexFilter 
     )
   }
- */
-
+ 
+  console.info('singlesData', singlesData)
   return (
     <Page>
       <Section>
@@ -418,8 +453,8 @@ const SingleAssetsFarms: React.FC = () => {
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', }}
               startIcon={<PancakeSwapIcon />}
-              isActive={dexFilter === 'pancake_swap'}
-              onClick={() => setDexFilter('pancake_swap')}
+              isActive={dexFilter === 'PancakeSwap'}
+              onClick={() => setDexFilter('PancakeSwap')}
             >
               PancakeSwap
             </FilterOption>
@@ -427,8 +462,8 @@ const SingleAssetsFarms: React.FC = () => {
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', }}
               startIcon={<img src="/images/Uniswap.svg" width='32px' height='32px' alt="" />}
-              isActive={dexFilter === 'wault_swap'}
-              onClick={() => setDexFilter('wault_swap')}
+              isActive={dexFilter === 'UniSwap'}
+              onClick={() => setDexFilter('UniSwap')}
             >
               UniSwap
             </FilterOption>
@@ -480,7 +515,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<HuskiIcon />}
               isActive={pairFilter === 'huski'}
               onClick={() => setPairFilter('huski')}
             >
@@ -498,7 +533,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<BusdIcon />}
               isActive={pairFilter === 'busd'}
               onClick={() => setPairFilter('busd')}
             >
@@ -507,7 +542,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<BtcbIcon />}
               isActive={pairFilter === 'btcb'}
               onClick={() => setPairFilter('btcb')}
             >
@@ -516,7 +551,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<EthIcon />}
               isActive={pairFilter === 'eth'}
               onClick={() => setPairFilter('eth')}
             >
@@ -526,11 +561,10 @@ const SingleAssetsFarms: React.FC = () => {
         </Flex>
       </FiltersWrapper>
       <CardsWrapper>
-        {/* change data to mockSingleAssetData to see the cards appear for testing */}
-        {singleData?.map((asset) => (
+        {singlesData?.map((asset) => (
           <SingleAssetsCard
             data={asset}
-            key={asset?.pid}
+            key={asset?.name}
             strategyFilter={strategyFilter}
           />
         ))}

@@ -14,6 +14,7 @@ import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import nFormatter from 'utils/nFormatter'
+import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -36,12 +37,16 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { t } = useTranslation()
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  // const { singleLeverage } = data
+  const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
+
+  console.info('data',data)
+  console.info('singleData',singleData)
+
 
   const [selectedPool, setSelectedPool] = useState(0)
-  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = data
-  const tokenSymbol = data?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-  const quoteTokenSymbol = data?.TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
+  const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
+  const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  const quoteTokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -50,16 +55,17 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     return null
   }
 
-  const [borrowingAsset, setBorrowingAsset] = useState(data.TokenInfo?.token?.symbol)
-  const { totalTvl } = getTvl(data)
-  const huskyRewards = getHuskyRewards(data, huskyPrice, borrowingAsset)
-  const yieldFarmData = getYieldFarming(data, cakePrice)
-  const { borrowingInterest } = getBorrowingInterest(data, borrowingAsset)
+  const [borrowingAsset, setBorrowingAsset] = useState(singleData.TokenInfo?.token?.symbol)
+  const { totalTvl } = getTvl(singleData)
+  const huskyRewards = getHuskyRewards(singleData, huskyPrice, borrowingAsset)
+  const yieldFarmData = getYieldFarming(singleData, cakePrice)
+  // const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
+  const { borrowingInterest } = useFarmsWithToken(singleData, borrowingAsset)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data.tradeFee * 365) / 100) * lvg) +
+      Number(((singleData.tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -98,7 +104,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         name: 'Neutral strategy 2x',
         singleLeverage: 2,
         direction: 'short',
-        riskLevel: 'Moderate',
+        riskLevel: 'Low',
       },
       {
         value: 'bear',
@@ -106,13 +112,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         singleLeverage: 3,
         direction: 'short',
         riskLevel: 'High',
-      },
-      {
-        value: 'bull',
-        name: 'Bull strategy 1x',
-        singleLeverage: 1,
-        direction: 'short',
-        riskLevel: 'Low',
       },
     ],
     [],
@@ -129,7 +128,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   }
 
   const [selectedStrategy, setSelectedStrategy] = useState(
-    data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
+    singleData?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
   )
 
   const getSelectOptions = React.useCallback(() => {
@@ -194,7 +193,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ]
     }
 
-    if (data?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA') {
+    if (singleData?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA') {
       return [
         {
           value: 'neutral',
@@ -215,14 +214,18 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ]
     }
     const selOptions = []
-    strategies.forEach((strat) => {
-      selOptions.push({
-        label: strat.name,
-        value: strat.value,
+    data.singleArray.forEach((single) => {
+      strategies.forEach((strat) => {
+        selOptions.push({
+          label: `${strat.name} + ${single?.lpSymbol}`,
+          value: strat.value,
+        })
       })
     })
+
+    console.info('selOptions', selOptions)
     return selOptions
-  }, [strategies, data, strategyFilter])
+  }, [strategies, singleData, strategyFilter, data])
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
@@ -246,7 +249,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         trigger: 'axis',
       },
       xAxis: {
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        data: ['first day', 'second day', 'third day', 'fourth day', 'fifth day', 'sixth day', 'seventh day'],
         boundaryGap: false,
         show: false,
         splitLine: {
@@ -263,10 +266,9 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       color: [color],
       series: [
         {
-          symbol: 'none', // no point
+          symbol: 'none',
           type: 'line',
-          data: [1000, 2000, 1500, 3000, 2000, 1200, 800],
-
+          data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
           smooth: 0.3,
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -285,7 +287,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ],
       grid: {
         left: 0,
-        top: 0,
+        top: 1,
         right: 0,
         bottom: 0,
       },
@@ -305,41 +307,53 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   const handleSelectChange = (option) => {
     setSelectedStrategy(option.value)
+    const lpSymbol = option.label.split('+ ').pop()
+    setSingleData(data.singleArray.find((single) => single.lpSymbol === lpSymbol))
   }
-
+console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
   return (
     <Card>
-      <CardHeader data={data} pool={selectedPool} />
+      <CardHeader data={singleData} pool={selectedPool} />
       <CardBody>
         <Box className="avgContainer">
-          <Flex alignItems="center" flexDirection="column">
-            <Flex width="100%" background={`${color}1A`} height="80px" border={`1px solid  ${color}`} borderRadius="10px" justifyContent="space-between">
+        {/*   <Flex alignItems="center" flexDirection="column">
+            <Flex
+              width="100%"
+              background={`${color}1A`}
+              height="80px"
+              border={`1px solid  ${color}`}
+              borderRadius="10px"
+              justifyContent="space-between"
+            >
               <Flex alignItems="center" width="calc(100% - 20px)">
                 <TokenPairImage
                   variant="inverted"
-                  primaryToken={data.QuoteTokenInfo.token}
-                  secondaryToken={data.QuoteTokenInfo.quoteToken}
+                  primaryToken={singleData.QuoteTokenInfo.token}
+                  secondaryToken={singleData.QuoteTokenInfo.quoteToken}
                   width={44}
                   height={44}
-                  primaryImageProps={{ style: { marginLeft: "20px" } }}
+                  primaryImageProps={{ style: { marginLeft: '20px' } }}
                   ml="20px"
                 />
-                <Flex flexDirection="column" marginLeft="30px">
-                  <Text color="#131313" fontSize="18px" fontWeight="600">{data.marketStrategy} Strategy <span style={{ fontSize: "20px", fontWeight: "normal" }}>{singleLeverage}x</span></Text>
+                 <Flex flexDirection="column" marginLeft="30px">
+                  <Text color="#131313" fontSize="18px" fontWeight="600">{singleData.marketStrategy} Strategy <span style={{ fontSize: "20px", fontWeight: "normal" }}>{singleLeverage}x</span></Text>
                   <Text color="#6F767E" fontSize="12px" fontWeight="500">{getSelectOptions()[0].label}</Text>
-                </Flex>
+                </Flex> 
               </Flex>
-              <Flex marginRight="5px"><ChevronDownIcon width="25px" /></Flex>
+              <Flex marginRight="5px">
+                <ChevronDownIcon width="25px" />
+              </Flex>
             </Flex>
-          </Flex>
+          </Flex> */}
+                <Select options={getSelectOptions()} onChange={handleSelectChange} />
           <Grid gridTemplateColumns="1fr 1fr">
             <Flex flexDirection="column" justifyContent="center">
               <Text>{t('APY')}</Text>
 
               <Text bold fontSize="3">
-                {Number(avgApy).toFixed(2)}%
+                {Number(apy).toFixed(2)}%
               </Text>
-              <Flex alignItems="center" >
+              <Flex alignItems="center">
                 <ArrowUpIcon width="13px" color={color} />
                 <Text fontSize="13px" color={color}>
                   {Number(avgApy).toFixed(2)}%
@@ -363,11 +377,15 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
           <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
-            <Text color={color} fontWeight="bold">{riskLevel}</Text>
+            <Text color={color} fontWeight="bold">
+              {riskLevel}
+            </Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earn')}</Text>
-            <Text>{dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}</Text>
+            <Text>
+              {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
+            </Text>
           </Flex>
         </Box>
         <Flex justifyContent="center">
@@ -376,11 +394,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
             as={Link}
             to={(location) => ({
               ...location,
-              pathname: `${location.pathname}/farm/${data?.lpSymbol.replace(' LP', '')}`,
+              pathname: `${location.pathname}/farm/${singleData?.lpSymbol.replace(' LP', '')}`,
               state: {
-                data,
-                singleLeverage: data?.singleLeverage,
-                marketStrategy: data?.marketStrategy,
+                singleData,
+                singleLeverage,
+                marketStrategy: selectedStrategy,
               },
             })}
             disabled={!account || !apy}

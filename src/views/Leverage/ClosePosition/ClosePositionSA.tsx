@@ -191,7 +191,7 @@ const ClosePositionSA = () => {
                 />
               </Box>
               <Text style={{ whiteSpace: 'nowrap' }} ml="5px">
-                {lpSymbolName.replace(' PancakeswapWorker', '')}
+                {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace("WBNB", "BNB")}
               </Text>
             </Flex>
           </Bubble>

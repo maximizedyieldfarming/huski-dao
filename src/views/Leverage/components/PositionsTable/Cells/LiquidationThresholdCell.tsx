@@ -3,10 +3,14 @@ import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
-
 import { useTranslation } from 'contexts/Localization'
 import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
+
+interface Props {
+  liquidationThreshold: number
+  noDebt?: boolean
+}
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
@@ -23,7 +27,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const LiquidationThresholdCell = ({ liquidationThreshold }) => {
+const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDebt }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
@@ -32,6 +36,15 @@ const LiquidationThresholdCell = ({ liquidationThreshold }) => {
     </>,
     { placement: 'top-start' },
   )
+ if (noDebt) {
+    return (
+      <StyledCell role="cell">
+        <CellContent>
+          <Text>{t('No Debt')}</Text>
+        </CellContent>
+      </StyledCell>
+    )
+  }
   return (
     <StyledCell role="cell">
       <CellContent>

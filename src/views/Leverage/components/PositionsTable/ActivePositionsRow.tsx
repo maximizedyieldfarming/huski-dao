@@ -18,7 +18,7 @@ import DebtRatioCell from './Cells/DebtRatioCell'
 import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
 import SafetyBufferCell from './Cells/SafetyBufferCell'
 import ProfitsCell from './Cells/ProfitsCell'
-// import StrategyCell from './Cells/StrategyCell'
+import StrategyCell from './Cells/StrategyCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -105,11 +105,11 @@ const ActivePositionsRow = ({ data }) => {
       <StyledRow role="row">
         <NameCell name={symbolName} positionId={positionId} />
         <PoolCell
-          pool={lpSymbolName.replace(' PancakeswapWorker', '')}
+          pool={lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
           quoteToken={quoteTokenValue}
           token={tokenValue}
         />
-        {/*         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} */}
+   {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} 
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
         {pathname.includes('farms') ? (
           <DebtCell
@@ -132,7 +132,7 @@ const ActivePositionsRow = ({ data }) => {
         {pathname.includes('farms') ? (
           <>
             <DebtRatioCell debtRatio={debtRatio} />
-            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} />{' '}
+            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} noDebt={debtValueNumber.toNumber() === 0 && debtRatio.toNumber() === 0}/>{' '}
           </>
         ) : null}
         <SafetyBufferCell
@@ -140,6 +140,7 @@ const ActivePositionsRow = ({ data }) => {
           tokenName={tokenValue?.symbol}
           quoteTokenName={quoteTokenValue?.symbol}
           priceDrop={new BigNumber(dropData).toFixed(2, 1)}
+          noDebt={debtValueNumber.toNumber() === 0 && debtRatio.toNumber() === 0}
         />
         {/* <ProfitsCell profitLoss={profitLoss} /> */}
         <ActionCell

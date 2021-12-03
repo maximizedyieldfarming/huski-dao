@@ -27,6 +27,7 @@ const AprCell = ({ getApyData }) => {
   const { t } = useTranslation()
 
   const { stakeApr, apy } = getApyData
+  // console.log('AprCell', getApyData)
 
   const apyCell = (e) => {
     const value = e * 100
@@ -53,18 +54,16 @@ const AprCell = ({ getApyData }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex justifyContent="center" alignItems ="center">
-          <Text fontSize="12px" color="textSubtle" textAlign="left" mr='5px'>
-            {t('APY')}
-          </Text>
-          <span ref={targetRef}>
-            <InfoIcon color="textSubtle" stroke='1px'  />
-          </span>
-        </Flex>
+        <Text fontSize="12px" color="textSubtle" textAlign="left" mb="auto">
+          {t('APY')}
+        </Text>
         {apy ? (
           <Flex alignItems="center">
-            <Text fontWeight='500' color="text" >{apyCell(apy)}</Text>
+            <Text>{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

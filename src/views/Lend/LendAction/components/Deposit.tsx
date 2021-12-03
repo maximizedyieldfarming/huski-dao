@@ -65,7 +65,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
-  // const { history } = useHistory<any>()
+  const history = useHistory()
 
   const setAmountToMax = () => {
     setAmount(userTokenBalance)
@@ -237,7 +237,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             fontWeight="bold"
             fontSize="16px"
             style={{ height: '100%' }}
-          // onClick={() => history.push('/lend')}
+            onClick={() => history.goBack()}
           >
             {t('Back')}
           </Text>
@@ -250,7 +250,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             isLoading={isApproving}
             endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           >
-            {isPending ? t('Approving') : t('Transfer')}
+            {isPending ? t('Approving') : t('Approve')}
           </Button>
         )} */}
         {isApproved ? null : (
