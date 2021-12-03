@@ -36,7 +36,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { t } = useTranslation()
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  const singleData = data?.singleArray[0]
+  const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
 
   console.info('data',data)
   console.info('singleData',singleData)
@@ -212,14 +212,18 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ]
     }
     const selOptions = []
-    strategies.forEach((strat) => {
-      selOptions.push({
-        label: strat.name,
-        value: strat.value,
+    data.singleArray.forEach((single) => {
+      strategies.forEach((strat) => {
+        selOptions.push({
+          label: `${strat.name} + ${single?.lpSymbol}`,
+          value: strat.value,
+        })
       })
     })
+
+    console.info('selOptions', selOptions)
     return selOptions
-  }, [strategies, singleData, strategyFilter])
+  }, [strategies, singleData, strategyFilter, data])
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
@@ -301,8 +305,10 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   const handleSelectChange = (option) => {
     setSelectedStrategy(option.value)
+    const lpSymbol = option.label.split('+ ').pop()
+    setSingleData(data.singleArray.find((single) => single.lpSymbol === lpSymbol))
   }
-
+console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
   return (
     <Card>
       <CardHeader data={singleData} pool={selectedPool} />

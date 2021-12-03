@@ -58,7 +58,7 @@ interface RouteParams {
 }
 
 interface LocationParams {
-    data?: any
+    singleData?: any
     singleLeverage?: number
     marketStrategy?: string
 }
@@ -156,7 +156,7 @@ const FarmSA = () => {
     const { account } = useWeb3React()
 
     const {
-        state: { data, singleLeverage, marketStrategy },
+        state: { singleData: data, singleLeverage, marketStrategy },
     } = useLocation<LocationParams>()
 
     const singleFarm = data

@@ -28,7 +28,7 @@ const DropDownListContainer = styled.div`
   transform-origin: top;
   opacity: 0;
   width: 100%;
-
+overflow: auto;
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 110px;
   }
@@ -60,12 +60,14 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
 
       ${DropDownListContainer} {
         height: auto;
+        max-height: 300px;
         transform: scaleY(1);
         opacity: 1;
         border: 1px solid #efefef;
         border-top-width: 0;
         border-radius: 0 0 16px 16px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
+overflow: auto;
       }
     `}
 
@@ -82,6 +84,7 @@ const DropDownList = styled.ul`
   margin: 0;
   box-sizing: border-box;
   z-index: ${({ theme }) => theme.zIndices.dropdown};
+overflow: auto;
 `
 
 const ListItem = styled.li`
