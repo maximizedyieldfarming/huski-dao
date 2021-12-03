@@ -46,7 +46,7 @@ const PoolCell = ({ pool, tokenData,}) => {
             <Text mt='-3px' bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
               {pool}
             </Text>
-            <Text fontSize="12px"  mt='5px' color="textSubtle">Pancakeswap</Text>
+            <Text fontSize="12px" mt='5px' color="textSubtle">{tokenData?.lpExchange}</Text>
           </Flex>
         </Flex>
       </CellContent>

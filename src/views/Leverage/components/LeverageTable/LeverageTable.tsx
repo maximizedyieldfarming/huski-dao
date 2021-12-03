@@ -3,13 +3,12 @@ import styled from 'styled-components'
 import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/Select'
-import { useCakePrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
 import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
-import { getYieldFarming, getTvl } from '../../helpers'
-
+import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import LeverageRow from './LeverageRow'
 import LeverageHeaderRow from './LeverageHeaderRow'
 
@@ -113,6 +112,7 @@ const LeverageTable = ({ leverageData }) => {
   }
 
   // sort feature
+  const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -130,8 +130,29 @@ const LeverageTable = ({ leverageData }) => {
       case 'apy':
         return orderBy(
           dataToSort,
-          (pool) =>
-            pool.totalToken ? parseFloat(getDisplayApr(getYieldFarming(pool, cakePrice) * pool?.leverage)) : 0,
+          (pool) => {
+            const huskyRewards = getHuskyRewards(pool, huskyPrice, pool?.TokenInfo?.token?.symbol)
+            const yieldFarmData = getYieldFarming(pool, cakePrice)
+
+            const { borrowingInterest } = getBorrowingInterest(pool, pool?.TokenInfo?.token?.symbol)
+
+            const getApr = (lvg) => {
+              const apr =
+                Number((yieldFarmData / 100) * lvg) +
+                Number(((pool.tradeFee * 365) / 100) * lvg) +
+                Number(huskyRewards * (lvg - 1)) -
+                Number(borrowingInterest * (lvg - 1))
+              return apr
+            }
+
+            const getApy = (lvg) => {
+              const apr = getApr(lvg)
+              // eslint-disable-next-line no-restricted-properties
+              const apy = Math.pow(1 + apr / 365, 365) - 1
+              return apy * 100
+            }
+            return pool.totalToken ? parseFloat(getDisplayApr(getApy(pool?.leverage))) : 0
+          },
           'desc',
         )
       case 'tvl':
@@ -157,6 +178,12 @@ const LeverageTable = ({ leverageData }) => {
         pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
+  if (dexFilter !== 'all') {
+    farmsData = farmsData.filter(
+      (pool) =>
+        pool?.lpExchange === dexFilter 
+    )
+  }
 
   const { t } = useTranslation()
   return (
@@ -179,8 +206,8 @@ const LeverageTable = ({ leverageData }) => {
                   variant="tertiary"
                   style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end',}}
                   startIcon={<PancakeSwapIcon />}
-                  isActive={dexFilter === 'pancake_swap'}
-                  onClick={() => setDexFilter('pancake_swap')}
+                  isActive={dexFilter === 'PancakeSwap'}
+                  onClick={() => setDexFilter('PancakeSwap')}
                 >
                   PancakeSwap
                 </FilterOption>
@@ -188,8 +215,8 @@ const LeverageTable = ({ leverageData }) => {
                   variant="tertiary"
                   style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end',}}
                   startIcon={<img src="/images/BUSD.svg" width='32px' height='32px' alt="" />}
-                  isActive={dexFilter === 'wault_swap'}
-                  onClick={() => setDexFilter('wault_swap')}
+                  isActive={dexFilter === 'WaultSwap'}
+                  onClick={() => setDexFilter('WaultSwap')}
                 >
                   WaultSwap
                 </FilterOption>
@@ -227,7 +254,7 @@ const LeverageTable = ({ leverageData }) => {
                 <FilterOption
                   variant="tertiary"
                   style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
-                  startIcon={<BnbIcon />}
+                  startIcon={<BusdIcon />}
                   isActive={pairFilter === 'busd'}
                   onClick={() => setPairFilter('busd')}
                 >
@@ -236,7 +263,7 @@ const LeverageTable = ({ leverageData }) => {
                 <FilterOption
                   variant="tertiary"
                   style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
-                  startIcon={<BnbIcon />}
+                  startIcon={<BtcbIcon />}
                   isActive={pairFilter === 'btcb'}
                   onClick={() => setPairFilter('btcb')}
                 >
@@ -245,7 +272,7 @@ const LeverageTable = ({ leverageData }) => {
                 <FilterOption
                   variant="tertiary"
                   style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
-                  startIcon={<BnbIcon />}
+                  startIcon={<EthIcon />}
                   isActive={pairFilter === 'eth'}
                   onClick={() => setPairFilter('eth')}
                 >
