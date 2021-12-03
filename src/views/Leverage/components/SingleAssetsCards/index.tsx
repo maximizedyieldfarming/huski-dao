@@ -239,7 +239,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         trigger: 'axis',
       },
       xAxis: {
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        data: ['first day', 'second day', 'third day', 'fourth day', 'fifth day', 'sixth day', 'seventh day'],
         boundaryGap: false,
         show: false,
         splitLine: {
@@ -258,8 +258,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         {
           symbol: 'none', // no point
           type: 'line',
-          data: [1000, 2000, 1500, 3000, 2000, 1200, 800],
-
+          data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
           smooth: 0.3,
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -278,7 +277,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ],
       grid: {
         left: 0,
-        top: 0,
+        top: 1,
         right: 0,
         bottom: 0,
       },
@@ -340,7 +339,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               <Text>{t('APY')}</Text>
 
               <Text bold fontSize="3">
-                {Number(avgApy).toFixed(2)}%
+                {Number(apy).toFixed(2)}%
               </Text>
               <Flex alignItems="center">
                 <ArrowUpIcon width="13px" color={color} />
