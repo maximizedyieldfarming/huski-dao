@@ -858,6 +858,12 @@ const AdjustPosition = () => {
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
+React.useEffect(() => {
+  if (currentPositionLeverage === 1 && targetPositionLeverage === 1) {
+    setIsAddCollateral(false)
+  }
+}, [setIsAddCollateral, targetPositionLeverage, currentPositionLeverage])
+
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
       <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
