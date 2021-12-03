@@ -23,7 +23,7 @@ import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BnbIcon, BtcbIcon, BusdIcon } from 'assets'
-import Select from 'components/Select/CustomSelect'
+import Select from 'components/Select/Select'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault, useERC20 } from 'hooks/useContract'
@@ -321,20 +321,86 @@ const Farm = () => {
   }
 
   const options = () => {
+    if (
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'CAKE' ||
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'USDC' ||
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'SUSHI' ||
+      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'DOT'
+    ) {
+      return [
+        {
+          label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.token.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+        },
+        {
+          label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.token.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+        },
+      ]
+    }
+    if (
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'CAKE' ||
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'USDC' ||
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'SUSHI' ||
+      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'DOT'
+    ) {
+      return [
+        {
+          label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.quoteToken.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+        },
+        {
+          label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.quoteToken.symbol,
+          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+        },
+      ]
+    }
     return [
       {
-        label: radio.toUpperCase().replace('WBNB', 'BNB'),
-        value: radio,
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol
+            : tokenData?.TokenInfo?.quoteToken?.symbol,
+        icon: (
+          <TokenImage
+            token={
+              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                ? tokenData?.TokenInfo.token
+                : tokenData?.TokenInfo?.quoteToken
+            }
+            width={20}
+            height={20}
+          />
+        ),
       },
       {
         label:
-          radio === tokenData?.TokenInfo?.token?.symbol
-            ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
-            : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol
+            : tokenData?.TokenInfo?.token?.symbol,
         value:
-          radio === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        icon: (
+          <TokenImage
+            token={
+              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                ? tokenData?.TokenInfo.quoteToken
+                : tokenData?.TokenInfo?.token
+            }
+            width={20}
+            height={20}
+          />
+        ),
       },
     ]
   }
@@ -586,7 +652,6 @@ const Farm = () => {
     }
   }, [leverageValue, moveVal.width])
 
-  console.log('sel', selectedBorrowing, 'radio', radio, 'token', tokenData?.TokenInfo?.token?.symbol)
   const getSelectedToken = (name: string) => {
     let selectedToken
     if (tokenData?.TokenInfo?.token?.symbol.toUpperCase() === name.toUpperCase()) {
@@ -841,11 +906,6 @@ const Farm = () => {
               )} */}
 
               <Select
-                icon={
-                  <Box width={20} height={20}>
-                    <TokenImage token={selectedToken} width={20} height={20} />
-                  </Box>
-                }
                 options={options()}
                 onChange={(option) => setRadio(option.value)}
               />
