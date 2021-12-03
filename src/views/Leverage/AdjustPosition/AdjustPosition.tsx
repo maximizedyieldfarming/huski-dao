@@ -753,11 +753,11 @@ const AdjustPosition = () => {
                   {Number(tokenInputValue) > Number(Number(tokenInputValue)?.toFixed(3))
                     ? `${Number(tokenInputValue?.toFixed(3))}...`
                     : Number(tokenInputValue)?.toFixed(3)}{' '}
-                  {tokenValue?.symbol} +{' '}
+                  {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
                   {Number(quoteTokenInputValue) > Number(quoteTokenInputValue?.toFixed(3))
                     ? `${Number(tokenInputValue?.toFixed(3))}...`
                     : Number(quoteTokenInputValue)?.toFixed(3)}{' '}
-                  {quoteTokenValue?.symbol}
+                  {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
@@ -833,12 +833,12 @@ const AdjustPosition = () => {
           <Text>{t('Updated Total Assets')}</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol} + {farmingTokenInPosition?.toFixed(2)}{' '}
-              {quoteTokenValue?.symbol}
+              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} + {farmingTokenInPosition?.toFixed(2)}{' '}
+              {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
             </Text>
           ) : (
             <Text>
-              0.00 {tokenValue?.symbol} + 0.00 {quoteTokenValue?.symbol}
+              0.00 {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} + 0.00 {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
             </Text>
           )}
         </Flex>
@@ -859,6 +859,12 @@ const AdjustPosition = () => {
     }
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
+
+React.useEffect(() => {
+  if (currentPositionLeverage === 1 && targetPositionLeverage === 1) {
+    setIsAddCollateral(false)
+  }
+}, [setIsAddCollateral, targetPositionLeverage, currentPositionLeverage])
 
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
@@ -991,11 +997,11 @@ const AdjustPosition = () => {
                         {Number(tokenInputValue) > Number(Number(tokenInputValue).toFixed(3))
                           ? `${Number(tokenInputValue.toFixed(3))}...`
                           : Number(tokenInputValue).toFixed(3)}{' '}
-                        {tokenValue?.symbol} +{' '}
+                        {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
                         {Number(quoteTokenInputValue) > Number(quoteTokenInputValue.toFixed(3))
                           ? `${Number(tokenInputValue.toFixed(3))}...`
                           : Number(quoteTokenInputValue).toFixed(3)}{' '}
-                        {quoteTokenValue?.symbol}
+                        {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
                       </Text>
                     ) : (
                       <Skeleton width="80px" height="16px" />
@@ -1007,8 +1013,8 @@ const AdjustPosition = () => {
                     <Text>{t('Collateral to be Added')}</Text>
                     {farmingData ? (
                       <Text>
-                        {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol} +{' '}
-                        {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol}
+                        {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
+                        {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
                       </Text>
                     ) : (
                       <Skeleton width="80px" height="16px" />

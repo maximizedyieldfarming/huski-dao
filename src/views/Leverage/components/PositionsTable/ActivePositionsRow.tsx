@@ -105,7 +105,7 @@ const ActivePositionsRow = ({ data }) => {
       <StyledRow role="row">
         <NameCell name={symbolName} positionId={positionId} />
         <PoolCell
-          pool={lpSymbolName.replace(' PancakeswapWorker', '')}
+          pool={lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
           quoteToken={quoteTokenValue}
           token={tokenValue}
         />

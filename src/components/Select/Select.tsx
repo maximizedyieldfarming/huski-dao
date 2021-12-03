@@ -7,10 +7,10 @@ const DropDownHeader = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid #EFEFEF;
+  border: 1px solid #efefef;
   border-radius: 16px;
   background: ${({ theme }) => theme.colors.input};
   transition: border-radius 0.15s;
@@ -28,7 +28,7 @@ const DropDownListContainer = styled.div`
   transform-origin: top;
   opacity: 0;
   width: 100%;
-
+overflow: auto;
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 110px;
   }
@@ -42,7 +42,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   border-radius: 16px;
   height: 40px;
   min-width: 110px;
-  width:110px;
+  width: 110px;
   user-select: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {
@@ -53,19 +53,21 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
     props.isOpen &&
     css`
       ${DropDownHeader} {
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid #efefef;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         border-radius: 16px 16px 0 0;
       }
 
       ${DropDownListContainer} {
         height: auto;
+        max-height: 300px;
         transform: scaleY(1);
         opacity: 1;
-        border: 1px solid #EFEFEF;
+        border: 1px solid #efefef;
         border-top-width: 0;
         border-radius: 0 0 16px 16px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
+overflow: auto;
       }
     `}
 
@@ -82,9 +84,12 @@ const DropDownList = styled.ul`
   margin: 0;
   box-sizing: border-box;
   z-index: ${({ theme }) => theme.zIndices.dropdown};
+overflow: auto;
 `
 
 const ListItem = styled.li`
+  display: flex;
+  justify-content: space-evenly;
   list-style: none;
   padding: 8px 16px;
   &:hover {
@@ -100,6 +105,7 @@ export interface SelectProps {
 export interface OptionProps {
   label: string
   value: any
+  icon?: React.ReactNode
 }
 
 const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => {
@@ -143,15 +149,17 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling}>
+          {options[selectedOptionIndex].icon && options[selectedOptionIndex].icon}
           <Text>{options[selectedOptionIndex].label}</Text>
         </DropDownHeader>
       )}
-      <ArrowDropDownIcon color="text" onClick={toggling} />
+      <ArrowDropDownIcon color="text" onClick={toggling} style={{position: "absolute", right:"0"}}/>
       <DropDownListContainer>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
+                {option.icon && option.icon}
                 <Text>{option.label}</Text>
               </ListItem>
             ) : null,

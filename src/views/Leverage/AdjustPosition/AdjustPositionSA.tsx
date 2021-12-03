@@ -402,7 +402,7 @@ const AdjustPositionSA = () => {
         </Flex>
 
         {/* default always show add collateral */}
-        {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) ? (
+        {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
               <Text>
@@ -667,8 +667,7 @@ const AdjustPositionSA = () => {
         ) : null}
 
         {/* if target is 1 */}
-        {targetPositionLeverage === 1 &&
-        Number(targetPositionLeverage) !== Number(currentPositionLeverage.toFixed(2)) ? (
+        {targetPositionLeverage === 1 ? (
           isRepayDebt ? (
             <>
               <Text>
@@ -723,13 +722,13 @@ const AdjustPositionSA = () => {
           ) : (
             <>
               <Text>
-                {t('You can customize your position with partially')}{' '}
+                {t('You can customize your position with ')}{' '}
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
                   style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 >
-                  {t('repay your debt')}
+                  {t('Partially Close Your Position')}
                 </Text>
               </Text>
               <Box>

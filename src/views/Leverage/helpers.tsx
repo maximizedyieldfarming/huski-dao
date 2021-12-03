@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
-import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE } from 'config'
+import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE} from 'config'
 import { dichotomybasetoken, dichotomyfarmingtoken, RunLogic, RunLogic1, adjustRun, adjustPositionRepayDebt } from 'utils/pancakeService'
 import { BIG_TEN } from 'utils/bigNumber'
 
@@ -109,9 +109,9 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
 
   console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
 
-  const tradeFee = 0.0025
-  const ClosePosFee = 5 / 100 / 100;
-  const PancakeTradingFee = 0.25 / 100;
+  // const tradeFee = 0.0025
+  // const ClosePosFee = 5 / 100 / 100;
+  // const PancakeTradingFee = 0.25 / 100;
   const ClosePositionPercentage = 0;
 
   const currentLeverage = 1 + basetokenlpborrowed / (2 * basetokenlp - basetokenlpborrowed)
@@ -135,16 +135,16 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
     tokenInputNum = 0
     quoteTokenInputNum = 0
 
-    const farmdata1 = dichotomybasetoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
+    const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
     console.info('======adjust===aa===', farmdata1);
 
-    const farmdata2 = dichotomyfarmingtoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
+    const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
     console.info('======adjust===111==aa=', farmdata2);
 
 
     if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0 && farmdata2[0] === 0 && farmdata2[1][3] === 0 && farmdata2[2] === 0) {
       console.info('==zijinbuzu')
-      const { data: fData, repayDebt } = adjustRun(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
+      const { data: fData, repayDebt } = adjustRun(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE)
       farmingData = fData;
       repayDebtData = repayDebt
 
@@ -159,11 +159,11 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
 
   } else {// left
 
-    const farmdata1 = dichotomybasetoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false)
+    const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false)
     console.info('======adjust======', farmdata1);
     farmingData = farmdata1;
     if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
-      const farmdata2 = dichotomyfarmingtoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false)
+      const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false)
       console.info('======adjust===111===', farmdata2);
       farmingData = farmdata2;
       if (farmdata2[1][10] > leverage) {
@@ -175,7 +175,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
         const farmingtokenlpnew = quoteTokenInputNum - farmdata2[0] + farmdata2[1][7]
         const basetokenlpborrowednew = basetokenlpborrowed + farmdata2[1][3]
 
-        const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
+        const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE)
 
         repayDebtData = repayDebt
         console.info('=====999===');
@@ -186,7 +186,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
       const basetokenlpnew = tokenInputNum + farmdata1[1][3] - farmdata1[0] + farmdata1[1][6]
       const farmingtokenlpnew = farmdata1[1][2] + quoteTokenInputNum + farmdata1[1][7]
       const basetokenlpborrowednew = basetokenlpborrowed + farmdata1[1][3]
-      const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
+      const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE)
 
       // const { data: fData, repayDebt } = adjustRun(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
       // farmingData = fData;
@@ -313,8 +313,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   const basetokenBegin = parseFloat(tokenAmountTotalValue)
   const farmingtokenBegin = parseFloat(quoteTokenAmountTotalValue)
 
-  const MinimumReceivedPercentage = 1 - 5 / 1000
-  const MaximumSoldPercentage = 1 + 4 / 1000
+  // const MinimumReceivedPercentage = 1 - 5 / 1000
+  // const MaximumSoldPercentage = 1 + 4 / 1000
 
   const num0 = (leverage - 1) / leverage * (basetokenlp + farmingtokenlp / farmingtokenBegin * basetokenBegin)
   const num1 = (basetokenlp * (1 - ClosePosFee) - num0)
@@ -370,7 +370,7 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
       priceImpactClose = AmountToTrade * (1 - PancakeTradingFee) / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin)
       bastokennum = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) + (basetokenBegin - basetokenBegin * farmingtokenBegin / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin))
       willReceive = bastokennum - basetokenlpborrowed
-      minimumReceived = bastokennum * MinimumReceivedPercentage - basetokenlpborrowed
+      minimumReceived = bastokennum * MINIMUM_RECEIVED_PERCENTAGE - basetokenlpborrowed
 
     } else {
       needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
@@ -397,7 +397,7 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
         willReceivebase = 0
         willReceivefarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) - AmountToTrade
         minimumReceivedbase = 0
-        minimumReceivedfarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) - AmountToTrade * MaximumSoldPercentage
+        minimumReceivedfarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) - AmountToTrade * MAXIMUM_SOLD_PERCENTAGE
       }
     }
 

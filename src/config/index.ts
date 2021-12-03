@@ -36,3 +36,9 @@ export const AUCTION_WHITELISTED_BIDDERS_TO_FETCH = 500
 
 export const LIQUIDATION_REWARDS = 0.05
 export const REINVEST_MINUTE = 60
+
+export const TRADE_FEE = 0.0025
+export const CLOSE_POS_FEE = 5 / 100 / 100;
+export const PANCAKE_TRADING_FEE = 0.25 / 100;
+export const MINIMUM_RECEIVED_PERCENTAGE = 1 - 5 / 1000
+export const MAXIMUM_SOLD_PERCENTAGE = 1 + 4 / 1000

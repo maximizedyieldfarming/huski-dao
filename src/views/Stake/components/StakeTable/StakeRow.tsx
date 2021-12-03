@@ -336,7 +336,7 @@ const StakeRow = ({ tokenData }) => {
                     {t('I Want to stake')}
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
-                    {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol })}
+                    {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace("WBNB", "BNB") })}
                     <span style={{ color: '#1A1D1F', fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
                     </span>
@@ -391,7 +391,7 @@ const StakeRow = ({ tokenData }) => {
                     {t('I Want to Unstake')}
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
-                    {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol })}
+                    {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace("WBNB", "BNB") })}
                     <span style={{ color: '#1A1D1F', fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)}
                     </span>

@@ -7,7 +7,7 @@ import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/levera
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
+import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
@@ -210,7 +210,7 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
-  const singleData = farmsData.filter((f) => f.singleFlag === 0);
+  let singleData = farmsData.filter((f) => f.singleFlag === 0);
   console.log(singleData);
 
 
@@ -364,18 +364,19 @@ const SingleAssetsFarms: React.FC = () => {
   const [strategyFilter, setStrategyFilter] = useState<string>()
 
   // filters
-  // if (pairFilter !== 'all') {
-  //   singlesData = singlesData.filter(
-  //     (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
-  //     //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-  //   )
-  // }
-  /* if (strategyFilter !== 'all') {
-    singleNewData = singleNewData.filter(
-      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
+   if (pairFilter !== 'all') {
+     singleData = singleData.filter(
+       (pool) => pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter || pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+     )
+   }
+ 
+ if (dexFilter !== 'all') {
+    singleData = singleData.filter(
+      (pool) =>
+        pool?.lpExchange === dexFilter 
     )
   }
- */
+ 
   console.info('singlesData', singlesData)
   return (
     <Page>
@@ -452,8 +453,8 @@ const SingleAssetsFarms: React.FC = () => {
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', }}
               startIcon={<PancakeSwapIcon />}
-              isActive={dexFilter === 'pancake_swap'}
-              onClick={() => setDexFilter('pancake_swap')}
+              isActive={dexFilter === 'PancakeSwap'}
+              onClick={() => setDexFilter('PancakeSwap')}
             >
               PancakeSwap
             </FilterOption>
@@ -461,8 +462,8 @@ const SingleAssetsFarms: React.FC = () => {
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', }}
               startIcon={<img src="/images/Uniswap.svg" width='32px' height='32px' alt="" />}
-              isActive={dexFilter === 'wault_swap'}
-              onClick={() => setDexFilter('wault_swap')}
+              isActive={dexFilter === 'UniSwap'}
+              onClick={() => setDexFilter('UniSwap')}
             >
               UniSwap
             </FilterOption>
@@ -514,7 +515,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<HuskiIcon />}
               isActive={pairFilter === 'huski'}
               onClick={() => setPairFilter('huski')}
             >
@@ -532,7 +533,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<BusdIcon />}
               isActive={pairFilter === 'busd'}
               onClick={() => setPairFilter('busd')}
             >
@@ -541,7 +542,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<BtcbIcon />}
               isActive={pairFilter === 'btcb'}
               onClick={() => setPairFilter('btcb')}
             >
@@ -550,7 +551,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<EthIcon />}
               isActive={pairFilter === 'eth'}
               onClick={() => setPairFilter('eth')}
             >

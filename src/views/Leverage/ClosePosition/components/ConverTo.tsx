@@ -325,7 +325,7 @@ const ConverTo = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          {debtValueNumber ? (
+          {debtValueNumber !== (undefined || NaN) ? (
             <Text>
               {debtValueNumber.toFixed(3)} {tokenValueSymbol}
             </Text>

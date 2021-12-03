@@ -48,7 +48,7 @@ const LendRow = ({ tokenData }) => {
   const userTokenBalance = getBalanceAmount(
     TokenInfo.token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
   ).toJSON()
-  const userIbTokenBalance = getBalanceAmount(tokenBalanceIb).toJSON()
+  const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
   return (
     <>
       <StyledRow 
@@ -61,7 +61,7 @@ const LendRow = ({ tokenData }) => {
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
         <BalanceCell
           balance={userTokenBalance}
-          balanceIb={userIbTokenBalance}
+          balanceIb={userTokenBalanceIb}
           name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
           decimals={TokenInfo?.token?.decimalsDigits}
         />

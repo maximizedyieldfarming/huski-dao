@@ -59,8 +59,8 @@ const ClosePosition = (props) => {
   } = props
 
   const [isDeposit, setIsDeposit] = useState(true)
-  const handleWithdrawClick = (e) => isDeposit && setIsDeposit(false)
-  const handleDepositClick = (e) => !isDeposit && setIsDeposit(true)
+  const handleWithdrawClick = () => isDeposit && setIsDeposit(false)
+  const handleDepositClick = () => !isDeposit && setIsDeposit(true)
 
   const { positionId, vault } = data
   const { TokenInfo, QuoteTokenInfo } = data?.farmData
@@ -82,7 +82,7 @@ const ClosePosition = (props) => {
   }
 
   const [isCloseEntire, setCloseEntire] = useState(true)
-  const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
+  // const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
 
   return (
     <Page>
@@ -94,7 +94,7 @@ const ClosePosition = (props) => {
           <Text mr="1rem">{t('Which method would you like to use?')}</Text>
         </Flex>
         <Bubble alignSelf="flex-end" alignItems="center">
-          <Text>{symbolName}</Text>
+          <Text>{symbolName.toUpperCase().replace('WBNB', 'BNB')}</Text>
           <Text>#{positionId}</Text>
           <Flex alignItems="center">
             <Box width={40} height={40}>
@@ -107,7 +107,7 @@ const ClosePosition = (props) => {
               />
             </Box>
             <Text style={{ whiteSpace: 'nowrap' }} ml="5px">
-              {lpSymbolName.replace(' PancakeswapWorker', '')}
+              {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
             </Text>
           </Flex>
         </Bubble>
