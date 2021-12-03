@@ -113,7 +113,7 @@ const Leverage: React.FC = () => {
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
-console.info('positionData', positionData)
+  console.info('positionData', positionData)
   const positionFarmsData = []
   if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {
@@ -191,7 +191,7 @@ console.info('positionData', positionData)
           </Text>
           <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
             <Text mb="5px" color="textFarm" fontWeight="700" fontSize="28px">
-              {new BigNumber(reward).toFixed(3, 1)}
+              {new BigNumber(reward || 0).toFixed(3, 1)}
             </Text>
             <StyledButton
               as={Link}

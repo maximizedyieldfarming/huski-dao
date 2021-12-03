@@ -7,7 +7,7 @@ import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/levera
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
+import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
@@ -376,7 +376,7 @@ const SingleAssetsFarms: React.FC = () => {
         pool?.lpExchange === dexFilter 
     )
   }
- */
+ 
   console.info('singlesData', singlesData)
   return (
     <Page>
@@ -515,7 +515,7 @@ const SingleAssetsFarms: React.FC = () => {
             <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
+              startIcon={<HuskiIcon />}
               isActive={pairFilter === 'huski'}
               onClick={() => setPairFilter('huski')}
             >

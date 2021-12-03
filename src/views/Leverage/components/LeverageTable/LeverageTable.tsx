@@ -7,7 +7,7 @@ import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
+import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import LeverageRow from './LeverageRow'
 import LeverageHeaderRow from './LeverageHeaderRow'
@@ -236,7 +236,7 @@ const LeverageTable = ({ leverageData }) => {
                 <FilterOption
                   variant="tertiary"
                   style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px'}}
-                  startIcon={<BnbIcon />}
+                  startIcon={<HuskiIcon />}
                   isActive={pairFilter === 'huski'}
                   onClick={() => setPairFilter('huski')}
                 >
