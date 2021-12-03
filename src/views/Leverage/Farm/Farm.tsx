@@ -22,7 +22,7 @@ import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { BnbIcon, BtcbIcon, BusdIcon, } from 'assets'
+import { BnbIcon, BtcbIcon, BusdIcon } from 'assets'
 import Select from 'components/Select/CustomSelect'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
@@ -73,12 +73,12 @@ const SectionWrapper = styled(Page)`
     flex-direction: row;
   }
   > .gray {
-    width:850px;
-    height:915px;
+    width: 850px;
+    height: 915px;
   }
   > .sideSection {
-    width:500px;
-    height:915px;
+    width: 500px;
+    height: 915px;
     flex-direction: column;
     gap: 1rem;
   }
@@ -87,81 +87,80 @@ const SectionWrapper = styled(Page)`
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.background};
   border-radius: '12px';
-  height:80px;
+  height: 80px;
   padding: 0.5rem;
   flex: 1;
   align-items: center;
 `
 const customBotton = styled(Button)`
-  background:transparent;
-  border:none;
-  color:#6f767e!important;
-  width:25%;
-  margin-top:4px;
-    margin-bottom:4px;
+  background: transparent;
+  border: none;
+  color: #6f767e !important;
+  width: 25%;
+  margin-top: 4px;
+  margin-bottom: 4px;
 `
 const StyledButton = styled(customBotton)`
-
   &:focus {
-    width:25%;
-    border-color:transparent!important;
-    background:white;
-    margin-top:4px;
-    margin-bottom:4px;
-    border-radius:12px;
-    color:#FF6A55!important;
-    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
+    width: 25%;
+    border-color: transparent !important;
+    background: white;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 12px;
+    color: #ff6a55 !important;
+    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04),
+      inset 0px 2px 0px rgba(255, 255, 255, 0.25);
   }
   &:visited {
-    width:25%;
-    border-color:transparent!important;
-    background:white;
-    margin-top:4px;
-    margin-bottom:4px;
-    border-radius:12px;
-    color:#FF6A55!important;
-    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
+    width: 25%;
+    border-color: transparent !important;
+    background: white;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 12px;
+    color: #ff6a55 !important;
+    box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04),
+      inset 0px 2px 0px rgba(255, 255, 255, 0.25);
   }
 `
 interface MoveProps {
-  move: number;
+  move: number
 }
 
-
-const MoveBox = styled(Box) <MoveProps>`
-  margin-left:${({ move }) => move}px;
-  margin-top:-20px;
-  margin-bottom:10px;
-  color:#7B3FE4;
+const MoveBox = styled(Box)<MoveProps>`
+  margin-left: ${({ move }) => move}px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+  color: #7b3fe4;
 `
 const ButtonArea = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.background};
-  border-radius:12px;
-  padding-left:4px;
-  padding-right:4px;
+  border-radius: 12px;
+  padding-left: 4px;
+  padding-right: 4px;
 `
 const StyledNumberInput = styled(NumberInput)`
   background: transparent;
-  border:none;
-  box-shadow:none;
-  font-size:16px;
-  font-weight:700;
+  border: none;
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 700;
   &:focus {
-    box-shadow:none!important;
+    box-shadow: none !important;
   }
-  
 `
 
 const makeLongShadow = (color: any, size: any) => {
-  let i = 2;
-  let shadow = `${i}px 0 0 ${size} ${color}`;
+  let i = 2
+  let shadow = `${i}px 0 0 ${size} ${color}`
 
   for (; i < 856; i++) {
-    shadow = `${shadow}, ${i}px 0 0 ${size} ${color}`;
+    shadow = `${shadow}, ${i}px 0 0 ${size} ${color}`
   }
 
-  return shadow;
-};
+  return shadow
+}
 const RangeInput = styled.input`
   overflow: hidden;
   display: block;
@@ -169,46 +168,42 @@ const RangeInput = styled.input`
   max-width: 850px;
   width: 100%;
   margin: 0;
-  height:32px;
-  
+  height: 32px;
+
   cursor: pointer;
 
   &::-webkit-slider-runnable-track {
     width: 100%;
-    height:32px;
-    background: linear-gradient(to right, #B488FF, #3A009E) 100% 50% / 100% 4px no-repeat transparent;
+    height: 32px;
+    background: linear-gradient(to right, #b488ff, #3a009e) 100% 50% / 100% 4px no-repeat transparent;
   }
 
-  
   &:focus {
     outline: none;
   }
- 
+
   &::-webkit-slider-thumb {
     position: relative;
-    appearance: none!important;
+    appearance: none !important;
     height: 32px;
     width: 28px;
-    
+
     background-image: url('/images/RangeHandle.png');
     background-position: center center;
     background-repeat: no-repeat;
-    
+
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', "-13px")};
+    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
       width: 32px;
-      background:red!important;
+      background: red !important;
     }
   }
- 
-  
 `
-
 
 const Farm = () => {
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
@@ -372,6 +367,7 @@ const Farm = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
+  console.log(farmData)
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -590,17 +586,17 @@ const Farm = () => {
     }
   }, [leverageValue, moveVal.width])
 
-  console.log("sel", selectedBorrowing, 'radio', radio, 'token', tokenData?.TokenInfo?.token?.symbol)
+  console.log('sel', selectedBorrowing, 'radio', radio, 'token', tokenData?.TokenInfo?.token?.symbol)
   const getSelectedToken = (name: string) => {
-    let selectedToken 
+    let selectedToken
     if (tokenData?.TokenInfo?.token?.symbol.toUpperCase() === name.toUpperCase()) {
       selectedToken = tokenData?.TokenInfo?.token
     } else {
       selectedToken = tokenData?.TokenInfo?.quoteToken
     }
-    return {selectedToken}
+    return { selectedToken }
   }
-  const {selectedToken} = getSelectedToken(radio)
+  const { selectedToken } = getSelectedToken(radio)
   return (
     <Page>
       <Text

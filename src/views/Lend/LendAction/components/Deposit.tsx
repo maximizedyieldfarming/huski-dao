@@ -242,7 +242,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             {t('Back')}
           </Text>
         </Flex>
-        {isApproved ? null : (
+        {/* {isApproved ? null : (
           <Button
             style={{ width: '160px', height: '57px', borderRadius: '16px' }}
             onClick={handleApprove}
@@ -252,7 +252,17 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
           >
             {isPending ? t('Approving') : t('Approve')}
           </Button>
-        )}
+        )} */}
+        {isApproved ? null : (
+          <Button
+            style={{ width: '160px', height: '57px', borderRadius: '16px' }}
+            onClick={handleApprove}
+            disabled={!account || isApproving}
+            isLoading={isApproving}
+            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          >
+            {isPending ? t('Approving') : t('Approve')}
+          </Button>)}
         <Button
           onClick={handleConfirm}
           disabled={

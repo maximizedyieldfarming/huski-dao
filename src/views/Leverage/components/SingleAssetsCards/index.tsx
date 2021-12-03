@@ -3,17 +3,17 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, CardRibbon, Skeleton, Button, Box, Grid, ArrowUpIcon } from 'husky-uikit1.0'
+import { CardBody as UiKitCardBody, Flex, Text, CardRibbon, Skeleton, Button, Box, Grid, ChevronDownIcon, ArrowUpIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
+import { TokenPairImage, TokenImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { formatBigNumber } from 'state/utils'
+import Select from 'components/Select/Select'
 import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import nFormatter from 'utils/nFormatter'
-import Select from 'components/Select/Select'
-import { LeverageFarm } from 'state/types'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -24,15 +24,13 @@ interface Props {
 }
 
 const CardBody = styled(UiKitCardBody)`
-  padding: 0;
-  > ${Flex},>${Box} {
-    padding: 1rem 0;
-  }
   .avgContainer {
-    border-bottom: 1px solid ${({ theme }) => `${theme.colors.textSubtle}66`};
+    border-bottom: 1px solid ${({ theme }) => `${theme.colors.textSubtle}26`};
+    padding-bottom: 0.5rem;
   }
 `
-
+const AssetSelect = styled(Flex)`
+`
 const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
@@ -221,6 +219,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
+    console.log(strategyFilter);
   }, [strategyFilter])
 
   const { singleLeverage, direction, riskLevel } = getStrategyInfo(selectedStrategy)
@@ -303,64 +302,84 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   return (
     <Card>
-      <CardHeader
-        data={data}
-        pool={selectedPool}
-        strategy={selectedStrategy}
-        direction={direction}
-        leverage={singleLeverage}
-      />
+      <CardHeader data={data} pool={selectedPool} />
       <CardBody>
         <Box className="avgContainer">
-          <Flex alignItems="center" justifyContent="space-between">
-            <Text>{t('APY')}</Text>
-            <Select options={getSelectOptions()} onChange={handleSelectChange} />
-          </Flex>
-          <Grid gridTemplateColumns="1fr 1fr" padding="1rem 0">
-            <Flex flexDirection="column" justifyContent="center">
-              <Text bold fontSize="3" mb="1rem">
-                {Number(apy).toFixed(2)}%
-              </Text>
-              <Flex>
-                <Text color="#27C73F">{apyPercentageDiff}</Text>
-                <ArrowUpIcon color="#27C73F" />
-                <Text>{t(` than 1x yield farm`)}</Text>
+        {/*   <Flex alignItems="center" flexDirection="column">
+            <Flex
+              width="100%"
+              background={`${color}1A`}
+              height="80px"
+              border={`1px solid  ${color}`}
+              borderRadius="10px"
+              justifyContent="space-between"
+            >
+              <Flex alignItems="center" width="calc(100% - 20px)">
+                <TokenPairImage
+                  variant="inverted"
+                  primaryToken={data.QuoteTokenInfo.token}
+                  secondaryToken={data.QuoteTokenInfo.quoteToken}
+                  width={44}
+                  height={44}
+                  primaryImageProps={{ style: { marginLeft: '20px' } }}
+                  ml="20px"
+                />
+                 <Flex flexDirection="column" marginLeft="30px">
+                  <Text color="#131313" fontSize="18px" fontWeight="600">{data.marketStrategy} Strategy <span style={{ fontSize: "20px", fontWeight: "normal" }}>{singleLeverage}x</span></Text>
+                  <Text color="#6F767E" fontSize="12px" fontWeight="500">{getSelectOptions()[0].label}</Text>
+                </Flex> 
+              </Flex>
+              <Flex marginRight="5px">
+                <ChevronDownIcon width="25px" />
               </Flex>
             </Flex>
-            <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '100px' }} />
+          </Flex> */}
+                <Select options={getSelectOptions()} onChange={handleSelectChange} />
+          <Grid gridTemplateColumns="1fr 1fr">
+            <Flex flexDirection="column" justifyContent="center">
+              <Text>{t('APY')}</Text>
+
+              <Text bold fontSize="3">
+                {Number(avgApy).toFixed(2)}%
+              </Text>
+              <Flex alignItems="center">
+                <ArrowUpIcon width="13px" color={color} />
+                <Text fontSize="13px" color={color}>
+                  {Number(avgApy).toFixed(2)}%
+                </Text>
+                <Text fontSize="13px">{t(` than 1x yield farm`)}</Text>
+              </Flex>
+            </Flex>
+            {/* graph */}
+            <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '200px' }} />
           </Grid>
         </Box>
-        <Box>
-          <Flex justifyContent="space-between" padding="1rem 0">
+        <Box padding="0.5rem 0">
+          <Flex justifyContent="space-between">
             <Text>{t('TVL')}</Text>
             {tvl && !Number.isNaN(tvl) && tvl !== undefined ? (
-              <Text>{nFormatter(tvl)}</Text>
+              <Text>${nFormatter(tvl)}</Text>
             ) : (
               <Skeleton width="80px" height="16px" />
             )}
           </Flex>
-          {/*  <Flex justifyContent="space-between">
-            <Text>{t('APY')}</Text>
-            <Text>{Number(apy).toFixed(2)}%</Text>
-          </Flex> */}
-          <Flex justifyContent="space-between" padding="1rem 0">
+
+          <Flex justifyContent="space-between">
             <Text>{t('Risk Level')}</Text>
-            <Text>{riskLevel}</Text>
+            <Text color={color} fontWeight="bold">
+              {riskLevel}
+            </Text>
           </Flex>
-          <Flex justifyContent="space-between" padding="1rem 0">
-            <Text>{t('Daily Earnings')}</Text>
-            {dailyEarnings && !Number.isNaN(dailyEarnings) && dailyEarnings !== undefined ? (
-              <Text>
-                {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
-              </Text>
-            ) : (
-              <Skeleton width="80px" height="16px" />
-            )}
+          <Flex justifyContent="space-between">
+            <Text>{t('Daily Earn')}</Text>
+            <Text>
+              {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
+            </Text>
           </Flex>
         </Box>
         <Flex justifyContent="center">
           <Button
-            // scale="sm"
+            width="100%"
             as={Link}
             to={(location) => ({
               ...location,
@@ -372,7 +391,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               },
             })}
             disabled={!account || !apy}
-            onClick={(e) => !account || (!apy && e.preventDefault())}
+            onClick={(e) => !account && e.preventDefault()}
           >
             {t('Farm')}
           </Button>

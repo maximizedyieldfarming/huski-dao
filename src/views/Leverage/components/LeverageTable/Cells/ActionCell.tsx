@@ -36,51 +36,52 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-      {/* {(!token?.totalSupply || !account)? */}
-        {true?
-        (<Link
-          style={{
-            background: '#7B3FE4',
-            border: '1px solid #EFEFEF',
-            boxSizing: 'border-box',
-            borderRadius: '10px',
-            width: '114px',
-            height: '40px',
-            display:'flex',
-            alignItems:'center',
-            justifyContent:'center',
-            cursor:'pointer',
-            color:'white'
-          }}
-          to={(location) => ({
-            pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
-            state: { tokenData: token, selectedLeverage, selectedBorrowing },
-          })}
-          // disabled={!token?.totalSupply || !account}
-          // onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
-        >
-          {t('Farm')}
-        </Link>):(
-          <div
-          style={{
-            background: '#D3D3D3',
-            border: '1px solid #EFEFEF',
-            boxSizing: 'border-box',
-            borderRadius: '10px',
-            width: '114px',
-            height: '40px',
-            display:'flex',
-            alignItems:'center',
-            justifyContent:'center',
-            cursor:'pointer',
-            color:'white'
-          }}
-         
-       
-        >
-          {t('Farm')}
-        </div>
-        )}
+        {(token?.totalSupply && account) ?
+          // {true?
+          (<Button
+            style={{
+              background: '#7B3FE4',
+              border: '1px solid #EFEFEF',
+              boxSizing: 'border-box',
+              borderRadius: '10px',
+              width: '114px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: 'white'
+            }}
+            as={Link}
+            to={(location) => ({
+              pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
+              state: { tokenData: token, selectedLeverage, selectedBorrowing },
+            })}
+            disabled={!token?.totalSupply || !account}
+            onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
+          >
+            {t('Farm')}
+          </Button>) : (
+            <div
+              style={{
+                background: '#D3D3D3',
+                border: '1px solid #EFEFEF',
+                boxSizing: 'border-box',
+                borderRadius: '10px',
+                width: '114px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'white'
+              }}
+
+
+            >
+              {t('Farm')}
+            </div>
+          )}
       </CellContent>
     </StyledCell >
   )

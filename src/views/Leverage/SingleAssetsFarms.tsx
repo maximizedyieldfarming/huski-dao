@@ -1,19 +1,19 @@
 /* eslint-disable array-callback-return */
 import Page from 'components/Layout/Page'
-import React, { useState, forwardRef, useImperativeHandle } from 'react'
-import { Link, useRouteMatch } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, Grid, CardsLayout as UikitCardLayout } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
 import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon } from 'assets'
+import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
+import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
-import BigNumber from 'bignumber.js'
-import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { usePositions } from './hooks/usePositions'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
@@ -70,51 +70,64 @@ const StyledTableBorder = styled.div`
   padding: 1rem 1.5rem;
 `
 
-const CardsLayout = styled(UikitCardLayout)`
-  ${({ theme }) => theme.mediaQueries.lg} {
-    grid-gap: 100px;
-  }
+const CardsWrapper = styled(Grid)`
+  grid-template-columns: repeat(auto-fit, minmax(300px, 500px));
+  justify-content: space-between;
 `
 
 const FilterOption = styled(Button)`
-  padding: 5px;
-  background-color: transparent;
-  border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme }) => theme.colors.text};
-  border-radius: unset;
-  margin: 0 5px;
-  > svg {
-    height: 28px;
-    width: 28px;
-    path {
-      height: auto;
-      width: 100%;
-    }
-    &.allFilter {
-      fill: #f7931a;
-    }
+padding: 10px;
+font-size:13px;
+background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
+// border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
+color: ${({ theme, isActive }) => (isActive ? '#FFFFFF!important' : "#9D9D9D!important")};
+border-radius: 10px;
+color:#9D9D9D;
+> img {
+  height: 26px;
+  width: 26px;
+  margin-right:10px;
+}
+> svg {
+  height: 26px;
+  width: 26px;
+  margin-right:10px;
+  path {
+    height: auto;
+    width: 100%;
   }
-  &:active:not(:disabled):not(.pancake-button--disabled):not(.pancake-button--disabled) {
-    transform: none;
+  &.allFilter {
+    fill: #f7931a;
   }
+}
+&:active:not(:disabled):not(.pancake-button--disabled):not(.pancake-button--disabled) {
+  transform: none;
+}
 `
 
 const FiltersWrapper = styled(Flex)`
   flex-direction: column;
   justify-content: space-between;
   gap: 1rem;
+  box-shadow: ${({ theme }) => theme.card.boxShadow};
+  padding-top : 10px;
+  padding-bottom : 10px;
+  background-color: ${({ theme }) => theme.colors.backgroundAlt};
   // margin-bottom: 0.5rem;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
     gap: 0;
   }
   > ${Flex} {
-    background-color: ${({ theme }) => theme.colors.backgroundAlt};
-    padding: 10px 1rem;
-    border-radius: ${({ theme }) => theme.radii.card};
-    box-shadow: ${({ theme }) => theme.card.boxShadow};
+    
+    padding-left: 1rem;
+    padding-right : 1rem;
+    font-size : 13px;
   }
-  .dexFilter {
+  > ${Flex} > ${Flex}{
+    ::-webkit-scrollbar {
+      height: 8px;
+    }
   }
   .tokenFilter {
     > ${Flex} {
@@ -133,31 +146,6 @@ const FiltersWrapper = styled(Flex)`
     }
   }
 `
-
-const Section = styled(Flex)`
-  // background-color: ${({ theme }) => theme.card.background};
-  // padding: 1rem;
-  gap: 1rem;
-  // border-radius: ${({ theme }) => theme.radii.default};
-  // box-shadow: ${({ theme }) => theme.card.boxShadow};
-  flex-flow: row wrap;
-  .rewardsContainer {
-    flex-direction: row;
-    align-self: flex-end;
-    background-color: ${({ theme }) => theme.card.background};
-    border-radius: ${({ theme }) => theme.radii.card};
-    padding: 1rem;
-    box-shadow: ${({ theme }) => theme.card.boxShadow};
-  }
-  .adContainer {
-    background-color: ${({ theme }) => theme.card.background};
-    border-radius: ${({ theme }) => theme.radii.card};
-    padding: 1rem;
-    box-shadow: ${({ theme }) => theme.card.boxShadow};
-    flex: 1;
-  }
-`
-
 const StrategyIcon = styled.div<{ market: string }>`
   width: 8px;
   height: 8px;
@@ -176,6 +164,43 @@ const StrategyIcon = styled.div<{ market: string }>`
     return null
   }};
 `
+const SBBox = styled(Box)`
+  border-radius:15px!important;
+  background-image: url('/images/BG.png');
+  background-position: right;
+  background-size: cover;
+  background-repeat: no-repeat;
+`
+
+const Section = styled(Flex)`
+  background-color: 'transparent';
+  padding: 0.5rem;
+  gap: 0.5rem;
+  border-radius: ${({ theme }) => theme.radii.default};
+  height:224px;
+  .container {
+    background-color: ${({ theme }) => theme.colors.background};
+    padding: 1rem;
+    border-radius: ${({ theme }) => theme.radii.small};
+  }
+  .block {
+    background-color: ${({ theme }) => theme.colors.background};
+    flex: 1;
+    border-radius: ${({ theme }) => theme.radii.small};
+  }
+`
+const StyledButton = styled(Button)`
+  background: #FFFFFF;
+  border: 1px solid #EFEFEF;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 114px;
+  height: 32px;
+  text-align:center;
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+`
 
 const SingleAssetsFarms: React.FC = () => {
   const { t } = useTranslation()
@@ -185,15 +210,15 @@ const SingleAssetsFarms: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   usePollLeverageFarmsWithUserData()
 
-  const singleData = farmsData.filter((f) => f.singleFlag === 0)
-  console.log('singleData', singleData)
+  const singleData = farmsData.filter((f) => f.singleFlag === 0);
+  console.log(singleData);
 
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
   const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
   const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ALPACA') // HUSKI
   const cakeArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'CAKE')
-console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
+
   const marketArray = [
     {
       singleLeverage: 2,
@@ -209,11 +234,6 @@ console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
       singleLeverage: 3,
       direction: 'short',
       marketStrategy: 'Bear',
-    },
-    {
-      singleLeverage: 3,
-      direction: 'long',
-      marketStrategy: 'Bull',
     },
   ]
   // let singleNewData = []
@@ -279,13 +299,7 @@ console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
   const data = useGetPositions(account)
   const positionData = usePositions(data)
   const positionFarmsData = []
-  if (
-    positionData &&
-    positionData !== null &&
-    positionData !== undefined &&
-    positionData !== [] &&
-    positionData.length !== 0
-  ) {
+  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
@@ -301,7 +315,8 @@ console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
     })
   }
 
-  let reward = 0
+  let reward = 0;
+
   positionFarmsData.map((farm) => {
     const farmEarnings = new BigNumber(parseFloat(farm?.farmData?.userData?.farmEarnings))
       .div(DEFAULT_TOKEN_DECIMAL)
@@ -317,44 +332,61 @@ console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
   // filters
   // if (pairFilter !== 'all') {
   //   singlesData = singlesData.filter(
-  //     (pool) =>
-  //       pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
-  //       pool.farmData[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
+  //     (pool) => pool.farmData[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter,
+  //     //       pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
   //   )
   // }
-
-  // console.log({ singlesData })
-  // const hash = {}
-  // const newSinglesData = singlesData.reduce((cur, next) => {
-  //   // eslint-disable-next-line no-unused-expressions
-  //   hash[next?.farmData[0].pid] ? '' : (hash[next?.farmData[0].pid] = true && cur.push(next))
-  //   return cur
-  // }, [])
-
-  // singlesData.forEach(
-  //   (item, index) => {
-  //     if (item?.farmData[0].pid === singlesData[index + 1]?.farmData[0].pid)
-  //     newSinglesData.push(item)
-  //   }
-  // )
-  // console.log({ newSinglesData })
+  /* if (strategyFilter !== 'all') {
+    singleNewData = singleNewData.filter(
+      (pool) => pool.data?.TokenInfo?.token?.symbol.toLowerCase() === strategyFilter,
+    )
+  }
+ */
 
   return (
     <Page>
       <Section>
-        <Box className="adContainer" />
-        <Box className="rewardsContainer">
-          <Text mb="8px">{t('HUSKI Rewards')}</Text>
-          <Flex justifyContent="space-between" alignItems="flex-end" style={{ gap: '4rem' }}>
-            <Text color="secondary" bold fontSize="5">
-              {reward?.toPrecision(3)}
+        <SBBox
+          className="block"
+          style={{ position: 'relative', marginRight: '30px', display: 'flex', alignItems: 'center' }}
+        >
+          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
+            Huski
+            <br /> Finance
+          </h2>
+        </SBBox>
+
+        <Flex
+          className="container"
+          style={{
+            padding: '30px',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            background: '#E3F0F6',
+            borderRadius: '15px',
+            width: '20%',
+          }}
+        >
+          <img src="/images/crown.png" width="48px" height="48px" alt="" />
+          <Text mt="10px" fontSize="13px" fontWeight="600">
+            {t('HUSKI Rewards')}
+          </Text>
+          <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
+            <Text mb="5px" color="textFarm" fontWeight="700" fontSize="28px">
+              {reward.toPrecision(3)}
             </Text>
-            <Button as={Link} to={{ pathname: '/leverage/claim' }} disabled={!account} scale="sm">
-              {t('Claim')}
-            </Button>
+            <StyledButton
+              as={Link}
+              to={(location) => ({ pathname: `${location.pathname}/claim`, state: { farmsData } })}
+              disabled={!account}
+              scale="sm"
+            >
+              <Text color="textSubtle">{t('Claim')}</Text>
+            </StyledButton>
           </Flex>
-        </Box>
+        </Flex>
       </Section>
+
 
       <StyledTableBorder>
         <PositionButtonsContainer>
@@ -367,20 +399,16 @@ console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
             </PositionsButton>
           </Box>
         </PositionButtonsContainer>
-        {isActivePos ? (
-          <ActivePositionsTable positionFarmsData={positionFarmsData} />
-        ) : (
-          <LiquidatedPositionsTable data={null} />
-        )}
+        {isActivePos ? <ActivePositionsTable positionFarmsData={positionFarmsData} /> : <LiquidatedPositionsTable data={null} />}
       </StyledTableBorder>
 
-      <FiltersWrapper>
-        <Flex alignItems="center" className="dexFilter">
-          <Text>DEX:</Text>
-          <Flex overflowX="auto">
+      <FiltersWrapper >
+        <Flex alignItems="center" className="dexFilter" width="28%" justifyContent="center" borderRight="2px solid #EFEFEF;">
+          <Text bold >DEX:</Text>
+          <Flex overflowX="auto" paddingLeft="5px">
             <FilterOption
               variant="tertiary"
-              startIcon={<AllFilterIcon className="allFilter" />}
+              style={{ width: '60px', height: '30px', justifySelf: 'flex-end', }}
               isActive={dexFilter === 'all'}
               onClick={() => setDexFilter('all')}
             >
@@ -388,47 +416,125 @@ console.log({ bnbArray,btcbArray, ethArray, huskiArray, cakeArray })
             </FilterOption>
             <FilterOption
               variant="tertiary"
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', }}
               startIcon={<PancakeSwapIcon />}
               isActive={dexFilter === 'pancake_swap'}
               onClick={() => setDexFilter('pancake_swap')}
             >
               PancakeSwap
             </FilterOption>
+            <FilterOption
+              variant="tertiary"
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', }}
+              startIcon={<img src="/images/Uniswap.svg" width='32px' height='32px' alt="" />}
+              isActive={dexFilter === 'wault_swap'}
+              onClick={() => setDexFilter('wault_swap')}
+            >
+              UniSwap
+            </FilterOption>
           </Flex>
         </Flex>
-        <Flex alignItems="center" className="strategyFilter">
+        <Flex alignItems="center" width="25%" justifyContent="center" borderRight="2px solid #EFEFEF;">
           <Text>{t('Strategy:')}</Text>
+          <Flex overflowX="auto" alignItems="center">
+            <FilterOption
+              style={{ height: '30px' }}
+              variant="tertiary"
+              isActive={strategyFilter === 'bear'}
+              onClick={() => setStrategyFilter('bear')}
+              startIcon={<StrategyIcon market="bear" />}
+            >
+              Bear
+            </FilterOption>
+            <FilterOption
+              variant="tertiary"
+              style={{ height: '30px' }}
+              isActive={strategyFilter === 'bull'}
+              onClick={() => setStrategyFilter('bull')}
+              startIcon={<StrategyIcon market="bull" />}
+            >
+              Bull
+            </FilterOption>
+            <FilterOption
+              variant="tertiary"
+              style={{ height: '30px' }}
+              isActive={strategyFilter === 'neutral'}
+              onClick={() => setStrategyFilter('neutral')}
+              startIcon={<StrategyIcon market="neutral" />}
+            >
+              Neutral
+            </FilterOption>
+          </Flex>
+        </Flex>
+        <Flex alignItems="center" className="tokenFilter" width="47%" justifyContent="center">
+          <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
           <Flex>
             <FilterOption
               variant="tertiary"
-              onClick={(e) => setStrategyFilter('bull2x')}
-              startIcon={<StrategyIcon market="bull" />}
+              style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px', }}
+              isActive={pairFilter === 'all'}
+              onClick={() => setPairFilter('all')}
             >
-              Bull Strategy
+              {t('All')}
             </FilterOption>
             <FilterOption
               variant="tertiary"
-              onClick={(e) => setStrategyFilter('bear')}
-              startIcon={<StrategyIcon market="bear" />}
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+              startIcon={<BnbIcon />}
+              isActive={pairFilter === 'huski'}
+              onClick={() => setPairFilter('huski')}
             >
-              Bear Strategy
+              Huski
             </FilterOption>
             <FilterOption
               variant="tertiary"
-              onClick={(e) => setStrategyFilter('neutral')}
-              startIcon={<StrategyIcon market="neutral" />}
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+              startIcon={<BnbIcon />}
+              isActive={pairFilter === 'wbnb'}
+              onClick={() => setPairFilter('wbnb')}
             >
-              Neutral Strategy
+              BNB
+            </FilterOption>
+            <FilterOption
+              variant="tertiary"
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+              startIcon={<BnbIcon />}
+              isActive={pairFilter === 'busd'}
+              onClick={() => setPairFilter('busd')}
+            >
+              BUSD
+            </FilterOption>
+            <FilterOption
+              variant="tertiary"
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+              startIcon={<BnbIcon />}
+              isActive={pairFilter === 'btcb'}
+              onClick={() => setPairFilter('btcb')}
+            >
+              BTCB
+            </FilterOption>
+            <FilterOption
+              variant="tertiary"
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+              startIcon={<BnbIcon />}
+              isActive={pairFilter === 'eth'}
+              onClick={() => setPairFilter('eth')}
+            >
+              ETH
             </FilterOption>
           </Flex>
         </Flex>
-       
       </FiltersWrapper>
-      <CardsLayout>
+      <CardsWrapper>
+        {/* change data to mockSingleAssetData to see the cards appear for testing */}
         {singleData?.map((asset) => (
-          <SingleAssetsCard data={asset} key={asset?.pid} strategyFilter={strategyFilter} />
+          <SingleAssetsCard
+            data={asset}
+            key={asset?.pid}
+            strategyFilter={strategyFilter}
+          />
         ))}
-      </CardsLayout>
+      </CardsWrapper>
     </Page>
   )
 }
