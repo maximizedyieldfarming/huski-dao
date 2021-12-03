@@ -47,7 +47,7 @@ const ActionCell = ({ posData, disabled, name }) => {
           scale="sm"
           as={Link}
           to={(location) => ({
-            pathname: `${location.pathname}/adjustPosition/${name}`,
+            pathname: `${location.pathname}/adjustPosition/${name.toUpperCase().replace('WBNB', 'BNB')}`,
             state: { data, liquidationThresholdData },
           })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
@@ -60,7 +60,7 @@ const ActionCell = ({ posData, disabled, name }) => {
           scale="sm"
           as={Link}
           to={(location) => ({
-            pathname: `${location.pathname}/closePosition/${name}`,
+            pathname: `${location.pathname}/closePosition/${name.toUpperCase().replace('WBNB', 'BNB')}`,
             state: { data },
           })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
