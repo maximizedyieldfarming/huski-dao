@@ -34,6 +34,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token
   const { t } = useTranslation()
+  console.log({ tokenNum, quoteTokenNum })
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
@@ -49,7 +50,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
         <Box width={20} height={20} mr="5px">
           <TokenImage token={token} width={20} height={20} />
         </Box>
-
+        <Text small mx="5px">{nFormatter(tokenNum.toNumber())}</Text>
         {tokenPriceUsd ? (
           <Text small>
             {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
@@ -64,6 +65,8 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
         <Box width={20} height={20} mr="5px">
           <TokenImage token={quoteToken} width={20} height={20} />
         </Box>
+        <Text small mx="5px">{nFormatter(quoteTokenNum.toNumber())}</Text>
+        {' '}
         {quoteTokenPriceUsd ? (
           <Text small>
             {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
@@ -90,7 +93,9 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
         <Flex alignItems="center" style={{ marginTop: '15px' }}>
           {tvl ? (
             <>
-              <Text color="text" fontWeight='600'>{nFormatter(tvl)}</Text>
+              <Text color="text" fontWeight="600">
+                {nFormatter(tvl)}
+              </Text>
               {tooltipVisible && tooltip}
               <span ref={targetRef}>
                 <InfoIcon ml="7px" color="textSubtle" />
