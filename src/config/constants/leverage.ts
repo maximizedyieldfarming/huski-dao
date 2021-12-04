@@ -10,6 +10,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 1,
     TokenInfo: {
       token: tokens.wbnb,
       quoteToken: tokens.cake,
@@ -61,6 +62,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     lpExchange: 'PancakeSwap',
     singleFlag: 0,
+    switchFlag: 0,
     QuoteTokenInfo: {
       token: tokens.usdt,
       quoteToken: tokens.wbnb,
@@ -114,6 +116,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     lpExchange: 'PancakeSwap',
     singleFlag: 0,
+    switchFlag: 0,
     QuoteTokenInfo: {
       token: tokens.busd,
       quoteToken: tokens.wbnb,
@@ -171,6 +174,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0x61EB789d75A95CAa3fF50ed7E47b96c132fEc082',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 0,
     TokenInfo: {
       token: tokens.wbnb,
       quoteToken: tokens.btcb,
@@ -223,6 +227,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0x74E4716E431f45807DCF19f284c7aA99F18a4fbc',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 0,
     TokenInfo: {
       token: tokens.wbnb,
       quoteToken: tokens.eth,
@@ -277,6 +282,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0x7EFaEf62fDdCCa950418312c6C91Aef321375A00',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 0,
     TokenInfo: {
       token: tokens.busd,
       quoteToken: tokens.usdt,
@@ -331,6 +337,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0x7752e1fa9f3a2e860856458517008558deb989e3',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 0,
     singleFlag: 0,
     TokenInfo: {
       token: tokens.alpaca,
@@ -384,6 +391,7 @@ const leverageFarms: LeverageFarmConfig[] = [
     },
     lpExchange: 'PancakeSwap',
     singleFlag: 1,
+    switchFlag: 0,
     TokenInfo: {
       token: tokens.busd,
       quoteToken: tokens.btcb,
@@ -434,6 +442,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0xec6557348085aa57c72514d67070dc863c0a5a8c',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 1,
     TokenInfo: {
       token: tokens.usdt,
       quoteToken: tokens.usdc,
@@ -484,6 +493,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0x16aFc4F2Ad82986bbE2a4525601F8199AB9c832D',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 1,
     TokenInfo: {
       token: tokens.eth,
       quoteToken: tokens.sushi,
@@ -534,6 +544,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       56: '0xDd5bAd8f8b360d76d12FdA230F8BAF42fe0022CF',
     },
     lpExchange: 'PancakeSwap',
+    switchFlag: 1,
     TokenInfo: {
       token: tokens.wbnb,
       quoteToken: tokens.dot,

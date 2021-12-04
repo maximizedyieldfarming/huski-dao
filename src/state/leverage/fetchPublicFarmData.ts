@@ -15,6 +15,7 @@ import { LeverageFarm, SerializedBigNumber } from '../types'
 type PublicFarmData = {
   lptotalSupply: SerializedBigNumber
   tokenUserInfoLP: SerializedBigNumber
+  quoteTokenUserInfoLP: SerializedBigNumber
   tokenAmountTotal: SerializedBigNumber
   quoteTokenAmountTotal: SerializedBigNumber
   quoteTokenTotalSupply: SerializedBigNumber
@@ -233,7 +234,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       : [null, null]
 
   const masterChefAddress = getMasterChefAddress()
-  const [info, cakePerBlock, totalAllocPoint, userInfo] =
+  const [info, cakePerBlock, totalAllocPoint, tokenUserInfo, quoteTokenUserInfo] =
     pid || pid === 0
       ? await multicall(masterchefABI, [
         {
@@ -253,6 +254,11 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
           address: masterChefAddress,
           name: 'userInfo',
           params: [pid, TokenInfo.address],
+        },
+        {
+          address: masterChefAddress,
+          name: 'userInfo',
+          params: [pid, QuoteTokenInfo.address],
         }
       ])
       : [null, null]
@@ -273,7 +279,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     vaultDebtVal: vaultDebtVal[0]._hex,
     tokenReserve: lpTotalReserves[0]._hex,
     quoteTokenReserve: lpTotalReserves[1]._hex,
-    tokenUserInfoLP: userInfo[0]._hex,
+    tokenUserInfoLP: tokenUserInfo[0]._hex,
+    quoteTokenUserInfoLP: quoteTokenUserInfo[0]._hex,
     tokenAmountTotal: tokenAmountTotal.toJSON(),
     quoteTokenAmountTotal: quoteTokenAmountTotal.toJSON(),
     lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),

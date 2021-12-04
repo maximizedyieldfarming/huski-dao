@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
-import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE} from 'config'
+import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE } from 'config'
 import { dichotomybasetoken, dichotomyfarmingtoken, RunLogic, RunLogic1, adjustRun, adjustPositionRepayDebt } from 'utils/pancakeService'
 import { BIG_TEN } from 'utils/bigNumber'
 
@@ -35,18 +35,46 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
+  const { tokenUserInfoLP, switchFlag, quoteTokenUserInfoLP, lptotalSupply, lpSymbol, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
+
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
-  const tokensLP = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
+  const tokensLPOne = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
   const lpTokenRatio = new BigNumber(tokenUserInfoLP).div(new BigNumber(lptotalSupply))
-  const tokenNum = new BigNumber(tokenAmountTotal).times(lpTokenRatio)
-  const quoteTokenNum = new BigNumber(quoteTokenAmountTotal).times(lpTokenRatio)
-  const tokenTvl = new BigNumber(tokenNum).times(tokenPriceInUsd)
-  const quoteTokenTvl = new BigNumber(quoteTokenNum).times(quoteTokenPriceInUsd)
+  const tokenNumOne = new BigNumber(tokenAmountTotal).times(lpTokenRatio)
+  const quoteTokenNumOne = new BigNumber(quoteTokenAmountTotal).times(lpTokenRatio)
+  const tokenTvl = new BigNumber(tokenNumOne).times(tokenPriceInUsd)
+  const quoteTokenTvl = new BigNumber(quoteTokenNumOne).times(quoteTokenPriceInUsd)
   // const tokenTvl = new BigNumber(tokenAmountTotal).times(tokenPriceInUsd).times(lpTokenRatio)
   // const quoteTokenTvl = new BigNumber(quoteTokenAmountTotal).times(quoteTokenPriceInUsd).times(lpTokenRatio)
-  const totalTvl = BigNumber.sum(tokenTvl, quoteTokenTvl)
+  const totalTvlOne = BigNumber.sum(tokenTvl, quoteTokenTvl)
+
+  const tokensLPAnother = new BigNumber(quoteTokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
+  const lpTokenRatioAnother = new BigNumber(quoteTokenUserInfoLP).div(new BigNumber(lptotalSupply))
+  const tokenNumAnother = new BigNumber(tokenAmountTotal).times(lpTokenRatioAnother)
+  const quoteTokenNumAnother = new BigNumber(quoteTokenAmountTotal).times(lpTokenRatioAnother)
+  const tokenTvlAnother = new BigNumber(tokenNumAnother).times(tokenPriceInUsd)
+  const quoteTokenTvlAnother = new BigNumber(quoteTokenNumAnother).times(quoteTokenPriceInUsd)
+  const totalTvlAnother = BigNumber.sum(tokenTvlAnother, quoteTokenTvlAnother)
+
+  let tokensLP
+  let totalTvl
+  // let tokenNum
+  let quoteTokenNum
+
+  if (switchFlag === 0) {
+    tokensLP = BigNumber.sum(tokensLPOne, tokensLPAnother)
+    totalTvl = BigNumber.sum(totalTvlOne, totalTvlAnother)
+  } else {
+    tokensLP = tokensLPOne
+    totalTvl = totalTvlOne
+  }
+
+  const tokenNum = BigNumber.sum(tokenNumOne, tokenNumAnother)
+ const   tokenNum1 = BigNumber.sum(tokenNumOne, quoteTokenNumAnother)
+
+
+  console.log({ tokenUserInfoLP,tokenNum,tokenNum1 , lpSymbol, totalTvl, totalTvlOne, totalTvlAnother, tokensLPOne, tokensLPAnother, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd, tokensLP, lpTokenRatio })
   return { tokensLP, tokenNum, quoteTokenNum, totalTvl };
 }
 
@@ -277,7 +305,7 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
   }
 
   const borrowingInterest = lendRate / (utilization * 100) / (1 - 0.16)
-console.info('borrowingInterest----',borrowingInterest)
+  console.info('borrowingInterest----', borrowingInterest)
   return { borrowingInterest };
 }
 
