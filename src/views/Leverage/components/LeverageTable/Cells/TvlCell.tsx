@@ -34,7 +34,6 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token
   const { t } = useTranslation()
-  console.log({ tokenNum, quoteTokenNum })
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
