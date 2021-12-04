@@ -156,7 +156,7 @@ const FarmSA = () => {
     const { account } = useWeb3React()
 
     const {
-        state: { singleData: data, singleLeverage, marketStrategy },
+        state: { singleData: data, singleLeverage: leverage, marketStrategy: selectedStrategy },
     } = useLocation<LocationParams>()
 
     const singleFarm = data
@@ -167,12 +167,34 @@ const FarmSA = () => {
 
     const tokenPriceList = useTokenPriceList(coingeckoId)
     const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
-    const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
-    const [selectedStrategy, setSelectedStrategy] = useState<string>()
+    const [marketStrategy, setMarketStrategy] = useState<string>(selectedStrategy)
+    const [singleLeverage, setSingleLeverage] = useState(leverage)
 
     let tokenName
     let quoteTokenName
     let riskKillThreshold
+
+const getDefaultTokenInfo = (selStrat: string) => {
+    if (selStrat.includes('bull')) {
+      return 'QuoteTokenInfo'
+    }
+    return 'TokenInfo'
+  }
+    const tokenInfoToUse = getDefaultTokenInfo(marketStrategy)
+
+    const getSingleLeverage = (selStrategy: string): number => {
+        if (selStrategy === 'bull3x' || selStrategy === 'bear') {
+            return 3
+        }
+        return 2
+    }
+
+    const [selectedToken, setSelectedToken] = useState(singleFarm?.[tokenInfoToUse]?.token)
+    React.useEffect(() => {
+        setSelectedToken(singleFarm?.[tokenInfoToUse]?.token)
+        setSingleLeverage(getSingleLeverage(marketStrategy))
+        setInputValue(null)
+    }, [singleFarm, marketStrategy, setSelectedToken, tokenInfoToUse])
 
     if (marketStrategy.includes('bull')) { // bull === 2x long
         tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -196,7 +218,7 @@ const FarmSA = () => {
         getBalanceAmount(selectedToken.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance).toJSON(),
     )
 
-    const [inputValue, setInputValue] = useState(0)
+    const [inputValue, setInputValue] = useState<number>()
     const [buttonIndex, setButtonIndex] = useState(null)
     const handleInput = useCallback(
         (event) => {
@@ -305,17 +327,19 @@ const FarmSA = () => {
         quoteTokenInputValue = 0;
     }
 
+    console.log('tokenInputValue', tokenInputValue, 'quoteTokenInputValue', quoteTokenInputValue, "single lev", singleLeverage, 'tokenName', tokenName, 'quoteTokenName', quoteTokenName)
     const farmingData = getLeverageFarmingData(singleFarm, singleLeverage, tokenInputValue, quoteTokenInputValue, tokenName)
     const farmData = farmingData ? farmingData[1] : []
+    console.log('farmData', farmData)
     const apy = getApy(singleLeverage)
 
-    const selectOptions = []
-    data.farmData?.forEach((item, index) => {
-        selectOptions.push({
-            label: item.lpSymbol.replace(' LP', ''),
-            value: index,
-        })
-    })
+    // const selectOptions = []
+    // data.farmData?.forEach((item, index) => {
+    //     selectOptions.push({
+    //         label: item.lpSymbol.replace(' LP', ''),
+    //         value: index,
+    //     })
+    // })
 
     const balanceBigNumber = new BigNumber(userTokenBalance)
     let balanceNumber
@@ -610,7 +634,7 @@ console.info('111',marketStrategy)
     }
 
 const getSelectOptions = () => {
-  if (marketStrategy === 'neutral') {
+  if (selectedStrategy === 'neutral') {
     return [
       {
         value: 'neutral',
@@ -630,7 +654,7 @@ const getSelectOptions = () => {
       },
     ]
   }
-  if (marketStrategy === 'bear') {
+  if (selectedStrategy === 'bear') {
     return [
       {
         value: 'bear',
@@ -650,7 +674,7 @@ const getSelectOptions = () => {
       },
     ]
   }
-  if (marketStrategy === 'bull2x') {
+  if (selectedStrategy === 'bull2x') {
     return [
       {
         value: 'bull2x',
@@ -689,6 +713,39 @@ const getSelectOptions = () => {
     },
   ]
 }
+    
+    const getTokenSelectOptions = (selStrategy: string) => {
+        if (selStrategy.includes('bull')) {
+            return [
+                {
+                    icon: singleFarm?.[tokenInfoToUse]?.token,
+                    label: singleFarm?.[tokenInfoToUse]?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                    value: singleFarm?.[tokenInfoToUse]?.token,
+                },
+                {
+                    icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                    label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                    value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                },
+            ]
+        }
+        return [
+            {
+                icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+            },
+            {
+                icon: singleFarm?.[tokenInfoToUse]?.token,
+                label: singleFarm?.[tokenInfoToUse]?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                value: singleFarm?.[tokenInfoToUse]?.token,
+            },
+        ]
+    }
+ 
+
+    const tokenSelectOptions = getTokenSelectOptions(marketStrategy)
+
 
   const yieldFarming = yieldFarmData * singleLeverage
   const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
@@ -757,29 +814,19 @@ const getSelectOptions = () => {
                 <Flex className="infoSide" flex="1">
                     <Section>
                         <Box>
-                            <Flex alignItems="center" justifyContent="space-between">
+                            <Flex>
                                 <Select
                                     options={getSelectOptions()}
                                     onChange={(option) => {
-                                        setSelectedStrategy(option.value)
+                                        setMarketStrategy(option.value)
+                                        setSelectedToken(singleFarm?.[tokenInfoToUse]?.token)
                                     }}
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
                                 <Text>{t('Collateral')}</Text>
                                 <SingleFarmSelect
-                                    options={[
-                                        {
-                                            icon: singleFarm?.TokenInfo?.quoteToken,
-                                            label: singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                                            value: singleFarm?.TokenInfo?.quoteToken,
-                                        },
-                                        {
-                                            icon: singleFarm?.TokenInfo?.token,
-                                            label: singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                    ]}
+                                    options={tokenSelectOptions}
                                     onChange={(option) => {
                                         setSelectedToken(option.value)
                                         setInputValue(0)
@@ -836,17 +883,17 @@ const getSelectOptions = () => {
                             <Text small>{t('Equity')}</Text>
                             {farmData ? (
                                 <Text fontWeight="bold">
-                                    {farmData[3]?.toFixed(2)} {tokenName}
+                                    {farmData[3]?.toFixed(2)} {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}
                                 </Text>
                             ) : (
-                                <Text fontWeight="bold">0.00 {tokenName}</Text>
+                                <Text fontWeight="bold">0.00 {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}</Text>
                             )}
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between">
                             <Text small>{t('Position Value')}</Text>
                             {farmData ? (
                                 <Text fontWeight="bold">
-                                    {farmData[8].toFixed(2)} {tokenName} + {farmData[9].toFixed(2)} {quoteTokenName}
+                                    {farmData[8].toFixed(2)} {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')} + {farmData[9].toFixed(2)} {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName ? quoteTokenName : tokenName}
                                 </Text>
                             ) : (
                                 <Skeleton width="80px" height="16px" />
