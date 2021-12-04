@@ -55,7 +55,7 @@ const LeverageRow = ({ tokenData }) => {
 
   const huskyRewards = getHuskyRewards(tokenData, huskyPrice, borrowingAsset)
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
-  const { tokensLP, totalTvl } = getTvl(tokenData)
+  const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
   const { borrowingInterest } = useFarmsWithToken(tokenData, borrowingAsset)
   // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
@@ -98,7 +98,7 @@ const LeverageRow = ({ tokenData }) => {
           huskyRewards={huskyRewards * 100 * (childLeverage - 1)}
           borrowingInterest={borrowingInterest * 100 * (childLeverage - 1)}
         />
-        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} />
+        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} tokenNum={tokenNum} quoteTokenNum={quoteTokenNum} />
         <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} />
         <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />

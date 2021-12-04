@@ -35,7 +35,7 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenUserInfoLP, switchFlag, quoteTokenUserInfoLP, lptotalSupply, lpSymbol, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
+  const { tokenUserInfoLP, switchFlag, quoteTokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
 
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
@@ -59,22 +59,22 @@ export const getTvl = (farm: LeverageFarm) => {
 
   let tokensLP
   let totalTvl
-  // let tokenNum
+  let tokenNum
   let quoteTokenNum
 
   if (switchFlag === 0) {
     tokensLP = BigNumber.sum(tokensLPOne, tokensLPAnother)
     totalTvl = BigNumber.sum(totalTvlOne, totalTvlAnother)
+    tokenNum = BigNumber.sum(tokenNumOne, tokenNumAnother)
+    quoteTokenNum = BigNumber.sum(quoteTokenNumOne, quoteTokenNumAnother)
   } else {
     tokensLP = tokensLPOne
     totalTvl = totalTvlOne
+    tokenNum = tokenNumOne
+    quoteTokenNum = quoteTokenNumOne
   }
 
-  const tokenNum = BigNumber.sum(tokenNumOne, tokenNumAnother)
- const   tokenNum1 = BigNumber.sum(tokenNumOne, quoteTokenNumAnother)
-
-
-  console.log({ tokenUserInfoLP,tokenNum,tokenNum1 , lpSymbol, totalTvl, totalTvlOne, totalTvlAnother, tokensLPOne, tokensLPAnother, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd, tokensLP, lpTokenRatio })
+  // console.log({ tokenUserInfoLP, tokenNum, lpSymbol, totalTvl, totalTvlOne, totalTvlAnother, tokensLPOne, tokensLPAnother, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd, tokensLP, lpTokenRatio })
   return { tokensLP, tokenNum, quoteTokenNum, totalTvl };
 }
 

@@ -28,7 +28,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TvlCell = ({ tvl, tokenData, lpTokens }) => {
+const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { tokenPriceUsd, quoteTokenPriceUsd } = tokenData
   const quoteToken = tokenData?.TokenInfo.quoteToken
@@ -87,13 +87,13 @@ const TvlCell = ({ tvl, tokenData, lpTokens }) => {
           </Text>
         )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
-        <Flex alignItems="center" style={{marginTop:'15px'}}>
+        <Flex alignItems="center" style={{ marginTop: '15px' }}>
           {tvl ? (
             <>
               <Text color="text" fontWeight='600'>{nFormatter(tvl)}</Text>
               {tooltipVisible && tooltip}
               <span ref={targetRef}>
-                <InfoIcon ml="7px"  color="textSubtle" />
+                <InfoIcon ml="7px" color="textSubtle" />
               </span>
             </>
           ) : (
