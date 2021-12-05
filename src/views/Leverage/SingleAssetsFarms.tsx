@@ -107,7 +107,6 @@ color:#9D9D9D;
 
 const FiltersWrapper = styled(Flex)`
   flex-direction: column;
-  justify-content: space-between;
   gap: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   padding-top : 10px;
@@ -438,7 +437,7 @@ const SingleAssetsFarms: React.FC = () => {
       </StyledTableBorder>
 
       <FiltersWrapper >
-        <Flex alignItems="center" className="dexFilter" width="28%" justifyContent="center" borderRight="2px solid #EFEFEF;">
+        <Flex alignItems="center" className="dexFilter" justifyContent="center" borderRight="2px solid #EFEFEF;">
           <Text bold >DEX:</Text>
           <Flex overflowX="auto" paddingLeft="5px">
             <FilterOption
@@ -469,7 +468,7 @@ const SingleAssetsFarms: React.FC = () => {
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex alignItems="center" width="25%" justifyContent="center" borderRight="2px solid #EFEFEF;">
+        <Flex alignItems="center" justifyContent="center" borderRight="2px solid #EFEFEF;" style={{ paddingRight: "40px", paddingLeft: "50px" }}>
           <Text>{t('Strategy:')}</Text>
           <Flex overflowX="auto" alignItems="center">
             <FilterOption
@@ -498,64 +497,6 @@ const SingleAssetsFarms: React.FC = () => {
               startIcon={<StrategyIcon market="neutral" />}
             >
               Neutral
-            </FilterOption>
-          </Flex>
-        </Flex>
-        <Flex alignItems="center" className="tokenFilter" width="47%" justifyContent="center">
-          <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
-          <Flex>
-            <FilterOption
-              variant="tertiary"
-              style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px', }}
-              isActive={pairFilter === 'all'}
-              onClick={() => setPairFilter('all')}
-            >
-              {t('All')}
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<HuskiIcon />}
-              isActive={pairFilter === 'huski'}
-              onClick={() => setPairFilter('huski')}
-            >
-              Huski
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BnbIcon />}
-              isActive={pairFilter === 'wbnb'}
-              onClick={() => setPairFilter('wbnb')}
-            >
-              BNB
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BusdIcon />}
-              isActive={pairFilter === 'busd'}
-              onClick={() => setPairFilter('busd')}
-            >
-              BUSD
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<BtcbIcon />}
-              isActive={pairFilter === 'btcb'}
-              onClick={() => setPairFilter('btcb')}
-            >
-              BTCB
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-              startIcon={<EthIcon />}
-              isActive={pairFilter === 'eth'}
-              onClick={() => setPairFilter('eth')}
-            >
-              ETH
             </FilterOption>
           </Flex>
         </Flex>

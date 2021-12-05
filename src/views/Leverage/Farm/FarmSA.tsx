@@ -73,10 +73,7 @@ const Section = styled(Box)`
   padding: 1rem;
 
   > ${Flex} {
-    padding: 1.5rem 0;
-    &:not(:last-child) {
-      border-bottom: 1px solid #a41ff81a;
-    }
+    padding: 1.5rem 2rem;
   }
 
   input[type='range'] {
@@ -375,10 +372,10 @@ const FarmSA = () => {
         let contract
         let amount
         let workerAddress
-console.info('111',marketStrategy)
-        if (marketStrategy.includes('bull') ) { // bull === 2x long
+        console.info('111', marketStrategy)
+        if (marketStrategy.includes('bull')) { // bull === 2x long
             console.info('1111bull')
-            if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')=== tokenName) {  // token is farm token
+            if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {  // token is farm token
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
@@ -609,125 +606,127 @@ console.info('111',marketStrategy)
         return option
     }
 
-const getSelectOptions = () => {
-  if (marketStrategy === 'neutral') {
-    return [
-      {
-        value: 'neutral',
-        label: 'Neutral strategy 2x',
-      },
-      {
-        value: 'bear',
-        label: 'Bear strategy 2x',
-      },
-      {
-        value: 'bull2x',
-        label: 'Bull Strategy 2x',
-      },
-      {
-        value: 'bull3x',
-        label: 'Bull Strategy 3x',
-      },
-    ]
-  }
-  if (marketStrategy === 'bear') {
-    return [
-      {
-        value: 'bear',
-        label: 'Bear strategy 2x',
-      },
-      {
-        value: 'bull2x',
-        label: 'Bull Strategy 2x',
-      },
-      {
-        value: 'bull3x',
-        label: 'Bull Strategy 3x',
-      },
-      {
-        value: 'neutral',
-        label: 'Neutral strategy 2x',
-      },
-    ]
-  }
-  if (marketStrategy === 'bull2x') {
-    return [
-      {
-        value: 'bull2x',
-        label: 'Bull Strategy 2x',
-      },
-      {
-        value: 'bull3x',
-        label: 'Bull Strategy 3x',
-      },
-      {
-        value: 'bear',
-        label: 'Bear strategy 2x',
-      },
-      {
-        value: 'neutral',
-        label: 'Neutral strategy 2x',
-      },
-    ]
-  }
-  return [
-    {
-      value: 'bull3x',
-      label: 'Bull Strategy 3x',
-    },
-    {
-      value: 'bull2x',
-      label: 'Bull Strategy 2x',
-    },
-    {
-      value: 'bear',
-      label: 'Bear strategy 2x',
-    },
-    {
-      value: 'neutral',
-      label: 'Neutral strategy 2x',
-    },
-  ]
-}
+    const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, { placement: 'right' })
+    const [chartype, setChartType] = useState(0);
+    const getSelectOptions = () => {
+        if (marketStrategy === 'neutral') {
+            return [
+                {
+                    value: 'neutral',
+                    label: 'Neutral strategy 2x',
+                },
+                {
+                    value: 'bear',
+                    label: 'Bear strategy 2x',
+                },
+                {
+                    value: 'bull2x',
+                    label: 'Bull Strategy 2x',
+                },
+                {
+                    value: 'bull3x',
+                    label: 'Bull Strategy 3x',
+                },
+            ]
+        }
+        if (marketStrategy === 'bear') {
+            return [
+                {
+                    value: 'bear',
+                    label: 'Bear strategy 2x',
+                },
+                {
+                    value: 'bull2x',
+                    label: 'Bull Strategy 2x',
+                },
+                {
+                    value: 'bull3x',
+                    label: 'Bull Strategy 3x',
+                },
+                {
+                    value: 'neutral',
+                    label: 'Neutral strategy 2x',
+                },
+            ]
+        }
+        if (marketStrategy === 'bull2x') {
+            return [
+                {
+                    value: 'bull2x',
+                    label: 'Bull Strategy 2x',
+                },
+                {
+                    value: 'bull3x',
+                    label: 'Bull Strategy 3x',
+                },
+                {
+                    value: 'bear',
+                    label: 'Bear strategy 2x',
+                },
+                {
+                    value: 'neutral',
+                    label: 'Neutral strategy 2x',
+                },
+            ]
+        }
+        return [
+            {
+                value: 'bull3x',
+                label: 'Bull Strategy 3x',
+            },
+            {
+                value: 'bull2x',
+                label: 'Bull Strategy 2x',
+            },
+            {
+                value: 'bear',
+                label: 'Bear strategy 2x',
+            },
+            {
+                value: 'neutral',
+                label: 'Neutral strategy 2x',
+            },
+        ]
+    }
 
-  const yieldFarming = yieldFarmData * singleLeverage
-  const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
-  const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
-  const dailyApr = apr / 365
+    const yieldFarming = yieldFarmData * singleLeverage
+    const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
+    const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
+    const dailyApr = apr / 365
 
-    const { tooltip, targetRef, tooltipVisible } = useTooltip(
-      <>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Yield Farming')}</Text>
-          <Text>{yieldFarming?.toFixed(2)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Trading Fees')}</Text>
-          <Text>{tradingFees.toFixed(2)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Huski Rewards')}</Text>
-          <Text>{huskyRewards.toFixed(2)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Borrowing Interest')}</Text>
-          <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Total APR')}</Text>
-          <Text>{apr.toFixed(2)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Total APY')}</Text>
-          <Text>{apy.toFixed(2)}%</Text>
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Daily APR')}</Text>
-          <Text>{dailyApr.toFixed(2)}%</Text>
-        </Flex>
-      </>,
-      { placement: 'right' },
-    )
+    // const { tooltip, targetRef, tooltipVisible } = useTooltip(
+    //     <>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Yield Farming')}</Text>
+    //             <Text>{yieldFarming?.toFixed(2)}%</Text>
+    //         </Flex>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Trading Fees')}</Text>
+    //             <Text>{tradingFees.toFixed(2)}%</Text>
+    //         </Flex>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Huski Rewards')}</Text>
+    //             <Text>{huskyRewards.toFixed(2)}%</Text>
+    //         </Flex>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Borrowing Interest')}</Text>
+    //             <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
+    //         </Flex>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Total APR')}</Text>
+    //             <Text>{apr.toFixed(2)}%</Text>
+    //         </Flex>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Total APY')}</Text>
+    //             <Text>{apy.toFixed(2)}%</Text>
+    //         </Flex>
+    //         <Flex justifyContent="space-between" alignItems="center">
+    //             <Text small>{t('Daily APR')}</Text>
+    //             <Text>{dailyApr.toFixed(2)}%</Text>
+    //         </Flex>
+    //     </>,
+    //     { placement: 'right' },
+    // )
     return (
         <Page>
             <Text bold fontSize="3" color="secondary" mx="auto">
@@ -737,32 +736,63 @@ const getSelectOptions = () => {
                 )}
             </Text>
             <SectionWrapper>
-                <Flex className="graphSide" flex="1">
+                <Flex className="graphSide" flex="2" >
                     <Section style={{ height: "500px" }}>
-                       {/*  <TradingViewWidget
-                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')}USD`}
+                        {/* <TradingViewWidget
+                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}USD`}
                             theme={Themes.DARK}
                             locale="fr"
                             autosize
                         /> */}
-                         <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} /> 
+                        <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} />
                     </Section>
+
                     <Section>
-                        <ReactEcharts option={getOption()} style={{ height: '500px' }} />
-                    </Section>
-                    <Section>
-                        <ReactEcharts option={getOption2()} style={{ height: '500px' }} />
+                        <Flex justifyContent="space-between">
+                            <Flex>
+                                <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>Time Profit</Text>
+                                <Text style={{ cursor: "pointer", color: chartype === 1 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 1 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(1)}>Price Profit</Text>
+                            </Flex>
+                            <Flex>
+                                <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
+                                <Text >USD Value</Text>
+                            </Flex>
+                            <Flex>
+                                <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
+                                <Text>Coin Value</Text>
+                            </Flex>
+                            <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy}%</Text>
+                        </Flex>
+                        {chartype === 0 ? <ReactEcharts option={getOption()} style={{ height: '500px' }} /> :
+                            <ReactEcharts option={getOption2()} style={{ height: '500px' }} />}
                     </Section>
                 </Flex>
                 <Flex className="infoSide" flex="1">
                     <Section>
                         <Box>
                             <Flex alignItems="center" justifyContent="space-between">
-                                <Select
-                                    options={getSelectOptions()}
+                                <SingleFarmSelect
+                                    options={[
+                                        {
+                                            icon: "bear",
+                                            label: t('Bear Market Strategy'),
+                                            value: singleFarm?.TokenInfo?.quoteToken,
+                                        },
+                                        {
+                                            icon: "bull",
+                                            label: t('Bull Market Strategy'),
+                                            value: singleFarm?.TokenInfo?.token,
+                                        },
+                                        {
+                                            icon: "neutral",
+                                            label: t('Neutral Market Strategy'),
+                                            value: singleFarm?.TokenInfo?.token,
+                                        },
+                                    ]}
                                     onChange={(option) => {
                                         setSelectedStrategy(option.value)
                                     }}
+                                    width="calc(80%)"
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
@@ -885,8 +915,8 @@ const getSelectOptions = () => {
                         </Flex>
                     </Section>
                 </Flex>
-            </SectionWrapper>
-        </Page>
+            </SectionWrapper >
+        </Page >
     )
 }
 
