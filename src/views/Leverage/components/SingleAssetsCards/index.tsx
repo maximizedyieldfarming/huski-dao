@@ -252,12 +252,14 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     }
     return '#FCBD2C'
   })();
+
   let soption;
   getSelectOptions().map((d) => {
     if (d.value === selectedStrategy)
       soption = d.label.split(' +')[0];
     return "";
   })
+
   const [selectedoption, setSelectedOption] = useState(soption);
   const handleSelectChange = (option) => {
     const lpSymbol = option.label.split('+ ').pop()
@@ -277,6 +279,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   },[isselect])
   console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
   let prevpair;
+
   return (
     <Card>
       <CardHeader data={singleData} pool={selectedPool} />
@@ -297,7 +300,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                   />
                   <Flex flexDirection="column" marginLeft="30px">
                     <Text color="#131313" fontSize="18px" fontWeight="600">{selectedoption}</Text>
-                    <Text color="#6F767E" fontSize="12px" fontWeight="500">{singleData && singleData.QuoteTokenInfo.name.replace("WBNB", "BNB").replace("Worker", "")}</Text>
+                    <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(' LP', '')} ${singleData?.lpExchange}`}</Text>
                   </Flex>
                 </Flex>
                 <Flex marginRight="5px"><ChevronDownIcon width="25px" /></Flex>
@@ -321,7 +324,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                         primaryImageProps={{ style: { marginLeft: "4px" } }}
                         ml="20px"
                       />
-                      <Text color="#6F767E" fontWeight="600" ml="10px">{singleData && singleData.QuoteTokenInfo.name.split(' ')[0]}</Text>
+                      <Text color="#6F767E" fontWeight="600" ml="10px">{symbol.replace(' LP', '')}</Text>
                     </Flex>}
                       <Box background="#FFFFFF" >
 
@@ -346,14 +349,12 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               <Text>{t('APY')}</Text>
 
               <Text bold fontSize="3">
-                {Number(apy).toFixed(2)}%
+                {apy}%
               </Text>
               <Flex alignItems="center">
-                <ArrowUpIcon width="13px" color={color} />
-                <Text fontSize="13px" color={color}>
-                  {Number(avgApy).toFixed(2)}%
-                </Text>
-                <Text fontSize="13px">{t(` than 1x yield farm`)}</Text>
+                <Text color="#27C73F">{apyPercentageDiff}</Text>
+                <ArrowUpIcon color="#27C73F" />
+                <Text>{t(` than 1x yield farm`)}</Text>
               </Flex>
             </Flex>
             {/* graph */}

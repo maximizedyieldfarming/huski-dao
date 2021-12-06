@@ -131,7 +131,6 @@ const LendAction = () => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
   const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
-  console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
 
   const exchangeRate =
     token.totalToken && token.totalSupply
@@ -139,8 +138,8 @@ const LendAction = () => {
       : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   const huskyPrice = useHuskiPrice()
-  const {apy} = getAprData(tokenData, huskyPrice)
-const apyCell = (e) => {
+  const { apy } = getAprData(tokenData, huskyPrice)
+  const apyCell = (e) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
@@ -150,7 +149,7 @@ const apyCell = (e) => {
       <div style={{ textAlign: 'center' }}>
         <img src="/images/HuskiPaw.png" alt="" />
         <Text fontSize="25px" color="fontFarm" fontWeight="600" textTransform="capitalize">
-          {t(`${action}`)} {tokenName}
+          {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
       <TabPanel style={{ width: '500px', height: '560px' }}>
