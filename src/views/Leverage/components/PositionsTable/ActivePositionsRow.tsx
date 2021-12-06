@@ -137,20 +137,13 @@ const ActivePositionsRow = ({ data }) => {
         ) : null}
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={symbolName} />
         <ApyCell
-          apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
-          huskyRewards={huskyRewards}
-          apr={null}
-          borrowingInterest={null}
-          liquidityRewards={null}
-          tradingFeesRewards={null}
-
-        // apy={getDisplayApr(getApy(leverage.toNumber()))}
-        // yieldFarming={yieldFarmData * leverage.toNumber()}
-        // tradingFees={data?.farmData.tradeFee * 365 * leverage.toNumber()}
-        // huskyRewards={huskyRewards * 100 * (leverage.toNumber() - 1)}
-        // borrowingInterest={borrowingInterest * 100 * (leverage.toNumber() - 1)}
-
-
+          apr={getApr(leverage.toNumber()) * 100}
+          dailyApr={getApr(leverage.toNumber()) / 365 * 100}
+          apy={getDisplayApr(getApy(leverage.toNumber()))}
+          yieldFarming={yieldFarmData * leverage.toNumber()}
+          tradingFees={data?.farmData.tradeFee * 365 * leverage.toNumber()}
+          huskyRewards={huskyRewards * 100 * (leverage.toNumber() - 1)}
+          borrowingInterest={borrowingInterest * 100 * (leverage.toNumber() - 1)}
         />
 
         {pathname.includes('farms') ? (
