@@ -232,6 +232,7 @@ const apyCell = (e) => {
               tokenData={tokenData}
               account={account}
               userTokenBalance={userTokenBalance}
+              userTokenBalanceIb={userTokenBalanceIb}
             />
           ) : (
             <Withdraw
@@ -241,6 +242,7 @@ const apyCell = (e) => {
               account={account}
               tokenData={tokenData}
               userTokenBalanceIb={userTokenBalanceIb}
+              userTokenBalance={userTokenBalance}
             />
           )}
         </Body>

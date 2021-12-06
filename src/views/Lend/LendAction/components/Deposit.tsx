@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid } from 'husky-uikit1.0'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
@@ -15,6 +15,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
+import { TokenImage } from 'components/TokenImage'
 import Page from '../../../../components/Layout/Page'
 
 interface DepositProps {
@@ -24,6 +25,7 @@ interface DepositProps {
   account: any
   tokenData: any
   userTokenBalance: any
+  userTokenBalanceIb: any
 }
 
 const ButtonGroup = styled(Flex)`
@@ -61,7 +63,15 @@ const StyledArrowDown = styled(ArrowDownIcon)`
   }
 `
 
-const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tokenData, name, userTokenBalance }) => {
+const Deposit: React.FC<DepositProps> = ({
+  allowance,
+  exchangeRate,
+  account,
+  tokenData,
+  name,
+  userTokenBalance,
+  userTokenBalanceIb,
+}) => {
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
   const [amount, setAmount] = useState<number | string>()
@@ -188,12 +198,12 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
                   {t('MAX')}
                 </button>
               </Box>
-              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
-              <Box>
+              <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
+                <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
                 <Text color="textFarm" style={{ fontWeight: 700 }}>
                   {name}
                 </Text>
-              </Box>
+              </Grid>
             </MaxContainer>
           </Box>
         </Section>
@@ -208,9 +218,9 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
             <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
-              userTokenBalance,
+              userTokenBalanceIb,
               tokenData.TokenInfo?.token?.decimalsDigits,
-            )} ${name}`}</span>
+            )} ib${name}`}</span>
           </Text>
         </Flex>
         <Section justifyContent="space-between">
@@ -221,10 +231,10 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
           </Box>
           <Box>
             <MaxContainer>
-              <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
-              <Box>
+              <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
+                <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
                 <Text style={{ color: '#1A1D1F', fontWeight: 700 }}>ib{name}</Text>
-              </Box>
+              </Grid>
             </MaxContainer>
           </Box>
         </Section>
@@ -262,7 +272,8 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           >
             {isPending ? t('Approving') : t('Approve')}
-          </Button>)}
+          </Button>
+        )}
         <Button
           onClick={handleConfirm}
           disabled={
