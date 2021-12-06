@@ -60,7 +60,7 @@ background-repeat: no-repeat;
 `
 const StyledOurPartner = styled(Box)`
   width:100%;
-  height:1000px;
+  height:1600px;
   background-image:url(${ourPartner});
   background-position: center;
   background-size: cover;
@@ -417,53 +417,71 @@ const Home: React.FC = () => {
 
 
       </StyledHeroSection>
-      <StyledHeroSection style={{ background: '#2C353D', position: 'relative', height: '1000px' }}>
-        <StyledOurPartner />
+      <StyledHeroSection style={{ background: '#2C353D', position: 'relative', height: '1520px' }}>
+      <StyledOurPartner />
+
         <div style={{ position: 'absolute', width: '100%', top: 100, left: 0 }}>
           <div style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
-            <Flex justifyContent="space-between">
+            <Text textAlign="center" fontSize="48px" style={{ paddingTop: "30px" }} color="white">Backed By the best</Text>
+            <div style={{ display: "flex" , marginTop : "50px"}}>
+              <img src="images/backed/binance.png" style={{ zIndex: 2, marginLeft: "0px", marginTop: "10px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+              <img src="images/backed/tether.png" style={{ zIndex: 2, marginLeft: "226px", marginTop: "0px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+              <img src="images/backed/trezor.png" style={{ zIndex: 2, marginLeft: "147px", marginTop: "20px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+            </div>
+            <div style={{ display: "flex" }}>
+              <img src="images/backed/thegraph.png" style={{ marginLeft: "212px", marginTop: "-38px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+              <img src="images/backed/ledger.png" style={{  marginLeft: "175px", marginTop: "-30px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+            </div>
+            <div style={{ display: "flex" }}>
+              <img src="images/backed/openzepplin.png" style={{ marginLeft: "0px", marginTop: "-26px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+              <img src="images/backed/pancakeswap.png" style={{ marginLeft: "92px", marginTop: "20px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+              <img src="images/backed/immunefi.png" style={{ marginLeft: "100px", marginTop: "-23px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+              <img src="images/backed/eth.png" style={{ marginLeft: "24px", marginTop: "22px", width: "216px", borderRadius: "4px", height: "110px", boxShadow: "0px 0px 18px 6px rgba(0, 0, 0, 0.15)" }} alt="backed.png" />
+            </div>
+
+            <Flex justifyContent="space-between" marginTop = "60px">
               <Box>
                 <Text style={{ color: 'white', fontSize: '48px', textAlign: 'left' }}>Our Partners</Text>
                 <Text style={{ color: 'white', fontSize: '14px', marginTop: '20px', textAlign: 'left' }}>Here are Husky Finace Partners</Text>
               </Box>
-              <Box style={{ background: '#22282E', borderRadius: '50%' }}><img src={hand} alt="" /></Box>
+              <Box style={{ borderRadius: '50%' }}><img src="images/backed/hand.svg" alt="" style={{ width: "150px" }} /></Box>
             </Flex>
-            
+
             <Flex style={{ marginTop: 40 }}>
-              <ItemBox src='/images/partner/Wault_BNW.png' text = 'Wault Finance' />
-              <ItemBox src='/images/partner/PancakeSwap_BNW.png' text = 'PancakeSwap' />
-              <ItemBox src='/images/partner/ChainLink_BNW.png' text = 'Chainlink' />
-              <ItemBox src='/images/partner/TUSD_BNW.png' text = 'TUSD' />
-            </Flex>
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src='/images/partner/Immunefi_BNW.png' text = 'Immunefi' />
-              <ItemBox src='/images/partner/Nexus_BNW.png' text = 'Nexus Mutural' />
-              <ItemBox src='/images/partner/DODO_BNW.png' text = 'DODO' />
-              <ItemBox src='/images/partner/BELT_BNW.png' text = 'Belt' />
+              <ItemBox src='/images/partner/Wault_BNW.png' text='Wault Finance' />
+              <ItemBox src='/images/partner/PancakeSwap_BNW.png' text='PancakeSwap' />
+              <ItemBox src='/images/partner/ChainLink_BNW.png' text='Chainlink' />
+              <ItemBox src='/images/partner/TUSD_BNW.png' text='TUSD' />
             </Flex>
             <Flex style={{ marginTop: 40 }}>
-              <ItemBox src='/images/partner/Scientix_BNW.png' text = 'Scientix' />
-              <ItemBox src='/images/partner/Orbs_BNW.png' text = 'Orbs' />
-              <ItemBox src='/images/partner/Multiplier_BNW.png' text = 'Multiplier' />
-              <ItemBox src='/images/partner/Boring Dao_BNW.png' text = 'Boring Dao' />
+              <ItemBox src='/images/partner/Immunefi_BNW.png' text='Immunefi' />
+              <ItemBox src='/images/partner/Nexus_BNW.png' text='Nexus Mutural' />
+              <ItemBox src='/images/partner/DODO_BNW.png' text='DODO' />
+              <ItemBox src='/images/partner/BELT_BNW.png' text='Belt' />
             </Flex>
             <Flex style={{ marginTop: 40 }}>
-              <ItemBox src='/images/partner/Farmation_BNW.png' text = 'Farmation' />
-              <ItemBox src='/images/partner/Seascape_BNW.png' text = 'Seascape' />
-              <ItemBox src='/images/partner/Swingby_BNW.png' text = 'Swingby' />
-              <ItemBox src='/images/partner/Oddz_BNW.png' text = 'Oddz' />
+              <ItemBox src='/images/partner/Scientix_BNW.png' text='Scientix' />
+              <ItemBox src='/images/partner/Orbs_BNW.png' text='Orbs' />
+              <ItemBox src='/images/partner/Multiplier_BNW.png' text='Multiplier' />
+              <ItemBox src='/images/partner/Boring Dao_BNW.png' text='Boring Dao' />
             </Flex>
             <Flex style={{ marginTop: 40 }}>
-              <ItemBox src='/images/partner/Berry Data_BNW.png' text = 'Berry Data' />
-              <ItemBox src='/images/partner/Itam_BNW.png' text = 'Itam' />
-              <ItemBox src='/images/partner/polychain monsters_BNW.png' text = 'Polychain monsters' />
-              <ItemBox src='/images/partner/phala_BNW.png' text = 'Phala' />
+              <ItemBox src='/images/partner/Farmation_BNW.png' text='Farmation' />
+              <ItemBox src='/images/partner/Seascape_BNW.png' text='Seascape' />
+              <ItemBox src='/images/partner/Swingby_BNW.png' text='Swingby' />
+              <ItemBox src='/images/partner/Oddz_BNW.png' text='Oddz' />
             </Flex>
             <Flex style={{ marginTop: 40 }}>
-              <ItemBox src='/images/partner/Alium_BNW.png' text = 'Alium Finance' />
-              <ItemBox src='/images/partner/Kalata_BNW.png' text = 'Kalata' />
-              <ItemBox src='/images/partner/NAOS_BNW.png' text = 'NAOS finance' />
-              <div style={{width:'320px'}} />
+              <ItemBox src='/images/partner/Berry Data_BNW.png' text='Berry Data' />
+              <ItemBox src='/images/partner/Itam_BNW.png' text='Itam' />
+              <ItemBox src='/images/partner/polychain monsters_BNW.png' text='Polychain monsters' />
+              <ItemBox src='/images/partner/phala_BNW.png' text='Phala' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }}>
+              <ItemBox src='/images/partner/Alium_BNW.png' text='Alium Finance' />
+              <ItemBox src='/images/partner/Kalata_BNW.png' text='Kalata' />
+              <ItemBox src='/images/partner/NAOS_BNW.png' text='NAOS finance' />
+              <div style={{ width: '320px' }} />
             </Flex>
           </div>
         </div>
