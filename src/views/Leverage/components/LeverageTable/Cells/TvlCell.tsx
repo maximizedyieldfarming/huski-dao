@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip } from 'husky-uikit1.0'
+import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip, Grid } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -45,37 +45,40 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
       ) : (
         <Skeleton width="80px" height="16px" />
       )}
-      <Flex alignItems="center">
-        <Box width={20} height={20} mr="5px">
-          <TokenImage token={token} width={20} height={20} />
-        </Box>
-        <Text small mx="5px">{nFormatter(tokenNum.toNumber())}</Text>
-        {tokenPriceUsd ? (
-          <Text small>
-            {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
-            &nbsp;=&nbsp;{parseFloat(tokenPriceUsd).toFixed(2)}
-            &nbsp;USD)
+      <Grid alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="20px 1fr 1fr">
+        <TokenImage token={token} width={20} height={20} />
+        <Flex>
+          <Text small mx="5px">
+            {nFormatter(tokenNum.toNumber())}
           </Text>
-        ) : (
-          <Skeleton width="80px" height="16px" />
-        )}
-      </Flex>
-      <Flex alignItems="center">
-        <Box width={20} height={20} mr="5px">
-          <TokenImage token={quoteToken} width={20} height={20} />
-        </Box>
-        <Text small mx="5px">{nFormatter(quoteTokenNum.toNumber())}</Text>
-        {' '}
-        {quoteTokenPriceUsd ? (
-          <Text small>
-            {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
-            &nbsp;=&nbsp;
-            {parseFloat(quoteTokenPriceUsd).toFixed(2)}&nbsp;USD)
+          {tokenPriceUsd ? (
+            <Text small>
+              {token?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{token?.symbol.replace('wBNB', 'BNB')}
+              &nbsp;=&nbsp;{parseFloat(tokenPriceUsd).toFixed(2)}
+              &nbsp;USD)
+            </Text>
+          ) : (
+            <Skeleton width="80px" height="16px" />
+          )}
+        </Flex>
+      </Grid>
+      <Grid alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="20px 1fr 1fr">
+        <TokenImage token={quoteToken} width={20} height={20} />
+        <Flex>
+          <Text small mx="5px">
+            {nFormatter(quoteTokenNum.toNumber())}
           </Text>
-        ) : (
-          <Skeleton width="80px" height="16px" />
-        )}
-      </Flex>
+          {quoteTokenPriceUsd ? (
+            <Text small>
+              {quoteToken?.symbol.replace('wBNB', 'BNB')}&nbsp;(1&nbsp;{quoteToken?.symbol.replace('wBNB', 'BNB')}
+              &nbsp;=&nbsp;
+              {parseFloat(quoteTokenPriceUsd).toFixed(2)}&nbsp;USD)
+            </Text>
+          ) : (
+            <Skeleton width="80px" height="16px" />
+          )}
+        </Flex>
+      </Grid>
     </>,
     { placement: 'bottom-start' },
   )
