@@ -33,6 +33,8 @@ import NumberInput from 'components/NumberInput'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
 // import { Range } from 'react-range';
+
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
@@ -664,6 +666,8 @@ const Farm = () => {
     return { selectedToken }
   }
   const { selectedToken } = getSelectedToken(radio)
+  const minimumDebt = radio === tokenData?.TokenInfo?.token?.symbol ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18)) : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
+
   return (
     <Page>
       <Text
@@ -907,10 +911,7 @@ const Farm = () => {
                 </Flex>
               )} */}
 
-              <Select
-                options={options()}
-                onChange={(option) => setRadio(option.value)}
-              />
+              <Select options={options()} onChange={(option) => setRadio(option.value)} />
             </Flex>
             {/*   <Flex justifyContent="space-evenly" mt="20px">
               {isApproved ? null : (
@@ -999,7 +1000,7 @@ const Farm = () => {
               </Flex>
               {farmData ? (
                 <Text>
-                  {farmData[3]?.toFixed(2)} {radio.replace('wBNB', 'BNB')}
+                  {farmData[3]?.toFixed(3)} {radio.replace('wBNB', 'BNB')}
                 </Text>
               ) : (
                 <Text>0.00 {radio.replace('wBNB', 'BNB')}</Text>
@@ -1080,12 +1081,14 @@ const Farm = () => {
             !isApproved ||
             (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
             (tokenInput === undefined && quoteTokenInput === undefined) ||
+            new BigNumber(farmData[3]).lt(minimumDebt) ||
             isPending
           }
         >
           {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
         </Button>
       </Flex>
+      {tokenInput || quoteTokenInput ? <Text mx="auto" color='red'>{new BigNumber(farmData[3]).lt(minimumDebt) ? t('Minimum Debt Size: %minimumDebt% %radio%', { minimumDebt: minimumDebt.toNumber(), radio: radio.toUpperCase().replace('WBNB', 'BNB') }) : null}</Text> : null}
     </Page>
   )
 }
