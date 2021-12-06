@@ -171,12 +171,12 @@ const FarmSA = () => {
     let quoteTokenName
     let riskKillThreshold
 
-const getDefaultTokenInfo = (selStrat: string) => {
-    if (selStrat.includes('bull')) {
-      return 'QuoteTokenInfo'
+    const getDefaultTokenInfo = (selStrat: string) => {
+        if (selStrat.includes('bull')) {
+            return 'QuoteTokenInfo'
+        }
+        return 'TokenInfo'
     }
-    return 'TokenInfo'
-  }
     const tokenInfoToUse = getDefaultTokenInfo(marketStrategy)
 
     const getSingleLeverage = (selStrategy: string): number => {
@@ -297,13 +297,19 @@ const getDefaultTokenInfo = (selStrat: string) => {
     const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
     const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
 
+    let borrowingInterestParam = borrowingInterest
+    if (marketStrategy.includes('bull')) { // bull === 2x long
+        borrowingInterestParam = borrowingInterest // borrowingInterestQuoteToken
+    } else { // 2x short || 3x short
+        borrowingInterestParam = borrowingInterest
+    }
 
     const getApr = (lvg: number) => {
         const totalapr =
             Number((yieldFarmData / 100) * lvg) +
             Number(((singleFarm?.tradeFee * 365) / 100) * lvg) +
             Number(huskyRewards * (lvg - 1)) -
-            Number(borrowingInterest * (lvg - 1))
+            Number(borrowingInterestParam * (lvg - 1))
         return totalapr
     }
     const getApy = (lvg: number) => {
@@ -324,10 +330,9 @@ const getDefaultTokenInfo = (selStrat: string) => {
         quoteTokenInputValue = 0;
     }
 
-    console.log('tokenInputValue', tokenInputValue, 'quoteTokenInputValue', quoteTokenInputValue, "single lev", singleLeverage, 'tokenName', tokenName, 'quoteTokenName', quoteTokenName)
     const farmingData = getLeverageFarmingData(singleFarm, singleLeverage, tokenInputValue, quoteTokenInputValue, tokenName)
     const farmData = farmingData ? farmingData[1] : []
-    console.log('farmData', farmData)
+    // console.log('farmData', farmData)
     const apy = getApy(singleLeverage)
 
     // const selectOptions = []
@@ -457,12 +462,7 @@ const getDefaultTokenInfo = (selStrat: string) => {
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
 
-    let borrowingInterestParam
-    if (marketStrategy.includes('bull')) { // bull === 2x long
-        borrowingInterestParam = borrowingInterestQuoteToken
-    } else { // 2x short || 3x short
-        borrowingInterestParam = borrowingInterest
-    }
+
 
     const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage)
     const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterestParam, getApr(1), singleLeverage)
@@ -630,158 +630,162 @@ const getDefaultTokenInfo = (selStrat: string) => {
         return option
     }
 
-const getSelectOptions = () => {
-  if (selectedStrategy === 'neutral') {
-    return [
-      {
-        value: 'neutral',
-        label: 'Neutral strategy 2x',
-      },
-      {
-        value: 'bear',
-        label: 'Bear strategy 2x',
-      },
-      {
-        value: 'bull2x',
-        label: 'Bull Strategy 2x',
-      },
-      {
-        value: 'bull3x',
-        label: 'Bull Strategy 3x',
-      },
-    ]
-  }
-  if (selectedStrategy === 'bear') {
-    return [
-      {
-        value: 'bear',
-        label: 'Bear strategy 2x',
-      },
-      {
-        value: 'bull2x',
-        label: 'Bull Strategy 2x',
-      },
-      {
-        value: 'bull3x',
-        label: 'Bull Strategy 3x',
-      },
-      {
-        value: 'neutral',
-        label: 'Neutral strategy 2x',
-      },
-    ]
-  }
-  if (selectedStrategy === 'bull2x') {
-    return [
-      {
-        value: 'bull2x',
-        label: 'Bull Strategy 2x',
-      },
-      {
-        value: 'bull3x',
-        label: 'Bull Strategy 3x',
-      },
-      {
-        value: 'bear',
-        label: 'Bear strategy 2x',
-      },
-      {
-        value: 'neutral',
-        label: 'Neutral strategy 2x',
-      },
-    ]
-  }
-  return [
-    {
-      value: 'bull3x',
-      label: 'Bull Strategy 3x',
-    },
-    {
-      value: 'bull2x',
-      label: 'Bull Strategy 2x',
-    },
-    {
-      value: 'bear',
-      label: 'Bear strategy 2x',
-    },
-    {
-      value: 'neutral',
-      label: 'Neutral strategy 2x',
-    },
-  ]
-}
-    
-    const getTokenSelectOptions = (selStrategy: string) => {
-        if (selStrategy.includes('bull')) {
+    const getSelectOptions = () => {
+        if (selectedStrategy === 'neutral') {
             return [
                 {
-                    icon: singleFarm?.[tokenInfoToUse]?.token,
-                    label: singleFarm?.[tokenInfoToUse]?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                    value: singleFarm?.[tokenInfoToUse]?.token,
+                    value: 'neutral',
+                    label: 'Neutral strategy 2x',
                 },
                 {
-                    icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
-                    label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                    value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                    value: 'bear',
+                    label: 'Bear strategy 3x',
+                },
+                {
+                    value: 'bull2x',
+                    label: 'Bull Strategy 2x',
+                },
+                {
+                    value: 'bull3x',
+                    label: 'Bull Strategy 3x',
+                },
+            ]
+        }
+        if (selectedStrategy === 'bear') {
+            return [
+                {
+                    value: 'bear',
+                    label: 'Bear strategy 3x',
+                },
+                {
+                    value: 'bull2x',
+                    label: 'Bull Strategy 2x',
+                },
+                {
+                    value: 'bull3x',
+                    label: 'Bull Strategy 3x',
+                },
+                {
+                    value: 'neutral',
+                    label: 'Neutral strategy 2x',
+                },
+            ]
+        }
+        if (selectedStrategy === 'bull2x') {
+            return [
+                {
+                    value: 'bull2x',
+                    label: 'Bull Strategy 2x',
+                },
+                {
+                    value: 'bull3x',
+                    label: 'Bull Strategy 3x',
+                },
+                {
+                    value: 'bear',
+                    label: 'Bear strategy 3x',
+                },
+                {
+                    value: 'neutral',
+                    label: 'Neutral strategy 2x',
                 },
             ]
         }
         return [
             {
-                icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
-                label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                value: 'bull3x',
+                label: 'Bull Strategy 3x',
             },
+            {
+                value: 'bull2x',
+                label: 'Bull Strategy 2x',
+            },
+            {
+                value: 'bear',
+                label: 'Bear strategy 3x',
+            },
+            {
+                value: 'neutral',
+                label: 'Neutral strategy 2x',
+            },
+        ]
+    }
+
+    const getTokenSelectOptions = (selStrategy: string) => {
+        console.info('selStrategy', selectedToken)
+        console.info('singleFarm?.[tokenInfoToUse]?', singleFarm?.[tokenInfoToUse])
+        // if (selStrategy.includes('bull')) {
+        //     return [
+        //         {
+        //             icon: singleFarm?.[tokenInfoToUse]?.token,
+        //             label: singleFarm?.[tokenInfoToUse]?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        //             value: singleFarm?.[tokenInfoToUse]?.token,
+        //         },
+        //         {
+        //             icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
+        //             label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        //             value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+        //         },
+        //     ]
+        // }
+        return [
             {
                 icon: singleFarm?.[tokenInfoToUse]?.token,
                 label: singleFarm?.[tokenInfoToUse]?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
                 value: singleFarm?.[tokenInfoToUse]?.token,
             },
+            {
+                icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+            },
+
         ]
     }
- 
+
 
     const tokenSelectOptions = getTokenSelectOptions(marketStrategy)
 
-
-    const yieldFarming = yieldFarmData * singleLeverage
-    const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
-    const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
+    const yieldFarming = Number(yieldFarmData * singleLeverage)
+    const tradingFees = Number((singleFarm?.tradeFee * 365) * singleLeverage)
+    const huskyRewardsData = Number(huskyRewards * (singleLeverage - 1)) * 100
+    const borrowingInterestData = Number(borrowingInterest * (singleLeverage - 1)) * 100
+    const apr = getApr(singleLeverage) * 100
     const dailyApr = apr / 365
 
-     const { tooltip, targetRef, tooltipVisible } = useTooltip(
-         <>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Yield Farming')}</Text>
-                 <Text>{yieldFarming?.toFixed(2)}%</Text>
-             </Flex>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Trading Fees')}</Text>
-                 <Text>{tradingFees.toFixed(2)}%</Text>
-             </Flex>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Huski Rewards')}</Text>
-                 <Text>{huskyRewards.toFixed(2)}%</Text>
-             </Flex>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Borrowing Interest')}</Text>
-                 <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
-             </Flex>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Total APR')}</Text>
-                 <Text>{apr.toFixed(2)}%</Text>
-             </Flex>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Total APY')}</Text>
-                 <Text>{apy.toFixed(2)}%</Text>
-             </Flex>
-             <Flex justifyContent="space-between" alignItems="center">
-                 <Text small>{t('Daily APR')}</Text>
-                 <Text>{dailyApr.toFixed(2)}%</Text>
-             </Flex>
-         </>,
-         { placement: 'right' },
-     )
+    const { tooltip, targetRef, tooltipVisible } = useTooltip(
+        <>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Yield Farming')}</Text>
+                <Text>{yieldFarming?.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Trading Fees')}</Text>
+                <Text>{tradingFees.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Huski Rewards')}</Text>
+                <Text>{huskyRewardsData.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Borrowing Interest')}</Text>
+                <Text>-{Number(borrowingInterestData).toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Total APR')}</Text>
+                <Text>{apr.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Total APY')}</Text>
+                <Text>{apy.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Daily APR')}</Text>
+                <Text>{dailyApr.toFixed(2)}%</Text>
+            </Flex>
+        </>,
+        { placement: 'right' },
+    )
 
     const [chartype, setChartType] = useState(0);
     return (
@@ -818,7 +822,7 @@ const getSelectOptions = () => {
                                 <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
                                 <Text>Coin Value</Text>
                             </Flex>
-                            <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy}%</Text>
+                            <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy.toFixed(2)}%</Text>
                         </Flex>
                         {chartype === 0 ? <ReactEcharts option={getOption()} style={{ height: '500px' }} /> :
                             <ReactEcharts option={getOption2()} style={{ height: '500px' }} />}
@@ -896,17 +900,17 @@ const getSelectOptions = () => {
                             <Text small>{t('Equity')}</Text>
                             {farmData ? (
                                 <Text fontWeight="bold">
-                                    {farmData[3]?.toFixed(2)} {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}
+                                    {farmData[3]?.toFixed(2)} {tokenName}
                                 </Text>
                             ) : (
-                                <Text fontWeight="bold">0.00 {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}</Text>
+                                <Text fontWeight="bold">0.00 {tokenName}</Text>
                             )}
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between">
                             <Text small>{t('Position Value')}</Text>
                             {farmData ? (
                                 <Text fontWeight="bold">
-                                    {farmData[8].toFixed(2)} {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')} + {farmData[9].toFixed(2)} {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName ? quoteTokenName : tokenName}
+                                    {farmData[8].toFixed(2)} {tokenName} + {farmData[9].toFixed(2)} {quoteTokenName}
                                 </Text>
                             ) : (
                                 <Skeleton width="80px" height="16px" />

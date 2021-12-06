@@ -543,7 +543,7 @@ export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
     // console.log({ '涨跌幅': m / 100 - 1, '价格': 1000 * m / 100, Token0Name, '损益比例(计价)': dataList[5], Token1Name, '损益比例+ 计价)': dataList[6] })
 
   }
-  console.log({ priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 })
+  // console.log({ priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 })
   return { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 }
 
 

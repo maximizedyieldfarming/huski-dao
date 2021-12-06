@@ -159,7 +159,7 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
     }
   }, [])
 
-  console.log(options[selectedOptionIndex].icon);
+  console.log({'options': options, selectedOptionIndex });
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize} width={width}>
       {containerSize.width !== 0 && (

@@ -44,10 +44,10 @@ export const useFarmsWithToken = (farm: LeverageFarm, tokenName?: string) => {
           }
         ])
 
-      console.info('borrowingInterest', borrowInterest)
-      console.info(token)
+      // console.info('borrowingInterest', borrowInterest)
+      // console.info(token)
       const borrowingInterestData = parseInt(borrowInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 ** 18)
-      console.info(borrowingInterestData)
+      // console.info(borrowingInterestData)
       setBorrowingInterest(borrowingInterestData)
     }
 
