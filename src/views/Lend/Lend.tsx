@@ -3,9 +3,9 @@ import React from 'react'
 import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
-// import { useLendTotalSupply } from 'state/lend/hooks'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
+import { getTvl } from '../Leverage/helpers'
 import LendTable from './components/LendTable/LendTable'
 import headerBg from './BG.png'
 
@@ -37,8 +37,15 @@ const SBBox = styled(Box)`
 
 const Lend: React.FC = () => {
   const { t } = useTranslation()
-  const lendTotalSupply = null // useLendTotalSupply()
   const { data: farmsData } = useLeverageFarms()
+
+  let lpTokensTvl = 0
+  farmsData.map((farm) => {
+    const { totalTvl } = getTvl(farm)
+    lpTokensTvl += Number(totalTvl)
+    return lpTokensTvl
+  })
+
   const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
     hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
@@ -46,6 +53,17 @@ const Lend: React.FC = () => {
   }, [])
 
   console.log({ lendData })
+
+  let depositTotalToken = 0
+  lendData.map((farm) => {
+    const { totalToken, tokenPriceUsd } = farm
+    const totalSupplyUSD = Number(totalToken) * Number(tokenPriceUsd) / (10 ** 18)
+    depositTotalToken += totalSupplyUSD
+    return depositTotalToken
+  })
+
+  const totalValueLocked = Number(lpTokensTvl) + Number(depositTotalToken)
+  const totalValueLockedValue = totalValueLocked.toLocaleString("en-US", { style: "currency", currency: "USD" })
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
@@ -54,29 +72,29 @@ const Lend: React.FC = () => {
   return (
     <Page>
       <Section>
-        <SBBox className="block" style={{position:'relative',marginRight:'25px',display:'flex',alignItems:'center' }}>
-          <h2 style={{color:'white',fontSize:'60px',marginLeft:'80px',fontWeight:800}}>Huski<br /> Finance</h2>
+        <SBBox className="block" style={{ position: 'relative', marginRight: '25px', display: 'flex', alignItems: 'center' }}>
+          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>Huski<br /> Finance</h2>
         </SBBox>
-        <Flex className="container" style={{padding:'30px',flexDirection:'column',justifyContent:'space-evenly', background:'#E3F0F6',borderRadius:'15px',width:'20%',marginRight:'25px'}}>
+        <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-evenly', background: '#E3F0F6', borderRadius: '15px', width: '20%', marginRight: '25px' }}>
           <img src="/images/8825.svg" width='70px' height='70px' alt="" />
-          <Text fontWeight='600'  color="textFarm" mt='30px' fontSize='13px'>{t(`Total Volume 24H:`)}</Text>
+          <Text fontWeight='600' color="textFarm" mt='30px' fontSize='13px'>{t(`Total Volume 24H:`)}</Text>
           {volume24 ? (
             <Text fontSize="30px" color="textFarm">
               {volume24}
             </Text>
           ) : (
             // <Skeleton width="180px" height="30px" />
-            <Text fontSize="28px" style={{letterSpacing:'-0.01em'}} color="textFarm" fontWeight="700">
+            <Text fontSize="28px" style={{ letterSpacing: '-0.01em' }} color="textFarm" fontWeight="700">
               $123,123,126
             </Text>
           )}
           <Text fontSize="30px">{volume24}</Text>
         </Flex>
-        <Flex className="container" style={{padding:'30px', flexDirection:'column',justifyContent:'space-evenly',background:'#D6C7F0',borderRadius:'15px',width:'20%'}}>
+        <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-evenly', background: '#D6C7F0', borderRadius: '15px', width: '20%' }}>
           <img src="/images/8826.svg" width='70px' height='70px' alt="" />
           <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600">{t('Total Value Locked:')}</Text>
-          {lendTotalSupply ? (
-            <Text fontSize="28px" style={{letterSpacing:'-0.01em'}} color="textFarm" fontWeight="bold">{`$${lendTotalSupply}`}</Text>
+          {totalValueLocked ? (
+            <Text fontSize="28px" style={{ letterSpacing: '-0.01em' }} color="textFarm" fontWeight="bold">{totalValueLockedValue}</Text>
           ) : (
             <Skeleton width="180px" height="30px" />
           )}
