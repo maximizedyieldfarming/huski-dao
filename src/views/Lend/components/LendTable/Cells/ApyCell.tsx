@@ -8,7 +8,7 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
-  flex:1;
+  flex: 1;
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
@@ -36,25 +36,35 @@ const ApyCell = ({ getApyData, token }) => {
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>{t('Lending APR')}</Text>
+        <Text small mr="8px">
+          {t('Lending APR')}
+        </Text>
         {lendApr ? <Text>{apyCell(lendApr)}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>{t('Staking APR')}</Text>
+        <Text small mr="8px">
+          {t('Staking APR')}
+        </Text>
         {stakeApr ? <Text>{apyCell(stakeApr.toNumber())}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       {tokenName === 'ALPACA' && (
         <Flex justifyContent="space-between" alignItems="center">
-          <Text small>{t('Protocol APR')}</Text>
+          <Text small mr="8px">
+            {t('Protocol APR')}
+          </Text>
           <Skeleton width="80px" height="16px" />
         </Flex>
       )}
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>{t('Total APR')}</Text>
+        <Text small mr="8px">
+          {t('Total APR')}
+        </Text>
         {totalApr ? <Text>{apyCell(totalApr.toNumber())}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text small>{t('Total APY')}</Text>
+        <Text small mr="8px">
+          {t('Total APY')}
+        </Text>
         {apy ? <Text>{apyCell(apy)}</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
     </>,
@@ -71,11 +81,13 @@ const ApyCell = ({ getApyData, token }) => {
         )}
         {apy ? (
           <Flex alignItems="center">
-            <Text style={{fontWeight:600,fontSize:'16px',marginTop:'10px'}} color="text">{apyCell(apy)}</Text>
+            <Text style={{ fontWeight: 600, fontSize: '16px' }} color="text">
+              {apyCell(apy)}
+            </Text>
             {tooltipVisible && tooltip}
-            {/* <span ref={targetRef}>
+            <span ref={targetRef}>
               <InfoIcon ml="5px" color="textSubtle" />
-            </span> */}
+            </span>
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />

@@ -393,12 +393,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               pathname: `${location.pathname}/farm/${singleData?.lpSymbol.replace(' LP', '')}`,
               state: {
                 singleData,
-                singleLeverage,
                 marketStrategy: selectedStrategy,
               },
             })}
             disabled={!account || !apy}
-            onClick={(e) => !account && e.preventDefault()}
+            onClick={(e) => !account || !apy && e.preventDefault()}
           >
             {t('Farm')}
           </Button>
