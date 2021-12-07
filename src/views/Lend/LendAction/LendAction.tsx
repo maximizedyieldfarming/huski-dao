@@ -17,6 +17,7 @@ import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useHuskiPrice } from 'hooks/api'
+import { useFarmsWithToken } from '../../Leverage/hooks/useFarmsWithToken'
 import { getAprData } from '../helpers'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
@@ -138,7 +139,8 @@ const LendAction = () => {
       : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   const huskyPrice = useHuskiPrice()
-  const { apy } = getAprData(tokenData, huskyPrice)
+  const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
+  const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
   const apyCell = (e) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
