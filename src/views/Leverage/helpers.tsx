@@ -503,30 +503,31 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 
   const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
 
-  // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
+  const  drop1 = liquidationPrice / farmingtokenlp * basetokenlp * 100
   const drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
 
+  console.log({ 'kkkkkkk': drop1 , drop })
   return drop
 }
 
 
-export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
+export const getRunLogic = (riskKillThreshold, lpApr, leverage, Token0Name, Token1Name, tokenName) => {
 
   const RiskKillThreshold = Number(riskKillThreshold) / 10000 // 清算风险度
   const LiquidationRewards = LIQUIDATION_REWARDS // 清算罚金
   const ReinvestMinute = REINVEST_MINUTE // 复投时长（分钟）0为按日复投
-  const Token0Name = 'BNB' // token0名称
-  const Token1Name = 'USD' // token1名称
+  // const Token0Name = 'BNB' // token0名称
+  // const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = 0
   const LPAPRList = lpApr // 0.5 // LP历史日均年化
-  const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
+  const BaseTokenName = tokenName // 填Token0Name 或 Token1Name
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = 90 // priceList.length // 时间长度（天） 换成价格list的长度
 
   const profitLossRatioSheet1Token0 = []
   const profitLossRatioSheet1Token1 = []
   const priceRiseFall = []
-
+console.log({ Token0Name, Token1Name, tokenName});
 
   for (let m = 1; m <= 300; m++) {
     const PriceList = [];
@@ -552,17 +553,17 @@ export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
 }
 
 
-export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest, lpApr, leverage) => {
+export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest, lpApr, leverage, Token0Name, Token1Name, tokenName) => {
   const RiskKillThreshold = Number(riskKillThreshold) / 10000  // 清算风险度
   const LiquidationRewards = LIQUIDATION_REWARDS // 清算罚金
   const ReinvestMinute = REINVEST_MINUTE // 复投时长（分钟）0为按日复投
-  const Token0Name = 'BNB' // token0名称
-  const Token1Name = 'USD' // token1名称
+  // const Token0Name = 'BNB' // token0名称
+  // const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = borrowingInterest // 0.05
   const LPAPRList = lpApr // LP历史日均年化
   const PriceList = priceList // 历史日均价格 token0_usd / token1_usd
   // 注意三个List的长度一致
-  const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
+  const BaseTokenName = tokenName // 填Token0Name 或 Token1Name
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = PriceList.length // 时间长度（天）
 

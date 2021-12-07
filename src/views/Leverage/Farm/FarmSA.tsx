@@ -159,7 +159,6 @@ const FarmSA = () => {
     const singleFarm = data
     console.info('singleFarm', singleFarm)
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
-    console.log("coingeckoId", coingeckoId);
     const priceList = usePriceList(coingeckoId)
 
     const tokenPriceList = useTokenPriceList(coingeckoId)
@@ -202,6 +201,10 @@ const FarmSA = () => {
         quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
         riskKillThreshold = singleFarm?.liquidationThreshold
     }
+
+    // for chart logic params
+    const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
     const allowance = singleFarm?.userData?.quoteTokenAllowance
 
@@ -295,21 +298,21 @@ const FarmSA = () => {
     // const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
 
     const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
-    const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
+    // const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
 
-    let borrowingInterestParam = borrowingInterest
-    if (marketStrategy.includes('bull')) { // bull === 2x long
-        borrowingInterestParam = borrowingInterest // borrowingInterestQuoteToken
-    } else { // 2x short || 3x short
-        borrowingInterestParam = borrowingInterest
-    }
+    // let borrowingInterestParam = borrowingInterest
+    // if (marketStrategy.includes('bull')) { // bull === 2x long
+    //     borrowingInterestParam = borrowingInterest // borrowingInterestQuoteToken
+    // } else { // 2x short || 3x short
+    //     borrowingInterestParam = borrowingInterest
+    // }
 
     const getApr = (lvg: number) => {
         const totalapr =
             Number((yieldFarmData / 100) * lvg) +
             Number(((singleFarm?.tradeFee * 365) / 100) * lvg) +
             Number(huskyRewards * (lvg - 1)) -
-            Number(borrowingInterestParam * (lvg - 1))
+            Number(borrowingInterest * (lvg - 1))
         return totalapr
     }
     const getApy = (lvg: number) => {
@@ -464,8 +467,8 @@ const FarmSA = () => {
 
 
 
-    const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage)
-    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterestParam, getApr(1), singleLeverage)
+    const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
+    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
 
     // for test data
     const xAxisdata = dateList
