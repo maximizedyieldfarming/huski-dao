@@ -96,7 +96,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
-  // console.log({ leverage,  tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum':parseFloat(quoteTokenAmountTotalNum)  })
+  console.log({ leverage, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
   // console.info('======farmdata======', farmdata);
   return farmdata
@@ -336,8 +336,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   const farmingtokenlp = farmTokenAmount // .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  const ClosePosFee = 5 / 100 / 100; // 咱们是万5， alpaca是0
-  const PancakeTradingFee = 0.25 / 100;
+  const ClosePosFee = CLOSE_POS_FEE // 5 / 100 / 100; // 咱们是万5， alpaca是0
+  const PancakeTradingFee = PANCAKE_TRADING_FEE // 0.25 / 100;
   const basetokenBegin = parseFloat(tokenAmountTotalValue)
   const farmingtokenBegin = parseFloat(quoteTokenAmountTotalValue)
 
@@ -503,10 +503,10 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 
   const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
 
-  const  drop1 = liquidationPrice / farmingtokenlp * basetokenlp * 100
-  const drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
+  const drop1 = liquidationPrice / farmingtokenlp * basetokenlp * 100
+  const drop = 1 / liquidationPrice / basetokenlp * farmingtokenlp * 100
 
-  console.log({ 'kkkkkkk': drop1 , drop })
+  console.log({ 'kkkkkkk': drop1, basetokenlp, farmingtokenlp, basetokenlpborrowed, drop, TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold })
   return drop
 }
 
@@ -527,7 +527,6 @@ export const getRunLogic = (riskKillThreshold, lpApr, leverage, Token0Name, Toke
   const profitLossRatioSheet1Token0 = []
   const profitLossRatioSheet1Token1 = []
   const priceRiseFall = []
-console.log({ Token0Name, Token1Name, tokenName});
 
   for (let m = 1; m <= 300; m++) {
     const PriceList = [];
