@@ -162,7 +162,7 @@ const FarmSA = () => {
     const priceList = usePriceList(coingeckoId)
 
     const tokenPriceList = useTokenPriceList(coingeckoId)
-    const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
+    // const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
     const [marketStrategy, setMarketStrategy] = useState<string>(selectedStrategy)
     const [singleLeverage, setSingleLeverage] = useState(leverage)
 
@@ -428,18 +428,22 @@ const FarmSA = () => {
             workerAddress = singleFarm?.QuoteTokenInfo.address
 
         } else { // 2x short || 3x short
+            console.info('2x short || 3x short', selectedToken.symbol)
             if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
+                console.info('===tokenname',tokenName)
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
                 dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
+                console.info('!!!==tokenname',tokenName)
                 tokenInputValue = 0;
                 quoteTokenInputValue = inputValue
                 farmingTokenAmount = Number(quoteTokenInputValue).toString()
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
                 dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
+                dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
             contract = vaultContract
             amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
