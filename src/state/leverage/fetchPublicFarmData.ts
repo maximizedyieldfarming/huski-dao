@@ -34,6 +34,7 @@ type PublicFarmData = {
   quoteTokenLiquidationThreshold: SerializedBigNumber
   tokenMinDebtSize: SerializedBigNumber
   quoteTokenMinDebtSize: SerializedBigNumber
+  tokenReserveFund: SerializedBigNumber
   pooPerBlock: number
   quoteTokenPoolPerBlock: number
   poolLendPerBlock: number
@@ -74,21 +75,29 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       }
     ])
 
-  const [tokenMinDebtSize] =
+  const [tokenMinDebtSize, quoteTokenMinDebtSize, tokenReserveFund] =
     await multicall(SimpleVaultConfigABI, [
       {
         address: getAddress(TokenInfo.token.config),
         name: 'minDebtSize',
-      }
-    ])
-
-  const [quoteTokenMinDebtSize] =
-    await multicall(SimpleVaultConfigABI, [
+      },
       {
         address: getAddress(QuoteTokenInfo.token.config),
         name: 'minDebtSize',
+      },
+      {
+        address: getAddress(TokenInfo.token.config),
+        name: 'getReservePoolBps',
       }
     ])
+
+  // const [quoteTokenMinDebtSize] =
+  //   await multicall(SimpleVaultConfigABI, [
+  //     {
+  //       address: getAddress(QuoteTokenInfo.token.config),
+  //       name: 'minDebtSize',
+  //     }
+  //   ])
 
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -294,6 +303,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     quoteTokenLiquidationThreshold: quoteTokenLiquidationThreshold[0]._hex,
     tokenMinDebtSize: tokenMinDebtSize[0]._hex,
     quoteTokenMinDebtSize: quoteTokenMinDebtSize[0]._hex,
+    tokenReserveFund: tokenReserveFund[0]._hex,
   }
 }
 

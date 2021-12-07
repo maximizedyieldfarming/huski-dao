@@ -8,6 +8,7 @@ import { getAddress } from 'utils/addressHelpers'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
 import NameCell from './Cells/NameCell'
 import { getAprData } from '../../helpers'
+import { useFarmsWithToken } from '../../../Leverage/hooks/useFarmsWithToken'
 import UtilRateCell from './Cells/UtilRateCell'
 import ApyCell from './Cells/ApyCell'
 import TotalSupplyCell from './Cells/TotalSupplyCell'
@@ -32,8 +33,11 @@ const LendRow = ({ tokenData }) => {
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
 
   const huskyPrice = useHuskiPrice()
-  const { lendApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice)
+  const tokenName = tokenData?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB');
 
+  const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
+  // const { lendApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
+  // console.log({tokenName, borrowingInterest })
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
@@ -55,7 +59,7 @@ const LendRow = ({ tokenData }) => {
         onMouseEnter={() => setIsShown(true)}
         onMouseLeave={() => setIsShown(false)} role="row" onClick={toggleExpanded}>
         <NameCell token={tokenData} />
-        <ApyCell getApyData={getAprData(tokenData, huskyPrice)} token={tokenData} />
+        <ApyCell getApyData={getAprData(tokenData, huskyPrice, borrowingInterest)} token={tokenData} />
         <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />
         <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} />
         <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
