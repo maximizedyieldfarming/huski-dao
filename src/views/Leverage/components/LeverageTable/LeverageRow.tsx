@@ -29,7 +29,6 @@ const LeverageRow = ({ tokenData }) => {
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
-  const [childLeverage, setChildLeverage] = useState(leverage)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
@@ -86,6 +85,28 @@ const LeverageRow = ({ tokenData }) => {
 
   // console.log({'newLeverage--': apyarray, 'lpSymbol': lpSymbol, childLeverage })
 
+  const getLeverageWithHighestApy = () => {
+    const lvgArray = []
+    for (let i = 1; i < leverage / 0.5; i++) {
+      lvgArray.push(1 + 0.5 * (-1 + i))
+    }
+    // which lvg has highest apy
+    const apyArray = lvgArray.map((lvg) => getApy(lvg))
+    const maxApy = Math.max(...apyArray)
+    const index = apyArray.indexOf(maxApy)
+    const leveragewithHighestApy = lvgArray[index]
+
+    return leveragewithHighestApy
+  }
+  const lvgWithHighestApy = getLeverageWithHighestApy()
+
+  const [childLeverage, setChildLeverage] = useState(lvgWithHighestApy || leverage)
+  React.useEffect(() => {
+    if (lvgWithHighestApy) {
+      setChildLeverage(lvgWithHighestApy)
+    }
+  }, [lvgWithHighestApy])
+
   return (
     <>
       <StyledRow role="row" onClick={toggleExpanded}>
@@ -100,7 +121,7 @@ const LeverageRow = ({ tokenData }) => {
         />
         <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} tokenNum={tokenNum} quoteTokenNum={quoteTokenNum} />
         <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
-        <LeverageCell leverage={leverage} onChange={onChildValueChange} />
+        <LeverageCell leverage={leverage} onChange={onChildValueChange} childLeverage={childLeverage} />
         <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />
       </StyledRow>
     </>
