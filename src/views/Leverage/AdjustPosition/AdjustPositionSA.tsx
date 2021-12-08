@@ -137,8 +137,10 @@ const AdjustPositionSA = () => {
   let quoteTokenInputValue
   let userTokenBalance
   let userQuoteTokenBalance
+  // let minimumDebt
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
+    // console.log('case 1')
     symbolName = token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = token
@@ -157,11 +159,13 @@ const AdjustPositionSA = () => {
     contract = vaultContract
     tokenInputValue = formatNumber(Number(tokenInput))
     quoteTokenInputValue = 0 // formatNumber(quoteTokenInput)
-    userTokenBalance = getBalanceAmount(tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+    userTokenBalance = getBalanceAmount(tokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance).toNumber()
     userQuoteTokenBalance = getBalanceAmount(
-      quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
-    )
+      quoteTokenValueSymbol === 'BNB'  ? bnbBalance : quoteTokenBalance,
+    ).toNumber()
+    // minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   } else {
+   //  console.log('case 2')
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = quoteToken
@@ -183,9 +187,10 @@ const AdjustPositionSA = () => {
     tokenInputValue = 0 // formatNumber(quoteTokenInput)
     quoteTokenInputValue = formatNumber(Number(tokenInput))
     userTokenBalance = getBalanceAmount(
-      quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
-    )
-    userQuoteTokenBalance = getBalanceAmount(tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+      tokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
+    ).toNumber()
+    userQuoteTokenBalance = getBalanceAmount(quoteTokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance).toNumber()
+    // minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   }
   // console.info('use this', {
   //   symbolName,
@@ -511,9 +516,9 @@ const AdjustPositionSA = () => {
                   </Text>
                 )}
               </Flex>
-              <Flex justifyContent="space-between">
+              {/*               <Flex justifyContent="space-between">
                 <Text>{t('Minimum Debt Repayment')}</Text>
-              </Flex>
+              </Flex> */}
             </>
           )
         ) : null}
@@ -605,6 +610,18 @@ const AdjustPositionSA = () => {
                 </BalanceInputWrapper>
               </Box>
               <Flex justifyContent="space-between">
+                <Text>{t('APY')}</Text>
+                {apy ? (
+                  <Flex alignItems="center">
+                    <Text>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
                   <Text>
@@ -617,9 +634,9 @@ const AdjustPositionSA = () => {
                   </Text>
                 )}
               </Flex>
-              <Flex justifyContent="space-between">
+              {/* <Flex justifyContent="space-between">
                 <Text>{t('Minimum Debt Repayment')}</Text>
-              </Flex>
+              </Flex> */}
             </>
           )
         ) : null}
@@ -660,9 +677,9 @@ const AdjustPositionSA = () => {
                 </Text>
               )}
             </Flex>
-            <Flex justifyContent="space-between">
+            {/* <Flex justifyContent="space-between">
               <Text>{t('Minimum Debt Repayment')}</Text>
-            </Flex>
+            </Flex> */}
           </>
         ) : null}
 
@@ -753,6 +770,18 @@ const AdjustPositionSA = () => {
                 </BalanceInputWrapper>
               </Box>
               <Flex justifyContent="space-between">
+                <Text>{t('APY')}</Text>
+                {apy ? (
+                  <Flex alignItems="center">
+                    <Text>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon />
+                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                  </Flex>
+                ) : (
+                  <Skeleton width="80px" height="16px" />
+                )}
+              </Flex>
+              <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
                   <Text>
@@ -765,9 +794,9 @@ const AdjustPositionSA = () => {
                   </Text>
                 )}
               </Flex>
-              <Flex justifyContent="space-between">
+              {/* <Flex justifyContent="space-between">
                 <Text>{t('Minimum Debt Repayment')}</Text>
-              </Flex>
+              </Flex> */}
             </>
           )
         ) : null}
@@ -789,6 +818,14 @@ const AdjustPositionSA = () => {
           </Button>
         </Flex>
       </Section>
+    {/*   <Text mx="auto" color="red">
+        {new BigNumber(assetsBorrowed).lt(minimumDebt)
+          ? t('Minimum Debt Size: %minimumDebt% %name%', {
+              minimumDebt: minimumDebt.toNumber(),
+              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+            })
+          : null}
+      </Text> */}
     </Page>
   )
 }
