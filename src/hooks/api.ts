@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import moment from 'moment'
+import useRefresh from './useRefresh'
 
 export const useGetPositions = (account) => {
   const [data, setData] = useState([])
@@ -102,6 +103,7 @@ export const useTokenPriceList = (coingeckoId) => {
 
 export const useCakePrice = () => {
   const [cakePrice, setCakePrice] = useState()
+  const { slowRefresh } = useRefresh()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,13 +119,14 @@ export const useCakePrice = () => {
     }
 
     fetchData()
-  }, [setCakePrice])
+  }, [slowRefresh])
 
   return cakePrice
 }
 
 export const useHuskiPrice = () => {
   const [huskiPrice, setHuskiPrice] = useState()
+  const { slowRefresh } = useRefresh()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,7 +142,7 @@ export const useHuskiPrice = () => {
     }
 
     fetchData()
-  }, [setHuskiPrice])
+  }, [slowRefresh])
 
   return huskiPrice
 }
