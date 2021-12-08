@@ -39,12 +39,9 @@ import ReactEcharts from 'echarts-for-react'
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import useTheme from 'hooks/useTheme'
-
-// import TradingViewWidget, { Themes } from 'react-tradingview-widget';
-
-// import ReactHighstock from 'react-highcharts/bundle/ReactHighstock.src';
 import { useWeb3React } from '@web3-react/core'
 import SingleFarmSelect from 'components/Select/SingleFarmSelect'
+import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import {
     getHuskyRewards,
     getYieldFarming,
@@ -54,10 +51,6 @@ import {
     getRunLogic1,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
-
-interface RouteParams {
-    token: string
-}
 
 interface LocationParams {
     singleData?: any
@@ -767,6 +760,9 @@ const FarmSA = () => {
     const apr = getApr(singleLeverage) * 100
     const dailyApr = apr / 365
 
+  const minimumDebt = tokenName === singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') ? new BigNumber(singleFarm?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18)) : new BigNumber(singleFarm?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
+  console.log("farmData3",farmData[3], "minimumDebt", minimumDebt.toNumber())
+
     const { tooltip, targetRef, tooltipVisible } = useTooltip(
         <>
             <Flex justifyContent="space-between" alignItems="center">
@@ -957,6 +953,7 @@ const FarmSA = () => {
                             )}
                         </Flex>
                     </Section>
+                    {inputValue ? <Text mx="auto" color='red'>{new BigNumber(farmData[3]).lt(minimumDebt) ? t('Minimum Debt Size: %minimumDebt% %tokenName%', { minimumDebt: minimumDebt.toNumber(), tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB') }) : null}</Text> : null}
                 </Flex>
             </SectionWrapper >
         </Page >
