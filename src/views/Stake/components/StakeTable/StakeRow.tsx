@@ -189,6 +189,8 @@ const StakeRow = ({ tokenData }) => {
   const approveContract = useERC20(vaultIbAddress)
   const fairLaunchAddress = getFairLaunchAddress()
   const [isPending, setIsPending] = useState<boolean>(false)
+  const [isPendingUnstake, setIsPendingUnstake] = useState<boolean>(false)
+  const [isPendingClaim, setIsPendingClaim] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const [stakeAmount, setStakeAmount] = useState<string>()
   const handleStakeInput = useCallback(
@@ -266,7 +268,7 @@ const StakeRow = ({ tokenData }) => {
       gasLimit: 380000,
     }
 
-    setIsPending(true)
+    setIsPendingUnstake(true)
     try {
       const tx = await callWithGasPrice(
         claimContract,
@@ -282,7 +284,7 @@ const StakeRow = ({ tokenData }) => {
       toastError(t('Unsuccessful'), t('Something went wrong your unstake request. Please try again...'))
       console.error('transaction failed', error)
     } finally {
-      setIsPending(false)
+      setIsPendingUnstake(false)
       setUnstakeAmount('')
     }
   }
@@ -294,7 +296,7 @@ const StakeRow = ({ tokenData }) => {
 
   // claim operations
   const handleClaimConfirm = async () => {
-    setIsPending(true)
+    setIsPendingClaim(true)
     toastInfo(t('Pending request...'), t('Please Wait!'))
     try {
       const tx = await callWithGasPrice(claimContract, 'harvest', [tokenData.pid], { gasLimit: 300000 })
@@ -305,7 +307,7 @@ const StakeRow = ({ tokenData }) => {
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
     } finally {
-      setIsPending(false)
+      setIsPendingClaim(false)
     }
   }
 
@@ -360,7 +362,7 @@ const StakeRow = ({ tokenData }) => {
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
-                    {t('I Want to stake')}
+                    {t('I Want to Stake')}
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
                     {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
@@ -374,7 +376,7 @@ const StakeRow = ({ tokenData }) => {
                     placeholder="0.00"
                     onChange={handleStakeInput}
                     value={stakeAmount}
-                    style={{ background: 'unset', border: 'none', width: '100px' }}
+                    style={{ background: 'unset', border: 'none'}}
                   />
                   <Flex alignItems="center">
                     <Box>
@@ -401,18 +403,18 @@ const StakeRow = ({ tokenData }) => {
                           isPending
                         }
                         isLoading={isPending}
-                        endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                       >
-                        {isPending ? t('Confirming') : t('Stake')}
+                        {isPending ? t('Staking') : t('Stake')}
                       </StyledButton>
                     ) : (
                       <StyledButton
                         onClick={handleApprove}
                         disabled={!account || isPending}
-                        isLoading={isPending}
-                        endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                        isLoading={isApproving}
+                        endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
                       >
-                        {isPending ? t('Approving') : t('Approve')}
+                        {isApproving ? t('Approving') : t('Approve')}
                       </StyledButton>
                     )}
                   </Flex>
@@ -459,12 +461,12 @@ const StakeRow = ({ tokenData }) => {
                         Number(unstakeAmount) === 0 ||
                         unstakeAmount === undefined ||
                         Number(userStakedBalance) === 0 ||
-                        isPending
+                        isPendingUnstake
                       }
-                      isLoading={isPending}
-                      endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                      isLoading={isPendingUnstake}
+                      endIcon={isPendingUnstake ? <AutoRenewIcon spin color="primary" /> : null}
                     >
-                      {isPending ? t('Confirming') : t('Unstake')}
+                      {isPendingUnstake ? t('Unstaking') : t('Unstake')}
                     </StyledButton>
                   </Flex>
                 </MaxContainer>
@@ -477,17 +479,17 @@ const StakeRow = ({ tokenData }) => {
                 </Flex>
                 <MaxContainer>
                   <Text color="textFarm" fontSize="28px" fontWeight="700">
-                    {reward.toFixed(2, 1)}
+                    {reward.gt(0) ? (reward.lt(0.01) ? reward.toFixed(4, 1) : reward.toFixed(2, 1)) : '0.00'}
                   </Text>
                   <Flex alignItems="center">
                     <StyledButton
-                      disabled={!account || Number(reward) === 0}
+                      disabled={!account || Number(reward) === 0 || isPendingClaim}
                       onClick={handleClaimConfirm}
                       scale="sm"
-                      isLoading={isPending}
-                      endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                      isLoading={isPendingClaim}
+                      endIcon={isPendingClaim ? <AutoRenewIcon spin color="primary" /> : null}
                     >
-                      {t('Claim')}
+                      {isPendingClaim ? t('Claiming') : t('Claim')}
                     </StyledButton>
                   </Flex>
                 </MaxContainer>

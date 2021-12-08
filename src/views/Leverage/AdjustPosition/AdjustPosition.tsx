@@ -626,15 +626,16 @@ const AdjustPosition = () => {
           <Text>
             {isConvertTo ? (
               <>
-                {Number(willReceive).toPrecision(4)} {tokenValueSymbol}
+                {new BigNumber(willReceive).toFixed(3, 1)}{' '}
+                {tokenValueSymbol}
               </>
             ) : (
               <>
-                {Number(willReceivefarm).toPrecision(4)} {quoteTokenValueSymbol} + {Number(willReceivebase).toPrecision(4)} {tokenValueSymbol}
+                {new BigNumber(willReceivefarm).toFixed(3, 1)}{' '}
+                {quoteTokenValueSymbol} + {Number(willReceivebase).toPrecision(4)} {tokenValueSymbol}
               </>
             )}
           </Text>
-
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Minimum Received')}</Text>
@@ -646,11 +647,11 @@ const AdjustPosition = () => {
               </>
             ) : (
               <>
-                {Number(minimumReceivedfarm).toPrecision(4)} {quoteTokenValueSymbol} + {Number(minimumReceivedbase).toPrecision(4)} {tokenValueSymbol}
+                {Number(minimumReceivedfarm).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+                {Number(minimumReceivedbase).toPrecision(4)} {tokenValueSymbol}
               </>
             )}
           </Text>
-
         </Flex>
       </Section>
     )
@@ -875,7 +876,7 @@ React.useEffect(() => {
         >
           <Page>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
-              {t('Adjust Position')} {lpSymbolName}
+              {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Section>
               <Text bold>
@@ -924,18 +925,8 @@ React.useEffect(() => {
                 <AddCollateralRepayDebtContainer
                   currentPositionLeverage={Number(currentPositionLeverage)}
                   targetPositionLeverage={Number(targetPositionLeverage)}
-                  userQuoteTokenBalance={
-                    isAddCollateral
-                      ? getBalanceAmount(
-                        quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
-                      )
-                      : userQuoteTokenBalance
-                  }
-                  userTokenBalance={
-                    isAddCollateral
-                      ? getBalanceAmount(tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
-                      : userTokenBalance
-                  }
+                  userQuoteTokenBalance={userQuoteTokenBalance}
+                  userTokenBalance={userTokenBalance}
                   quoteTokenName={isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol}
                   tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
                   quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
