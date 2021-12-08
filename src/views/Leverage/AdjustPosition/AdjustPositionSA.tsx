@@ -378,6 +378,7 @@ const AdjustPositionSA = () => {
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
+  const [ percentageToClose, setPercentageToClose ] = useState<number>(0)
 
   return (
     <Page>
@@ -694,7 +695,7 @@ const AdjustPositionSA = () => {
                   onClick={(e) => setIsRepayDebt(false)}
                   style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 >
-                  {t('adding collateral')}
+                  {t(' adding collateral')}
                 </Text>
               </Text>
               <Box>
@@ -709,7 +710,18 @@ const AdjustPositionSA = () => {
                 </Text>
               </Flex>
               <Text>{t('What percentage would you like to close? (After repay all debt)')}</Text>
-              <input type="range" min="0" max="100" step="1" name="percentage" value="0" />
+              <Flex>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={percentageToClose}
+                  onChange={(e) => setPercentageToClose(Number(e.target.value))}
+                  style={{ width: '95%' }}
+                />
+                <Text ml="auto">{percentageToClose}%</Text>
+              </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
@@ -818,7 +830,7 @@ const AdjustPositionSA = () => {
           </Button>
         </Flex>
       </Section>
-    {/*   <Text mx="auto" color="red">
+      {/*   <Text mx="auto" color="red">
         {new BigNumber(assetsBorrowed).lt(minimumDebt)
           ? t('Minimum Debt Size: %minimumDebt% %name%', {
               minimumDebt: minimumDebt.toNumber(),
