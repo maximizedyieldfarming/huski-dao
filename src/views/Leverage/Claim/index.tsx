@@ -5,7 +5,7 @@ import { Flex, Box, Text, Button, AutoRenewIcon } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
@@ -24,10 +24,10 @@ interface LocationState {
 }
 
 const Wrapper = styled(Flex)`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  grid-gap: 1rem;
-
+  display : flex;
+  flex-direction : column;
+  justify-content : center;
+  align-items : center;
   // justify-content: space-between;
   // align-content: space-between;
   // align-items: center;
@@ -36,8 +36,9 @@ const Wrapper = styled(Flex)`
 const Cell = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   padding: 1rem;
+  margin : 0.7rem;
+  width : 70%;
   border-radius: ${({ theme }) => theme.radii.default};
-  gap: 1rem;
   justify-content: space-between;
 `
 
@@ -68,24 +69,27 @@ const Rewards: React.FC<RewardsProps> = ({ name, earnings, token, debtPoolId }) 
 
   return (
     <Cell>
-      <Flex alignItems="center" flex="2">
-        <TokenImage token={token} width={30} height={30} mr="8px" />
+      <Flex alignItems="center" width="300px">
+        <TokenImage token={token} width={44} height={44} mr="8px" />
         <Box>
-          <Text>{t(`Rewards from positions on ${name} pairs`)}</Text>
+          <Text fontSize="12px" color="#6F767E">{t(`Rewards from positions on`)}</Text>
+          <Text >{t(`${name} pairs`)}</Text>
         </Box>
       </Flex>
-      <Box style={{ flex: '1' }}>
+      <Box >
         <Text>{t('HUSKI Earned')}</Text>
         <Text bold color="secondary">
           {rewards.toPrecision(4)}
         </Text>
       </Box>
-      <Box style={{ flex: '1' }}>
+      <Box >
         <Button
           disabled={isPending || !rewards}
           isLoading={isPending}
           onClick={handleConfirm}
           endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          width="154px"
+          height="40px"
         >
           {isPending ? t('Claiming') : t('Claim')}
         </Button>
@@ -96,6 +100,7 @@ const Rewards: React.FC<RewardsProps> = ({ name, earnings, token, debtPoolId }) 
 
 const Claim: React.FC = () => {
   const { t } = useTranslation()
+  const history = useHistory()
   const {
     state: { farmsData },
   } = useLocation<LocationState>()
@@ -120,8 +125,11 @@ const Claim: React.FC = () => {
   })
 
   return (
-    <Page>
-      <Text bold mx="auto" color="secondary" fontSize="2">
+    <Page >
+      <Flex justifyContent="center">
+        <img src="/images/harvest.png" alt="haverst" width="193px" height="75px" />
+      </Flex>
+      <Text bold mx="auto" fontSize="25px" mt="-30px">
         {t('Harvest')}
       </Text>
       <Wrapper>
@@ -134,7 +142,23 @@ const Claim: React.FC = () => {
             token={pool?.TokenInfo?.token}
           />
         ))}
+        <Flex style={{ alignItems: 'center', cursor: 'pointer' }} width="70%" mt="20px">
+          <img src="/images/Cheveron.svg" alt="" />
+          <Text
+            color="textSubtle"
+            fontWeight="bold"
+            fontSize="16px"
+            style={{ height: '100%' }}
+            onClick={() => history.goBack()}
+          >
+            {t('Back')}
+          </Text>
+        </Flex>
       </Wrapper>
+
+      <Box position="absolute" right="0px" bottom="0px">
+        <img src="/images/haverstdog.png" alt="havestdog" width="300px" height="300px" />
+      </Box>
     </Page>
   )
 }

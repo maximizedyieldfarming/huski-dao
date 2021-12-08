@@ -330,7 +330,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     ml="20px"
                   />
                   <Flex flexDirection="column" marginLeft="30px">
-                    <Text color="#131313" fontSize="18px" fontWeight="600" textTransform="capitalize">
+                    <Text  fontSize="18px" fontWeight="600" textTransform="capitalize">
                       {strategyName}
                     </Text>
                     <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(

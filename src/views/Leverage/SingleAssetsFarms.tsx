@@ -379,7 +379,7 @@ const SingleAssetsFarms: React.FC = () => {
             </Text>
             <StyledButton
               as={Link}
-              to={(location) => ({ pathname: `${location.pathname}/claim`, state: { farmsData } })}
+              to={(location) => ({ pathname: `${location.pathname.replace('singleAssets', 'farms')}/claim`, state: { farmsData } })}
               disabled={!account}
               scale="sm"
             >
@@ -408,7 +408,7 @@ const SingleAssetsFarms: React.FC = () => {
       </StyledTableBorder>
 
       <FiltersWrapper>
-        <Flex alignItems="center" className="dexFilter" justifyContent="center" borderRight="2px solid #EFEFEF;">
+        <Flex alignItems="center" className="dexFilter" justifyContent="center" borderRight="2px solid #EFEFEF;" width = "28%">
           <Text bold>DEX:</Text>
           <Flex overflowX="auto" paddingLeft="5px">
             <FilterOption
@@ -443,7 +443,7 @@ const SingleAssetsFarms: React.FC = () => {
           alignItems="center"
           justifyContent="center"
           borderRight="2px solid #EFEFEF;"
-          style={{ paddingRight: '40px', paddingLeft: '50px' }}
+          style={{ paddingRight: '40px', paddingLeft: '50px', width: "28%" }}
         >
           <Text>{t('Strategy:')}</Text>
           <Flex overflowX="auto" alignItems="center">
@@ -476,9 +476,9 @@ const SingleAssetsFarms: React.FC = () => {
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex alignItems="center" justifyContent="center" style={{ paddingRight: '40px', paddingLeft: '50px' }}>
+        <Flex alignItems="center" justifyContent="center" style={{ paddingRight: '40px', paddingLeft: '50px', width: "44%" }}>
           <Text>{t('Paired Assets:')}</Text>
-          <Flex>
+          <Flex style={{ overflowX: "scroll" }}>
             <FilterOption
               variant="tertiary"
               style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
