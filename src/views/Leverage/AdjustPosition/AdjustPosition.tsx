@@ -246,6 +246,12 @@ const AdjustPosition = () => {
 
   }
 
+  const UpdatedDebtData = new BigNumber(debtValueNumber).minus(UpdatedDebt)
+  let UpdatedDebtValue = Number(UpdatedDebtData)
+  if (UpdatedDebtValue < 0.000001) {
+    UpdatedDebtValue = 0
+  }
+
   let tradingFees = adjustData?.[5]
   if (tradingFees < 0 || tradingFees > 1 || tradingFees.toString() === 'NaN') {
     tradingFees = 0
@@ -1054,7 +1060,7 @@ React.useEffect(() => {
                     <ChevronRightIcon />
                     {isAddCollateral ? <Text>
                       {UpdatedDebt?.toFixed(3)} {symbolName}
-                    </Text> : <Text>{new BigNumber(debtValueNumber).minus(UpdatedDebt).toFixed(2, 1)} {tokenValueSymbol}</Text>}
+                    </Text> : <Text>{UpdatedDebtValue.toFixed(2)} {tokenValueSymbol}</Text>}
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />

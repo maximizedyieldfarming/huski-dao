@@ -388,7 +388,11 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
       const paramsa = 0 - basetokenlp * (1 - ClosePosFee) * params1 * (1 - ClosePositionPercentage)
       const paramsb = basetokenlpborrowed * params1 * (1 - ClosePositionPercentage) - basetokenBegin * params1 - basetokenlp * (1 - ClosePosFee) * (params1 * ClosePositionPercentage + farmingtokenBegin)
       const paramsc = basetokenlpborrowed * (params1 * ClosePositionPercentage + farmingtokenBegin)
-      rationum = (0 - paramsb - (paramsb ** 2 - 4 * paramsa * paramsc) ** 0.5) / 2 / paramsa
+      if (paramsa === 0) {
+        rationum = paramsc / paramsb
+      } else {
+        rationum = (0 - paramsb - (paramsb ** 2 - 4 * paramsa * paramsc) ** 0.5) / 2 / paramsa
+      }
       needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
       needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
       remainBase = basetokenlp * (1 - rationum) * (1 - ClosePositionPercentage)
@@ -399,6 +403,12 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
       bastokennum = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee) + (basetokenBegin - basetokenBegin * farmingtokenBegin / (AmountToTrade * (1 - PancakeTradingFee) + farmingtokenBegin))
       willReceive = bastokennum - basetokenlpborrowed
       minimumReceived = bastokennum * MINIMUM_RECEIVED_PERCENTAGE - basetokenlpborrowed
+
+      console.log({
+        params1, paramsa, paramsb, paramsc, rationum, needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
+        AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm
+      })
+
 
     } else {
       needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
@@ -444,6 +454,11 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   //   willReceive, minimumReceived, willReceivebase, willReceivefarm,  minimumReceivedbase,  priceImpactClose, tradingFeesClose,  minimumReceivedfarm,
   //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
   // });
+
+  console.log({
+    needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
+    AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm
+  })
 
   return {
     needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
