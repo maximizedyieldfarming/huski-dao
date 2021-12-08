@@ -11,6 +11,8 @@ import { useTranslation } from 'contexts/Localization'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import useTheme from 'hooks/useTheme'
+
 import Switch from 'react-switch'
 import { Bone, Bone2 } from 'assets'
 import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
@@ -63,7 +65,7 @@ const Header = styled(Flex)`
   padding: 20px;
 `
 
-const HeaderTabs = styled(Link)<Props>`
+const HeaderTabs = styled(Link) <Props>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
@@ -131,6 +133,7 @@ const LendAction = () => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
   const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+  const { isDark } = useTheme();
   console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
 
   const exchangeRate =
@@ -139,8 +142,8 @@ const LendAction = () => {
       : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   const huskyPrice = useHuskiPrice()
-  const {apy} = getAprData(tokenData, huskyPrice)
-const apyCell = (e) => {
+  const { apy } = getAprData(tokenData, huskyPrice)
+  const apyCell = (e) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
@@ -149,14 +152,14 @@ const apyCell = (e) => {
     <StyledPage>
       <div style={{ textAlign: 'center' }}>
         <img src="/images/HuskiPaw.png" alt="" />
-        <Text fontSize="25px" color="fontFarm" fontWeight="600" textTransform="capitalize">
+        <Text fontSize="25px" fontWeight="600" textTransform="capitalize">
           {t(`${action}`)} {tokenName}
         </Text>
       </div>
       <TabPanel style={{ width: '500px', height: '560px' }}>
         <Header>
           {isDeposit ? (
-            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
+            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: isDark ? "#111315" : '#f4f4f4' }}>
               <Flex style={{ width: '98%', height: '52px' }}>
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
@@ -171,8 +174,8 @@ const apyCell = (e) => {
                     marginTop: '4px',
                     paddingTop: '18px',
                     width: '50%',
-                    backgroundColor: 'white',
-                    color: '#1A1D1F',
+                    backgroundColor: isDark ? "#272B30" : 'white',
+                    color: isDark ? "white" : '#1A1D1F',
                     boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
                   }}
                 >
@@ -189,7 +192,7 @@ const apyCell = (e) => {
               </Flex>
             </Box>
           ) : (
-            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: '#f4f4f4' }}>
+            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: isDark ? "#111315 ": '#f4f4f4' }}>
               <Flex style={{ width: '98%', height: '52px' }}>
                 <HeaderButton
                   onClick={handleDepositClick}
@@ -211,8 +214,8 @@ const apyCell = (e) => {
                     marginTop: '4px',
                     paddingTop: '18px',
                     width: '50%',
-                    backgroundColor: 'white',
-                    color: '#1A1D1F',
+                    backgroundColor: isDark ? "#272B30" : 'white',
+                    color: isDark ? "white" : '#1A1D1F',
                     boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
                   }}
                 >
@@ -256,7 +259,7 @@ const apyCell = (e) => {
           )}
         </Text>
       </Box>
-    </StyledPage>
+    </StyledPage >
   )
 }
 

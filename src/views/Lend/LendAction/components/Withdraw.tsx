@@ -13,6 +13,7 @@ import { ArrowDownIcon } from 'assets'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
 import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTheme from 'hooks/useTheme'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import styled from 'styled-components'
 import Page from '../../../../components/Layout/Page'
@@ -79,11 +80,12 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
     .times(exchangeRate)
     .toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
   const [isPending, setIsPending] = useState<boolean>(false)
+  const { isDark } = useTheme()
 
-    // const { balance: tokenBalance } = useTokenBalance(tokenData.TokenInfo.vaultAddress)
-    // const [userTokenBalanceIb, setBalance] = useState(
-    //   getBalanceAmount(tokenBalance).isNaN() ? 0.0 : getBalanceAmount(tokenBalance).toJSON(),
-    // )
+  // const { balance: tokenBalance } = useTokenBalance(tokenData.TokenInfo.vaultAddress)
+  // const [userTokenBalanceIb, setBalance] = useState(
+  //   getBalanceAmount(tokenBalance).isNaN() ? 0.0 : getBalanceAmount(tokenBalance).toJSON(),
+  // )
 
   const handleAmountChange = useCallback(
     (event) => {
@@ -136,18 +138,19 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
           <Text fontWeight="700" color="textFarm" fontSize="14px">
             {t('From')}
           </Text>
-          <Text color="textSubtle" fontSize="12px">
-            {t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance} ${name}`}</span>
+          <Text fontSize="12px">
+            {t('Balance')}: <span style={{ fontWeight: 700 }}>{`${balance} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between">
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
           <Box>
             <Input
-                    pattern="^[0-9]*[.,]?[0-9]{0,18}$"
-                    placeholder="0.00"
-                    onChange={handleAmountChange}
-                    value={amount}
-                  />
+              pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+              placeholder="0.00"
+              onChange={handleAmountChange}
+              value={amount}
+              style={{ background: "transparent", border: "none" }}
+            />
           </Box>
           <Box>
             <MaxContainer>
@@ -162,7 +165,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
                   }}
                   onClick={setAmountToMax}
                 >
-                  {t('MAX')}
+                  <Text>{t('MAX')}</Text>
                 </button>
               </Box>
               <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
@@ -182,13 +185,13 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
           <Text fontWeight="700" color="textFarm" fontSize="14px">
             {t('Recieve (Estimated)')}
           </Text>
-          <Text color="textSubtle" fontSize="12px">
-            {t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance} ${name}`}</span>
+          <Text  fontSize="12px">
+            {t('Balance')}: <span style={{ fontWeight: 700 }}>{`${balance} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between">
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
           <Box>
-            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}>
+            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700 }}>
               {assetsReceived !== 'NaN' ? assetsReceived : 0}
             </Text>
           </Box>
@@ -196,7 +199,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <MaxContainer>
               <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
               <Box>
-                <Text style={{ color: '#1A1D1F', fontWeight: 700 }}>ib{name}</Text>
+                <Text color="textFarm" style={{ fontWeight: 700 }}>ib{name}</Text>
               </Box>
             </MaxContainer>
           </Box>
@@ -211,7 +214,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             {t('Back')}
           </Text>
         </Flex>
-       
+
         <Button
           style={{ width: '160px', height: '57px', borderRadius: '16px' }}
           onClick={handleConfirm}
@@ -228,7 +231,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
         >
           {isPending ? t('Confirming') : t('Confirm')}
         </Button>
-       
+
       </ButtonGroup>
     </Page>
   )

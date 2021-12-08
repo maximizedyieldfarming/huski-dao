@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
+import useTheme from 'hooks/useTheme'
 import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
 import { ethers } from 'ethers'
@@ -80,6 +81,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
   const isApproved: boolean = Number(allowance) > 0
   const [isPending, setIsPending] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
+  const { isDark } = useTheme()
 
   // const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   // const { balance: bnbBalance } = useGetBnbBalance()
@@ -162,15 +164,15 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+            <span style={{ color: isDark ? "white" : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
               userTokenBalance,
               tokenData.TokenInfo?.token?.decimalsDigits,
             )} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between">
-          <Box>
-            <Input pattern="^[0-9]*[.,]?[0-9]{0,18}$" placeholder="0.00" onChange={handleAmountChange} value={amount} />
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
+          <Box >
+            <NumberInput pattern="^[0-9]*[.,]?[0-9]{0,18}$" placeholder="0.00" onChange={handleAmountChange} value={amount} style={{ background: "unset", border: "transparent" }} />
           </Box>
           <Box>
             <MaxContainer>
@@ -185,7 +187,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
                   }}
                   onClick={setAmountToMax}
                 >
-                  {t('MAX')}
+                  <Text>{t('MAX')}</Text>
                 </button>
               </Box>
               <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
@@ -207,15 +209,15 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+            <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
               userTokenBalance,
               tokenData.TokenInfo?.token?.decimalsDigits,
             )} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between">
+        <Section justifyContent="space-between" style = {{background: isDark ? '#111315' : '#F7F7F8'}}>
           <Box>
-            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}>
+            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700}}>
               {assetsReceived !== 'NaN' ? assetsReceived : 0}
             </Text>
           </Box>
@@ -223,7 +225,7 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
             <MaxContainer>
               <img src="/images/BNB.svg" style={{ marginLeft: '20px', marginRight: '15px' }} width="40px" alt="" />
               <Box>
-                <Text style={{ color: '#1A1D1F', fontWeight: 700 }}>ib{name}</Text>
+                <Text color = "textFarm"style={{ fontWeight: 700 }}>ib{name}</Text>
               </Box>
             </MaxContainer>
           </Box>
@@ -233,7 +235,6 @@ const Deposit: React.FC<DepositProps> = ({ allowance, exchangeRate, account, tok
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
           <Text
-            color="textSubtle"
             fontWeight="bold"
             fontSize="16px"
             style={{ height: '100%' }}

@@ -13,6 +13,7 @@ import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import useTheme from 'hooks/useTheme'
 import { useGetPositions } from 'hooks/api'
 import { usePositions } from './hooks/usePositions'
 import LeverageTable from './components/LeverageTable/LeverageTable'
@@ -110,6 +111,7 @@ const Leverage: React.FC = () => {
   const { account } = useWeb3React()
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
+  const {isDark} = useTheme()
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
@@ -180,9 +182,9 @@ const Leverage: React.FC = () => {
             padding: '30px',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            background: '#E3F0F6',
             borderRadius: '15px',
             width: '20%',
+            background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />

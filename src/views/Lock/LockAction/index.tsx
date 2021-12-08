@@ -148,7 +148,7 @@ const LockAction = () => {
             <MaxContainer>
               <Box>
                 <button type="button" style={{ width: '48px', height: '34px', borderRadius: '8px', border: '1px solid #DDDFE0', background: 'transparent', cursor: 'pointer' }} onClick={setAmountToMax}>
-                  {t('MAX')}
+                  <Text>{t('MAX')}</Text>
                 </button>
               </Box>
               <img src="/images/lock/sHuski.png" style={{ marginLeft: '20px', marginRight: '15px' }} width='40px' alt="" />
@@ -180,9 +180,9 @@ const LockAction = () => {
         </Box> */}
         <Flex justifyContent="space-around">
           <Text color='textFarm' fontWeight='700'>Lock HUSKI for</Text>
-          <Text style={{ textDecoration: 'underline' }} color='textSecondary' bold>3 weeks + 3 Days</Text>
+          <Text style={{ textDecoration: 'underline' }} color='#7B3FE4' bold>3 weeks + 3 Days</Text>
           <Text>&</Text>
-          <Text style={{ textDecoration: 'underline' }} color='textSecondary' bold>Auto-Relock Monthly</Text>
+          <Text style={{ textDecoration: 'underline' }} color='#7B3FE4' bold>Auto-Relock Monthly</Text>
         </Flex>
         <Flex justifyContent="space-between" >
           <Text color="textFarm" mt='10px'>{t('APY')}</Text>

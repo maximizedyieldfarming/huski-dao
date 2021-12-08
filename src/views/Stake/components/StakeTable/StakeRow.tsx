@@ -19,9 +19,12 @@ import BigNumber from 'bignumber.js'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useClaimFairLaunch, useERC20 } from 'hooks/useContract'
+import useTheme from 'hooks/useTheme'
 import useToast from 'hooks/useToast'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import { getAddress, getFairLaunchAddress } from 'utils/addressHelpers'
+import NumberInput from 'components/NumberInput'
+
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
@@ -33,6 +36,7 @@ import TotalVolumeCell from './Cells/TotalVolumeCell'
 import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
 import RewardsCell from './Cells/RewardsCell'
+
 // import ClaimCell from './Cells/'
 import StakedCell from './Cells/StakedCell'
 import TotalValueCell from './Cells/TotalValueCell'
@@ -55,7 +59,7 @@ const collapseAnimation = keyframes`
   }
 `
 
-const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
@@ -65,6 +69,9 @@ const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
           ${collapseAnimation} 300ms linear forwards
         `};
   .expandedArea {
+    ::-webkit-scrollbar {
+      height: 8px;
+    }
     flex-direction: column;
     padding: 30px 20px;
     ${({ theme }) => theme.mediaQueries.lg} {
@@ -81,13 +88,13 @@ const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
   }
 `
 const StakeContainer = styled(Flex)`
-  flex: 1 0 460px;
+  flex: 1 0 300px;
 `
 
 interface Props {
   disabled: boolean
 }
-const StyledButton = styled(Button)<Props>`
+const StyledButton = styled(Button) <Props>`
   background: ${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
   border-radius: 10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
@@ -106,13 +113,7 @@ const MaxContainer = styled(Flex)`
   padding: 6px;
   ${Box} {
     padding: 0 5px;
-    &:first-child {
-      // border-right: 2px solid ${({ theme }) => theme.colors.text};
-    }
-    &:last-child {
-      // border-left: 1px solid purple;
-    }
-  }
+     }
 `
 const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
   background-color: ${({ theme }) => theme.card.background};
@@ -150,7 +151,7 @@ const StakeRow = ({ tokenData }) => {
 
   const { totalToken, totalSupply, vaultDebtVal, totalValueStaked } = tokenData
   // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
-
+  const {isDark} = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance).toJSON()
   const userStakedBalance = getBalanceAmount(new BigNumber(tokenData.userData.stakedBalance)).toJSON()
   const reward = new BigNumber(tokenData?.userData?.earnings).div(DEFAULT_TOKEN_DECIMAL)
@@ -329,7 +330,7 @@ const StakeRow = ({ tokenData }) => {
         )} */}
         {shouldRenderActionPanel ? (
           <>
-            <Flex className="expandedArea">
+            <Flex className="expandedArea" style = {{overflowX : "scroll"}}>
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
@@ -337,17 +338,17 @@ const StakeRow = ({ tokenData }) => {
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
                     {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace("WBNB", "BNB") })}
-                    <span style={{ color: '#1A1D1F', fontSize: '12px', fontWeight: 700 }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
                     </span>
                   </Text>
                 </Flex>
                 <MaxContainer>
-                  <Input
-                    pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+                  <NumberInput
                     placeholder="0.00"
                     onChange={handleStakeInput}
                     value={stakeAmount}
+                    style = {{background: "unset", border : "none", width : "100px"}}
                   />
                   <Flex alignItems="center">
                     <Box>
@@ -357,14 +358,14 @@ const StakeRow = ({ tokenData }) => {
                           width: '48px',
                           height: '48px',
                           borderRadius: '8px',
-                          border: '1px solid #DDDFE0',
-                          background: '#FFFFFF',
+                          
+                          background: isDark ? '#272B30' : '#FFFFFF',
                           cursor: 'pointer',
                         }}
                         onClick={setStakeAmountToMax}
                         disabled={Number(userTokenBalance) === 0}
                       >
-                        {t('MAX')}
+                        <Text>{t('MAX')}</Text>
                       </button>
                     </Box>
                     <StyledButton
@@ -392,17 +393,18 @@ const StakeRow = ({ tokenData }) => {
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
                     {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace("WBNB", "BNB") })}
-                    <span style={{ color: '#1A1D1F', fontSize: '12px', fontWeight: 700 }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)}
                     </span>
                   </Text>
                 </Flex>
                 <MaxContainer>
-                  <Input
+                  <NumberInput
                     pattern="^[0-9]*[.,]?[0-9]{0,18}$"
                     placeholder="0.00"
                     onChange={handleUnstakeInput}
                     value={unstakeAmount}
+                    style = {{background: "unset", border : "none"}}
                   />
 
                   <Flex alignItems="center">
@@ -413,14 +415,14 @@ const StakeRow = ({ tokenData }) => {
                           width: '48px',
                           height: '48px',
                           borderRadius: '8px',
-                          border: '1px solid #DDDFE0',
-                          background: '#FFFFFF',
+                          
+                          background: isDark ? '#272B30' : '#FFFFFF',
                           cursor: 'pointer',
                         }}
                         onClick={setUnstakeAmountToMax}
                         disabled={Number(userStakedBalance) === 0}
                       >
-                        {t('MAX')}
+                        <Text>{t('MAX')}</Text>
                       </button>
                     </Box>
                     <StyledButton

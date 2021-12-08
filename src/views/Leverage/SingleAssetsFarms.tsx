@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useClaimFairLaunch } from 'hooks/useContract'
+import useTheme from 'hooks/useTheme'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
 import { usePositions } from './hooks/usePositions'
@@ -207,13 +208,11 @@ const SingleAssetsFarms: React.FC = () => {
   const { account } = useWeb3React()
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
+  const { isDark } = useTheme()
   usePollLeverageFarmsWithUserData()
 
   let singleData = farmsData.filter((f) => f.singleFlag === 0);
   console.log(singleData);
-
-
-
 
 
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
@@ -363,19 +362,19 @@ const SingleAssetsFarms: React.FC = () => {
   const [strategyFilter, setStrategyFilter] = useState<string>()
 
   // filters
-   if (pairFilter !== 'all') {
-     singleData = singleData.filter(
-       (pool) => pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter || pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-     )
-   }
- 
- if (dexFilter !== 'all') {
+  if (pairFilter !== 'all') {
     singleData = singleData.filter(
-      (pool) =>
-        pool?.lpExchange === dexFilter 
+      (pool) => pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter || pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
   }
- 
+
+  if (dexFilter !== 'all') {
+    singleData = singleData.filter(
+      (pool) =>
+        pool?.lpExchange === dexFilter
+    )
+  }
+
   console.info('singlesData', singlesData)
   return (
     <Page>
@@ -396,7 +395,7 @@ const SingleAssetsFarms: React.FC = () => {
             padding: '30px',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            background: '#E3F0F6',
+            background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
             borderRadius: '15px',
             width: '20%',
           }}
