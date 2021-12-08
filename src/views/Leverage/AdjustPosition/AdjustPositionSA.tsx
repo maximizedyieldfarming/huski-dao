@@ -161,11 +161,11 @@ const AdjustPositionSA = () => {
     quoteTokenInputValue = 0 // formatNumber(quoteTokenInput)
     userTokenBalance = getBalanceAmount(tokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance).toNumber()
     userQuoteTokenBalance = getBalanceAmount(
-      quoteTokenValueSymbol === 'BNB'  ? bnbBalance : quoteTokenBalance,
+      quoteTokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     ).toNumber()
     // minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   } else {
-   //  console.log('case 2')
+    //  console.log('case 2')
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = quoteToken
@@ -251,19 +251,48 @@ const AdjustPositionSA = () => {
     Number(adjustBorrowingInterestAPR)
   const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
-  const { farmingData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput || 0, 0, symbolName)
+  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput || 0, 0, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
-  const assetsBorrowed = adjustData?.[3]
-  console.log('adjustData', adjustData)
-  const baseTokenInPosition = adjustData?.[8]
-  const farmingTokenInPosition = adjustData?.[9]
+  let assetsBorrowed
+  let baseTokenInPosition
+  let farmingTokenInPosition
+
+  let UpdatedDebt
+  if (adjustData?.[3] === 0 && adjustData?.[11] === 0) {
+    // use repayDebtData
+    assetsBorrowed = repayDebtData?.[4]
+    baseTokenInPosition = repayDebtData?.[2]
+    farmingTokenInPosition = repayDebtData?.[3]
+    UpdatedDebt = Number(debtValueNumber) - repayDebtData?.[4]
+
+  } else {
+    assetsBorrowed = adjustData?.[3]
+    baseTokenInPosition = adjustData?.[8]
+    farmingTokenInPosition = adjustData?.[9]
+    UpdatedDebt = targetPositionLeverage >= currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
+
+  }
+
+
+  const [percentageToClose, setPercentageToClose] = useState<number>(0)
+
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceImpactClose, tradingFeesClose, remainLeverage, AmountToTrade, willReceive, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm } = getAdjustPositionRepayDebt(
+    data.farmData,
+    data,
+    targetPositionLeverage,
+    percentageToClose / 100,
+    symbolName,
+    true
+  )
+
+
 
   const handleTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = Number(input) > Number(userTokenBalance) ? input : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -317,8 +346,8 @@ const AdjustPositionSA = () => {
 
   const handleConfirm = async () => {
     const id = positionId
-    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber() // debtValueNumber.toNumber() // farmData ? farmData[3] : 0
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
+    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
@@ -378,7 +407,6 @@ const AdjustPositionSA = () => {
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
-  const [ percentageToClose, setPercentageToClose ] = useState<number>(0)
 
   return (
     <Page>
@@ -448,12 +476,11 @@ const AdjustPositionSA = () => {
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
                   <Text>
-                    {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
-                    {quoteTokenValueSymbol}
+                    {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {baseTokenInPosition.toFixed(2)} {tokenValueSymbol}
                   </Text>
                 ) : (
                   <Text>
-                    0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
+                    0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                   </Text>
                 )}
               </Flex>
@@ -547,10 +574,9 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
                 <Text>
-                  {formatDisplayedBalance(debtValueNumber.toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
+                  {formatDisplayedBalance(new BigNumber(debtValueNumber).minus(UpdatedDebt).toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
                 </Text>
               </Flex>
-
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
@@ -567,12 +593,13 @@ const AdjustPositionSA = () => {
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
                   <Text>
-                    {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
-                    {quoteTokenValueSymbol}
+                    {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
+                    {/* {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
+                    {quoteTokenValueSymbol} */}
                   </Text>
                 ) : (
                   <Text>
-                    0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
+                    0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                   </Text>
                 )}
               </Flex>
@@ -669,12 +696,11 @@ const AdjustPositionSA = () => {
               <Text>{t('Position Value')}</Text>
               {adjustData ? (
                 <Text>
-                  {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
-                  {quoteTokenValueSymbol}
+                  {baseTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {tokenValueSymbol}
                 </Text>
               ) : (
                 <Text>
-                  0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
+                  0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                 </Text>
               )}
             </Flex>
@@ -738,12 +764,13 @@ const AdjustPositionSA = () => {
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
                   <Text>
-                    {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
-                    {quoteTokenValueSymbol}
+                    {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
+                    {/* {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
+                    {quoteTokenValueSymbol} */}
                   </Text>
                 ) : (
                   <Text>
-                    0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
+                    0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                   </Text>
                 )}
               </Flex>
