@@ -19,6 +19,7 @@ import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useHuskiPrice } from 'hooks/api'
+import { useFarmsWithToken } from '../../Leverage/hooks/useFarmsWithToken'
 import { getAprData } from '../helpers'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
@@ -65,7 +66,7 @@ const Header = styled(Flex)`
   padding: 20px;
 `
 
-const HeaderTabs = styled(Link) <Props>`
+const HeaderTabs = styled(Link)<Props>`
   flex: 1;
   background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
   border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
@@ -133,8 +134,8 @@ const LendAction = () => {
   const { balance: bnbBalance } = useGetBnbBalance()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
   const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
-  const { isDark } = useTheme();
-  console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
+  const { isDark } = useTheme()
+  // console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
 
   const exchangeRate =
     token.totalToken && token.totalSupply
@@ -142,7 +143,8 @@ const LendAction = () => {
       : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
 
   const huskyPrice = useHuskiPrice()
-  const { apy } = getAprData(tokenData, huskyPrice)
+  const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
+  const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
   const apyCell = (e) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
@@ -152,14 +154,21 @@ const LendAction = () => {
     <StyledPage>
       <div style={{ textAlign: 'center' }}>
         <img src="/images/HuskiPaw.png" alt="" />
-        <Text fontSize="25px" fontWeight="600" textTransform="capitalize">
-          {t(`${action}`)} {tokenName}
+        <Text fontSize="25px" color="fontFarm" fontWeight="600" textTransform="capitalize">
+          {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
       <TabPanel style={{ width: '500px', height: '560px' }}>
         <Header>
           {isDeposit ? (
-            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: isDark ? "#111315" : '#f4f4f4' }}>
+            <Box
+              style={{
+                borderRadius: '12px',
+                width: '100%',
+                height: '56px',
+                backgroundColor: isDark ? '#111315' : '#f4f4f4',
+              }}
+            >
               <Flex style={{ width: '98%', height: '52px' }}>
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
@@ -174,8 +183,8 @@ const LendAction = () => {
                     marginTop: '4px',
                     paddingTop: '18px',
                     width: '50%',
-                    backgroundColor: isDark ? "#272B30" : 'white',
-                    color: isDark ? "white" : '#1A1D1F',
+                    backgroundColor: isDark ? '#272B30' : 'white',
+                    color: isDark ? 'white' : '#1A1D1F',
                     boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
                   }}
                 >
@@ -192,7 +201,14 @@ const LendAction = () => {
               </Flex>
             </Box>
           ) : (
-            <Box style={{ borderRadius: '12px', width: '100%', height: '56px', backgroundColor: isDark ? "#111315 ": '#f4f4f4' }}>
+            <Box
+              style={{
+                borderRadius: '12px',
+                width: '100%',
+                height: '56px',
+                backgroundColor: isDark ? '#111315 ' : '#f4f4f4',
+              }}
+            >
               <Flex style={{ width: '98%', height: '52px' }}>
                 <HeaderButton
                   onClick={handleDepositClick}
@@ -214,8 +230,8 @@ const LendAction = () => {
                     marginTop: '4px',
                     paddingTop: '18px',
                     width: '50%',
-                    backgroundColor: isDark ? "#272B30" : 'white',
-                    color: isDark ? "white" : '#1A1D1F',
+                    backgroundColor: isDark ? '#272B30' : 'white',
+                    color: isDark ? 'white' : '#1A1D1F',
                     boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
                   }}
                 >
@@ -235,6 +251,7 @@ const LendAction = () => {
               tokenData={tokenData}
               account={account}
               userTokenBalance={userTokenBalance}
+              userTokenBalanceIb={userTokenBalanceIb}
             />
           ) : (
             <Withdraw
@@ -244,6 +261,7 @@ const LendAction = () => {
               account={account}
               tokenData={tokenData}
               userTokenBalanceIb={userTokenBalanceIb}
+              userTokenBalance={userTokenBalance}
             />
           )}
         </Body>
@@ -259,7 +277,7 @@ const LendAction = () => {
           )}
         </Text>
       </Box>
-    </StyledPage >
+    </StyledPage>
   )
 }
 

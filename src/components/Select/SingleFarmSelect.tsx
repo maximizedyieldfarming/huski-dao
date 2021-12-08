@@ -159,7 +159,12 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
     }
   }, [])
 
-  console.log(options[selectedOptionIndex].icon);
+  // console.log({'options': options, selectedOptionIndex });
+  React.useEffect(() => {
+    // console.log("options changed", options)
+    setSelectedOptionIndex(0)
+  }, [options])
+
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize} width={width}>
       {containerSize.width !== 0 && (

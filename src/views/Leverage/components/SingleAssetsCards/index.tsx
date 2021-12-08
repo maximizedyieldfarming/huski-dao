@@ -3,7 +3,18 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, CardRibbon, Skeleton, Button, Box, Grid, ChevronDownIcon, ArrowUpIcon } from 'husky-uikit1.0'
+import {
+  CardBody as UiKitCardBody,
+  Flex,
+  Text,
+  CardRibbon,
+  Skeleton,
+  Button,
+  Box,
+  Grid,
+  ChevronDownIcon,
+  ArrowUpIcon,
+} from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { TokenPairImage, TokenImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
@@ -52,16 +63,14 @@ const DropDown = styled.div<{ isselect: boolean }>`
     }
     return 'hidden'
   }};
-  transition: max-height 0.3s
-
-`
+  transition: max-height 0.3s;
+  `
 
 const DropDownItem = styled(Flex)`
-  :hover{
-    background : lightgrey
+  :hover {
+    background: lightgrey;
   }
 `
-
 
 const StrategyIcon = styled.div<{ market: string }>`
   width: 8px;
@@ -81,8 +90,7 @@ const StrategyIcon = styled.div<{ market: string }>`
     return null
   }};
 `
-const AssetSelect = styled(Flex)`
-`
+const AssetSelect = styled(Flex)``
 const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
@@ -93,7 +101,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   console.info('data', data)
   console.info('singleData', singleData)
-
 
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
@@ -186,7 +193,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   )
 
   const getSelectOptions = React.useCallback(() => {
-
     const selOptions = []
     data.singleArray.forEach((single) => {
       strategies.forEach((strat) => {
@@ -203,10 +209,10 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
-    console.log(strategyFilter);
+    console.log(strategyFilter)
   }, [strategyFilter])
 
-  const { singleLeverage, direction, riskLevel } = getStrategyInfo(selectedStrategy)
+  const { singleLeverage, direction, riskLevel, name: strategyName } = getStrategyInfo(selectedStrategy)
 
   const tvl = totalTvl.toNumber()
   const apy = getDisplayApr(getApy(singleLeverage))
@@ -277,22 +283,23 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       return '#FE6057'
     }
     return '#FCBD2C'
-  })();
-  let soption;
+  })()
+
+  let soption
   getSelectOptions().map((d) => {
-    if (d.value === selectedStrategy)
-      soption = d.label.split(' +')[0];
-    return "";
+    if (d.value === selectedStrategy) soption = d.label.split(' +')[0]
+    return ''
   })
-  const [selectedoption, setSelectedOption] = useState(soption);
+
+  const [selectedoption, setSelectedOption] = useState(soption)
   const handleSelectChange = (option) => {
     const lpSymbol = option.label.split('+ ').pop()
     setSingleData(data.singleArray.find((single) => single.lpSymbol === lpSymbol))
-    setSelectedStrategy(option.value);
-    setSelectedOption(option.label.split(' +')[0]);
+    setSelectedStrategy(option.value)
+    setSelectedOption(option.label.split(' +')[0])
   }
 
-  const [isselect, setIsSelect] = useState(false);
+  const [isselect, setIsSelect] = useState(false)
 
   useEffect(() => {
     document.addEventListener('mousedown', function (event) {
@@ -301,8 +308,9 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       }
     })
   }, [isselect])
-  console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
+  // console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
   let prevpair;
+
   return (
     <Card>
       <CardHeader data={singleData} pool={selectedPool} />
@@ -318,15 +326,22 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     secondaryToken={singleData.QuoteTokenInfo.quoteToken}
                     width={44}
                     height={44}
-                    primaryImageProps={{ style: { marginLeft: "20px" } }}
+                    primaryImageProps={{ style: { marginLeft: '20px' } }}
                     ml="20px"
                   />
                   <Flex flexDirection="column" marginLeft="30px">
-                    <Text color={isDark ? "white" : "#131313"} fontSize="18px" fontWeight="600">{selectedoption}</Text>
-                    <Text color="#6F767E" fontSize="12px" fontWeight="500">{singleData && singleData.QuoteTokenInfo.name.replace("WBNB", "BNB").replace("Worker", "")}</Text>
+                    <Text color="#131313" fontSize="18px" fontWeight="600" textTransform="capitalize">
+                      {strategyName}
+                    </Text>
+                    <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(
+                      ' LP',
+                      '',
+                    )} ${singleData?.lpExchange}`}</Text>
                   </Flex>
                 </Flex>
-                <Flex marginRight="5px"><ChevronDownIcon width="25px" /></Flex>
+                <Flex marginRight="5px">
+                  <ChevronDownIcon width="25px" />
+                </Flex>
               </Flex>
               <DropDown isselect={isselect}>
                 {
@@ -347,7 +362,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                         primaryImageProps={{ style: { marginLeft: "4px" } }}
                         ml="20px"
                       />
-                      <Text color="#6F767E" fontWeight="600" ml="10px">{singleData && singleData.QuoteTokenInfo.name.split(' ')[0]}</Text>
+                      <Text color="#6F767E" fontWeight="600" ml="10px">{symbol.replace(' LP', '')}</Text>
                     </Flex>}
                       <Box background={isDark ? "#111315" : "#FFFFFF"} >
 
@@ -358,31 +373,34 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                             <Text fontSize="16px" color={isDark ? "white" : "black"}>{option.label.split(' ')[2]}</Text>
                           </Flex>
                         </DropDownItem>
-
                       </Box>
                     </>
                   })}
               </DropDown>
             </Box>
-
           </Flex>
 
           <Grid gridTemplateColumns="1fr 1fr" paddingTop="20px">
             <Flex flexDirection="column" justifyContent="center">
               <Text>{t('APY')}</Text>
-
-              <Text bold fontSize="3">
-                {Number(apy).toFixed(2)}%
-              </Text>
-              <Flex alignItems="center">
-                <ArrowUpIcon width="13px" color={color} />
-                <Text fontSize="13px" color={color}>
-                  {Number(avgApy).toFixed(2)}%
-                </Text>
-                <Text fontSize="13px">{t(` than 1x yield farm`)}</Text>
-              </Flex>
+              {apy ? (
+                <>
+                  <Text bold fontSize="3">
+                    {apy}%
+                  </Text>
+                  <Flex alignItems="center">
+                    <Text color="#27C73F">{apyPercentageDiff}</Text>
+                    <ArrowUpIcon color="#27C73F" />
+                    <Text>{t(` than 1x yield farm`)}</Text>
+                  </Flex>
+                </>
+              ) : (
+                <>
+                  <Skeleton width="5rem" height="1rem" mb="1rem" />
+                  <Skeleton width="8rem" height="1rem" />
+                </>
+              )}
             </Flex>
-            {/* graph */}
             <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '200px' }} />
           </Grid>
         </Box>
@@ -404,9 +422,13 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{t('Daily Earn')}</Text>
-            <Text>
-              {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
-            </Text>
+            {dailyEarnings ? (
+              <Text>
+                {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
+              </Text>
+            ) : (
+              <Skeleton width="5rem" height="1rem" />
+            )}
           </Flex>
         </Box>
         <Flex justifyContent="center">
@@ -418,12 +440,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               pathname: `${location.pathname}/farm/${singleData?.lpSymbol.replace(' LP', '')}`,
               state: {
                 singleData,
-                singleLeverage,
                 marketStrategy: selectedStrategy,
               },
             })}
             disabled={!account || !apy}
-            onClick={(e) => !account && e.preventDefault()}
+            onClick={(e) => !account || (!apy && e.preventDefault())}
           >
             {t('Farm')}
           </Button>

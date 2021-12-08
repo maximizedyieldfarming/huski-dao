@@ -94,6 +94,7 @@ export interface LeverageFarmConfig {
     endBlock: number
   }
   singleFlag?:number
+  switchFlag?:number
   leverage: number
   TokenInfo: {
     token: Token

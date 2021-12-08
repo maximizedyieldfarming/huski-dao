@@ -15,6 +15,7 @@ import { LeverageFarm, SerializedBigNumber } from '../types'
 type PublicFarmData = {
   lptotalSupply: SerializedBigNumber
   tokenUserInfoLP: SerializedBigNumber
+  quoteTokenUserInfoLP: SerializedBigNumber
   tokenAmountTotal: SerializedBigNumber
   quoteTokenAmountTotal: SerializedBigNumber
   quoteTokenTotalSupply: SerializedBigNumber
@@ -33,6 +34,7 @@ type PublicFarmData = {
   quoteTokenLiquidationThreshold: SerializedBigNumber
   tokenMinDebtSize: SerializedBigNumber
   quoteTokenMinDebtSize: SerializedBigNumber
+  tokenReserveFund: SerializedBigNumber
   pooPerBlock: number
   quoteTokenPoolPerBlock: number
   poolLendPerBlock: number
@@ -73,21 +75,29 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       }
     ])
 
-  const [tokenMinDebtSize] =
+  const [tokenMinDebtSize, quoteTokenMinDebtSize, tokenReserveFund] =
     await multicall(SimpleVaultConfigABI, [
       {
         address: getAddress(TokenInfo.token.config),
         name: 'minDebtSize',
-      }
-    ])
-
-  const [quoteTokenMinDebtSize] =
-    await multicall(SimpleVaultConfigABI, [
+      },
       {
         address: getAddress(QuoteTokenInfo.token.config),
         name: 'minDebtSize',
+      },
+      {
+        address: getAddress(TokenInfo.token.config),
+        name: 'getReservePoolBps',
       }
     ])
+
+  // const [quoteTokenMinDebtSize] =
+  //   await multicall(SimpleVaultConfigABI, [
+  //     {
+  //       address: getAddress(QuoteTokenInfo.token.config),
+  //       name: 'minDebtSize',
+  //     }
+  //   ])
 
   const [totalSupply, totalToken, vaultDebtVal] =
     await multicall(VaultABI, [
@@ -233,7 +243,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       : [null, null]
 
   const masterChefAddress = getMasterChefAddress()
-  const [info, cakePerBlock, totalAllocPoint, userInfo] =
+  const [info, cakePerBlock, totalAllocPoint, tokenUserInfo, quoteTokenUserInfo] =
     pid || pid === 0
       ? await multicall(masterchefABI, [
         {
@@ -253,6 +263,11 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
           address: masterChefAddress,
           name: 'userInfo',
           params: [pid, TokenInfo.address],
+        },
+        {
+          address: masterChefAddress,
+          name: 'userInfo',
+          params: [pid, QuoteTokenInfo.address],
         }
       ])
       : [null, null]
@@ -273,7 +288,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     vaultDebtVal: vaultDebtVal[0]._hex,
     tokenReserve: lpTotalReserves[0]._hex,
     quoteTokenReserve: lpTotalReserves[1]._hex,
-    tokenUserInfoLP: userInfo[0]._hex,
+    tokenUserInfoLP: tokenUserInfo[0]._hex,
+    quoteTokenUserInfoLP: quoteTokenUserInfo[0]._hex,
     tokenAmountTotal: tokenAmountTotal.toJSON(),
     quoteTokenAmountTotal: quoteTokenAmountTotal.toJSON(),
     lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),
@@ -287,6 +303,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     quoteTokenLiquidationThreshold: quoteTokenLiquidationThreshold[0]._hex,
     tokenMinDebtSize: tokenMinDebtSize[0]._hex,
     quoteTokenMinDebtSize: quoteTokenMinDebtSize[0]._hex,
+    tokenReserveFund: tokenReserveFund[0]._hex,
   }
 }
 

@@ -40,8 +40,12 @@ const CustomButton = styled(Button)`
 `
 
 // const LeverageCell = ({ leverage }) => {
-export default function LeverageCell({ leverage, onChange }: { leverage: any; onChange: (value: any) => void }) {
-  const [lvgValue, setLvgValue] = useState(leverage)
+export default function LeverageCell({ leverage, onChange, childLeverage }: { leverage: any; onChange: (value: any) => void;  childLeverage: any }) {
+  const [lvgValue, setLvgValue] = useState(childLeverage)
+ React.useEffect(() => {
+  
+      setLvgValue(childLeverage)
+  }, [childLeverage])
   // const increaseLvgValue = (e) => {
   //   setLvgValue(lvgValue + 0.5)
   // }
@@ -73,7 +77,7 @@ export default function LeverageCell({ leverage, onChange }: { leverage: any; on
         )}
         <LeverageContainer>
           <Flex padding="1rem">
-            <Text color='text' fontWeight="500">{lvgValue.toFixed(2)}</Text>
+            <Text color='text' fontWeight="500">{lvgValue?.toFixed(2)}</Text>
           </Flex>
           <Flex flexDirection="column">
             <CustomButton scale="xs" variant="secondary" onClick={increaseLvgValue} disabled={lvgValue === leverage}>

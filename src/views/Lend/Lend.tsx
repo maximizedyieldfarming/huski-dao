@@ -5,9 +5,9 @@ import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 
 import Page from 'components/Layout/Page'
-// import { useLendTotalSupply } from 'state/lend/hooks'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
+import { getTvl } from '../Leverage/helpers'
 import LendTable from './components/LendTable/LendTable'
 import headerBg from './BG.png'
 
@@ -39,8 +39,15 @@ const SBBox = styled(Box)`
 
 const Lend: React.FC = () => {
   const { t } = useTranslation()
-  const lendTotalSupply = null // useLendTotalSupply()
   const { data: farmsData } = useLeverageFarms()
+
+  let lpTokensTvl = 0
+  farmsData.map((farm) => {
+    const { totalTvl } = getTvl(farm)
+    lpTokensTvl += Number(totalTvl)
+    return lpTokensTvl
+  })
+
   const hash = {}
   const { isDark } = useTheme()
   const lendData = farmsData.reduce((cur, next) => {
@@ -49,6 +56,17 @@ const Lend: React.FC = () => {
   }, [])
 
   console.log({ lendData })
+
+  let depositTotalToken = 0
+  lendData.map((farm) => {
+    const { totalToken, tokenPriceUsd } = farm
+    const totalSupplyUSD = Number(totalToken) * Number(tokenPriceUsd) / (10 ** 18)
+    depositTotalToken += totalSupplyUSD
+    return depositTotalToken
+  })
+
+  const totalValueLocked = Number(lpTokensTvl) + Number(depositTotalToken)
+  const totalValueLockedValue = totalValueLocked.toLocaleString("en-US", { style: "currency", currency: "USD" })
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
@@ -78,8 +96,8 @@ const Lend: React.FC = () => {
         <Flex className="container" style={{ padding: '30px', flexDirection: 'column', justifyContent: 'space-evenly', background: isDark ? 'rgb(44,30,73)' : '#D6C7F0', borderRadius: '15px', width: '20%' }}>
           <img src="/images/8826.svg" width='70px' height='70px' alt="" />
           <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600">{t('Total Value Locked:')}</Text>
-          {lendTotalSupply ? (
-            <Text fontSize="28px" style={{ letterSpacing: '-0.01em' }} color="textFarm" fontWeight="bold">{`$${lendTotalSupply}`}</Text>
+          {totalValueLockedValue ? (
+            <Text fontSize="28px" style={{ letterSpacing: '-0.01em' }} color="textFarm" fontWeight="bold">{`$${totalValueLockedValue}`}</Text>
           ) : (
             <Skeleton width="180px" height="30px" />
           )}

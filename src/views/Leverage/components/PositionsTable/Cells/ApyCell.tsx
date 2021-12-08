@@ -23,37 +23,41 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, tradingFeesRewards }) => {
+const ApyCell = ({ apy, huskyRewards, apr,dailyApr, borrowingInterest, yieldFarming, tradingFees }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
       <Flex justifyContent="space-between">
-        <Text small>{t('Pancake Liquitity Rewards:')}</Text>
-        {liquidityRewards ? <Text small>{liquidityRewards}%</Text> : <Skeleton width="80px" height="16px" />}
+        <Text small>{t('Current Yield Farming APR:')}</Text>
+        {yieldFarming ? <Text small>{yieldFarming.toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>{t('Pancake Trading Fee Rewards:')}</Text>
-        {tradingFeesRewards ? <Text small>{tradingFeesRewards}%</Text> : <Skeleton width="80px" height="16px" />}
+        <Text small>{t('Current Trading Fees APR:')}</Text>
+        {tradingFees ? <Text small>{tradingFees.toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>{t('Huski Token Rewards:')}</Text>
-        {huskyRewards ? <Text small>{huskyRewards.toPrecision(4)}%</Text> : <Skeleton width="80px" height="16px" />}
+        <Text small>{t('Current HUSKI Rewards APR')}</Text>
+        {huskyRewards ? <Text small>{huskyRewards.toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>{t('Borrowing Interest:')}</Text>
+        <Text small>{t('Current Borrowing Interest APR:')}</Text>
         {borrowingInterest ? (
-          <Text small>{borrowingInterest?.toPrecision(4)}%</Text>
+          <Text small>-{borrowingInterest?.toFixed(2)}%</Text>
         ) : (
           <Skeleton width="80px" height="16px" />
         )}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>{t('APR:')}</Text>
-        {apr ? <Text small>{apr}%</Text> : <Skeleton width="80px" height="16px" />}
+        <Text small>{t('Total APR:')}</Text>
+        {apr ? <Text small>{apr.toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
       <Flex justifyContent="space-between">
-        <Text small>{t('APY:')}</Text>
+        <Text small>{t('Daily APR:')}</Text>
+        {apr ? <Text small>{dailyApr.toFixed(2)}%</Text> : <Skeleton width="80px" height="16px" />}
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Text small>{t('Total APY:')}</Text>
         {apy ? <Text small>{apy}%</Text> : <Skeleton width="80px" height="16px" />}
       </Flex>
     </>,
@@ -73,7 +77,19 @@ const ApyCell = ({ apy, huskyRewards, apr, borrowingInterest, liquidityRewards, 
             </span>
           </Flex>
         )}
-        {apy ? <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{apy}%</Text> : <Skeleton width="80px" height="16px" />}
+        {apy ? (
+          <Flex alignItems="center">
+            <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+              {apy}%
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon ml="10px" />
+            </span>
+          </Flex>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

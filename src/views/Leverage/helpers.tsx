@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
-import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE} from 'config'
+import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE } from 'config'
 import { dichotomybasetoken, dichotomyfarmingtoken, RunLogic, RunLogic1, adjustRun, adjustPositionRepayDebt } from 'utils/pancakeService'
 import { BIG_TEN } from 'utils/bigNumber'
 
@@ -35,18 +35,46 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
 }
 
 export const getTvl = (farm: LeverageFarm) => {
-  const { tokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
+  const { tokenUserInfoLP, switchFlag, quoteTokenUserInfoLP, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd } = farm
+
   const tokenPriceInUsd = new BigNumber(tokenPriceUsd)
   const quoteTokenPriceInUsd = new BigNumber(quoteTokenPriceUsd)
-  const tokensLP = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
+  const tokensLPOne = new BigNumber(tokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
   const lpTokenRatio = new BigNumber(tokenUserInfoLP).div(new BigNumber(lptotalSupply))
-  const tokenNum = new BigNumber(tokenAmountTotal).times(lpTokenRatio)
-  const quoteTokenNum = new BigNumber(quoteTokenAmountTotal).times(lpTokenRatio)
-  const tokenTvl = new BigNumber(tokenNum).times(tokenPriceInUsd)
-  const quoteTokenTvl = new BigNumber(quoteTokenNum).times(quoteTokenPriceInUsd)
+  const tokenNumOne = new BigNumber(tokenAmountTotal).times(lpTokenRatio)
+  const quoteTokenNumOne = new BigNumber(quoteTokenAmountTotal).times(lpTokenRatio)
+  const tokenTvl = new BigNumber(tokenNumOne).times(tokenPriceInUsd)
+  const quoteTokenTvl = new BigNumber(quoteTokenNumOne).times(quoteTokenPriceInUsd)
   // const tokenTvl = new BigNumber(tokenAmountTotal).times(tokenPriceInUsd).times(lpTokenRatio)
   // const quoteTokenTvl = new BigNumber(quoteTokenAmountTotal).times(quoteTokenPriceInUsd).times(lpTokenRatio)
-  const totalTvl = BigNumber.sum(tokenTvl, quoteTokenTvl)
+  const totalTvlOne = BigNumber.sum(tokenTvl, quoteTokenTvl)
+
+  const tokensLPAnother = new BigNumber(quoteTokenUserInfoLP).div(DEFAULT_TOKEN_DECIMAL)
+  const lpTokenRatioAnother = new BigNumber(quoteTokenUserInfoLP).div(new BigNumber(lptotalSupply))
+  const tokenNumAnother = new BigNumber(tokenAmountTotal).times(lpTokenRatioAnother)
+  const quoteTokenNumAnother = new BigNumber(quoteTokenAmountTotal).times(lpTokenRatioAnother)
+  const tokenTvlAnother = new BigNumber(tokenNumAnother).times(tokenPriceInUsd)
+  const quoteTokenTvlAnother = new BigNumber(quoteTokenNumAnother).times(quoteTokenPriceInUsd)
+  const totalTvlAnother = BigNumber.sum(tokenTvlAnother, quoteTokenTvlAnother)
+
+  let tokensLP
+  let totalTvl
+  let tokenNum
+  let quoteTokenNum
+
+  if (switchFlag === 0) {
+    tokensLP = BigNumber.sum(tokensLPOne, tokensLPAnother)
+    totalTvl = BigNumber.sum(totalTvlOne, totalTvlAnother)
+    tokenNum = BigNumber.sum(tokenNumOne, tokenNumAnother)
+    quoteTokenNum = BigNumber.sum(quoteTokenNumOne, quoteTokenNumAnother)
+  } else {
+    tokensLP = tokensLPOne
+    totalTvl = totalTvlOne
+    tokenNum = tokenNumOne
+    quoteTokenNum = quoteTokenNumOne
+  }
+
+  // console.log({ tokenUserInfoLP, tokenNum, lpSymbol, totalTvl, totalTvlOne, totalTvlAnother, tokensLPOne, tokensLPAnother, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenPriceUsd, quoteTokenPriceUsd, tokensLP, lpTokenRatio })
   return { tokensLP, tokenNum, quoteTokenNum, totalTvl };
 }
 
@@ -68,7 +96,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
-  // console.log({ leverage,  tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum':parseFloat(quoteTokenAmountTotalNum)  })
+  console.log({ leverage, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
   // console.info('======farmdata======', farmdata);
   return farmdata
@@ -277,7 +305,7 @@ export const getBorrowingInterest = (farm: LeverageFarm, tokenName?: string) => 
   }
 
   const borrowingInterest = lendRate / (utilization * 100) / (1 - 0.16)
-console.info('borrowingInterest----',borrowingInterest)
+  console.info('borrowingInterest----', borrowingInterest)
   return { borrowingInterest };
 }
 
@@ -308,8 +336,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   const farmingtokenlp = farmTokenAmount // .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  const ClosePosFee = 5 / 100 / 100; // 咱们是万5， alpaca是0
-  const PancakeTradingFee = 0.25 / 100;
+  const ClosePosFee = CLOSE_POS_FEE // 5 / 100 / 100; // 咱们是万5， alpaca是0
+  const PancakeTradingFee = PANCAKE_TRADING_FEE // 0.25 / 100;
   const basetokenBegin = parseFloat(tokenAmountTotalValue)
   const farmingtokenBegin = parseFloat(quoteTokenAmountTotalValue)
 
@@ -475,30 +503,30 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 
   const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
 
-  // drop = liquidationPrice / farmingtokenlp * basetokenlp * 100
-  const drop = 1 / liquidationPrice / farmingtokenlp * basetokenlp * 100
+  const drop1 = liquidationPrice / farmingtokenlp * basetokenlp * 100
+  const drop = 1 / liquidationPrice / basetokenlp * farmingtokenlp * 100
 
+  console.log({ 'kkkkkkk': drop1, basetokenlp, farmingtokenlp, basetokenlpborrowed, drop, TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold })
   return drop
 }
 
 
-export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
+export const getRunLogic = (riskKillThreshold, lpApr, leverage, Token0Name, Token1Name, tokenName) => {
 
   const RiskKillThreshold = Number(riskKillThreshold) / 10000 // 清算风险度
   const LiquidationRewards = LIQUIDATION_REWARDS // 清算罚金
   const ReinvestMinute = REINVEST_MINUTE // 复投时长（分钟）0为按日复投
-  const Token0Name = 'BNB' // token0名称
-  const Token1Name = 'USD' // token1名称
+  // const Token0Name = 'BNB' // token0名称
+  // const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = 0
   const LPAPRList = lpApr // 0.5 // LP历史日均年化
-  const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
+  const BaseTokenName = tokenName // 填Token0Name 或 Token1Name
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = 90 // priceList.length // 时间长度（天） 换成价格list的长度
 
   const profitLossRatioSheet1Token0 = []
   const profitLossRatioSheet1Token1 = []
   const priceRiseFall = []
-
 
   for (let m = 1; m <= 300; m++) {
     const PriceList = [];
@@ -515,7 +543,7 @@ export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
     // console.log({ '涨跌幅': m / 100 - 1, '价格': 1000 * m / 100, Token0Name, '损益比例(计价)': dataList[5], Token1Name, '损益比例+ 计价)': dataList[6] })
 
   }
-  console.log({ priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 })
+  // console.log({ priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 })
   return { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 }
 
 
@@ -524,17 +552,17 @@ export const getRunLogic = (riskKillThreshold, lpApr, leverage) => {
 }
 
 
-export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest, lpApr, leverage) => {
+export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest, lpApr, leverage, Token0Name, Token1Name, tokenName) => {
   const RiskKillThreshold = Number(riskKillThreshold) / 10000  // 清算风险度
   const LiquidationRewards = LIQUIDATION_REWARDS // 清算罚金
   const ReinvestMinute = REINVEST_MINUTE // 复投时长（分钟）0为按日复投
-  const Token0Name = 'BNB' // token0名称
-  const Token1Name = 'USD' // token1名称
+  // const Token0Name = 'BNB' // token0名称
+  // const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = borrowingInterest // 0.05
   const LPAPRList = lpApr // LP历史日均年化
   const PriceList = priceList // 历史日均价格 token0_usd / token1_usd
   // 注意三个List的长度一致
-  const BaseTokenName = Token0Name // 填Token0Name 或 Token1Name
+  const BaseTokenName = tokenName // 填Token0Name 或 Token1Name
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = PriceList.length // 时间长度（天）
 

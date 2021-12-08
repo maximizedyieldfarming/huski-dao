@@ -277,7 +277,7 @@ const AdjustPosition = () => {
   const adjustedTradingFeesAPR = Number(tradeFee) * 365 * Number(targetPositionLeverage)
   const adjustedHuskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   const adjustHuskiRewardsAPR = adjustedHuskyRewards * (targetPositionLeverage - 1)
-  const adjustBorrowingInterestAPR = borrowingInterest * (currentPositionLeverage - 1)
+  const adjustBorrowingInterestAPR = borrowingInterest * (targetPositionLeverage - 1)
   const adjustedApr: number =
     Number(adjustedYieldFarmAPR) +
     Number(adjustedTradingFeesAPR) +
@@ -753,11 +753,11 @@ const AdjustPosition = () => {
                   {Number(tokenInputValue) > Number(Number(tokenInputValue)?.toFixed(3))
                     ? `${Number(tokenInputValue?.toFixed(3))}...`
                     : Number(tokenInputValue)?.toFixed(3)}{' '}
-                  {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
+                  {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
                   {Number(quoteTokenInputValue) > Number(quoteTokenInputValue?.toFixed(3))
                     ? `${Number(tokenInputValue?.toFixed(3))}...`
                     : Number(quoteTokenInputValue)?.toFixed(3)}{' '}
-                  {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                  {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                 </Text>
               ) : (
                 <Skeleton width="80px" height="16px" />
@@ -799,11 +799,8 @@ const AdjustPosition = () => {
             </span>
           </Flex>
           {adjustData ? (
-            <Text color={new BigNumber((priceImpact * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
-              {new BigNumber((priceImpact * 100).toFixed(2)).gt(0)
-                ? `+${new BigNumber(priceImpact * 100).toFixed(2, 1)}`
-                : `0.00`}
-              %
+            <Text>
+              {new BigNumber(priceImpact * 100).toPrecision(3)}%
             </Text>
           ) : (
             <Text>0.00%</Text>
@@ -818,11 +815,8 @@ const AdjustPosition = () => {
             </span>
           </Flex>
           {adjustData ? (
-            <Text color={new BigNumber((tradingFees * 100).toFixed(2)).gt(0) ? '#1DBE03' : 'text'}>
-              {new BigNumber((tradingFees * 100).toFixed(2)).gt(0)
-                ? `+${new BigNumber(tradingFees * 100).toFixed(2, 1)}`
-                : `0.00`}
-              %
+            <Text>
+              {new BigNumber(tradingFees * 100).toPrecision(3)}%
             </Text>
           ) : (
             /*             <Text color="#EB0303">-{(tradingFees * 100).toFixed(2)}%</Text> */
@@ -833,12 +827,13 @@ const AdjustPosition = () => {
           <Text>{t('Updated Total Assets')}</Text>
           {adjustData ? (
             <Text>
-              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} + {farmingTokenInPosition?.toFixed(2)}{' '}
-              {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+              {baseTokenInPosition?.toFixed(2)} {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+              {farmingTokenInPosition?.toFixed(2)} {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
           ) : (
             <Text>
-              0.00 {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} + 0.00 {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+              0.00 {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} + 0.00{' '}
+              {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
           )}
         </Flex>
@@ -1117,26 +1112,26 @@ React.useEffect(() => {
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('HUSKI Rewards APR')}</Text>
-                {huskiRewardsAPR ? (
+                {adjustHuskiRewardsAPR ? (
                   <Flex alignItems="center">
                     <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
                     <ChevronRightIcon />
                     <Text>{adjustHuskiRewardsAPR.toFixed(2)}%</Text>
                   </Flex>
                 ) : (
-                  <Skeleton width="80px" height="16px" />
+                    <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
                 )}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('Borrowing Interest APR')}</Text>
-                {borrowingInterestAPR ? (
+                {adjustBorrowingInterestAPR ? (
                   <Flex alignItems="center">
-                    <Text>-{borrowingInterestAPR.toFixed(2)}%</Text>
+                    <Text>{borrowingInterestAPR.toFixed(2)}%</Text>
                     <ChevronRightIcon />
-                    <Text>-{adjustBorrowingInterestAPR.toFixed(2)}%</Text>
+                    <Text>{adjustBorrowingInterestAPR.toFixed(2)}%</Text>
                   </Flex>
                 ) : (
-                  <Skeleton width="80px" height="16px" />
+                    <Text>{borrowingInterestAPR.toFixed(2)}%</Text>
                 )}
               </Flex>
               <Flex justifyContent="space-between">

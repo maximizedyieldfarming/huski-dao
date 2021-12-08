@@ -30,7 +30,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
   const { t } = useTranslation()
 
   const options = () => {
-    if (quoteToken === 'CAKE' || quoteToken === 'USDC' || quoteToken === 'SUSHI' || quoteToken === 'DOT') {
+    if (tokenData?.switchFlag === 1) {
       return [
         {
           label: token.replace('wBNB', 'BNB'),
@@ -41,20 +41,6 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
           label: token.replace('wBNB', 'BNB'),
           value: token,
           icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
-        },
-      ]
-    }
-    if (token === 'CAKE' || token === 'USDC' || token === 'SUSHI' || token === 'DOT') {
-      return [
-        {
-          label: quoteToken.replace('wBNB', 'BNB'),
-          value: quoteToken,
-          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
-        },
-        {
-          label: quoteToken.replace('wBNB', 'BNB'),
-          value: quoteToken,
-          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
         },
       ]
     }

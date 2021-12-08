@@ -52,6 +52,7 @@ export interface LeverageFarm extends LeverageFarmConfig {
   quoteTokenLiquidationThreshold?: SerializedBigNumber
   tokenMinDebtSize?: SerializedBigNumber
   quoteTokenMinDebtSize?: SerializedBigNumber
+  tokenReserveFund?: SerializedBigNumber
   tokenPriceUsd?: string
   quoteTokenPriceUsd?: string
   userData?: {
@@ -62,6 +63,7 @@ export interface LeverageFarm extends LeverageFarmConfig {
   }
   lptotalSupply?: SerializedBigNumber
   tokenUserInfoLP?: SerializedBigNumber
+  quoteTokenUserInfoLP?: SerializedBigNumber
   quoteTokenTotalSupply?: SerializedBigNumber
   quoteTokenTotal?: SerializedBigNumber
   quoteTokenVaultDebtVal?: SerializedBigNumber

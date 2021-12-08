@@ -61,7 +61,6 @@ interface RouteParams {
 
 interface LocationParams {
     singleData?: any
-    singleLeverage?: number
     marketStrategy?: string
 }
 
@@ -155,7 +154,7 @@ const FarmSA = () => {
     const { account } = useWeb3React()
 
     const {
-        state: { singleData: data, singleLeverage, marketStrategy },
+        state: { singleData: data, marketStrategy: selectedStrategy },
     } = useLocation<LocationParams>()
 
     const singleFarm = data
@@ -165,14 +164,30 @@ const FarmSA = () => {
     const { isDark, toggleTheme } = useTheme()
     const priceList = usePriceList(coingeckoId)
 
+    const getSingleLeverage = (selStrategy: string): number => {
+        if (selStrategy.toLowerCase() === 'bull3x' || selStrategy.toLowerCase() === 'bear') {
+            return 3
+        }
+        return 2
+    }
     const tokenPriceList = useTokenPriceList(coingeckoId)
-    const [selectedTokenInfo, setSelectedTokenInfo] = useState(singleFarm?.TokenInfo)
-    const [selectedToken, setSelectedToken] = useState(singleFarm?.TokenInfo?.quoteToken)
-    const [selectedStrategy, setSelectedStrategy] = useState<string>()
+    const [marketStrategy, setMarketStrategy] = useState<string>(selectedStrategy)
+    const singleLeverage: number = getSingleLeverage(marketStrategy)
 
     let tokenName
     let quoteTokenName
     let riskKillThreshold
+
+    const getDefaultTokenInfo = (selStrat: string): string => {
+        if (selStrat.includes('bull')) {
+            return 'QuoteTokenInfo'
+        }
+        return 'TokenInfo'
+    }
+    const tokenInfoToUse = getDefaultTokenInfo(marketStrategy)
+
+
+    const [selectedToken, setSelectedToken] = useState(singleFarm?.[tokenInfoToUse]?.token)
 
     if (marketStrategy.includes('bull')) { // bull === 2x long
         tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -184,10 +199,14 @@ const FarmSA = () => {
         riskKillThreshold = singleFarm?.liquidationThreshold
     }
 
+    // for chart logic params
+    const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+
     const allowance = singleFarm?.userData?.quoteTokenAllowance
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-    const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+    const isApproved: boolean = Number(allowance) > 0
     const [isPending, setIsPending] = useState(false)
 
     const { balance: bnbBalance } = useGetBnbBalance()
@@ -196,21 +215,22 @@ const FarmSA = () => {
         getBalanceAmount(selectedToken.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance).toJSON(),
     )
 
-    const [inputValue, setInputValue] = useState(0)
+    const [inputValue, setInputValue] = useState<number | string>('')
     const [buttonIndex, setButtonIndex] = useState(null)
     const handleInput = useCallback(
         (event) => {
             // check if input is a number and includes decimals
             if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
                 const input = event.target.value
-                const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+                // const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+                const finalValue = input
                 setInputValue(finalValue)
             } else {
                 event.preventDefault()
             }
             setButtonIndex(null)
         },
-        [userTokenBalance],
+        [],
     )
     const setInputToFraction = (index) => {
         if (index === 0) {
@@ -276,8 +296,14 @@ const FarmSA = () => {
     // const { borrowingInterest: borrowingInterestQuoteToken } = getBorrowingInterest(singleFarm, quoteTokenName)
 
     const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
-    const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
+    // const { borrowingInterest: borrowingInterestQuoteToken } = useFarmsWithToken(singleFarm, quoteTokenName)
 
+    // let borrowingInterestParam = borrowingInterest
+    // if (marketStrategy.includes('bull')) { // bull === 2x long
+    //     borrowingInterestParam = borrowingInterest // borrowingInterestQuoteToken
+    // } else { // 2x short || 3x short
+    //     borrowingInterestParam = borrowingInterest
+    // }
 
     const getApr = (lvg: number) => {
         const totalapr =
@@ -297,25 +323,38 @@ const FarmSA = () => {
     let tokenInputValue
     let quoteTokenInputValue
 
-    if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
-        tokenInputValue = 0;
-        quoteTokenInputValue = inputValue
+    if (marketStrategy.includes('bull')) { // bull === 2x long
+        if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
+            tokenInputValue = inputValue;
+            quoteTokenInputValue = 0
+        } else {
+            tokenInputValue = 0
+            quoteTokenInputValue = inputValue;
+        }
     } else {
-        tokenInputValue = inputValue
-        quoteTokenInputValue = 0;
+        // eslint-disable-next-line no-lonely-if
+        if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
+            tokenInputValue = 0
+            quoteTokenInputValue = inputValue;
+        } else {
+            tokenInputValue = inputValue;
+            quoteTokenInputValue = 0
+        }
     }
 
     const farmingData = getLeverageFarmingData(singleFarm, singleLeverage, tokenInputValue, quoteTokenInputValue, tokenName)
     const farmData = farmingData ? farmingData[1] : []
+    // console.log('values for farmData', {singleFarm, singleLeverage, tokenInputValue, quoteTokenInputValue, tokenName, farmData})
+    // console.log('farmData', farmData)
     const apy = getApy(singleLeverage)
 
-    const selectOptions = []
-    data.farmData?.forEach((item, index) => {
-        selectOptions.push({
-            label: item.lpSymbol.replace(' LP', ''),
-            value: index,
-        })
-    })
+    // const selectOptions = []
+    // data.farmData?.forEach((item, index) => {
+    //     selectOptions.push({
+    //         label: item.lpSymbol.replace(' LP', ''),
+    //         value: index,
+    //     })
+    // })
 
     const balanceBigNumber = new BigNumber(userTokenBalance)
     let balanceNumber
@@ -399,18 +438,22 @@ const FarmSA = () => {
             workerAddress = singleFarm?.QuoteTokenInfo.address
 
         } else { // 2x short || 3x short
+            console.info('2x short || 3x short', selectedToken.symbol)
             if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
+                console.info('===tokenname',tokenName)
                 tokenInputValue = inputValue
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
                 dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
+                console.info('!!!==tokenname',tokenName)
                 tokenInputValue = 0;
                 quoteTokenInputValue = inputValue
                 farmingTokenAmount = Number(quoteTokenInputValue).toString()
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
                 dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
+                dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
             contract = vaultContract
             amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
@@ -436,15 +479,10 @@ const FarmSA = () => {
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
 
-    let borrowingInterestParam
-    if (marketStrategy.includes('bull')) { // bull === 2x long
-        borrowingInterestParam = borrowingInterestQuoteToken
-    } else { // 2x short || 3x short
-        borrowingInterestParam = borrowingInterest
-    }
 
-    const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage)
-    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterestParam, getApr(1), singleLeverage)
+
+    const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
+    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
 
     // for test data
     const xAxisdata = dateList
@@ -617,10 +655,8 @@ const FarmSA = () => {
         return option
     }
 
-    const { tooltip, targetRef, tooltipVisible } = useTooltip(<><Text>{t('text')}</Text></>, { placement: 'right' })
-    const [chartype, setChartType] = useState(0);
     const getSelectOptions = () => {
-        if (marketStrategy === 'neutral') {
+        if (selectedStrategy === 'neutral') {
             return [
                 {
                     value: 'neutral',
@@ -628,7 +664,7 @@ const FarmSA = () => {
                 },
                 {
                     value: 'bear',
-                    label: 'Bear strategy 2x',
+                    label: 'Bear strategy 3x',
                 },
                 {
                     value: 'bull2x',
@@ -640,11 +676,11 @@ const FarmSA = () => {
                 },
             ]
         }
-        if (marketStrategy === 'bear') {
+        if (selectedStrategy === 'bear') {
             return [
                 {
                     value: 'bear',
-                    label: 'Bear strategy 2x',
+                    label: 'Bear strategy 3x',
                 },
                 {
                     value: 'bull2x',
@@ -660,7 +696,7 @@ const FarmSA = () => {
                 },
             ]
         }
-        if (marketStrategy === 'bull2x') {
+        if (selectedStrategy === 'bull2x') {
             return [
                 {
                     value: 'bull2x',
@@ -672,7 +708,7 @@ const FarmSA = () => {
                 },
                 {
                     value: 'bear',
-                    label: 'Bear strategy 2x',
+                    label: 'Bear strategy 3x',
                 },
                 {
                     value: 'neutral',
@@ -691,7 +727,7 @@ const FarmSA = () => {
             },
             {
                 value: 'bear',
-                label: 'Bear strategy 2x',
+                label: 'Bear strategy 3x',
             },
             {
                 value: 'neutral',
@@ -700,44 +736,72 @@ const FarmSA = () => {
         ]
     }
 
-    const yieldFarming = yieldFarmData * singleLeverage
-    const tradingFees = singleFarm?.tradeFee * 365 * singleLeverage
-    const apr = yieldFarming + tradingFees + huskyRewards - borrowingInterest
+    const getTokenSelectOptions = React.useCallback(() => {   
+        return [
+            {
+                icon: singleFarm?.[tokenInfoToUse]?.token,
+                label: singleFarm?.[tokenInfoToUse]?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                value: singleFarm?.[tokenInfoToUse]?.token,
+            },
+            {
+                icon: singleFarm?.[tokenInfoToUse]?.quoteToken,
+                label: singleFarm?.[tokenInfoToUse]?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+                value: singleFarm?.[tokenInfoToUse]?.quoteToken,
+            },
+
+        ]
+    }, [singleFarm, tokenInfoToUse])
+
+
+    const [tokenSelectOptions, setTokenSelectOptions] = useState(getTokenSelectOptions())
+    React.useEffect(() => {
+        setSelectedToken(singleFarm?.[tokenInfoToUse]?.token,)
+        setTokenSelectOptions(getTokenSelectOptions());
+    }, [getTokenSelectOptions, marketStrategy, singleFarm, tokenInfoToUse])
+        
+
+    const yieldFarming = Number(yieldFarmData * singleLeverage)
+    const tradingFees = Number((singleFarm?.tradeFee * 365) * singleLeverage)
+    const huskyRewardsData = Number(huskyRewards * (singleLeverage - 1)) * 100
+    const borrowingInterestData = Number(borrowingInterest * (singleLeverage - 1)) * 100
+    const apr = getApr(singleLeverage) * 100
     const dailyApr = apr / 365
 
-    // const { tooltip, targetRef, tooltipVisible } = useTooltip(
-    //     <>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Yield Farming')}</Text>
-    //             <Text>{yieldFarming?.toFixed(2)}%</Text>
-    //         </Flex>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Trading Fees')}</Text>
-    //             <Text>{tradingFees.toFixed(2)}%</Text>
-    //         </Flex>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Huski Rewards')}</Text>
-    //             <Text>{huskyRewards.toFixed(2)}%</Text>
-    //         </Flex>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Borrowing Interest')}</Text>
-    //             <Text>-{Number(borrowingInterest).toFixed(2)}%</Text>
-    //         </Flex>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Total APR')}</Text>
-    //             <Text>{apr.toFixed(2)}%</Text>
-    //         </Flex>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Total APY')}</Text>
-    //             <Text>{apy.toFixed(2)}%</Text>
-    //         </Flex>
-    //         <Flex justifyContent="space-between" alignItems="center">
-    //             <Text small>{t('Daily APR')}</Text>
-    //             <Text>{dailyApr.toFixed(2)}%</Text>
-    //         </Flex>
-    //     </>,
-    //     { placement: 'right' },
-    // )
+    const { tooltip, targetRef, tooltipVisible } = useTooltip(
+        <>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Yield Farming')}</Text>
+                <Text>{yieldFarming?.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Trading Fees')}</Text>
+                <Text>{tradingFees.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Huski Rewards')}</Text>
+                <Text>{huskyRewardsData.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Borrowing Interest')}</Text>
+                <Text>-{Number(borrowingInterestData).toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Total APR')}</Text>
+                <Text>{apr.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Total APY')}</Text>
+                <Text>{apy.toFixed(2)}%</Text>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Text small>{t('Daily APR')}</Text>
+                <Text>{dailyApr.toFixed(2)}%</Text>
+            </Flex>
+        </>,
+        { placement: 'right' },
+    )
+
+    const [chartype, setChartType] = useState(0);
     return (
         <Page>
             <Text bold fontSize="3" color="secondary" mx="auto">
@@ -749,12 +813,6 @@ const FarmSA = () => {
             <SectionWrapper>
                 <Flex className="graphSide" flex="2" >
                     <Section style={{ height: "500px" }}>
-                        {/* <TradingViewWidget
-                            symbol={`${singleFarm?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}USD`}
-                            theme={Themes.DARK}
-                            locale="fr"
-                            autosize
-                        /> */}
                         <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} />
                     </Section>
 
@@ -766,11 +824,11 @@ const FarmSA = () => {
                             </Flex>
                             <Flex>
                                 <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
-                                <Text >USD Value</Text>
+                                <Text>{t('USD Value')}</Text>
                             </Flex>
                             <Flex>
                                 <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
-                                <Text>Coin Value</Text>
+                                <Text>{t('Coin Value')}</Text>
                             </Flex>
                             <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy.toFixed(2)}%</Text>
                         </Flex>
@@ -781,49 +839,23 @@ const FarmSA = () => {
                 <Flex className="infoSide" flex="1">
                     <Section>
                         <Box>
-                            <Flex alignItems="center" justifyContent="space-between">
-                                <SingleFarmSelect
-                                    options={[
-                                        {
-                                            icon: "bear",
-                                            label: t('Bear Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.quoteToken,
-                                        },
-                                        {
-                                            icon: "bull",
-                                            label: t('Bull Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                        {
-                                            icon: "neutral",
-                                            label: t('Neutral Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                    ]}
+                            <Flex>
+                                <Select
+                                    options={getSelectOptions()}
                                     onChange={(option) => {
-                                        setSelectedStrategy(option.value)
+                                        setMarketStrategy(option.value)
+                                        setInputValue('')
+                                        setButtonIndex(null)
                                     }}
-                                    width="calc(80%)"
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
                                 <Text>{t('Collateral')}</Text>
                                 <SingleFarmSelect
-                                    options={[
-                                        {
-                                            icon: singleFarm?.TokenInfo?.quoteToken,
-                                            label: singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                                            value: singleFarm?.TokenInfo?.quoteToken,
-                                        },
-                                        {
-                                            icon: singleFarm?.TokenInfo?.token,
-                                            label: singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                    ]}
+                                    options={tokenSelectOptions}
                                     onChange={(option) => {
                                         setSelectedToken(option.value)
-                                        setInputValue(0)
+                                        setInputValue('')
                                         setButtonIndex(null)
                                     }}
                                     width="140px"
@@ -877,7 +909,7 @@ const FarmSA = () => {
                             <Text small>{t('Equity')}</Text>
                             {farmData ? (
                                 <Text fontWeight="bold">
-                                    {farmData[3]?.toFixed(2)} {tokenName}
+                                    {new BigNumber(farmData[3])?.toFixed(3, 1)} {tokenName}
                                 </Text>
                             ) : (
                                 <Text fontWeight="bold">0.00 {tokenName}</Text>
@@ -887,7 +919,7 @@ const FarmSA = () => {
                             <Text small>{t('Position Value')}</Text>
                             {farmData ? (
                                 <Text fontWeight="bold">
-                                    {farmData[8].toFixed(2)} {tokenName} + {farmData[9].toFixed(2)} {quoteTokenName}
+                                    {new BigNumber(farmData[8]).toFixed(3, 1)} {tokenName} + {new BigNumber(farmData[9]).toFixed(3, 1)} {quoteTokenName}
                                 </Text>
                             ) : (
                                 <Skeleton width="80px" height="16px" />

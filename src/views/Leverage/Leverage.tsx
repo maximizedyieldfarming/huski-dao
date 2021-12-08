@@ -19,7 +19,7 @@ import { usePositions } from './hooks/usePositions'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
-import { getYieldFarming, getTvl } from './helpers'
+
 
 
 const ActionButton = styled(Button)`

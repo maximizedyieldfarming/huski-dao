@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-properties */
 import React, { useState } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
@@ -7,6 +8,7 @@ import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useLocation } from 'react-router-dom'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getDrop } from '../../helpers'
+import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
@@ -33,7 +35,6 @@ const StyledRow = styled.div`
 `
 
 const ActivePositionsRow = ({ data }) => {
-  // console.log('active Positions data', data)
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
@@ -82,9 +83,25 @@ const ActivePositionsRow = ({ data }) => {
 
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  const huskyRewards = getHuskyRewards(data.farmData, huskyPrice, symbolName)
-  const yieldFarmData = getYieldFarming(data.farmData, cakePrice)
-  const dropData = getDrop(data.farmData, data, symbolName)
+  const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName)
+  const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
+  const dropData = getDrop(data?.farmData, data, symbolName)
+  const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
+
+  const getApr = (lvg) => {
+    const apr =
+      Number((yieldFarmData / 100) * lvg) +
+      Number(((data?.farmData.tradeFee * 365) / 100) * lvg) +
+      Number(huskyRewards * (lvg - 1)) -
+      Number(borrowingInterest * (lvg - 1))
+    return apr
+  }
+
+  const getApy = (lvg) => {
+    const apr = getApr(lvg)
+    const apy = Math.pow(1 + apr / 365, 365) - 1
+    return apy * 100
+  }
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -93,7 +110,6 @@ const ActivePositionsRow = ({ data }) => {
     return null
   }
 
-  const borrowingInterest = new BigNumber(data?.farmData?.borrowingInterest).div(BIG_TEN.pow(18)).toNumber()
   const profitLoss = undefined
 
   const liquidationThresholdData = parseInt(liquidationThresholdValue) / 100
@@ -109,7 +125,7 @@ const ActivePositionsRow = ({ data }) => {
           quoteToken={quoteTokenValue}
           token={tokenValue}
         />
-   {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null} 
+        {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />
         {pathname.includes('farms') ? (
           <DebtCell
@@ -121,18 +137,19 @@ const ActivePositionsRow = ({ data }) => {
         ) : null}
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={symbolName} />
         <ApyCell
-          apy={getDisplayApr(yieldFarmData * leverage.toNumber())}
-          huskyRewards={huskyRewards}
-          apr={null}
-          borrowingInterest={null}
-          liquidityRewards={null}
-          tradingFeesRewards={null}
+          apr={getApr(leverage.toNumber()) * 100}
+          dailyApr={getApr(leverage.toNumber()) / 365 * 100}
+          apy={getDisplayApr(getApy(leverage.toNumber()))}
+          yieldFarming={yieldFarmData * leverage.toNumber()}
+          tradingFees={data?.farmData.tradeFee * 365 * leverage.toNumber()}
+          huskyRewards={huskyRewards * 100 * (leverage.toNumber() - 1)}
+          borrowingInterest={borrowingInterest * 100 * (leverage.toNumber() - 1)}
         />
 
         {pathname.includes('farms') ? (
           <>
             <DebtRatioCell debtRatio={debtRatio} />
-            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} noDebt={debtValueNumber.toNumber() === 0 && debtRatio.toNumber() === 0}/>{' '}
+            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} noDebt={debtValueNumber.toNumber() === 0 && debtRatio.toNumber() === 0} />{' '}
           </>
         ) : null}
         <SafetyBufferCell

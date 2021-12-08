@@ -4,10 +4,11 @@ import { Menu as UikitMenu } from 'husky-uikit1.0'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
-// import { usePriceCakeBusd } from 'state/farms/hooks'
+import BigNumber from 'bignumber.js'
 import { useProfile } from 'state/profile/hooks'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
+import { useHuskiPrice } from 'hooks/api'
 import config from './config'
 import UserMenu from './UserMenu'
 import GlobalSettings from './GlobalSettings'
@@ -25,6 +26,7 @@ const CertikLogo1 = () => <img src={certikLogo1} style={{paddingLeft:'30px',padd
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
   // const cakePriceUsd = usePriceCakeBusd()
+  const huskyPrice = useHuskiPrice()
   const { profile } = useProfile()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
@@ -45,7 +47,7 @@ const Menu = (props) => {
       cakePriceUsd={null}
       links={config(t)}
       logo={isHome?<Logo1 />:<Logo />}
-      huskiPriceUsd={null}
+      huskiPriceUsd={new BigNumber(huskyPrice || 0).toFixed(3, 1)}
      /*  profile={{
         username: profile?.username,
         image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
