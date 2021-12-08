@@ -36,7 +36,7 @@ const MyPosCell = ({ staked }) => {
                     {t('My Position')}
                 </Text>
                
-          {staked ? <Text mt="10px" fontSize="18px" fontWeight='700' color="secondary">{staked}</Text> : <Skeleton width="80px" height="16px" />}
+          {staked ? <Text mt="10px" fontSize="18px" fontWeight='700' color="secondary">{new BigNumber(staked).toFixed(3, 1)}</Text> : <Skeleton width="80px" height="16px" />}
                
             </CellContent>
         </StyledCell>
