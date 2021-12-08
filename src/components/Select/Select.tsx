@@ -3,11 +3,12 @@ import styled, { css } from 'styled-components'
 import { ArrowDropDownIcon, Text } from 'husky-uikit1.0'
 
 const DropDownHeader = styled.div`
-  width: 100%;
+  min-width: max-content;
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-start;
+  gap: 8px;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
   border: 1px solid #efefef;
@@ -28,7 +29,7 @@ const DropDownListContainer = styled.div`
   transform-origin: top;
   opacity: 0;
   width: 100%;
-overflow: auto;
+  overflow: auto;
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 110px;
   }
@@ -36,13 +37,13 @@ overflow: auto;
 
 const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: number }>`
   cursor: pointer;
-  width: ${({ width }) => width}px;
+  // width: ${({ width }) => width}px;
   position: relative;
   background: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
   height: 40px;
-  min-width: 110px;
-  width: 110px;
+  min-width: max-content;
+  // width: 110px;
   user-select: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {
@@ -67,7 +68,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         border-top-width: 0;
         border-radius: 0 0 16px 16px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
-overflow: auto;
+        overflow: auto;
       }
     `}
 
@@ -84,12 +85,13 @@ const DropDownList = styled.ul`
   margin: 0;
   box-sizing: border-box;
   z-index: ${({ theme }) => theme.zIndices.dropdown};
-overflow: auto;
+  overflow: auto;
 `
 
 const ListItem = styled.li`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
+  gap: 8px;
   list-style: none;
   padding: 8px 16px;
   &:hover {
@@ -153,7 +155,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
           <Text>{options[selectedOptionIndex].label}</Text>
         </DropDownHeader>
       )}
-      <ArrowDropDownIcon color="text" onClick={toggling} style={{position: "absolute", right:"0"}}/>
+      <ArrowDropDownIcon color="text" onClick={toggling} style={{ position: 'absolute', right: '0' }} />
       <DropDownListContainer>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
