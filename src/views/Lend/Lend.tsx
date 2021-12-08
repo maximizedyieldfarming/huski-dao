@@ -97,7 +97,7 @@ const Lend: React.FC = () => {
           <img src="/images/8826.svg" width='70px' height='70px' alt="" />
           <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600">{t('Total Value Locked:')}</Text>
           {totalValueLockedValue ? (
-            <Text fontSize="28px" style={{ letterSpacing: '-0.01em' }} color="textFarm" fontWeight="bold">{`$${totalValueLockedValue}`}</Text>
+            <Text fontSize="28px" style={{ letterSpacing: '-0.01em' }} color="textFarm" fontWeight="bold">{`${totalValueLockedValue}`}</Text>
           ) : (
             <Skeleton width="180px" height="30px" />
           )}
