@@ -43,7 +43,7 @@ const BalanceCell = ({ balance, balanceIb, name, decimals }) => {
         )}
         {balanceIb ? (
           <Box>
-            <Text small textAlign="left" fontSize="12px" bold style={{color:'#131313',marginBottom:'7px'}}>
+            <Text small textAlign="left" fontSize="12px" bold style={{marginBottom:'7px'}}>
               {ibFormatedBalance} ib{name}
             </Text>
             <Text small textAlign="left" fontSize="12px" bold color="text">

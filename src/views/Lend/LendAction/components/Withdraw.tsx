@@ -13,6 +13,7 @@ import { ArrowDownIcon } from 'assets'
 import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
 import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTheme from 'hooks/useTheme'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
@@ -80,6 +81,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
     .times(exchangeRate)
     .toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
   const [isPending, setIsPending] = useState<boolean>(false)
+  const { isDark } = useTheme()
 
   // const { balance: tokenBalance } = useTokenBalance(tokenData.TokenInfo.vaultAddress)
   // const [userTokenBalanceIb, setBalance] = useState(
@@ -138,12 +140,18 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             {t('From')}
           </Text>
           <Text color="textSubtle" fontSize="12px">
-            {t('Balance')}: <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${balance} ib${name}`}</span>
+            {t('Balance')}: <span style={{fontWeight: 700 }}>{`${balance} ib${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between">
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
           <Box>
-            <Input pattern="^[0-9]*[.,]?[0-9]{0,18}$" placeholder="0.00" onChange={handleAmountChange} value={amount} />
+            <Input
+              pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+              placeholder="0.00"
+              onChange={handleAmountChange}
+              value={amount}
+              style={{ background: "transparent", border: "none" }}
+            />
           </Box>
           <Box>
             <MaxContainer>
@@ -158,7 +166,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
                   }}
                   onClick={setAmountToMax}
                 >
-                  {t('MAX')}
+                  <Text>{t('MAX')}</Text>
                 </button>
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
@@ -180,15 +188,15 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+            <span style={{fontWeight: 700 }}>{`${formatDisplayedBalance(
               userTokenBalance,
               tokenData.TokenInfo?.token?.decimalsDigits,
             )} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between">
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
           <Box>
-            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700, color: '#1a1d1f' }}>
+            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700 }}>
               {assetsReceived !== 'NaN' ? assetsReceived : 0}
             </Text>
           </Box>

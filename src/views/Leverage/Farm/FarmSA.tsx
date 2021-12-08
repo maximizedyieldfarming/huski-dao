@@ -38,6 +38,8 @@ import 'echarts/lib/component/markPoint'
 import ReactEcharts from 'echarts-for-react'
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
+import useTheme from 'hooks/useTheme'
+
 // import TradingViewWidget, { Themes } from 'react-tradingview-widget';
 
 // import ReactHighstock from 'react-highcharts/bundle/ReactHighstock.src';
@@ -106,7 +108,7 @@ const InputArea = styled(Flex)`
 `
 
 const ButtonMenu = styled(UiKitButtonMenu)`
-  background-color: #F4F4F4;
+
   border-radius: 12px;
   border: unset;
   width: 100%;
@@ -134,7 +136,7 @@ const ButtonMenuItem = styled(UiKitButtonMenuItem)`
 const BalanceInputWrapper = styled(Flex)`
   border-radius: 12px;
   padding: 5px;
-  height : 80px;
+  height : 60px;
   background : #F7F7F8;
   input {
     border: none;
@@ -158,6 +160,8 @@ const FarmSA = () => {
     const singleFarm = data
     console.info('singleFarm', singleFarm)
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+    console.log("coingeckoId", coingeckoId);
+    const { isDark, toggleTheme } = useTheme()
     const priceList = usePriceList(coingeckoId)
 
     const getSingleLeverage = (selStrategy: string): number => {
@@ -596,7 +600,9 @@ const FarmSA = () => {
     const getOption1 = () => {
 
         const option = {
+
             rangeSelector: {
+
                 buttons: [{
                     type: 'month',
                     count: 1,
@@ -621,6 +627,12 @@ const FarmSA = () => {
                     text: 'All'
                 }],
                 selected: 1  // 默认选中的范围，值为上面 buttons 数组的下标（从 0 开始）
+            },
+            chart: {
+                backgroundColor: isDark ? "#111315" : "white",
+                polar: true,
+                type: 'line',
+                color: "white"
             },
             plotOptions: {
                 series: {
@@ -858,8 +870,8 @@ const FarmSA = () => {
                                         {balanceNumber}
                                     </Text>
                                 </Flex>
-                                <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
-                                    <BalanceInputWrapper alignItems="center" flex="1">
+                                <InputArea justifyContent="space-between" mt="10px" mb="1rem" style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
+                                    <BalanceInputWrapper alignItems="center" flex="1" style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
                                         <Box width={50} height={50} ml="5px" mt="15px">
                                             <TokenImage token={selectedToken} width={50} height={50} />
                                         </Box>

@@ -13,6 +13,7 @@ import Select from 'components/Select/Select'
 import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
+import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
@@ -29,6 +30,30 @@ const CardBody = styled(UiKitCardBody)`
     border-bottom: 1px solid ${({ theme }) => `${theme.colors.textSubtle}26`};
     padding-bottom: 0.5rem;
   }
+`
+
+const DropDown = styled.div<{ isselect: boolean }>`
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+  z-index: 1; 
+  width: 60%;
+  position: absolute; 
+  left: 40%;
+  top: 90px; 
+  max-height: ${({ theme, isselect }) => {
+    if (isselect) {
+      return '330px'
+    }
+    return '0px'
+  }};
+  overflow-y: ${({ theme, isselect }) => {
+    if (isselect) {
+      return 'scroll'
+    }
+    return 'hidden'
+  }};
+  transition: max-height 0.3s
+
 `
 
 const DropDownItem = styled(Flex)`
@@ -64,6 +89,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
+  const { isDark, toggleTheme } = useTheme()
 
   console.info('data', data)
   console.info('singleData', singleData)
@@ -88,7 +114,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   // const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
   const { borrowingInterest } = useFarmsWithToken(singleData, borrowingAsset)
   const dropdown = useRef(null);
- 
+
 
   const getApr = (lvg) => {
     const apr =
@@ -270,13 +296,13 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   const [isselect, setIsSelect] = useState(false);
 
-  useEffect(()=>{
-    document.addEventListener('mousedown',function(event){
-      if(dropdown.current && isselect && !dropdown.current.contains(event.target)){
+  useEffect(() => {
+    document.addEventListener('mousedown', function (event) {
+      if (dropdown.current && isselect && !dropdown.current.contains(event.target)) {
         setIsSelect(false)
       }
     })
-  },[isselect])
+  }, [isselect])
   console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
   let prevpair;
 
@@ -286,7 +312,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       <CardBody>
         <Box className="avgContainer">
           <Flex alignItems="center" flexDirection="column">
-            <Box style={{ position: "relative", width: "100%" }}ref = {dropdown}>
+            <Box style={{ position: "relative", width: "100%" }} ref={dropdown}>
               <Flex onClick={() => { setIsSelect(!isselect) }} style={{ cursor: "pointer" }} background={`${color}1A`} height="80px" border={`1px solid  ${color}`} borderRadius="10px" justifyContent="space-between">
                 <Flex alignItems="center" width="calc(100% - 20px)">
                   <TokenPairImage
@@ -305,7 +331,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                 </Flex>
                 <Flex marginRight="5px"><ChevronDownIcon width="25px" /></Flex>
               </Flex>
-              <Box  style={{ borderRadius: "10px", boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.15)", zIndex: 1, width: "60%", position: "absolute", left: "40%", top: "90px", maxHeight: isselect ? "330px" : "0px", overflow: isselect ? "scroll" : "hidden", transition: "max-height 0.3s" }}>
+              <DropDown isselect={isselect}>
                 {
                   getSelectOptions().map((option, i) => {
                     const symbol = option.label.split('+ ')[1];
@@ -314,11 +340,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                       f = 1;
                       prevpair = symbol;
                     }
-                    return <>{f === 1 && <Flex height="50px" background="#F8F8F8" alignItems="center" pl="12px">
+                    return <>{f === 1 && <Flex height="50px" background={isDark ? "#070707" : "#F8F8F8"} alignItems="center" pl="12px">
                       <TokenPairImage
                         variant="inverted"
-                        primaryToken={data.singleArray.find((single)=>single.lpSymbol === symbol).QuoteTokenInfo.token}
-                        secondaryToken={data.singleArray.find((single)=>single.lpSymbol === symbol).QuoteTokenInfo.quoteToken}
+                        primaryToken={data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.token}
+                        secondaryToken={data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.quoteToken}
                         width={28}
                         height={28}
                         primaryImageProps={{ style: { marginLeft: "4px" } }}
@@ -326,20 +352,20 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                       />
                       <Text color="#6F767E" fontWeight="600" ml="10px">{symbol.replace(' LP', '')}</Text>
                     </Flex>}
-                      <Box background="#FFFFFF" >
+                      <Box background={isDark ? "#111315" : "#FFFFFF"} >
 
                         <DropDownItem padding="10px 20px 10px 27px" alignItems="center" onClick={() => { setIsSelect(false); handleSelectChange(option); }}>
                           <Box mr="20px"><StrategyIcon market={option.label.split(' ')[0].toLowerCase()} /></Box>
                           <Flex justifyContent="space-between" style={{ cursor: "pointer" }} width="100%">
-                            <Text fontSize="16px">{option.label.split(' ')[0]} {option.label.split(' ')[1]}</Text>
-                            <Text fontSize="16px">{option.label.split(' ')[2]}</Text>
+                            <Text fontSize="16px" color={isDark ? "white" : "black"}>{option.label.split(' ')[0]} {option.label.split(' ')[1]}</Text>
+                            <Text fontSize="16px" color={isDark ? "white" : "black"}>{option.label.split(' ')[2]}</Text>
                           </Flex>
                         </DropDownItem>
 
                       </Box>
                     </>
                   })}
-              </Box>
+              </DropDown>
             </Box>
 
           </Flex>
