@@ -293,7 +293,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          <Text color={priceImpact > 0 ? "#2ECC8E" : "#EB0303"}>{priceImpact.toPrecision(3)}%</Text>
+          <Text>{new BigNumber(priceImpact).toPrecision(3, 1)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -303,7 +303,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" />
             </span>
           </Flex>
-          <Text>{tradingFees.toPrecision(3)}%</Text> 
+          <Text>{new BigNumber(tradingFees).toPrecision(3, 1)}%</Text> 
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
