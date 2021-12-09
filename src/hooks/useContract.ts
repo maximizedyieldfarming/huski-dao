@@ -7,12 +7,9 @@ import {
   getClaimFairLaunchContract,
   getProfileContract,
   getMasterchefContract,
-  getClaimRefundContract,
   getErc721Contract,
   getCakeVaultContract,
   getPredictionsContract,
-  getChainlinkOracleContract,
-  getFarmAuctionContract,
 } from 'utils/contractHelpers'
 import { getMulticallAddress } from 'utils/addressHelpers'
 
@@ -69,11 +66,6 @@ export const useMasterchef = () => {
   return useMemo(() => getMasterchefContract(library.getSigner()), [library])
 }
 
-export const useClaimRefundContract = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getClaimRefundContract(library.getSigner()), [library])
-}
-
 export const useCakeVaultContract = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getCakeVaultContract(library.getSigner()), [library])
@@ -84,26 +76,6 @@ export const usePredictionsContract = () => {
   return useMemo(() => getPredictionsContract(library.getSigner()), [library])
 }
 
-export const useChainlinkOracleContract = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getChainlinkOracleContract(library.getSigner()), [library])
-}
-
-export const useFarmAuctionContract = () => {
-  const { account, library } = useActiveWeb3React()
-  // This hook is slightly different from others
-  // Calls were failing if unconnected user goes to farm auction page
-  // Using library instead of library.getSigner() fixes the problem for unconnected users
-  // However, this fix is not ideal, it currently has following behavior:
-  // - If you visit Farm Auction page coming from some other page there are no errors in console (unconnected or connected)
-  // - If you go directly to Farm Auction page
-  //   - as unconnected user you don't see any console errors
-  //   - as connected user you see `unknown account #0 (operation="getAddress", code=UNSUPPORTED_OPERATION, ...` errors
-  //     the functionality of the page is not affected, data is loading fine and you can interact with the contract
-  //
-  // Similar behavior was also noticed on Trading Competition page.
-  return useMemo(() => getFarmAuctionContract(account ? library.getSigner() : library), [library, account])
-}
 
 // Code below migrated from Exchange useContract.ts
 
