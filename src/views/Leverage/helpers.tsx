@@ -518,8 +518,10 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 
   const liquidationPrice = farmingtokenlp * basetokenlp / (basetokenlpborrowed / liquidationThresholdData / 2) ** 2
 
-  const drop1 = liquidationPrice / farmingtokenlp * basetokenlp * 100
-  const drop = 1 / liquidationPrice / basetokenlp * farmingtokenlp * 100
+  const drop1 = liquidationPrice / farmingtokenlp * basetokenlp
+  const dropValue = 1 / liquidationPrice / basetokenlp * farmingtokenlp
+
+  const drop = (1 - dropValue) * 100
 
   console.log({ 'kkkkkkk': drop1, basetokenlp, farmingtokenlp, basetokenlpborrowed, drop, TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold })
   return drop
