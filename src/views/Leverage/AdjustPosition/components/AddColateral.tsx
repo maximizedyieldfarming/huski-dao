@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { TokenImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
+import { useAddCollateralContext } from '../context'
 
 const InputArea = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
@@ -89,6 +90,16 @@ const AddColateral = ({
       const value = userTokenBalance.toNumber()
       setTokenInput(new BigNumber(value).toNumber())
     }
+  }
+  // cleanup input when changing between repay debt and add collateral
+  const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
+  React.useEffect(() => {
+    setTokenInput('')
+    setQuoteTokenInput('')
+  }, [isAddCollateral, setQuoteTokenInput, setTokenInput])
+
+  if (!isAddCollateral) {
+    return null;
   }
 
   return (

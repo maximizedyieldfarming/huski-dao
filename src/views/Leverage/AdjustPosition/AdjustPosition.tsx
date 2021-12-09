@@ -120,6 +120,7 @@ const AdjustPosition = () => {
   let quoteTokenInputValue;
   let userTokenBalance
   let userQuoteTokenBalance
+  let minimumDebt
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = token?.symbol.replace('wBNB', 'BNB')
@@ -146,6 +147,7 @@ const AdjustPosition = () => {
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
     )
+    minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
   } else {
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
@@ -174,6 +176,7 @@ const AdjustPosition = () => {
     userQuoteTokenBalance = getBalanceAmount(
       tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
     )
+    minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
 
   }
@@ -525,8 +528,11 @@ const AdjustPosition = () => {
 
 
   const isConfirmDisabled =
-    (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
-    Number(currentPositionLeverage).toFixed(2) === Number(targetPositionLeverage).toFixed(2)
+    Number(currentPositionLeverage) === Number(targetPositionLeverage) ||
+    (!isAddCollateral &&
+      Number(targetPositionLeverage) !== 1 &&
+      Number(targetPositionLeverage) !== Number(currentPositionLeverage) &&
+      new BigNumber(UpdatedDebtValue).lt(minimumDebt))
 
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
@@ -757,13 +763,9 @@ const AdjustPosition = () => {
               <Text>{t('Collateral to be Added')}</Text>
               {farmingData ? (
                 <Text>
-                  {Number(tokenInputValue) > Number(Number(tokenInputValue)?.toFixed(3))
-                    ? `${Number(tokenInputValue?.toFixed(3))}...`
-                    : Number(tokenInputValue)?.toFixed(3)}{' '}
+                  {new BigNumber(tokenInputValue || 0).toFixed(3, 1)}{' '}
                   {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
-                  {Number(quoteTokenInputValue) > Number(quoteTokenInputValue?.toFixed(3))
-                    ? `${Number(tokenInputValue?.toFixed(3))}...`
-                    : Number(quoteTokenInputValue)?.toFixed(3)}{' '}
+                  {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
                   {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                 </Text>
               ) : (
@@ -986,14 +988,10 @@ React.useEffect(() => {
                     <Text>{t('Collateral to be Added')}</Text>
                     {farmingData ? (
                       <Text>
-                        {Number(tokenInputValue) > Number(Number(tokenInputValue).toFixed(3))
-                          ? `${Number(tokenInputValue.toFixed(3))}...`
-                          : Number(tokenInputValue).toFixed(3)}{' '}
-                        {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
-                        {Number(quoteTokenInputValue) > Number(quoteTokenInputValue.toFixed(3))
-                          ? `${Number(tokenInputValue.toFixed(3))}...`
-                          : Number(quoteTokenInputValue).toFixed(3)}{' '}
-                        {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                        {new BigNumber(tokenInputValue || 0).toFixed(3)}{' '}
+                        {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+                        {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
+                        {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                       </Text>
                     ) : (
                       <Skeleton width="80px" height="16px" />
@@ -1005,8 +1003,10 @@ React.useEffect(() => {
                     <Text>{t('Collateral to be Added')}</Text>
                     {farmingData ? (
                       <Text>
-                        {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
-                        {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                        {new BigNumber(tokenInputValue || 0).toFixed(3)}{' '}
+                        {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+                        {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
+                        {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                       </Text>
                     ) : (
                       <Skeleton width="80px" height="16px" />
@@ -1116,7 +1116,7 @@ React.useEffect(() => {
                     <Text>{adjustHuskiRewardsAPR.toFixed(2)}%</Text>
                   </Flex>
                 ) : (
-                    <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
+                  <Text>{huskiRewardsAPR.toFixed(2)}%</Text>
                 )}
               </Flex>
               <Flex justifyContent="space-between">
@@ -1128,7 +1128,7 @@ React.useEffect(() => {
                     <Text>{adjustBorrowingInterestAPR.toFixed(2)}%</Text>
                   </Flex>
                 ) : (
-                    <Text>{borrowingInterestAPR.toFixed(2)}%</Text>
+                  <Text>{borrowingInterestAPR.toFixed(2)}%</Text>
                 )}
               </Flex>
               <Flex justifyContent="space-between">
@@ -1170,9 +1170,19 @@ React.useEffect(() => {
                   {t('Confirm')}
                 </Button>
               )}
-              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo}>{t('Confirm')}</Button>}
+              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo} disabled={isConfirmDisabled}>{t('Confirm')}</Button>}
               {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>{t('Confirm')}</Button>}
             </Box>
+            <Text mx="auto" color="red">
+              {!isAddCollateral && Number(targetPositionLeverage) !== 1 && Number(targetPositionLeverage) !== Number(currentPositionLeverage) 
+                ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                  ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                      minimumDebt: minimumDebt.toNumber(),
+                      name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                    })
+                  : null
+                : null}
+            </Text>
           </Page>
         </PercentageToCloseContext.Provider>
       </ConvertToContext.Provider>

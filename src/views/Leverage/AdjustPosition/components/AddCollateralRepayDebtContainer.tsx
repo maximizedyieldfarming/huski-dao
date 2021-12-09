@@ -85,7 +85,7 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
         </HeaderTab>
       </Header>
       <Box padding="1rem">
-        {isAddCollateral ? (
+        
           <AddColateral
             userQuoteTokenBalance={userQuoteTokenBalance}
             userTokenBalance={userTokenBalance}
@@ -101,7 +101,7 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
             tokenPrice={tokenPrice}
             quoteTokenPrice={quoteTokenPrice}
           />
-        ) : (
+       
           <RepayDebt
             currentPositionLeverage={currentPositionLeverage}
             targetPositionLeverage={targetPositionLeverage}
@@ -111,7 +111,7 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
             baseTokenAmountValue={baseTokenAmountValue}
             farmTokenAmountValue={farmTokenAmountValue}
           />
-        )}
+       
       </Box>
     </Box>
   )

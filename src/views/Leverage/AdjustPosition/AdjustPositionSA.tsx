@@ -137,7 +137,7 @@ const AdjustPositionSA = () => {
   let quoteTokenInputValue
   let userTokenBalance
   let userQuoteTokenBalance
-  // let minimumDebt
+  let minimumDebt
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     // console.log('case 1')
@@ -163,7 +163,7 @@ const AdjustPositionSA = () => {
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     ).toNumber()
-    // minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
+    minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   } else {
     //  console.log('case 2')
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
@@ -190,7 +190,7 @@ const AdjustPositionSA = () => {
       tokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     ).toNumber()
     userQuoteTokenBalance = getBalanceAmount(quoteTokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance).toNumber()
-    // minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
+    minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   }
   // console.info('use this', {
   //   symbolName,
@@ -843,10 +843,10 @@ const AdjustPositionSA = () => {
           <Button
             onClick={handleConfirm}
             disabled={
-              !account ||
-              Number(tokenInput) === 0 ||
-              tokenInput === undefined ||
-              Number(userTokenBalance) === 0 ||
+              !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) : 
+              (Number(tokenInput) === 0 ||
+              tokenInput === undefined)
+              ) ||
               isPending
             }
             isLoading={isPending}
@@ -857,14 +857,14 @@ const AdjustPositionSA = () => {
           </Button>
         </Flex>
       </Section>
-      {/*   <Text mx="auto" color="red">
-        {new BigNumber(assetsBorrowed).lt(minimumDebt)
+       <Text mx="auto" color="red">
+        {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
           ? t('Minimum Debt Size: %minimumDebt% %name%', {
               minimumDebt: minimumDebt.toNumber(),
               name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
             })
-          : null}
-      </Text> */}
+          : null) : null}
+      </Text>
     </Page>
   )
 }

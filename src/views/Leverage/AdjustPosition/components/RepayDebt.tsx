@@ -4,7 +4,7 @@ import Select from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
 import RepayDebtMinimizeTrading from './RepayDebtMinimizeTrading'
 import RepayDebtConvertTo from './RepayDebtConvertTo'
-import { useConvertToContext } from '../context'
+import { useConvertToContext, useAddCollateralContext } from '../context'
 
 const RepayDebt = ({
   currentPositionLeverage,
@@ -19,6 +19,10 @@ const RepayDebt = ({
   const { isConvertTo, handleIsConvertTo } = useConvertToContext()
   const handleSelect = (option) => {
     handleIsConvertTo(option.value === 'convertTo')
+  }
+  const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
+  if (isAddCollateral) {
+    return null
   }
 
   return (
