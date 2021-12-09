@@ -15,7 +15,6 @@ export const ToastsProvider: React.FC = ({ children }) => {
 
         // Remove any existing toasts with the same id
         const currentToasts = prevToasts.filter((prevToast) => prevToast.id !== id)
-
         return [
           {
             id,

@@ -815,8 +815,8 @@ const FarmSA = () => {
                     <Section>
                         <Flex justifyContent="space-between">
                             <Flex>
-                                <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>Time Profit</Text>
-                                <Text style={{ cursor: "pointer", color: chartype === 1 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 1 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(1)}>Price Profit</Text>
+                                <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>{t(`Time Profit`)}</Text>
+                                <Text style={{ cursor: "pointer", color: chartype === 1 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 1 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(1)}>{t(`Price Profit`)}</Text>
                             </Flex>
                             <Flex>
                                 <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
@@ -836,13 +836,30 @@ const FarmSA = () => {
                     <Section>
                         <Box>
                             <Flex>
-                                <Select
-                                    options={getSelectOptions()}
+                                <SingleFarmSelect
+                                    options={[
+                                        {
+                                            icon: "bear",
+                                            label: t('Bear Market Strategy'),
+                                            value: singleFarm?.TokenInfo?.quoteToken,
+                                        },
+                                        {
+                                            icon: "bull",
+                                            label: t('Bull Market Strategy'),
+                                            value: singleFarm?.TokenInfo?.token,
+                                        },
+                                        {
+                                            icon: "neutral",
+                                            label: t('Neutral Market Strategy'),
+                                            value: singleFarm?.TokenInfo?.token,
+                                        },
+                                    ]}
                                     onChange={(option) => {
                                         setMarketStrategy(option.value)
                                         setInputValue('')
                                         setButtonIndex(null)
                                     }}
+                                    width="calc(80%)"
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
