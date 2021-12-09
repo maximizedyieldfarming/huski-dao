@@ -61,6 +61,9 @@ export interface LeverageFarm extends LeverageFarmConfig {
     stakedBalance: string
     earnings: string
   }
+  tradingData?: {
+    tradingFee? : string
+  }
   lptotalSupply?: SerializedBigNumber
   tokenUserInfoLP?: SerializedBigNumber
   quoteTokenUserInfoLP?: SerializedBigNumber
@@ -118,6 +121,7 @@ export interface LeverageFarmsState {
   data: LeverageFarm[]
   loadArchivedFarmsData: boolean
   userDataLoaded: boolean
+  tradingDataLoaded: boolean
 }
 
 

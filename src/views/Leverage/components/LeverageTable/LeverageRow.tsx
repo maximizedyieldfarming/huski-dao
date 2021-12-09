@@ -73,18 +73,6 @@ const LeverageRow = ({ tokenData }) => {
     return apy * 100
   }
 
-  // const apyarray = [];
-  // const newLeverage = leverage
-  // for (let i = 1; i <= leverage; i++) {
-  //   // if (getApy(i) >= getApy(i + 1)) {
-  //     // newLeverage = i;
-  //     apyarray.push(getApy(i))
-  //   // }
-  //   // break;
-  // }
-
-  // console.log({'newLeverage--': apyarray, 'lpSymbol': lpSymbol, childLeverage })
-
   const getLeverageWithHighestApy = () => {
     const lvgArray = []
     for (let i = 1; i < leverage / 0.5; i++) {
