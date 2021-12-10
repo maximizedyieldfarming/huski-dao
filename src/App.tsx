@@ -48,6 +48,7 @@ const App: React.FC = () => {
   useFetchProfile()
   // usePollCoreFarmData()
   const { account } = useWeb3React()
+  console.info('account==========',account)
   return (
     <Router history={history}>
       <ResetCSS />
