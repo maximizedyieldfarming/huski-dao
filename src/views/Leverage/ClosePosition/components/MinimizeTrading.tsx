@@ -35,13 +35,13 @@ const BusdPriceContainer = styled(Flex)`
 `
 
 const GrayBox = styled(Box)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-  border-radius: ${({ theme }) => theme.radii.default};
+  margin-top : 20px;
+  border-radius: 12px;
   padding: 1rem;
 `
 
 const MinimizeTrading = ({ data, isCloseEntire }) => {
- 
+
   const { positionId, debtValue, lpAmount, vault } = data
   const {
     TokenInfo,
@@ -163,7 +163,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
     tooltipVisible: positionValueTooltipVisible,
   } = useTooltip(
     <>
-      <Text>Total value of your farming position calculated from PancakeSwap pool’s reserve.</Text>
+      <Text bold>Total value of your farming position calculated from PancakeSwap pool’s reserve.</Text>
     </>,
     { placement: 'top-start' },
   )
@@ -233,8 +233,8 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
 
   return (
     <>
-      <GrayBox background="backgroundDisabled">
-        <Text small color="textSubtle">
+      <GrayBox background="#F7F7F8">
+        <Text small color="textSubtle" >
           {t(
             `We will convert the minimum required amount of tokens into ${symbolName} to pay back the debt and return the remaining assets to you. This can potentially save on slippage and trading fees.`,
           )}
@@ -248,7 +248,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
               <Text>{t('Position Value Assets')}</Text>
               {positionValueTooltipVisible && positionValueTooltip}
               <span ref={positionValueRef}>
-                <InfoIcon ml="10px" />
+                <InfoIcon ml="10px" mt="2px" />
               </span>
             </Flex>
             <BusdPriceContainer>
@@ -275,7 +275,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
             </BusdPriceContainer>
           </Box>
           {data ? (
-            <Text>
+            <Text bold>
               {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
               {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
             </Text>
@@ -288,11 +288,11 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
             <Text>{t('Amount to Trade')}</Text>
             {amountToTradeTooltipVisible && amountToTradeTooltip}
             <span ref={amountToTradeRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
           {data ? (
-            <Text>
+            <Text bold>
               {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
             </Text>
           ) : (
@@ -304,31 +304,31 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
             <Text>{t('Price Impact')}</Text>
             {priceImpactTooltipVisible && priceImpactTooltip}
             <span ref={priceImpactRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
-          <Text>{new BigNumber(priceImpact).toPrecision(3, 1)}%</Text>
+          <Text bold color="#83BF6E"><span>{Number(priceImpact) >= 0 ? "+" : ""}</span>{priceImpact.toFixed(2)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
             <Text>{t('Trading Fees')}</Text>
             {tradingFeesTooltipVisible && tradingFeesTooltip}
             <span ref={tradingFeesRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
-          <Text>{new BigNumber(tradingFees).toPrecision(3, 1)}%</Text>
+          <Text bold>{new BigNumber(tradingFees).toPrecision(3, 1)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
             <Text>{t('Converted Position Value Assets')}</Text>
             {convertedPositionValueTooltipVisible && convertedPositionValueTooltip}
             <span ref={convertedPositionValueRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
           {convertedPositionValueAssets ? (
-            <Text>
+            <Text bold>
               {convertedPositionValueAssets.toFixed(3)} {tokenValueSymbol}
             </Text>
           ) : (
@@ -340,11 +340,11 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
             <Text>{t('Debt Value')}</Text>
             {debtValueTooltipVisible && debtValueTooltip}
             <span ref={debtValueRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
           {debtValueNumber !== (undefined || NaN) ? (
-            <Text>
+            <Text bold>
               {debtValueNumber.toFixed(3)} {tokenValueSymbol}
             </Text>
           ) : (
@@ -356,7 +356,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
         <Flex justifyContent="space-between">
           <Text>{t('You will receive approximately')}</Text>
           {convertedPositionValue ? (
-            <Text>
+            <Text bold>
               {Number(convertedPositionValue).toPrecision(4)} {tokenValueSymbol}
             </Text>
           ) : (
@@ -368,18 +368,20 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
             <Text>{t('Minimum Received')}</Text>
             {minimumReceivedTooltipVisible && minimumReceivedTooltip}
             <span ref={minimumReceivedRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
           {convertedPositionValue ? (
-            <Text>
+            <Text bold>
               {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
           )}
         </Flex>
-        <Button onClick={handleConfirm}>{t('Close Position')}</Button>
+        <Flex  justifyContent="center">
+          <Button onClick={handleConfirm} width="300px" height = "60px">{t('Close Position')}</Button>
+        </Flex>
       </Section>
     </>
   )
