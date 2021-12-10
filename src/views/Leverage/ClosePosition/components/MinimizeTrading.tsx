@@ -5,8 +5,8 @@ import { useTranslation } from 'contexts/Localization'
 import CloseEntirePosition from './CloseEntirePosition'
 
 const GrayBox = styled(Box)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-  border-radius: ${({ theme }) => theme.radii.default};
+  margin-top: 20px;
+  border-radius: 12px;
   padding: 1rem;
 `
 
@@ -24,7 +24,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
 
   return (
     <>
-      <GrayBox background="backgroundDisabled">
+      <GrayBox background="#F7F7F8">
         <Text small color="textSubtle">
           {t(
             `We will convert the minimum required amount of tokens into ${symbolName} to pay back the debt and return the remaining assets to you. This can potentially save on slippage and trading fees.`,

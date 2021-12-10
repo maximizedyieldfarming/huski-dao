@@ -12,6 +12,7 @@ interface Props {
 }
 
 const TabPanel = styled(Box)`
+padding: 2rem;
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
@@ -20,37 +21,40 @@ const TabPanel = styled(Box)`
 `
 
 const Header = styled(Flex)`
-  border-radius: 20px 0 20px 0;
+  margin-top : 20px;
+  background: #F4F4F4;
+  border-radius: 12px;
+  padding : 4px;
+  height : 54px;
 `
 
 const HeaderTabs = styled.div<Props>`
   flex: 1;
-  background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
-  border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
+  box-shadow:${({ active, theme }) => (active ? "0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)" : "")};
+  background-color: ${({ active, theme }) => (active ? "#FFFFFF" : "transparent")};
   padding: 1rem;
   cursor: pointer;
-  &:first-child {
-    border-top-left-radius: 20px;
-  }
-  &:last-child {
-    border-top-right-radius: 20px;
-  }
+  border-radius : 12px;
+  display : flex;
+  justify-content : center;
+  align-items : center;
 `
 
 const Body = styled(Flex)`
-  padding: 2rem;
+  
   flex-direction: column;
   gap: 1rem;
 `
 const Bubble = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   padding: 1rem;
-  border-radius: ${({ theme }) => theme.radii.default};
+  border-radius: 12px;
+  border: 1px solid #EFEFEF;
   gap: 10px;
 `
 
 const ClosePosition = (props) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   const {
     location: {
@@ -89,36 +93,42 @@ const ClosePosition = (props) => {
       <Text fontSize="36px" textTransform="capitalize" mx="auto">
         {t('Close Position')}
       </Text>
-      <Flex alignItems="center">
-        <Flex alignItems="center" justifySelf="flex-start" flex="1">
-          <Text mr="1rem">{t('Which method would you like to use?')}</Text>
-        </Flex>
-        <Bubble alignSelf="flex-end" alignItems="center">
-          <Text>{symbolName.toUpperCase().replace('WBNB', 'BNB')}</Text>
-          <Text>#{positionId}</Text>
-          <Flex alignItems="center">
-            <Box width={40} height={40}>
-              <TokenPairImage
-                primaryToken={quoteTokenValue}
-                secondaryToken={tokenValue}
-                width={40}
-                height={40}
-                variant="inverted"
-              />
-            </Box>
-            <Text style={{ whiteSpace: 'nowrap' }} ml="5px">
-              {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
-            </Text>
-          </Flex>
-        </Bubble>
-      </Flex>
+
       <TabPanel>
+        <Flex alignItems="center">
+          <Flex alignItems="center" justifySelf="flex-start" flex="1">
+            <Text mr="1rem" fontWeight="900" fontSize="18px">{t('Which method would you like to use?')}</Text>
+          </Flex>
+          <Bubble alignSelf="flex-end" alignItems="center">
+            <Text fontWeight="500">{symbolName.toUpperCase().replace('WBNB', 'BNB')}</Text>
+            <Text fontWeight="500">#{positionId}</Text>
+            <Flex alignItems="center" ml="10px" >
+              <Box width={24} height={24}>
+                <TokenPairImage
+                  primaryToken={quoteTokenValue}
+                  secondaryToken={tokenValue}
+                  width={24}
+                  height={24}
+                  variant="inverted"
+                />
+              </Box>
+              <Flex flexDirection="column" ml="10px">
+                <Text style={{ whiteSpace: 'nowrap' }} fontWeight="500">
+                  {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
+                </Text>
+                <Text color="#6F767E" fontSize="12px">
+                  {data.farmData?.lpExchange}
+                </Text>
+              </Flex>
+            </Flex>
+          </Bubble>
+        </Flex>
         <Header>
           <HeaderTabs onClick={handleDepositClick} active={isDeposit}>
-            <Text>{t('Convert To')} {symbolName}</Text>
+            <Text bold fontSize = "15px">{t('Convert To')} {symbolName}</Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit}>
-            <Text>{t('Minimize Trading')}</Text>
+            <Text bold fontSize = "15px">{t('Minimize Trading')}</Text>
           </HeaderTabs>
         </Header>
         <Body>
