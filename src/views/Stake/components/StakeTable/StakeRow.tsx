@@ -28,7 +28,7 @@ import NumberInput from 'components/NumberInput'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
-import useTokenBalance from 'hooks/useTokenBalance'
+import useTokenBalance, { useStakedibTokenBalance } from 'hooks/useTokenBalance'
 import { getStakeApy } from '../../helpers'
 import AprCell from './Cells/AprCell'
 import ActionCell from './Cells/ActionCell'
@@ -137,11 +137,11 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
 `
 
 const MaxButton = styled.button`
-width: 48px;
-height: 48px;
-border-radius: 8px;
-// background: isDark ? '#272B30' : '#FFFFFF';
-cursor: ${({disabled})=> disabled ? 'not-allowed' : 'pointer'} ;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  // background: isDark ? '#272B30' : '#FFFFFF';
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `
 
 const StakeRow = ({ tokenData }) => {
@@ -161,7 +161,7 @@ const StakeRow = ({ tokenData }) => {
   // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
   const { isDark } = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance).toJSON()
-  const userStakedBalance = getBalanceAmount(new BigNumber(tokenData.userData.stakedBalance)).toJSON()
+  const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance)).toJSON()
   const reward = new BigNumber(tokenData?.userData?.earnings).div(DEFAULT_TOKEN_DECIMAL)
   // const userTokenBalanceIbStaked = getBalanceAmount(
   //   useTokenBalance(getAddress(tokenData?.token.address)).balance,
@@ -376,7 +376,7 @@ const StakeRow = ({ tokenData }) => {
                     placeholder="0.00"
                     onChange={handleStakeInput}
                     value={stakeAmount}
-                    style={{ background: 'unset', border: 'none'}}
+                    style={{ background: 'unset', border: 'none' }}
                   />
                   <Flex alignItems="center">
                     <Box>
@@ -496,9 +496,7 @@ const StakeRow = ({ tokenData }) => {
               </StakeContainer>
             </Flex>
           </>
-        ) : (
-          null
-        )}
+        ) : null}
       </StyledActionPanel>
     </StyledRow>
   )

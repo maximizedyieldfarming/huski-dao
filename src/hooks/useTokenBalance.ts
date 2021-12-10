@@ -52,7 +52,7 @@ const useTokenBalance = (tokenAddress: string) => {
   return balanceState
 }
 
-const useStakedibTokenBalance = (pid: number) => {
+export const useStakedibTokenBalance = (pid: number) => {
   const { NOT_FETCHED, SUCCESS, FAILED } = FetchStatus
   const [balanceState, setBalanceState] = useState<UseTokenBalanceState>({
     balance: BIG_ZERO,
@@ -64,10 +64,10 @@ const useStakedibTokenBalance = (pid: number) => {
 
   useEffect(() => {
     const fetchBalance = async () => {
-      const contract = getClaimFairLaunchContract(fairLaunchAddress)
+      const contract = getClaimFairLaunchContract()
       try {
         const res = await contract.userInfo(pid, account)
-        setBalanceState({ balance: new BigNumber(res.toString()), fetchStatus: SUCCESS })
+        setBalanceState({ balance: new BigNumber(res[0]._hex.toString()), fetchStatus: SUCCESS })
       } catch (e) {
         console.error(e)
         setBalanceState((prev) => ({
@@ -80,7 +80,7 @@ const useStakedibTokenBalance = (pid: number) => {
     if (account) {
       fetchBalance()
     }
-  }, [account, fastRefresh, SUCCESS, FAILED, fairLaunchAddress, pid])
+  }, [account, fastRefresh, SUCCESS, FAILED, pid])
 
   return balanceState
 }
