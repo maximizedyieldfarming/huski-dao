@@ -182,29 +182,29 @@ const AdjustPosition = () => {
   }
 
 
-  // console.log({
-  //   tokenAmountTotal,
-  //   lpAmount,
-  //   lptotalSupply,
-  //   symbolName,
-  //   lpSymbolName,
-  //   tokenValue,
-  //   quoteTokenValue,
-  //   tokenValueSymbol,
-  //   quoteTokenValueSymbol,
-  //   baseTokenAmount,
-  //   farmTokenAmount,
-  //   basetokenBegin,
-  //   farmingtokenBegin,
-  //   workerAddress,
-  //   withdrawMinimizeTradingAddress,
-  //   partialCloseLiquidateAddress,
-  //   contract,
-  //   tokenInputValue,
-  //   quoteTokenInputValue,
-  //   userTokenBalance,
-  //   userQuoteTokenBalance,
-  // })
+  console.log({
+    tokenAmountTotal,
+    lpAmount,
+    lptotalSupply,
+    symbolName,
+    lpSymbolName,
+    tokenValue,
+    quoteTokenValue,
+    tokenValueSymbol,
+    quoteTokenValueSymbol,
+    baseTokenAmount,
+    farmTokenAmount,
+    basetokenBegin,
+    farmingtokenBegin,
+    workerAddress,
+    withdrawMinimizeTradingAddress,
+    partialCloseLiquidateAddress,
+    contract,
+    tokenInputValue,
+    quoteTokenInputValue,
+    userTokenBalance,
+    userQuoteTokenBalance,
+  })
 
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
@@ -392,23 +392,26 @@ const AdjustPosition = () => {
 
     }
 
-    // console.log({
-    //   id,
-    //   workerAddress,
-    //   amount,
-    //   loan,
-    //   AssetsBorrowed,
-    //   maxReturn,
-    //   farmingTokenAmount,
-    //   dataWorker,
-    //   strategiesAddress,
-    //   dataStrategy,
-    //   tokenInputValue,
-    //   quoteTokenInputValue,
+    console.log({
 
-    //   'tokenInput': (tokenInput),
-    //   'quoteTokenInput': (quoteTokenInput)
-    // })
+    'id====':  id,
+     adjustData ,
+      assetsBorrowed ,
+      'debtValueNumber': debtValueNumber.toNumber(),
+      workerAddress,
+      amount,
+      loan,
+      AssetsBorrowed,
+      maxReturn,
+      farmingTokenAmount,
+      dataWorker,
+      strategiesAddress,
+      dataStrategy,
+      tokenInputValue,
+      quoteTokenInputValue,
+      'tokenInput': (tokenInput),
+      'quoteTokenInput': (quoteTokenInput)
+    })
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -418,7 +421,7 @@ const AdjustPosition = () => {
       gasLimit: 3800000,
     }
     const callOptionsBNB = {
-      gasLimit: 3800000,
+      gasLimit: 380000,
       value: amount,
     }
     try {
@@ -428,20 +431,37 @@ const AdjustPosition = () => {
         toastSuccess(t('Successful!'), t('Your farm was successfull'))
       }
     } catch (error) {
+      console.info('error----------',error)
       toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
     }
   }
 
   const handleConfirmConvertTo = async () => {
+
+console.log({repayDebtData, debtValueNumber,UpdatedDebtValue ,UpdatedDebt,  convertedPositionValueAssets  })
+let receive = 0;
+let receive1:any
+if(Number(targetPositionLeverage) === 1){
+  receive = 0
+}else{
+  receive =  0.0000024 // Number(convertedPositionValueAssets) - Number(UpdatedDebt)
+
+  receive1 = new BigNumber(convertedPositionValueAssets).minus(new BigNumber(UpdatedDebt))
+}
     const id = positionId
     const amount = 0
     const loan = 0;
     const maxReturn = ethers.constants.MaxUint256;
-    const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
+    // const minbasetoken1 = Number(convertedPositionValueAssets) - Number(UpdatedDebt)
+    const minbasetoken = Number(receive).toString()
+
+  const  minbasetoken222 = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
+    console.log({repayDebtData, debtValueNumber,UpdatedDebtValue ,UpdatedDebt,  convertedPositionValueAssets, receive ,receive1, minbasetoken, '2':minbasetoken222})
+
     const abiCoder = ethers.utils.defaultAbiCoder;
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken222)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
-    console.log({ symbolName, id, workerAddress, amount, loan, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
+    console.log({ 'handleConfirmConvertTo-symbolName':symbolName,receive, id, workerAddress, amount, loan,dataStrategy, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -1167,11 +1187,11 @@ React.useEffect(() => {
             <Box mx="auto">
               {isAddCollateral && (
                 <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
-                  {t('Confirm')}
+                  {t('Confirm--')}
                 </Button>
               )}
-              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo} disabled={isConfirmDisabled}>{t('Confirm')}</Button>}
-              {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>{t('Confirm')}</Button>}
+              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo} disabled={isConfirmDisabled}>{t('Confirm--con')}</Button>}
+              {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>{t('Confirm--mini')}</Button>}
             </Box>
             <Text mx="auto" color="red">
               {!isAddCollateral && Number(targetPositionLeverage) !== 1 && Number(targetPositionLeverage) !== Number(currentPositionLeverage) 
