@@ -324,6 +324,7 @@ const AdjustPositionSA = () => {
 
     setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(
         contract,
         'work',
@@ -333,11 +334,11 @@ const AdjustPositionSA = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
+      toastError('Unsuccessful', 'Something went wrong your request. Please try again...')
     } finally {
       setIsPending(false)
       setTokenInput(0)
@@ -850,7 +851,7 @@ const AdjustPositionSA = () => {
               isPending
             }
             isLoading={isPending}
-            endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+            endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
             mx="auto"
           >
             {isPending ? t('Confirming') : t('Confirm')}

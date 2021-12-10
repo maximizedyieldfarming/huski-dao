@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -16,6 +16,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
+import { useWeb3React } from '@web3-react/core'
 // import { DebtRatioProgress } from 'components/ProgressBars'
 import {
   getHuskyRewards,
@@ -296,6 +297,7 @@ const AdjustPosition = () => {
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isPending, setIsPending] = useState(false)
+  const { account } = useWeb3React()
 
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -308,6 +310,7 @@ const AdjustPosition = () => {
 
     setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(
         contract,
         'work',
@@ -317,11 +320,11 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
     } finally {
       setIsPending(false)
       setTokenInput(0)
@@ -424,15 +427,18 @@ const AdjustPosition = () => {
       gasLimit: 380000,
       value: amount,
     }
+    setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions,)
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
-      console.info('error----------',error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -473,16 +479,20 @@ if(Number(targetPositionLeverage) === 1){
       gasLimit: 3800000,
       value: amount,
     }
+    setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -1069,9 +1079,15 @@ React.useEffect(() => {
                       {debtValueNumber.toNumber().toFixed(3)} {symbolName}
                     </Text>
                     <ChevronRightIcon />
-                    {isAddCollateral ? <Text>
-                      {UpdatedDebt?.toFixed(3)} {symbolName}
-                    </Text> : <Text>{UpdatedDebtValue.toFixed(2)} {tokenValueSymbol}</Text>}
+                    {isAddCollateral ? (
+                      <Text>
+                        {new BigNumber(UpdatedDebt).toFixed(3, 1)} {symbolName}
+                      </Text>
+                    ) : (
+                      <Text>
+                        {new BigNumber(UpdatedDebtValue).toFixed(2, 1)} {tokenValueSymbol}
+                      </Text>
+                    )}
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -1186,15 +1202,41 @@ React.useEffect(() => {
 
             <Box mx="auto">
               {isAddCollateral && (
-                <Button onClick={handleConfirm} disabled={isConfirmDisabled}>
-                  {t('Confirm--')}
+                <Button
+                  onClick={handleConfirm}
+                  disabled={isConfirmDisabled || !account || isPending}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                >
+                  {isPending ? t('Confirming') : t('Confirm')}
                 </Button>
               )}
-              {!isAddCollateral && isConvertTo && <Button onClick={handleConfirmConvertTo} disabled={isConfirmDisabled}>{t('Confirm--con')}</Button>}
-              {!isAddCollateral && !isConvertTo && <Button onClick={handleConfirmMinimize}>{t('Confirm--mini')}</Button>}
+              {!isAddCollateral && isConvertTo && (
+                <Button
+                  onClick={handleConfirmConvertTo}
+                  disabled={isConfirmDisabled || !account || isPending}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                >
+                  {isPending ? t('Confirming') : t('Confirm')}
+                </Button>
+              )}
+              {!isAddCollateral && !isConvertTo && (
+                <Button
+                  onClick={handleConfirmMinimize}
+                  disabled={isConfirmDisabled || !account || isPending}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                >
+                  {' '}
+                  {isPending ? t('Confirming') : t('Confirm')}
+                </Button>
+              )}
             </Box>
             <Text mx="auto" color="red">
-              {!isAddCollateral && Number(targetPositionLeverage) !== 1 && Number(targetPositionLeverage) !== Number(currentPositionLeverage) 
+              {!isAddCollateral &&
+              Number(targetPositionLeverage) !== 1 &&
+              Number(targetPositionLeverage) !== Number(currentPositionLeverage)
                 ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
                   ? t('Minimum Debt Size: %minimumDebt% %name%', {
                       minimumDebt: minimumDebt.toNumber(),
