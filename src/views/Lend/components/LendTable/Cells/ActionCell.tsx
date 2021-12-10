@@ -38,7 +38,7 @@ const StyledButton = styled(Button)<Props>`
   text-align: center;
   width:140px;
   height:40px;
-  border:${({disabled}) => (disabled?'1px solid #EFEFEF':'none')}
+  border:${({disabled}) => (disabled?'1px solid #EFEFEF':'none')};
 `
 
 const ActionCell = ({ token }) => {
