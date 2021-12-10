@@ -57,23 +57,28 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
 
-  const [liquidationThreshold] =
+  const [liquidationThreshold, quoteTokenLiquidationThreshold] =
     await multicall(WorkerConfigABI, [
       {
         address: TokenInfo.config,
         name: 'killFactor',
         params: [TokenInfo.address, 0],
-      }
-    ])
-
-  const [quoteTokenLiquidationThreshold] =
-    await multicall(WorkerConfigABI, [
+      },
       {
         address: QuoteTokenInfo.config,
         name: 'killFactor',
         params: [QuoteTokenInfo.address, 0],
       }
     ])
+
+  // const [quoteTokenLiquidationThreshold] =
+  //   await multicall(WorkerConfigABI, [
+  //     {
+  //       address: QuoteTokenInfo.config,
+  //       name: 'killFactor',
+  //       params: [QuoteTokenInfo.address, 0],
+  //     }
+  //   ])
 
   const [tokenMinDebtSize, quoteTokenMinDebtSize, tokenReserveFund] =
     await multicall(SimpleVaultConfigABI, [
@@ -99,7 +104,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   //     }
   //   ])
 
-  const [totalSupply, totalToken, vaultDebtVal] =
+  const [totalSupply, totalToken, vaultDebtVal, quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
     await multicall(VaultABI, [
       {
         address: vaultAddresses,
@@ -111,25 +116,37 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
       {
         address: vaultAddresses,
+        name: 'vaultDebtVal',
+      },
+      {
+        address: quoteTokenVaultAddresses,
+        name: 'totalSupply',
+      },
+      {
+        address: quoteTokenVaultAddresses,
+        name: 'totalToken',
+      },
+      {
+        address: quoteTokenVaultAddresses,
         name: 'vaultDebtVal',
       },
     ])
 
-  const [quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
-    await multicall(VaultABI, [
-      {
-        address: quoteTokenVaultAddresses,
-        name: 'totalSupply',
-      },
-      {
-        address: quoteTokenVaultAddresses,
-        name: 'totalToken',
-      },
-      {
-        address: quoteTokenVaultAddresses,
-        name: 'vaultDebtVal',
-      },
-    ])
+  // const [quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
+  //   await multicall(VaultABI, [
+  //     {
+  //       address: quoteTokenVaultAddresses,
+  //       name: 'totalSupply',
+  //     },
+  //     {
+  //       address: quoteTokenVaultAddresses,
+  //       name: 'totalToken',
+  //     },
+  //     {
+  //       address: quoteTokenVaultAddresses,
+  //       name: 'vaultDebtVal',
+  //     },
+  //   ])
 
   const calls = [
     // Balance of token in the LP contract
