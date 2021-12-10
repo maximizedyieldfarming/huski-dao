@@ -264,9 +264,9 @@ const FarmSA = () => {
             contract = quoteTokenApproveContract //  approveContract
         }
 
-        toastInfo(t('Approving...'), t('Please Wait!'))
         setIsApproving(true)
         try {
+            toastInfo(t('Approving...'), t('Please Wait!'))
             const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
             const receipt = await tx.wait()
             if (receipt.status) {
@@ -372,6 +372,7 @@ const FarmSA = () => {
 
         setIsPending(true)
         try {
+        toastInfo(t('Pending Request!'), t('Please Wait'))
             const tx = await callWithGasPrice(
                 contract,
                 'work',
@@ -965,7 +966,7 @@ const FarmSA = () => {
                                     isLoading={isPending}
                                     endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
                                 >
-                                    {t('Approve')}
+                                    {isPending ? t('Approving') : t('Approve')}
                                 </Button>
                             )}
                         </Flex>

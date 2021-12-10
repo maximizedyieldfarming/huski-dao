@@ -264,35 +264,35 @@ const Farm = () => {
 
   const [tokenInput, setTokenInput] = useState(0)
   const tokenInputRef = useRef<HTMLInputElement>()
-  const handleTokenInput = useCallback(
-    (event) => {
-      // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
-        const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
-        setTokenInput(finalValue)
-      } else {
-        event.preventDefault()
-      }
-    },
-    [userTokenBalance],
-  )
+ const handleTokenInput = useCallback(
+   (event) => {
+     // check if input is a number and includes decimals
+     if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+       const input = event.target.value
+       const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+       setTokenInput(finalValue)
+     } else {
+       event.preventDefault()
+     }
+   },
+   [userTokenBalance],
+ )
 
   const [quoteTokenInput, setQuoteTokenInput] = useState(0)
   const quoteTokenInputRef = useRef<HTMLInputElement>()
-  const handleQuoteTokenInput = useCallback(
-    (event) => {
-      // check if input is a number and includes decimals
-      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
-        const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
-        setQuoteTokenInput(finalValue)
-      } else {
-        event.preventDefault()
-      }
-    },
-    [userQuoteTokenBalance],
-  )
+ const handleQuoteTokenInput = useCallback(
+   (event) => {
+     // check if input is a number and includes decimals
+     if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+       const input = event.target.value
+       const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+       setQuoteTokenInput(finalValue)
+     } else {
+       event.preventDefault()
+     }
+   },
+   [userQuoteTokenBalance],
+ )
 
   const handleChange = (e) => {
     const { value } = e.target
@@ -449,6 +449,7 @@ const Farm = () => {
 
     setIsPending(true)
     try {
+        toastInfo(t('Pending Request!'), t('Please Wait'))
       const tx = await callWithGasPrice(
         contract,
         'work',
@@ -609,7 +610,6 @@ const Farm = () => {
     } else {
       contract = quoteTokenApproveContract // approveContract
     }
-
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
@@ -666,7 +666,10 @@ const Farm = () => {
     return { selectedToken }
   }
   const { selectedToken } = getSelectedToken(radio)
-  const minimumDebt = radio === tokenData?.TokenInfo?.token?.symbol ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18)) : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
+  const minimumDebt =
+    radio === tokenData?.TokenInfo?.token?.symbol
+      ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
+      : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
   return (
     <Page>
@@ -1071,7 +1074,16 @@ const Farm = () => {
         </Flex>
       </SectionWrapper>
       <Flex justifyContent="space-evenly">
-        {isApproved ? null : <Button onClick={handleApprove}>{t('Approve')}</Button>}
+        {isApproved ? null : (
+          <Button
+            onClick={handleApprove}
+            disabled={isApproving}
+            isLoading={isApproving}
+            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+          >
+            {isApproving ? t('Approving') : t('Approve')}
+          </Button>
+        )}
         <Button
           onClick={handleConfirm}
           isLoading={isPending}
@@ -1088,7 +1100,16 @@ const Farm = () => {
           {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
         </Button>
       </Flex>
-      {tokenInput || quoteTokenInput ? <Text mx="auto" color='red'>{new BigNumber(farmData[3]).lt(minimumDebt) ? t('Minimum Debt Size: %minimumDebt% %radio%', { minimumDebt: minimumDebt.toNumber(), radio: radio.toUpperCase().replace('WBNB', 'BNB') }) : null}</Text> : null}
+      {tokenInput || quoteTokenInput ? (
+        <Text mx="auto" color="red">
+          {new BigNumber(farmData[3]).lt(minimumDebt)
+            ? t('Minimum Debt Size: %minimumDebt% %radio%', {
+                minimumDebt: minimumDebt.toNumber(),
+                radio: radio.toUpperCase().replace('WBNB', 'BNB'),
+              })
+            : null}
+        </Text>
+      ) : null}
     </Page>
   )
 }

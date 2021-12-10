@@ -1,14 +1,15 @@
 import React from 'react'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, AutoRenewIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
+import { useWeb3React } from '@web3-react/core'
 import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
@@ -39,7 +40,13 @@ const CloseEntirePosition = ({ data }) => {
     TokenInfo,
     QuoteTokenInfo,
     tokenPriceUsd,
-    quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data.farmData
+    quoteTokenPriceUsd,
+    tradeFee,
+    leverage,
+    lptotalSupply,
+    tokenAmountTotal,
+    quoteTokenAmountTotal,
+  } = data.farmData
 
   const { t } = useTranslation()
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -49,27 +56,27 @@ const CloseEntirePosition = ({ data }) => {
   const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
 
-  let symbolName;
-  let tokenValue;
-  let quoteTokenValue;
-  let tokenPrice;
-  let quoteTokenPrice;
-  let tokenValueSymbol;
-  let quoteTokenValueSymbol;
-  let baseTokenAmount;
-  let farmTokenAmount;
-  let basetokenBegin;
-  let farmingtokenBegin;
-  let workerAddress;
-  let withdrawMinimizeTradingAddress;
-  let contract;
+  let symbolName
+  let tokenValue
+  let quoteTokenValue
+  let tokenPrice
+  let quoteTokenPrice
+  let tokenValueSymbol
+  let quoteTokenValueSymbol
+  let baseTokenAmount
+  let farmTokenAmount
+  let basetokenBegin
+  let farmingtokenBegin
+  let workerAddress
+  let withdrawMinimizeTradingAddress
+  let contract
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
-    tokenValue = TokenInfo?.token;
-    quoteTokenValue = TokenInfo?.quoteToken;
-    tokenPrice = tokenPriceUsd;
-    quoteTokenPrice = quoteTokenPriceUsd;
+    tokenValue = TokenInfo?.token
+    quoteTokenValue = TokenInfo?.quoteToken
+    tokenPrice = tokenPriceUsd
+    quoteTokenPrice = quoteTokenPriceUsd
     tokenValueSymbol = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(tokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -81,10 +88,10 @@ const CloseEntirePosition = ({ data }) => {
     contract = vaultContract
   } else {
     symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
-    tokenValue = TokenInfo?.quoteToken;
-    quoteTokenValue = TokenInfo?.token;
-    tokenPrice = quoteTokenPriceUsd;
-    quoteTokenPrice = tokenPriceUsd;
+    tokenValue = TokenInfo?.quoteToken
+    quoteTokenValue = TokenInfo?.token
+    tokenPrice = quoteTokenPriceUsd
+    quoteTokenPrice = tokenPriceUsd
     tokenValueSymbol = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -96,16 +103,18 @@ const CloseEntirePosition = ({ data }) => {
     contract = quoteTokenVaultContract
   }
 
-
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18)).toNumber()
 
-  let amountToTrade = 0;
-  let convertedPositionValueToken;
-  let tokenReceive = 0;
+  let amountToTrade = 0
+  let convertedPositionValueToken
+  let tokenReceive = 0
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
-    amountToTrade = 0;
+    amountToTrade = 0
   } else {
-    amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
+    amountToTrade =
+      ((basetokenBegin * farmingtokenBegin) / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) -
+        farmingtokenBegin) /
+      (1 - 0.0025)
   }
   const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
@@ -117,13 +126,14 @@ const CloseEntirePosition = ({ data }) => {
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
     tokenReceive = Number(convertedPositionValueToken) - Number(debtValueNumber)
   } else {
-    tokenReceive = 0;
+    tokenReceive = 0
   }
-
 
   const priceImpact = getPriceImpact(data.farmData, amountToTrade, symbolName)
   const tradingFees = Number(amountToTrade) * 0.0025
 
+  const [isPending, setIsPending] = React.useState(false)
+  const { account } = useWeb3React()
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -132,16 +142,25 @@ const CloseEntirePosition = ({ data }) => {
       gasLimit: 3800000,
       value: amount,
     }
+    setIsPending(true)
     try {
-      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
+      toastInfo(t('Closing Position...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        contract,
+        'work',
+        [id, address, amount, loan, maxReturn, dataWorker],
+        symbolName === 'BNB' ? callOptionsBNB : callOptions,
+      )
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your position was closed successfully'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -149,12 +168,12 @@ const CloseEntirePosition = ({ data }) => {
     const id = positionId
     const amount = 0
     const loan = 0
-    const maxReturn = ethers.constants.MaxUint256;
+    const maxReturn = ethers.constants.MaxUint256
     const minfarmtoken = (Number(convertedPositionValue) * 0.995).toString()
-    const abiCoder = ethers.utils.defaultAbiCoder;
+    const abiCoder = ethers.utils.defaultAbiCoder
 
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -225,7 +244,9 @@ const CloseEntirePosition = ({ data }) => {
     tooltipVisible: minimumReceivedTooltipVisible,
   } = useTooltip(
     <>
-      <Text>{t('Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.')}</Text>
+      <Text>
+        {t('Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.')}
+      </Text>
     </>,
     { placement: 'top-start' },
   )
@@ -303,7 +324,7 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
-          <Text bold>{new BigNumber(tradingFees).toPrecision(3, 1)}%</Text> 
+          <Text bold>{new BigNumber(tradingFees).toPrecision(3, 1)}%</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -342,7 +363,14 @@ const CloseEntirePosition = ({ data }) => {
       <Section flexDirection="column">
         <Flex justifyContent="space-between">
           <Text>{t('You will receive approximately')}</Text>
-          {convertedPositionValue ? <Text bold>{Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}</Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? (
+            <Text bold>
+              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+              {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
         <Flex justifyContent="space-between">
           <Flex>
@@ -352,10 +380,26 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
-          {convertedPositionValue ? <Text bold>{(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} + {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}     </Text> : <Skeleton height="16px" width="80px" />}
+          {convertedPositionValue ? (
+            <Text bold>
+              {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+              {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}{' '}
+            </Text>
+          ) : (
+            <Skeleton height="16px" width="80px" />
+          )}
         </Flex>
         <Flex justifyContent="center">
-        <Button onClick={handleConfirm}>{t('Close Position')}</Button>
+          <Button
+            onClick={handleConfirm}
+            width="300px"
+            height="60px"
+            disabled={!account || isPending}
+            isLoading={isPending}
+            endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+          >
+            {isPending ? t('Closing Position') : t('Close Position')}
+          </Button>
         </Flex>
       </Section>
     </>

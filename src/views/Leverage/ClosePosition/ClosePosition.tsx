@@ -12,7 +12,7 @@ interface Props {
 }
 
 const TabPanel = styled(Box)`
-padding: 2rem;
+  padding: 2rem;
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
@@ -21,27 +21,29 @@ padding: 2rem;
 `
 
 const Header = styled(Flex)`
-  margin-top : 20px;
-  background: #F4F4F4;
+  margin-top: 20px;
+  background: #f4f4f4;
   border-radius: 12px;
-  padding : 4px;
-  height : 54px;
+  padding: 4px;
+  height: 54px;
 `
 
 const HeaderTabs = styled.div<Props>`
   flex: 1;
-  box-shadow:${({ active, theme }) => (active ? "0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)" : "")};
-  background-color: ${({ active, theme }) => (active ? "#FFFFFF" : "transparent")};
+  box-shadow: ${({ active, theme }) =>
+    active
+      ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'
+      : ''};
+  background-color: ${({ active, theme }) => (active ? '#FFFFFF' : 'transparent')};
   padding: 1rem;
   cursor: pointer;
-  border-radius : 12px;
-  display : flex;
-  justify-content : center;
-  align-items : center;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const Body = styled(Flex)`
-  
   flex-direction: column;
   gap: 1rem;
 `
@@ -49,7 +51,7 @@ const Bubble = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   padding: 1rem;
   border-radius: 12px;
-  border: 1px solid #EFEFEF;
+  border: 1px solid #efefef;
   gap: 10px;
 `
 
@@ -69,20 +71,20 @@ const ClosePosition = (props) => {
   const { positionId, vault } = data
   const { TokenInfo, QuoteTokenInfo } = data?.farmData
 
-  let symbolName;
-  let lpSymbolName;
-  let tokenValue;
-  let quoteTokenValue;
+  let symbolName
+  let lpSymbolName
+  let tokenValue
+  let quoteTokenValue
   if (vault.toUpperCase() === TokenInfo?.vaultAddress.toUpperCase()) {
     symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = TokenInfo?.name
-    tokenValue = TokenInfo?.token;
-    quoteTokenValue = TokenInfo?.quoteToken;
+    tokenValue = TokenInfo?.token
+    quoteTokenValue = TokenInfo?.quoteToken
   } else {
     symbolName = TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')
     lpSymbolName = QuoteTokenInfo?.name
-    tokenValue = TokenInfo?.quoteToken;
-    quoteTokenValue = TokenInfo?.token;
+    tokenValue = TokenInfo?.quoteToken
+    quoteTokenValue = TokenInfo?.token
   }
 
   const [isCloseEntire, setCloseEntire] = useState(true)
@@ -97,12 +99,14 @@ const ClosePosition = (props) => {
       <TabPanel>
         <Flex alignItems="center">
           <Flex alignItems="center" justifySelf="flex-start" flex="1">
-            <Text mr="1rem" fontWeight="900" fontSize="18px">{t('Which method would you like to use?')}</Text>
+            <Text mr="1rem" fontWeight="900" fontSize="18px">
+              {t('Which method would you like to use?')}
+            </Text>
           </Flex>
           <Bubble alignSelf="flex-end" alignItems="center">
             <Text fontWeight="500">{symbolName.toUpperCase().replace('WBNB', 'BNB')}</Text>
             <Text fontWeight="500">#{positionId}</Text>
-            <Flex alignItems="center" ml="10px" >
+            <Flex alignItems="center" ml="10px">
               <Box width={24} height={24}>
                 <TokenPairImage
                   primaryToken={quoteTokenValue}
@@ -125,10 +129,14 @@ const ClosePosition = (props) => {
         </Flex>
         <Header>
           <HeaderTabs onClick={handleDepositClick} active={isDeposit}>
-            <Text bold fontSize = "15px">{t('Convert To')} {symbolName}</Text>
+            <Text bold fontSize="15px">
+              {t('Convert To')} {symbolName}
+            </Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit}>
-            <Text bold fontSize = "15px">{t('Minimize Trading')}</Text>
+            <Text bold fontSize="15px">
+              {t('Minimize Trading')}
+            </Text>
           </HeaderTabs>
         </Header>
         <Body>
