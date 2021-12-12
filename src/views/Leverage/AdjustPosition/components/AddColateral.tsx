@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Box, Button, Flex, Text, Skeleton } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
@@ -8,11 +8,19 @@ import { useTranslation } from 'contexts/Localization'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 
 const InputArea = styled(Flex)`
-  background-color: ${({ theme }) => theme.card.background};
-  border-radius: ${({ theme }) => theme.radii.default};
+background: #F7F7F8;
+border-radius: 12px;
   padding: 0.5rem;
   flex: 1;
   align-items: center;
+  input {
+  font-weight : bold;
+    border: none;
+    box-shadow: none;
+    background : none;
+    &:focus:not(:disabled) {
+      box-shadow: none;
+    }
 `
 const AddColateral = ({
   userQuoteTokenBalance,
@@ -30,7 +38,8 @@ const AddColateral = ({
   quoteTokenPrice,
 }) => {
   const { t } = useTranslation()
-
+  const [active1, setActive1] = useState(-1);
+  const [active2, setActive2] = useState(-1);
   BigNumber.config({ EXPONENTIAL_AT: 1e9 })
   const handleQuoteTokenInput = useCallback(
     (event) => {
@@ -47,16 +56,20 @@ const AddColateral = ({
   )
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
+      setActive1(0);
       const value = userQuoteTokenBalance.toNumber() * 0.25
       setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '50%') {
+      setActive1(1);
       const value = userQuoteTokenBalance.toNumber() * 0.5
       setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '75%') {
+      setActive1(2);
       const value = userQuoteTokenBalance.toNumber() * 0.75
       setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '100%') {
       const value = userQuoteTokenBalance.toNumber()
+      setActive1(3);
       setQuoteTokenInput(new BigNumber(value).toNumber())
     }
   }
@@ -77,15 +90,19 @@ const AddColateral = ({
 
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
+      setActive2(0);
       const value = userTokenBalance.toNumber() * 0.25
       setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '50%') {
+      setActive2(1);
       const value = userTokenBalance.toNumber() * 0.5
       setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '75%') {
+      setActive2(2);
       const value = userTokenBalance.toNumber() * 0.75
       setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '100%') {
+      setActive2(3);
       const value = userTokenBalance.toNumber()
       setTokenInput(new BigNumber(value).toNumber())
     }
@@ -101,12 +118,12 @@ const AddColateral = ({
           {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
         </Text>
       </Flex>
-      <Flex>
+      <Flex mt="30px">
         <Flex flexDirection="column" justifyContent="space-between" flex="1">
           <Box>
             <Flex alignItems="center" justifyContent="space-between">
               <Flex>
-                <Text as="span" mr="1rem" small>
+                <Text as="span" mr="1rem" small >
                   {t('Balance')}:
                 </Text>
                 {userQuoteTokenBalance ? (
@@ -126,26 +143,26 @@ const AddColateral = ({
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={quoteToken} width={40} height={40} />
                 </Box>
-                <NumberInput placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
+                <NumberInput style={{ border: "none", background: "unset" }} placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
               </Flex>
-              <Text>{quoteTokenName}</Text>
+              <Text bold>{quoteTokenName}</Text>
             </InputArea>
-            <Flex justifyContent="space-around">
-              <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+            <Flex justifyContent="space-around" background="#F4F4F4" padding="4px" borderRadius="12px">
+              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 0}>
                 25%
-              </Button>
-              <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+              </CustomButton>
+              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 1}>
                 50%
-              </Button>
-              <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+              </CustomButton>
+              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 2}>
                 75%
-              </Button>
-              <Button variant="secondary" onClick={setQuoteTokenInputToFraction}>
+              </CustomButton>
+              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 3}>
                 100%
-              </Button>
+              </CustomButton>
             </Flex>
           </Box>
-          <Box>
+          <Box mt="30px">
             <Flex alignItems="center" justifyContent="space-between">
               <Flex>
                 <Text as="span" mr="1rem" small>
@@ -170,21 +187,21 @@ const AddColateral = ({
                 </Box>
                 <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
               </Flex>
-              <Text>{tokenName}</Text>
+              <Text bold>{tokenName}</Text>
             </InputArea>
-            <Flex justifyContent="space-around">
-              <Button variant="secondary" onClick={setTokenInputToFraction}>
+            <Flex justifyContent="space-around" background="#F4F4F4" padding="4px" borderRadius="12px">
+              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 0}>
                 25%
-              </Button>
-              <Button variant="secondary" onClick={setTokenInputToFraction}>
+              </CustomButton>
+              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 1}>
                 50%
-              </Button>
-              <Button variant="secondary" onClick={setTokenInputToFraction}>
+              </CustomButton>
+              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 2}>
                 75%
-              </Button>
-              <Button variant="secondary" onClick={setTokenInputToFraction}>
+              </CustomButton>
+              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 3}>
                 100%
-              </Button>
+              </CustomButton>
             </Flex>
           </Box>
         </Flex>
@@ -192,5 +209,13 @@ const AddColateral = ({
     </>
   )
 }
-
+interface custombuttonprops {
+  active: boolean
+}
+const CustomButton = styled(Button) <custombuttonprops>`
+ box-shadow : ${({ active, theme }) => (active ? "0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)" : "none")};
+  color : ${({ active }) => (active ? "black" : "lightgrey")};
+  border : none!important;
+  width : 25%;
+`
 export default AddColateral

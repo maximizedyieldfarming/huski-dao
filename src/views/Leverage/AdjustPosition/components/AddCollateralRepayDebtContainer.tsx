@@ -32,16 +32,19 @@ interface Props {
 
 const Header = styled(Flex)`
   // border-radius: 20px 0 20px 0;
+  border-radius : 12px;
+  background : #F4F4F4;
+  padding : 4px;
 `
 const HeaderTab = styled(Button)<HeaderProps>`
   flex: 1;
-  background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
-  border: 1px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
+  box-shadow:${({ active, theme }) => (active ? "0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)" : "none")};
+  background-color: ${({ active, theme }) => (active ? "#FFFFFF" : "transparent")};
+  color : ${({active, theme})=>(active ? "black":"#6F767E")}!important;
+  font-weight : ${({active, theme})=>(active ? "bold":"")}!important;
   padding: 1rem;
-  box-shadow: none;
-  border-radius: unset;
+  border-radius: 12px;
   // cursor: pointer;
-  color: ${({ theme }) => theme.colors.text};
 `
 
 const AddCollateralRepayDebtContainer: React.FC<Props> = ({

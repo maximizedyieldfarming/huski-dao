@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Flex, Text, WarningIcon, ChevronRightIcon } from 'husky-uikit1.0'
+import { Box, Flex, Text, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { usePercentageToCloseContext } from '../context'
@@ -39,14 +39,14 @@ const RepayDebtConvertTo: React.FC<Props> = ({
   const { needCloseBase, needCloseFarm, remainBase, remainFarm } =
     convertToValues
 
-    const {t} = useTranslation()
+  const { t } = useTranslation()
   const { percentage, setPercentage } = usePercentageToCloseContext()
   return (
     <Wrapper>
-      <GrayBox>
-        <WarningIcon />
-        <Text color="textSubtle">
-         {t(`Your position value will all be converted to ${tokenName} and returned to you after paying back the debt.`)}
+      <GrayBox background="#F7F7F8!important">
+        <InfoIcon mr = "10px"/>
+        <Text color="textSubtle" small>
+          {t(`Your position value will all be converted to ${tokenName} and returned to you after paying back the debt.`)}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (
@@ -76,22 +76,29 @@ const RepayDebtConvertTo: React.FC<Props> = ({
         </Box>
       )}
       <Flex justifyContent="space-between" alignItems="center">
-        <Box>
+        <Flex>
           <Text>{t('Position Value Assets to Close')}</Text>
-        </Box>
-        <Text>
+          <InfoIcon ml="10px" />
+        </Flex>
+        <Text bold>
           {needCloseFarm?.toFixed(3)} {quoteTokenName} + {needCloseBase?.toFixed(3)} {tokenName}
+
+
         </Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text>{t('Updated Position Value Assets')}</Text>
         <Flex>
-          <Text color="textSubtle">
+          <Text>{t('Updated Position Value Assets')}</Text>
+          <InfoIcon ml="10px" />
+        </Flex>
+        <Flex>
+          <Text color="textSubtle" bold>
             {farmTokenAmountValue?.toFixed(3)} {quoteTokenName} + {baseTokenAmountValue?.toFixed(3)} {tokenName}
           </Text>
-          <ChevronRightIcon />
-          <Text>
+          <ChevronRightIcon style={{ fontWeight: "bold" }} />
+          <Text bold>
             {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
+
           </Text>
         </Flex>
       </Flex>
