@@ -1046,6 +1046,40 @@ const AdjustPosition = () => {
                           style={{ width: '100%' }}
                         />
                       </Box>
+                      <Flex justifyContent="space-between" mt="-22px" mb="10px">
+                        <div
+                          className="middle"
+                          style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                        />
+                        {targetPositionLeverage < 1.5 ? (
+                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                        ) : (
+                          <div
+                            className="middle"
+                            style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                          />
+                        )}
+                        {targetPositionLeverage < 2 ? (
+                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                        ) : (
+                          <div
+                            className="middle"
+                            style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                          />
+                        )}
+                        {targetPositionLeverage < 2.5 ? (
+                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                        ) : (
+                          <div
+                            className="middle"
+                            style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                          />
+                        )}
+                        <div
+                          className="middle"
+                          style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
+                        />
+                      </Flex>
                       <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
                         {datalistOptions}
                       </datalist>
@@ -1250,12 +1284,12 @@ const AdjustPosition = () => {
                   </Flex>
                   <Box mx="auto" display="flex" style={{ justifyContent: "center" }}>
                     {isAddCollateral && (
-                      <Button height = "60px" onClick={handleConfirm} disabled={isConfirmDisabled} width="290px" style={{ borderRadius: "16px" }}>
+                      <Button height="60px" onClick={handleConfirm} disabled={isConfirmDisabled} width="290px" style={{ borderRadius: "16px" }}>
                         {t('Confirm')}
                       </Button>
                     )}
-                    {!isAddCollateral && isConvertTo && <Button width="290px"  height = "60px" onClick={handleConfirmConvertTo} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
-                    {!isAddCollateral && !isConvertTo && <Button width="290px"  height = "60px" onClick={handleConfirmMinimize} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
+                    {!isAddCollateral && isConvertTo && <Button width="290px" height="60px" onClick={handleConfirmConvertTo} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
+                    {!isAddCollateral && !isConvertTo && <Button width="290px" height="60px" onClick={handleConfirmMinimize} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
                   </Box>
                 </Section>
               </Box>
