@@ -27,7 +27,7 @@ const RepayDebt = ({
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center">
+        <Flex justifyContent="space-between" alignItems="center">
         <Text>{t('Which method would you like to repay the debt?')}</Text>
         {
           Number(targetPositionLeverage) === 1 ?
