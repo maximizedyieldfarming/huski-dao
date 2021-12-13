@@ -314,7 +314,7 @@ const AdjustPosition = () => {
   let farmingTokenInPosition
   // let assetsBorrowedUp
   let UpdatedDebt
-  let closeRatioValue
+  let closeRatioValue // the ratio of position to close
 
 
   if (adjustData?.[3] === 0 && adjustData?.[11] === 0) {// use adjustData is ok ,add farmingData to strengthen the validation  && farmingData[0] === 0
