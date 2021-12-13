@@ -361,7 +361,7 @@ const AdjustPosition = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = (quoteTokenInputValue)
+        farmingTokenAmount = (quoteTokenInputValue).toString()
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -385,7 +385,7 @@ const AdjustPosition = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = (quoteTokenInputValue)
+        farmingTokenAmount = (quoteTokenInputValue).toString()
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -397,9 +397,9 @@ const AdjustPosition = () => {
 
     console.log({
 
-    'id====':  id,
-     adjustData ,
-      assetsBorrowed ,
+      'id====': id,
+      adjustData,
+      assetsBorrowed,
       'debtValueNumber': debtValueNumber.toNumber(),
       workerAddress,
       amount,
@@ -424,7 +424,7 @@ const AdjustPosition = () => {
       gasLimit: 3800000,
     }
     const callOptionsBNB = {
-      gasLimit: 380000,
+      gasLimit: 3800000,
       value: amount,
     }
     setIsPending(true)
@@ -436,6 +436,7 @@ const AdjustPosition = () => {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
+      console.info('error', error)
       toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
     } finally {
       setIsPending(false)
@@ -444,16 +445,16 @@ const AdjustPosition = () => {
 
   const handleConfirmConvertTo = async () => {
 
-console.log({repayDebtData, debtValueNumber,UpdatedDebtValue ,UpdatedDebt,  convertedPositionValueAssets  })
-let receive = 0;
-let receive1:any
-if(Number(targetPositionLeverage) === 1){
-  receive = 0
-}else{
-  receive =  0.0000024 // Number(convertedPositionValueAssets) - Number(UpdatedDebt)
+    console.log({ "handleConfirmConvertTo": repayDebtData, debtValueNumber, UpdatedDebtValue, UpdatedDebt, convertedPositionValueAssets })
+    let receive = 0;
+    let receive1: any
+    if (Number(targetPositionLeverage) === 1) {
+      receive = 0
+    } else {
+      receive = Number(convertedPositionValueAssets) - Number(UpdatedDebt) // UpdatedDebtValue //
 
-  receive1 = new BigNumber(convertedPositionValueAssets).minus(new BigNumber(UpdatedDebt))
-}
+      receive1 = new BigNumber(convertedPositionValueAssets).minus(new BigNumber(UpdatedDebt))
+    }
     const id = positionId
     const amount = 0
     const loan = 0;
@@ -461,13 +462,18 @@ if(Number(targetPositionLeverage) === 1){
     // const minbasetoken1 = Number(convertedPositionValueAssets) - Number(UpdatedDebt)
     const minbasetoken = Number(receive).toString()
 
-  const  minbasetoken222 = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
-    console.log({repayDebtData, debtValueNumber,UpdatedDebtValue ,UpdatedDebt,  convertedPositionValueAssets, receive ,receive1, minbasetoken, '2':minbasetoken222})
+    const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
+    console.log({ "参数": debtValueNumber, UpdatedDebtValue, UpdatedDebt, convertedPositionValueAssets, receive, receive1, minbasetoken, minbasetokenvalue })
 
     const abiCoder = ethers.utils.defaultAbiCoder;
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken222)]);
+    // - maxLpTokenToLiquidate -> maximum lpToken amount that user want to liquidate.
+    // - maxDebtRepayment -> maximum BTOKEN amount that user want to repaid debt.
+    // - minFarmingTokenAmount -> minimum farmingToken amount that user want to receive.
+    // (uint256 maxLpTokenToLiquidate, uint256 maxDebtRepayment, uint256 minFarmingToken) = abi.decode(data, (uint256, uint256, uint256));
+    // ( uint256 returnLpToken, uint256 minBaseToken ) = abi.decode(data, (uint256, uint256));
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(minbasetokenvalue),]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
-    console.log({ 'handleConfirmConvertTo-symbolName':symbolName,receive, id, workerAddress, amount, loan,dataStrategy, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
+    console.log({ 'handleConfirmConvertTo-symbolName': symbolName, receive, id, workerAddress, amount, loan, dataStrategy, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -894,11 +900,11 @@ if(Number(targetPositionLeverage) === 1){
     return datalistSteps.map((value) => <option value={value} label={value} />)
   })()
 
-React.useEffect(() => {
-  if (currentPositionLeverage === 1 && targetPositionLeverage === 1) {
-    setIsAddCollateral(false)
-  }
-}, [setIsAddCollateral, targetPositionLeverage, currentPositionLeverage])
+  React.useEffect(() => {
+    if (currentPositionLeverage === 1 && targetPositionLeverage === 1) {
+      setIsAddCollateral(false)
+    }
+  }, [setIsAddCollateral, targetPositionLeverage, currentPositionLeverage])
 
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
@@ -1235,13 +1241,13 @@ React.useEffect(() => {
             </Box>
             <Text mx="auto" color="red">
               {!isAddCollateral &&
-              Number(targetPositionLeverage) !== 1 &&
-              Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                Number(targetPositionLeverage) !== 1 &&
+                Number(targetPositionLeverage) !== Number(currentPositionLeverage)
                 ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
                   ? t('Minimum Debt Size: %minimumDebt% %name%', {
-                      minimumDebt: minimumDebt.toNumber(),
-                      name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                    })
+                    minimumDebt: minimumDebt.toNumber(),
+                    name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                  })
                   : null
                 : null}
             </Text>
