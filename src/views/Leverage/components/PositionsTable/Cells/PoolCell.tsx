@@ -25,7 +25,7 @@ flex: 5;
   }
 `
 
-const PoolCell = ({ pool, quoteToken, token }) => {
+const PoolCell = ({ pool, quoteToken, token, exchange }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
 
@@ -49,7 +49,7 @@ const PoolCell = ({ pool, quoteToken, token }) => {
           <Text color="text" ml='-10px' mt='-12px' fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
             {pool}
           </Text>
-{/*           <Text fontSize="12px" ml='40px' mt='-3px' color="textSubtle">Pancakeswap</Text> */}
+          <Text fontSize="12px" ml='40px' mt='-3px' color="textSubtle">{exchange}</Text> 
         </Grid>
       </CellContent>
     </StyledCell>
