@@ -49,13 +49,13 @@ const AddColateral = ({
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? Number(userQuoteTokenBalance) : input
-        setQuoteTokenInput(finalValue)
+        // const finalValue = Number(input) > Number(userQuoteTokenBalance) ? Number(userQuoteTokenBalance) : input
+        setQuoteTokenInput(input)
       } else {
         event.preventDefault()
       }
     },
-    [userQuoteTokenBalance, setQuoteTokenInput],
+    [setQuoteTokenInput],
   )
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
@@ -82,13 +82,13 @@ const AddColateral = ({
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? Number(userTokenBalance) : input
-        setTokenInput(finalValue)
+        // const finalValue = Number(input) > Number(userTokenBalance) ? Number(userTokenBalance) : input
+        setTokenInput(input)
       } else {
         event.preventDefault()
       }
     },
-    [userTokenBalance, setTokenInput],
+    [setTokenInput],
   )
 
   const setTokenInputToFraction = (e) => {
