@@ -151,8 +151,10 @@ export const adjustPositionRepayDebt = (basetokenLp, farmingtokenLp, basetokenLp
     let remainFarm
     let remainBorrowBase
     let remainLeverage
+    let closeRatio
 
     if (TargetPositionLeverage > 1) {
+        closeRatio = rationum
         needCloseBase = basetokenLp * rationum
         needCloseFarm = farmingtokenLp * rationum
         const repaydebtnum = basetokenLp * rationum * (1 - ClosePosFee) + basetokenBegin - farmingtokenBegin * basetokenBegin / (farmingtokenLp * rationum * (1 - ClosePosFee) * (1 - PancakeTradingFee) + farmingtokenBegin)
@@ -161,6 +163,7 @@ export const adjustPositionRepayDebt = (basetokenLp, farmingtokenLp, basetokenLp
         remainBorrowBase = basetokenLpBorrowed - repaydebtnum
         remainLeverage = (basetokenLpBorrowed - repaydebtnum) / (basetokenLp * (1 - rationum) + farmingtokenLp * (1 - rationum) / farmingtokenBegin * basetokenBegin - (basetokenLpBorrowed - repaydebtnum)) + 1
     } else if (Number(TargetPositionLeverage) === 1) {
+        closeRatio = rationum + (1 - rationum) * ClosePositionPercentage
         needCloseBase = basetokenLp * (rationum + (1 - rationum) * ClosePositionPercentage)
         needCloseFarm = farmingtokenLp * (rationum + (1 - rationum) * ClosePositionPercentage)
         remainBase = basetokenLp - needCloseBase
@@ -170,7 +173,7 @@ export const adjustPositionRepayDebt = (basetokenLp, farmingtokenLp, basetokenLp
     }
 
     return [
-        needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage
+        needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceimpact, tradingfee, remainLeverage, closeRatio
     ];
 
 
