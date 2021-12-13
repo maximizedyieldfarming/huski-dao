@@ -159,7 +159,7 @@ const Deposit: React.FC<DepositProps> = ({
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       setIsPending(false)
-      setAmount(0)
+      setAmount('')
     }
   }
 

@@ -262,7 +262,7 @@ const Farm = () => {
     return null
   }
 
-  const [tokenInput, setTokenInput] = useState(0)
+  const [tokenInput, setTokenInput] = useState<number | string>()
   const tokenInputRef = useRef<HTMLInputElement>()
  const handleTokenInput = useCallback(
    (event) => {
@@ -278,7 +278,7 @@ const Farm = () => {
    [userTokenBalance],
  )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState(0)
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
   const quoteTokenInputRef = useRef<HTMLInputElement>()
  const handleQuoteTokenInput = useCallback(
    (event) => {
@@ -466,8 +466,8 @@ const Farm = () => {
       toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
     } finally {
       setIsPending(false)
-      setTokenInput(0)
-      setQuoteTokenInput(0)
+      setTokenInput('')
+      setQuoteTokenInput('')
     }
   }
 
