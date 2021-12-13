@@ -157,8 +157,8 @@ const AdjustPosition = () => {
   } = useLocation<LocationParams>()
 
   const { t } = useTranslation()
-  const [quoteTokenInput, setQuoteTokenInput] = useState<number>()
-  const [tokenInput, setTokenInput] = useState<number>()
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
+  const [tokenInput, setTokenInput] = useState<number | string>()
 
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
@@ -427,8 +427,8 @@ const AdjustPosition = () => {
       toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
     } finally {
       setIsPending(false)
-      setTokenInput(0)
-      setQuoteTokenInput(0)
+      setTokenInput('')
+      setQuoteTokenInput('')
     }
   }
 
@@ -1012,7 +1012,7 @@ if(Number(targetPositionLeverage) === 1){
     return datalistSteps.map((value) => <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />)
   })()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentPositionLeverage === 1 && targetPositionLeverage === 1) {
       setIsAddCollateral(false)
     }
@@ -1123,7 +1123,6 @@ if(Number(targetPositionLeverage) === 1){
                         {datalistOptions}
                       </datalist>
                     </Box>
-
                   </Flex>
                   {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
                     <Flex justifyContent="space-between" alignItems="center">
@@ -1143,19 +1142,11 @@ if(Number(targetPositionLeverage) === 1){
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
                       targetPositionLeverage={Number(targetPositionLeverage)}
-                      userQuoteTokenBalance={
-                        isAddCollateral
-                          ? getBalanceAmount(
-                            quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
-                          )
-                          : userQuoteTokenBalance
+                      userQuoteTokenBalance={userQuoteTokenBalance}
+                      userTokenBalance={userTokenBalance}
+                      quoteTokenName={
+                        isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol
                       }
-                      userTokenBalance={
-                        isAddCollateral
-                          ? getBalanceAmount(tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
-                          : userTokenBalance
-                      }
-                      quoteTokenName={isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol}
                       tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
                       quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
                       token={isAddCollateral ? token : tokenValue}
@@ -1213,15 +1204,11 @@ if(Number(targetPositionLeverage) === 1){
                       <>
                         <Text>{t('Collateral to be Added')}</Text>
                         {farmingData ? (
-                          <Text bold>
-                            {Number(tokenInputValue) > Number(Number(tokenInputValue).toFixed(3))
-                              ? `${Number(tokenInputValue.toFixed(3))}...`
-                              : Number(tokenInputValue).toFixed(3)}{' '}
-                            {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
-                            {Number(quoteTokenInputValue) > Number(quoteTokenInputValue.toFixed(3))
-                              ? `${Number(tokenInputValue.toFixed(3))}...`
-                              : Number(quoteTokenInputValue).toFixed(3)}{' '}
-                            {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                          <Text>
+                            {new BigNumber(tokenInputValue || 0).toFixed(3)}{' '}
+                            {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+                            {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
+                            {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                           </Text>
                         ) : (
                           <Skeleton width="80px" height="16px" />
@@ -1233,8 +1220,10 @@ if(Number(targetPositionLeverage) === 1){
                         <Text>{t('Collateral to be Added')}</Text>
                         {farmingData ? (
                           <Text bold>
-                            {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
-                            {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                            {Number(tokenInputValue).toFixed(3)}{' '}
+                            {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+                            {Number(quoteTokenInputValue).toFixed(3)}{' '}
+                            {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                           </Text>
                         ) : (
                           <Skeleton width="80px" height="16px" />
@@ -1274,7 +1263,6 @@ if(Number(targetPositionLeverage) === 1){
                     {repayDebtData ? (
                       <Flex alignItems="center">
                         <Text bold>
-                          {' '}
                           {debtValueNumber.toNumber().toFixed(3)} {symbolName}
                         </Text>
                         <ChevronRightIcon fontWeight="bold" />
@@ -1303,13 +1291,6 @@ if(Number(targetPositionLeverage) === 1){
                       <Skeleton width="80px" height="16px" />
                     )}
                   </Flex>
-                  {/*               <Flex height="100px" alignItems="center">
-                <DebtRatioProgress
-                  debtRatio={updatedDebtRatio * 100}
-                  liquidationThreshold={liquidationThresholdData}
-                  max={maxValue * 100}
-                />
-              </Flex> */}
                   <Text small color="text" fontSize="16px" mt="30px">
                     {t('My Debt Status')}
                   </Text>
@@ -1319,17 +1300,51 @@ if(Number(targetPositionLeverage) === 1){
                       liquidationThreshold={liquidationThresholdData}
                       max={maxValue * 100}
                     />
-
                   </Flex>
-                  <Box mx="auto" display="flex" style={{ justifyContent: "center" }}>
+                  <Box mx="auto">
                     {isAddCollateral && (
-                      <Button height="60px" onClick={handleConfirm} disabled={isConfirmDisabled} width="290px" style={{ borderRadius: "16px" }}>
-                        {t('Confirm')}
+                      <Button
+                        onClick={handleConfirm}
+                        disabled={isConfirmDisabled || !account || isPending}
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Confirming') : t('Confirm')}
                       </Button>
                     )}
-                    {!isAddCollateral && isConvertTo && <Button width="290px" height="60px" onClick={handleConfirmConvertTo} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
-                    {!isAddCollateral && !isConvertTo && <Button width="290px" height="60px" onClick={handleConfirmMinimize} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
+                    {!isAddCollateral && isConvertTo && (
+                      <Button
+                        onClick={handleConfirmConvertTo}
+                        disabled={isConfirmDisabled || !account || isPending}
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Confirming') : t('Confirm')}
+                      </Button>
+                    )}
+                    {!isAddCollateral && !isConvertTo && (
+                      <Button
+                        onClick={handleConfirmMinimize}
+                        disabled={isConfirmDisabled || !account || isPending}
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Confirming') : t('Confirm')}
+                      </Button>
+                    )}
                   </Box>
+                  <Text mx="auto" color="red">
+                    {!isAddCollateral &&
+                    Number(targetPositionLeverage) !== 1 &&
+                    Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                      ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                        ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                            minimumDebt: minimumDebt.toNumber(),
+                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                          })
+                        : null
+                      : null}
+                  </Text>
                 </Section>
               </Box>
               <Box width="38%">
@@ -1416,7 +1431,6 @@ if(Number(targetPositionLeverage) === 1){
                 {lastSection}
               </Box>
             </Flex>
-
           </Page>
         </PercentageToCloseContext.Provider>
       </ConvertToContext.Provider>

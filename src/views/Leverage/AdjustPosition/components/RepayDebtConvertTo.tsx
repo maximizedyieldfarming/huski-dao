@@ -65,6 +65,7 @@ const RepayDebtConvertTo: React.FC<Props> = ({
               onChange={(e) => setPercentage(Number(e.target.value))}
               style={{ width: '90%' }}
               list="percentageToClose"
+              className="unstyledRangeInput" // TODO: leave this className, at least until theres a better looking one with proper functionality. because we need to see it for testing
             />
             <datalist id="percentageToClose">
               <option value="0" label="0%" />

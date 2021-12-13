@@ -17,8 +17,8 @@ interface Props {
   tokenName: any
   quoteToken: any
   token: any
-  tokenInput: number
-  quoteTokenInput: number
+  tokenInput: number | string
+  quoteTokenInput: number | string
   setTokenInput: any
   setQuoteTokenInput: any
   currentPositionLeverage: number
