@@ -366,9 +366,10 @@ const AdjustPositionSA = () => {
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      } else if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
-        console.info('base + single + quote token input ')
-        farmingTokenAmount = quoteTokenInputValue || 0
+      } else {
+        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
+        console.info('base + single + quote token input ---')
+        farmingTokenAmount = quoteTokenInputValue || '0'
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -381,9 +382,10 @@ const AdjustPositionSA = () => {
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      } else if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
+      } else {
+        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
         console.info('farm + single +1 quote token input ')
-        farmingTokenAmount = quoteTokenInputValue || 0
+        farmingTokenAmount = quoteTokenInputValue || '0'
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -858,12 +860,12 @@ const AdjustPositionSA = () => {
           </Button>
         </Flex>
       </Section>
-       <Text mx="auto" color="red">
+      <Text mx="auto" color="red">
         {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
           ? t('Minimum Debt Size: %minimumDebt% %name%', {
-              minimumDebt: minimumDebt.toNumber(),
-              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-            })
+            minimumDebt: minimumDebt.toNumber(),
+            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+          })
           : null) : null}
       </Text>
     </Page>
