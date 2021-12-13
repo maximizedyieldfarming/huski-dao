@@ -389,7 +389,7 @@ const FarmSA = () => {
             toastError('Unsuccessfulll', 'Something went wrong your farm request. Please try again...')
         } finally {
             setIsPending(false)
-            setInputValue(0)
+            setInputValue('')
             setButtonIndex(null)
         }
     }
@@ -649,22 +649,26 @@ const FarmSA = () => {
         return option
     }
 
-    const getSelectOptions = () => {
+    const getSelectOptions = (): Array<{icon: string, value: string, label:string}> => {
         if (selectedStrategy === 'neutral') {
             return [
                 {
+                    icon: 'neutral',
                     value: 'neutral',
                     label: 'Neutral strategy 2x',
                 },
                 {
+                    icon: 'bear',
                     value: 'bear',
                     label: 'Bear strategy 3x',
                 },
                 {
+                    icon: 'bull',
                     value: 'bull2x',
                     label: 'Bull Strategy 2x',
                 },
                 {
+                    icon: 'bull',
                     value: 'bull3x',
                     label: 'Bull Strategy 3x',
                 },
@@ -673,18 +677,22 @@ const FarmSA = () => {
         if (selectedStrategy === 'bear') {
             return [
                 {
+                    icon: 'bear',
                     value: 'bear',
                     label: 'Bear strategy 3x',
                 },
                 {
+                    icon: 'bull',
                     value: 'bull2x',
                     label: 'Bull Strategy 2x',
                 },
                 {
+                    icon: 'bull',
                     value: 'bull3x',
                     label: 'Bull Strategy 3x',
                 },
                 {
+                    icon: 'neutral',
                     value: 'neutral',
                     label: 'Neutral strategy 2x',
                 },
@@ -693,18 +701,22 @@ const FarmSA = () => {
         if (selectedStrategy === 'bull2x') {
             return [
                 {
+                    icon: 'bull',
                     value: 'bull2x',
                     label: 'Bull Strategy 2x',
                 },
                 {
+                    icon: 'bull',
                     value: 'bull3x',
                     label: 'Bull Strategy 3x',
                 },
                 {
+                    icon: 'bear',
                     value: 'bear',
                     label: 'Bear strategy 3x',
                 },
                 {
+                    icon: 'neutral',
                     value: 'neutral',
                     label: 'Neutral strategy 2x',
                 },
@@ -712,18 +724,22 @@ const FarmSA = () => {
         }
         return [
             {
+                icon: 'bull',
                 value: 'bull3x',
                 label: 'Bull Strategy 3x',
             },
             {
+                icon: 'bull',
                 value: 'bull2x',
                 label: 'Bull Strategy 2x',
             },
             {
+                icon: 'bear',
                 value: 'bear',
                 label: 'Bear strategy 3x',
             },
             {
+                icon: 'neutral',
                 value: 'neutral',
                 label: 'Neutral strategy 2x',
             },
@@ -748,11 +764,12 @@ const FarmSA = () => {
 
 
     const [tokenSelectOptions, setTokenSelectOptions] = useState(getTokenSelectOptions())
+    const [resetWatcher, setResetWatcher] = useState(0)
     React.useEffect(() => {
         setSelectedToken(singleFarm?.[tokenInfoToUse]?.token,)
         setTokenSelectOptions(getTokenSelectOptions());
+        setResetWatcher(prev => prev + 1)
     }, [getTokenSelectOptions, marketStrategy, singleFarm, tokenInfoToUse])
-        
 
     const yieldFarming = Number(yieldFarmData * singleLeverage)
     const tradingFees = Number((singleFarm?.tradeFee * 365) * singleLeverage)
@@ -838,23 +855,7 @@ const FarmSA = () => {
                         <Box>
                             <Flex>
                                 <SingleFarmSelect
-                                    options={[
-                                        {
-                                            icon: "bear",
-                                            label: t('Bear Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.quoteToken,
-                                        },
-                                        {
-                                            icon: "bull",
-                                            label: t('Bull Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                        {
-                                            icon: "neutral",
-                                            label: t('Neutral Market Strategy'),
-                                            value: singleFarm?.TokenInfo?.token,
-                                        },
-                                    ]}
+                                    options={getSelectOptions()}
                                     onChange={(option) => {
                                         setMarketStrategy(option.value)
                                         setInputValue('')
@@ -873,6 +874,7 @@ const FarmSA = () => {
                                         setButtonIndex(null)
                                     }}
                                     width="140px"
+                                    reset={resetWatcher}
                                 />
                             </Flex>
                             <Box>
