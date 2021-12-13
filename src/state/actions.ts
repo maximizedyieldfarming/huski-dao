@@ -1,3 +1,3 @@
 // export { fetchFarmsPublicDataAsync, fetchFarmUserDataAsync } from './farms'
-export { fetchLeverageFarmsPublicDataAsync, fetchLeverageFarmUserDataAsync } from './leverage'
+export { fetchLeverageFarmsPublicDataAsync, fetchLeverageFarmUserDataAsync, fetchLeverageFarmOtherDataAsync } from './leverage'
 export { fetchStakePublicDataAsync, fetchStakeUserDataAsync } from './stake'

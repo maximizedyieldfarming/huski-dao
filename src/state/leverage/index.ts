@@ -16,6 +16,7 @@ import {
   fetchFarmUserStakedBalances,
 } from './fetchFarmUser'
 import { LeverageFarmsState, LeverageFarm } from '../types'
+import { getTradingfees } from './helpers'
 
 const noAccountFarmConfig = leverageFarmsConfig.map((farm) => ({
   ...farm,
@@ -25,9 +26,13 @@ const noAccountFarmConfig = leverageFarmsConfig.map((farm) => ({
     stakedBalance: '0',
     earnings: '0',
   },
+  tradingData: {
+    tradingFee: '0',
+
+  },
 }))
 
-const initialState: LeverageFarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false }
+const initialState: LeverageFarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false, tradingDataLoaded: false }
 
 export const nonArchivedFarms = leverageFarmsConfig.filter(({ pid }) => !isArchivedPid(pid))
 
@@ -95,6 +100,32 @@ export const fetchLeverageFarmUserDataAsync =
   ,
   )
 
+interface LeverageFarmOtherDataResponse {
+  pid?: number
+  tradingFee?: string
+}
+
+
+export const fetchLeverageFarmOtherDataAsync =
+  createAsyncThunk<LeverageFarmOtherDataResponse[], { first?: number; pids: number[] }>(
+    'leverage/fetchLeverageFarmOtherDataAsync',
+    async ({ first, pids }) => {
+      const farmsToFetch = leverageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
+      console.info('---response--0000000000000-')
+      const response = await getTradingfees(first, farmsToFetch)
+      console.info('---response--0000000000000-', response)
+
+      return response.map((farmAllowance, index) => {
+        return {
+          pid: farmsToFetch[index].pid,
+          tradingFee : '1'
+        }
+      })
+    }
+,
+  )
+
+
 export const leverageSlice = createSlice({
   name: 'leverage',
   initialState,
@@ -122,6 +153,17 @@ export const leverageSlice = createSlice({
       })
       state.userDataLoaded = true
     })
+
+    // Update farms with trading data
+    builder.addCase(fetchLeverageFarmOtherDataAsync.fulfilled, (state, action) => {
+      action.payload.forEach((tradingDataEl) => {
+        const { pid } = tradingDataEl
+        const index = state.data.findIndex((farm) => farm.pid === pid)
+        state.data[index] = { ...state.data[index], tradingData: tradingDataEl }
+      })
+      state.tradingDataLoaded = true
+    })
+
   },
 })
 

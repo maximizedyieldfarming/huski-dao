@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { getBep20Contract, getCakeContract } from 'utils/contractHelpers'
+import { getBep20Contract, getCakeContract, getClaimFairLaunchContract } from 'utils/contractHelpers'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { simpleRpcProvider } from 'utils/providers'
+import { getFairLaunch } from 'utils/env'
+import { getFairLaunchAddress } from 'utils/addressHelpers'
 import useRefresh from './useRefresh'
 import useLastUpdated from './useLastUpdated'
 
@@ -46,6 +48,39 @@ const useTokenBalance = (tokenAddress: string) => {
       fetchBalance()
     }
   }, [account, tokenAddress, fastRefresh, SUCCESS, FAILED])
+
+  return balanceState
+}
+
+export const useStakedibTokenBalance = (pid: number) => {
+  const { NOT_FETCHED, SUCCESS, FAILED } = FetchStatus
+  const [balanceState, setBalanceState] = useState<UseTokenBalanceState>({
+    balance: BIG_ZERO,
+    fetchStatus: NOT_FETCHED,
+  })
+  const { account } = useWeb3React()
+  const { fastRefresh } = useRefresh()
+  const fairLaunchAddress = getFairLaunch() // getFairLaunchAddress() // 
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      const contract = getClaimFairLaunchContract()
+      try {
+        const res = await contract.userInfo(pid, account)
+        setBalanceState({ balance: new BigNumber(res[0]._hex.toString()), fetchStatus: SUCCESS })
+      } catch (e) {
+        console.error(e)
+        setBalanceState((prev) => ({
+          ...prev,
+          fetchStatus: FAILED,
+        }))
+      }
+    }
+
+    if (account) {
+      fetchBalance()
+    }
+  }, [account, fastRefresh, SUCCESS, FAILED, pid])
 
   return balanceState
 }

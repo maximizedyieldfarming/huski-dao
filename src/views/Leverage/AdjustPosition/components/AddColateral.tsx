@@ -6,22 +6,25 @@ import BigNumber from 'bignumber.js'
 import { TokenImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
+import { useAddCollateralContext } from '../context'
 
 const InputArea = styled(Flex)`
-background: #F7F7F8;
-border-radius: 12px;
+  background: #f7f7f8;
+  border-radius: 12px;
   padding: 0.5rem;
   flex: 1;
   align-items: center;
   input {
-  font-weight : bold;
+    font-weight: bold;
     border: none;
     box-shadow: none;
-    background : none;
+    background: none;
     &:focus:not(:disabled) {
       box-shadow: none;
     }
+  }
 `
+
 const AddColateral = ({
   userQuoteTokenBalance,
   userTokenBalance,
@@ -38,8 +41,8 @@ const AddColateral = ({
   quoteTokenPrice,
 }) => {
   const { t } = useTranslation()
-  const [active1, setActive1] = useState(-1);
-  const [active2, setActive2] = useState(-1);
+  const [active1, setActive1] = useState(-1)
+  const [active2, setActive2] = useState(-1)
   BigNumber.config({ EXPONENTIAL_AT: 1e9 })
   const handleQuoteTokenInput = useCallback(
     (event) => {
@@ -56,20 +59,20 @@ const AddColateral = ({
   )
   const setQuoteTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setActive1(0);
+      setActive1(0)
       const value = userQuoteTokenBalance.toNumber() * 0.25
       setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '50%') {
-      setActive1(1);
+      setActive1(1)
       const value = userQuoteTokenBalance.toNumber() * 0.5
       setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '75%') {
-      setActive1(2);
+      setActive1(2)
       const value = userQuoteTokenBalance.toNumber() * 0.75
       setQuoteTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '100%') {
       const value = userQuoteTokenBalance.toNumber()
-      setActive1(3);
+      setActive1(3)
       setQuoteTokenInput(new BigNumber(value).toNumber())
     }
   }
@@ -90,22 +93,32 @@ const AddColateral = ({
 
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setActive2(0);
+      setActive2(0)
       const value = userTokenBalance.toNumber() * 0.25
       setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '50%') {
-      setActive2(1);
+      setActive2(1)
       const value = userTokenBalance.toNumber() * 0.5
       setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '75%') {
-      setActive2(2);
+      setActive2(2)
       const value = userTokenBalance.toNumber() * 0.75
       setTokenInput(new BigNumber(value).toNumber())
     } else if (e.target.innerText === '100%') {
-      setActive2(3);
+      setActive2(3)
       const value = userTokenBalance.toNumber()
       setTokenInput(new BigNumber(value).toNumber())
     }
+  }
+  // cleanup input when changing between repay debt and add collateral
+  const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
+  React.useEffect(() => {
+    setTokenInput('')
+    setQuoteTokenInput('')
+  }, [isAddCollateral, setQuoteTokenInput, setTokenInput])
+
+  if (!isAddCollateral) {
+    return null
   }
 
   return (
@@ -123,7 +136,7 @@ const AddColateral = ({
           <Box>
             <Flex alignItems="center" justifyContent="space-between">
               <Flex>
-                <Text as="span" mr="1rem" small >
+                <Text as="span" mr="1rem" small>
                   {t('Balance')}:
                 </Text>
                 {userQuoteTokenBalance ? (
@@ -143,7 +156,12 @@ const AddColateral = ({
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={quoteToken} width={40} height={40} />
                 </Box>
-                <NumberInput style={{ border: "none", background: "unset" }} placeholder="0.00" value={quoteTokenInput} onChange={handleQuoteTokenInput} />
+                <NumberInput
+                  style={{ border: 'none', background: 'unset' }}
+                  placeholder="0.00"
+                  value={quoteTokenInput}
+                  onChange={handleQuoteTokenInput}
+                />
               </Flex>
               <Text bold>{quoteTokenName}</Text>
             </InputArea>
@@ -212,10 +230,13 @@ const AddColateral = ({
 interface custombuttonprops {
   active: boolean
 }
-const CustomButton = styled(Button) <custombuttonprops>`
- box-shadow : ${({ active, theme }) => (active ? "0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)" : "none")};
-  color : ${({ active }) => (active ? "black" : "lightgrey")};
-  border : none!important;
-  width : 25%;
+const CustomButton = styled(Button)<custombuttonprops>`
+  box-shadow: ${({ active, theme }) =>
+    active
+      ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'
+      : 'none'};
+  color: ${({ active }) => (active ? 'black' : 'lightgrey')};
+  border: none !important;
+  width: 25%;
 `
 export default AddColateral

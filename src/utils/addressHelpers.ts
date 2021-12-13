@@ -39,24 +39,12 @@ export const getWbnbAddress = () => {
 export const getPancakeProfileAddress = () => {
   return getAddress(addresses.pancakeProfile)
 }
-export const getClaimRefundAddress = () => {
-  return getAddress(addresses.claimRefund)
-}
-export const getBunnySpecialAddress = () => {
-  return getAddress(addresses.bunnySpecial)
-}
-export const getEasterNftAddress = () => {
-  return getAddress(addresses.easterNft)
-}
+
 export const getCakeVaultAddress = () => {
   return getAddress(addresses.cakeVault)
 }
 export const getPredictionsAddress = () => {
   return getAddress(addresses.predictions)
 }
-export const getChainlinkOracleAddress = () => {
-  return getAddress(addresses.chainlinkOracle)
-}
-export const getFarmAuctionAddress = () => {
-  return getAddress(addresses.farmAuction)
-}
+
+

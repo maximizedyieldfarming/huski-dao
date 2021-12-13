@@ -210,13 +210,9 @@ const Stake: React.FC = () => {
                 <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>
                   {t('Unstaked Rewards')}
                 </Text>
-                {unlockedRewards ? (
                   <Text fontSize="28px" color="white" bold ml="25px">
                     {new BigNumber(unlockedRewards).toFixed(3, 1)}
                   </Text>
-                ) : (
-                  <Skeleton width="80px" height="16px"  ml={isSmallScreen ? '0px' : '25px'}/>
-                )}
               </Flex>
             </Flex>
             <Flex>

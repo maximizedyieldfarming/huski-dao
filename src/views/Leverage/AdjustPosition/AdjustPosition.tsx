@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -15,6 +15,7 @@ import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { useWeb3React } from '@web3-react/core'
 import { TokenImage, TokenPairImage } from 'components/TokenImage'
 import DebtRatioProgress from 'components/DebRatioProgress'
 
@@ -156,8 +157,8 @@ const AdjustPosition = () => {
   } = useLocation<LocationParams>()
 
   const { t } = useTranslation()
-  const [quoteTokenInput, setQuoteTokenInput] = useState<number>()
-  const [tokenInput, setTokenInput] = useState<number>()
+  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
+  const [tokenInput, setTokenInput] = useState<number | string>()
 
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
@@ -202,6 +203,7 @@ const AdjustPosition = () => {
   let quoteTokenInputValue;
   let userTokenBalance
   let userQuoteTokenBalance
+  let minimumDebt
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = token?.symbol.replace('wBNB', 'BNB')
@@ -228,6 +230,7 @@ const AdjustPosition = () => {
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
     )
+    minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
   } else {
     symbolName = quoteToken?.symbol.replace('wBNB', 'BNB')
@@ -256,34 +259,35 @@ const AdjustPosition = () => {
     userQuoteTokenBalance = getBalanceAmount(
       tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
     )
+    minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
 
   }
 
 
-  // console.log({
-  //   tokenAmountTotal,
-  //   lpAmount,
-  //   lptotalSupply,
-  //   symbolName,
-  //   lpSymbolName,
-  //   tokenValue,
-  //   quoteTokenValue,
-  //   tokenValueSymbol,
-  //   quoteTokenValueSymbol,
-  //   baseTokenAmount,
-  //   farmTokenAmount,
-  //   basetokenBegin,
-  //   farmingtokenBegin,
-  //   workerAddress,
-  //   withdrawMinimizeTradingAddress,
-  //   partialCloseLiquidateAddress,
-  //   contract,
-  //   tokenInputValue,
-  //   quoteTokenInputValue,
-  //   userTokenBalance,
-  //   userQuoteTokenBalance,
-  // })
+  console.log({
+    tokenAmountTotal,
+    lpAmount,
+    lptotalSupply,
+    symbolName,
+    lpSymbolName,
+    tokenValue,
+    quoteTokenValue,
+    tokenValueSymbol,
+    quoteTokenValueSymbol,
+    baseTokenAmount,
+    farmTokenAmount,
+    basetokenBegin,
+    farmingtokenBegin,
+    workerAddress,
+    withdrawMinimizeTradingAddress,
+    partialCloseLiquidateAddress,
+    contract,
+    tokenInputValue,
+    quoteTokenInputValue,
+    userTokenBalance,
+    userQuoteTokenBalance,
+  })
 
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
@@ -326,6 +330,12 @@ const AdjustPosition = () => {
     // assetsBorrowedUp = adjustData?.[3] < 0.0000001 ? 0 : adjustData?.[3]
     UpdatedDebt = isAddCollateral || targetPositionLeverage >= currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
 
+  }
+
+  const UpdatedDebtData = new BigNumber(debtValueNumber).minus(UpdatedDebt)
+  let UpdatedDebtValue = Number(UpdatedDebtData)
+  if (UpdatedDebtValue < 0.000001) {
+    UpdatedDebtValue = 0
   }
 
   let tradingFees = adjustData?.[5]
@@ -387,6 +397,7 @@ const AdjustPosition = () => {
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isPending, setIsPending] = useState(false)
+  const { account } = useWeb3React()
 
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -399,6 +410,7 @@ const AdjustPosition = () => {
 
     setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(
         contract,
         'work',
@@ -408,15 +420,15 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
     } finally {
       setIsPending(false)
-      setTokenInput(0)
-      setQuoteTokenInput(0)
+      setTokenInput('')
+      setQuoteTokenInput('')
     }
   }
 
@@ -449,7 +461,7 @@ const AdjustPosition = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = (quoteTokenInputValue)
+        farmingTokenAmount = (quoteTokenInputValue).toString()
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -473,7 +485,7 @@ const AdjustPosition = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = (quoteTokenInputValue)
+        farmingTokenAmount = (quoteTokenInputValue).toString()
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -483,23 +495,26 @@ const AdjustPosition = () => {
 
     }
 
-    // console.log({
-    //   id,
-    //   workerAddress,
-    //   amount,
-    //   loan,
-    //   AssetsBorrowed,
-    //   maxReturn,
-    //   farmingTokenAmount,
-    //   dataWorker,
-    //   strategiesAddress,
-    //   dataStrategy,
-    //   tokenInputValue,
-    //   quoteTokenInputValue,
+    console.log({
 
-    //   'tokenInput': (tokenInput),
-    //   'quoteTokenInput': (quoteTokenInput)
-    // })
+      'id====': id,
+      adjustData,
+      assetsBorrowed,
+      'debtValueNumber': debtValueNumber.toNumber(),
+      workerAddress,
+      amount,
+      loan,
+      AssetsBorrowed,
+      maxReturn,
+      farmingTokenAmount,
+      dataWorker,
+      strategiesAddress,
+      dataStrategy,
+      tokenInputValue,
+      quoteTokenInputValue,
+      'tokenInput': (tokenInput),
+      'quoteTokenInput': (quoteTokenInput)
+    })
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -512,27 +527,53 @@ const AdjustPosition = () => {
       gasLimit: 3800000,
       value: amount,
     }
+    setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions,)
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      console.info('error', error)
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
     }
   }
 
   const handleConfirmConvertTo = async () => {
+
+    console.log({ "handleConfirmConvertTo": repayDebtData, debtValueNumber, UpdatedDebtValue, UpdatedDebt, convertedPositionValueAssets })
+    let receive = 0;
+    let receive1: any
+    if (Number(targetPositionLeverage) === 1) {
+      receive = 0
+    } else {
+      receive = Number(convertedPositionValueAssets) - Number(UpdatedDebt) // UpdatedDebtValue //
+
+      receive1 = new BigNumber(convertedPositionValueAssets).minus(new BigNumber(UpdatedDebt))
+    }
     const id = positionId
     const amount = 0
     const loan = 0;
     const maxReturn = ethers.constants.MaxUint256;
-    const minbasetoken = (Number(convertedPositionValue) * 0.995).toString()
+    // const minbasetoken1 = Number(convertedPositionValueAssets) - Number(UpdatedDebt)
+    const minbasetoken = Number(receive).toString()
+
+    const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
+    console.log({ "参数": debtValueNumber, UpdatedDebtValue, UpdatedDebt, convertedPositionValueAssets, receive, receive1, minbasetoken, minbasetokenvalue })
+
     const abiCoder = ethers.utils.defaultAbiCoder;
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minbasetoken)]);
+    // - maxLpTokenToLiquidate -> maximum lpToken amount that user want to liquidate.
+    // - maxDebtRepayment -> maximum BTOKEN amount that user want to repaid debt.
+    // - minFarmingTokenAmount -> minimum farmingToken amount that user want to receive.
+    // (uint256 maxLpTokenToLiquidate, uint256 maxDebtRepayment, uint256 minFarmingToken) = abi.decode(data, (uint256, uint256, uint256));
+    // ( uint256 returnLpToken, uint256 minBaseToken ) = abi.decode(data, (uint256, uint256));
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(minbasetokenvalue),]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
-    console.log({ symbolName, id, workerAddress, amount, loan, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
+    console.log({ 'handleConfirmConvertTo-symbolName': symbolName, receive, id, workerAddress, amount, loan, dataStrategy, convertedPositionValue, partialCloseLiquidateAddress, minbasetoken, maxReturn, dataWorker })
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -544,16 +585,20 @@ const AdjustPosition = () => {
       gasLimit: 3800000,
       value: amount,
     }
+    setIsPending(true)
     try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
       const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -619,8 +664,11 @@ const AdjustPosition = () => {
 
 
   const isConfirmDisabled =
-    (Number(currentPositionLeverage) === 1 && Number(targetPositionLeverage) === 1) ||
-    Number(currentPositionLeverage).toFixed(2) === Number(targetPositionLeverage).toFixed(2)
+    Number(currentPositionLeverage) === Number(targetPositionLeverage) ||
+    (!isAddCollateral &&
+      Number(targetPositionLeverage) !== 1 &&
+      Number(targetPositionLeverage) !== Number(currentPositionLeverage) &&
+      new BigNumber(UpdatedDebtValue).lt(minimumDebt))
 
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
@@ -720,15 +768,16 @@ const AdjustPosition = () => {
           <Text bold>
             {isConvertTo ? (
               <>
-                {Number(willReceive).toPrecision(4)} {tokenValueSymbol}
+                {new BigNumber(willReceive).toFixed(3, 1)}{' '}
+                {tokenValueSymbol}
               </>
             ) : (
               <>
-                {Number(willReceivefarm).toPrecision(4)} {quoteTokenValueSymbol} + {Number(willReceivebase).toPrecision(4)} {tokenValueSymbol}
+                {new BigNumber(willReceivefarm).toFixed(3, 1)}{' '}
+                {quoteTokenValueSymbol} + {Number(willReceivebase).toPrecision(4)} {tokenValueSymbol}
               </>
             )}
           </Text>
-
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Minimum Received')}</Text>
@@ -740,11 +789,11 @@ const AdjustPosition = () => {
               </>
             ) : (
               <>
-                {Number(minimumReceivedfarm).toPrecision(4)} {quoteTokenValueSymbol} + {Number(minimumReceivedbase).toPrecision(4)} {tokenValueSymbol}
+                {Number(minimumReceivedfarm).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+                {Number(minimumReceivedbase).toPrecision(4)} {tokenValueSymbol}
               </>
             )}
           </Text>
-
         </Flex>
       </Section>
     )
@@ -867,14 +916,10 @@ const AdjustPosition = () => {
             <Flex justifyContent="space-between">
               <Text>{t('Collateral to be Added')}</Text>
               {farmingData ? (
-                <Text bold>
-                  {Number(tokenInputValue) > Number(Number(tokenInputValue)?.toFixed(3))
-                    ? `${Number(tokenInputValue?.toFixed(3))}...`
-                    : Number(tokenInputValue)?.toFixed(3)}{' '}
+                <Text>
+                  {new BigNumber(tokenInputValue || 0).toFixed(3, 1)}{' '}
                   {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
-                  {Number(quoteTokenInputValue) > Number(quoteTokenInputValue?.toFixed(3))
-                    ? `${Number(tokenInputValue?.toFixed(3))}...`
-                    : Number(quoteTokenInputValue)?.toFixed(3)}{' '}
+                  {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
                   {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                 </Text>
               ) : (
@@ -973,7 +1018,7 @@ const AdjustPosition = () => {
     return datalistSteps.map((value) => <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />)
   })()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentPositionLeverage === 1 && targetPositionLeverage === 1) {
       setIsAddCollateral(false)
     }
@@ -987,7 +1032,7 @@ const AdjustPosition = () => {
         >
           <Page>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
-              {t('Adjust Position')} {lpSymbolName}
+              {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Flex justifyContent="space-between">
               <Box width="60%">
@@ -1084,7 +1129,6 @@ const AdjustPosition = () => {
                         {datalistOptions}
                       </datalist>
                     </Box>
-
                   </Flex>
                   {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
                     <Flex justifyContent="space-between" alignItems="center">
@@ -1104,19 +1148,11 @@ const AdjustPosition = () => {
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
                       targetPositionLeverage={Number(targetPositionLeverage)}
-                      userQuoteTokenBalance={
-                        isAddCollateral
-                          ? getBalanceAmount(
-                            quoteTokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : quoteTokenBalance,
-                          )
-                          : userQuoteTokenBalance
+                      userQuoteTokenBalance={userQuoteTokenBalance}
+                      userTokenBalance={userTokenBalance}
+                      quoteTokenName={
+                        isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol
                       }
-                      userTokenBalance={
-                        isAddCollateral
-                          ? getBalanceAmount(tokenValue?.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
-                          : userTokenBalance
-                      }
-                      quoteTokenName={isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol}
                       tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
                       quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
                       token={isAddCollateral ? token : tokenValue}
@@ -1174,15 +1210,11 @@ const AdjustPosition = () => {
                       <>
                         <Text>{t('Collateral to be Added')}</Text>
                         {farmingData ? (
-                          <Text bold>
-                            {Number(tokenInputValue) > Number(Number(tokenInputValue).toFixed(3))
-                              ? `${Number(tokenInputValue.toFixed(3))}...`
-                              : Number(tokenInputValue).toFixed(3)}{' '}
-                            {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
-                            {Number(quoteTokenInputValue) > Number(quoteTokenInputValue.toFixed(3))
-                              ? `${Number(tokenInputValue.toFixed(3))}...`
-                              : Number(quoteTokenInputValue).toFixed(3)}{' '}
-                            {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                          <Text>
+                            {new BigNumber(tokenInputValue || 0).toFixed(3)}{' '}
+                            {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+                            {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
+                            {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                           </Text>
                         ) : (
                           <Skeleton width="80px" height="16px" />
@@ -1194,8 +1226,10 @@ const AdjustPosition = () => {
                         <Text>{t('Collateral to be Added')}</Text>
                         {farmingData ? (
                           <Text bold>
-                            {Number(tokenInputValue).toFixed(3)} {tokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")} +{' '}
-                            {Number(quoteTokenInputValue).toFixed(3)} {quoteTokenValue?.symbol.toUpperCase().replace("WBNB", "BNB")}
+                            {Number(tokenInputValue).toFixed(3)}{' '}
+                            {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
+                            {Number(quoteTokenInputValue).toFixed(3)}{' '}
+                            {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                           </Text>
                         ) : (
                           <Skeleton width="80px" height="16px" />
@@ -1235,7 +1269,6 @@ const AdjustPosition = () => {
                     {repayDebtData ? (
                       <Flex alignItems="center">
                         <Text bold>
-                          {' '}
                           {debtValueNumber.toNumber().toFixed(3)} {symbolName}
                         </Text>
                         <ChevronRightIcon fontWeight="bold" />
@@ -1264,13 +1297,6 @@ const AdjustPosition = () => {
                       <Skeleton width="80px" height="16px" />
                     )}
                   </Flex>
-                  {/*               <Flex height="100px" alignItems="center">
-                <DebtRatioProgress
-                  debtRatio={updatedDebtRatio * 100}
-                  liquidationThreshold={liquidationThresholdData}
-                  max={maxValue * 100}
-                />
-              </Flex> */}
                   <Text small color="text" fontSize="16px" mt="30px">
                     {t('My Debt Status')}
                   </Text>
@@ -1280,17 +1306,51 @@ const AdjustPosition = () => {
                       liquidationThreshold={liquidationThresholdData}
                       max={maxValue * 100}
                     />
-
                   </Flex>
-                  <Box mx="auto" display="flex" style={{ justifyContent: "center" }}>
+                  <Box mx="auto">
                     {isAddCollateral && (
-                      <Button height="60px" onClick={handleConfirm} disabled={isConfirmDisabled} width="290px" style={{ borderRadius: "16px" }}>
-                        {t('Confirm')}
+                      <Button
+                        onClick={handleConfirm}
+                        disabled={isConfirmDisabled || !account || isPending}
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Confirming') : t('Confirm')}
                       </Button>
                     )}
-                    {!isAddCollateral && isConvertTo && <Button width="290px" height="60px" onClick={handleConfirmConvertTo} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
-                    {!isAddCollateral && !isConvertTo && <Button width="290px" height="60px" onClick={handleConfirmMinimize} style={{ borderRadius: "16px" }}>{t('Confirm')}</Button>}
+                    {!isAddCollateral && isConvertTo && (
+                      <Button
+                        onClick={handleConfirmConvertTo}
+                        disabled={isConfirmDisabled || !account || isPending}
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Confirming') : t('Confirm')}
+                      </Button>
+                    )}
+                    {!isAddCollateral && !isConvertTo && (
+                      <Button
+                        onClick={handleConfirmMinimize}
+                        disabled={isConfirmDisabled || !account || isPending}
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Confirming') : t('Confirm')}
+                      </Button>
+                    )}
                   </Box>
+                  <Text mx="auto" color="red">
+                    {!isAddCollateral &&
+                    Number(targetPositionLeverage) !== 1 &&
+                    Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                      ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                        ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                            minimumDebt: minimumDebt.toNumber(),
+                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                          })
+                        : null
+                      : null}
+                  </Text>
                 </Section>
               </Box>
               <Box width="38%">
@@ -1377,7 +1437,6 @@ const AdjustPosition = () => {
                 {lastSection}
               </Box>
             </Flex>
-
           </Page>
         </PercentageToCloseContext.Provider>
       </ConvertToContext.Provider>

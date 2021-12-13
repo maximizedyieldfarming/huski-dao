@@ -28,7 +28,7 @@ import NumberInput from 'components/NumberInput'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
-import useTokenBalance from 'hooks/useTokenBalance'
+import useTokenBalance, { useStakedibTokenBalance } from 'hooks/useTokenBalance'
 import { getStakeApy } from '../../helpers'
 import AprCell from './Cells/AprCell'
 import ActionCell from './Cells/ActionCell'
@@ -59,7 +59,7 @@ const collapseAnimation = keyframes`
   }
 `
 
-const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
@@ -94,7 +94,7 @@ const StakeContainer = styled(Flex)`
 interface Props {
   disabled: boolean
 }
-const StyledButton = styled(Button) <Props>`
+const StyledButton = styled(Button)<Props>`
   background: ${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
   border-radius: 10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
@@ -113,7 +113,7 @@ const MaxContainer = styled(Flex)`
   padding: 6px;
   ${Box} {
     padding: 0 5px;
-     }
+  }
 `
 const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
   background-color: ${({ theme }) => theme.card.background};
@@ -136,6 +136,14 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
   }
 `
 
+const MaxButton = styled.button`
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  // background: isDark ? '#272B30' : '#FFFFFF';
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+`
+
 const StakeRow = ({ tokenData }) => {
   const { account } = useWeb3React()
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
@@ -143,7 +151,7 @@ const StakeRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskiPrice()
-  console.log({ huskyPrice })
+  // console.log({ huskyPrice })
   const { t } = useTranslation()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
@@ -151,9 +159,9 @@ const StakeRow = ({ tokenData }) => {
 
   const { totalToken, totalSupply, vaultDebtVal, totalValueStaked } = tokenData
   // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
-  const {isDark} = useTheme()
+  const { isDark } = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance).toJSON()
-  const userStakedBalance = getBalanceAmount(new BigNumber(tokenData.userData.stakedBalance)).toJSON()
+  const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance)).toJSON()
   const reward = new BigNumber(tokenData?.userData?.earnings).div(DEFAULT_TOKEN_DECIMAL)
   // const userTokenBalanceIbStaked = getBalanceAmount(
   //   useTokenBalance(getAddress(tokenData?.token.address)).balance,
@@ -181,6 +189,8 @@ const StakeRow = ({ tokenData }) => {
   const approveContract = useERC20(vaultIbAddress)
   const fairLaunchAddress = getFairLaunchAddress()
   const [isPending, setIsPending] = useState<boolean>(false)
+  const [isPendingUnstake, setIsPendingUnstake] = useState<boolean>(false)
+  const [isPendingClaim, setIsPendingClaim] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const [stakeAmount, setStakeAmount] = useState<string>()
   const handleStakeInput = useCallback(
@@ -258,7 +268,7 @@ const StakeRow = ({ tokenData }) => {
       gasLimit: 380000,
     }
 
-    setIsPending(true)
+    setIsPendingUnstake(true)
     try {
       const tx = await callWithGasPrice(
         claimContract,
@@ -274,7 +284,7 @@ const StakeRow = ({ tokenData }) => {
       toastError(t('Unsuccessful'), t('Something went wrong your unstake request. Please try again...'))
       console.error('transaction failed', error)
     } finally {
-      setIsPending(false)
+      setIsPendingUnstake(false)
       setUnstakeAmount('')
     }
   }
@@ -286,7 +296,7 @@ const StakeRow = ({ tokenData }) => {
 
   // claim operations
   const handleClaimConfirm = async () => {
-    setIsPending(true)
+    setIsPendingClaim(true)
     toastInfo(t('Pending request...'), t('Please Wait!'))
     try {
       const tx = await callWithGasPrice(claimContract, 'harvest', [tokenData.pid], { gasLimit: 300000 })
@@ -297,7 +307,25 @@ const StakeRow = ({ tokenData }) => {
     } catch (error) {
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
     } finally {
-      setIsPending(false)
+      setIsPendingClaim(false)
+    }
+  }
+
+  const handleApprove = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    setIsApproving(true)
+    try {
+      const tx = await approveContract.approve(fairLaunchAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
     }
   }
 
@@ -330,14 +358,14 @@ const StakeRow = ({ tokenData }) => {
         )} */}
         {shouldRenderActionPanel ? (
           <>
-            <Flex className="expandedArea" style = {{overflowX : "scroll"}}>
+            <Flex className="expandedArea" style={{ overflowX: 'scroll' }}>
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
-                    {t('I Want to stake')}
+                    {t('I Want to Stake')}
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
-                    {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace("WBNB", "BNB") })}
+                    {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
                     <span style={{ fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
                     </span>
@@ -348,41 +376,47 @@ const StakeRow = ({ tokenData }) => {
                     placeholder="0.00"
                     onChange={handleStakeInput}
                     value={stakeAmount}
-                    style = {{background: "unset", border : "none", width : "100px"}}
+                    style={{ background: 'unset', border: 'none' }}
                   />
                   <Flex alignItems="center">
                     <Box>
-                      <button
+                      <MaxButton
                         type="button"
                         style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '8px',
-                          
                           background: isDark ? '#272B30' : '#FFFFFF',
-                          cursor: 'pointer',
                         }}
                         onClick={setStakeAmountToMax}
-                        disabled={Number(userTokenBalance) === 0}
+                        disabled={Number(userTokenBalance) === 0 || Number(allowance) === 0}
                       >
                         <Text>{t('MAX')}</Text>
-                      </button>
+                      </MaxButton>
                     </Box>
-                    <StyledButton
-                      onClick={handleStakeConfirm}
-                      disabled={
-                        !account ||
-                        !(Number(allowance) > 0) ||
-                        Number(stakeAmount) === 0 ||
-                        stakeAmount === undefined ||
-                        Number(userTokenBalance) === 0 ||
-                        isPending
-                      }
-                      isLoading={isPending}
-                      endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                    >
-                      {isPending ? t('Confirming') : t('Stake')}
-                    </StyledButton>
+                    {Number(allowance) !== 0 ? (
+                      <StyledButton
+                        onClick={handleStakeConfirm}
+                        disabled={
+                          !account ||
+                          !(Number(allowance) > 0) ||
+                          Number(stakeAmount) === 0 ||
+                          stakeAmount === undefined ||
+                          Number(userTokenBalance) === 0 ||
+                          isPending
+                        }
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Staking') : t('Stake')}
+                      </StyledButton>
+                    ) : (
+                      <StyledButton
+                        onClick={handleApprove}
+                        disabled={!account || isPending}
+                        isLoading={isApproving}
+                        endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                      >
+                        {isApproving ? t('Approving') : t('Approve')}
+                      </StyledButton>
+                    )}
                   </Flex>
                 </MaxContainer>
               </StakeContainer>
@@ -392,7 +426,7 @@ const StakeRow = ({ tokenData }) => {
                     {t('I Want to Unstake')}
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
-                    {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace("WBNB", "BNB") })}
+                    {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
                     <span style={{ fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)}
                     </span>
@@ -404,26 +438,21 @@ const StakeRow = ({ tokenData }) => {
                     placeholder="0.00"
                     onChange={handleUnstakeInput}
                     value={unstakeAmount}
-                    style = {{background: "unset", border : "none"}}
+                    style={{ background: 'unset', border: 'none' }}
                   />
 
                   <Flex alignItems="center">
                     <Box>
-                      <button
+                      <MaxButton
                         type="button"
                         style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '8px',
-                          
                           background: isDark ? '#272B30' : '#FFFFFF',
-                          cursor: 'pointer',
                         }}
                         onClick={setUnstakeAmountToMax}
                         disabled={Number(userStakedBalance) === 0}
                       >
                         <Text>{t('MAX')}</Text>
-                      </button>
+                      </MaxButton>
                     </Box>
                     <StyledButton
                       onClick={handleUnstakeConfirm}
@@ -432,12 +461,12 @@ const StakeRow = ({ tokenData }) => {
                         Number(unstakeAmount) === 0 ||
                         unstakeAmount === undefined ||
                         Number(userStakedBalance) === 0 ||
-                        isPending
+                        isPendingUnstake
                       }
-                      isLoading={isPending}
-                      endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                      isLoading={isPendingUnstake}
+                      endIcon={isPendingUnstake ? <AutoRenewIcon spin color="primary" /> : null}
                     >
-                      {isPending ? t('Confirming') : t('Unstake')}
+                      {isPendingUnstake ? t('Unstaking') : t('Unstake')}
                     </StyledButton>
                   </Flex>
                 </MaxContainer>
@@ -450,26 +479,24 @@ const StakeRow = ({ tokenData }) => {
                 </Flex>
                 <MaxContainer>
                   <Text color="textFarm" fontSize="28px" fontWeight="700">
-                    {reward.toFixed(2, 1)}
+                    {reward.gt(0) ? (reward.lt(0.01) ? reward.toFixed(4, 1) : reward.toFixed(2, 1)) : '0.00'}
                   </Text>
                   <Flex alignItems="center">
                     <StyledButton
-                      disabled={!account || Number(reward) === 0}
+                      disabled={!account || Number(reward) === 0 || isPendingClaim}
                       onClick={handleClaimConfirm}
                       scale="sm"
-                      isLoading={isPending}
-                      endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                      isLoading={isPendingClaim}
+                      endIcon={isPendingClaim ? <AutoRenewIcon spin color="primary" /> : null}
                     >
-                      {t('Claim')}
+                      {isPendingClaim ? t('Claiming') : t('Claim')}
                     </StyledButton>
                   </Flex>
                 </MaxContainer>
               </StakeContainer>
             </Flex>
           </>
-        ) : (
-          <div />
-        )}
+        ) : null}
       </StyledActionPanel>
     </StyledRow>
   )

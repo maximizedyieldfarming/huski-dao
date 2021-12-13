@@ -15,18 +15,6 @@ export default {
     56: '0xDf4dBf6536201370F95e06A0F8a7a70fE40E388a',
     97: '0x4B683C7E13B6d5D7fd1FeA9530F451954c1A7c8A',
   },
-  claimRefund: {
-    56: '0xE7e53A7e9E3Cf6b840f167eF69519175c497e149',
-    97: '',
-  },
-  bunnySpecial: {
-    56: '0xFee8A195570a18461146F401d6033f5ab3380849',
-    97: '0x7b7b1583De1DeB32Ce6605F6deEbF24A0671c17C',
-  },
-  easterNft: {
-    56: '0x23c41D28A239dDCAABd1bb1deF8d057189510066',
-    97: '0x24ec6962dbe874F6B67B5C50857565667fA0854F',
-  },
   cakeVault: {
     56: '0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC',
     97: '',
@@ -34,13 +22,5 @@ export default {
   predictions: {
     56: '0xe7C277DB56F2089351E9ac910871EB820e11206B',
     97: '',
-  },
-  chainlinkOracle: {
-    56: '0xD276fCF34D54A926773c399eBAa772C12ec394aC',
-    97: '',
-  },
-  farmAuction: {
-    56: '0xb92Ab7c1edcb273AbA24b0656cEb3681654805D2',
-    97: '0x3F9602593b4f7C67ab045DB51BbDEa94E40fA9Fe',
-  },
+  }
 }

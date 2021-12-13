@@ -12,6 +12,7 @@ import { BIG_TEN } from 'utils/bigNumber'
 import { ethers } from 'ethers'
 import { TokenPairImage } from 'components/TokenImage'
 import { ArrowDownIcon } from 'assets'
+import { useWeb3React } from '@web3-react/core'
 
 interface LocationParams {
   data: any
@@ -133,6 +134,7 @@ const ClosePositionSA = () => {
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   const [isPending, setIsPending] = useState<boolean>(false)
+  const {account} = useWeb3React()
 
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -142,16 +144,20 @@ const ClosePositionSA = () => {
       gasLimit: 3800000,
       value: amount,
     }
+    setIsPending(true)
     try {
+      toastInfo(t('Closing Position...'), t('Please Wait!'))
       const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
-        toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        toastSuccess(t('Successful!'), t('Your position was closed successfully'))
       }
     } catch (error) {
       console.error('error', error)
-      toastError(t('Unsuccessfulll'), t('Something went wrong your farm request. Please try again...'))
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -229,14 +235,16 @@ const ClosePositionSA = () => {
           </Section>
         </Container>
       </Box>
-      <Button
-        onClick={handleConfirm}
-        isLoading={isPending}
-        endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-        mx="auto"
-      >
-        {isPending ? t('Closing Position...') : t('Close Position')}
-      </Button>
+     <Button
+            onClick={handleConfirm}
+            width="300px"
+            height="60px"
+            disabled={!account || isPending}
+            isLoading={isPending}
+            endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+          >
+            {isPending ? t('Closing Position') : t('Close Position')}
+          </Button>
     </Page>
   )
 }

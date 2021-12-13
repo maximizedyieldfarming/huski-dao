@@ -8,7 +8,6 @@ const ToastListener = () => {
   const handleRemove = (id: string) => remove(id)
 
   return <ToastContainer toasts={toasts} onRemove={handleRemove} />
-  return <div />
 }
 
 export default ToastListener
