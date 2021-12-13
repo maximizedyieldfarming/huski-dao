@@ -697,11 +697,11 @@ const AdjustPositionSA = () => {
               <Text>{t('Position Value')}</Text>
               {adjustData ? (
                 <Text>
-                  {baseTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {tokenValueSymbol}
+                  {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
                 </Text>
               ) : (
                 <Text>
-                  0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
+                  0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
                 </Text>
               )}
             </Flex>
@@ -843,13 +843,13 @@ const AdjustPositionSA = () => {
         <Flex>
           <Button
             onClick={handleConfirm}
-            disabled={
-              !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) : 
-              (Number(tokenInput) === 0 ||
-              tokenInput === undefined)
-              ) ||
-              isPending
-            }
+            // disabled={
+            //   !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) : 
+            //   (Number(tokenInput) === 0 ||
+            //   tokenInput === undefined)
+            //   ) ||
+            //   isPending
+            // }
             isLoading={isPending}
             endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
             mx="auto"
