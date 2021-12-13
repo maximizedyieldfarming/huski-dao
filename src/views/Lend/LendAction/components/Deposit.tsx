@@ -79,7 +79,11 @@ const Deposit: React.FC<DepositProps> = ({
   const history = useHistory()
 
   const setAmountToMax = () => {
-    setAmount(userTokenBalance)
+    if (name.toLowerCase() === 'bnb') {
+      setAmount(new BigNumber(userTokenBalance).toFixed(2, 1))
+    } else {
+      setAmount(userTokenBalance)
+    }
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
