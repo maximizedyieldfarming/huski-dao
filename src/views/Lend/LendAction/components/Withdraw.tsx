@@ -218,7 +218,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             fontWeight="bold"
             fontSize="16px"
             style={{ height: '100%' }}
-            onClick={() => history.goBack()}
+            onClick={() => history.push('/lend')}
           >
             {t('Back')}
           </Text>

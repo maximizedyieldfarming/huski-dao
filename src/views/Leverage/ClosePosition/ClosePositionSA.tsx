@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useHistory } from 'react-router'
 import { Box, Flex, Text, useTooltip, InfoIcon, Skeleton, Button, AutoRenewIcon } from 'husky-uikit1.0'
 import useToast from 'hooks/useToast'
 import { useVault } from 'hooks/useContract'
@@ -51,6 +51,7 @@ const ClosePositionSA = () => {
   const {
     state: { data },
   } = useLocation<LocationParams>()
+  const history = useHistory()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
@@ -152,6 +153,7 @@ const ClosePositionSA = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your position was closed successfully'))
+        history.push(`/singleAssets`)
       }
     } catch (error) {
       console.error('error', error)
