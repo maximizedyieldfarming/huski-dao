@@ -221,10 +221,8 @@ const AdjustPositionSA = () => {
   const lvgAdjust = new BigNumber(baseTokenAmount)
     .times(2)
     .div(new BigNumber(baseTokenAmount).times(2).minus(new BigNumber(debtValueNumber)))
-  const currentPositionLeverage = lvgAdjust.toNumber()
-  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
-    Number(currentPositionLeverage.toPrecision(3)),
-  )
+  const currentPositionLeverage = Number(lvgAdjust.toFixed(2, 1)) // lvgAdjust.toNumber()
+  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
   // for apr
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
@@ -341,14 +339,14 @@ const AdjustPositionSA = () => {
       toastError('Unsuccessful', 'Something went wrong your request. Please try again...')
     } finally {
       setIsPending(false)
-      setTokenInput(0)
+      setTokenInput('')
     }
   }
 
   const handleConfirm = async () => {
     const id = positionId
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g,'') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
@@ -419,10 +417,10 @@ const AdjustPositionSA = () => {
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
         <Text>
-          {t('Current Position Leverage:')} {Number(currentPositionLeverage).toPrecision(3)}x
+          {t('Current Position Leverage:')} {currentPositionLeverage}x
         </Text>
         <Text>
-          {t('Target Position Leverage:')} {Number(targetPositionLeverage).toPrecision(3)}x
+          {t('Target Position Leverage:')} {targetPositionLeverage}x
         </Text>
         <Flex>
           <input
@@ -439,7 +437,7 @@ const AdjustPositionSA = () => {
         </Flex>
 
         {/* default always show add collateral */}
-        {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
+        {targetPositionLeverage === currentPositionLeverage && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
               <Text>
@@ -555,7 +553,7 @@ const AdjustPositionSA = () => {
         ) : null}
 
         {/* if current >= max lvg, can only go left choose between add collateral or repay debt */}
-        {targetPositionLeverage < Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
+        {targetPositionLeverage < currentPositionLeverage && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
               <Text>
@@ -673,7 +671,7 @@ const AdjustPositionSA = () => {
         ) : null}
 
         {/* if target > current */}
-        {targetPositionLeverage > Number(currentPositionLeverage.toFixed(2)) ? (
+        {targetPositionLeverage > currentPositionLeverage ? (
           <>
             <Box>
               <Flex justifyContent="space-between">
