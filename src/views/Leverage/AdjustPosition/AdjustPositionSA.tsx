@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
@@ -26,7 +26,7 @@ import { useVault } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
-import { TokenImage } from 'components/TokenImage'
+import { TokenImage, TokenPairImage } from 'components/TokenImage'
 import { useWeb3React } from '@web3-react/core'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import {
@@ -38,6 +38,121 @@ import {
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
 
+interface MoveProps {
+  move: number
+}
+
+const MoveBox = styled(Box) <MoveProps>`
+  margin-left: ${({ move }) => move}px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+  color: #7b3fe4;
+`
+const MoveBox1 = styled(Box) <MoveProps>`
+  margin-left: ${({ move }) => move}px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+  color: #83BF6E;
+`
+const makeLongShadow = (color: any, size: any) => {
+  let i = 2
+  let shadow = `${i}px 0 0 ${size} ${color}`
+
+  for (; i < 856; i++) {
+    shadow = `${shadow}, ${i}px 0 0 ${size} ${color}`
+  }
+
+  return shadow
+}
+
+const RangeInput = styled.input`
+  overflow: hidden;
+  display: block;
+  appearance: none;
+  max-width: 850px;
+  width: 100%;
+  margin: 0;
+  height: 32px;
+
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 32px;
+    background: linear-gradient(to right, #b488ff, #3a009e) 100% 50% / 100% 4px no-repeat transparent;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-thumb {
+    position: relative;
+    appearance: none !important;
+    height: 32px;
+    width: 28px;
+
+    background-image: url('/images/RangeHandle.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    border: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    transition: background-color 150ms;
+    &::before {
+      height: 32px;
+      width: 32px;
+      background: red !important;
+    }
+  }
+`
+
+const RangeInput1 = styled.input`
+  overflow: hidden;
+  display: block;
+  appearance: none;
+  max-width: 850px;
+  width: 100%;
+  margin: 0;
+  height: 32px;
+
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 32px;
+    background: linear-gradient(to right, #83BF6E, #83BF6E) 100% 50% / 100% 4px no-repeat transparent;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-thumb {
+    position: relative;
+    appearance: none !important;
+    height: 32px;
+    width: 28px;
+
+    background-image: url('/images/RangeHandle1.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    border: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    transition: background-color 150ms;
+    &::before {
+      height: 32px;
+      width: 32px;
+      background: red !important;
+    }
+  }
+`
+
 interface LocationParams {
   data: any
 }
@@ -46,6 +161,9 @@ const Section = styled(Box)`
   &:first-of-type {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
+  margin-left: auto;
+  margin-right : auto;
+  width : 60%;
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
@@ -53,18 +171,12 @@ const Section = styled(Box)`
   &:not(:first-child) {
     > ${Flex} {
       padding: 1.5rem 0;
-      &:not(:last-child) {
-        border-bottom: 1px solid #a41ff81a;
-      }
+      
     }
-  }
-  input[type='range'] {
-    -webkit-appearance: auto;
   }
 `
 const BalanceInputWrapper = styled(Flex)`
-  border: 1px solid ${({ theme }) => theme.colors.text};
-  border-radius: ${({ theme }) => theme.radii.card};
+  border-bottom: 2px solid #9DA2A6;
   padding: 5px;
   input {
     border: none;
@@ -116,6 +228,14 @@ const AdjustPositionSA = () => {
   const { balance: tokenBalance } = useTokenBalance(getAddress(TokenInfo.token.address))
   const { balance: quoteTokenBalance } = useTokenBalance(getAddress(TokenInfo.quoteToken.address))
   const lptotalSupplyNum = new BigNumber(lptotalSupply)
+
+  const targetRef = React.useRef<any>()
+  const [moveVal, setMoveVal] = useState({ width: 0, height: 0 })
+  const [margin, setMargin] = useState(0)
+
+  const targetRef1 = React.useRef<any>()
+  const [moveVal1, setMoveVal1] = useState({ width: 0, height: 0 })
+  const [margin1, setMargin1] = useState(0)
 
   let symbolName
   let lpSymbolName
@@ -249,7 +369,26 @@ const AdjustPositionSA = () => {
     Number(adjustedTradingFeesAPR) +
     Number(adjustHuskiRewardsAPR) -
     Number(adjustBorrowingInterestAPR)
-  const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
+  const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1;
+
+  useLayoutEffect(() => {
+    if (targetRef.current !== null && targetRef.current !== undefined) {
+      setMoveVal({
+        width: targetRef?.current?.offsetWidth,
+        height: targetRef?.current?.offsetHeight,
+      })
+    }
+  }, [targetPositionLeverage])
+
+  useEffect(() => {
+    const tt = ((targetPositionLeverage - 1) / 2) * moveVal.width
+    if (tt === 0) {
+      setMargin(tt - targetPositionLeverage * 9 + 10)
+    } else {
+      setMargin(tt - targetPositionLeverage * 9)
+    }
+  }, [targetPositionLeverage, moveVal.width])
+
 
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput || 0, 0, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
@@ -300,6 +439,19 @@ const AdjustPositionSA = () => {
     },
     [userTokenBalance],
   )
+  useLayoutEffect(() => {
+    if (targetRef1.current !== null && targetRef1.current !== undefined) {
+      setMoveVal1({
+        width: targetRef1?.current?.offsetWidth,
+        height: targetRef1?.current?.offsetHeight,
+      })
+      console.log("!!!!", targetRef1?.current?.offsetWidth);
+    }
+  }, [percentageToClose])
+
+  useEffect(() => {
+    setMargin1((moveVal1.width - 32) / 100 * percentageToClose);
+  }, [percentageToClose, moveVal1.width])
 
   const [isRepayDebt, setIsRepayDebt] = useState(false)
 
@@ -416,55 +568,132 @@ const AdjustPositionSA = () => {
       </Text>
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
-        <Text>
-          {t('Current Position Leverage:')} {Number(currentPositionLeverage).toPrecision(3)}x
-        </Text>
-        <Text>
-          {t('Target Position Leverage:')} {Number(targetPositionLeverage).toPrecision(3)}x
-        </Text>
+        <Flex alignItems="center" justifyContent="space-between" style={{ border: "none" }}>
+          <Text>
+            {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
+          </Text>
+          <CurrentPostionToken >
+            <Text bold>{`${TokenInfo.token.symbol.replace("wBNB", "BNB")}#${TokenInfo.pId}`}</Text>
+            <Box width={24} height={24}>
+              <TokenPairImage
+                primaryToken={TokenInfo.quoteToken}
+                secondaryToken={TokenInfo.token}
+                width={24}
+                height={24}
+                variant="inverted"
+              />
+            </Box>
+            <Box>
+              <Text style={{ whiteSpace: 'nowrap' }} bold>
+                {data.farmData.lpSymbol.replace(' LP', '').replace('WBNB', 'BNB')}
+              </Text>
+              <Text style={{ color: "#6F767E", fontSize: "12px" }}>{data.farmData.lpExchange}</Text>
+            </Box>
+          </CurrentPostionToken>
+        </Flex>
+        <Flex mt="-20px">
+          <Text bold>
+            {t('Target Position Leverage')}
+          </Text>
+          <PositionX ml="auto" color="#6F767E">
+            <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
+          </PositionX>
+        </Flex>
         <Flex>
-          <input
-            type="range"
-            min="1.0"
-            max={leverage}
-            step="0.01"
-            name="leverage"
-            value={targetPositionLeverage}
-            onChange={handleSliderChange}
-            list="leverage"
-          />
-          <datalist id="leverage">{datalistOptions}</datalist>
+          <Box style={{ width: '100%', maxWidth: "850px", marginLeft: "auto", marginRight: "auto" }}>
+            <MoveBox move={margin}>
+              <Text color="#7B3FE4" bold>
+                {targetPositionLeverage}x
+              </Text>
+            </MoveBox>
+            <Box ref={targetRef} style={{ width: '100%' }}>
+              <RangeInput
+                type="range"
+                min="1.0"
+                max={
+                  leverage < Number(currentPositionLeverage)
+                    ? new BigNumber(currentPositionLeverage).toFixed(2, 1)
+                    : leverage
+                }
+                step="0.01"
+                name="leverage"
+                value={targetPositionLeverage}
+                onChange={handleSliderChange}
+                list="leverage"
+                style={{ width: '100%' }}
+              />
+            </Box>
+            <Flex justifyContent="space-between" mt="-22px" mb="10px">
+              <div
+                className="middle"
+                style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+              />
+              {targetPositionLeverage < 1.5 ? (
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+              ) : (
+                <div
+                  className="middle"
+                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                />
+              )}
+              {targetPositionLeverage < 2 ? (
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+              ) : (
+                <div
+                  className="middle"
+                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                />
+              )}
+              {targetPositionLeverage < 2.5 ? (
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+              ) : (
+                <div
+                  className="middle"
+                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
+                />
+              )}
+              <div
+                className="middle"
+                style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
+              />
+            </Flex>
+            <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
+              {datalistOptions}
+            </datalist>
+          </Box>
         </Flex>
 
         {/* default always show add collateral */}
         {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
-              <Text>
+              <Text bold>
                 {t('You can customize your position with ')}{' '}
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(false)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  color="#7B3FE4"
                 >
-                  {t('adding collateral')}
+                  {t('Adding collateral')}
                 </Text>
               </Text>
               <Box>
-                <Text bold fontSize="2">
-                  {t(`You're repaying debt`)}
-                </Text>
+                <Flex mt="30px">
+                  <Text>{t(`You're Repaying Debt`)}</Text>
+                  <InfoIcon mt="3px" ml="3px" color="#6F767E" />
+                </Flex>
               </Box>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
-                <Text>
+                <Text bold>
                   {formatDisplayedBalance(debtValueNumber.toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
                 </Text>
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
-                  <Flex alignItems="center">
+                  <Flex alignItems="center" style={{ fontWeight: "bold" }}>
                     <Text>{(apy * 100).toFixed(2)}%</Text>
                     <ChevronRightIcon />
                     <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
@@ -476,11 +705,11 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
-                  <Text>
+                  <Text bold>
                     {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {baseTokenInPosition.toFixed(2)} {tokenValueSymbol}
                   </Text>
                 ) : (
-                  <Text>
+                  <Text bold>
                     0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                   </Text>
                 )}
@@ -489,33 +718,37 @@ const AdjustPositionSA = () => {
           ) : (
             <>
               {' '}
-              <Text>
+              <Text bold>
                 {t('You can customize your position with partially')}{' '}
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  color="#7B3FE4"
                 >
-                  {t('repay debt')}
+                  {t('Repay Debt')}
                 </Text>
               </Text>
               <Box>
-                <Flex justifyContent="space-between">
-                  <Text>{t(`You're adding collateral`)}</Text>
+                <Flex justifyContent="space-between" mt="30px" alignItems="center">
+                  <Flex mt="30px">
+                    <Text>{t(`You're adding collateral`)}</Text>
+                    <InfoIcon mt="3px" ml="3px" color="#6F767E" />
+                  </Flex>
                   <Flex>
-                    <Text>{t('Balance:')}</Text>
-                    <Text>{`${formatDisplayedBalance(
+                    <Text fontSize="12px" color="#6F767E">{t('Balance:')}</Text>
+                    <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
                       userTokenBalance,
                       tokenValue?.decimalsDigits,
                     )} ${tokenValueSymbol}`}</Text>
                   </Flex>
                 </Flex>
-                <BalanceInputWrapper alignItems="center" flex="1" padding="0">
-                  <Box width={40} height={40} mr="5px">
-                    <TokenImage token={tokenValue} width={40} height={40} />
+                <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
+                  <Box width={24} height={24} mr="5px">
+                    <TokenImage token={tokenValue} width={24} height={24} />
                   </Box>
-                  <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
-                  <Text mr="5px" small color="textSubtle">
+                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <Text mr="5px" small bold>
                     {tokenValueSymbol}
                   </Text>
                 </BalanceInputWrapper>
@@ -524,9 +757,9 @@ const AdjustPositionSA = () => {
                 <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
-                    <Text>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon />
-                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                    <Text bold>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -535,12 +768,12 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
-                  <Text>
+                  <Text bold>
                     {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
                     {quoteTokenValueSymbol}
                   </Text>
                 ) : (
-                  <Text>
+                  <Text bold>
                     0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
                   </Text>
                 )}
@@ -556,25 +789,27 @@ const AdjustPositionSA = () => {
         {targetPositionLeverage < Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
-              <Text>
+              <Text bold>
                 {t('You can customize your position with ')}{' '}
                 <Text
+                  color="#7B3FE4"
                   as="span"
                   onClick={(e) => setIsRepayDebt(false)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
                 >
-                  {t('adding collateral')}
+                  {t('Adding collateral')}
                 </Text>
               </Text>
 
               <Box>
-                <Text bold fontSize="2">
-                  {t(`You're repaying debt`)}
-                </Text>
+                <Flex mt="30px">
+                  <Text>{t(`You're repaying debt`)}</Text>
+                  <InfoIcon mt="3px" ml="3px" color="#6F767E" />
+                </Flex>
               </Box>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
-                <Text>
+                <Text bold>
                   {formatDisplayedBalance(new BigNumber(debtValueNumber).minus(UpdatedDebt).toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
                 </Text>
               </Flex>
@@ -582,9 +817,9 @@ const AdjustPositionSA = () => {
                 <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
-                    <Text>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon />
-                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                    <Text bold>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -593,13 +828,13 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
-                  <Text>
+                  <Text bold>
                     {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
                     {/* {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
                     {quoteTokenValueSymbol} */}
                   </Text>
                 ) : (
-                  <Text>
+                  <Text bold>
                     0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                   </Text>
                 )}
@@ -607,33 +842,37 @@ const AdjustPositionSA = () => {
             </>
           ) : (
             <>
-              <Text>
+              <Text bold>
                 {t('You can customize your position with partially')}{' '}
                 <Text
+                  color="#7B3FE4"
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
                 >
-                  {t('repay your debt')}
+                  {t('Repay Your Debt')}
                 </Text>
               </Text>
               <Box>
-                <Flex justifyContent="space-between">
-                  <Text>{t(`You're adding collateral`)}</Text>
+                <Flex justifyContent="space-between" mt="30px" alignItems="center">
+                  <Flex mt="30px">
+                    <Text>{t(`You're adding collateral`)}</Text>
+                    <InfoIcon mt="3px" ml="3px" color="#6F767E" />
+                  </Flex>
                   <Flex>
-                    <Text>{t('Balance:')}</Text>
-                    <Text>{`${formatDisplayedBalance(
+                    <Text fontSize="12px" color="#6F767E">{t('Balance:')}</Text>
+                    <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
                       userTokenBalance,
                       tokenValue?.decimalsDigits,
                     )} ${tokenValueSymbol}`}</Text>
                   </Flex>
                 </Flex>
-                <BalanceInputWrapper alignItems="center" flex="1" padding="0">
-                  <Box width={40} height={40} mr="5px">
+                <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
+                  <Box width={24} height={24} mr="5px">
                     <TokenImage token={tokenValue} width={40} height={40} />
                   </Box>
-                  <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
-                  <Text mr="5px" small color="textSubtle">
+                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <Text mr="5px" small bold>
                     {tokenValueSymbol}
                   </Text>
                 </BalanceInputWrapper>
@@ -642,9 +881,9 @@ const AdjustPositionSA = () => {
                 <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
-                    <Text>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon />
-                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                    <Text bold>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -653,12 +892,12 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
-                  <Text>
+                  <Text bold>
                     {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
                     {quoteTokenValueSymbol}
                   </Text>
                 ) : (
-                  <Text>
+                  <Text bold>
                     0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
                   </Text>
                 )}
@@ -674,9 +913,12 @@ const AdjustPositionSA = () => {
         {targetPositionLeverage > Number(currentPositionLeverage.toFixed(2)) ? (
           <>
             <Box>
-              <Flex justifyContent="space-between">
+
+              <Flex mt="30px">
                 <Text>{t(`You're borrowing more:`)}</Text>
+                <InfoIcon mt="3px" ml="3px" color="#6F767E" />
               </Flex>
+
               <Text>
                 {assetsBorrowed?.toFixed(2)} {symbolName}
               </Text>
@@ -685,8 +927,8 @@ const AdjustPositionSA = () => {
               <Text>{t('APY')}</Text>
               {apy ? (
                 <Flex alignItems="center">
-                  <Text>{(apy * 100).toFixed(2)}%</Text>
-                  <ChevronRightIcon />
+                  <Text bold>{(apy * 100).toFixed(2)}%</Text>
+                  <ChevronRightIcon style={{ fontWeight: "bold" }} />
                   <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
                 </Flex>
               ) : (
@@ -696,11 +938,11 @@ const AdjustPositionSA = () => {
             <Flex justifyContent="space-between">
               <Text>{t('Position Value')}</Text>
               {adjustData ? (
-                <Text>
+                <Text bold>
                   {baseTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {tokenValueSymbol}
                 </Text>
               ) : (
-                <Text>
+                <Text bold>
                   0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                 </Text>
               )}
@@ -715,47 +957,68 @@ const AdjustPositionSA = () => {
         {targetPositionLeverage === 1 ? (
           isRepayDebt ? (
             <>
-              <Text>
+              <Text bold>
                 {t('You can customize your position with')}{' '}
                 <Text
+                  color="#7B3FE4"
                   as="span"
                   onClick={(e) => setIsRepayDebt(false)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
                 >
-                  {t(' adding collateral')}
+                  {t('Adding collateral')}
                 </Text>
               </Text>
               <Box>
-                <Text bold fontSize="2">
-                  {t(`You're repaying debt`)}
-                </Text>
+                <Flex mt="30px">
+                  <Text>{t(`You're Repaying Debt`)}</Text>
+                  <InfoIcon mt="3px" ml="3px" color="#6F767E" />
+                </Flex>
               </Box>
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
-                <Text>
+                <Text bold>
                   {formatDisplayedBalance(debtValueNumber.toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
                 </Text>
               </Flex>
               <Text>{t('What percentage would you like to close? (After repay all debt)')}</Text>
-              <Flex>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={percentageToClose}
-                  onChange={(e) => setPercentageToClose(Number(e.target.value))}
-                  style={{ width: '95%' }}
-                />
-                <Text ml="auto">{percentageToClose}%</Text>
+              <Flex mt="30px">
+                <Box style={{ width: '100%', maxWidth: "850px", marginLeft: "auto", marginRight: "auto" }}>
+                  <MoveBox1 move={margin1}>
+                    <Text color="#83BF6E" bold>
+                      {percentageToClose}%
+                    </Text>
+                  </MoveBox1>
+                  <Box ref={targetRef1} style={{ width: '100%' }}>
+                    <RangeInput1
+                      type="range"
+                      min="1.0"
+                      max="100"
+                      step="0.01"
+                      name="leverage"
+                      value={percentageToClose}
+                      onChange={(e) => setPercentageToClose(Number(e.target.value))}
+                      list="leverage"
+                      style={{ width: '100%' }}
+                    />
+                  </Box>
+
+                  <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
+                    <Text>0%</Text>
+                    <Text>25%</Text>
+                    <Text>50%</Text>
+                    <Text>75%</Text>
+                    <Text>100%</Text>
+                  </datalist>
+                </Box>
+
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
-                    <Text>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon />
-                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                    <Text bold>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -764,13 +1027,13 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
-                  <Text>
+                  <Text bold>
                     {remainFarm?.toFixed(3)} {quoteTokenValueSymbol} + {remainBase?.toFixed(3)} {tokenValueSymbol}
                     {/* {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
                     {quoteTokenValueSymbol} */}
                   </Text>
                 ) : (
-                  <Text>
+                  <Text bold>
                     0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
                   </Text>
                 )}
@@ -778,33 +1041,38 @@ const AdjustPositionSA = () => {
             </>
           ) : (
             <>
-              <Text>
+              <Text bold>
                 {t('You can customize your position with ')}{' '}
                 <Text
+                  color="#7B3FE4"
+                  bold
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }}
                 >
                   {t('Partially Close Your Position')}
                 </Text>
               </Text>
               <Box>
-                <Flex justifyContent="space-between">
-                  <Text>{t(`You're adding collateral`)}</Text>
+                <Flex justifyContent="space-between" mt="30px" alignItems="center">
                   <Flex>
-                    <Text>{t('Balance:')}</Text>
-                    <Text>{`${formatDisplayedBalance(
+                    <Text>{t(`You're adding collateral`)}</Text>
+                    <InfoIcon mt="3px" ml="3px" color="#6F767E" />
+                  </Flex>
+                  <Flex>
+                    <Text fontSize="12px" color="#6F767E">{t('Balance:')}</Text>
+                    <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
                       userTokenBalance,
                       tokenValue?.decimalsDigits,
                     )} ${tokenValueSymbol}`}</Text>
                   </Flex>
                 </Flex>
-                <BalanceInputWrapper alignItems="center" flex="1" padding="0">
-                  <Box width={40} height={40} mr="5px">
-                    <TokenImage token={tokenValue} width={40} height={40} />
+                <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
+                  <Box width={24} height={24} mr="5px">
+                    <TokenImage token={tokenValue} width={24} height={24} />
                   </Box>
-                  <NumberInput placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
-                  <Text mr="5px" small color="textSubtle">
+                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <Text mr="5px" small bold>
                     {tokenValueSymbol}
                   </Text>
                 </BalanceInputWrapper>
@@ -813,9 +1081,9 @@ const AdjustPositionSA = () => {
                 <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
-                    <Text>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon />
-                    <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
+                    <Text bold>{(apy * 100).toFixed(2)}%</Text>
+                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
                   <Skeleton width="80px" height="16px" />
@@ -824,12 +1092,12 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
-                  <Text>
+                  <Text bold>
                     {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
                     {quoteTokenValueSymbol}
                   </Text>
                 ) : (
-                  <Text>
+                  <Text bold>
                     0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
                   </Text>
                 )}
@@ -840,13 +1108,22 @@ const AdjustPositionSA = () => {
             </>
           )
         ) : null}
+        <Text mx="auto" color="red" textAlign="center" mt="10px">
+          {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
+            ? t('Minimum Debt Size: %minimumDebt% %name%', {
+              minimumDebt: minimumDebt.toNumber(),
+              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+            })
+            : null) : null}
+        </Text>
         <Flex>
           <Button
+            style={{ width: "260px", height: "60px" }}
             onClick={handleConfirm}
             disabled={
-              !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) : 
-              (Number(tokenInput) === 0 ||
-              tokenInput === undefined)
+              !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) :
+                (Number(tokenInput) === 0 ||
+                  tokenInput === undefined)
               ) ||
               isPending
             }
@@ -854,20 +1131,37 @@ const AdjustPositionSA = () => {
             endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
             mx="auto"
           >
-            {isPending ? t('Confirming') : t('Confirm')}
+            {isPending ? t('Adjusting Position') : t('Adjust Position')}
           </Button>
         </Flex>
-      </Section>
-       <Text mx="auto" color="red">
-        {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
-          ? t('Minimum Debt Size: %minimumDebt% %name%', {
-              minimumDebt: minimumDebt.toNumber(),
-              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-            })
-          : null) : null}
-      </Text>
-    </Page>
+      </Section >
+
+    </Page >
   )
 }
 
 export default AdjustPositionSA
+
+const CurrentPostionToken = styled(Box)`
+        border: 1px solid #EFEFEF;
+        box-sizing: border-box;
+        border-radius: 12px;
+        width: 290px;
+        height: 80px;
+        display : flex;
+        justify-content : space-between;
+        align-items : center;
+        padding : 0px 20px;
+        `
+
+const PositionX = styled(Box)`
+        width: 78px;
+        height: 40px;
+        border: 1px solid #EFEFEF;
+        box-sizing: border-box;
+        border-radius: 10px;
+        display : flex;
+        justify-content : center;
+        align-items : center;
+
+        `
