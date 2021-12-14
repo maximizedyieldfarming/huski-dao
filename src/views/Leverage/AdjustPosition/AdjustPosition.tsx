@@ -128,12 +128,8 @@ const Section = styled(Box)`
       }
     }
   }
-  /*  > ${Flex} {
-    > div:first-child {
-      flex: 1;
-    }
-  } */
- 
+ input[type='range'].unstyledRangeInput {
+    -webkit-appearance: auto;
 `
 
 const BorrowingMoreContainer = styled(Flex)`
