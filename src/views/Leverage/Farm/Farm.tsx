@@ -131,7 +131,7 @@ interface MoveProps {
   move: number
 }
 
-const MoveBox = styled(Box)<MoveProps>`
+const MoveBox = styled(Box) <MoveProps>`
   margin-left: ${({ move }) => move}px;
   margin-top: -20px;
   margin-bottom: 10px;
@@ -264,35 +264,35 @@ const Farm = () => {
 
   const [tokenInput, setTokenInput] = useState<number | string>()
   const tokenInputRef = useRef<HTMLInputElement>()
- const handleTokenInput = useCallback(
-   (event) => {
-     // check if input is a number and includes decimals
-     if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
-       const input = event.target.value
-       const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
-       setTokenInput(finalValue)
-     } else {
-       event.preventDefault()
-     }
-   },
-   [userTokenBalance],
- )
+  const handleTokenInput = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        setTokenInput(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userTokenBalance],
+  )
 
   const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
   const quoteTokenInputRef = useRef<HTMLInputElement>()
- const handleQuoteTokenInput = useCallback(
-   (event) => {
-     // check if input is a number and includes decimals
-     if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
-       const input = event.target.value
-       const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
-       setQuoteTokenInput(finalValue)
-     } else {
-       event.preventDefault()
-     }
-   },
-   [userQuoteTokenBalance],
- )
+  const handleQuoteTokenInput = useCallback(
+    (event) => {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        setQuoteTokenInput(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userQuoteTokenBalance],
+  )
 
   const handleChange = (e) => {
     const { value } = e.target
@@ -437,6 +437,35 @@ const Farm = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
+  const bnbVaultAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+  const depositContract = useVault(bnbVaultAddress)
+  const handleDeposit = async (bnbMsgValue) => {
+
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: bnbMsgValue,
+    }
+    // setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [bnbMsgValue],
+        callOptionsBNB,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+    }
+  }
+
+
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -448,7 +477,7 @@ const Farm = () => {
 
     setIsPending(true)
     try {
-        toastInfo(t('Pending Request!'), t('Please Wait'))
+      toastInfo(t('Pending Request!'), t('Please Wait'))
       const tx = await callWithGasPrice(
         contract,
         'work',
@@ -534,6 +563,7 @@ const Farm = () => {
     }
 
     console.log({
+      radio,
       id,
       workerAddress,
       amount,
@@ -544,12 +574,22 @@ const Farm = () => {
       dataWorker,
       strategiesAddress,
       dataStrategy,
+      tokenData,
       tokenInput,
       'a': Number(tokenInput),
       quoteTokenInput,
       'b': Number(quoteTokenInput)
     })
 
+    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB') {
+      // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
+      // need mod commit name 
+      const bnbMsgValue = getDecimalAmount(new BigNumber(0), 18).toString() // "218311561760734500000" //
+      handleDeposit(bnbMsgValue)
+      // handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+    } else {
+      //   // handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+    }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -1103,9 +1143,9 @@ const Farm = () => {
         <Text mx="auto" color="red">
           {new BigNumber(farmData[3]).lt(minimumDebt)
             ? t('Minimum Debt Size: %minimumDebt% %radio%', {
-                minimumDebt: minimumDebt.toNumber(),
-                radio: radio.toUpperCase().replace('WBNB', 'BNB'),
-              })
+              minimumDebt: minimumDebt.toNumber(),
+              radio: radio.toUpperCase().replace('WBNB', 'BNB'),
+            })
             : null}
         </Text>
       ) : null}
