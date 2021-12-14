@@ -114,6 +114,7 @@ export interface SelectProps {
   width: any
   options: OptionProps[]
   onChange?: (option: OptionProps) => void
+  reset?: any
 }
 
 export interface OptionProps {
@@ -122,7 +123,7 @@ export interface OptionProps {
   icon: any
 }
 
-const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onChange, width }) => {
+const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onChange, width, reset}) => {
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -159,11 +160,9 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
     }
   }, [])
 
-  // console.log({'options': options, selectedOptionIndex });
   React.useEffect(() => {
-    // console.log("options changed", options)
     setSelectedOptionIndex(0)
-  }, [options])
+  }, [reset])
 
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize} width={width}>
