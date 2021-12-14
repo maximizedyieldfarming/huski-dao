@@ -566,11 +566,13 @@ const AdjustPosition = () => {
     // const maxReturn = ethers.constants.MaxUint256;
     const minbasetoken = Number(receive).toString()
     const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
-    console.log({ "参数": debtValueNumber, 
-    UpdatedDebtValue, UpdatedDebt,
-     convertedPositionValueAssets,
+    console.log({
+      "参数": debtValueNumber,
+      UpdatedDebtValue, UpdatedDebt,
+      convertedPositionValueAssets,
       receive, receive1, minbasetoken,
-       minbasetokenvalue })
+      minbasetokenvalue
+    })
 
     const maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
     const maxDebtRepayment = Number(maxDebtRepay).toString()
@@ -578,14 +580,15 @@ const AdjustPosition = () => {
     const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
     const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minbasetokenvalue)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
-    console.log({ 'handleConfirmConvertTo-symbolName': symbolName,
-     returnLpTokenValue, receive, id, workerAddress,
-      minbasetokenvalue, amount, loan, dataStrategy,maxDebtRepayment,
-       convertedPositionValue, partialCloseLiquidateAddress, 
-       minbasetoken, maxReturn, dataWorker,
-      'ethers.utils.parseEther(maxDebtRepayment)':ethers.utils.parseEther(maxDebtRepayment),
-      'ethers.utils.parseEther(minbasetokenvalue)':ethers.utils.parseEther(minbasetokenvalue)
-     })
+    console.log({
+      'handleConfirmConvertTo-symbolName': symbolName,
+      returnLpTokenValue, receive, id, workerAddress,
+      minbasetokenvalue, amount, loan, dataStrategy, maxDebtRepayment,
+      convertedPositionValue, partialCloseLiquidateAddress,
+      minbasetoken, maxReturn, dataWorker,
+      'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
+      'ethers.utils.parseEther(minbasetokenvalue)': ethers.utils.parseEther(minbasetokenvalue)
+    })
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
@@ -618,18 +621,26 @@ const AdjustPosition = () => {
     const id = positionId
     const amount = 0
     const loan = 0
-    const maxReturn = ethers.constants.MaxUint256;
     const minfarmtoken = Number(minimumReceivedfarm) > 0 ? Number(minimumReceivedfarm) : 0
     const abiCoder = ethers.utils.defaultAbiCoder;
     const maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
     const closeRationum = closeRatio
     const returnLpTokenValue = (lpAmount * closeRationum).toString()
     const maxDebtRepayment = Number(maxDebtRepay).toString()
+    // const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
+    const maxReturn = ethers.constants.MaxUint256;
     const minfarmtokenvalue = minfarmtoken.toString() // getDecimalAmount(new BigNumber((minfarmtoken)), 18).toString()
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minfarmtokenvalue)]);
+    // const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minfarmtokenvalue)]);
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.constants.MaxUint256, ethers.utils.parseEther(minfarmtokenvalue)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
 
-    console.log({ '这是最小化关仓': symbolName, id, workerAddress, amount, loan, convertedPositionValue, withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker })
+    console.log({
+      '这是最小化关仓': symbolName, id, returnLpTokenValue,
+      workerAddress, amount, loan, convertedPositionValue, minfarmtokenvalue, maxDebtRepayment,
+      'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
+      'ethers.utils.parseEther(minfarmtokenvalue)': ethers.utils.parseEther(minfarmtokenvalue),
+      withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker
+    })
 
     handleFarmMinimize(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }

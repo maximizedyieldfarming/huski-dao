@@ -533,22 +533,22 @@ const Farm = () => {
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
-    // console.log({
-    //   id,
-    //   workerAddress,
-    //   amount,
-    //   loan,
-    //   AssetsBorrowed,
-    //   maxReturn,
-    //   farmingTokenAmount,
-    //   dataWorker,
-    //   strategiesAddress,
-    //   dataStrategy,
-    //   tokenInput,
-    //   'a': Number(tokenInput),
-    //   quoteTokenInput,
-    //   'b': Number(quoteTokenInput)
-    // })
+    console.log({
+      id,
+      workerAddress,
+      amount,
+      loan,
+      AssetsBorrowed,
+      maxReturn,
+      farmingTokenAmount,
+      dataWorker,
+      strategiesAddress,
+      dataStrategy,
+      tokenInput,
+      'a': Number(tokenInput),
+      quoteTokenInput,
+      'b': Number(quoteTokenInput)
+    })
 
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
