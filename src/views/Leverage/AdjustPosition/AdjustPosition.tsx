@@ -563,7 +563,7 @@ const AdjustPosition = () => {
     const id = positionId
     const amount = 0
     const loan = 0;
-    const maxReturn = ethers.constants.MaxUint256;
+    // const maxReturn = ethers.constants.MaxUint256;
     const minbasetoken = Number(receive).toString()
     const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
     console.log({ "参数": debtValueNumber, 
@@ -575,6 +575,7 @@ const AdjustPosition = () => {
     const maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
     const maxDebtRepayment = Number(maxDebtRepay).toString()
     const abiCoder = ethers.utils.defaultAbiCoder;
+    const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
     const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minbasetokenvalue)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
     console.log({ 'handleConfirmConvertTo-symbolName': symbolName,
