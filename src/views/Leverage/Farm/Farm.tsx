@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react'
-import { useParams, useLocation } from 'react-router'
+import { useParams, useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
 import { hexZeroPad } from '@ethersproject/bytes'
 import {
@@ -217,6 +217,7 @@ const Farm = () => {
   const {
     state: { tokenData: data, selectedLeverage, selectedBorrowing },
   } = useLocation<LocationParams>()
+  const history = useHistory()
 
   const [tokenData, setTokenData] = useState(data)
   const quoteTokenName = tokenData?.TokenInfo?.quoteToken?.symbol
@@ -488,6 +489,7 @@ const Farm = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your farm was successfull'))
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)

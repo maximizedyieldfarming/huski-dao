@@ -10,6 +10,7 @@ import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
 import { useWeb3React } from '@web3-react/core'
+import { useHistory } from 'react-router-dom'
 import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
@@ -54,6 +55,7 @@ const ConverTo = ({ data }) => {
   const vaultContract = useVault(tokenVaultAddress)
   const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
+  const history = useHistory()
 
   let symbolName
   let tokenValue
@@ -134,6 +136,7 @@ const ConverTo = ({ data }) => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your position was closed successfully'))
+        history.push('/farms')
       }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))

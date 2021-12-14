@@ -252,7 +252,7 @@ const Deposit: React.FC<DepositProps> = ({
             fontWeight="bold"
             fontSize="16px"
             style={{ height: '100%' }}
-            onClick={() => history.goBack()}
+            onClick={() => history.push('/lend')}
           >
             {t('Back')}
           </Text>
@@ -276,7 +276,7 @@ const Deposit: React.FC<DepositProps> = ({
             isLoading={isApproving}
             endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           >
-            {isPending ? t('Approving') : t('Approve')}
+            {isApproving ? t('Approving') : t('Approve')}
           </Button>
         )}
         <Button

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { useParams, useLocation } from 'react-router'
+import { useParams, useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
     Box,
@@ -149,6 +149,7 @@ const FarmSA = () => {
     const {
         state: { singleData: data, marketStrategy: selectedStrategy },
     } = useLocation<LocationParams>()
+    const history = useHistory()
 
     const singleFarm = data
     console.info('singleFarm', singleFarm)
@@ -381,8 +382,8 @@ const FarmSA = () => {
             )
             const receipt = await tx.wait()
             if (receipt.status) {
-
                 toastSuccess(t('Successful!'), t('Your farm was successfull'))
+                history.push('/singleAssets')
             }
         } catch (error) {
 

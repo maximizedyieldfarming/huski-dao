@@ -130,6 +130,7 @@ const Section = styled(Box)`
   }
  input[type='range'].unstyledRangeInput {
     -webkit-appearance: auto;
+    }
 `
 
 const BorrowingMoreContainer = styled(Flex)`
