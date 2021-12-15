@@ -19,10 +19,9 @@ import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getAddress } from 'utils/addressHelpers'
+import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { BnbIcon, BtcbIcon, BusdIcon } from 'assets'
 import Select from 'components/Select/Select'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
@@ -409,7 +408,6 @@ const Farm = () => {
 
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
-  // const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
   const { borrowingInterest } = useFarmsWithToken(tokenData, radio)
 
   const getApr = (lvg) => {
@@ -436,7 +434,7 @@ const Farm = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
-  const bnbVaultAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+  const bnbVaultAddress = getWbnbAddress()
   const depositContract = useVault(bnbVaultAddress)
   const handleDeposit = async (bnbMsgValue) => {
 
