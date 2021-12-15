@@ -160,8 +160,8 @@ const StakeRow = ({ tokenData }) => {
   const { totalToken, totalSupply, vaultDebtVal, totalValueStaked } = tokenData
   // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
   const { isDark } = useTheme()
-  const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance).toJSON()
-  const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance)).toJSON()
+  const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance)
+  const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance))
   const reward = new BigNumber(tokenData?.userData?.earnings).div(DEFAULT_TOKEN_DECIMAL)
   // const userTokenBalanceIbStaked = getBalanceAmount(
   //   useTokenBalance(getAddress(tokenData?.token.address)).balance,
@@ -198,7 +198,7 @@ const StakeRow = ({ tokenData }) => {
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
         setStakeAmount(finalValue)
       } else {
         event.preventDefault()
@@ -208,7 +208,7 @@ const StakeRow = ({ tokenData }) => {
   )
 
   const setStakeAmountToMax = () => {
-    setStakeAmount(userTokenBalance)
+    setStakeAmount(userTokenBalance.toString())
   }
 
   const handleStake = async (convertedStakeAmount: BigNumber) => {
@@ -250,7 +250,7 @@ const StakeRow = ({ tokenData }) => {
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userStakedBalance) ? userStakedBalance : input
+        const finalValue = new BigNumber(input).gt(userStakedBalance) ? userStakedBalance.toString() : input
         setUnstakeAmount(finalValue)
       } else {
         event.preventDefault()
@@ -260,7 +260,7 @@ const StakeRow = ({ tokenData }) => {
   )
 
   const setUnstakeAmountToMax = () => {
-    setUnstakeAmount(userStakedBalance)
+    setUnstakeAmount(userStakedBalance.toString())
   }
 
   const handleUnStake = async (convertedStakeAmount: BigNumber) => {

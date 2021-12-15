@@ -203,39 +203,35 @@ const FarmSA = () => {
 
     const { balance: bnbBalance } = useGetBnbBalance()
     const { balance: tokenBalance } = useTokenBalance(getAddress(selectedToken?.address))
-    const userTokenBalance = Number(
-        getBalanceAmount(selectedToken.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance).toJSON(),
-    )
+    const userTokenBalance = getBalanceAmount(selectedToken.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance)
+    
 
-    const [inputValue, setInputValue] = useState<number | string>('')
+    const [inputValue, setInputValue] = useState<string>()
     const [buttonIndex, setButtonIndex] = useState(null)
-    const handleInput = useCallback(
-        (event) => {
-            // check if input is a number and includes decimals
-            if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
-                const input = event.target.value
-                // const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
-                const finalValue = input
-                setInputValue(finalValue)
-            } else {
-                event.preventDefault()
-            }
-            setButtonIndex(null)
-        },
-        [],
-    )
+    const handleInput = useCallback((event) => {
+      // check if input is a number and includes decimals
+      if (event.target.value.match(/^\d*\.?\d*$/) || event.target.value === '') {
+        const input = event.target.value
+        // const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
+        const finalValue = input
+        setInputValue(finalValue)
+      } else {
+        event.preventDefault()
+      }
+      setButtonIndex(null)
+    }, [])
     const setInputToFraction = (index) => {
         if (index === 0) {
-            setInputValue(userTokenBalance * 0.25)
+            setInputValue(userTokenBalance.times(0.25).toString())
             setButtonIndex(index)
         } else if (index === 1) {
-            setInputValue(userTokenBalance * 0.5)
+            setInputValue(userTokenBalance.times(0.5).toString())
             setButtonIndex(index)
         } else if (index === 2) {
-            setInputValue(userTokenBalance * 0.75)
+            setInputValue(userTokenBalance.times(0.75).toString())
             setButtonIndex(index)
         } else if (index === 3) {
-            setInputValue(userTokenBalance)
+            setInputValue(userTokenBalance.toString())
             setButtonIndex(index)
         }
     }
@@ -317,19 +313,19 @@ const FarmSA = () => {
 
     if (marketStrategy.includes('bull')) { // bull === 2x long
         if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
-            tokenInputValue = inputValue;
+            tokenInputValue = inputValue || 0;
             quoteTokenInputValue = 0
         } else {
             tokenInputValue = 0
-            quoteTokenInputValue = inputValue;
+            quoteTokenInputValue = inputValue || 0;
         }
     } else {
         // eslint-disable-next-line no-lonely-if
         if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
             tokenInputValue = 0
-            quoteTokenInputValue = inputValue;
+            quoteTokenInputValue = inputValue || 0;
         } else {
-            tokenInputValue = inputValue;
+            tokenInputValue = inputValue || 0;
             quoteTokenInputValue = 0
         }
     }
@@ -441,7 +437,7 @@ const FarmSA = () => {
         if (marketStrategy.includes('bull')) { // bull === 2x long
             console.info('1111bull')
             if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {  // token is farm token
-                tokenInputValue = inputValue
+                tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
                 dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
@@ -449,22 +445,22 @@ const FarmSA = () => {
             } else {
                 console.info('!== tokenName')
                 tokenInputValue = 0;
-                quoteTokenInputValue = inputValue
-                farmingTokenAmount = Number(quoteTokenInputValue).toString()
+                quoteTokenInputValue = inputValue || 0
+                farmingTokenAmount = (quoteTokenInputValue)?.toString()
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
                 dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
                 dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
 
             contract = quoteTokenVaultContract
-            amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+            amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
             workerAddress = singleFarm?.QuoteTokenInfo.address
 
         } else { // 2x short || 3x short
             console.info('2x short || 3x short', selectedToken.symbol)
             if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
                 console.info('===tokenname',tokenName)
-                tokenInputValue = inputValue
+                tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
                 dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
@@ -472,14 +468,14 @@ const FarmSA = () => {
             } else {
                 console.info('!!!==tokenname',tokenName)
                 tokenInputValue = 0;
-                quoteTokenInputValue = inputValue
-                farmingTokenAmount = Number(quoteTokenInputValue).toString()
+                quoteTokenInputValue = inputValue || 0
+                farmingTokenAmount = (quoteTokenInputValue)?.toString()
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
                 dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
             contract = vaultContract
-            amount = getDecimalAmount(new BigNumber(Number(tokenInputValue)), 18).toString()
+            amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
             workerAddress = singleFarm?.TokenInfo.address
         }
 
@@ -935,7 +931,7 @@ const FarmSA = () => {
                                 <ButtonMenu
                                     onItemClick={setInputToFraction}
                                     activeIndex={buttonIndex}
-                                    disabled={Number(userTokenBalance) === 0}
+                                    disabled={userTokenBalance.eq(0)}
                                 >
                                     <ButtonMenuItem>25%</ButtonMenuItem>
                                     <ButtonMenuItem>50%</ButtonMenuItem>
@@ -986,8 +982,8 @@ const FarmSA = () => {
                                     disabled={
                                         !account ||
                                         !isApproved ||
-                                        (Number(inputValue) === 0 && Number(inputValue) === 0) ||
-                                        (inputValue === undefined && inputValue === undefined) ||
+                                       Number(inputValue) === 0 ||
+                                       inputValue === undefined ||
                                         isPending
                                     }
                                 >
@@ -1006,8 +1002,10 @@ const FarmSA = () => {
                                 </Button>
                             )}
                         </Flex>
-                    </Section>
+                        <Flex>
                     {inputValue ? <Text mx="auto" color='red'>{new BigNumber(farmData[3]).lt(minimumDebt) ? t('Minimum Debt Size: %minimumDebt% %tokenName%', { minimumDebt: minimumDebt.toNumber(), tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB') }) : null}</Text> : null}
+                        </Flex>
+                    </Section>
                 </Flex>
             </SectionWrapper >
         </Page >
@@ -1015,3 +1013,7 @@ const FarmSA = () => {
 }
 
 export default FarmSA
+
+// NOTE: javascript Number function and BigNumber.js toNumber() function might return a different value than the actual value
+// if that value is bigger than MAX_SAFE_INTEGER. so needs to be careful when doing number operations.
+// https://stackoverflow.com/questions/35727608/why-does-number-return-wrong-values-with-very-large-integers

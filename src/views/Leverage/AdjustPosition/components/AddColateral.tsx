@@ -49,31 +49,23 @@ const AddColateral = ({
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        // const finalValue = Number(input) > Number(userQuoteTokenBalance) ? Number(userQuoteTokenBalance) : input
-        setQuoteTokenInput(input)
+        const finalValue = new BigNumber(input).gt(userQuoteTokenBalance) ? input : input
+        setQuoteTokenInput(finalValue)
       } else {
         event.preventDefault()
       }
     },
-    [setQuoteTokenInput],
+    [setQuoteTokenInput, userQuoteTokenBalance],
   )
-  const setQuoteTokenInputToFraction = (e) => {
+   const setQuoteTokenInputToFraction = (e: any) => {
     if (e.target.innerText === '25%') {
-      setActive1(0)
-      const value = userQuoteTokenBalance.toNumber() * 0.25
-      setQuoteTokenInput(new BigNumber(value).toNumber())
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
-      setActive1(1)
-      const value = userQuoteTokenBalance.toNumber() * 0.5
-      setQuoteTokenInput(new BigNumber(value).toNumber())
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.5).toString())
     } else if (e.target.innerText === '75%') {
-      setActive1(2)
-      const value = userQuoteTokenBalance.toNumber() * 0.75
-      setQuoteTokenInput(new BigNumber(value).toNumber())
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.75).toString())
     } else if (e.target.innerText === '100%') {
-      const value = userQuoteTokenBalance.toNumber()
-      setActive1(3)
-      setQuoteTokenInput(new BigNumber(value).toNumber())
+      setQuoteTokenInput(userQuoteTokenBalance.toString())
     }
   }
 
@@ -82,32 +74,24 @@ const AddColateral = ({
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        // const finalValue = Number(input) > Number(userTokenBalance) ? Number(userTokenBalance) : input
-        setTokenInput(input)
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? input : input
+        setTokenInput(finalValue)
       } else {
         event.preventDefault()
       }
     },
-    [setTokenInput],
+    [setTokenInput, userTokenBalance],
   )
 
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setActive2(0)
-      const value = userTokenBalance.toNumber() * 0.25
-      setTokenInput(new BigNumber(value).toNumber())
+      setTokenInput(userTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
-      setActive2(1)
-      const value = userTokenBalance.toNumber() * 0.5
-      setTokenInput(new BigNumber(value).toNumber())
+      setTokenInput(userTokenBalance.times(0.5).toString())
     } else if (e.target.innerText === '75%') {
-      setActive2(2)
-      const value = userTokenBalance.toNumber() * 0.75
-      setTokenInput(new BigNumber(value).toNumber())
+      setTokenInput(userTokenBalance.times(0.75).toString())
     } else if (e.target.innerText === '100%') {
-      setActive2(3)
-      const value = userTokenBalance.toNumber()
-      setTokenInput(new BigNumber(value).toNumber())
+      setTokenInput(userTokenBalance.toString())
     }
   }
   // cleanup input when changing between repay debt and add collateral

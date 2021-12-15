@@ -202,7 +202,7 @@ const AdjustPositionSA = () => {
   }
 
   // const marketStrategy = 'bull' // TODO: get from data
-  const [tokenInput, setTokenInput] = useState<number | string>()
+  const [tokenInput, setTokenInput] = useState<string>()
   // const [quoteTokenInput, setQuoteTokenInput] = useState(0)
 
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
@@ -277,12 +277,12 @@ const AdjustPositionSA = () => {
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = vaultContract
-    tokenInputValue = formatNumber(Number(tokenInput))
+    tokenInputValue = tokenInput || 0
     quoteTokenInputValue = 0 // formatNumber(quoteTokenInput)
-    userTokenBalance = getBalanceAmount(tokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance).toNumber()
+    userTokenBalance = getBalanceAmount(tokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance)
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
-    ).toNumber()
+    )
     minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   } else {
     //  console.log('case 2')
@@ -305,11 +305,11 @@ const AdjustPositionSA = () => {
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = quoteTokenVaultContract
     tokenInputValue = 0 // formatNumber(quoteTokenInput)
-    quoteTokenInputValue = formatNumber(Number(tokenInput))
+    quoteTokenInputValue = tokenInput || 0
     userTokenBalance = getBalanceAmount(
       tokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
-    ).toNumber()
-    userQuoteTokenBalance = getBalanceAmount(quoteTokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance).toNumber()
+    )
+    userQuoteTokenBalance = getBalanceAmount(quoteTokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance)
     minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   }
   // console.info('use this', {
@@ -388,7 +388,7 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage, moveVal.width])
 
 
-  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput || 0, 0, symbolName)
+  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, 0, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
   let assetsBorrowed
   let baseTokenInPosition
@@ -430,7 +430,7 @@ const AdjustPositionSA = () => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? input : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? input : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -498,8 +498,8 @@ const AdjustPositionSA = () => {
 
   const handleConfirm = async () => {
     const id = positionId
-    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '') // 815662939548462.2--- >  815662939548462
+    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g,'') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
@@ -512,7 +512,7 @@ const AdjustPositionSA = () => {
     // base token is base token
     if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
       // single base token
-      if (Number(tokenInputValue || 0) !== 0 && Number(quoteTokenInputValue || 0) === 0) {
+      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
@@ -525,10 +525,10 @@ const AdjustPositionSA = () => {
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
     } else {
       // farm token is base token
-      if (Number(tokenInputValue || 0) !== 0 && Number(quoteTokenInputValue || 0) === 0) {
+      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('farm + single + token input ')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
@@ -541,7 +541,7 @@ const AdjustPositionSA = () => {
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
     }
 
     console.log({
@@ -748,7 +748,7 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
                 <Text bold>
-                  {formatDisplayedBalance(debtValueNumber.toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
+                  {formatDisplayedBalance(debtValueNumber, tokenValue?.decimalsDigits)} {tokenValueSymbol}
                 </Text>
               </Flex>
               <Flex justifyContent="space-between">
@@ -1038,7 +1038,7 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
                 <Text bold>
-                  {formatDisplayedBalance(debtValueNumber.toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
+                  {formatDisplayedBalance(debtValueNumber, tokenValue?.decimalsDigits)} {tokenValueSymbol}
                 </Text>
               </Flex>
               <Text>{t('What percentage would you like to close? (After repay all debt)')}</Text>
