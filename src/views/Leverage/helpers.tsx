@@ -79,7 +79,7 @@ export const getTvl = (farm: LeverageFarm) => {
 }
 
 export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput, quoteTokenInput, tokenName?: string) => {
-  const { tokenAmountTotal, quoteTokenAmountTotal, TokenInfo } = farm
+  const { tokenAmountTotal, quoteTokenAmountTotal, TokenInfo, lptotalSupply } = farm
 
   let tokenAmountTotalNum
   let quoteTokenAmountTotalNum
@@ -96,8 +96,10 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
-  // console.log({ leverage, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
-  const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
+
+  const lptotalSupplyNum = new BigNumber(lptotalSupply).dividedBy(BIG_TEN.pow(18)).toNumber()
+  // console.log({ leverage, lptotalSupplyNum, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
+  const farmdata = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNum)
   // console.info('======farmdata======', farmdata);
   return farmdata
 }
@@ -123,6 +125,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   }
 
   const lptotalSupplyNum = new BigNumber(lptotalSupply)
+  const lptotalSupplyNumber = new BigNumber(lptotalSupply).dividedBy(BIG_TEN.pow(18)).toNumber()
   const baseTokenAmount = Number(tokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
   const farmTokenAmount = Number(quoteTokenAmountTotalNum) / Number(lptotalSupplyNum) * lpAmount
 
@@ -149,48 +152,38 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
 
   if (leverage.toPrecision(3) >= currentLeverage.toPrecision(3)) {// right
 
-    // const farmdata1 = dichotomybasetoken(leverage, tradeFee, 0, 0, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
-    // console.info('======adjust===right==1=', farmdata1);
-
-    // farmingData = farmdata1;
-    // if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
-    //   const farmdata2 = dichotomyfarmingtoken(leverage, tradeFee, 0, 0, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
-    //   console.info('======adjust===right==2=', farmdata2);
-    //   farmingData = farmdata2;
-    // }
-
     tokenInputNum = 0
     quoteTokenInputNum = 0
 
-    const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
-    console.info('======adjust===aa===', farmdata1);
+    const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNumber)
+    console.info('======adjust===farmdata1===', farmdata1);
 
-    const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
-    console.info('======adjust===111==aa=', farmdata2);
+    const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNumber)
+    console.info('======adjust===farmdata2=', farmdata2);
 
 
     if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0 && farmdata2[0] === 0 && farmdata2[1][3] === 0 && farmdata2[2] === 0) {
       console.info('==zijinbuzu')
-      const { data: fData, repayDebt } = adjustRun(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE)
+      const { data: fData, repayDebt } = adjustRun(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, lptotalSupplyNumber)
       farmingData = fData;
       repayDebtData = repayDebt
 
     } else if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
-      console.info('==yong   farm token dichotomyfarmingtoken')
+      console.info('==use   farm token dichotomyfarmingtoken')
       farmingData = farmdata2;
     } else {
-      console.info('yong   base token  dichotomybasetoken')
+      console.info('use   base token  dichotomybasetoken')
       farmingData = farmdata1;
     }
 
 
   } else {// left
 
-    const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false)
+    const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, lptotalSupplyNumber)
     console.info('======adjust======', farmdata1);
     farmingData = farmdata1;
     if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
-      const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false)
+      const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, lptotalSupplyNumber)
       console.info('======adjust===111===', farmdata2);
       farmingData = farmdata2;
       if (farmdata2[1][10] > leverage) {
@@ -198,7 +191,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
         const farmingtokenlpnew = quoteTokenInputNum - farmdata2[0] + farmdata2[1][7]
         const basetokenlpborrowednew = basetokenlpborrowed + farmdata2[1][3]
 
-        const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE)
+        const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, lptotalSupplyNumber)
 
         repayDebtData = repayDebt
         console.info('=====999===');
@@ -209,10 +202,8 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
       const basetokenlpnew = tokenInputNum + farmdata1[1][3] - farmdata1[0] + farmdata1[1][6]
       const farmingtokenlpnew = farmdata1[1][2] + quoteTokenInputNum + farmdata1[1][7]
       const basetokenlpborrowednew = basetokenlpborrowed + farmdata1[1][3]
-      const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE)
+      const repayDebt = adjustPositionRepayDebt(basetokenlpnew, farmingtokenlpnew, basetokenlpborrowednew, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), leverage, ClosePositionPercentage, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, lptotalSupplyNumber)
 
-      // const { data: fData, repayDebt } = adjustRun(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
-      // farmingData = fData;
       repayDebtData = repayDebt
       console.info('======333444=');
     } else {
@@ -224,31 +215,6 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   }
 
   console.log({ farmingData, repayDebtData })
-
-
-
-
-
-  // const farmdata1 = dichotomybasetoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
-  // console.info('======adjust======', farmdata1);
-
-  // const farmdata2 = dichotomyfarmingtoken(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
-  // console.info('======adjust===111===', farmdata2);
-
-
-  // if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0 && farmdata2[0] === 0 && farmdata2[1][3] === 0 && farmdata2[2] === 0) {
-  //   console.info('==zijinbuzu')
-  //   const { data: fData, repayDebt } = adjustRun(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee)
-  //   farmingData = fData;
-  //   repayDebtData = repayDebt
-
-  // } else if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
-  //   console.info('==yong   farm token dichotomyfarmingtoken')
-  //   farmingData = farmdata2;
-  // } else {
-  //   console.info('yong   base token  dichotomybasetoken')
-  //   farmingData = farmdata1;
-  // }
 
 
   return { farmingData, repayDebtData }

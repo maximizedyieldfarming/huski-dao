@@ -503,10 +503,12 @@ const Farm = () => {
 
   const handleConfirm = async () => {
     const id = 0
-    const AssetsBorrowed = farmData ? farmData[3] : 0
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
-    const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
+    const AssetsBorrowed = farmData ? farmData[3] : 0
+    const minLPAmountValue = farmData ? farmData[12] : 0
+    const minLPAmount = minLPAmountValue.toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+    const maxReturn = 0
     let amount
     let workerAddress
     let farmingTokenAmount
@@ -550,13 +552,13 @@ const Farm = () => {
         console.info('farm + single + quote token input ')
         farmingTokenAmount = Number(tokenInput || 0).toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
         farmingTokenAmount = Number(tokenInput || 0).toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
@@ -566,6 +568,8 @@ const Farm = () => {
 
     console.log({
       radio,
+      minLPAmount,
+      "ethers.utils.parseEther(minLPAmount)": ethers.utils.parseEther(minLPAmount),
       id,
       workerAddress,
       amount,
@@ -586,11 +590,8 @@ const Farm = () => {
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB') {
       // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
       // need mod commit name 
-      const bnbMsgValue = getDecimalAmount(new BigNumber(0), 18).toString() // "218311561760734500000" //
+      const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
       handleDeposit(bnbMsgValue)
-      // handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
-    } else {
-      //   // handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
