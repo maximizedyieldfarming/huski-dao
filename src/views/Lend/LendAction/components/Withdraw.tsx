@@ -126,7 +126,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
     } finally {
       setIsPending(false)
-      setAmount(0)
+      setAmount('')
     }
   }
 
@@ -218,7 +218,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             fontWeight="bold"
             fontSize="16px"
             style={{ height: '100%' }}
-            onClick={() => history.goBack()}
+            onClick={() => history.push('/lend')}
           >
             {t('Back')}
           </Text>

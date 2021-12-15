@@ -124,6 +124,7 @@ const ActivePositionsRow = ({ data }) => {
           pool={lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
           quoteToken={quoteTokenValue}
           token={tokenValue}
+          exchange={data?.farmData.lpExchange}
         />
         {pathname.includes('singleAssets') ? <StrategyCell strategy={null} /> : null}
         <PositionValueCell position={totalPositionValueInToken} name={symbolName} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useHistory } from 'react-router-dom'
 import { Box, Flex, Text, useTooltip, InfoIcon, Skeleton, Button, AutoRenewIcon } from 'husky-uikit1.0'
 import useToast from 'hooks/useToast'
 import { useVault } from 'hooks/useContract'
@@ -12,7 +12,6 @@ import { BIG_TEN } from 'utils/bigNumber'
 import { ethers } from 'ethers'
 import { TokenPairImage } from 'components/TokenImage'
 import { ArrowDownIcon } from 'assets'
-import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -58,6 +57,7 @@ const ClosePositionSA = () => {
   const {
     state: { data },
   } = useLocation<LocationParams>()
+  const history = useHistory()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
@@ -85,7 +85,6 @@ const ClosePositionSA = () => {
 
   console.log(data);
 
-  const history = useHistory()
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenVaultAddress = TokenInfo?.vaultAddress
   const quoteTokenVaultAddress = QuoteTokenInfo?.vaultAddress
@@ -169,6 +168,7 @@ const ClosePositionSA = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your position was closed successfully'))
+        history.push(`/singleAssets`)
       }
     } catch (error) {
       console.error('error', error)

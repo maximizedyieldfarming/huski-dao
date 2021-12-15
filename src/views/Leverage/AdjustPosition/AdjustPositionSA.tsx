@@ -341,10 +341,8 @@ const AdjustPositionSA = () => {
   const lvgAdjust = new BigNumber(baseTokenAmount)
     .times(2)
     .div(new BigNumber(baseTokenAmount).times(2).minus(new BigNumber(debtValueNumber)))
-  const currentPositionLeverage = lvgAdjust.toNumber()
-  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(
-    Number(currentPositionLeverage.toPrecision(3)),
-  )
+  const currentPositionLeverage = Number(lvgAdjust.toFixed(2, 1)) // lvgAdjust.toNumber()
+  const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
   // for apr
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
@@ -395,6 +393,7 @@ const AdjustPositionSA = () => {
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
+  let closeRatioValue // the ratio of position to close
 
   let UpdatedDebt
   if (adjustData?.[3] === 0 && adjustData?.[11] === 0) {
@@ -403,19 +402,19 @@ const AdjustPositionSA = () => {
     baseTokenInPosition = repayDebtData?.[2]
     farmingTokenInPosition = repayDebtData?.[3]
     UpdatedDebt = Number(debtValueNumber) - repayDebtData?.[4]
-
+    closeRatioValue = repayDebtData?.[8]
   } else {
     assetsBorrowed = adjustData?.[3]
     baseTokenInPosition = adjustData?.[8]
     farmingTokenInPosition = adjustData?.[9]
     UpdatedDebt = targetPositionLeverage >= currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
-
+    closeRatioValue = repayDebtData?.[8]
   }
 
 
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceImpactClose, tradingFeesClose, remainLeverage, AmountToTrade, willReceive, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm } = getAdjustPositionRepayDebt(
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceImpactClose, tradingFeesClose, remainLeverage, AmountToTrade, willReceive, minimumReceived, closeRatio, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
     targetPositionLeverage,
@@ -493,14 +492,14 @@ const AdjustPositionSA = () => {
       toastError('Unsuccessful', 'Something went wrong your request. Please try again...')
     } finally {
       setIsPending(false)
-      setTokenInput(0)
+      setTokenInput('')
     }
   }
 
   const handleConfirm = async () => {
     const id = positionId
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
@@ -518,9 +517,10 @@ const AdjustPositionSA = () => {
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      } else if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
-        console.info('base + single + quote token input ')
-        farmingTokenAmount = quoteTokenInputValue || 0
+      } else {
+        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
+        console.info('base + single + quote token input ---')
+        farmingTokenAmount = quoteTokenInputValue || '0'
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -533,9 +533,10 @@ const AdjustPositionSA = () => {
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
-      } else if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
+      } else {
+        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
         console.info('farm + single +1 quote token input ')
-        farmingTokenAmount = quoteTokenInputValue || 0
+        farmingTokenAmount = quoteTokenInputValue || '0'
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -561,6 +562,66 @@ const AdjustPositionSA = () => {
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
+  const handleFarmConvertTo = async (id, address, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount,
+    }
+    setIsPending(true)
+    try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions,)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  const handleConfirmConvertTo = async () => {
+    let receive = 0;
+    let closeRationum;
+    if (Number(targetPositionLeverage) === 1) {
+      receive = Number(minimumReceived)
+      closeRationum = closeRatio
+    } else {
+      receive = 0
+      closeRationum = closeRatioValue
+    }
+    const returnLpTokenValue = (lpAmount * closeRationum).toString()
+    const id = positionId
+    const amount = 0
+    const loan = 0;
+    const minbasetoken = Number(receive).toString()
+    const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
+    const maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
+    const maxDebtRepayment = Number(maxDebtRepay).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minbasetokenvalue)]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
+    console.log({
+      'handleConfirmConvertTo-symbolName': symbolName,
+      returnLpTokenValue, receive, id, workerAddress,
+      minbasetokenvalue, amount, loan, dataStrategy, maxDebtRepayment,
+      partialCloseLiquidateAddress,
+      minbasetoken, maxReturn, dataWorker,
+      'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
+      'ethers.utils.parseEther(minbasetokenvalue)': ethers.utils.parseEther(minbasetokenvalue)
+    })
+    handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
+
+
   return (
     <Page>
       <Text fontWeight="bold" fontSize="3" mx="auto">
@@ -570,7 +631,7 @@ const AdjustPositionSA = () => {
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
         <Flex alignItems="center" justifyContent="space-between" style={{ border: "none" }}>
           <Text>
-            {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
+            {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
           <CurrentPostionToken >
             <Text bold>{`${TokenInfo.token.symbol.replace("wBNB", "BNB")}#${TokenInfo.pId}`}</Text>
@@ -664,7 +725,7 @@ const AdjustPositionSA = () => {
         </Flex>
 
         {/* default always show add collateral */}
-        {targetPositionLeverage === Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
+        {targetPositionLeverage === currentPositionLeverage && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
               <Text bold>
@@ -786,7 +847,7 @@ const AdjustPositionSA = () => {
         ) : null}
 
         {/* if current >= max lvg, can only go left choose between add collateral or repay debt */}
-        {targetPositionLeverage < Number(currentPositionLeverage.toFixed(2)) && targetPositionLeverage !== 1 ? (
+        {targetPositionLeverage < currentPositionLeverage && targetPositionLeverage !== 1 ? (
           isRepayDebt ? (
             <>
               <Text bold>
@@ -910,7 +971,7 @@ const AdjustPositionSA = () => {
         ) : null}
 
         {/* if target > current */}
-        {targetPositionLeverage > Number(currentPositionLeverage.toFixed(2)) ? (
+        {targetPositionLeverage > currentPositionLeverage ? (
           <>
             <Box>
 
@@ -939,11 +1000,11 @@ const AdjustPositionSA = () => {
               <Text>{t('Position Value')}</Text>
               {adjustData ? (
                 <Text bold>
-                  {baseTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {tokenValueSymbol}
+                  {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
                 </Text>
               ) : (
                 <Text bold>
-                  0.00 {quoteTokenValueSymbol} + 0.00 {tokenValueSymbol}
+                  0.00 {tokenValueSymbol} + 0.00 {quoteTokenValueSymbol}
                 </Text>
               )}
             </Flex>
@@ -1120,13 +1181,13 @@ const AdjustPositionSA = () => {
           <Button
             style={{ width: "260px", height: "60px" }}
             onClick={handleConfirm}
-            disabled={
-              !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) :
-                (Number(tokenInput) === 0 ||
-                  tokenInput === undefined)
-              ) ||
-              isPending
-            }
+            // disabled={
+            //   !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) : 
+            //   (Number(tokenInput) === 0 ||
+            //   tokenInput === undefined)
+            //   ) ||
+            //   isPending
+            // }
             isLoading={isPending}
             endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
             mx="auto"
@@ -1134,9 +1195,16 @@ const AdjustPositionSA = () => {
             {isPending ? t('Adjusting Position') : t('Adjust Position')}
           </Button>
         </Flex>
-      </Section >
-
-    </Page >
+      </Section>
+      <Text mx="auto" color="red">
+        {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
+          ? t('Minimum Debt Size: %minimumDebt% %name%', {
+            minimumDebt: minimumDebt.toNumber(),
+            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+          })
+          : null) : null}
+      </Text>
+    </Page>
   )
 }
 

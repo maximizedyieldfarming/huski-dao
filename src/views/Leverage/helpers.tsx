@@ -86,17 +86,17 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   let tokenInputNum
   let quoteTokenInputNum
   if (TokenInfo?.token?.symbol?.toLowerCase() === tokenName?.toLowerCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
-    tokenInputNum = Number(tokenInput);
-    quoteTokenInputNum = Number(quoteTokenInput);
+    tokenInputNum = Number(tokenInput || 0);
+    quoteTokenInputNum = Number(quoteTokenInput || 0);
     tokenAmountTotalNum = tokenAmountTotal;
     quoteTokenAmountTotalNum = quoteTokenAmountTotal;
   } else {
-    tokenInputNum = Number(quoteTokenInput);
-    quoteTokenInputNum = Number(tokenInput);
+    tokenInputNum = Number(quoteTokenInput || 0);
+    quoteTokenInputNum = Number(tokenInput || 0);
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
-  console.log({ leverage, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
+  // console.log({ leverage, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
   const farmdata = dichotomybasetoken(leverage, 0.0025, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true)
   // console.info('======farmdata======', farmdata);
   return farmdata
@@ -145,8 +145,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const currentLeverage = 1 + basetokenlpborrowed / (2 * basetokenlp - basetokenlpborrowed)
 
   let farmingData;
-  let repayDebtData = [];
-  console.info(currentLeverage)
+  let repayDebtData = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   if (leverage.toPrecision(3) >= currentLeverage.toPrecision(3)) {// right
 
@@ -195,10 +194,6 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
       console.info('======adjust===111===', farmdata2);
       farmingData = farmdata2;
       if (farmdata2[1][10] > leverage) {
-        // const { data: fData, repayDebt } = adjustRun(leverage, tradeFee, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, leverage, ClosePositionPercentage, ClosePosFee, PancakeTradingFee, farmdata2[0], farmdata2[1][3])
-        // farmingData = fData;
-        // repayDebtData = repayDebt
-
         const basetokenlpnew = farmdata2[1][2] + tokenInputNum + farmdata2[1][3] + farmdata2[1][6]
         const farmingtokenlpnew = quoteTokenInputNum - farmdata2[0] + farmdata2[1][7]
         const basetokenlpborrowednew = basetokenlpborrowed + farmdata2[1][3]
@@ -370,8 +365,10 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
   let minimumReceivedbase = 0
   let minimumReceivedfarm = 0
   let bastokennum
+  let closeRatio
 
   if (leverage > 1) {
+    closeRatio = rationum
     tradingFeesClose = AmountToTrade * PancakeTradingFee * basetokenBegin / farmingtokenBegin / (2 * basetokenlp - basetokenlpborrowed)
     priceImpactClose = farmingtokenlp * rationum * (1 - PancakeTradingFee) / (farmingtokenlp * rationum * (1 - PancakeTradingFee) + farmingtokenBegin)
     needCloseBase = basetokenlp * rationum
@@ -393,6 +390,7 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
       } else {
         rationum = (0 - paramsb - (paramsb ** 2 - 4 * paramsa * paramsc) ** 0.5) / 2 / paramsa
       }
+      closeRatio = rationum + (1 - rationum) * ClosePositionPercentage
       needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
       needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
       remainBase = basetokenlp * (1 - rationum) * (1 - ClosePositionPercentage)
@@ -404,13 +402,8 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
       willReceive = bastokennum - basetokenlpborrowed
       minimumReceived = bastokennum * MINIMUM_RECEIVED_PERCENTAGE - basetokenlpborrowed
 
-      console.log({
-        params1, paramsa, paramsb, paramsc, rationum, needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
-        AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm
-      })
-
-
     } else {
+      closeRatio = rationum + (1 - rationum) * ClosePositionPercentage
       needCloseBase = basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
       needCloseFarm = farmingtokenlp * (rationum + (1 - rationum) * ClosePositionPercentage)
       const remainingdebt = basetokenlpborrowed - basetokenlp * (rationum + (1 - rationum) * ClosePositionPercentage) * (1 - ClosePosFee)
@@ -448,21 +441,15 @@ export const getAdjustPositionRepayDebt = (farm: LeverageFarm, data, leverage, C
     tradingFeesClose = 0
   }
 
-
-  // console.log({
-  //   basetokenlp, farmingtokenlp, basetokenlpborrowed, tokenAmountTotalValue,
-  //   willReceive, minimumReceived, willReceivebase, willReceivefarm,  minimumReceivedbase,  priceImpactClose, tradingFeesClose,  minimumReceivedfarm,
-  //   quoteTokenAmountTotalValue, needCloseBase, rationum, needCloseFarm, remainBase, remainFarm, remainBorrowBase, remainLeverage, leverage, ClosePositionPercentage
-  // });
-
   console.log({
+    closeRatio,
     needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
     AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm
   })
 
   return {
     needCloseBase, needCloseFarm, remainBase, remainFarm, remainBorrowBase, priceImpactClose, tradingFeesClose, remainLeverage, willReceive,
-    AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm
+    AmountToTrade, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm, closeRatio
   };
 }
 

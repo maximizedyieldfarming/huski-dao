@@ -79,7 +79,11 @@ const Deposit: React.FC<DepositProps> = ({
   const history = useHistory()
 
   const setAmountToMax = () => {
-    setAmount(userTokenBalance)
+    if (name.toLowerCase() === 'bnb') {
+      setAmount(new BigNumber(userTokenBalance).toFixed(2, 1))
+    } else {
+      setAmount(userTokenBalance)
+    }
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -155,7 +159,7 @@ const Deposit: React.FC<DepositProps> = ({
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       setIsPending(false)
-      setAmount(0)
+      setAmount('')
     }
   }
 
@@ -248,7 +252,7 @@ const Deposit: React.FC<DepositProps> = ({
             fontWeight="bold"
             fontSize="16px"
             style={{ height: '100%' }}
-            onClick={() => history.goBack()}
+            onClick={() => history.push('/lend')}
           >
             {t('Back')}
           </Text>
@@ -272,7 +276,7 @@ const Deposit: React.FC<DepositProps> = ({
             isLoading={isApproving}
             endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           >
-            {isPending ? t('Approving') : t('Approve')}
+            {isApproving ? t('Approving') : t('Approve')}
           </Button>
         )}
         <Button
