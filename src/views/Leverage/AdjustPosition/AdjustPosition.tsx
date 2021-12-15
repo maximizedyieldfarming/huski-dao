@@ -154,8 +154,8 @@ const AdjustPosition = () => {
   } = useLocation<LocationParams>()
 
   const { t } = useTranslation()
-  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
-  const [tokenInput, setTokenInput] = useState<number | string>()
+  const [quoteTokenInput, setQuoteTokenInput] = useState<string>()
+  const [tokenInput, setTokenInput] = useState<string>()
 
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
   const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
@@ -454,13 +454,13 @@ const AdjustPosition = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('base + single + quote token input ')
-        farmingTokenAmount = (quoteTokenInputValue)
+        farmingTokenAmount = (quoteTokenInputValue)?.toString()
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = (quoteTokenInputValue).toString()
+        farmingTokenAmount = (quoteTokenInputValue)?.toString()
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -478,13 +478,13 @@ const AdjustPosition = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('farm + single +1 quote token input ')
-        farmingTokenAmount = (quoteTokenInputValue)
+        farmingTokenAmount = (quoteTokenInputValue)?.toString()
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = (quoteTokenInputValue).toString()
+        farmingTokenAmount = (quoteTokenInputValue)?.toString()
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -920,9 +920,9 @@ const AdjustPosition = () => {
             </Text>
           </Flex>
           <Text bold>
-            {symbolName === tokenValueSymbol ? Number(tokenInputValue || 0)?.toFixed(3) : Number(quoteTokenInputValue || 0)?.toFixed(3)}{' '}
+            {symbolName === tokenValueSymbol ? new BigNumber(tokenInputValue)?.toFixed(3, 1) : new BigNumber(quoteTokenInputValue)?.toFixed(3, 1)}{' '}
             {symbolName.replace('wBNB', 'BNB')} +{' '}
-            {symbolName === tokenValueSymbol ? Number(quoteTokenInputValue || 0)?.toFixed(3) : Number(tokenInputValue || 0)?.toFixed(3)}{' '}
+            {symbolName === tokenValueSymbol ? new BigNumber(quoteTokenInputValue)?.toFixed(3, 1) : new BigNumber(tokenInputValue)?.toFixed(3, 1)}{' '}
             {
               symbolName === tokenValueSymbol
                 ? quoteTokenValueSymbol.replace('wBNB', 'BNB')
@@ -937,9 +937,9 @@ const AdjustPosition = () => {
               <Text>{t('Collateral to be Added')}</Text>
               {farmingData ? (
                 <Text>
-                  {new BigNumber(tokenInputValue || 0).toFixed(3, 1)}{' '}
+                  {new BigNumber(tokenInputValue).toFixed(3, 1)}{' '}
                   {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
-                  {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
+                  {new BigNumber(quoteTokenInputValue).toFixed(3, 1)}{' '}
                   {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                 </Text>
               ) : (
@@ -1231,9 +1231,9 @@ const AdjustPosition = () => {
                         <Text>{t('Collateral to be Added')}</Text>
                         {farmingData ? (
                           <Text>
-                            {new BigNumber(tokenInputValue || 0).toFixed(3)}{' '}
+                            {new BigNumber(tokenInputValue).toFixed(3, 1)}{' '}
                             {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
-                            {new BigNumber(quoteTokenInputValue || 0).toFixed(3)}{' '}
+                            {new BigNumber(quoteTokenInputValue).toFixed(3, 1)}{' '}
                             {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                           </Text>
                         ) : (
@@ -1246,9 +1246,9 @@ const AdjustPosition = () => {
                         <Text>{t('Collateral to be Added')}</Text>
                         {farmingData ? (
                           <Text bold>
-                            {Number(tokenInputValue).toFixed(3)}{' '}
+                            {new BigNumber(tokenInputValue).toFixed(3, 1)}{' '}
                             {tokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')} +{' '}
-                            {Number(quoteTokenInputValue).toFixed(3)}{' '}
+                            {new BigNumber(quoteTokenInputValue).toFixed(3, 1)}{' '}
                             {quoteTokenValue?.symbol.toUpperCase().replace('WBNB', 'BNB')}
                           </Text>
                         ) : (

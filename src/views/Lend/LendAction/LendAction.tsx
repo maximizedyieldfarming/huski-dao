@@ -132,8 +132,8 @@ const LendAction = () => {
 
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   const { balance: bnbBalance } = useGetBnbBalance()
-  const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
-  const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+  const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance)
+  const userTokenBalance = getBalanceAmount(tokenName.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance)
   const { isDark } = useTheme()
   // console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
 

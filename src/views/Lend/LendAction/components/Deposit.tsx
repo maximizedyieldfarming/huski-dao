@@ -75,14 +75,14 @@ const Deposit: React.FC<DepositProps> = ({
 }) => {
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
-  const [amount, setAmount] = useState<number | string>()
+  const [amount, setAmount] = useState<string>()
   const history = useHistory()
 
   const setAmountToMax = () => {
     if (name.toLowerCase() === 'bnb') {
       setAmount(new BigNumber(userTokenBalance).toFixed(2, 1))
     } else {
-      setAmount(userTokenBalance)
+      setAmount(userTokenBalance.toString())
     }
   }
 
@@ -107,7 +107,7 @@ const Deposit: React.FC<DepositProps> = ({
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
         setAmount(finalValue)
       } else {
         event.preventDefault()
@@ -300,3 +300,7 @@ const Deposit: React.FC<DepositProps> = ({
 }
 
 export default Deposit
+
+// NOTE: javascript Number function and BigNumber.js toNumber() function might return a different value than the actual value
+// if that value is bigger than MAX_SAFE_INTEGER. so needs to be careful when doing number operations.
+// https://stackoverflow.com/questions/35727608/why-does-number-return-wrong-values-with-very-large-integers

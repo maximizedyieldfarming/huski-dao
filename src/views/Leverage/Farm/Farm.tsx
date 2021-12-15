@@ -263,14 +263,13 @@ const Farm = () => {
     return null
   }
 
-  const [tokenInput, setTokenInput] = useState<number | string>()
-  const tokenInputRef = useRef<HTMLInputElement>()
+  const [tokenInput, setTokenInput] = useState<string>()
   const handleTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -279,14 +278,13 @@ const Farm = () => {
     [userTokenBalance],
   )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
-  const quoteTokenInputRef = useRef<HTMLInputElement>()
+  const [quoteTokenInput, setQuoteTokenInput] = useState<string>()
   const handleQuoteTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userQuoteTokenBalance) ? userQuoteTokenBalance.toString() : input
         setQuoteTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -295,32 +293,32 @@ const Farm = () => {
     [userQuoteTokenBalance],
   )
 
-  const handleChange = (e) => {
-    const { value } = e.target
-    setRadio(value)
-  }
+  // const handleChange = (e) => {
+  //   const { value } = e.target
+  //   setRadio(value)
+  // }
 
   const setQuoteTokenInputToFraction = (e: any) => {
     if (e.target.innerText === '25%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.5).toString())
     } else if (e.target.innerText === '75%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.75).toString())
     } else if (e.target.innerText === '100%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+      setQuoteTokenInput(userQuoteTokenBalance.toString())
     }
   }
-  const [Token, setToken] = useState(1)
+
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.25)
+      setTokenInput(userTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.5)
+      setTokenInput(userTokenBalance.times(0.5).toString())
     } else if (e.target.innerText === '75%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.75)
+      setTokenInput(userTokenBalance.times(0.75).toString())
     } else if (e.target.innerText === '100%') {
-      setTokenInput(userTokenBalance.toNumber())
+      setTokenInput(userTokenBalance.toString())
     }
   }
 
@@ -527,19 +525,19 @@ const Farm = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('base + single + quote token input ')
-        farmingTokenAmount = Number(quoteTokenInput || 0).toString()
+        farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = Number(quoteTokenInput || 0).toString()
+        farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
-      amount = getDecimalAmount(new BigNumber(Number(tokenInput || 0)), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString()
       workerAddress = tokenData.TokenInfo.address
     } else {
       // farm token is base token
@@ -550,19 +548,19 @@ const Farm = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('farm + single + quote token input ')
-        farmingTokenAmount = Number(tokenInput || 0).toString()
+        farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = Number(tokenInput || 0).toString()
+        farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
-      amount = getDecimalAmount(new BigNumber(Number(quoteTokenInput || 0)), 18).toString()
+      amount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString()
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
@@ -582,9 +580,9 @@ const Farm = () => {
       dataStrategy,
       tokenData,
       tokenInput,
-      'a': Number(tokenInput),
+      'a': (tokenInput),
       quoteTokenInput,
-      'b': Number(quoteTokenInput)
+      'b': (quoteTokenInput)
     })
 
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB') {
@@ -1157,3 +1155,7 @@ const Farm = () => {
 }
 
 export default Farm
+
+// NOTE: javascript Number function and BigNumber.js toNumber() function might return a different value than the actual value
+// if that value is bigger than MAX_SAFE_INTEGER. so needs to be careful when doing number operations.
+// https://stackoverflow.com/questions/35727608/why-does-number-return-wrong-values-with-very-large-integers

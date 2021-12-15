@@ -1,8 +1,8 @@
 {
-  "short_name": "PancakeSwap",
-  "name": "PancakeSwap",
-  "description": "Farm CAKE with Pancake LP Tokens",
-  "homepage_url": "https://pancakeswap.finance",
+  "short_name": "HUSKI Finance",
+  "name": "HUSKI Finance",
+  "description": "Trade, earn, and win crypto with HUSKI Finance",
+  "homepage_url": "https://huski.finance",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#1FC7D4",
@@ -12,12 +12,12 @@
     {
       "src": "favicon.ico",
       "type": "image/x-icon",
-      "sizes": "256x256"
+      "sizes": "48x48"
     },
     {
       "src": "logo.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "236x232"
     }
   ]
 }
