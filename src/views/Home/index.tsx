@@ -339,8 +339,7 @@ const Home: React.FC = () => {
               {t('Our Contract have been audited by best audit auditing in this field')}
             </Text>
           </Grid>
-          <Grid width="55%">
-            <Flex>
+          <Grid /* width="55%"  gridTemplateColumns="1fr 1fr" gridTemplateRows="1fr 1fr" */  justifyContent="center" alignItems="center">
               {/*  <Card
                 className="auditedBy"
                 style={{
@@ -353,19 +352,19 @@ const Home: React.FC = () => {
               >
                 <img src={peckShieldLogo} alt="" />
               </Card> */}
-              <Card
-                className="auditedBy"
-                style={{
-                  boxShadow: ' 2px 3px 5px #888888',
-                  width: '50%',
-                  margin: '15px',
-                  padding: '20px',
-                  border: 'none',
-                }}
-              >
-                <img src={certikLogo} alt="" />
-              </Card>
-            </Flex>
+            <Card
+              className="auditedBy"
+              style={{
+                boxShadow: ' 2px 3px 5px #888888',
+                width: '315px',
+                height: '158px',
+                margin: '15px',
+                padding: '20px',
+                border: 'none',
+              }}
+            >
+              <img src={certikLogo} alt="" width="100%" />
+            </Card>
             {/*   <Flex style={{ marginTop: '30px' }}>
               <Card
                 className="auditedBy"
@@ -395,13 +394,13 @@ const Home: React.FC = () => {
           </Grid>
         </Flex>
       </StyledHeroSection>
-      {/*   <StyledHeroSection style={{ background: '#2C353D', position: 'relative', height: '1520px' }}>
+      <StyledHeroSection style={{ background: '#2C353D', position: 'relative', height: '900px' }}>
         <StyledOurPartner />
 
         <div style={{ position: 'absolute', width: '100%', top: 100, left: 0 }}>
           <div style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
             <Text textAlign="center" fontSize="48px" style={{ paddingTop: '30px' }} color="white">
-              {t('Backed By the best')}
+              {t('Backed by the best')}
             </Text>
             <div style={{ display: 'flex', marginTop: '50px' }}>
               <img
@@ -521,7 +520,7 @@ const Home: React.FC = () => {
               />
             </div>
 
-            <Flex justifyContent="space-between" marginTop="60px">
+            {/*   <Flex justifyContent="space-between" marginTop="60px">
               <Box>
                 <Text style={{ color: 'white', fontSize: '48px', textAlign: 'left' }}>{t('Our Partners')}</Text>
                 <Text style={{ color: 'white', fontSize: '14px', marginTop: '20px', textAlign: 'left' }}>
@@ -568,10 +567,10 @@ const Home: React.FC = () => {
               <ItemBox src="/images/partner/Kalata_BNW.png" text="Kalata" />
               <ItemBox src="/images/partner/NAOS_BNW.png" text="NAOS finance" />
               <div style={{ width: '320px' }} />
-            </Flex>
+            </Flex> */}
           </div>
         </div>
-      </StyledHeroSection> */}
+      </StyledHeroSection>
 
       <SBStyledContainer style={{ position: 'relative', height: '700px' }}>
         <SBJoin />
@@ -583,7 +582,7 @@ const Home: React.FC = () => {
               width: '1120px',
               marginLeft: 'auto',
               marginRight: 'auto',
-              paddingBottom: '80px',
+              // paddingBottom: '80px',
             }}
           >
             <Box style={{ width: '50%' }}>
