@@ -629,12 +629,12 @@ const AdjustPositionSA = () => {
       </Text>
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
-        <Flex alignItems="center" justifyContent="space-between" style={{ border: "none" }}>
+        <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }}>
           <Text>
             {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
-          <CurrentPostionToken >
-            <Text bold>{`${TokenInfo.token.symbol.replace("wBNB", "BNB")}#${TokenInfo.pId}`}</Text>
+          <CurrentPostionToken>
+            <Text bold>{`${TokenInfo.token.symbol.replace('wBNB', 'BNB')}#${TokenInfo.pId}`}</Text>
             <Box width={24} height={24}>
               <TokenPairImage
                 primaryToken={TokenInfo.quoteToken}
@@ -648,20 +648,18 @@ const AdjustPositionSA = () => {
               <Text style={{ whiteSpace: 'nowrap' }} bold>
                 {data.farmData.lpSymbol.replace(' LP', '').replace('WBNB', 'BNB')}
               </Text>
-              <Text style={{ color: "#6F767E", fontSize: "12px" }}>{data.farmData.lpExchange}</Text>
+              <Text style={{ color: '#6F767E', fontSize: '12px' }}>{data.farmData.lpExchange}</Text>
             </Box>
           </CurrentPostionToken>
         </Flex>
         <Flex mt="-20px">
-          <Text bold>
-            {t('Target Position Leverage')}
-          </Text>
+          <Text bold>{t('Target Position Leverage')}</Text>
           <PositionX ml="auto" color="#6F767E">
             <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
           </PositionX>
         </Flex>
         <Flex>
-          <Box style={{ width: '100%', maxWidth: "850px", marginLeft: "auto", marginRight: "auto" }}>
+          <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
             <MoveBox move={margin}>
               <Text color="#7B3FE4" bold>
                 {targetPositionLeverage}x
@@ -718,7 +716,10 @@ const AdjustPositionSA = () => {
                 style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
               />
             </Flex>
-            <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
+            <datalist
+              style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '5px' }}
+              id="leverage"
+            >
               {datalistOptions}
             </datalist>
           </Box>
@@ -733,7 +734,8 @@ const AdjustPositionSA = () => {
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(false)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
+                  bold
                   color="#7B3FE4"
                 >
                   {t('Adding collateral')}
@@ -754,7 +756,7 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
-                  <Flex alignItems="center" style={{ fontWeight: "bold" }}>
+                  <Flex alignItems="center" style={{ fontWeight: 'bold' }}>
                     <Text>{(apy * 100).toFixed(2)}%</Text>
                     <ChevronRightIcon />
                     <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
@@ -767,7 +769,8 @@ const AdjustPositionSA = () => {
                 <Text>{t('Updated Position Value Assets')}</Text>
                 {adjustData ? (
                   <Text bold>
-                    {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {baseTokenInPosition.toFixed(2)} {tokenValueSymbol}
+                    {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol} + {baseTokenInPosition.toFixed(2)}{' '}
+                    {tokenValueSymbol}
                   </Text>
                 ) : (
                   <Text bold>
@@ -784,7 +787,8 @@ const AdjustPositionSA = () => {
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
+                  bold
                   color="#7B3FE4"
                 >
                   {t('Repay Debt')}
@@ -797,7 +801,9 @@ const AdjustPositionSA = () => {
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
                   <Flex>
-                    <Text fontSize="12px" color="#6F767E">{t('Balance:')}</Text>
+                    <Text fontSize="12px" color="#6F767E">
+                      {t('Balance:')}
+                    </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
                       userTokenBalance,
                       tokenValue?.decimalsDigits,
@@ -819,7 +825,7 @@ const AdjustPositionSA = () => {
                 {apy ? (
                   <Flex alignItems="center">
                     <Text bold>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <ChevronRightIcon style={{ fontWeight: 'bold' }} />
                     <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
@@ -856,7 +862,8 @@ const AdjustPositionSA = () => {
                   color="#7B3FE4"
                   as="span"
                   onClick={(e) => setIsRepayDebt(false)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
+                  bold
                 >
                   {t('Adding collateral')}
                 </Text>
@@ -871,7 +878,11 @@ const AdjustPositionSA = () => {
               <Flex justifyContent="space-between">
                 <Text>{t('Updated Debt')}</Text>
                 <Text bold>
-                  {formatDisplayedBalance(new BigNumber(debtValueNumber).minus(UpdatedDebt).toNumber(), tokenValue?.decimalsDigits)} {tokenValueSymbol}
+                  {formatDisplayedBalance(
+                    new BigNumber(debtValueNumber).minus(UpdatedDebt).toNumber(),
+                    tokenValue?.decimalsDigits,
+                  )}{' '}
+                  {tokenValueSymbol}
                 </Text>
               </Flex>
               <Flex justifyContent="space-between">
@@ -879,7 +890,7 @@ const AdjustPositionSA = () => {
                 {apy ? (
                   <Flex alignItems="center">
                     <Text bold>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <ChevronRightIcon style={{ fontWeight: 'bold' }} />
                     <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
@@ -909,7 +920,8 @@ const AdjustPositionSA = () => {
                   color="#7B3FE4"
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
+                  bold
                 >
                   {t('Repay Your Debt')}
                 </Text>
@@ -921,7 +933,9 @@ const AdjustPositionSA = () => {
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
                   <Flex>
-                    <Text fontSize="12px" color="#6F767E">{t('Balance:')}</Text>
+                    <Text fontSize="12px" color="#6F767E">
+                      {t('Balance:')}
+                    </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
                       userTokenBalance,
                       tokenValue?.decimalsDigits,
@@ -943,7 +957,7 @@ const AdjustPositionSA = () => {
                 {apy ? (
                   <Flex alignItems="center">
                     <Text bold>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <ChevronRightIcon style={{ fontWeight: 'bold' }} />
                     <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
@@ -974,7 +988,6 @@ const AdjustPositionSA = () => {
         {targetPositionLeverage > currentPositionLeverage ? (
           <>
             <Box>
-
               <Flex mt="30px">
                 <Text>{t(`You're borrowing more:`)}</Text>
                 <InfoIcon mt="3px" ml="3px" color="#6F767E" />
@@ -989,7 +1002,7 @@ const AdjustPositionSA = () => {
               {apy ? (
                 <Flex alignItems="center">
                   <Text bold>{(apy * 100).toFixed(2)}%</Text>
-                  <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                  <ChevronRightIcon style={{ fontWeight: 'bold' }} />
                   <Text>{(adjustedApy * 100).toFixed(2)}%</Text>
                 </Flex>
               ) : (
@@ -1000,7 +1013,8 @@ const AdjustPositionSA = () => {
               <Text>{t('Position Value')}</Text>
               {adjustData ? (
                 <Text bold>
-                  {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)} {quoteTokenValueSymbol}
+                  {baseTokenInPosition.toFixed(2)} {tokenValueSymbol} + {farmingTokenInPosition.toFixed(2)}{' '}
+                  {quoteTokenValueSymbol}
                 </Text>
               ) : (
                 <Text bold>
@@ -1024,7 +1038,8 @@ const AdjustPositionSA = () => {
                   color="#7B3FE4"
                   as="span"
                   onClick={(e) => setIsRepayDebt(false)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }} bold
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
+                  bold
                 >
                   {t('Adding collateral')}
                 </Text>
@@ -1043,7 +1058,7 @@ const AdjustPositionSA = () => {
               </Flex>
               <Text>{t('What percentage would you like to close? (After repay all debt)')}</Text>
               <Flex mt="30px">
-                <Box style={{ width: '100%', maxWidth: "850px", marginLeft: "auto", marginRight: "auto" }}>
+                <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
                   <MoveBox1 move={margin1}>
                     <Text color="#83BF6E" bold>
                       {percentageToClose}%
@@ -1063,7 +1078,10 @@ const AdjustPositionSA = () => {
                     />
                   </Box>
 
-                  <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
+                  <datalist
+                    style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '5px' }}
+                    id="leverage"
+                  >
                     <Text>0%</Text>
                     <Text>25%</Text>
                     <Text>50%</Text>
@@ -1071,14 +1089,13 @@ const AdjustPositionSA = () => {
                     <Text>100%</Text>
                   </datalist>
                 </Box>
-
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
                   <Flex alignItems="center">
                     <Text bold>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <ChevronRightIcon style={{ fontWeight: 'bold' }} />
                     <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
@@ -1109,7 +1126,7 @@ const AdjustPositionSA = () => {
                   bold
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
-                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: "10px" }}
+                  style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
                 >
                   {t('Partially Close Your Position')}
                 </Text>
@@ -1121,7 +1138,9 @@ const AdjustPositionSA = () => {
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
                   <Flex>
-                    <Text fontSize="12px" color="#6F767E">{t('Balance:')}</Text>
+                    <Text fontSize="12px" color="#6F767E">
+                      {t('Balance:')}
+                    </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
                       userTokenBalance,
                       tokenValue?.decimalsDigits,
@@ -1143,7 +1162,7 @@ const AdjustPositionSA = () => {
                 {apy ? (
                   <Flex alignItems="center">
                     <Text bold>{(apy * 100).toFixed(2)}%</Text>
-                    <ChevronRightIcon style={{ fontWeight: "bold" }} />
+                    <ChevronRightIcon style={{ fontWeight: 'bold' }} />
                     <Text bold>{(adjustedApy * 100).toFixed(2)}%</Text>
                   </Flex>
                 ) : (
@@ -1170,24 +1189,26 @@ const AdjustPositionSA = () => {
           )
         ) : null}
         <Text mx="auto" color="red" textAlign="center" mt="10px">
-          {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
-            ? t('Minimum Debt Size: %minimumDebt% %name%', {
-              minimumDebt: minimumDebt.toNumber(),
-              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-            })
-            : null) : null}
+          {isRepayDebt
+            ? new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
+              ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                  minimumDebt: minimumDebt.toNumber(),
+                  name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                })
+              : null
+            : null}
         </Text>
         <Flex>
           <Button
-            style={{ width: "260px", height: "60px" }}
-            onClick={handleConfirm}
-            // disabled={
-            //   !account || (isRepayDebt ? !(new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)) : 
-            //   (Number(tokenInput) === 0 ||
-            //   tokenInput === undefined)
-            //   ) ||
-            //   isPending
-            // }
+            style={{ width: '260px', height: '60px' }}
+            onClick={isRepayDebt ? handleConfirmConvertTo : handleConfirm}
+            disabled={
+              !account ||
+              (isRepayDebt
+                ? !new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)
+                : Number(tokenInput) === 0 || tokenInput === undefined) ||
+              isPending
+            }
             isLoading={isPending}
             endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
             mx="auto"
@@ -1196,14 +1217,6 @@ const AdjustPositionSA = () => {
           </Button>
         </Flex>
       </Section>
-      <Text mx="auto" color="red">
-        {isRepayDebt ? (new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
-          ? t('Minimum Debt Size: %minimumDebt% %name%', {
-            minimumDebt: minimumDebt.toNumber(),
-            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-          })
-          : null) : null}
-      </Text>
     </Page>
   )
 }
