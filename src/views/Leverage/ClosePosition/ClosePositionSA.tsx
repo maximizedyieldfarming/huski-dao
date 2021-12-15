@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocation, useHistory } from 'react-router'
+import { useLocation, useHistory } from 'react-router-dom'
 import { Box, Flex, Text, useTooltip, InfoIcon, Skeleton, Button, AutoRenewIcon } from 'husky-uikit1.0'
 import useToast from 'hooks/useToast'
 import { useVault } from 'hooks/useContract'
@@ -13,6 +13,12 @@ import { ethers } from 'ethers'
 import { TokenPairImage } from 'components/TokenImage'
 import { ArrowDownIcon } from 'assets'
 import { useWeb3React } from '@web3-react/core'
+import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
+import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import { getAddress } from 'utils/addressHelpers'
+import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
+
+
 
 interface LocationParams {
   data: any
@@ -20,7 +26,7 @@ interface LocationParams {
 
 const Bubble = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
-  padding: 1rem;
+  padding: 0 1rem;
   border-radius: ${({ theme }) => theme.radii.default};
   gap: 10px;
 `
@@ -28,7 +34,7 @@ const Bubble = styled(Flex)`
 const Container = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
-  border-radius: 20px;
+  border-radius: 12px;
   width: 510px;
   max-height: 528px;
   padding: 1rem;
@@ -69,6 +75,15 @@ const ClosePositionSA = () => {
     tokenAmountTotal,
     quoteTokenAmountTotal,
   } = data.farmData
+
+  const { balance: tokenBalance } = useTokenBalance(getAddress(TokenInfo.token.address))
+  const { balance: bnbBalance } = useGetBnbBalance()
+  const userTokenBalanceIb = getBalanceAmount(useTokenBalance(data.farmData?.TokenInfo.vaultAddress).balance).toJSON()
+  console.log(userTokenBalanceIb);
+
+  const userTokenBalance = getBalanceAmount(TokenInfo.token.symbol.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+
+  console.log(data);
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenVaultAddress = TokenInfo?.vaultAddress
@@ -135,7 +150,7 @@ const ClosePositionSA = () => {
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   const [isPending, setIsPending] = useState<boolean>(false)
-  const {account} = useWeb3React()
+  const { account } = useWeb3React()
 
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -174,81 +189,136 @@ const ClosePositionSA = () => {
     const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
 
-    console.log({symbolName, id, workerAddress, amount, loan,convertedPositionValue,withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker})
+    console.log({ symbolName, id, workerAddress, amount, loan, convertedPositionValue, withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
   return (
     <Page>
-      <Text fontSize="36px" textTransform="capitalize" mx="auto">
+      <Box mx="auto" mt="1rem">
+        <img src="/images/ClosePositionSA.svg" alt="ClosePositionSA" />
+      </Box>
+      <Text fontSize="36px" textTransform="capitalize" mx="auto" mt="-30px">
         {t('Close Position')}
       </Text>
       <Box mx="auto">
-        <Flex alignItems="center" justifyContent="flex-end">
-          <Bubble alignSelf="flex-end" alignItems="center">
-            <Text>{symbolName}</Text>
-            <Text>#{positionId}</Text>
+        <Container mt="1rem" >
+          <Section className="gray" mt="1rem" flexDirection="column">
+            <Flex justifyContent="space-between" alignItems="center">
+              <Text bold>{t('Position Value')}</Text>
+              <Text fontSize="12px">
+                  {t('Balance')}:{' '}
+                  <span style={{ fontWeight: 700 }}>{`${formatDisplayedBalance(
+                    userTokenBalance,
+                    TokenInfo?.token?.decimalsDigits,
+                  )} ${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
+                </Text>
+            </Flex>
+            <AmountPanel mt="10px">
+              {baseTokenAmount ? (
+                <Text bold fontSize="28px">
+                  {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
+                  {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
+                </Text>
+              ) : (
+                <Skeleton height="16px" width="80px" />
+              )}
+            </AmountPanel>
+          </Section>
+          <Section className="gray" mt="1rem" flexDirection="column">
+            <Flex flexDirection="column" >
+              <ArrowDownIcon mx="auto" />
+              <Flex alignItems="center" justifyContent="space-between">
+                <Text bold>{t('Receive (Estimated)')}</Text>
+                {tooltipVisible && tooltip}
+                <Text fontSize="12px">
+                  {t('Balance')}:{' '}
+                  <span style={{ fontWeight: 700 }}>{`${formatDisplayedBalance(
+                    userTokenBalanceIb,
+                    TokenInfo?.token?.decimalsDigits,
+                  )} i${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
+                </Text>
+              </Flex>
+              <AmountPanel mt="10px">
+                {convertedPositionValue ? (
+                  <Text bold fontSize="28px">
+                    {convertedPositionValue.toFixed(3)} {tokenValueSymbol}
+                  </Text>
+                ) : (
+                  <Skeleton height="16px" width="80px" />
+                )}
+              </AmountPanel>
+            </Flex>
+            <Flex justifyContent="space-between" mt="1rem">
+              <Flex style={{ cursor: 'pointer' }} alignItems='center'>
+                <img src="/images/Cheveron.svg" alt="" />
+                <Text
+                  fontWeight="bold"
+                  fontSize="16px"
+                  onClick={() => history.goBack()}
+                >
+                  {t('Back')}
+                </Text>
+              </Flex>
+              <Button
+                style={{ borderRadius: "18px" }}
+                onClick={handleConfirm}
+                width="180px"
+                height="57px"
+                disabled={!account || isPending}
+                isLoading={isPending}
+                endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+              >
+                {isPending ? t('Closing Position') : t('Close Position')}
+              </Button>
+            </Flex>
+          </Section>
+
+        </Container>
+      </Box>
+      <Flex justifyContent="center">
+        <Container mt="1rem">
+          <Bubble justifyContent="space-between" alignItems="center">
             <Flex alignItems="center">
-              <Box width={40} height={40}>
+              <Text bold>{symbolName}</Text>
+              <Text color="#6F767E" fontSize="12px">#{positionId}</Text>
+            </Flex>
+            <Flex alignItems="center">
+              <Box width={24} height={24}>
                 <TokenPairImage
                   primaryToken={quoteTokenValue}
                   secondaryToken={tokenValue}
-                  width={40}
-                  height={40}
+                  width={24}
+                  height={24}
                   variant="inverted"
                 />
               </Box>
-              <Text style={{ whiteSpace: 'nowrap' }} ml="5px">
-                {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace("WBNB", "BNB")}
-              </Text>
+              <Box ml="5px">
+                <Text style={{ whiteSpace: 'nowrap' }} ml="5px" bold>
+                  {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace("WBNB", "BNB")}
+                </Text>
+                <Text style={{ whiteSpace: 'nowrap' }} ml="5px" fontSize="12px" color="#6F767E">
+                  {lpSymbolName.split(' ')[1].replace('Worker', '')}
+                </Text>
+              </Box>
             </Flex>
           </Bubble>
-        </Flex>
-        <Container mt="2rem">
-          <Section className="gray" mt="1rem" justifyContent="space-between">
-            <Text>{t('Position Value')}</Text>
-            {baseTokenAmount ? (
-              <Text>
-                {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-                {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
-              </Text>
-            ) : (
-              <Skeleton height="16px" width="80px" />
-            )}
-          </Section>
-          <Flex flexDirection="column" alignItems="center">
-            <ArrowDownIcon mx="auto" />
-            <Flex alignItems="center">
-              <Text mx="auto">{t('Assets Received')}</Text>
-              {tooltipVisible && tooltip}
-              <span ref={targetRef}>
-                <InfoIcon ml="5px" />
-              </span>
-            </Flex>
-          </Flex>
-          <Section className="gray" mt="1rem" justifyContent="center">
-            {convertedPositionValue ? (
-              <Text>
-                {convertedPositionValue.toFixed(3)} {tokenValueSymbol}
-              </Text>
-            ) : (
-              <Skeleton height="16px" width="80px" />
-            )}
-          </Section>
         </Container>
-      </Box>
-     <Button
-            onClick={handleConfirm}
-            width="300px"
-            height="60px"
-            disabled={!account || isPending}
-            isLoading={isPending}
-            endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
-          >
-            {isPending ? t('Closing Position') : t('Close Position')}
-          </Button>
+      </Flex>
+
     </Page>
   )
 }
 
 export default ClosePositionSA
+
+const AmountPanel = styled(Box)`
+  background: #F7F7F8;
+  border: 1px solid #C6C6C6;
+  box-sizing: border-box;
+  border-radius: 12px;
+  height: 100px;
+  display : flex;
+  justify-content : center;
+  align-items : center;
+`
