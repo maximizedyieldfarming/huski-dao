@@ -152,9 +152,7 @@ const FarmSA = () => {
     const history = useHistory()
 
     const singleFarm = data
-    console.info('singleFarm', singleFarm)
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
-    console.log("coingeckoId", coingeckoId);
     const { isDark, toggleTheme } = useTheme()
     const priceList = usePriceList(coingeckoId)
 
@@ -362,6 +360,36 @@ const FarmSA = () => {
         balanceNumber = balanceBigNumber.toNumber().toFixed(2)
     }
 
+
+    const bnbVaultAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+  const depositContract = useVault(bnbVaultAddress)
+  const handleDeposit = async (bnbMsgValue) => {
+
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: bnbMsgValue,
+    }
+    // setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [bnbMsgValue],
+        callOptionsBNB,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+    }
+  }
+
+
     const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
         const callOptions = {
             gasLimit: 3800000,
@@ -409,7 +437,7 @@ const FarmSA = () => {
         let contract
         let amount
         let workerAddress
-        console.info('111', marketStrategy)
+
         if (marketStrategy.includes('bull')) { // bull === 2x long
             console.info('1111bull')
             if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {  // token is farm token
@@ -470,6 +498,12 @@ const FarmSA = () => {
             dataStrategy,
             inputValue,
         })
+
+
+        if (singleFarm?.lpSymbol.toUpperCase().includes('BNB') && marketStrategy.includes('bull')) {
+            const bnbMsgValue = getDecimalAmount(new BigNumber(0), 18).toString() // "218311561760734500000" //
+            handleDeposit(bnbMsgValue)
+          }
 
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
