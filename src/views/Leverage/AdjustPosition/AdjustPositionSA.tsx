@@ -393,6 +393,7 @@ const AdjustPositionSA = () => {
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
+  let closeRatioValue // the ratio of position to close
 
   let UpdatedDebt
   if (adjustData?.[3] === 0 && adjustData?.[11] === 0) {
@@ -401,19 +402,19 @@ const AdjustPositionSA = () => {
     baseTokenInPosition = repayDebtData?.[2]
     farmingTokenInPosition = repayDebtData?.[3]
     UpdatedDebt = Number(debtValueNumber) - repayDebtData?.[4]
-
+    closeRatioValue = repayDebtData?.[8]
   } else {
     assetsBorrowed = adjustData?.[3]
     baseTokenInPosition = adjustData?.[8]
     farmingTokenInPosition = adjustData?.[9]
     UpdatedDebt = targetPositionLeverage >= currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
-
+    closeRatioValue = repayDebtData?.[8]
   }
 
 
   const [percentageToClose, setPercentageToClose] = useState<number>(0)
 
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceImpactClose, tradingFeesClose, remainLeverage, AmountToTrade, willReceive, minimumReceived, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm } = getAdjustPositionRepayDebt(
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm, priceImpactClose, tradingFeesClose, remainLeverage, AmountToTrade, willReceive, minimumReceived, closeRatio, willReceivebase, willReceivefarm, minimumReceivedbase, minimumReceivedfarm } = getAdjustPositionRepayDebt(
     data.farmData,
     data,
     targetPositionLeverage,
@@ -498,7 +499,7 @@ const AdjustPositionSA = () => {
   const handleConfirm = async () => {
     const id = positionId
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g,'') // 815662939548462.2--- >  815662939548462
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
@@ -561,6 +562,66 @@ const AdjustPositionSA = () => {
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
+  const handleFarmConvertTo = async (id, address, amount, loan, maxReturn, dataWorker) => {
+    const callOptions = {
+      gasLimit: 3800000,
+    }
+    const callOptionsBNB = {
+      gasLimit: 3800000,
+      value: amount,
+    }
+    setIsPending(true)
+    try {
+      toastInfo(t('Pending Request...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions,)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your request was successfull'))
+      }
+    } catch (error) {
+      console.info('error', error)
+      toastError(t('Unsuccessful'), t('Something went wrong your request. Please try again...'))
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  const handleConfirmConvertTo = async () => {
+    let receive = 0;
+    let closeRationum;
+    if (Number(targetPositionLeverage) === 1) {
+      receive = Number(minimumReceived)
+      closeRationum = closeRatio
+    } else {
+      receive = 0
+      closeRationum = closeRatioValue
+    }
+    const returnLpTokenValue = (lpAmount * closeRationum).toString()
+    const id = positionId
+    const amount = 0
+    const loan = 0;
+    const minbasetoken = Number(receive).toString()
+    const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
+    const maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
+    const maxDebtRepayment = Number(maxDebtRepay).toString()
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minbasetokenvalue)]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
+    console.log({
+      'handleConfirmConvertTo-symbolName': symbolName,
+      returnLpTokenValue, receive, id, workerAddress,
+      minbasetokenvalue, amount, loan, dataStrategy, maxDebtRepayment,
+      partialCloseLiquidateAddress,
+      minbasetoken, maxReturn, dataWorker,
+      'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
+      'ethers.utils.parseEther(minbasetokenvalue)': ethers.utils.parseEther(minbasetokenvalue)
+    })
+    handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
+
+
   return (
     <Page>
       <Text fontWeight="bold" fontSize="3" mx="auto">
@@ -570,8 +631,8 @@ const AdjustPositionSA = () => {
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
         <Flex alignItems="center" justifyContent="space-between" style={{ border: "none" }}>
           <Text>
-          {t('Current Position Leverage:')} {currentPositionLeverage}x
-        </Text>
+            {t('Current Position Leverage:')} {currentPositionLeverage}x
+          </Text>
           <CurrentPostionToken >
             <Text bold>{`${TokenInfo.token.symbol.replace("wBNB", "BNB")}#${TokenInfo.pId}`}</Text>
             <Box width={24} height={24}>

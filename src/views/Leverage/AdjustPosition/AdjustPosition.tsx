@@ -805,7 +805,6 @@ const AdjustPosition = () => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text>{t('Minimum Received')}</Text>
-          {/* {minimumReceived ? ( */}
           <Text bold>
             {isConvertTo ? (
               <>

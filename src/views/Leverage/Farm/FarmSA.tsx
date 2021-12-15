@@ -814,7 +814,6 @@ const FarmSA = () => {
     const dailyApr = apr / 365
 
   const minimumDebt = tokenName === singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') ? new BigNumber(singleFarm?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18)) : new BigNumber(singleFarm?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
-  console.log("farmData3",farmData[3], "minimumDebt", minimumDebt.toNumber())
 
     const { tooltip, targetRef, tooltipVisible } = useTooltip(
         <>
