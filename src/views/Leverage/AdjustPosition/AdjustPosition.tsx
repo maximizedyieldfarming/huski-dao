@@ -294,7 +294,7 @@ const AdjustPosition = () => {
   const debtValueNumber = new BigNumber(debtValue).dividedBy(BIG_TEN.pow(18))
   const debtRatio = new BigNumber(debtValueNumber).div(new BigNumber(totalPositionValueInToken))
   const lvgAdjust = new BigNumber(baseTokenAmount).times(2).div((new BigNumber(baseTokenAmount).times(2)).minus(new BigNumber(debtValueNumber)))
-  const currentPositionLeverage = Number(lvgAdjust.toFixed(2, 1)) // lvgAdjust.toNumber()
+  const currentPositionLeverage = Number(lvgAdjust.toFixed(2, 1))
   const [targetPositionLeverage, setTargetPositionLeverage] = useState<number>(currentPositionLeverage)
 
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInputValue, quoteTokenInputValue, symbolName)
@@ -306,7 +306,6 @@ const AdjustPosition = () => {
   let assetsBorrowed
   let baseTokenInPosition
   let farmingTokenInPosition
-  // let assetsBorrowedUp
   let UpdatedDebt
   let closeRatioValue // the ratio of position to close
 
@@ -316,14 +315,12 @@ const AdjustPosition = () => {
     assetsBorrowed = repayDebtData?.[4]
     baseTokenInPosition = repayDebtData?.[2]
     farmingTokenInPosition = repayDebtData?.[3]
-    // assetsBorrowedUp = 0
     UpdatedDebt = Number(debtValueNumber) - repayDebtData?.[4]
     closeRatioValue = repayDebtData?.[8]
   } else {
     assetsBorrowed = adjustData?.[3]
     baseTokenInPosition = adjustData?.[8]
     farmingTokenInPosition = adjustData?.[9]
-    // assetsBorrowedUp = adjustData?.[3] < 0.0000001 ? 0 : adjustData?.[3]
     UpdatedDebt = isAddCollateral || targetPositionLeverage >= currentPositionLeverage ? adjustData?.[3] + Number(debtValueNumber) : Number(debtValueNumber) - repayDebtData?.[4]
     closeRatioValue = repayDebtData?.[8]
   }
@@ -395,6 +392,34 @@ const AdjustPosition = () => {
   const [isPending, setIsPending] = useState(false)
   const { account } = useWeb3React()
 
+  const bnbVaultAddress = getWbnbAddress()
+  const depositContract = useVault(bnbVaultAddress)
+  const handleDeposit = async (bnbMsgValue) => {
+
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: bnbMsgValue,
+    }
+    // setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [bnbMsgValue],
+        callOptionsBNB,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+    }
+  }
+
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -428,41 +453,14 @@ const AdjustPosition = () => {
     }
   }
 
-  const bnbVaultAddress = getWbnbAddress()
-  const depositContract = useVault(bnbVaultAddress)
-  const handleDeposit = async (bnbMsgValue) => {
-
-    const callOptionsBNB = {
-      gasLimit: 380000,
-      value: bnbMsgValue,
-    }
-    // setIsPending(true)
-    try {
-      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
-      const tx = await callWithGasPrice(
-        depositContract,
-        'deposit',
-        [bnbMsgValue],
-        callOptionsBNB,
-      )
-      const receipt = await tx.wait()
-      if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
-      }
-    } catch (error) {
-      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
-    } finally {
-      // setIsPending(false)
-    }
-  }
-
   const handleConfirm = async () => {
     const id = positionId
     const abiCoder = ethers.utils.defaultAbiCoder
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
     const minLPAmountValue = adjustData ? adjustData?.[12] : 0
-    const minLPAmount = minLPAmountValue.toString()
+    // const minLPAmount = minLPAmountValue.toString()
+    const minLPAmount = getDecimalAmount(new BigNumber(minLPAmountValue), 18).toString().replace(/\.(.*?\d*)/g, '')
     const maxReturn = 0
 
     let amount
@@ -478,23 +476,24 @@ const AdjustPosition = () => {
       if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [ethers.utils.parseEther(minLPAmount)])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [minLPAmount])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('base + single + quote token input ')
-        farmingTokenAmount = (quoteTokenInputValue)?.toString()
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = (quoteTokenInputValue)?.toString()
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
 
-      amount = getDecimalAmount(new BigNumber((tokenInputValue)), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber((tokenInputValue)), 18).toString()
 
     } else {
       // farm token is base token
@@ -502,28 +501,31 @@ const AdjustPosition = () => {
       if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('farm + single + token input ')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [ethers.utils.parseEther(minLPAmount)])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [minLPAmount])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('farm + single +1 quote token input ')
         wrapFlag = true
-        farmingTokenAmount = (quoteTokenInputValue)?.toString()
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')//  (quoteTokenInputValue)?.toString()
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
         wrapFlag = true
-        farmingTokenAmount = (quoteTokenInputValue)?.toString()
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
 
-      amount = getDecimalAmount(new BigNumber((tokenInputValue)), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber((tokenInputValue)), 18).toString()
 
     }
 
+    // 'parseUnits(farmingTokenAmount': ethers.utils.parseUnits(farmingTokenAmount, 18), 
+    // 'parseUnits(minLPAmount, ':ethers.utils.parseUnits(minLPAmount, 18) ,
     console.log({
 
       'id====': id,
@@ -548,12 +550,12 @@ const AdjustPosition = () => {
     if (data?.farmData?.lpSymbol.toUpperCase().includes('BNB') && vault.toUpperCase() !== TokenInfo.vaultAddress.toUpperCase() && wrapFlag) {
       //  radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB'
       // need mod commit name 
-      const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
-      console.info('12')
-      // handleDeposit(bnbMsgValue)
+      // amount = farmingTokenAmount
+      const bnbMsgValue = farmingTokenAmount //  getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+      handleDeposit(bnbMsgValue)
     }
 
-    // handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
+    handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
   const handleFarmConvertTo = async (id, address, amount, loan, maxReturn, dataWorker) => {
@@ -601,17 +603,17 @@ const AdjustPosition = () => {
       receive = 0
       closeRationum = closeRatioValue
       maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
-      const maxDebtRepayment = Number(maxDebtRepay).toString()
-      maxReturn = ethers.utils.parseEther(maxDebtRepayment)
-      maxDebtRepaymentValue = ethers.utils.parseEther(maxDebtRepayment)
+      const maxDebtRepayment = getDecimalAmount(new BigNumber(maxDebtRepay), 18).toString().replace(/\.(.*?\d*)/g, '') // Number(maxDebtRepay).toString()
+      maxReturn = maxDebtRepayment // ethers.utils.parseEther(maxDebtRepayment)
+      maxDebtRepaymentValue = maxDebtRepayment // ethers.utils.parseEther(maxDebtRepayment)    try 
     }
 
     const returnLpTokenValue = (lpAmount * closeRationum).toString()
     // const maxReturn = ethers.constants.MaxUint256;
     // const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
-    const minbasetoken = Number(receive).toString()
+    const minbasetoken = getDecimalAmount(new BigNumber(receive), 18).toString().replace(/\.(.*?\d*)/g, '') // Number(receive).toString()
     // const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, maxDebtRepaymentValue, ethers.utils.parseEther(minbasetoken)]);
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, maxDebtRepaymentValue, minbasetoken]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
     console.log({
       'handleConfirmConvertTo-symbolName': symbolName, maxDebtRepaymentValue,
@@ -661,9 +663,9 @@ const AdjustPosition = () => {
     const maxDebtRepayment = Number(maxDebtRepay).toString()
     // const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
     const maxReturn = ethers.constants.MaxUint256;
-    const minfarmtokenvalue = minfarmtoken.toString() // getDecimalAmount(new BigNumber((minfarmtoken)), 18).toString()
+    const minfarmtokenvalue = getDecimalAmount(new BigNumber(minfarmtoken), 18).toString().replace(/\.(.*?\d*)/g, '')  // minfarmtoken.toString() 
     // const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minfarmtokenvalue)]);
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.constants.MaxUint256, ethers.utils.parseEther(minfarmtokenvalue)]);
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.constants.MaxUint256, minfarmtokenvalue]);
     const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
 
     console.log({
