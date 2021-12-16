@@ -512,6 +512,7 @@ const Farm = () => {
     let dataStrategy
     let dataWorker
     let contract
+    let wrapFlag = false
 
     // base token is base token
     if (radio === tokenData?.TokenInfo?.token?.symbol) {
@@ -519,19 +520,19 @@ const Farm = () => {
       if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [ethers.utils.parseEther(minLPAmount)])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('base + single + quote token input ')
         farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
         farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
@@ -542,16 +543,18 @@ const Farm = () => {
       if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('farm + single + token input ')
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [ethers.utils.parseEther(minLPAmount)])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('farm + single + quote token input ')
+        wrapFlag = true
         farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
+        wrapFlag = true
         farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)]) // [param.farmingTokenAmount, param.minLPAmount])
@@ -583,10 +586,11 @@ const Farm = () => {
       'b': (quoteTokenInput)
     })
 
-    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB') {
+    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
       // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
       // need mod commit name 
       const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+      console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)

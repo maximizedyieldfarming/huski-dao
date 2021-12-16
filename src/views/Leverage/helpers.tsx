@@ -112,16 +112,22 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   let quoteTokenAmountTotalNum
   let tokenInputNum
   let quoteTokenInputNum
-  if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+  if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
     tokenInputNum = Number(tokenInput);
     quoteTokenInputNum = Number(quoteTokenInput);
     tokenAmountTotalNum = tokenAmountTotal;
     quoteTokenAmountTotalNum = quoteTokenAmountTotal;
+    console.info('=======', tokenName)
   } else {
-    tokenInputNum = Number(quoteTokenInput);
-    quoteTokenInputNum = Number(tokenInput);
+    // tokenInputNum = Number(quoteTokenInput);
+    // quoteTokenInputNum = Number(tokenInput);
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
+    console.info('=======', TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase())
+    tokenInputNum = Number(tokenInput);
+    quoteTokenInputNum = Number(quoteTokenInput);
+    // tokenAmountTotalNum = tokenAmountTotal;
+    // quoteTokenAmountTotalNum = quoteTokenAmountTotal;
   }
 
   const lptotalSupplyNum = new BigNumber(lptotalSupply)
@@ -138,7 +144,13 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount// .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  console.log({ tokenName, tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount, farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply, lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum) });
+  console.log({
+    tokenName, tokenInput, quoteTokenInput,
+    tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount,
+    farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply,
+    lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum),
+    'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum)
+  });
 
   // const tradeFee = 0.0025
   // const ClosePosFee = 5 / 100 / 100;
@@ -178,7 +190,10 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
 
 
   } else {// left
-
+    console.log({
+      leverage, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed,
+      'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum), lptotalSupplyNumber
+    })
     const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, basetokenlp, farmingtokenlp, basetokenlpborrowed, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), false, lptotalSupplyNumber)
     console.info('======adjust======', farmdata1);
     farmingData = farmdata1;
