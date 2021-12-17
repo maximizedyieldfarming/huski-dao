@@ -413,7 +413,8 @@ const FarmSA = () => {
         const AssetsBorrowed = farmData ? farmData[3] : 0
         const minLPAmountValue = farmData ? farmData[12] : 0
         const minLPAmount = minLPAmountValue.toString()
-        const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+        const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
+        // getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
         const maxReturn = 0
 
         let farmingTokenAmount
@@ -430,7 +431,7 @@ const FarmSA = () => {
                 tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [ethers.utils.parseEther(minLPAmount)])
+                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
                 console.info('!== tokenName')
@@ -438,12 +439,13 @@ const FarmSA = () => {
                 quoteTokenInputValue = inputValue || 0
                 farmingTokenAmount = (quoteTokenInputValue)?.toString()
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-                dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)])
+                dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
                 dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
 
             contract = quoteTokenVaultContract
-            amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
+            amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+            // getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
             workerAddress = singleFarm?.QuoteTokenInfo.address
 
         } else { // 2x short || 3x short
@@ -453,7 +455,7 @@ const FarmSA = () => {
                 tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
-                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], [ethers.utils.parseEther(minLPAmount)])
+                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
                 console.info('!!!==tokenname', tokenName)
@@ -461,11 +463,12 @@ const FarmSA = () => {
                 quoteTokenInputValue = inputValue || 0
                 farmingTokenAmount = (quoteTokenInputValue)?.toString()
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-                dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), ethers.utils.parseEther(minLPAmount)])
+                dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
             contract = vaultContract
-            amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
+            amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+            // getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
             workerAddress = singleFarm?.TokenInfo.address
         }
 
@@ -487,7 +490,8 @@ const FarmSA = () => {
 
 
         if (singleFarm?.lpSymbol.toUpperCase().includes('BNB') && marketStrategy.includes('bull') && selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB') {
-            const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+            const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+            // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
             handleDeposit(bnbMsgValue)
         }
 

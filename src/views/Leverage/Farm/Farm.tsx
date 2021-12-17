@@ -503,7 +503,8 @@ const Farm = () => {
     const AssetsBorrowed = farmData ? farmData[3] : 0
     const minLPAmountValue = farmData ? farmData[12] : 0
     const minLPAmount = minLPAmountValue.toString()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
+    // getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
     const maxReturn = 0
     let amount
     let workerAddress
@@ -536,7 +537,8 @@ const Farm = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
-      amount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString()
       workerAddress = tokenData.TokenInfo.address
     } else {
       // farm token is base token
@@ -561,7 +563,8 @@ const Farm = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
-      amount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString()
+      amount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString()
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
@@ -589,7 +592,8 @@ const Farm = () => {
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
       // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
       // need mod commit name 
-      const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+      const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
       console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
     }
