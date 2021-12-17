@@ -4,11 +4,13 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
+import { getAddress } from 'utils/addressHelpers'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import PoolCell from './Cells/PoolCell'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
+import { useTradingFees } from '../../hooks/useTradingFees'
 import LeverageCell from './Cells/LeverageCell'
 import TvlCell from './Cells/TvlCell'
 import Borrowing from './Cells/Borrowing'
@@ -56,6 +58,8 @@ const LeverageRow = ({ tokenData }) => {
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
   const { borrowingInterest } = useFarmsWithToken(tokenData, borrowingAsset)
+  // const { tradingFees } =
+  useTradingFees(tokenData)
   // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
   const getApr = (lvg) => {

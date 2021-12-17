@@ -318,7 +318,6 @@ const SingleAssetsFarms: React.FC = () => {
     singlesData = singlesData.filter((pool) => pool?.singleArray[0]?.lpExchange === dexFilter)
   }
 
-  console.info('singlesData', { singlesData }, 'singleData', { singleData })
   return (
     <Page>
       <Section>
