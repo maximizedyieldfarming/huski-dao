@@ -99,8 +99,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
   const { isDark, toggleTheme } = useTheme()
 
-  console.info('data', data)
-  console.info('singleData', singleData)
+
 
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
@@ -203,13 +202,13 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       })
     })
 
-    console.info('selOptions', selOptions)
+
     return selOptions
   }, [strategies, data])
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
-    console.log(strategyFilter)
+
   }, [strategyFilter])
 
   const { singleLeverage, direction, riskLevel, name: strategyName } = getStrategyInfo(selectedStrategy)
@@ -308,7 +307,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       }
     })
   }, [isselect])
-  // console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
+
   let prevpair;
 
   return (

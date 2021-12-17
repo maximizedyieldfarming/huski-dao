@@ -3,10 +3,10 @@ import React from 'react'
 import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
-
 import Page from 'components/Layout/Page'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { useTranslation } from 'contexts/Localization'
+import { useVolume24h } from './hooks/useVolume24h'
 import { getTvl } from '../Leverage/helpers'
 import LendTable from './components/LendTable/LendTable'
 import headerBg from './BG.png'
@@ -70,7 +70,9 @@ const Lend: React.FC = () => {
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const volume24 = undefined
+
+  const volume24hnum = undefined
+  useVolume24h('1638748800')
 
   return (
     <Page>
@@ -100,14 +102,14 @@ const Lend: React.FC = () => {
           <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
             {t(`Total Volume 24H:`)}
           </Text>
-          {volume24 ? (
+          {volume24hnum ? (
             <Text fontSize="30px" color="textFarm">
-              {volume24}
+              {volume24hnum}
             </Text>
           ) : (
             <Skeleton width="180px" height="30px" />
           )}
-          <Text fontSize="30px">{volume24}</Text>
+          <Text fontSize="30px">{volume24hnum}</Text>
         </Flex>
         <Flex
           className="container"
