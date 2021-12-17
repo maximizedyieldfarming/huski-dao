@@ -547,7 +547,7 @@ const AdjustPosition = () => {
       'quoteTokenInput': (quoteTokenInput)
     })
 
-    if (data?.farmData?.lpSymbol.toUpperCase().includes('BNB') && vault.toUpperCase() !== TokenInfo.vaultAddress.toUpperCase() && wrapFlag) {
+    if (data?.farmData?.lpSymbol.toUpperCase().includes('BNB') && vault.toUpperCase() !== TokenInfo.vaultAddress.toUpperCase() && wrapFlag &&  Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2)) ) {
       //  radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB'
       // need mod commit name 
       // amount = farmingTokenAmount
