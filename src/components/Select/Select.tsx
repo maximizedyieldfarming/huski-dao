@@ -151,7 +151,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling}>
-          {options[selectedOptionIndex].icon && options[selectedOptionIndex].icon}
+          {options[selectedOptionIndex]?.icon ? options[selectedOptionIndex]?.icon : null}
           <Text>{options[selectedOptionIndex].label}</Text>
         </DropDownHeader>
       )}
@@ -161,7 +161,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
-                {option.icon && option.icon}
+                {option.icon ? option.icon :  null}
                 <Text>{option.label}</Text>
               </ListItem>
             ) : null,
