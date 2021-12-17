@@ -14,10 +14,14 @@ const BaseCell = styled.div`
 
 export const CellContent = styled(Flex)`
   flex-direction: row;
-  justify-content: left;
+  justify-content: space-between;
   // max-height: 40px;
   ${Text} {
     line-height: 1;
+  }
+  ${({ theme }) => theme.mediaQueries.lg} {
+    // flex-direction: column;
+    justify-content: left;
   }
 `
 

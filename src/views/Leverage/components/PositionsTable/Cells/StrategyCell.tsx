@@ -28,12 +28,12 @@ const StrategyCell = ({ strategy }) => {
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
             <Text fontSize="12px" color="textSubtle" textAlign="left">
-              {t('APY')}
+              {t('Strategy')}
             </Text>
-            {tooltipVisible && tooltip}
+            {/* {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
-            </span>
+            </span> */}
           </Flex>
         )}
         {strategy ? <Text>{strategy}</Text> : <Skeleton width="80px" height="16px" />}

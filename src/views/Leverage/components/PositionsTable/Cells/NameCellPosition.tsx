@@ -8,17 +8,9 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 0.2 0 50px;
+  flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 0.2 0 80px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
+    flex: 1 0 120px;
   }
 `
 

@@ -47,8 +47,7 @@ const {t} = useTranslation()
       <GrayBox>
         <WarningIcon />
         <Text color="textSubtle">
-          {t(`We will convert the minimum required amount of tokens into ${tokenName} to pay back the debt and return the remaining
-          assets to you. This can potentially save on slippage and trading fees.`)}
+          {t('We will convert the minimum required amount of tokens into %tokenName% to pay back the debt and return the remaining assets to you. This can potentially save on slippage and trading fees.', { tokenName })}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (

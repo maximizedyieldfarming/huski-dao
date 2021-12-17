@@ -88,7 +88,15 @@ const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
   }
 `
 const StakeContainer = styled(Flex)`
-  flex: 1 0 300px;
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex: 1 0 300px;
+    &:not(:last-child) {
+      margin-bottom: none;
+    }
+  }
 `
 
 interface Props {
@@ -105,7 +113,9 @@ const StyledButton = styled(Button)<Props>`
 `
 
 const MaxContainer = styled(Flex)`
-  align-items: center;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    align-items: center;
+  }
   justify-content: space-between;
   height: 100%;
   background: ${({ theme }) => theme.colors.background};
@@ -146,7 +156,7 @@ const MaxButton = styled.button`
 
 const StakeRow = ({ tokenData }) => {
   const { account } = useWeb3React()
-  const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
+  const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop, isMobile } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
@@ -156,12 +166,13 @@ const StakeRow = ({ tokenData }) => {
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
+  const isSmallScreen = isMobile || isTablet
 
   const { totalToken, totalSupply, vaultDebtVal, totalValueStaked } = tokenData
   // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
   const { isDark } = useTheme()
-  const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance).toJSON()
-  const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance)).toJSON()
+  const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance)
+  const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance))
   const reward = new BigNumber(tokenData?.userData?.earnings).div(DEFAULT_TOKEN_DECIMAL)
   // const userTokenBalanceIbStaked = getBalanceAmount(
   //   useTokenBalance(getAddress(tokenData?.token.address)).balance,
@@ -198,7 +209,7 @@ const StakeRow = ({ tokenData }) => {
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
         setStakeAmount(finalValue)
       } else {
         event.preventDefault()
@@ -208,7 +219,7 @@ const StakeRow = ({ tokenData }) => {
   )
 
   const setStakeAmountToMax = () => {
-    setStakeAmount(userTokenBalance)
+    setStakeAmount(userTokenBalance.toString())
   }
 
   const handleStake = async (convertedStakeAmount: BigNumber) => {
@@ -250,7 +261,7 @@ const StakeRow = ({ tokenData }) => {
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userStakedBalance) ? userStakedBalance : input
+        const finalValue = new BigNumber(input).gt(userStakedBalance) ? userStakedBalance.toString() : input
         setUnstakeAmount(finalValue)
       } else {
         event.preventDefault()
@@ -260,7 +271,7 @@ const StakeRow = ({ tokenData }) => {
   )
 
   const setUnstakeAmountToMax = () => {
-    setUnstakeAmount(userStakedBalance)
+    setUnstakeAmount(userStakedBalance.toString())
   }
 
   const handleUnStake = async (convertedStakeAmount: BigNumber) => {
@@ -371,14 +382,14 @@ const StakeRow = ({ tokenData }) => {
                     </span>
                   </Text>
                 </Flex>
-                <MaxContainer>
+                <MaxContainer flexDirection={isSmallScreen ? 'column' : 'row'}>
                   <NumberInput
                     placeholder="0.00"
                     onChange={handleStakeInput}
                     value={stakeAmount}
                     style={{ background: 'unset', border: 'none' }}
                   />
-                  <Flex alignItems="center">
+                  <Flex alignItems="center" justifyContent="space-between">
                     <Box>
                       <MaxButton
                         type="button"
@@ -420,7 +431,11 @@ const StakeRow = ({ tokenData }) => {
                   </Flex>
                 </MaxContainer>
               </StakeContainer>
-              <StakeContainer flexDirection="column" mr="60px" ml="30px">
+              <StakeContainer
+                flexDirection="column"
+                mr={isSmallScreen ? '0' : '60px'}
+                ml={isSmallScreen ? '0' : '30px'}
+              >
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
                     {t('I Want to Unstake')}
@@ -432,7 +447,7 @@ const StakeRow = ({ tokenData }) => {
                     </span>
                   </Text>
                 </Flex>
-                <MaxContainer>
+                <MaxContainer flexDirection={isSmallScreen ? 'column' : 'row'}>
                   <NumberInput
                     pattern="^[0-9]*[.,]?[0-9]{0,18}$"
                     placeholder="0.00"
@@ -441,7 +456,7 @@ const StakeRow = ({ tokenData }) => {
                     style={{ background: 'unset', border: 'none' }}
                   />
 
-                  <Flex alignItems="center">
+                  <Flex alignItems="center" justifyContent="space-between">
                     <Box>
                       <MaxButton
                         type="button"
@@ -471,7 +486,11 @@ const StakeRow = ({ tokenData }) => {
                   </Flex>
                 </MaxContainer>
               </StakeContainer>
-              <StakeContainer flexDirection="column" pl="60px" style={{ borderLeft: '2px solid #EFEFEF' }}>
+              <StakeContainer
+                flexDirection="column"
+                pl={isSmallScreen ? '0' : '60px'}
+                style={isSmallScreen ? null : { borderLeft: '2px solid #EFEFEF' }}
+              >
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
                     {t('HUSKI Rewards')}

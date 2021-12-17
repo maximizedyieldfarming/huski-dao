@@ -13,14 +13,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 
 const ApyCell = ({ apy, huskyRewards, apr,dailyApr, borrowingInterest, yieldFarming, tradingFees }) => {
@@ -71,10 +63,6 @@ const ApyCell = ({ apy, huskyRewards, apr,dailyApr, borrowingInterest, yieldFarm
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('APY')}
             </Text>
-            {tooltipVisible && tooltip}
-            <span ref={targetRef}>
-              <InfoIcon ml="10px" />
-            </span>
           </Flex>
         )}
         {apy ? (
@@ -83,7 +71,7 @@ const ApyCell = ({ apy, huskyRewards, apr,dailyApr, borrowingInterest, yieldFarm
               {apy}%
             </Text>
             {tooltipVisible && tooltip}
-            <span ref={targetRef}>
+            <span ref={targetRef} style={{marginTop: "8px"}}>
               <InfoIcon ml="10px" />
             </span>
           </Flex>

@@ -7,18 +7,9 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  padding-top:29px;
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 100px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
+    flex: 1 0 120px;
   }
 `
 const LeverageContainer = styled(Flex)`

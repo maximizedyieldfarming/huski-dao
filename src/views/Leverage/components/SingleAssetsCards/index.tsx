@@ -46,11 +46,11 @@ const CardBody = styled(UiKitCardBody)`
 const DropDown = styled.div<{ isselect: boolean }>`
   border-radius: 10px;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
-  z-index: 1; 
+  z-index: 1;
   width: 60%;
-  position: absolute; 
+  position: absolute;
   left: 40%;
-  top: 90px; 
+  top: 90px;
   max-height: ${({ theme, isselect }) => {
     if (isselect) {
       return '330px'
@@ -64,7 +64,7 @@ const DropDown = styled.div<{ isselect: boolean }>`
     return 'hidden'
   }};
   transition: max-height 0.3s;
-  `
+`
 
 const DropDownItem = styled(Flex)`
   :hover {
@@ -99,8 +99,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
   const { isDark, toggleTheme } = useTheme()
 
-  console.info('data', data)
-  console.info('singleData', singleData)
+
 
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
@@ -120,8 +119,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const yieldFarmData = getYieldFarming(singleData, cakePrice)
   // const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
   const { borrowingInterest } = useFarmsWithToken(singleData, borrowingAsset)
-  const dropdown = useRef(null);
-
+  const dropdown = useRef(null)
 
   const getApr = (lvg) => {
     const apr =
@@ -203,13 +201,13 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       })
     })
 
-    console.info('selOptions', selOptions)
+
     return selOptions
   }, [strategies, data])
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
-    console.log(strategyFilter)
+
   }, [strategyFilter])
 
   const { singleLeverage, direction, riskLevel, name: strategyName } = getStrategyInfo(selectedStrategy)
@@ -309,7 +307,17 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     })
   }, [isselect])
   // console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
-  let prevpair;
+  let prevpair
+
+  // because of useState for setting which token pair and strategy is being used,
+  // the data inside the card gets stale (doesn't update) this forces it to update
+  // if theres not apy data,
+  // theres also a code to prevent user from change token pair or strategy if theres no apy data
+useEffect(() => {
+    if (!apy) {
+      setSingleData(data?.singleArray[0])
+    }
+  }, [data, apy])
 
   return (
     <Card>
@@ -317,8 +325,22 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       <CardBody>
         <Box className="avgContainer">
           <Flex alignItems="center" flexDirection="column">
-            <Box style={{ position: "relative", width: "100%" }} ref={dropdown}>
-              <Flex onClick={() => { setIsSelect(!isselect) }} style={{ cursor: "pointer" }} background={`${color}1A`} height="80px" border={`1px solid  ${color}`} borderRadius="10px" justifyContent="space-between">
+            <Box style={{ position: 'relative', width: '100%' }} ref={dropdown}>
+              <Flex
+                onClick={
+                  apy
+                    ? () => {
+                        setIsSelect(!isselect)
+                      }
+                    : null
+                }
+                style={{ cursor: apy ? 'pointer' : 'not-allowed' }}
+                background={`${color}1A`}
+                height="80px"
+                border={`1px solid  ${color}`}
+                borderRadius="10px"
+                justifyContent="space-between"
+              >
                 <Flex alignItems="center" width="calc(100% - 20px)">
                   <TokenPairImage
                     variant="inverted"
@@ -330,7 +352,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     ml="20px"
                   />
                   <Flex flexDirection="column" marginLeft="30px">
-                    <Text  fontSize="18px" fontWeight="600" textTransform="capitalize">
+                    <Text fontSize="18px" fontWeight="600" textTransform="capitalize">
                       {strategyName}
                     </Text>
                     <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(
@@ -344,38 +366,60 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                 </Flex>
               </Flex>
               <DropDown isselect={isselect}>
-                {
-                  getSelectOptions().map((option, i) => {
-                    const symbol = option.label.split('+ ')[1];
-                    let f = 0;
-                    if (symbol !== prevpair) {
-                      f = 1;
-                      prevpair = symbol;
-                    }
-                    return <>{f === 1 && <Flex height="50px" background={isDark ? "#070707" : "#F8F8F8"} alignItems="center" pl="12px">
-                      <TokenPairImage
-                        variant="inverted"
-                        primaryToken={data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.token}
-                        secondaryToken={data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.quoteToken}
-                        width={28}
-                        height={28}
-                        primaryImageProps={{ style: { marginLeft: "4px" } }}
-                        ml="20px"
-                      />
-                      <Text color="#6F767E" fontWeight="600" ml="10px">{symbol.replace(' LP', '')}</Text>
-                    </Flex>}
-                      <Box background={isDark ? "#111315" : "#FFFFFF"} >
-
-                        <DropDownItem padding="10px 20px 10px 27px" alignItems="center" onClick={() => { setIsSelect(false); handleSelectChange(option); }}>
-                          <Box mr="20px"><StrategyIcon market={option.label.split(' ')[0].toLowerCase()} /></Box>
-                          <Flex justifyContent="space-between" style={{ cursor: "pointer" }} width="100%">
-                            <Text fontSize="16px" color={isDark ? "white" : "black"}>{option.label.split(' ')[0]} {option.label.split(' ')[1]}</Text>
-                            <Text fontSize="16px" color={isDark ? "white" : "black"}>{option.label.split(' ')[2]}</Text>
+                {getSelectOptions().map((option, i) => {
+                  const symbol = option.label.split('+ ')[1]
+                  let f = 0
+                  if (symbol !== prevpair) {
+                    f = 1
+                    prevpair = symbol
+                  }
+                  return (
+                    <>
+                      {f === 1 && (
+                        <Flex height="50px" background={isDark ? '#070707' : '#F8F8F8'} alignItems="center" pl="12px">
+                          <TokenPairImage
+                            variant="inverted"
+                            primaryToken={
+                              data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.token
+                            }
+                            secondaryToken={
+                              data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.quoteToken
+                            }
+                            width={28}
+                            height={28}
+                            primaryImageProps={{ style: { marginLeft: '4px' } }}
+                            ml="20px"
+                          />
+                          <Text color="#6F767E" fontWeight="600" ml="10px">
+                            {symbol.replace(' LP', '')}
+                          </Text>
+                        </Flex>
+                      )}
+                      <Box background={isDark ? '#111315' : '#FFFFFF'}>
+                        <DropDownItem
+                          padding="10px 20px 10px 27px"
+                          alignItems="center"
+                          onClick={() => {
+                            setIsSelect(false)
+                            handleSelectChange(option)
+                          }}
+                        >
+                          <Box mr="20px">
+                            <StrategyIcon market={option.label.split(' ')[0].toLowerCase()} />
+                          </Box>
+                          <Flex justifyContent="space-between" style={{ cursor: 'pointer' }} width="100%">
+                            <Text fontSize="16px" color={isDark ? 'white' : 'black'}>
+                              {option.label.split(' ')[0]} {option.label.split(' ')[1]}
+                            </Text>
+                            <Text fontSize="16px" color={isDark ? 'white' : 'black'}>
+                              {option.label.split(' ')[2]}
+                            </Text>
                           </Flex>
                         </DropDownItem>
                       </Box>
                     </>
-                  })}
+                  )
+                })}
               </DropDown>
             </Box>
           </Flex>

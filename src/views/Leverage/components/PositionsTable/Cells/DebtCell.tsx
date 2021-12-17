@@ -11,14 +11,7 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
+ 
 `
 
 const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
@@ -40,10 +33,10 @@ const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('Debt')}
             </Text>
-            {tooltipVisible && tooltip}
+            {/* {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
-            </span>
+            </span> */}
           </Flex>
         )}
         {debt ? (

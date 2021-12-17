@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
@@ -75,14 +75,14 @@ const Deposit: React.FC<DepositProps> = ({
 }) => {
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
-  const [amount, setAmount] = useState<number | string>()
+  const [amount, setAmount] = useState<string>()
   const history = useHistory()
 
   const setAmountToMax = () => {
     if (name.toLowerCase() === 'bnb') {
       setAmount(new BigNumber(userTokenBalance).toFixed(2, 1))
     } else {
-      setAmount(userTokenBalance)
+      setAmount(userTokenBalance.toString())
     }
   }
 
@@ -97,6 +97,8 @@ const Deposit: React.FC<DepositProps> = ({
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const { isDark } = useTheme()
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   // const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   // const { balance: bnbBalance } = useGetBnbBalance()
 
@@ -107,7 +109,7 @@ const Deposit: React.FC<DepositProps> = ({
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
         setAmount(finalValue)
       } else {
         event.preventDefault()
@@ -184,9 +186,19 @@ const Deposit: React.FC<DepositProps> = ({
             )} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
-          <Box >
-            <NumberInput pattern="^[0-9]*[.,]?[0-9]{0,18}$" placeholder="0.00" onChange={handleAmountChange} value={amount} style={{ background: "unset", border: "transparent" }} />
+        <Section
+          justifyContent="space-between"
+          style={{ background: isDark ? '#111315' : '#F7F7F8' }}
+          flexDirection={isSmallScreen ? 'column' : 'row'}
+        >
+          <Box>
+            <NumberInput
+              pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+              placeholder="0.00"
+              onChange={handleAmountChange}
+              value={amount}
+              style={{ background: 'unset', border: 'transparent' }}
+            />
           </Box>
           <Box>
             <MaxContainer>
@@ -300,3 +312,7 @@ const Deposit: React.FC<DepositProps> = ({
 }
 
 export default Deposit
+
+// NOTE: javascript Number function and BigNumber.js toNumber() function might return a different value than the actual value
+// if that value is bigger than MAX_SAFE_INTEGER. so needs to be careful when doing number operations.
+// https://stackoverflow.com/questions/35727608/why-does-number-return-wrong-values-with-very-large-integers

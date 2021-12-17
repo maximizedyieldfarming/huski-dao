@@ -13,18 +13,10 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 
 const TotalVolumeCell = ({ volumeLocked }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
   const formatedSupply = volumeLocked && parseFloat(formatBigNumber(Number(volumeLocked)).replace(/,/g, ''))
@@ -32,7 +24,7 @@ const TotalVolumeCell = ({ volumeLocked }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+        <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left">
           {t('Total Volume Locked')}
         </Text>
         {volumeLocked ? (

@@ -46,7 +46,7 @@ const RepayDebtConvertTo: React.FC<Props> = ({
       <GrayBox background="#F7F7F8!important">
         <InfoIcon mr = "10px"/>
         <Text color="textSubtle" small>
-          {t(`Your position value will all be converted to ${tokenName} and returned to you after paying back the debt.`)}
+          {t('Your position value will all be converted to %tokenName% and returned to you after paying back the debt.', { tokenName })}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (
@@ -83,8 +83,6 @@ const RepayDebtConvertTo: React.FC<Props> = ({
         </Flex>
         <Text bold>
           {needCloseFarm?.toFixed(3)} {quoteTokenName} + {needCloseBase?.toFixed(3)} {tokenName}
-
-
         </Text>
       </Flex>
       <Flex justifyContent="space-between" alignItems="center">

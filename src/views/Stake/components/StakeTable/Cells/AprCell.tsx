@@ -12,18 +12,10 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 
 const AprCell = ({ getApyData }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const { t } = useTranslation()
 
   const { stakeApr, apy } = getApyData
@@ -54,7 +46,7 @@ const AprCell = ({ getApyData }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left" mb="auto">
+        <Text fontSize={isMobile || isTablet ? "1rem" : "12px"} color="textSubtle" textAlign="left" mb="auto">
           {t('APY')}
         </Text>
         {apy ? (

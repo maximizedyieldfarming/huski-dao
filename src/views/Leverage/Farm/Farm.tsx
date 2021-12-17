@@ -19,10 +19,9 @@ import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getAddress } from 'utils/addressHelpers'
+import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { BnbIcon, BtcbIcon, BusdIcon } from 'assets'
 import Select from 'components/Select/Select'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
@@ -75,16 +74,20 @@ const SectionWrapper = styled(Page)`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  > .gray {
+  > .main {
+   ${({ theme }) => theme.mediaQueries.lg} {
     width: 850px;
     height: 915px;
   }
+}
   > .sideSection {
-    width: 500px;
-    height: 915px;
     flex-direction: column;
     gap: 1rem;
+   ${({ theme }) => theme.mediaQueries.lg} {
+    width: 500px;
+    height: 915px;
   }
+}
 `
 
 const InputArea = styled(Flex)`
@@ -263,14 +266,13 @@ const Farm = () => {
     return null
   }
 
-  const [tokenInput, setTokenInput] = useState<number | string>()
-  const tokenInputRef = useRef<HTMLInputElement>()
+  const [tokenInput, setTokenInput] = useState<string>()
   const handleTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalance) ? userTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userTokenBalance) ? userTokenBalance.toString() : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -279,14 +281,13 @@ const Farm = () => {
     [userTokenBalance],
   )
 
-  const [quoteTokenInput, setQuoteTokenInput] = useState<number | string>()
-  const quoteTokenInputRef = useRef<HTMLInputElement>()
+  const [quoteTokenInput, setQuoteTokenInput] = useState<string>()
   const handleQuoteTokenInput = useCallback(
     (event) => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userQuoteTokenBalance) ? userQuoteTokenBalance : input
+        const finalValue = new BigNumber(input).gt(userQuoteTokenBalance) ? userQuoteTokenBalance.toString() : input
         setQuoteTokenInput(finalValue)
       } else {
         event.preventDefault()
@@ -295,32 +296,32 @@ const Farm = () => {
     [userQuoteTokenBalance],
   )
 
-  const handleChange = (e) => {
-    const { value } = e.target
-    setRadio(value)
-  }
+  // const handleChange = (e) => {
+  //   const { value } = e.target
+  //   setRadio(value)
+  // }
 
   const setQuoteTokenInputToFraction = (e: any) => {
     if (e.target.innerText === '25%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.25)
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.5)
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.5).toString())
     } else if (e.target.innerText === '75%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber() * 0.75)
+      setQuoteTokenInput(userQuoteTokenBalance.times(0.75).toString())
     } else if (e.target.innerText === '100%') {
-      setQuoteTokenInput(userQuoteTokenBalance.toNumber())
+      setQuoteTokenInput(userQuoteTokenBalance.toString())
     }
   }
-  const [Token, setToken] = useState(1)
+
   const setTokenInputToFraction = (e) => {
     if (e.target.innerText === '25%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.25)
+      setTokenInput(userTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.5)
+      setTokenInput(userTokenBalance.times(0.5).toString())
     } else if (e.target.innerText === '75%') {
-      setTokenInput(userTokenBalance.toNumber() * 0.75)
+      setTokenInput(userTokenBalance.times(0.75).toString())
     } else if (e.target.innerText === '100%') {
-      setTokenInput(userTokenBalance.toNumber())
+      setTokenInput(userTokenBalance.toString())
     }
   }
 
@@ -335,12 +336,12 @@ const Farm = () => {
         {
           label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.token.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} /></Box>,
         },
         {
           label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.token.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} /></Box>,
         },
       ]
     }
@@ -354,12 +355,12 @@ const Farm = () => {
         {
           label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.quoteToken.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} /></Box>,
         },
         {
           label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.quoteToken.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} /></Box>,
         },
       ]
     }
@@ -374,15 +375,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.token.symbol
             : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
+          <Box  width={20}
+            height={20}>
           <TokenImage
             token={
               selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-                ? tokenData?.TokenInfo.token
-                : tokenData?.TokenInfo?.quoteToken
+              ? tokenData?.TokenInfo.token
+              : tokenData?.TokenInfo?.quoteToken
             }
             width={20}
             height={20}
-          />
+            />
+            </Box>
         ),
       },
       {
@@ -395,15 +399,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
+         <Box width={20}
+            height={20}>
           <TokenImage
             token={
               selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-                ? tokenData?.TokenInfo.quoteToken
-                : tokenData?.TokenInfo?.token
+              ? tokenData?.TokenInfo.quoteToken
+              : tokenData?.TokenInfo?.token
             }
             width={20}
             height={20}
-          />
+            />
+            </Box>
         ),
       },
     ]
@@ -411,7 +418,6 @@ const Farm = () => {
 
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
-  // const { borrowingInterest } = getBorrowingInterest(tokenData, radio)
   const { borrowingInterest } = useFarmsWithToken(tokenData, radio)
 
   const getApr = (lvg) => {
@@ -438,7 +444,7 @@ const Farm = () => {
   const { callWithGasPrice } = useCallWithGasPrice()
   const [isPending, setIsPending] = useState(false)
 
-  const bnbVaultAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+  const bnbVaultAddress = getWbnbAddress()
   const depositContract = useVault(bnbVaultAddress)
   const handleDeposit = async (bnbMsgValue) => {
 
@@ -503,10 +509,13 @@ const Farm = () => {
 
   const handleConfirm = async () => {
     const id = 0
-    const AssetsBorrowed = farmData ? farmData[3] : 0
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString() // Assets Borrowed
-    const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
+    const AssetsBorrowed = farmData ? farmData[3] : 0
+    const minLPAmountValue = farmData ? farmData[12] : 0
+    const minLPAmount = minLPAmountValue.toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
+    // getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+    const maxReturn = 0
     let amount
     let workerAddress
     let farmingTokenAmount
@@ -514,6 +523,7 @@ const Farm = () => {
     let dataStrategy
     let dataWorker
     let contract
+    let wrapFlag = false
 
     // base token is base token
     if (radio === tokenData?.TokenInfo?.token?.symbol) {
@@ -525,19 +535,20 @@ const Farm = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('base + single + quote token input ')
-        farmingTokenAmount = Number(quoteTokenInput || 0).toString()
+        farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = Number(quoteTokenInput || 0).toString()
+        farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
-      amount = getDecimalAmount(new BigNumber(Number(tokenInput || 0)), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString()
       workerAddress = tokenData.TokenInfo.address
     } else {
       // farm token is base token
@@ -548,24 +559,29 @@ const Farm = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('farm + single + quote token input ')
-        farmingTokenAmount = Number(tokenInput || 0).toString()
+        wrapFlag = true
+        farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
-        farmingTokenAmount = Number(tokenInput || 0).toString()
+        wrapFlag = true
+        farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
-      amount = getDecimalAmount(new BigNumber(Number(quoteTokenInput || 0)), 18).toString()
+      amount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString()
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
     console.log({
       radio,
+      minLPAmount,
+      "ethers.utils.parseEther(minLPAmount)": ethers.utils.parseEther(minLPAmount),
       id,
       workerAddress,
       amount,
@@ -578,19 +594,18 @@ const Farm = () => {
       dataStrategy,
       tokenData,
       tokenInput,
-      'a': Number(tokenInput),
+      'a': (tokenInput),
       quoteTokenInput,
-      'b': Number(quoteTokenInput)
+      'b': (quoteTokenInput)
     })
 
-    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB') {
+    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
       // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
       // need mod commit name 
-      const bnbMsgValue = getDecimalAmount(new BigNumber(0), 18).toString() // "218311561760734500000" //
+      const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+      console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
-      // handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
-    } else {
-      //   // handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -723,7 +738,7 @@ const Farm = () => {
         {t(`Farming ${token} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="gray">
+        <Section className="main">
           <Flex alignItems="center" justifyContent="space-between">
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
@@ -1134,7 +1149,7 @@ const Farm = () => {
             !isApproved ||
             (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
             (tokenInput === undefined && quoteTokenInput === undefined) ||
-            new BigNumber(farmData[3]).lt(minimumDebt) ||
+            (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
             isPending
           }
         >
@@ -1143,7 +1158,7 @@ const Farm = () => {
       </Flex>
       {tokenInput || quoteTokenInput ? (
         <Text mx="auto" color="red">
-          {new BigNumber(farmData[3]).lt(minimumDebt)
+          {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
             ? t('Minimum Debt Size: %minimumDebt% %radio%', {
               minimumDebt: minimumDebt.toNumber(),
               radio: radio.toUpperCase().replace('WBNB', 'BNB'),
@@ -1156,3 +1171,7 @@ const Farm = () => {
 }
 
 export default Farm
+
+// NOTE: javascript Number function and BigNumber.js toNumber() function might return a different value than the actual value
+// if that value is bigger than MAX_SAFE_INTEGER. so needs to be careful when doing number operations.
+// https://stackoverflow.com/questions/35727608/why-does-number-return-wrong-values-with-very-large-integers

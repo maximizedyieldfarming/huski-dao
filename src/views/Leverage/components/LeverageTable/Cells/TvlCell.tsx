@@ -16,15 +16,7 @@ interface InfoParams {
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 150px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
+    flex: 1 0 120px;
   }
 `
 

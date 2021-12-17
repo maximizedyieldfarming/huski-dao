@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Spinner } from 'husky-uikit1.0'
+import { DogRunning } from 'components/DogLoader'
 import Page from '../Layout/Page'
 
 const Wrapper = styled(Page)`
@@ -12,7 +12,7 @@ const Wrapper = styled(Page)`
 const PageLoader: React.FC = () => {
   return (
     <Wrapper>
-      <Spinner />
+      <DogRunning />
     </Wrapper>
   )
 }

@@ -7,12 +7,12 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 150px;
+    flex: 1 0 120px;
   }
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: start;
+    align-items: center;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }

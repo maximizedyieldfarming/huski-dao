@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -66,13 +66,15 @@ const StyledArrowDown = styled(ArrowDownIcon)`
 const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userTokenBalanceIb, userTokenBalance }) => {
   usePollLeverageFarmsWithUserData()
   const { t } = useTranslation()
-  const [amount, setAmount] = useState<number | string>()
+  const [amount, setAmount] = useState<string>()
   const history = useHistory()
 
   const setAmountToMax = () => {
-    setAmount(userTokenBalanceIb)
+    setAmount(userTokenBalanceIb.toString())
   }
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   const { toastError, toastSuccess, toastInfo } = useToast()
   const { vaultAddress } = tokenData.TokenInfo
   const withdrawContract = useVault(vaultAddress)
@@ -93,7 +95,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
       // check if input is a number and includes decimals and allow empty string
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = Number(input) > Number(userTokenBalanceIb) ? userTokenBalanceIb : input
+        const finalValue = new BigNumber(input).gt(userTokenBalanceIb) ? userTokenBalanceIb.toString() : input
         setAmount(finalValue)
       } else {
         event.preventDefault()
@@ -143,7 +145,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             {t('Balance')}: <span style={{fontWeight: 700 }}>{`${balance} ib${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }} flexDirection={isSmallScreen ? 'column' : 'row'}>
           <Box>
             <Input
               pattern="^[0-9]*[.,]?[0-9]{0,18}$"

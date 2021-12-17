@@ -12,11 +12,12 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
+  ${CellContent} {
+    align-items: unset;
+  }
   > div {
     gap: 5px;
   }
-  
-  padding-top:15px!important;
   a {
     padding: 0.75rem;
     font-size: 14px;

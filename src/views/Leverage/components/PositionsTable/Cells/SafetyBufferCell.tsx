@@ -18,14 +18,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 const SBLinearProgress = styled(LinearProgress)`
   .MuiLinearProgress-barColorPrimary {
@@ -44,14 +36,6 @@ const Circle = styled.div`
     transform: rotate(180deg);
   }
 `
-
-const ProgressCircle = () => {
-  return (
-    <Circle className="pie-wrapper pie-wrapper--solid progress-88">
-      <div className="inner" />
-    </Circle>
-  )
-}
 
 const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop, noDebt }) => {
   const { t } = useTranslation()
@@ -100,10 +84,6 @@ const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, token
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('Safety Buffer')}
             </Text>
-            {tooltipVisible && tooltip}
-            <span ref={targetRef}>
-              <InfoIcon ml="10px" />
-            </span>
           </Flex>
         )}
         {safetyBuffer ? (
@@ -119,19 +99,11 @@ const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, token
                 value={safetyBuffer}
                 style={{ height: '6px', width: '40px', color: '#7B3FE4', background: '#CCCCCC', borderRadius: 6 }}
               />
+              {tooltipVisible && tooltip}
+              <span ref={targetRef} style={{ marginTop: '8px' }}>
+                <InfoIcon ml="10px" />
+              </span>
             </Flex>
-            {/*  <div
-              style={{
-                marginLeft: '15px',
-                marginTop: '4px',
-                background: '#FFFEFE',
-                borderRadius: '10px',
-                color: '#4B4B4B',
-                fontSize: '9px',
-              }}
-            >
-              Debt Ratio - 43.60%
-            </div> */}
           </>
         ) : (
           <Skeleton width="80px" height="16px" />

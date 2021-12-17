@@ -17,10 +17,7 @@ const StyledCell = styled(BaseCell)`
     padding-left: 12px;
   }
   ${CellContent} {
-    display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 1rem;
   }
 `
 
@@ -29,9 +26,9 @@ const NameCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">
-      <CellContent>
-        <Box width={40} height={40}>
-          <TokenImage token={token?.token} width={40} height={40} mr="8px" />
+      <CellContent alignItems="center">
+        <Box width={40} height={40} mr="1rem">
+          <TokenImage token={token?.token} width={40} height={40} />
         </Box>
         <Text bold={!isMobile} small={isMobile} color="textFarm">
           {token?.symbol.replace('WBNB', 'BNB')}

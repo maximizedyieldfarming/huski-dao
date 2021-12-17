@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import NameCellPosition from './Cells/NameCellPosition'
+// import NameCellPosition from './Cells/NameCellPosition'
 import PoolCellPosition from './Cells/PoolCellPosition'
 import PositionValueCell from './Cells/PositionValueCell'
 import LiquidatedEquityCell from './Cells/LiquidatedEquityCell'
@@ -145,7 +145,7 @@ const LiquidatedPositionsRow = ({ data }) => {
   return (
     <>
       <StyledRow role="row">
-        <NameCellPosition name="test" positionId="21843" />
+{/*         <NameCellPosition name="test" positionId="21843" /> */}
         <PoolCellPosition pool="HUSKI_BNB" quoteToken={quoteToken} token={token} />
         <PositionValueCell position={null} name="BNB" />
         <LiquidatedEquityCell liqEquity="10BNB" />
@@ -154,7 +154,7 @@ const LiquidatedPositionsRow = ({ data }) => {
         <TxRecordCell />
       </StyledRow>
       <StyledRow role="row">
-        <NameCellPosition name="test" positionId="21678" />
+{/*         <NameCellPosition name="test" positionId="21678" /> */}
         <PoolCellPosition pool="HUSKI_BNB" quoteToken={quoteToken} token={token} />
         <PositionValueCell position={null} name="BNB" />
         <LiquidatedEquityCell liqEquity="10BNB" />

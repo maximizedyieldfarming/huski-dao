@@ -14,11 +14,16 @@ const StyledTable = styled.div`
   background-position: right; 
   background-size:350px 400px;
   > div:not(:last-child) {
-    // border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   > div:first-child {
     // border-bottom:'1px solid #EFEFEF'!important;
   }
+   ${({ theme }) => theme.mediaQueries.lg} {
+     >div {
+       border-bottom: none !important;
+     }
+    }
 `
 
 const StyledTableBorder = styled.div`
