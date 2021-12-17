@@ -1,11 +1,12 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Button , Cards ,useWalletModal} from 'husky-uikit1.0'
+import { Button, Cards, useWalletModal } from 'husky-uikit1.0'
 
 import useAuth from 'hooks/useAuth'
 import { useTranslation } from 'contexts/Localization'
 
-const StyledButton = styled(Button)<any>`
+import styled, { useTheme } from 'styled-components'
+
+const StyledButton = styled(Button) <any>`
   border-radius:10px;
   margin-bottom:-10px;
   height:55px;
@@ -14,10 +15,11 @@ const StyledButton = styled(Button)<any>`
 `
 
 const ConnectWalletButton = (props) => {
+  const { isDark } = useTheme();
   const { t } = useTranslation()
   const { login, logout } = useAuth()
-  const { onPresentConnectModal } = useWalletModal(login, logout)
- 
+  const { onPresentConnectModal } = useWalletModal(login, logout, "asdf",isDark)
+
   return (
     <StyledButton size="lg" onClick={onPresentConnectModal} {...props}>
       {t('Connect Wallet')}

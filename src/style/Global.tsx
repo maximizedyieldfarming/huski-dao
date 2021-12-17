@@ -21,6 +21,13 @@ const GlobalStyle = createGlobalStyle`
       height: auto;
       max-width: 100%;
     }
+    input{
+      box-shadow : none!important;
+    }
+    input:focus{
+      outline: none!important;
+      box-shadow : none!important;
+  }
   }
 `
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Box, Text } from 'husky-uikit1.0'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import CloseEntirePosition from './CloseEntirePosition'
 
@@ -15,6 +15,8 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
 
   const { vault } = data
   const { TokenInfo } = data.farmData
+  const { isDark } = useTheme();
+
   let symbolName
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
     symbolName = TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
@@ -24,7 +26,7 @@ const MinimizeTrading = ({ data, isCloseEntire }) => {
 
   return (
     <>
-      <GrayBox background="#F7F7F8">
+      <GrayBox background={isDark ? "#111315" : "#F7F7F8"}>
         <Text small color="textSubtle">
           {t(
             `We will convert the minimum required amount of tokens into ${symbolName} to pay back the debt and return the remaining assets to you. This can potentially save on slippage and trading fees.`,

@@ -379,13 +379,11 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / 2) * moveVal.width
-    if (tt === 0) {
-      setMargin(tt - targetPositionLeverage * 9 + 10)
-    } else {
-      setMargin(tt - targetPositionLeverage * 9)
-    }
-  }, [targetPositionLeverage, moveVal.width])
+    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 26)
+   
+      setMargin(tt )
+   
+  }, [targetPositionLeverage, moveVal.width, leverage])
 
 
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput || 0, 0, symbolName)
@@ -718,9 +716,11 @@ const AdjustPositionSA = () => {
                 style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
               />
             </Flex>
-            <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
-              {datalistOptions}
-            </datalist>
+            <Text>
+              <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
+                {datalistOptions}
+              </datalist>
+            </Text>
           </Box>
         </Flex>
 

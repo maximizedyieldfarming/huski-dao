@@ -28,8 +28,8 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
 
   return (
     <>
-      <Text color="secondary" fontSize="12px" textTransform="uppercase" fontWeight="bold" mb="8px">
-        {t('Your Address')}
+      <Text fontSize="14px" textTransform="uppercase" fontWeight="bold" mb="8px">
+        {t('Your Wallet Address')}
       </Text>
       <CopyAddress account={account} mb="24px" />
       {hasLowBnbBalance && (
@@ -41,17 +41,18 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
         </Message>
       )}
       <Flex alignItems="center" justifyContent="space-between">
-        <Text color="textSubtle">{t('BNB Balance')}</Text>
-        <Text>{getFullDisplayBalance(balance, 18, 6)}</Text>
+        <Text>{t('BNB Balance')}</Text>
+        <Text bold>{getFullDisplayBalance(balance, 18, 6)} BNB</Text>
       </Flex>
-      <Flex alignItems="center" justifyContent="space-between" mb="24px">
-        <Text color="textSubtle">{t('CAKE Balance')}</Text>
-        <Text>{getFullDisplayBalance(cakeBalance, 18, 3)}</Text>
+      <Flex alignItems="center" justifyContent="space-between" mb="24px" mt="10px">
+        <Text>{t('CAKE Balance')}</Text>
+        <Text bold>{getFullDisplayBalance(cakeBalance, 18, 3)} HUSKI</Text>
       </Flex>
-      <Flex alignItems="center" justifyContent="end" mb="24px">
-        <LinkExternal href={getBscScanLink(account, 'address')}>{t('View on BscScan')}</LinkExternal>
+      <Flex alignItems="center" mb="24px" justifyContent="space-between">
+        <Text color="#7B3FE4" bold>{t('View on BscScan')}</Text>
+        <LinkExternal href={getBscScanLink(account, 'address')} width={20} color='#292D32' />
       </Flex>
-      <Button variant="secondary" width="100%" onClick={handleLogout}>
+      <Button  width="100%" onClick={handleLogout}>
         {t('Disconnect Wallet')}
       </Button>
     </>

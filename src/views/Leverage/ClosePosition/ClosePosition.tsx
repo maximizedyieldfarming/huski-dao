@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { Box, Flex, Text } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
-import styled from 'styled-components'
+import styled, {useTheme} from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
 import ConverTo from './components/ConverTo'
 import MinimizeTrading from './components/MinimizeTrading'
 
 interface Props {
-  active: boolean
+  active: boolean,
+  isDark : boolean,
 }
 
 const TabPanel = styled(Box)`
@@ -20,9 +21,9 @@ const TabPanel = styled(Box)`
   // height: 528px;
 `
 
-const Header = styled(Flex)`
+const Header = styled(Flex) <{ isDark: boolean }>`
   margin-top: 20px;
-  background: #f4f4f4;
+  background: ${({ isDark }) => isDark ? '#111315' : '#f4f4f4'};
   border-radius: 12px;
   padding: 4px;
   height: 54px;
@@ -30,11 +31,13 @@ const Header = styled(Flex)`
 
 const HeaderTabs = styled.div<Props>`
   flex: 1;
-  box-shadow: ${({ active, theme }) =>
+  box-shadow: ${({ active, isDark }) =>
     active
-      ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'
+      ? ( isDark ? 
+        '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)':
+        '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)')
       : ''};
-  background-color: ${({ active, theme }) => (active ? '#FFFFFF' : 'transparent')};
+  background-color: ${({ active, isDark }) => (active ? (isDark ? '#272B30':'#FFFFFF') : 'transparent')};
   padding: 1rem;
   cursor: pointer;
   border-radius: 12px;
@@ -88,6 +91,7 @@ const ClosePosition = (props) => {
   }
 
   const [isCloseEntire, setCloseEntire] = useState(true)
+  const {isDark} = useTheme();
   // const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
 
   return (
@@ -127,13 +131,13 @@ const ClosePosition = (props) => {
             </Flex>
           </Bubble>
         </Flex>
-        <Header>
-          <HeaderTabs onClick={handleDepositClick} active={isDeposit}>
+        <Header isDark = {isDark}>
+          <HeaderTabs onClick={handleDepositClick} active={isDeposit} isDark = {isDark}>
             <Text bold fontSize="15px">
               {t('Convert To')} {symbolName}
             </Text>
           </HeaderTabs>
-          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit}>
+          <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} isDark = {isDark}>
             <Text bold fontSize="15px">
               {t('Minimize Trading')}
             </Text>

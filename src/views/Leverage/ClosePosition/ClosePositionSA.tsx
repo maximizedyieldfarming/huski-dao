@@ -5,7 +5,7 @@ import useToast from 'hooks/useToast'
 import { useVault } from 'hooks/useContract'
 import { useTranslation } from 'contexts/Localization'
 import Page from 'components/Layout/Page'
-import styled from 'styled-components'
+import styled,{useTheme} from 'styled-components'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
@@ -48,7 +48,6 @@ const Section = styled(Flex)`
   border-radius: ${({ theme }) => theme.radii.small};
   justify-content: space-between;
   &.gray {
-    background-color: ${({ theme }) => theme.colors.backgroundDisabled};
   }
 `
 
@@ -91,6 +90,7 @@ const ClosePositionSA = () => {
   const vaultContract = useVault(tokenVaultAddress)
   const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
+  const {isDark} = useTheme();
 
   let symbolName
   let tokenValue
@@ -214,7 +214,7 @@ const ClosePositionSA = () => {
                   )} ${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
                 </Text>
             </Flex>
-            <AmountPanel mt="10px">
+            <AmountPanel mt="10px" isDark = {isDark}>
               {baseTokenAmount ? (
                 <Text bold fontSize="28px">
                   {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
@@ -239,7 +239,7 @@ const ClosePositionSA = () => {
                   )} i${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
                 </Text>
               </Flex>
-              <AmountPanel mt="10px">
+              <AmountPanel mt="10px" isDark = {isDark}>
                 {convertedPositionValue ? (
                   <Text bold fontSize="28px">
                     {convertedPositionValue.toFixed(3)} {tokenValueSymbol}
@@ -312,8 +312,8 @@ const ClosePositionSA = () => {
 
 export default ClosePositionSA
 
-const AmountPanel = styled(Box)`
-  background: #F7F7F8;
+const AmountPanel = styled(Box)<{ isDark? : boolean }>`
+  background: ${({ isDark }) => isDark ? '#111315' :'#F7F7F8' };
   border: 1px solid #C6C6C6;
   box-sizing: border-box;
   border-radius: 12px;

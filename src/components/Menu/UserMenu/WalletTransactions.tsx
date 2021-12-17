@@ -23,9 +23,9 @@ const WalletTransactions: React.FC = () => {
   }
 
   return (
-    <Box minHeight="120px">
+    <Box >
       <Flex alignItems="center" justifyContent="space-between" mb="24px">
-        <Text color="secondary" fontSize="12px" textTransform="uppercase" fontWeight="bold">
+        <Text bold fontSize="14px" textTransform="uppercase" fontWeight="bold">
           {t('Recent Transactions')}
         </Text>
         {sortedTransactions.length > 0 && (
