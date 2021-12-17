@@ -15,13 +15,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    margin: 0 auto;
-    ${({ theme }) => theme.mediaQueries.md} {
-      margin: unset;
-      align-items: unset;
-    }
-  }
 `
 
 const ClaimCell = ({ token }) => {

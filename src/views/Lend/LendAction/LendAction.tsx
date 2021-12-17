@@ -48,15 +48,22 @@ const TabPanel = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
-  width: 510px;
-  height: 528px;
+  width: 95%;
+  height: 600px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    width: 500px;
+    height: 528px;
+  }
 `
 
 const Balance = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   padding: 1rem;
   border-radius: 20px;
-  width: 510px;
+  width: 95%;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    width: 510px;
+  }
   justify-content: space-between;
   align-items: center;
 `
@@ -66,19 +73,6 @@ const Header = styled(Flex)`
   padding: 20px;
 `
 
-const HeaderTabs = styled(Link)<Props>`
-  flex: 1;
-  background-color: ${({ active, theme }) => (active ? theme.card.background : theme.colors.backgroundDisabled)};
-  border-top: 2px solid ${({ active, theme }) => (active ? '#9615e7' : theme.colors.backgroundDisabled)};
-  padding: 1rem;
-  cursor: pointer;
-  &:first-child {
-    border-top-left-radius: 12px;
-  }
-  &:last-child {
-    border-top-right-radius: 12px;
-  }
-`
 const HeaderButton = styled(Link)``
 
 const Body = styled(Flex)`
@@ -158,7 +152,7 @@ const LendAction = () => {
           {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
-      <TabPanel style={{ width: '500px', height: '560px' }}>
+      <TabPanel >
         <Header>
           {isDeposit ? (
             <Box

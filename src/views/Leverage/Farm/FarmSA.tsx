@@ -855,7 +855,7 @@ const FarmSA = () => {
                     </Section>
 
                     <Section>
-                        <Flex justifyContent="space-between">
+                        <Flex justifyContent="space-between" style={{flexFlow: "row wrap"}}>
                             <Flex>
                                 <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>{t(`Time Profit`)}</Text>
                                 <Text style={{ cursor: "pointer", color: chartype === 1 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 1 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(1)}>{t(`Price Profit`)}</Text>
@@ -922,16 +922,18 @@ const FarmSA = () => {
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
+                                <Box width="90%" overflow="auto">
                                 <ButtonMenu
                                     onItemClick={setInputToFraction}
                                     activeIndex={buttonIndex}
                                     disabled={userTokenBalance.eq(0)}
-                                >
+                                    >
                                     <ButtonMenuItem>25%</ButtonMenuItem>
                                     <ButtonMenuItem>50%</ButtonMenuItem>
                                     <ButtonMenuItem>75%</ButtonMenuItem>
                                     <ButtonMenuItem>100%</ButtonMenuItem>
                                 </ButtonMenu>
+                                    </Box>
                             </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>

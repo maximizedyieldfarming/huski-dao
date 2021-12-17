@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -73,6 +73,8 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
     setAmount(userTokenBalanceIb.toString())
   }
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   const { toastError, toastSuccess, toastInfo } = useToast()
   const { vaultAddress } = tokenData.TokenInfo
   const withdrawContract = useVault(vaultAddress)
@@ -143,7 +145,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             {t('Balance')}: <span style={{fontWeight: 700 }}>{`${balance} ib${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }} flexDirection={isSmallScreen ? 'column' : 'row'}>
           <Box>
             <Input
               pattern="^[0-9]*[.,]?[0-9]{0,18}$"

@@ -1,10 +1,9 @@
 /* eslint-disable array-callback-return */
 import Page from 'components/Layout/Page'
 import React, { useState } from 'react'
-import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
 import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
@@ -16,7 +15,6 @@ import useTheme from 'hooks/useTheme'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
 import { usePositions } from './hooks/usePositions'
-import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 import SingleAssetsCard from './components/SingleAssetsCards'
@@ -39,16 +37,6 @@ const PositionsButton = styled(ActionButton)`
   &:first-child {
     margin-right: 1rem;
   }
-`
-
-const RewardsContainer = styled(Box)`
-  flex-direction: row;
-  position: relative;
-  align-self: flex-end;
-  background-color: ${({ theme }) => theme.card.background};
-  border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem;
-  box-shadow: ${({ theme }) => theme.card.boxShadow};
 `
 
 const PositionButtonsContainer = styled(Box)`
@@ -109,10 +97,11 @@ const FiltersWrapper = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px 0;
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
-  // margin-bottom: 0.5rem;
+  *::-webkit-scrollbar {
+    height: 4px;
+  }
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
     gap: 0;
@@ -121,29 +110,17 @@ const FiltersWrapper = styled(Flex)`
     padding-left: 1rem;
     padding-right: 1rem;
     font-size: 13px;
+    flex: 1;
   }
-  > ${Flex} > ${Flex} {
-    ::-webkit-scrollbar {
-      height: 8px;
-    }
-  }
-  .tokenFilter {
-    > ${Flex} {
-      overflow: auto;
-      ::-webkit-scrollbar {
-        height: 8px;
-      }
-    }
-  }
-  .searchSortContainer {
-    flex-direction: column;
+  .strategyFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      margin-left: auto;
-      flex-direction: row;
-      gap: 10px;
+      border-right: 2px solid #efefef;
+      border-left: 2px solid #efefef;
+      justify-content: center;
     }
   }
 `
+
 const StrategyIcon = styled.div<{ market: string }>`
   width: 8px;
   height: 8px;
@@ -163,30 +140,28 @@ const StrategyIcon = styled.div<{ market: string }>`
   }};
 `
 const SBBox = styled(Box)`
-  border-radius: 15px !important;
+  border-radius: ${({ theme }) => theme.radii.default};
   background-image: url('/images/BG.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
+  flex: 5;
+  // position: relative;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    margin-right: 30px;
+  }
+  display: flex;
+  align-items: center;
 `
 
 const Section = styled(Flex)`
-  background-color: 'transparent';
-  padding: 0.5rem;
-  gap: 0.5rem;
-  border-radius: ${({ theme }) => theme.radii.default};
-  height: 224px;
-  .container {
-    background-color: ${({ theme }) => theme.colors.background};
-    padding: 1rem;
-    border-radius: ${({ theme }) => theme.radii.small};
-  }
-  .block {
-    background-color: ${({ theme }) => theme.colors.background};
-    flex: 1;
-    border-radius: ${({ theme }) => theme.radii.small};
+  gap: 1rem;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
   }
 `
+
 const StyledButton = styled(Button)`
   background: #ffffff;
   border: 1px solid #efefef;
@@ -202,7 +177,6 @@ const StyledButton = styled(Button)`
 
 const SingleAssetsFarms: React.FC = () => {
   const { t } = useTranslation()
-  const match = useRouteMatch()
   const { account } = useWeb3React()
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
@@ -344,14 +318,11 @@ const SingleAssetsFarms: React.FC = () => {
     singlesData = singlesData.filter((pool) => pool?.singleArray[0]?.lpExchange === dexFilter)
   }
 
-  console.info('singlesData', singlesData)
+  console.info('singlesData', { singlesData }, 'singleData', { singleData })
   return (
     <Page>
       <Section>
-        <SBBox
-          className="block"
-          style={{ position: 'relative', marginRight: '30px', display: 'flex', alignItems: 'center' }}
-        >
+        <SBBox>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
             Huski
             <br /> Finance
@@ -359,14 +330,13 @@ const SingleAssetsFarms: React.FC = () => {
         </SBBox>
 
         <Flex
-          className="container"
+          flex="1"
           style={{
             padding: '30px',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
             borderRadius: '15px',
-            width: '20%',
+            background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />
@@ -379,7 +349,10 @@ const SingleAssetsFarms: React.FC = () => {
             </Text>
             <StyledButton
               as={Link}
-              to={(location) => ({ pathname: `${location.pathname.replace('singleAssets', 'farms')}/claim`, state: { farmsData } })}
+              to={(location) => ({
+                pathname: `${location.pathname.replace('singleAssets', 'farms')}/claim`,
+                state: { farmsData },
+              })}
               disabled={!account}
               scale="sm"
             >
@@ -408,7 +381,7 @@ const SingleAssetsFarms: React.FC = () => {
       </StyledTableBorder>
 
       <FiltersWrapper>
-        <Flex alignItems="center" className="dexFilter" justifyContent="center" borderRight="2px solid #EFEFEF;" width = "28%">
+        <Flex alignItems="center" className="dexFilter">
           <Text bold>DEX:</Text>
           <Flex overflowX="auto" paddingLeft="5px">
             <FilterOption
@@ -439,12 +412,7 @@ const SingleAssetsFarms: React.FC = () => {
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          borderRight="2px solid #EFEFEF;"
-          style={{ paddingRight: '40px', paddingLeft: '50px', width: "28%" }}
-        >
+        <Flex className="strategyFilter" alignItems="center">
           <Text>{t('Strategy:')}</Text>
           <Flex overflowX="auto" alignItems="center">
             <FilterOption
@@ -454,7 +422,7 @@ const SingleAssetsFarms: React.FC = () => {
               onClick={() => setStrategyFilter('bear')}
               startIcon={<StrategyIcon market="bear" />}
             >
-              Bear
+              {t('Bear')}
             </FilterOption>
             <FilterOption
               variant="tertiary"
@@ -463,7 +431,7 @@ const SingleAssetsFarms: React.FC = () => {
               onClick={() => setStrategyFilter('bull2x')}
               startIcon={<StrategyIcon market="bull" />}
             >
-              Bull
+              {t('Bull')}
             </FilterOption>
             <FilterOption
               variant="tertiary"
@@ -472,13 +440,13 @@ const SingleAssetsFarms: React.FC = () => {
               onClick={() => setStrategyFilter('neutral')}
               startIcon={<StrategyIcon market="neutral" />}
             >
-              Neutral
+              {t('Neutral')}
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex alignItems="center" justifyContent="center" style={{ paddingRight: '40px', paddingLeft: '50px', width: "44%" }}>
+        <Flex className="tokenFilter" alignItems="center">
           <Text>{t('Paired Assets:')}</Text>
-          <Flex style={{ overflowX: "scroll" }}>
+          <Flex overflowX="auto">
             <FilterOption
               variant="tertiary"
               style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}

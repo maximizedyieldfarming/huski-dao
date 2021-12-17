@@ -20,8 +20,6 @@ import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 
-
-
 const ActionButton = styled(Button)`
   padding: 0.75rem 2rem;
   font-size: 14px;
@@ -42,49 +40,51 @@ const PositionsButton = styled(ActionButton)`
   }
 `
 const StyledButton = styled(Button)`
-  background: #FFFFFF;
-  border: 1px solid #EFEFEF;
+  background: #ffffff;
+  border: 1px solid #efefef;
   box-sizing: border-box;
   border-radius: 10px;
   width: 114px;
   height: 32px;
-  text-align:center;
-  display:flex;
-  justify-content:center;
-  flex-direction:column;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 `
 const Section = styled(Flex)`
-  background-color: 'transparent';
-  padding: 0.5rem;
-  gap: 0.5rem;
-  border-radius: ${({ theme }) => theme.radii.default};
-  height:224px;
-  .container {
-    background-color: ${({ theme }) => theme.colors.background};
-    padding: 1rem;
-    border-radius: ${({ theme }) => theme.radii.small};
+  // background-color: 'transparent';
+  // padding: 0.5rem;
+  gap: 1rem;
+  // border-radius: ${({ theme }) => theme.radii.default};
+  // height: 224px;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
   }
-  .block {
-    background-color: ${({ theme }) => theme.colors.background};
-    flex: 1;
-    border-radius: ${({ theme }) => theme.radii.small};
-  }
+  // .container {
+  //   background-color: ${({ theme }) => theme.colors.background};
+  //   padding: 1rem;
+  //   border-radius: ${({ theme }) => theme.radii.small};
+  // }
+  // .block {
+  //   background-color: ${({ theme }) => theme.colors.background};
+  //   flex: 1;
+  //   border-radius: ${({ theme }) => theme.radii.small};
+  // }
 `
 const SBBox = styled(Box)`
-  border-radius:15px!important;
+  border-radius: ${({ theme }) => theme.radii.default};
   background-image: url('/images/leverage.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
-`
-const RewardsContainer = styled(Box)`
-  flex-direction: row;
-  position: relative;
-  align-self: flex-end;
-  background-color: ${({ theme }) => theme.card.background};
-  border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem;
-  box-shadow: ${({ theme }) => theme.card.boxShadow};
+  flex: 5;
+  // position: relative;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    margin-right: 30px;
+  }
+  display: flex;
+  align-items: center;
 `
 
 const PositionButtonsContainer = styled(Box)`
@@ -111,13 +111,19 @@ const Leverage: React.FC = () => {
   const { account } = useWeb3React()
   const { data: farmsData } = useLeverageFarms()
   const [isActivePos, setActive] = useState(true)
-  const {isDark} = useTheme()
+  const { isDark } = useTheme()
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
   const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []
-  if (positionData && positionData !== null && positionData !== undefined && positionData !== [] && positionData.length !== 0) {
+  if (
+    positionData &&
+    positionData !== null &&
+    positionData !== undefined &&
+    positionData !== [] &&
+    positionData.length !== 0
+  ) {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
@@ -146,30 +152,27 @@ const Leverage: React.FC = () => {
   //   })
   // }
 
-   console.info('farmsData', farmsData)
+  console.info('farmsData', farmsData)
 
   let reward = 0
- const hash = {}
- const positionsWithEarnings = farmsData.reduce((cur, next) => {
-   hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
-   return cur
- }, [])
- positionsWithEarnings.map((farm) => {
-   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-   // @ts-ignore
-   const farmEarnings = new BigNumber(parseFloat(farm?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
-   // console.info('farmEarnings', farmEarnings)
-   reward += farmEarnings
-   return reward
- })
+  const hash = {}
+  const positionsWithEarnings = farmsData.reduce((cur, next) => {
+    hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+    return cur
+  }, [])
+  positionsWithEarnings.map((farm) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const farmEarnings = new BigNumber(parseFloat(farm?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
+    // console.info('farmEarnings', farmEarnings)
+    reward += farmEarnings
+    return reward
+  })
 
   return (
     <Page>
       <Section>
-        <SBBox
-          className="block"
-          style={{ position: 'relative', marginRight: '30px', display: 'flex', alignItems: 'center' }}
-        >
+        <SBBox>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
             Huski
             <br /> Finance
@@ -177,13 +180,12 @@ const Leverage: React.FC = () => {
         </SBBox>
 
         <Flex
-          className="container"
+        flex="1"
           style={{
             padding: '30px',
             flexDirection: 'column',
             justifyContent: 'space-between',
             borderRadius: '15px',
-            width: '20%',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
           }}
         >

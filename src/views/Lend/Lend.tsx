@@ -16,17 +16,20 @@ const Section = styled(Flex)`
   font-family: inter;
   padding: 0.5rem;
   gap: 0.5rem;
-  border-radius: ${({ theme }) => theme.radii.default};
-  height: 224px;
+  // border-radius: ${({ theme }) => theme.radii.default};
+  // height: 224px;
+  flex-flow: row wrap;
+
   .container {
-    background-color: ${({ theme }) => theme.colors.background};
-    padding: 1rem;
-    border-radius: ${({ theme }) => theme.radii.small};
+    // background-color: ${({ theme }) => theme.colors.background};
+    // padding: 1rem;
+    overflow: auto;
+    gap: 2rem;
   }
   .block {
     background-color: ${({ theme }) => theme.colors.background};
     flex: 1;
-    border-radius: ${({ theme }) => theme.radii.small};
+    border-radius: ${({ theme }) => theme.radii.default};
   }
 `
 const SBBox = styled(Box)`
@@ -35,6 +38,23 @@ const SBBox = styled(Box)`
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
+`
+const VolumeBox = styled(Box)`
+  padding: 30px;
+  flexdirection: column;
+  justifycontent: space-evenly;
+  // background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+  // width: 20%;
+  marginright: 25px;
+  border-radius: ${({ theme }) => theme.radii.default};
+`
+const ValueBox = styled(Box)`
+  padding: 30px;
+  flexdirection: column;
+  justifycontent: space-evenly;
+  // background: isDark ? 'rgb(44,30,73)' : '#D6C7F0';
+  // width: 20%;
+  border-radius: ${({ theme }) => theme.radii.default};
 `
 
 const Lend: React.FC = () => {
@@ -84,16 +104,17 @@ const Lend: React.FC = () => {
             <br /> Finance
           </h2>
         </SBBox>
-        <Flex
-          className="container"
+        <Flex className="container">
+        <VolumeBox
+          // className="container"
           style={{
-            padding: '30px',
-            flexDirection: 'column',
-            justifyContent: 'space-evenly',
-            background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
-            borderRadius: '15px',
-            width: '20%',
-            marginRight: '25px',
+            // padding: '30px',
+            // flexDirection: 'column',
+            // justifyContent: 'space-evenly',
+             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+            // borderRadius: '15px',
+            // width: '20%',
+            // marginRight: '25px',
           }}
         >
           <img src="/images/8825.svg" width="70px" height="70px" alt="" />
@@ -108,16 +129,16 @@ const Lend: React.FC = () => {
             <Skeleton width="180px" height="30px" />
           )}
           <Text fontSize="30px">{volume24}</Text>
-        </Flex>
-        <Flex
-          className="container"
+        </VolumeBox>
+        <ValueBox
+          // className="container"
           style={{
-            padding: '30px',
-            flexDirection: 'column',
-            justifyContent: 'space-evenly',
+            // padding: '30px',
+            // flexDirection: 'column',
+            // justifyContent: 'space-evenly',
             background: isDark ? 'rgb(44,30,73)' : '#D6C7F0',
-            borderRadius: '15px',
-            width: '20%',
+            // borderRadius: '15px',
+            // width: '20%',
           }}
         >
           <img src="/images/8826.svg" width="70px" height="70px" alt="" />
@@ -134,6 +155,7 @@ const Lend: React.FC = () => {
           ) : (
             <Skeleton width="180px" height="30px" />
           )}
+        </ValueBox>
         </Flex>
       </Section>
 

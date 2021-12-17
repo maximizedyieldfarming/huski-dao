@@ -74,16 +74,20 @@ const SectionWrapper = styled(Page)`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  > .gray {
+  > .main {
+   ${({ theme }) => theme.mediaQueries.lg} {
     width: 850px;
     height: 915px;
   }
+}
   > .sideSection {
-    width: 500px;
-    height: 915px;
     flex-direction: column;
     gap: 1rem;
+   ${({ theme }) => theme.mediaQueries.lg} {
+    width: 500px;
+    height: 915px;
   }
+}
 `
 
 const InputArea = styled(Flex)`
@@ -332,12 +336,12 @@ const Farm = () => {
         {
           label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.token.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} /></Box>,
         },
         {
           label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.token.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} /></Box>,
         },
       ]
     }
@@ -351,12 +355,12 @@ const Farm = () => {
         {
           label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.quoteToken.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} /></Box>,
         },
         {
           label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
           value: tokenData?.TokenInfo.quoteToken.symbol,
-          icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} /></Box>,
         },
       ]
     }
@@ -371,15 +375,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.token.symbol
             : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
+          <Box  width={20}
+            height={20}>
           <TokenImage
             token={
               selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-                ? tokenData?.TokenInfo.token
-                : tokenData?.TokenInfo?.quoteToken
+              ? tokenData?.TokenInfo.token
+              : tokenData?.TokenInfo?.quoteToken
             }
             width={20}
             height={20}
-          />
+            />
+            </Box>
         ),
       },
       {
@@ -392,15 +399,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
+         <Box width={20}
+            height={20}>
           <TokenImage
             token={
               selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-                ? tokenData?.TokenInfo.quoteToken
-                : tokenData?.TokenInfo?.token
+              ? tokenData?.TokenInfo.quoteToken
+              : tokenData?.TokenInfo?.token
             }
             width={20}
             height={20}
-          />
+            />
+            </Box>
         ),
       },
     ]
@@ -728,7 +738,7 @@ const Farm = () => {
         {t(`Farming ${token} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="gray">
+        <Section className="main">
           <Flex alignItems="center" justifyContent="space-between">
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
@@ -1139,7 +1149,7 @@ const Farm = () => {
             !isApproved ||
             (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
             (tokenInput === undefined && quoteTokenInput === undefined) ||
-            new BigNumber(farmData[3]).lt(minimumDebt) ||
+            (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
             isPending
           }
         >
@@ -1148,7 +1158,7 @@ const Farm = () => {
       </Flex>
       {tokenInput || quoteTokenInput ? (
         <Text mx="auto" color="red">
-          {new BigNumber(farmData[3]).lt(minimumDebt)
+          {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
             ? t('Minimum Debt Size: %minimumDebt% %radio%', {
               minimumDebt: minimumDebt.toNumber(),
               radio: radio.toUpperCase().replace('WBNB', 'BNB'),

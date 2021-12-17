@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useLocation } from 'react-router'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -1084,6 +1084,8 @@ const AdjustPosition = () => {
     }
   }, [setIsAddCollateral, targetPositionLeverage, currentPositionLeverage])
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
       <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
@@ -1094,8 +1096,8 @@ const AdjustPosition = () => {
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
               {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
-            <Flex justifyContent="space-between">
-              <Box width="60%">
+            <Flex justifyContent="space-between" flexDirection={isSmallScreen ? "column" : "row"}>
+              <Box width={isSmallScreen ? "unset" : "60%"}>
                 <Section>
                   <Flex alignItems="center" justifyContent="space-between" style={{ border: "none" }}>
                     <Text>
@@ -1413,7 +1415,7 @@ const AdjustPosition = () => {
                   </Text>
                 </Section>
               </Box>
-              <Box width="38%">
+              <Box width={isSmallScreen ? "unset" : "38%"} mt={isSmallScreen ? "2rem" : "unset"}>
                 <Section mb="40px">
                   <Flex justifyContent="space-between">
                     <Text>{t('Yields Farm APR')}</Text>

@@ -14,14 +14,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.lg} {
-      flex-direction: column;
-    }
-  }
 `
 
 const TotalSupplyCell = ({ supply, supplyUSD }) => {

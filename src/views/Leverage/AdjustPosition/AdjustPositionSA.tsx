@@ -163,7 +163,10 @@ const Section = styled(Box)`
   }
   margin-left: auto;
   margin-right : auto;
+  width : 95%;
+  ${({ theme }) => theme.mediaQueries.lg} {
   width : 60%;
+}
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};

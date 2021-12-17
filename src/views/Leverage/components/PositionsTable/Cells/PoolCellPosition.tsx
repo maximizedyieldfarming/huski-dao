@@ -8,18 +8,13 @@ import { TokenPairImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-flex: 1 0 50px;
-${({ theme }) => theme.mediaQueries.md} {
-  flex: 1 0 120px;
-}
-${CellContent} {
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: start;
+  flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: column;
+    flex: 2 0 150px;
   }
-}
+  ${Text} {
+    white-space: nowrap;
+  }
 `
 
 const PoolCell = ({ pool, quoteToken, token }) => {

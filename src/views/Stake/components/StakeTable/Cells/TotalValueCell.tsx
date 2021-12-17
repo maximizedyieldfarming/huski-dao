@@ -12,19 +12,11 @@ const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
     }
-  }
 `
 
 const TotalValueCell = ({ valueStaked }) => {
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
   const formatedSupply = valueStaked && parseFloat(formatBigNumber(Number(valueStaked)).replace(/,/g, ''))
@@ -32,7 +24,7 @@ const TotalValueCell = ({ valueStaked }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+        <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left">
           {t('Total Value Staked')}
         </Text>
         {valueStaked ? <Text fontWeight='500' mt="10px">{nFormatter(formatedSupply)}</Text> : <Skeleton width="80px" height="16px" />}

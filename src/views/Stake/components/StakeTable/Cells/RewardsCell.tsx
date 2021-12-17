@@ -15,22 +15,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 2 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    > * {
-      // flex: 1 0 50px;
-      ${({ theme }) => theme.mediaQueries.md} {
-        &:first-child {
-          flex: 2.5 0 120px;
-        }
-        &:last-child {
-          flex: 1 0 120px;
-        }
-      }
-    }
-  }
 `
 
 const RewardsCell = ({ token }) => {

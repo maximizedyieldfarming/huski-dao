@@ -13,14 +13,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 
 const AssetsReturnedCell = ({ assetsReturned }) => {
@@ -44,10 +36,10 @@ const AssetsReturnedCell = ({ assetsReturned }) => {
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('Assets Returned')}
             </Text>
-            {tooltipVisible && tooltip}
+            {/* {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
-            </span>
+            </span> */}
           </Flex>
         )}
         {assetsReturned ? <Text  color="text" fontWeight="600" fontSize="16px" mt='8px'>{assetsReturned}</Text> : <Skeleton width="80px" height="16px" />}

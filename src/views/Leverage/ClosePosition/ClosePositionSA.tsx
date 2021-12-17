@@ -35,7 +35,10 @@ const Container = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 12px;
+  width: 95%;
+  ${({ theme }) => theme.mediaQueries.lg}{
   width: 510px;
+}
   max-height: 528px;
   padding: 1rem;
   > * {

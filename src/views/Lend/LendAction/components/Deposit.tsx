@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
@@ -97,6 +97,8 @@ const Deposit: React.FC<DepositProps> = ({
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const { isDark } = useTheme()
 
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   // const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   // const { balance: bnbBalance } = useGetBnbBalance()
 
@@ -184,9 +186,19 @@ const Deposit: React.FC<DepositProps> = ({
             )} ${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
-          <Box >
-            <NumberInput pattern="^[0-9]*[.,]?[0-9]{0,18}$" placeholder="0.00" onChange={handleAmountChange} value={amount} style={{ background: "unset", border: "transparent" }} />
+        <Section
+          justifyContent="space-between"
+          style={{ background: isDark ? '#111315' : '#F7F7F8' }}
+          flexDirection={isSmallScreen ? 'column' : 'row'}
+        >
+          <Box>
+            <NumberInput
+              pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+              placeholder="0.00"
+              onChange={handleAmountChange}
+              value={amount}
+              style={{ background: 'unset', border: 'transparent' }}
+            />
           </Box>
           <Box>
             <MaxContainer>

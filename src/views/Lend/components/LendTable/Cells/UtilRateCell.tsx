@@ -12,20 +12,12 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.lg} {
-      flex-direction: column;
-    }
-  }
 `
 
 const UtilRateCell = ({ utilRate }) => {
   const utilizationRateToPercentage = (rate) => {
-    const value = rate * 100
-    return `${value.toFixed(2)}%`
+    const value = new BigNumber(rate).times(100).toFixed(2, 1)
+    return `${value}%`
   }
   const { t } = useTranslation()
 
@@ -34,7 +26,7 @@ const UtilRateCell = ({ utilRate }) => {
     <StyledCell role="cell">
       <CellContent>
         {(isMobile || isTablet) && (
-          <Text   textAlign="left">
+          <Text fontSize="12px" color="textSubtle" textAlign="left">
             {t('Utilization')}
           </Text>
         )}

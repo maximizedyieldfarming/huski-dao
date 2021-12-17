@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Flex } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import Select from 'components/Select/Select'
 import { BnbIcon } from 'assets'
@@ -8,18 +8,9 @@ import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  padding-top: 25px;
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 150px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
+    flex: 1 0 120px;
   }
 `
 
@@ -35,12 +26,20 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
         {
           label: token.replace('wBNB', 'BNB'),
           value: token,
-          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+          icon: (
+            <Box width={20} height={20}>
+              <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+            </Box>
+          ),
         },
         {
           label: token.replace('wBNB', 'BNB'),
           value: token,
-          icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+          icon: (
+            <Box width={20} height={20}>
+              <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+            </Box>
+          ),
         },
       ]
     }
@@ -48,12 +47,20 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
       {
         label: token.replace('wBNB', 'BNB'),
         value: token,
-        icon: <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />,
+        icon: (
+          <Box width={20} height={20}>
+            <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+          </Box>
+        ),
       },
       {
         label: quoteToken.replace('wBNB', 'BNB'),
         value: quoteToken,
-        icon: <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />,
+        icon: (
+          <Box width={20} height={20}>
+            <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />
+          </Box>
+        ),
       },
     ]
   }
@@ -66,9 +73,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
             {t('Borrowing')}
           </Text>
         )}
-        <Flex>
-          <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
-        </Flex>
+        <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
       </CellContent>
     </StyledCell>
   )

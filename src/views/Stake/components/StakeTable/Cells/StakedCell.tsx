@@ -9,15 +9,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: space-between;
-    ${({ theme }) => theme.mediaQueries.lg} {
-      align-items: center;
-      justify-content: unset;
-      gap: 1rem;
-    }
-  }
 `
 
 const StakedCell = ({ staked, name }) => {

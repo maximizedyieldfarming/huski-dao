@@ -13,14 +13,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }
 `
 
 const LiquidationFeeCell = ({ fee }) => {
@@ -40,10 +32,10 @@ const LiquidationFeeCell = ({ fee }) => {
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('Liquidation Fee')}
             </Text>
-            {tooltipVisible && tooltip}
+           {/*  {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
-            </span>
+            </span> */}
           </Flex>
         )}
         {fee ? <Text  color="text" fontWeight="600" fontSize="16px" mt='8px'>{fee}</Text> : <Skeleton width="80px" height="16px" />}
