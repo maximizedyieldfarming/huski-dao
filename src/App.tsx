@@ -22,7 +22,6 @@ const Home = lazy(() => import('./views/Home'))
 const Lend = lazy(() => import('./views/Lend'))
 const LendAction = lazy(() => import('views/Lend/LendAction/LendAction'))
 const Stake = lazy(() => import('./views/Stake'))
-const StakeAction = lazy(() => import('views/Stake/StakeAction/StakeAction'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const Lock = lazy(() => import('./views/Lock'))
 const LockAction = lazy(() => import('./views/Lock/LockAction'))
@@ -48,7 +47,7 @@ const App: React.FC = () => {
   useFetchProfile()
   // usePollCoreFarmData()
   const { account } = useWeb3React()
-  console.info('account==========',account)
+  // console.info('account==========',account)
   return (
     <Router history={history}>
       <ResetCSS />
@@ -68,7 +67,6 @@ const App: React.FC = () => {
             <Route exact path="/stake">
               <Stake />
             </Route>
-            <Route exact path="/stake/:action/:tokenName" component={StakeAction} />
 
             <Route exact path="/lock">
               <Lock />

@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { leverageFarmsConfig } from 'config/constants'
 import useRefresh from 'hooks/useRefresh'
-import { fetchLeverageFarmsPublicDataAsync, fetchLeverageFarmUserDataAsync,fetchLeverageFarmOtherDataAsync, nonArchivedFarms } from '.'
+import { fetchLeverageFarmsPublicDataAsync, fetchLeverageFarmUserDataAsync, nonArchivedFarms } from '.'
 import { State, LeverageFarm, LeverageFarmsState } from '../types'
 
 export const usePollLeverageFarmsPublicData = (includeArchive = true) => {
@@ -33,10 +33,7 @@ export const usePollLeverageFarmsWithUserData = (includeArchive = true) => {
     dispatch(fetchLeverageFarmsPublicDataAsync(pids))
 
     if (account) {
-      dispatch(fetchLeverageFarmUserDataAsync({ account, pids }))
-      console.info('fetchLeverageFarmOtherDataAsync')
-      dispatch(fetchLeverageFarmOtherDataAsync({ pids }))
-      
+      dispatch(fetchLeverageFarmUserDataAsync({ account, pids }))      
     }
   }, [includeArchive, dispatch, slowRefresh, account])
 }
