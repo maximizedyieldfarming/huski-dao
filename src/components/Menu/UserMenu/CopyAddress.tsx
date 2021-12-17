@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, CopyIcon, Flex, FlexProps, IconButton } from 'husky-uikit1.0'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 
 interface CopyAddressProps extends FlexProps {
@@ -9,8 +9,9 @@ interface CopyAddressProps extends FlexProps {
 
 const Wrapper = styled(Flex)`
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.dropdown};
-  border-radius: 16px;
+  background-color: #F7F7F8;
+  border-radius: 12px;
+  height : 50px;
   position: relative;
 `
 
@@ -22,10 +23,10 @@ const Address = styled.div`
   & > input {
     background: transparent;
     border: 0;
-    color: ${({ theme }) => theme.colors.text};
+    color : #7B3FE4;
+    font-size : 15px;
     display: block;
     font-weight: 600;
-    font-size: 16px;
     padding: 0;
     width: 100%;
 
@@ -67,6 +68,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
 const CopyAddress: React.FC<CopyAddressProps> = ({ account, ...props }) => {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const { t } = useTranslation()
+  const { isDark } = useTheme();
 
   const copyAddress = () => {
     if (navigator.clipboard && navigator.permissions) {
@@ -90,13 +92,13 @@ const CopyAddress: React.FC<CopyAddressProps> = ({ account, ...props }) => {
   }
 
   return (
-    <Box position="relative" {...props}>
-      <Wrapper>
+    <Box position="relative" {...props} >
+      <Wrapper style={{ background: isDark ? "#111315" : "white" }}>
         <Address title={account}>
-          <input type="text" readOnly value={account} />
+          <input type="text" readOnly value={account}  />
         </Address>
         <IconButton variant="text" onClick={copyAddress}>
-          <CopyIcon color="primary" width="24px" />
+          <CopyIcon width="24px" />
         </IconButton>
       </Wrapper>
       <Tooltip isTooltipDisplayed={isTooltipDisplayed}>{t('Copied')}</Tooltip>

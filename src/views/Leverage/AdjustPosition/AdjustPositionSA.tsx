@@ -382,13 +382,11 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / 2) * moveVal.width
-    if (tt === 0) {
-      setMargin(tt - targetPositionLeverage * 9 + 10)
-    } else {
-      setMargin(tt - targetPositionLeverage * 9)
-    }
-  }, [targetPositionLeverage, moveVal.width])
+    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 26)
+   
+      setMargin(tt )
+   
+  }, [targetPositionLeverage, moveVal.width, leverage])
 
 
   const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, 0, symbolName)

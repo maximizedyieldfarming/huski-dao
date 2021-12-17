@@ -12,7 +12,7 @@ const GasSettings = () => {
   return (
     <Flex flexDirection="column">
       <Flex mb="12px" alignItems="center">
-        <Text>{t('Default Transaction Speed (GWEI)')}</Text>
+        <Text fontSize="14px" bold>{t('Default Transaction Speed (GWEI)')}</Text>
         <QuestionHelper
           text={t(
             'Adjusts the gas price (transaction fee) for your transaction. Higher GWEI = higher speed = higher fees',
@@ -25,33 +25,39 @@ const GasSettings = () => {
         <Button
           mt="4px"
           mr="4px"
-          scale="sm"
+          width={100}
+          height={35}
           onClick={() => {
             setGasPrice(GAS_PRICE_GWEI.default)
           }}
           variant={gasPrice === GAS_PRICE_GWEI.default ? 'primary' : 'tertiary'}
+          style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
         >
           {t('Standard (%gasPrice%)', { gasPrice: GAS_PRICE.default })}
         </Button>
         <Button
           mt="4px"
           mr="4px"
-          scale="sm"
+          width={88}
+          height={35}
           onClick={() => {
             setGasPrice(GAS_PRICE_GWEI.fast)
           }}
           variant={gasPrice === GAS_PRICE_GWEI.fast ? 'primary' : 'tertiary'}
+          style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
         >
           {t('Fast (%gasPrice%)', { gasPrice: GAS_PRICE.fast })}
         </Button>
         <Button
           mr="4px"
           mt="4px"
-          scale="sm"
+          width={100}
+          height={35}
           onClick={() => {
             setGasPrice(GAS_PRICE_GWEI.instant)
           }}
           variant={gasPrice === GAS_PRICE_GWEI.instant ? 'primary' : 'tertiary'}
+          style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
         >
           {t('Instant (%gasPrice%)', { gasPrice: GAS_PRICE.instant })}
         </Button>
