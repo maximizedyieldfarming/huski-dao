@@ -26,7 +26,7 @@ export const getVolume = async (date) => {
   return response.vaultDayDatas
 }
 
-export const useVolume24h = async () => {
+export const useVolume24h = () => {
   const [volume24hnum, setVolumenum] = useState<number>(0)
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const useVolume24h = async () => {
 
         }
         console.info('volumenum', volumenum)
-        setVolumenum(volumenum)
+        setVolumenum(Number(volumenum))
 
       } catch (error) {
         console.error('Unable to fetch data form gql:', error)
