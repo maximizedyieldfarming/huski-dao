@@ -90,9 +90,9 @@ const Lend: React.FC = () => {
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const volume24h = 0
+  // const { volume24hnum }= useVolume24h()
 
-  const volume24hnum = undefined
-  useVolume24h('1638748800')
 
   return (
     <Page>
@@ -123,14 +123,14 @@ const Lend: React.FC = () => {
           <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
             {t(`Total Volume 24H:`)}
           </Text>
-          {volume24hnum ? (
+          {volume24h ? (
             <Text fontSize="30px" color="textFarm">
-              {volume24hnum}
+              {volume24h}
             </Text>
           ) : (
             <Skeleton width="180px" height="30px" />
           )}
-          <Text fontSize="30px">{volume24hnum}</Text>
+          <Text fontSize="30px">{volume24h}</Text>
         </VolumeBox>
         <ValueBox
           // className="container"
