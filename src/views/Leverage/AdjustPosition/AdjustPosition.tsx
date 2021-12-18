@@ -456,7 +456,7 @@ const AdjustPosition = () => {
   const handleConfirm = async () => {
     const id = positionId
     const abiCoder = ethers.utils.defaultAbiCoder
-    const AssetsBorrowed =  adjustData ? assetsBorrowed : debtValueNumber.toNumber()
+    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
     const minLPAmountValue = adjustData ? adjustData?.[12] : 0
     // const minLPAmount = minLPAmountValue.toString()
@@ -547,7 +547,7 @@ const AdjustPosition = () => {
       'quoteTokenInput': (quoteTokenInput)
     })
 
-    if (data?.farmData?.lpSymbol.toUpperCase().includes('BNB') && vault.toUpperCase() !== TokenInfo.vaultAddress.toUpperCase() && wrapFlag &&  Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2)) ) {
+    if (data?.farmData?.lpSymbol.toUpperCase().includes('BNB') && vault.toUpperCase() !== TokenInfo.vaultAddress.toUpperCase() && wrapFlag && Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2))) {
       //  radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB'
       // need mod commit name 
       // amount = farmingTokenAmount
@@ -594,7 +594,7 @@ const AdjustPosition = () => {
     let maxReturn
     let maxDebtRepaymentValue
     if (Number(targetPositionLeverage) === 1) {
-      receive = Number(minimumReceived)
+      receive = Number(minimumReceived) > 0 ? Number(minimumReceived) : 0
       closeRationum = closeRatio
       maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
       maxReturn = ethers.constants.MaxUint256
