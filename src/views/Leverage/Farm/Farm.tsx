@@ -730,6 +730,13 @@ const Farm = () => {
       ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
+  const getWrapText = (): string => {
+    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput: quoteTokenInput
+    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
+      return t(`Wrap BNB & ${leverageValue}x Farm`)
+    }
+    return t(`${leverageValue}x Farm`)
+  }
   return (
     <Page>
       <Text
@@ -1156,7 +1163,7 @@ const Farm = () => {
             isPending
           }
         >
-          {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
+          {isPending ? t('Confirming') : getWrapText()}
         </Button>
       </Flex>
       {tokenInput || quoteTokenInput ? (
