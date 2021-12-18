@@ -27,6 +27,7 @@ import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
+import { useBorrowingInterest7days } from '../../hooks/useBorrowingInterest7days'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -100,7 +101,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { isDark, toggleTheme } = useTheme()
 
 
-
+useBorrowingInterest7days()
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
   const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
