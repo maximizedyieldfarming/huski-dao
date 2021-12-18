@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-properties */
 import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useHistory } from 'react-router-dom'
 import Page from 'components/Layout/Page'
 import {
   Box,
@@ -197,6 +197,7 @@ const AdjustPositionSA = () => {
   const {
     state: { data },
   } = useLocation<LocationParams>()
+  const history = useHistory()
   console.log('daata', data)
 
   const handleSliderChange = (e) => {
@@ -487,6 +488,7 @@ const AdjustPositionSA = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/singleAssets')
       }
     } catch (error) {
       console.info('error', error)
@@ -578,6 +580,7 @@ const AdjustPositionSA = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/singleAssets')
       }
     } catch (error) {
       console.info('error', error)
