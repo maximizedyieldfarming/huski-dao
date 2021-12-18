@@ -130,7 +130,6 @@ const Lend: React.FC = () => {
             ) : (
               <Skeleton width="180px" height="30px" />
             )}
-            <Text fontSize="30px">{volume24h}</Text>
           </VolumeBox>
           <ValueBox
             // className="container"
