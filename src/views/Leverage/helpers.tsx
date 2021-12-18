@@ -138,13 +138,13 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount// .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  // console.log({
-  //   tokenName, tokenInput, quoteTokenInput,
-  //   tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount,
-  //   farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply,
-  //   lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum),
-  //   'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum)
-  // });
+  console.log({
+    tokenName, tokenInput, quoteTokenInput,
+    tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount,
+    farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply,
+    lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum),
+    'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum)
+  });
 
   // const tradeFee = 0.0025
   // const ClosePosFee = 5 / 100 / 100;
@@ -156,7 +156,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   let farmingData;
   let repayDebtData = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  if (leverage.toPrecision(3) >= currentLeverage.toPrecision(3)) {// right
+  if (leverage.toPrecision(3) > currentLeverage.toPrecision(3)) {// right
 
     tokenInputNum = 0
     quoteTokenInputNum = 0
