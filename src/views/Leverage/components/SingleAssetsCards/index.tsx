@@ -100,7 +100,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { isDark } = useTheme()
 
 
-useBorrowingInterest7days()
+  useBorrowingInterest7days()
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
   const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -312,7 +312,7 @@ useBorrowingInterest7days()
   // the data inside the card gets stale (doesn't update) this forces it to update
   // if theres not apy data,
   // theres also a code to prevent user from change token pair or strategy if theres no apy data
-useEffect(() => {
+  useEffect(() => {
     if (!apy) {
       setSingleData(data?.singleArray[0])
     }
@@ -329,8 +329,8 @@ useEffect(() => {
                 onClick={
                   apy
                     ? () => {
-                        setIsSelect(!isselect)
-                      }
+                      setIsSelect(!isselect)
+                    }
                     : null
                 }
                 style={{ cursor: apy ? 'pointer' : 'not-allowed' }}
@@ -435,8 +435,7 @@ useEffect(() => {
                     <ArrowUpIcon color="#27C73F" /> */}
                     <Text>
                       {t(
-                        `%apyPercentageDiff% ${
-                          Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
                         { apyPercentageDiff },
                       )}

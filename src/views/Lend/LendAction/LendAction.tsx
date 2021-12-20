@@ -115,7 +115,7 @@ const LendAction = () => {
   usePollLeverageFarmsWithUserData()
 
   const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
-  const allowance = token?.userData?.allowance
+  const allowance = tokenData.userData?.allowance ? tokenData.userData?.allowance : token?.userData?.allowance
 
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
