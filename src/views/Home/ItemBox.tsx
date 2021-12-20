@@ -10,8 +10,7 @@ import BigNumber from 'bignumber.js'
 const ItemBox = styled(Box)`
     cursor:pointer;
   >div >div  {background-color:#959A9E!important;}
-  width:275px;
-  margin-right:20px;
+  width:250px;
   h1 {color:#959A9E!important;}
   &:hover {h1 {color:white!important;}}
   
@@ -25,7 +24,7 @@ const ItemBoxComponenet = ({ src , text }) => {
         <ItemBox
             onMouseEnter={() => setIsShown(true)}
             onMouseLeave={() => setIsShown(false)}
-            className="community" style={{ marginLeft: "20px", alignItems: 'start', borderRadius: '25px', padding: 10, paddingLeft: 20 }}>
+            className="community" style={{alignItems: 'start', borderRadius: '25px', padding: '10px 0px' }}>
             <Flex alignItems='center' flexDirection="row" justifyContent='start' style={{ margin: 0 }}>
                 <Box style={{ padding: '5px', borderRadius: '12px', width: '42px',height:'42px' }}>
                     {!isShown ? (<img src={src} style={{ margin: 0 }} alt="" width="100%" height="100%" />)
