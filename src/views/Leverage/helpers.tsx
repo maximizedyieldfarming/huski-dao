@@ -4,7 +4,7 @@ import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWA
 import { dichotomybasetoken, dichotomyfarmingtoken, RunLogic, RunLogic1, adjustRun, adjustPositionRepayDebt } from 'utils/pancakeService'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 
-export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, tokenName?: string) => {
+export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd, tokenName?: string) => {
   const { vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const { quoteToken } = TokenInfo
   let vaultDebtValue

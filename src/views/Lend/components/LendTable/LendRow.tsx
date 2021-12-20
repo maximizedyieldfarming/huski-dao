@@ -36,8 +36,7 @@ const LendRow = ({ tokenData }) => {
   const tokenName = tokenData?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB');
 
   const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
-  // const { lendApr, stakeApr, totalApr, apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
-  // console.log({tokenName, borrowingInterest })
+
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
@@ -48,7 +47,7 @@ const LendRow = ({ tokenData }) => {
   
   const { balance: tokenBalance } = useTokenBalance(getAddress(tokenData.TokenInfo.token.address))
   const { balance: bnbBalance } = useGetBnbBalance()
-  const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
+  // const tokenBalanceIb = tokenData?.userData?.tokenBalanceIB
   const userTokenBalance = getBalanceAmount(
     TokenInfo.token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
   ).toJSON()

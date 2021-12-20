@@ -1,9 +1,8 @@
 /* eslint-disable no-restricted-properties */
-import BigNumber from 'bignumber.js'
 import { Stake } from 'state/types'
 import { BLOCKS_PER_YEAR, BIG_ZERO } from 'utils/config';
 
-export const getStakeApy = (stake: Stake, huskyPriceBusd: BigNumber) => {
+export const getStakeApy = (stake: Stake, huskyPriceBusd) => {
   const { totalToken, token, pooPerBlock, } = stake
 
   const busdTokenPrice: any = token.busdPrice;
