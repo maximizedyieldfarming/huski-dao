@@ -302,17 +302,7 @@ const SingleAssetsFarms: React.FC = () => {
   })
 
   const [dexFilter, setDexFilter] = useState('all')
-  const [pairFilter, setPairFilter] = useState('all')
   const [strategyFilter, setStrategyFilter] = useState<string>()
-
-  // filters
-  if (pairFilter !== 'all') {
-    singlesData = singlesData.filter(
-      (pool) =>
-        pool?.singleArray[0]?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
-        pool?.singleArray[0]?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
-    )
-  }
 
   if (dexFilter !== 'all') {
     singlesData = singlesData.filter((pool) => pool?.singleArray[0]?.lpExchange === dexFilter)
@@ -440,64 +430,6 @@ const SingleAssetsFarms: React.FC = () => {
               startIcon={<StrategyIcon market="neutral" />}
             >
               {t('Neutral')}
-            </FilterOption>
-          </Flex>
-        </Flex>
-        <Flex className="tokenFilter" alignItems="center">
-          <Text>{t('Paired Assets:')}</Text>
-          <Flex overflowX="auto">
-            <FilterOption
-              variant="tertiary"
-              style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
-              isActive={pairFilter === 'all'}
-              onClick={() => setPairFilter('all')}
-            >
-              {t('All')}
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ height: '30px' }}
-              startIcon={<BnbIcon />}
-              isActive={pairFilter === 'huski'}
-              onClick={() => setPairFilter('huski')}
-            >
-              HUSKI
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ height: '30px' }}
-              startIcon={<BnbIcon />}
-              isActive={pairFilter === 'wbnb'}
-              onClick={() => setPairFilter('wbnb')}
-            >
-              BNB
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ height: '30px' }}
-              startIcon={<BusdIcon />}
-              isActive={pairFilter === 'busd'}
-              onClick={() => setPairFilter('busd')}
-            >
-              BUSD
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ height: '30px' }}
-              startIcon={<BtcbIcon />}
-              isActive={pairFilter === 'btcb'}
-              onClick={() => setPairFilter('btcb')}
-            >
-              BTCB
-            </FilterOption>
-            <FilterOption
-              variant="tertiary"
-              style={{ height: '30px' }}
-              startIcon={<EthIcon />}
-              isActive={pairFilter === 'eth'}
-              onClick={() => setPairFilter('eth')}
-            >
-              ETH
             </FilterOption>
           </Flex>
         </Flex>
