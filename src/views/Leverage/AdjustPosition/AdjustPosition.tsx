@@ -1216,7 +1216,7 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  <AddCollateralRepayDebtContainer
+                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 && currentPositionLeverage !== 1 ? null : <AddCollateralRepayDebtContainer
                     currentPositionLeverage={Number(currentPositionLeverage)}
                     targetPositionLeverage={Number(targetPositionLeverage)}
                     userQuoteTokenBalance={userQuoteTokenBalance}
@@ -1241,7 +1241,7 @@ const AdjustPosition = () => {
                       percentageToClose / 100,
                       symbolName,
                     )}
-                  />
+                  />}
                   {/*  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
