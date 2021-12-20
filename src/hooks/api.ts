@@ -125,7 +125,7 @@ export const useCakePrice = () => {
 }
 
 export const useHuskiPrice = () => {
-  const [huskiPrice, setHuskiPrice] = useState()
+  const [huskiPrice, setHuskiPrice] = useState(0)
   const { slowRefresh } = useRefresh()
 
   useEffect(() => {
@@ -134,7 +134,8 @@ export const useHuskiPrice = () => {
         const cakePriceCoinGeckoApi = `https://api.coingecko.com/api/v3/coins/markets?ids=alpaca-finance&vs_currency=usd`;
         const res = await fetch(cakePriceCoinGeckoApi);
         const responseData = await res.json();
-        setHuskiPrice(responseData[0].current_price)
+        // setHuskiPrice(responseData[0].current_price)
+        setHuskiPrice(0)
 
       } catch (error) {
         console.error('Unable to fetch data:', error)
