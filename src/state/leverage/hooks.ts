@@ -107,8 +107,8 @@ export const useBusdPriceFromPid = (pid: number): BigNumber => {
 // }
 
 export const useHuskyPerBlock = (): number => {
-  const huskyFarm = useFarmFromPid(362)
-  const huskyPerBlock = huskyFarm.pooPerBlock
+  // const huskyFarm = useFarmFromPid(362)
+  const huskyPerBlock = 0 // 605555555555555600 // huskyFarm.pooPerBlock
   return huskyPerBlock
 }
 

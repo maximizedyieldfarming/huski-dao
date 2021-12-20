@@ -123,7 +123,7 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Lever
   const calls = farmsToFetch.map((farm) => {
     return {
       address: fairLaunchAddress,
-      name: 'pendingAlpaca',
+      name: 'pendingHusky',
       params: [farm.TokenInfo.token.poolId, account],
     }
   })
@@ -141,7 +141,7 @@ export const fetchFarmlpUserEarnings = async (account: string, farmsToFetch: Lev
   const calls = farmsToFetch.map((farm) => {
     return {
       address: fairLaunchAddress,
-      name: 'pendingAlpaca',
+      name: 'pendingHusky',
       params: [farm.TokenInfo.token.debtPoolId, account],
     }
   })

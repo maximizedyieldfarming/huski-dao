@@ -2,61 +2,24 @@ import tokens from './tokens'
 import { StakeConfig } from './types'
 
 const stakeConfig: StakeConfig[] = [
-  {
-    name: "HUSKI",
-    symbol: "ibALPACA",
-    vaultAddress: {
-      97: '',
-      56: "0xf1bE8ecC990cBcb90e166b71E368299f0116d421",
-    },
-    debtVaultAddress: {
-      97: '',
-      56: "0x11362eA137A799298306123EEa014b7809A9DB40",
-    },
-    pid: 11,
-    debtPid: 10,
-    token: tokens.alpaca,
-    fairLaunchAddress: {
-      97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
-    }
-  },
-  {
-    name: "sALPACA",
-    symbol: "sALPACA",
-    vaultAddress: {
-      97: 'use alpaca',
-      56: "0xf1bE8ecC990cBcb90e166b71E368299f0116d421",
-    },
-    debtVaultAddress: {
-      97: 'use alpaca',
-      56: "0x11362eA137A799298306123EEa014b7809A9DB40",
-    },
-    pid: 5,
-    // pid: 11,
-    token: tokens.salpaca,
-    fairLaunchAddress: {
-      97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
-    }
-  },
+
   {
     name: 'BNB',
-    symbol: "ibWBNB",
+    symbol: "ibBNB",
     vaultAddress: {
       97: '',
-      56: "0xd7D069493685A581d27824Fc46EdA46B7EfC0063",
+      56: "0xcc1477f75872876673Fbdf6829Cd89dfe9455956",
     },
     debtVaultAddress: {
       97: '',
-      56: "0x6A3487CE84FD83c66B83e598b18412bD1D2A55F9",
+      56: "0x57dA3b0A8EDDD4CE8B5b8c1C25C4AC80F1d10FDE",
     },
-    pid: 1,
-    debtPid: 6,
+    pid: 3,
+    debtPid: 2,
     token: tokens.wbnb,
     fairLaunchAddress: {
       97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+      56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
     }
   },
   {
@@ -64,18 +27,18 @@ const stakeConfig: StakeConfig[] = [
     symbol: "ibBUSD",
     vaultAddress: {
       97: '',
-      56: "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f",
+      56: "0xf846fa18682f985138cE43BCC6F989B6eD69bc81",
     },
     debtVaultAddress: {
       97: '',
-      56: "0x02dA7035beD00ae645516bDb0c282A7fD4AA7442",
+      56: "0xd8988c77D3b25aEE097F52a24AD93e18A4dc71cD",
     },
-    pid: 3,
-    debtPid: 7,
+    pid: 1,
+    debtPid: 0,
     token: tokens.busd,
     fairLaunchAddress: {
       97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+      56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
     }
   },
   {
@@ -83,39 +46,37 @@ const stakeConfig: StakeConfig[] = [
     symbol: "ibUSDT",
     vaultAddress: {
       97: '',
-      56: "0x158Da805682BdC8ee32d52833aD41E74bb951E59",
+      56: "0xbD91429B7546AFe01c2CC4a4587bBB2E66302534",
     },
     debtVaultAddress: {
       97: '',
-      56: "0x3B4fBB2b8536AB144048aBaFdd27eaF52f0fa4DC",
+      56: "0x8D9Df54d00146a182283fd8eA52bf462c6d0B193",
     },
-    pid: 16,
-    debtPid: 15,
+    pid: 5,
+    debtPid: 4,
     token: tokens.usdt,
     fairLaunchAddress: {
       97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+      56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
     }
   },
-
-  
   {
     name: "BTCB",
     symbol: "ibBTCB",
     vaultAddress: {
       97: '',
-      56: "0x08FC9Ba2cAc74742177e0afC3dC8Aed6961c24e7",
+      56: "0x5E33c3D92310135973A70cb02E24e8a116a20052",
     },
     debtVaultAddress: {
       97: '',
-      56: "0x262de19B5fde97eD5bdBa10d630E34Fb9a1b59B2",
+      56: "0xADef0dBa9671eb0A63330f35c70Ed1C40E8A9dDd",
     },
-    pid: 18,
-    debtPid: 17,
+    pid: 10,
+    debtPid: 9,
     token: tokens.btcb,
     fairLaunchAddress: {
       97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+      56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
     }
   },
   {
@@ -123,21 +84,39 @@ const stakeConfig: StakeConfig[] = [
     symbol: "ibETH",
     vaultAddress: {
       97: '',
-      56: "0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE",
+      56: "0x85549eac2c801dbd20964f7f6248f9ed32bd4efb",
     },
     debtVaultAddress: {
       97: '',
-      56: "0x92110af24d280E412b3a89691f6B0B9E09258fe6",
+      56: "0x9f6bcefea7c0f53077c7932785e79a0afde5ed89",
     },
-    pid: 9,
-    debtPid: 8,
+    pid: 8,
+    debtPid: 6,
     token: tokens.eth,
     fairLaunchAddress: {
       97: '',
-      56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+      56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
     }
   },
-
+  {
+    name: "USDC",
+    symbol: "ibUSDC",
+    vaultAddress: {
+      97: '',
+      56: "0xe363355790cfc313f5ab1939155356e72bf662fb",
+    },
+    debtVaultAddress: {
+      97: '',
+      56: "0x2a81f574ae37a8f5d534746dc24ae91af7f5b9d7",
+    },
+    pid: 12,
+    debtPid: 11,
+    token: tokens.usdc,
+    fairLaunchAddress: {
+      97: '',
+      56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
+    }
+  },
 ]
 
 export default stakeConfig

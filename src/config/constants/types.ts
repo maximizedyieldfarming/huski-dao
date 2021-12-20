@@ -83,6 +83,7 @@ export interface StakeConfig {
 }
 
 
+
 export interface LeverageFarmConfig {
   pid: number
   lpSymbol: string

@@ -41,7 +41,7 @@ const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
       }
     ])
 
-  const [info, alpacaPerBlock, totalAllocPoint] =
+  const [info, huskyPerBlock, totalAllocPoint] =
     pid || pid === 0
       ? await multicall(fairLaunchABI, [
         {
@@ -51,7 +51,7 @@ const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
         },
         {
           address: getFairLaunch(),
-          name: 'alpacaPerBlock',
+          name: 'huskyPerBlock',
         },
         {
           address: getFairLaunch(),
@@ -62,7 +62,7 @@ const fetchStake = async (stake: Stake): Promise<PublicFarmData> => {
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
-  const pooPerBlock = alpacaPerBlock * info.allocPoint / totalAllocPoint;
+  const pooPerBlock = huskyPerBlock * info.allocPoint / totalAllocPoint;
 
   return {
     totalSupply: totalSupply[0]._hex,

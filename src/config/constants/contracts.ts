@@ -1,7 +1,7 @@
 export default {
   fairLaunch: {
     97: '0x4D60aB5c2065a6010967091F12A3fe494bECceE9',
-    56: "0xA625AB01B08ce023B2a342Dbb12a16f2C8489A8F",
+    56: "0xf222d118F8f3261b764c05AC5e378f65703CF91f",
   },
   masterChef: {
     97: '0x1d32c2945C8FDCBc7156c553B7cEa4325a17f4f9',

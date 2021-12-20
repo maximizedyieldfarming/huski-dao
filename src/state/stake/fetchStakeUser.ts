@@ -62,7 +62,7 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Stake
   const calls = farmsToFetch.map((stake) => {
     return {
       address: fairLaunchAddress,
-      name: 'pendingAlpaca',
+      name: 'pendingHusky',
       params: [stake.pid, account],
     }
   })

@@ -57,19 +57,19 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
 
-  const [liquidationThreshold, quoteTokenLiquidationThreshold] =
-    await multicall(WorkerConfigABI, [
-      {
-        address: TokenInfo.config,
-        name: 'killFactor',
-        params: [TokenInfo.address, 0],
-      },
-      {
-        address: QuoteTokenInfo.config,
-        name: 'killFactor',
-        params: [QuoteTokenInfo.address, 0],
-      }
-    ])
+  // const [liquidationThreshold, quoteTokenLiquidationThreshold] =
+  //   await multicall(WorkerConfigABI, [
+  //     {
+  //       address: TokenInfo.config,
+  //       name: 'killFactor',
+  //       params: [TokenInfo.address, 0],
+  //     },
+  //     {
+  //       address: QuoteTokenInfo.config,
+  //       name: 'killFactor',
+  //       params: [QuoteTokenInfo.address, 0],
+  //     }
+  //   ])
 
   // const [quoteTokenLiquidationThreshold] =
   //   await multicall(WorkerConfigABI, [
@@ -200,7 +200,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   // Total staked in LP, in quote token value
   const lpTotalInQuoteToken = quoteTokenAmountMc.times(new BigNumber(2))
 
-  const [infoLend, alpacaPerBlockLend, totalAllocPointLend] =
+  const [infoLend, huskiPerBlockLend, totalAllocPointLend] =
     TokenInfo.token?.poolId || TokenInfo.token?.poolId === 0
       ? await multicall(fairLaunchABI, [
         {
@@ -210,7 +210,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         },
         {
           address: getFairLaunch(),
-          name: 'alpacaPerBlock',
+          name: 'huskyPerBlock',
         },
         {
           address: getFairLaunch(),
@@ -220,7 +220,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       : [null, null]
 
 
-  const [infoFL, alpacaPerBlock, totalAllocPointFL] =
+  const [infoFL, huskyPerBlock, totalAllocPointFL] =
     TokenInfo.token?.debtPoolId || TokenInfo.token?.debtPoolId === 0
       ? await multicall(fairLaunchABI, [
         {
@@ -230,7 +230,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         },
         {
           address: getFairLaunch(),
-          name: 'alpacaPerBlock',
+          name: 'huskyPerBlock',
         },
         {
           address: getFairLaunch(),
@@ -250,7 +250,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
         },
         {
           address: getFairLaunch(),
-          name: 'alpacaPerBlock',
+          name: 'huskyPerBlock',
         },
         {
           address: getFairLaunch(),
@@ -291,9 +291,11 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
-  const pooPerBlock = alpacaPerBlock * infoFL.allocPoint / totalAllocPointFL;
+  const pooPerBlock = huskyPerBlock * infoFL.allocPoint / totalAllocPointFL;
   const quoteTokenPoolPerBlock = quoteTokenAlpacaPerBlock * quoteTokenInfo.allocPoint / quoteTokenTotalAllocPoint;
-  const poolLendPerBlock = alpacaPerBlockLend * infoLend.allocPoint / totalAllocPointLend;
+  const poolLendPerBlock = huskiPerBlockLend * infoLend.allocPoint / totalAllocPointLend;
+console.log({infoFL, huskyPerBlock, totalAllocPointFL })
+
 
   return {
     lptotalSupply: lptotalSupply[0]._hex,
@@ -316,8 +318,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     poolLendPerBlock,
     tokenBalanceLP: tokenBalanceLP[0]._hex,
     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
-    liquidationThreshold: liquidationThreshold[0]._hex,
-    quoteTokenLiquidationThreshold: quoteTokenLiquidationThreshold[0]._hex,
+    liquidationThreshold: "0x208d", // liquidationThreshold[0]._hex,
+    quoteTokenLiquidationThreshold: "0x208d", // quoteTokenLiquidationThreshold[0]._hex,
     tokenMinDebtSize: tokenMinDebtSize[0]._hex,
     quoteTokenMinDebtSize: quoteTokenMinDebtSize[0]._hex,
     tokenReserveFund: tokenReserveFund[0]._hex,
