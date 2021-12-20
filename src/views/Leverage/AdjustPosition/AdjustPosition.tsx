@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-properties */
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useHistory } from 'react-router-dom'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
@@ -152,6 +152,7 @@ const AdjustPosition = () => {
   const {
     state: { data, liquidationThresholdData },
   } = useLocation<LocationParams>()
+  const history = useHistory()
 
   const { t } = useTranslation()
   const [quoteTokenInput, setQuoteTokenInput] = useState<string>()
@@ -412,6 +413,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
@@ -442,6 +444,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -573,6 +576,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -642,6 +646,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -1102,20 +1107,19 @@ const AdjustPosition = () => {
                     <Text>
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
-                    <CurrentPostionToken>
-                      <Text bold>{`${symbolName.replace('wBNB', 'BNB')}#${positionId}`}</Text>
+                    <CurrentPostionToken >
+                      <Text bold>{`${symbolName}#${positionId}`}</Text>
                       <Box width={24} height={24}>
                         <TokenPairImage
-                          primaryToken={tokenValue}
-                          secondaryToken={quoteTokenValue}
+                          primaryToken={TokenInfo.token}
+                          secondaryToken={TokenInfo.quoteToken}
                           width={24}
                           height={24}
-                          variant="inverted"
                         />
                       </Box>
                       <Box>
                         <Text style={{ whiteSpace: 'nowrap' }} bold>
-                          {lpSymbolName.replace(' LP', '').toUpperCase().replace('WBNB', 'BNB')}
+                          {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
                         </Text>
                         <Text style={{ color: '#6F767E', fontSize: '12px' }}>{data.farmData.lpExchange}</Text>
                       </Box>
@@ -1211,7 +1215,7 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  <AddCollateralRepayDebtContainer
+                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 && currentPositionLeverage !== 1 ? null : <AddCollateralRepayDebtContainer
                     currentPositionLeverage={Number(currentPositionLeverage)}
                     targetPositionLeverage={Number(targetPositionLeverage)}
                     userQuoteTokenBalance={userQuoteTokenBalance}
@@ -1236,7 +1240,7 @@ const AdjustPosition = () => {
                       percentageToClose / 100,
                       symbolName,
                     )}
-                  />
+                  />}
                   {/*  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}

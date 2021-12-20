@@ -91,14 +91,13 @@ const StrategyIcon = styled.div<{ market: string }>`
     return null
   }};
 `
-const AssetSelect = styled(Flex)``
 const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
-  const { isDark, toggleTheme } = useTheme()
+  const { isDark } = useTheme()
 
 
 useBorrowingInterest7days()
@@ -208,7 +207,6 @@ useBorrowingInterest7days()
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
-
   }, [strategyFilter])
 
   const { singleLeverage, direction, riskLevel, name: strategyName } = getStrategyInfo(selectedStrategy)
@@ -344,9 +342,8 @@ useEffect(() => {
               >
                 <Flex alignItems="center" width="calc(100% - 20px)">
                   <TokenPairImage
-                    variant="inverted"
-                    primaryToken={singleData.QuoteTokenInfo.token}
-                    secondaryToken={singleData.QuoteTokenInfo.quoteToken}
+                    primaryToken={singleData.QuoteTokenInfo.quoteToken}
+                    secondaryToken={singleData.QuoteTokenInfo.token}
                     width={44}
                     height={44}
                     primaryImageProps={{ style: { marginLeft: '20px' } }}
@@ -434,9 +431,16 @@ useEffect(() => {
                     {apy}%
                   </Text>
                   <Flex alignItems="center">
-                    <Text color="#27C73F">{apyPercentageDiff}</Text>
-                    <ArrowUpIcon color="#27C73F" />
-                    <Text>{t(` than 1x yield farm`)}</Text>
+                    {/*                     <Text color="#27C73F">{apyPercentageDiff}</Text>
+                    <ArrowUpIcon color="#27C73F" /> */}
+                    <Text>
+                      {t(
+                        `%apyPercentageDiff% ${
+                          Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        } than 1x yield farm`,
+                        { apyPercentageDiff },
+                      )}
+                    </Text>
                   </Flex>
                 </>
               ) : (
@@ -453,7 +457,7 @@ useEffect(() => {
           <Flex justifyContent="space-between">
             <Text>{t('TVL')}</Text>
             {tvl && !Number.isNaN(tvl) && tvl !== undefined ? (
-              <Text>${nFormatter(tvl)}</Text>
+              <Text>{`$${nFormatter(tvl)}`}</Text>
             ) : (
               <Skeleton width="80px" height="16px" />
             )}
@@ -469,7 +473,11 @@ useEffect(() => {
             <Text>{t('Daily Earn')}</Text>
             {dailyEarnings ? (
               <Text>
-                {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
+                {t('%dailyEarnings% %quoteTokenSymbol% per %tokenSymbol%', {
+                  dailyEarnings: dailyEarnings.toFixed(4),
+                  quoteTokenSymbol,
+                  tokenSymbol,
+                })}
               </Text>
             ) : (
               <Skeleton width="5rem" height="1rem" />

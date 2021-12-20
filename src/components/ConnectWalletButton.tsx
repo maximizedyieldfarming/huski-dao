@@ -18,7 +18,7 @@ const ConnectWalletButton = (props) => {
   const { isDark } = useTheme();
   const { t } = useTranslation()
   const { login, logout } = useAuth()
-  const { onPresentConnectModal } = useWalletModal(login, logout, "asdf",isDark)
+  const { onPresentConnectModal } = useWalletModal(login, logout)
 
   return (
     <StyledButton size="lg" onClick={onPresentConnectModal} {...props}>
