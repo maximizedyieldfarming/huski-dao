@@ -47,7 +47,7 @@ useEffect(() => {
   fetchTradingFee()
 }, [pairAddress])
 
-console.info('tradingFees',tradingFees)
+// console.info('tradingFees',tradingFees)
   return tradingFees
 }
 
