@@ -745,7 +745,7 @@ const Farm = () => {
         fontSize="25px"
         style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}
       >
-        {t(`Farming ${token} Pools`)}
+        {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
       <SectionWrapper>
         <Section className="main">

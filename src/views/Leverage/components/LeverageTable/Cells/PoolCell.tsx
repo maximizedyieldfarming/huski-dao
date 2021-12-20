@@ -37,7 +37,7 @@ const PoolCell = ({ pool, tokenData }) => {
           />
           <Box>
             <Text mt="-3px" bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
-              {pool}
+              {pool.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Text fontSize="12px" mt="5px" color="textSubtle">
               {tokenData?.lpExchange}
