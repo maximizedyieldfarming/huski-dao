@@ -10,7 +10,7 @@ import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { useTranslation } from 'contexts/Localization'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
+import { BIG_ZERO } from 'utils/bigNumber'
 import useTheme from 'hooks/useTheme'
 
 import Switch from 'react-switch'
@@ -115,7 +115,7 @@ const LendAction = () => {
   usePollLeverageFarmsWithUserData()
 
   const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
-  const allowance = token?.userData?.allowance
+  const allowance = tokenData?.userData?.allowance ? tokenData?.userData?.allowance : token?.userData?.allowance
 
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
@@ -132,14 +132,14 @@ const LendAction = () => {
   // console.log('ib balance', userTokenBalanceIb, "token balance", userTokenBalance)
 
   const exchangeRate =
-    token.totalToken && token.totalSupply
-      ? new BigNumber(token.totalToken).div(token.totalSupply)
-      : new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
+    Number(token.totalToken) && Number(token.totalSupply)
+    ? new BigNumber(tokenData.totalToken).div(tokenData.totalSupply)
+      : BIG_ZERO
 
   const huskyPrice = useHuskiPrice()
   const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
   const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
-  const apyCell = (e) => {
+  const apyCell = (e: number) => {
     const value = e * 100
     return `${value.toFixed(2)}%`
   }
