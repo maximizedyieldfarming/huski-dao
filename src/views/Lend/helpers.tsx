@@ -3,11 +3,11 @@ import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
 import { BLOCKS_PER_YEAR, BIG_ZERO } from 'utils/config';
 
-export const getAprData = (farm: LeverageFarm, cakePriceBusd: BigNumber, borrowingInterest?) => {
+export const getAprData = (farm: LeverageFarm, huskyPriceBusd, borrowingInterest?) => {
   const { totalToken, vaultDebtVal, poolLendPerBlock, tokenPriceUsd, tokenReserveFund } = farm
 
   const busdTokenPrice: any = tokenPriceUsd
-  const huskyPrice: any = cakePriceBusd;
+  const huskyPrice: any = huskyPriceBusd;
   const poolHuskyPerBlock = poolLendPerBlock;
   const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
   const reserveFund = parseInt(tokenReserveFund) / 10000;
