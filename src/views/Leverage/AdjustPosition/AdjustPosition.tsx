@@ -1215,7 +1215,7 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 && currentPositionLeverage !== 1 ? null : <AddCollateralRepayDebtContainer
+                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 /* || currentPositionLeverage !== 1 */ ? null : <AddCollateralRepayDebtContainer
                     currentPositionLeverage={Number(currentPositionLeverage)}
                     targetPositionLeverage={Number(targetPositionLeverage)}
                     userQuoteTokenBalance={userQuoteTokenBalance}
