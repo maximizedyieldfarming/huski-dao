@@ -289,11 +289,10 @@ const ClosePositionSA = () => {
             <Flex alignItems="center">
               <Box width={24} height={24}>
                 <TokenPairImage
-                  primaryToken={quoteTokenValue}
-                  secondaryToken={tokenValue}
+                  primaryToken={tokenValue}
+                  secondaryToken={quoteTokenValue}
                   width={24}
                   height={24}
-                  variant="inverted"
                 />
               </Box>
               <Box ml="5px">

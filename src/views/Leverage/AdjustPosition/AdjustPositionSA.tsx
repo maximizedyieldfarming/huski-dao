@@ -638,19 +638,18 @@ const AdjustPositionSA = () => {
             {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
           <CurrentPostionToken>
-            <Text bold>{`${TokenInfo.token.symbol.replace('wBNB', 'BNB')}#${TokenInfo.pId}`}</Text>
+            <Text bold>{`${symbolName.replace('wBNB', 'BNB')}#${positionId}`}</Text>
             <Box width={24} height={24}>
               <TokenPairImage
-                primaryToken={TokenInfo.quoteToken}
-                secondaryToken={TokenInfo.token}
+                primaryToken={TokenInfo.token}
+                secondaryToken={TokenInfo.quoteToken}
                 width={24}
                 height={24}
-                variant="inverted"
               />
             </Box>
             <Box>
               <Text style={{ whiteSpace: 'nowrap' }} bold>
-                {data.farmData.lpSymbol.replace(' LP', '').replace('WBNB', 'BNB')}
+                {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace('WBNB', 'BNB')}
               </Text>
               <Text style={{ color: '#6F767E', fontSize: '12px' }}>{data.farmData.lpExchange}</Text>
             </Box>
@@ -674,8 +673,8 @@ const AdjustPositionSA = () => {
                 type="range"
                 min="1.0"
                 max={
-                  leverage < Number(currentPositionLeverage)
-                    ? new BigNumber(currentPositionLeverage).toFixed(2, 1)
+                  new BigNumber(leverage).lt(currentPositionLeverage)
+                    ? new BigNumber(currentPositionLeverage).toString()
                     : leverage
                 }
                 step="0.01"
@@ -1208,9 +1207,9 @@ const AdjustPositionSA = () => {
             onClick={isRepayDebt ? handleConfirmConvertTo : handleConfirm}
             disabled={
               !account ||
-              (isRepayDebt
-                ? !new BigNumber(targetPositionLeverage).eq(currentPositionLeverage)
-                : Number(tokenInput) === 0 || tokenInput === undefined) ||
+              (!isRepayDebt && !tokenInput) ||
+              (isRepayDebt && targetPositionLeverage !== currentPositionLeverage) ||
+              (isRepayDebt && targetPositionLeverage === 1 && currentPositionLeverage === 1 && percentageToClose !== 0) ||
               isPending
             }
             isLoading={isPending}

@@ -1107,20 +1107,19 @@ const AdjustPosition = () => {
                     <Text>
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
-                    <CurrentPostionToken>
-                      <Text bold>{`${symbolName.replace('wBNB', 'BNB')}#${positionId}`}</Text>
+                    <CurrentPostionToken >
+                      <Text bold>{`${symbolName}#${positionId}`}</Text>
                       <Box width={24} height={24}>
                         <TokenPairImage
-                          primaryToken={tokenValue}
-                          secondaryToken={quoteTokenValue}
+                          primaryToken={TokenInfo.token}
+                          secondaryToken={TokenInfo.quoteToken}
                           width={24}
                           height={24}
-                          variant="inverted"
                         />
                       </Box>
                       <Box>
                         <Text style={{ whiteSpace: 'nowrap' }} bold>
-                          {lpSymbolName.replace(' LP', '').toUpperCase().replace('WBNB', 'BNB')}
+                          {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
                         </Text>
                         <Text style={{ color: '#6F767E', fontSize: '12px' }}>{data.farmData.lpExchange}</Text>
                       </Box>
