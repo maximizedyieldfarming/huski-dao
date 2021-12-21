@@ -1396,7 +1396,7 @@ const AdjustPosition = () => {
                     {!isAddCollateral && isConvertTo && (
                       <Button
                         onClick={handleConfirmConvertTo}
-                        disabled={isConfirmDisabled || !account || isPending}
+                        // disabled={isConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1408,7 +1408,7 @@ const AdjustPosition = () => {
                     {!isAddCollateral && !isConvertTo && (
                       <Button
                         onClick={handleConfirmMinimize}
-                        disabled={isConfirmDisabled || !account || isPending}
+                        // disabled={isConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
