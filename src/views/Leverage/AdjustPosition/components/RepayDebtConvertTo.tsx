@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { Box, Flex, Text, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { usePercentageToCloseContext } from '../context'
 
@@ -13,6 +13,73 @@ interface Props {
   baseTokenAmountValue: any
   farmTokenAmountValue: any
 }
+
+interface MoveProps {
+  move: number
+}
+
+const MoveBox = styled(Box) <MoveProps>`
+  margin-left: ${({ move }) => move}px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+  color: #83BF6E;
+`
+
+const makeLongShadow = (color: any, size: any) => {
+  let i = 2
+  let shadow = `${i}px 0 0 ${size} ${color}`
+
+  for (; i < 856; i++) {
+    shadow = `${shadow}, ${i}px 0 0 ${size} ${color}`
+  }
+
+  return shadow
+}
+
+const RangeInput = styled.input`
+  overflow: hidden;
+  display: block;
+  appearance: none;
+  max-width: 850px;
+  width: 100%;
+  margin: 0;
+  height: 32px;
+
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 32px;
+    background: linear-gradient(to right, #83BF6E, #83BF6E) 100% 50% / 100% 4px no-repeat transparent;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-thumb {
+    position: relative;
+    appearance: none !important;
+    height: 32px;
+    width: 28px;
+
+    background-image: url('/images/RangeHandle1.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    border: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    transition: background-color 150ms;
+    &::before {
+      height: 32px;
+      width: 32px;
+      background: red !important;
+    }
+  }
+`
+
 const Wrapper = styled(Box)`
   margin-top: 1rem;
   > ${Flex}, ${Box} {
@@ -21,10 +88,10 @@ const Wrapper = styled(Box)`
     }
   }
 `
-const GrayBox = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-  padding: 1rem;
-  border-radius: ${({ theme }) => theme.radii.card};
+const GrayBox = styled(Flex) <{ isDark: boolean }>`
+  background-color: ${({ isDark }) => isDark ? '#111315' : '#F4F4F4'};
+  padding: 16px 24px;
+  border-radius: 12px;
 `
 
 const RepayDebtConvertTo: React.FC<Props> = ({
@@ -40,12 +107,32 @@ const RepayDebtConvertTo: React.FC<Props> = ({
     convertToValues
 
   const { t } = useTranslation()
+  const { isDark } = useTheme();
   const { percentage, setPercentage } = usePercentageToCloseContext()
+
+  const targetRef = React.useRef<any>()
+  const [moveVal, setMoveVal] = useState({ width: 0, height: 0 })
+  const [margin, setMargin] = useState(0)
+
+  useLayoutEffect(() => {
+    if (targetRef.current !== null && targetRef.current !== undefined) {
+      setMoveVal({
+        width: targetRef?.current?.offsetWidth,
+        height: targetRef?.current?.offsetHeight,
+      })
+      console.log("!!!!", targetRef?.current?.offsetWidth);
+    }
+  }, [percentage])
+
+  useEffect(() => {
+    setMargin((moveVal.width - 32) / 100 * percentage);
+  }, [percentage, moveVal.width])
+
   return (
     <Wrapper>
-      <GrayBox background="#F7F7F8!important">
-        <InfoIcon mr = "10px"/>
-        <Text color="textSubtle" small>
+      <GrayBox isDark={isDark}>
+        <InfoIcon mr="10px" />
+        <Text color="#6F767E" small>
           {t('Your position value will all be converted to %tokenName% and returned to you after paying back the debt.', { tokenName })}
         </Text>
       </GrayBox>
@@ -56,25 +143,38 @@ const RepayDebtConvertTo: React.FC<Props> = ({
             {currentPositionLeverage !== 1 && t('(After repay all debt)')}
           </Text>
           <Flex>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              step="1"
-              value={percentage}
-              onChange={(e) => setPercentage(Number(e.target.value))}
-              style={{ width: '90%' }}
-              list="percentageToClose"
-              className="unstyledRangeInput" // TODO: leave this className, at least until theres a better looking one with proper functionality. because we need to see it for testing
-            />
-            <datalist id="percentageToClose">
-              <option value="0" label="0%" />
-              <option value="50" label="50%" />
-              <option value="100" label="100%" />
-            </datalist>
-            <Text ml="auto">{percentage}%</Text>
+            <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto', marginTop: "20px" }}>
+              <MoveBox move={margin}>
+                <Text color="#83BF6E" bold>
+                  {percentage}%
+                </Text>
+              </MoveBox>
+              <Box ref={targetRef} style={{ width: '100%' }} mt="-20px">
+                <RangeInput
+                  type="range"
+                  min="1.0"
+                  max="100"
+                  step="0.01"
+                  name="leverage"
+                  value={percentage}
+                  onChange={(e) => setPercentage(Number(e.target.value))}
+                  list="leverage"
+                  style={{ width: '100%' }}
+                />
+              </Box>
+              <datalist
+                style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '-15px' }}
+                id="leverage"
+              >
+                <option value={0} label='0%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                <option value={25} label='25%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                <option value={50} label='50%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                <option value={75} label='75%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                <option value={100} label='100%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+              </datalist>
+            </Box>
           </Flex>
-        </Box>
+        </Box >
       )}
       <Flex justifyContent="space-between" alignItems="center">
         <Flex>
@@ -101,7 +201,7 @@ const RepayDebtConvertTo: React.FC<Props> = ({
           </Text>
         </Flex>
       </Flex>
-    </Wrapper>
+    </Wrapper >
   )
 }
 

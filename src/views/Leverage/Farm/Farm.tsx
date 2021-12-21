@@ -489,7 +489,7 @@ const Farm = () => {
         contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        tokenName.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? callOptionsBNB : callOptions,
+        radio.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {

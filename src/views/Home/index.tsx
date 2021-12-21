@@ -9,7 +9,8 @@ import background from './assets/Graybackground.png'
 import bgCircle from './assets/bgCircle.svg'
 import bgCorner from './assets/Circles.png'
 import huski from './assets/HuskiPNG.png'
-import securityFirst from './assets/Security First.svg'
+import slogan from './assets/Group8810.png'
+import securityFirst from './assets/Security First.png'
 import communityImg from './assets/Community Owned.png'
 import noInvestorsImg from './assets/No Investor.png'
 import fairLaunchImg from './assets/Fair Launch.png'
@@ -27,8 +28,15 @@ import YouTube from './assets/Youtube.svg'
 import Discord from './assets/Discord.svg'
 import dog from './assets/Dog.png'
 
+import peckshield from './assets/peckShieldLogo@2x.png';
+import slowmist from './assets/slowMistLogo@2x.png';
+import inspect from './assets/inspexLogo@2x.png';
+import ItemBox from './ItemBox'
+import hand from './assets/Group 8802.png'
+
+
 const StyledHeroSection = styled(Box)`
-  padding: 16px;
+  padding : 160px;
   text-align: center;
 
   &:nth-child(even) {
@@ -39,14 +47,32 @@ const StyledHeroSection = styled(Box)`
   &:nth-child(2) {
     background-color: ${({ theme }) => theme.colors.backgroundAlt};
   }
-  ${({ theme }) => theme.mediaQueries.md} {
-    padding: 48px;
+  @media screen and (max-width : 1200px){
+    padding : 80px;
+  }
+  @media screen and (max-width : 900px){
+    padding : 40px
+  }
+  @media screen and (max-width : 500px){
+    padding : 40px 20px;
   }
 `
 const SBStyledContainer = styled(Box)`
   background-image: url(${dog});
   background-position: right;
   background-repeat: no-repeat;
+  padding : 160px;
+  @media screen and (max-width : 1200px){
+    padding : 80px;
+  }
+  @media screen and (max-width : 900px){
+    background-position : top right;
+    background-size : 50% 50vw;
+    padding : 40px
+  }
+  @media screen and (max-width : 500px){
+    padding : 40px 20px;
+  }
 `
 const StyledOurPartner = styled(Box)`
   width: 100%;
@@ -83,34 +109,58 @@ const StyledCircle = styled(Box)`
 `
 
 const StyledCorner = styled(Box)`
-  width: 621px;
-  height: 928px;
+  max-width : 1430px;
+  max-height : 953px;
+  width: 100%;
+  height: calc(100vw / 1.5);
   background-image: url(${bgCorner});
   background-position: right;
-  background-size: auto;
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   position: absolute;
   top: 0;
   right: 0;
 `
 const StyledHuski = styled(Box)`
-  width: 621px;
-  height: 928px;
+  max-width : 470px;
+  max-height : 601px;
+  width: 40%;
+  height: calc(40vw * 1.3);
   background-image: url(${huski});
   background-position: right;
-  background-size: auto;
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   position: absolute;
-  top: 0;
+  top: 150px;
   right: 70px;
+  @media screen and (max-width : 1200px){
+    right : 0px;
+  }
 `
 const SectionWithBgImg = styled(Box)`
-  height: 950px;
-  padding-top: 330px;
+  padding : calc(100vw / 1.5 * 0.5) 160px 80px 160px;
+  height: fit-content;
   background-image: url(${background});
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  @media screen and (max-width : 1200px){
+    padding-left : 80px;
+    padding-right : 80px;
+  }
+  @media screen and (max-width : 900px){
+    padding-left : 40px;
+    padding-right : 40px;
+  }
+  @media screen and (max-width : 500px){
+    padding-left : 20px;
+    padding-right : 0px;
+    padding-bottom : 40px;
+  }
+  @media screen and (min-width : 1300px){
+    padding-left : calc(50% - 560px);
+    padding-top : 320px;
+  }
 `
 
 const Card = styled(Flex)`
@@ -118,8 +168,6 @@ const Card = styled(Flex)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  height: 100%;
   border-radius: ${({ theme }) => theme.radii.default};
 
   flex: 1 1 0px;
@@ -153,7 +201,57 @@ const Card = styled(Flex)`
     }
   }
 `
+const TradeText = styled(Box)`
+  width : 60%;
+  font-size : 24px;
+  max-width : 700px;
+  color : #1A1A1F;
+  margin-top : 70px;
+  line-height : 39px;
+  font-weight : 400;
+  @media screen and (max-width : 768px){
+    font-size : 12px;
+    line-height : 20px;
+  }
+`
 
+const BackedImage = styled(Box)`
+  display : flex;
+  align-items : center;
+  flex-direction : column;
+  @media screen and (max-width : 1200px){
+    >div >img{
+      margin : 0 10px 20px 10px!important;
+    }
+    >div{
+      flex-wrap : wrap;
+    }
+  }
+  @media screen and (max-width : 570px){
+    >div >img{
+      width : 140px!important;
+      height : 80px!important;
+    }
+    >div{
+      justify-content : center!important;
+    }
+  }
+`
+const SocialIcon = styled(Flex)`
+  align-items : center;
+  justifyContent : space-between;
+  margin : 0!important;
+  @media screen and (max-width : 450px){
+    > img{
+      width :32px!important;
+      height : 32px!important;
+    }
+    > svg{
+      width :32px!important;
+      height : 32px!important;
+    }
+  }
+`;
 const Home: React.FC = () => {
   const { theme } = useTheme()
   const HomeSectionContainerStyles = { margin: '0', width: '100%', maxWidth: '968px' }
@@ -163,35 +261,28 @@ const Home: React.FC = () => {
     <>
       <SectionWithBgImg>
         <StyledCorner />
-        <StyledCircle />
         <StyledHuski />
 
-        <div style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto' }}>
-          <img src="images/slogan.png" width="694px" height="240px" alt="slogan" />
-          <p style={{ width: '610px', fontSize: '24px', color: '#1A1A1F', lineHeight: '30px', marginTop: '70px' }}>
+        <Box>
+          <img src={slogan} alt="slogan" style={{ position: 'relative', width: '65%', maxWidth : '700px' }} />
+          <TradeText style={{}}>
             {t('Trade, earn, and win crypto on the most popular decentralized platform in the galaxy.')}
-          </p>
-        </div>
+          </TradeText>
+        </Box>
 
         <Flex
-          style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px' }}
-          justifyContent="left"
+          style={{ marginTop: '20px', maxWidth: '320px' , position : 'relative' }}
+          justifyContent="space-between"
         >
-          {/* <Button
-            variant="secondary"
-            style={{ background: '#7B3FE4', color: 'white', border: 'none' }}
-            as={Link}
-            to="/lend"
-          >
-            {t('Connect Wallet')}
-          </Button> */}
-          <ConnectWalletButton scale="sm" />
+          <ConnectWalletButton scale="sm" width={167} height={56} style={{ margin: '0' }} />
           <Button
-            style={{ background: 'transparent', color: '#1A1A1F', borderColor: '#1A1A1F' }}
+            style={{ background: 'transparent', color: '#1A1A1F', borderColor: '#1A1A1F', fontSize: '16px', padding: '0', margin: '0' }}
             variant="secondary"
             mx="1rem"
             as={Link}
             to={{ pathname: '/lend' }}
+            width={133}
+            height={56}
           >
             {t('Trade Now')}
           </Button>
@@ -208,46 +299,43 @@ const Home: React.FC = () => {
       </SectionWithBgImg>
 
       <StyledHeroSection>
-        <p style={{ marginTop: '120px', marginBottom: '20px' }}>{t('FEATURES')}</p>
+        <p style={{ marginBottom: '20px' }}>{t('FEATURES')}</p>
         <h1 style={{ fontSize: '56px', marginTop: '15px', marginBottom: '40px' }}>{t('Why Huski')}</h1>
-        <div style={{ textAlign: 'center', width: '1120px', marginLeft: 'auto', marginRight: 'auto' }}>
-          <Grid
-            padding="0 2rem"
-            gridTemplateColumns="repeat(auto-fit, minmax(100px, 200px))"
-            gridAutoRows="1fr"
-            gridGap="1rem"
+        <div style={{ textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', maxWidth: '1120px' }}>
+          <Flex
+            flexWrap='wrap'
             justifyContent="space-between"
           >
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" width={145} mb={30}>
               <Card>
                 <img src={securityFirst} alt="" />
               </Card>
               <Text>{t('Security First')}</Text>
             </Flex>
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" width={145} mb={30}>
               <Card>
-                <img style={{ paddingTop: '35px' }} src={communityImg} alt="" />
+                <img src={communityImg} alt="" />
               </Card>
               <Text>{t('Community Owned')}</Text>
             </Flex>
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" width={145} mb={30}>
               <Card>
-                <img style={{ paddingTop: '30px' }} src={noInvestorsImg} alt="" />
+                <img src={noInvestorsImg} alt="" />
               </Card>
               <Text>{t('No Investors')}</Text>
             </Flex>
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" width={145} mb={30}>
               <Card>
-                <img style={{ paddingBottom: '10px' }} src={fairLaunchImg} alt="" />
+                <img src={fairLaunchImg} alt="" />
               </Card>
               <Text>{t('Fair Launch')}</Text>
             </Flex>
-          </Grid>
+          </Flex>
         </div>
       </StyledHeroSection>
 
       <StyledHeroSection style={{ background: 'white' }}>
-        <div style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto' }}>
+        <div style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '1120px' }}>
           <div
             style={{
               borderRadius: '20px 20px 0 0',
@@ -265,7 +353,6 @@ const Home: React.FC = () => {
           </div>
           <div
             style={{
-              width: '95%',
               background: '#2C353D',
               marginLeft: 'auto',
               marginRight: 'auto',
@@ -274,57 +361,53 @@ const Home: React.FC = () => {
               marginTop: '-2px',
             }}
           >
-            <Grid
-              width="100%"
-              padding="0 1rem"
-              gridTemplateColumns="repeat(auto-fit, minmax(300px,300px))"
-              gridAutoRows="1fr"
-              gridGap="0.5rem"
-              justifyContent="space-between"
-            >
-              <div>
+            <Flex justifyContent="space-between" flexWrap='wrap'>
+              <Box width={320}>
                 <Card
-                  className="learnMore"
-                  style={{ background: '#22282E', paddingTop: '50px', paddingBottom: '40px', height: 'fit-content' }}
+                  style={{ background: '#22282E', placeContent: 'center' }}
+                  maxWidth={320} maxHeight={320} width='100%' height={320}
                 >
-                  <img src={introTo} style={{ marginLeft: '18px' }} alt="" />
+                  <img src={introTo} alt="" width='220px' height='220px' />
                 </Card>
                 <Text style={{ fontSize: '20px', color: 'white', marginTop: '20px', marginBottom: '20px' }}>
                   {t('Intro to HUSKI finance')}
                 </Text>
-              </div>
-              <div>
+
+              </Box>
+              <Box width={320}>
                 <Card
                   className="learnMore"
-                  style={{ background: '#22282E', paddingTop: '50px', paddingBottom: '50px', height: 'fit-content' }}
+                  style={{ background: '#22282E', placeContent: 'center' }}
+                  maxWidth={320} maxHeight={320} width='100%' height='100vw'
                 >
                   <img src={tokenomics} alt="" />
                 </Card>
                 <Text style={{ fontSize: '20px', color: 'white', marginTop: '20px', marginBottom: '20px' }}>
                   {t('Tokenomics')}
                 </Text>
-              </div>
-              <div>
+              </Box>
+              <Box width={320}>
                 <Card
                   className="learnMore"
-                  style={{ background: '#22282E', paddingTop: '50px', paddingBottom: '50px', height: 'fit-content' }}
+                  style={{ background: '#22282E', placeContent: 'center' }}
+                  maxWidth={320} maxHeight={320} width='100%' height='100vw'
                 >
                   <img src={roadmap} alt="" />
                 </Card>
                 <Text style={{ fontSize: '20px', color: 'white', marginTop: '20px', marginBottom: '20px' }}>
                   {t('Roadmap')}
                 </Text>
-              </div>
-            </Grid>
+              </Box>
+            </Flex>
           </div>
         </div>
       </StyledHeroSection>
 
       <StyledHeroSection style={{ background: '#ECF2F6' }}>
-        <Flex style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
-          <Grid width="45%">
+        <Flex style={{ marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px', flexWrap: 'wrap', maxWidth: '1120px' }}>
+          <Grid width={300}>
             <h3
-              style={{ marginTop: '40px', fontWeight: 700, fontSize: '48px', paddingRight: '40%', textAlign: 'left' }}
+              style={{ marginTop: '40px', fontWeight: 700, fontSize: '48px', textAlign: 'left' }}
             >
               {t('Our contracts have been audited by')}
             </h3>
@@ -332,253 +415,267 @@ const Home: React.FC = () => {
               {t('Our Contract have been audited by best audit auditing in this field')}
             </Text>
           </Grid>
-          <Grid /* width="55%"  gridTemplateColumns="1fr 1fr" gridTemplateRows="1fr 1fr" */  justifyContent="center" alignItems="center">
-              {/*  <Card
-                className="auditedBy"
-                style={{
-                  boxShadow: ' 2px 3px 5px #888888',
-                  width: '50%',
-                  margin: '15px',
-                  padding: '20px',
-                  border: 'none',
-                }}
-              >
-                <img src={peckShieldLogo} alt="" />
-              </Card> */}
-            <Card
-              className="auditedBy"
-              style={{
-                boxShadow: ' 2px 3px 5px #888888',
-                width: '315px',
-                height: '158px',
-                margin: '15px',
-                padding: '20px',
-                border: 'none',
-              }}
-            >
-              <img src={certikLogo} alt="" width="100%" />
-            </Card>
-            {/*   <Flex style={{ marginTop: '30px' }}>
+          <Box>
+            <Flex flexWrap='wrap' justifyContent='space-between'>
               <Card
                 className="auditedBy"
                 style={{
                   boxShadow: ' 2px 3px 5px #888888',
-                  width: '50%',
+                  width: '300px',
+                  height: '120px',
                   margin: '15px',
                   padding: '20px',
                   border: 'none',
+                  flex: 'none'
                 }}
               >
-                <img src={showMist} alt="" />
+                <img src={peckshield} alt="" width="300px" />
               </Card>
               <Card
                 className="auditedBy"
                 style={{
                   boxShadow: ' 2px 3px 5px #888888',
-                  width: '50%',
+                  width: '300px',
+                  height: '120px',
                   margin: '15px',
                   padding: '20px',
                   border: 'none',
+                  flex: 'none'
                 }}
               >
-                <img src={insPex} alt="" />
+                <img src={certikLogo} alt="" width="100%" />
               </Card>
-            </Flex> */}
-          </Grid>
+            </Flex>
+
+            <Flex flexWrap='wrap' justifyContent='space-between'>
+              <Card
+                className="auditedBy"
+                style={{
+                  boxShadow: ' 2px 3px 5px #888888',
+                  width: '300px',
+                  height: '120px',
+                  margin: '15px',
+                  padding: '20px',
+                  border: 'none',
+                  flex: 'none'
+                }}
+              >
+                <img src={slowmist} alt="" width="300px" />
+              </Card>
+              <Card
+                className="auditedBy"
+                style={{
+                  boxShadow: ' 2px 3px 5px #888888',
+                  width: '300px',
+                  height: '120px',
+                  margin: '15px',
+                  padding: '20px',
+                  border: 'none',
+                  flex: 'none'
+                }}
+              >
+                <img src={inspect} alt="" width="100%" />
+              </Card>
+            </Flex>
+
+
+          </Box>
         </Flex>
       </StyledHeroSection>
-      <StyledHeroSection style={{ background: '#2C353D', position: 'relative', height: '900px' }}>
-        <StyledOurPartner />
 
-        <div style={{ position: 'absolute', width: '100%', top: 100, left: 0 }}>
-          <div style={{ width: '1120px', marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
+      <StyledHeroSection style={{ background: '#2C353D', position: 'relative' }}>
+        <StyledOurPartner />
+        <div style={{ width: '100%', top: 100, left: 0 }}>
+          <div style={{ marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
             <Text textAlign="center" fontSize="48px" style={{ paddingTop: '30px' }} color="white">
               {t('Backed by the best')}
             </Text>
-            <div style={{ display: 'flex', marginTop: '50px' }}>
-              <img
-                src="images/backed/binance.png"
-                style={{
-                  zIndex: 2,
-                  marginLeft: '0px',
-                  marginTop: '10px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-              <img
-                src="images/backed/tether.png"
-                style={{
-                  zIndex: 2,
-                  marginLeft: '226px',
-                  marginTop: '0px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-              <img
-                src="images/backed/trezor.png"
-                style={{
-                  zIndex: 2,
-                  marginLeft: '147px',
-                  marginTop: '20px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-            </div>
-            <div style={{ display: 'flex' }}>
-              <img
-                src="images/backed/thegraph.png"
-                style={{
-                  marginLeft: '212px',
-                  marginTop: '-38px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-              <img
-                src="images/backed/ledger.png"
-                style={{
-                  marginLeft: '175px',
-                  marginTop: '-30px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-            </div>
-            <div style={{ display: 'flex' }}>
-              <img
-                src="images/backed/openzepplin.png"
-                style={{
-                  marginLeft: '0px',
-                  marginTop: '-26px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-              <img
-                src="images/backed/pancakeswap.png"
-                style={{
-                  marginLeft: '92px',
-                  marginTop: '20px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-              <img
-                src="images/backed/immunefi.png"
-                style={{
-                  marginLeft: '100px',
-                  marginTop: '-23px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-              <img
-                src="images/backed/eth.png"
-                style={{
-                  marginLeft: '24px',
-                  marginTop: '22px',
-                  width: '216px',
-                  borderRadius: '4px',
-                  height: '110px',
-                  boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
-                }}
-                alt="backed.png"
-              />
-            </div>
+            <BackedImage >
+              <div style={{ display: 'flex', marginTop: '50px' }}>
+                <img
+                  src="images/backed/binance.png"
+                  style={{
+                    zIndex: 2,
+                    marginLeft: '0px',
+                    marginTop: '10px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+                <img
+                  src="images/backed/tether.png"
+                  style={{
+                    zIndex: 2,
+                    marginLeft: '226px',
+                    marginTop: '0px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+                <img
+                  src="images/backed/trezor.png"
+                  style={{
+                    zIndex: 2,
+                    marginLeft: '147px',
+                    marginTop: '20px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+              </div>
 
-            {/*   <Flex justifyContent="space-between" marginTop="60px">
-              <Box>
-                <Text style={{ color: 'white', fontSize: '48px', textAlign: 'left' }}>{t('Our Partners')}</Text>
-                <Text style={{ color: 'white', fontSize: '14px', marginTop: '20px', textAlign: 'left' }}>
-                  {t('Here are Husky Finace Partners')}
-                </Text>
-              </Box>
-              <Box style={{ borderRadius: '50%' }}>
-                <img src="images/backed/hand.svg" alt="" style={{ width: '150px' }} />
-              </Box>
-            </Flex>
-
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src="/images/partner/Wault_BNW.png" text="Wault Finance" />
-              <ItemBox src="/images/partner/PancakeSwap_BNW.png" text="PancakeSwap" />
-              <ItemBox src="/images/partner/ChainLink_BNW.png" text="Chainlink" />
-              <ItemBox src="/images/partner/TUSD_BNW.png" text="TUSD" />
-            </Flex>
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src="/images/partner/Immunefi_BNW.png" text="Immunefi" />
-              <ItemBox src="/images/partner/Nexus_BNW.png" text="Nexus Mutural" />
-              <ItemBox src="/images/partner/DODO_BNW.png" text="DODO" />
-              <ItemBox src="/images/partner/BELT_BNW.png" text="Belt" />
-            </Flex>
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src="/images/partner/Scientix_BNW.png" text="Scientix" />
-              <ItemBox src="/images/partner/Orbs_BNW.png" text="Orbs" />
-              <ItemBox src="/images/partner/Multiplier_BNW.png" text="Multiplier" />
-              <ItemBox src="/images/partner/Boring Dao_BNW.png" text="Boring Dao" />
-            </Flex>
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src="/images/partner/Farmation_BNW.png" text="Farmation" />
-              <ItemBox src="/images/partner/Seascape_BNW.png" text="Seascape" />
-              <ItemBox src="/images/partner/Swingby_BNW.png" text="Swingby" />
-              <ItemBox src="/images/partner/Oddz_BNW.png" text="Oddz" />
-            </Flex>
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src="/images/partner/Berry Data_BNW.png" text="Berry Data" />
-              <ItemBox src="/images/partner/Itam_BNW.png" text="Itam" />
-              <ItemBox src="/images/partner/polychain monsters_BNW.png" text="Polychain monsters" />
-              <ItemBox src="/images/partner/phala_BNW.png" text="Phala" />
-            </Flex>
-            <Flex style={{ marginTop: 40 }}>
-              <ItemBox src="/images/partner/Alium_BNW.png" text="Alium Finance" />
-              <ItemBox src="/images/partner/Kalata_BNW.png" text="Kalata" />
-              <ItemBox src="/images/partner/NAOS_BNW.png" text="NAOS finance" />
-              <div style={{ width: '320px' }} />
-            </Flex> */}
+              <div style={{ display: 'flex' }}>
+                <img
+                  src="images/backed/thegraph.png"
+                  style={{
+                    marginLeft: '212px',
+                    marginTop: '-38px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+                <img
+                  src="images/backed/ledger.png"
+                  style={{
+                    marginLeft: '175px',
+                    marginTop: '-30px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+              </div>
+              <div style={{ display: 'flex' }}>
+                <img
+                  src="images/backed/openzepplin.png"
+                  style={{
+                    marginLeft: '0px',
+                    marginTop: '-26px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+                <img
+                  src="images/backed/pancakeswap.png"
+                  style={{
+                    marginLeft: '92px',
+                    marginTop: '20px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+                <img
+                  src="images/backed/immunefi.png"
+                  style={{
+                    marginLeft: '100px',
+                    marginTop: '-23px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+                <img
+                  src="images/backed/eth.png"
+                  style={{
+                    marginLeft: '24px',
+                    marginTop: '22px',
+                    width: '216px',
+                    borderRadius: '4px',
+                    height: '110px',
+                    boxShadow: '0px 0px 18px 6px rgba(0, 0, 0, 0.15)',
+                  }}
+                  alt="backed.png"
+                />
+              </div>
+            </BackedImage>
           </div>
+
         </div>
+        {/* <div style={{ width: '100%', top: 100, left: 0 }}>
+          <div style={{ marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
+            <Flex justifyContent="space-between" flexWrap='wrap'>
+              <Box>
+                <Text style={{ color: 'white', fontSize: '48px', textAlign: 'left' }}>Our Partners</Text>
+                <Text style={{ color: 'white', fontSize: '14px', marginTop: '20px', textAlign: 'left' }}>Here are Husky Finace Partners</Text>
+              </Box>
+              <Box style={{ background: '#22282E', borderRadius: '50%' }}><img src={hand} alt="" /></Box>
+            </Flex>
+
+            <Flex style={{ marginTop: 40 }} flexWrap='wrap'>
+              <ItemBox src='/images/partner/Wault_BNW.png' text='Wault Finance' />
+              <ItemBox src='/images/partner/PancakeSwap_BNW.png' text='PancakeSwap' />
+              <ItemBox src='/images/partner/ChainLink_BNW.png' text='Chainlink' />
+              <ItemBox src='/images/partner/TUSD_BNW.png' text='TUSD' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }} flexWrap='wrap'>
+              <ItemBox src='/images/partner/Immunefi_BNW.png' text='Immunefi' />
+              <ItemBox src='/images/partner/Nexus_BNW.png' text='Nexus Mutural' />
+              <ItemBox src='/images/partner/DODO_BNW.png' text='DODO' />
+              <ItemBox src='/images/partner/BELT_BNW.png' text='Belt' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }} flexWrap='wrap'>
+              <ItemBox src='/images/partner/Scientix_BNW.png' text='Scientix' />
+              <ItemBox src='/images/partner/Orbs_BNW.png' text='Orbs' />
+              <ItemBox src='/images/partner/Multiplier_BNW.png' text='Multiplier' />
+              <ItemBox src='/images/partner/Boring Dao_BNW.png' text='Boring Dao' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }} flexWrap='wrap'>
+              <ItemBox src='/images/partner/Farmation_BNW.png' text='Farmation' />
+              <ItemBox src='/images/partner/Seascape_BNW.png' text='Seascape' />
+              <ItemBox src='/images/partner/Swingby_BNW.png' text='Swingby' />
+              <ItemBox src='/images/partner/Oddz_BNW.png' text='Oddz' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }} flexWrap='wrap'>
+              <ItemBox src='/images/partner/Berry Data_BNW.png' text='Berry Data' />
+              <ItemBox src='/images/partner/Itam_BNW.png' text='Itam' />
+              <ItemBox src='/images/partner/polychain monsters_BNW.png' text='Polychain monsters' />
+              <ItemBox src='/images/partner/phala_BNW.png' text='Phala' />
+            </Flex>
+            <Flex style={{ marginTop: 40 }} flexWrap='wrap'>
+              <ItemBox src='/images/partner/Alium_BNW.png' text='Alium Finance' />
+              <ItemBox src='/images/partner/Kalata_BNW.png' text='Kalata' />
+              <ItemBox src='/images/partner/NAOS_BNW.png' text='NAOS finance' />
+              <div style={{ width: '320px' }} />
+            </Flex>
+          </div>
+        </div> */}
       </StyledHeroSection>
 
       <SBStyledContainer style={{ position: 'relative', height: '700px' }}>
         <SBJoin />
-        <div style={{ position: 'absolute', width: '100%', top: 0, left: 0 }}>
+        <div style={{ width: '100%', top: 0, left: 0 }}>
           <Flex
             style={{
               marginTop: '70px',
               zIndex: 2200,
-              width: '1120px',
               marginLeft: 'auto',
               marginRight: 'auto',
-              // paddingBottom: '80px',
+              maxWidth: '1120px'
             }}
           >
-            <Box style={{ width: '50%' }}>
+            <Box>
               <div>
                 <Heading
                   style={{
@@ -591,11 +688,11 @@ const Home: React.FC = () => {
                 >
                   {t('Join us')}
                 </Heading>
-                <Text style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px' }}>
+                <Text style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px', position: 'relative' }}>
                   {t('Join us on our social media channels for more update & announcement.')}
                 </Text>
               </div>
-              <Flex style={{ marginTop: 80 }}>
+              <Flex style={{ marginTop: 80, flexWrap: 'wrap' }}>
                 <Card
                   className="community"
                   style={{
@@ -608,10 +705,10 @@ const Home: React.FC = () => {
                   as={Link}
                   to={{ pathname: 'https://t.me/HuskiFinance' }}
                 >
-                  <Flex alignItems="center" justifyContent="space-between" style={{ margin: 0 }}>
+                  <SocialIcon>
                     <img src={Telegram} style={{ margin: 0 }} alt="" width="48px" height="48px" />
                     <Text ml="1rem">Telegram</Text>
-                  </Flex>
+                  </SocialIcon>
                 </Card>
                 <Card
                   className="community"
@@ -626,10 +723,10 @@ const Home: React.FC = () => {
                   as={Link}
                   to={{ pathname: '/' }}
                 >
-                  <Flex alignItems="center" justifyContent="space-between" style={{ margin: 0 }}>
+                  <SocialIcon>
                     <img src={GitHub} style={{ margin: 0 }} alt="" width="48px" height="48px" />
                     <Text ml="1rem">GitHub</Text>
-                  </Flex>
+                  </SocialIcon>
                 </Card>
               </Flex>
               <Flex style={{ marginTop: '20px' }}>
@@ -645,10 +742,10 @@ const Home: React.FC = () => {
                   as={Link}
                   to={{ pathname: 'https://twitter.com/HuskiFinance' }}
                 >
-                  <Flex alignItems="center" justifyContent="space-between" style={{ margin: 0 }}>
+                  <SocialIcon>
                     <img src={Twitter} style={{ margin: 0 }} alt="" width="48px" height="48px" />
                     <Text ml="1rem">Twitter</Text>
-                  </Flex>
+                  </SocialIcon>
                 </Card>
                 <Card
                   className="community"
@@ -663,10 +760,10 @@ const Home: React.FC = () => {
                   as={Link}
                   to={{ pathname: 'https://medium.com/@huskifinance' }}
                 >
-                  <Flex alignItems="center" justifyContent="space-between" style={{ margin: 0 }}>
+                  <SocialIcon>
                     <Medium height="48px" width="48px" />
                     <Text ml="1rem">Medium</Text>
-                  </Flex>
+                  </SocialIcon>
                 </Card>
               </Flex>
               <Flex style={{ marginTop: '20px' }}>
@@ -682,10 +779,10 @@ const Home: React.FC = () => {
                   as={Link}
                   to={{ pathname: '/' }}
                 >
-                  <Flex alignItems="center" justifyContent="space-between" style={{ margin: 0 }}>
+                  <SocialIcon>
                     <img src={YouTube} style={{ margin: 0 }} alt="" width="48px" height="48px" />
                     <Text ml="1rem">YouTube</Text>
-                  </Flex>
+                  </SocialIcon>
                 </Card>
                 <Card
                   className="community"
@@ -700,13 +797,13 @@ const Home: React.FC = () => {
                   as={Link}
                   to={{ pathname: 'https://discord.com/channels/869829725365870592/869829725365870595' }}
                 >
-                  <Flex alignItems="center" justifyContent="space-between" style={{ margin: 0 }}>
+                  <SocialIcon>
                     <img src={Discord} style={{ margin: 0 }} alt="" width="48px" height="48px" />
                     <Text ml="1rem">Discord</Text>
-                  </Flex>
+                  </SocialIcon>
                 </Card>
               </Flex>
-              <div style={{ marginTop: '90px' }}>
+              <div style={{ marginTop: '90px', marginBottom: '80px' }}>
                 <Text>Copyright © 2021, HuskiFinance</Text>
               </div>
             </Box>

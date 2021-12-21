@@ -1380,13 +1380,15 @@ const AdjustPosition = () => {
                       max={maxValue * 100}
                     />
                   </Flex>
-                  <Box mx="auto">
+                  <Flex mx="auto" display="flex" justifyContent="center">
                     {isAddCollateral && (
                       <Button
                         onClick={handleConfirm}
                         disabled={isConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                        width={260}
+                        height={50}
                       >
                         {isPending ? t('Confirming') : t('Confirm')}
                       </Button>
@@ -1397,6 +1399,8 @@ const AdjustPosition = () => {
                         disabled={isConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                        width={260}
+                        height={50}
                       >
                         {isPending ? t('Confirming') : t('Confirm')}
                       </Button>
@@ -1407,23 +1411,28 @@ const AdjustPosition = () => {
                         disabled={isConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                        width={260}
+                        height={50}
                       >
                         {isPending ? t('Confirming') : t('Confirm')}
+
                       </Button>
                     )}
-                  </Box>
-                  <Text mx="auto" color="red">
+                  </Flex>
+                  <Flex mx="auto">
+                  <Text color="red">
                     {!isAddCollateral &&
                     Number(targetPositionLeverage) !== 1 &&
                     Number(targetPositionLeverage) !== Number(currentPositionLeverage)
-                      ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-                        ? t('Minimum Debt Size: %minimumDebt% %name%', {
-                            minimumDebt: minimumDebt.toNumber(),
-                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                          })
-                        : null
-                      : null}
+                    ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                    ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                      minimumDebt: minimumDebt.toNumber(),
+                      name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                    })
+                    : null
+                    : null}
                   </Text>
+                    </Flex>
                 </Section>
               </Box>
               <Box width={isSmallScreen ? 'unset' : '38%'} mt={isSmallScreen ? '2rem' : 'unset'}>
