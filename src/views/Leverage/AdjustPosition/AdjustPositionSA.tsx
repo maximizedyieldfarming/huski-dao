@@ -384,9 +384,9 @@ const AdjustPositionSA = () => {
 
   useEffect(() => {
     const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 26)
-   
-      setMargin(tt )
-   
+
+    setMargin(tt)
+
   }, [targetPositionLeverage, moveVal.width, leverage])
 
 
@@ -461,7 +461,7 @@ const AdjustPositionSA = () => {
     for (let i = 1; i < leverage / 0.5; i++) {
       datalistSteps.push(1 + 0.5 * (-1 + i))
     }
-    return datalistSteps.map((value) => <option value={value} label={value} />)
+    return datalistSteps.map((value) => <option value={value} label={`${value.toFixed(2)}x`} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />)
   })()
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -502,7 +502,7 @@ const AdjustPositionSA = () => {
   const handleConfirm = async () => {
     const id = positionId
     const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g,'') // 815662939548462.2--- >  815662939548462
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
     let amount
@@ -719,12 +719,14 @@ const AdjustPositionSA = () => {
                 style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
               />
             </Flex>
-            <datalist
-              style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '5px' }}
-              id="leverage"
-            >
-              {datalistOptions}
-            </datalist>
+            <Text>
+              <datalist
+                style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '5px' }}
+                id="leverage"
+              >
+                {datalistOptions}
+              </datalist>
+            </Text>
           </Box>
         </Flex>
 
@@ -817,7 +819,7 @@ const AdjustPositionSA = () => {
                   <Box width={24} height={24} mr="5px">
                     <TokenImage token={tokenValue} width={24} height={24} />
                   </Box>
-                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
                     {tokenValueSymbol}
                   </Text>
@@ -949,7 +951,7 @@ const AdjustPositionSA = () => {
                   <Box width={24} height={24} mr="5px">
                     <TokenImage token={tokenValue} width={40} height={40} />
                   </Box>
-                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
                     {tokenValueSymbol}
                   </Text>
@@ -1085,11 +1087,11 @@ const AdjustPositionSA = () => {
                     style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '5px' }}
                     id="leverage"
                   >
-                    <Text>0%</Text>
-                    <Text>25%</Text>
-                    <Text>50%</Text>
-                    <Text>75%</Text>
-                    <Text>100%</Text>
+                    <option value={0} label='0%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                    <option value={25} label='25%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                    <option value={50} label='50%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                    <option value={75} label='75%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                    <option value={100} label='100%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
                   </datalist>
                 </Box>
               </Flex>
@@ -1154,7 +1156,7 @@ const AdjustPositionSA = () => {
                   <Box width={24} height={24} mr="5px">
                     <TokenImage token={tokenValue} width={24} height={24} />
                   </Box>
-                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} />
+                  <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
                     {tokenValueSymbol}
                   </Text>
@@ -1195,9 +1197,9 @@ const AdjustPositionSA = () => {
           {isRepayDebt
             ? new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
               ? t('Minimum Debt Size: %minimumDebt% %name%', {
-                  minimumDebt: minimumDebt.toNumber(),
-                  name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                })
+                minimumDebt: minimumDebt.toNumber(),
+                name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+              })
               : null
             : null}
         </Text>
