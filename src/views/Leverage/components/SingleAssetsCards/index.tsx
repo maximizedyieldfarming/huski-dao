@@ -27,6 +27,7 @@ import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
+import { useBorrowingInterest7days } from '../../hooks/useBorrowingInterest7days'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -90,17 +91,16 @@ const StrategyIcon = styled.div<{ market: string }>`
     return null
   }};
 `
-const AssetSelect = styled(Flex)``
 const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
   const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
-  const { isDark, toggleTheme } = useTheme()
+  const { isDark } = useTheme()
 
 
-
+  useBorrowingInterest7days()
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
   const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -207,7 +207,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   useEffect(() => {
     setSelectedStrategy((prevState) => strategyFilter || prevState)
-
   }, [strategyFilter])
 
   const { singleLeverage, direction, riskLevel, name: strategyName } = getStrategyInfo(selectedStrategy)
@@ -313,7 +312,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   // the data inside the card gets stale (doesn't update) this forces it to update
   // if theres not apy data,
   // theres also a code to prevent user from change token pair or strategy if theres no apy data
-useEffect(() => {
+  useEffect(() => {
     if (!apy) {
       setSingleData(data?.singleArray[0])
     }
@@ -330,8 +329,8 @@ useEffect(() => {
                 onClick={
                   apy
                     ? () => {
-                        setIsSelect(!isselect)
-                      }
+                      setIsSelect(!isselect)
+                    }
                     : null
                 }
                 style={{ cursor: apy ? 'pointer' : 'not-allowed' }}
@@ -343,9 +342,8 @@ useEffect(() => {
               >
                 <Flex alignItems="center" width="calc(100% - 20px)">
                   <TokenPairImage
-                    variant="inverted"
-                    primaryToken={singleData.QuoteTokenInfo.token}
-                    secondaryToken={singleData.QuoteTokenInfo.quoteToken}
+                    primaryToken={singleData.QuoteTokenInfo.quoteToken}
+                    secondaryToken={singleData.QuoteTokenInfo.token}
                     width={44}
                     height={44}
                     primaryImageProps={{ style: { marginLeft: '20px' } }}
@@ -433,9 +431,15 @@ useEffect(() => {
                     {apy}%
                   </Text>
                   <Flex alignItems="center">
-                    <Text color="#27C73F">{apyPercentageDiff}</Text>
-                    <ArrowUpIcon color="#27C73F" />
-                    <Text>{t(` than 1x yield farm`)}</Text>
+                    {/*                     <Text color="#27C73F">{apyPercentageDiff}</Text>
+                    <ArrowUpIcon color="#27C73F" /> */}
+                    <Text>
+                      {t(
+                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        } than 1x yield farm`,
+                        { apyPercentageDiff },
+                      )}
+                    </Text>
                   </Flex>
                 </>
               ) : (
@@ -452,7 +456,7 @@ useEffect(() => {
           <Flex justifyContent="space-between">
             <Text>{t('TVL')}</Text>
             {tvl && !Number.isNaN(tvl) && tvl !== undefined ? (
-              <Text>${nFormatter(tvl)}</Text>
+              <Text>{`$${nFormatter(tvl)}`}</Text>
             ) : (
               <Skeleton width="80px" height="16px" />
             )}
@@ -468,7 +472,11 @@ useEffect(() => {
             <Text>{t('Daily Earn')}</Text>
             {dailyEarnings ? (
               <Text>
-                {dailyEarnings.toFixed(4)} {quoteTokenSymbol} Per {tokenSymbol}
+                {t('%dailyEarnings% %quoteTokenSymbol% per %tokenSymbol%', {
+                  dailyEarnings: dailyEarnings.toFixed(4),
+                  quoteTokenSymbol,
+                  tokenSymbol,
+                })}
               </Text>
             ) : (
               <Skeleton width="5rem" height="1rem" />

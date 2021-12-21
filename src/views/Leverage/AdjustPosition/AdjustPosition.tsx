@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-properties */
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useHistory } from 'react-router-dom'
 import Page from 'components/Layout/Page'
 import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
@@ -152,6 +152,7 @@ const AdjustPosition = () => {
   const {
     state: { data, liquidationThresholdData },
   } = useLocation<LocationParams>()
+  const history = useHistory()
 
   const { t } = useTranslation()
   const [quoteTokenInput, setQuoteTokenInput] = useState<string>()
@@ -412,6 +413,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
@@ -442,6 +444,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -573,6 +576,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -594,7 +598,7 @@ const AdjustPosition = () => {
     let maxReturn
     let maxDebtRepaymentValue
     if (Number(targetPositionLeverage) === 1) {
-      receive = Number(minimumReceived)
+      receive = Number(minimumReceived) > 0 ? Number(minimumReceived) : 0
       closeRationum = closeRatio
       maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
       maxReturn = ethers.constants.MaxUint256
@@ -642,6 +646,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
+      history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -724,13 +729,12 @@ const AdjustPosition = () => {
   )
 
 
-  const isConfirmDisabled =
-    Number(currentPositionLeverage) === Number(targetPositionLeverage) ||
-    (!isAddCollateral &&
+  const isConfirmDisabled = isAddCollateral ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0:
       Number(targetPositionLeverage) !== 1 &&
       Number(targetPositionLeverage) !== Number(currentPositionLeverage) &&
-      new BigNumber(UpdatedDebtValue).lt(minimumDebt))
+      new BigNumber(UpdatedDebtValue).lt(minimumDebt) || Number(percentageToClose) === 0
 
+      console.log({percentageToClose, isConfirmDisabled})
   const principal = 1
   const maxValue = 1 - principal / data?.farmData?.leverage
   const updatedDebtRatio = Number(targetPositionLeverage) === Number(currentPositionLeverage) ? debtRatio.toNumber() : 1 - principal / (remainLeverage || 1)
@@ -1096,40 +1100,42 @@ const AdjustPosition = () => {
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
               {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
-            <Flex justifyContent="space-between" flexDirection={isSmallScreen ? "column" : "row"}>
-              <Box width={isSmallScreen ? "unset" : "60%"}>
+            <Flex justifyContent="space-between" flexDirection={isSmallScreen ? 'column' : 'row'}>
+              <Box width={isSmallScreen ? 'unset' : '60%'}>
                 <Section>
-                  <Flex alignItems="center" justifyContent="space-between" style={{ border: "none" }}>
+                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }}>
                     <Text>
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
                     <CurrentPostionToken >
-                      <Text bold>{`${symbolName.replace("wBNB", "BNB")}#${positionId}`}</Text>
+                      <Text bold>{`${symbolName}#${positionId}`}</Text>
                       <Box width={24} height={24}>
                         <TokenPairImage
-                          primaryToken={tokenValue}
-                          secondaryToken={quoteTokenValue}
+                          primaryToken={TokenInfo.token}
+                          secondaryToken={TokenInfo.quoteToken}
                           width={24}
                           height={24}
-                          variant="inverted"
                         />
                       </Box>
                       <Box>
                         <Text style={{ whiteSpace: 'nowrap' }} bold>
-                          {lpSymbolName.replace(' LP', '').toUpperCase().replace('WBNB', 'BNB')}
+                          {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
                         </Text>
-                        <Text style={{ color: "#6F767E", fontSize: "12px" }}>{data.farmData.lpExchange}</Text>
+                        <Text style={{ color: '#6F767E', fontSize: '12px' }}>{data.farmData.lpExchange}</Text>
                       </Box>
                     </CurrentPostionToken>
                   </Flex>
                   <Text bold>
                     {t('Target Position Leverage')}:{' '}
-                    {tokenInput || quoteTokenInput ? leverageAfter : new BigNumber(targetPositionLeverage).toFixed(2, 1)}x
+                    {tokenInput || quoteTokenInput
+                      ? leverageAfter
+                      : new BigNumber(targetPositionLeverage).toFixed(2, 1)}
+                    x
                   </Text>
                   <PositionX ml="auto" color="#6F767E">
                     <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
                   </PositionX>
-                  <Flex style={{ border: "none" }}>
+                  <Flex style={{ border: 'none' }}>
                     <Box style={{ width: '100%' }}>
                       <MoveBox move={margin}>
                         <Text color="#7B3FE4" bold>
@@ -1187,24 +1193,13 @@ const AdjustPosition = () => {
                           style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
                         />
                       </Flex>
-                      <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: "5px" }} id="leverage">
+                      <datalist
+                        style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '5px' }}
+                        id="leverage"
+                      >
                         {datalistOptions}
                       </datalist>
                     </Box>
-                  </Flex>
-                  <Flex alignItems="center" flexDirection="column" mb="10px" border="none!important">
-                    {!isAddCollateral &&
-                      Number(targetPositionLeverage) !== 1 &&
-                      Number(targetPositionLeverage) !== Number(currentPositionLeverage)
-                      ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-                        ? <><Text color="red">{t('Minimum Debt Size: %minimumDebt% %name%', {
-                          minimumDebt: minimumDebt.toNumber(),
-                          name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                        })} </Text >
-                          <Text color="red">dev: red words shows when leveraged touch mini resisdent</Text>
-                        </>
-                        : null
-                      : null}
                   </Flex>
                   {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
                     <Flex justifyContent="space-between" alignItems="center">
@@ -1220,37 +1215,33 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  {Number(targetPositionLeverage.toFixed(2)) < Number(currentPositionLeverage.toFixed(2)) && (
-                    <AddCollateralRepayDebtContainer
-                      currentPositionLeverage={Number(currentPositionLeverage)}
-                      targetPositionLeverage={Number(targetPositionLeverage)}
-                      userQuoteTokenBalance={userQuoteTokenBalance}
-                      userTokenBalance={userTokenBalance}
-                      quoteTokenName={
-                        isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol
-                      }
-                      tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
-                      quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
-                      token={isAddCollateral ? token : tokenValue}
-                      tokenInput={tokenInput}
-                      quoteTokenInput={quoteTokenInput}
-                      setTokenInput={setTokenInput}
-                      setQuoteTokenInput={setQuoteTokenInput}
-                      symbolName={symbolName}
-                      tokenPrice={tokenPriceUsd}
-                      quoteTokenPrice={quoteTokenPriceUsd}
-                      baseTokenAmountValue={baseTokenAmount}
-                      farmTokenAmountValue={farmTokenAmount}
-                      minimizeTradingValues={getAdjustPositionRepayDebt(
-                        data.farmData,
-                        data,
-                        Number(targetPositionLeverage),
-                        percentageToClose / 100,
-                        symbolName,
-                      )}
-                    />
-                  )}
-                  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
+                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 /* || currentPositionLeverage !== 1 */ ? null : <AddCollateralRepayDebtContainer
+                    currentPositionLeverage={Number(currentPositionLeverage)}
+                    targetPositionLeverage={Number(targetPositionLeverage)}
+                    userQuoteTokenBalance={userQuoteTokenBalance}
+                    userTokenBalance={userTokenBalance}
+                    quoteTokenName={isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol}
+                    tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
+                    quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
+                    token={isAddCollateral ? token : tokenValue}
+                    tokenInput={tokenInput}
+                    quoteTokenInput={quoteTokenInput}
+                    setTokenInput={setTokenInput}
+                    setQuoteTokenInput={setQuoteTokenInput}
+                    symbolName={symbolName}
+                    tokenPrice={tokenPriceUsd}
+                    quoteTokenPrice={quoteTokenPriceUsd}
+                    baseTokenAmountValue={baseTokenAmount}
+                    farmTokenAmountValue={farmTokenAmount}
+                    minimizeTradingValues={getAdjustPositionRepayDebt(
+                      data.farmData,
+                      data,
+                      Number(targetPositionLeverage),
+                      percentageToClose / 100,
+                      symbolName,
+                    )}
+                  />}
+                  {/*  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
                       targetPositionLeverage={Number(targetPositionLeverage)}
@@ -1277,7 +1268,7 @@ const AdjustPosition = () => {
                         symbolName,
                       )}
                     />
-                  )}
+                  )} */}
                 </Section>
 
                 <Section mt="40px">
@@ -1348,9 +1339,15 @@ const AdjustPosition = () => {
                           {debtValueNumber.toNumber().toFixed(3)} {symbolName}
                         </Text>
                         <ChevronRightIcon fontWeight="bold" />
-                        {isAddCollateral ? <Text bold>
-                          {UpdatedDebt?.toFixed(3)} {symbolName}
-                        </Text> : <Text bold>{new BigNumber(debtValueNumber).minus(UpdatedDebt).toFixed(2, 1)} {tokenValueSymbol}</Text>}
+                        {isAddCollateral ? (
+                          <Text bold>
+                            {UpdatedDebt?.toFixed(3)} {symbolName}
+                          </Text>
+                        ) : (
+                          <Text bold>
+                            {new BigNumber(debtValueNumber).minus(UpdatedDebt).toFixed(2, 1)} {tokenValueSymbol}
+                          </Text>
+                        )}
                       </Flex>
                     ) : (
                       <Skeleton width="80px" height="16px" />
@@ -1422,10 +1419,23 @@ const AdjustPosition = () => {
                       </Button>
                     )}
                   </Flex>
-
+                  <Flex mx="auto">
+                  <Text color="red">
+                    {!isAddCollateral &&
+                    Number(targetPositionLeverage) !== 1 &&
+                    Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                    ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                    ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                      minimumDebt: minimumDebt.toNumber(),
+                      name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                    })
+                    : null
+                    : null}
+                  </Text>
+                    </Flex>
                 </Section>
               </Box>
-              <Box width={isSmallScreen ? "unset" : "38%"} mt={isSmallScreen ? "2rem" : "unset"}>
+              <Box width={isSmallScreen ? 'unset' : '38%'} mt={isSmallScreen ? '2rem' : 'unset'}>
                 <Section mb="40px">
                   <Flex justifyContent="space-between">
                     <Text>{t('Yields Farm APR')}</Text>
@@ -1467,12 +1477,18 @@ const AdjustPosition = () => {
                     <Text>{t('Borrowing Interest APR')}</Text>
                     {adjustBorrowingInterestAPR ? (
                       <Flex alignItems="center">
-                        <Text color="#FE7D5E" bold>{borrowingInterestAPR.toFixed(2)}%</Text>
+                        <Text color="#FE7D5E" bold>
+                          {borrowingInterestAPR.toFixed(2)}%
+                        </Text>
                         <ChevronRightIcon color="#FE7D5E" fontWeight="bold" />
-                        <Text color="#FE7D5E" bold>{adjustBorrowingInterestAPR.toFixed(2)}%</Text>
+                        <Text color="#FE7D5E" bold>
+                          {adjustBorrowingInterestAPR.toFixed(2)}%
+                        </Text>
                       </Flex>
                     ) : (
-                      <Text color="#FE7D5E" bold>{borrowingInterestAPR.toFixed(2)}%</Text>
+                      <Text color="#FE7D5E" bold>
+                        {borrowingInterestAPR.toFixed(2)}%
+                      </Text>
                     )}
                   </Flex>
                   <Flex justifyContent="space-between">

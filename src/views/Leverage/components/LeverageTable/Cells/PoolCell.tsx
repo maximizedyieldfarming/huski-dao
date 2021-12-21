@@ -29,16 +29,15 @@ const PoolCell = ({ pool, tokenData }) => {
       <CellContent>
         <Grid gridTemplateColumns="24px 1fr" gridGap="1rem">
           <TokenPairImage
-            variant="inverted"
-            primaryToken={quoteToken}
-            secondaryToken={token}
+            primaryToken={token}
+            secondaryToken={quoteToken}
             width={24}
             height={24}
             mr="1rem"
           />
           <Box>
             <Text mt="-3px" bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
-              {pool}
+              {pool.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Text fontSize="12px" mt="5px" color="textSubtle">
               {tokenData?.lpExchange}

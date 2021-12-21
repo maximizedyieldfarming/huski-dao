@@ -87,7 +87,7 @@ const AddCollateralRepayDebtContainer: React.FC<Props> = ({
           {t('Add Collateral')}
         </HeaderTab>
         <HeaderTab
-          active={!isAddCollateral || currentPositionLeverage === 1}
+          active={!isAddCollateral}
           onClick={() => handleIsAddCollateral(false)}
           isDark={isDark}
         >

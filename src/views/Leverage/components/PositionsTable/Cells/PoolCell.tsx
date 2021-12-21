@@ -31,9 +31,8 @@ const PoolCell = ({ pool, quoteToken, token, exchange }) => {
         )}
         <Grid  alignItems="center" gridTemplateColumns="50px 1fr">
           <TokenPairImage
-            variant="inverted"
-            primaryToken={quoteToken}
-            secondaryToken={token}
+            primaryToken={token}
+            secondaryToken={quoteToken}
             width={24}
             height={24}
             mr="8px"

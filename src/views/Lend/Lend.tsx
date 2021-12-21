@@ -91,8 +91,8 @@ const Lend: React.FC = () => {
 
   const { isMobile, isTablet } = useMatchBreakpoints()
 
-  const volume24hnum = undefined
-  useVolume24h('1638748800')
+  const volume24hnum = useVolume24h()
+  const volume24h = volume24hnum
 
   return (
     <Page>
@@ -107,57 +107,56 @@ const Lend: React.FC = () => {
           </h2>
         </SBBox>
         <Flex className="container">
-        <VolumeBox
-          // className="container"
-          style={{
-            // padding: '30px',
-            // flexDirection: 'column',
-            // justifyContent: 'space-evenly',
-             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
-            // borderRadius: '15px',
-            // width: '20%',
-            // marginRight: '25px',
-          }}
-        >
-          <img src="/images/8825.svg" width="70px" height="70px" alt="" />
-          <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
-            {t(`Total Volume 24H:`)}
-          </Text>
-          {volume24hnum ? (
-            <Text fontSize="30px" color="textFarm">
-              {volume24hnum}
+          <VolumeBox
+            // className="container"
+            style={{
+              // padding: '30px',
+              // flexDirection: 'column',
+              // justifyContent: 'space-evenly',
+              background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+              // borderRadius: '15px',
+              // width: '20%',
+              // marginRight: '25px',
+            }}
+          >
+            <img src="/images/8825.svg" width="70px" height="70px" alt="" />
+            <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
+              {t(`Total Volume 24H:`)}
             </Text>
-          ) : (
-            <Skeleton width="180px" height="30px" />
-          )}
-          <Text fontSize="30px">{volume24hnum}</Text>
-        </VolumeBox>
-        <ValueBox
-          // className="container"
-          style={{
-            // padding: '30px',
-            // flexDirection: 'column',
-            // justifyContent: 'space-evenly',
-            background: isDark ? 'rgb(44,30,73)' : '#D6C7F0',
-            // borderRadius: '15px',
-            // width: '20%',
-          }}
-        >
-          <img src="/images/8826.svg" width="70px" height="70px" alt="" />
-          <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600">
-            {t('Total Value Locked:')}
-          </Text>
-          {totalValueLocked ? (
-            <Text
-              fontSize="28px"
-              style={{ letterSpacing: '-0.01em' }}
-              color="textFarm"
-              fontWeight="bold"
-            >{`${totalValueLockedValue}`}</Text>
-          ) : (
-            <Skeleton width="180px" height="30px" />
-          )}
-        </ValueBox>
+            {volume24h ? (
+              <Text fontSize="30px" color="textFarm">
+                {volume24h}
+              </Text>
+            ) : (
+              <Skeleton width="180px" height="30px" />
+            )}
+          </VolumeBox>
+          <ValueBox
+            // className="container"
+            style={{
+              // padding: '30px',
+              // flexDirection: 'column',
+              // justifyContent: 'space-evenly',
+              background: isDark ? 'rgb(44,30,73)' : '#D6C7F0',
+              // borderRadius: '15px',
+              // width: '20%',
+            }}
+          >
+            <img src="/images/8826.svg" width="70px" height="70px" alt="" />
+            <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600">
+              {t('Total Value Locked:')}
+            </Text>
+            {totalValueLocked ? (
+              <Text
+                fontSize="28px"
+                style={{ letterSpacing: '-0.01em' }}
+                color="textFarm"
+                fontWeight="bold"
+              >{`${totalValueLockedValue}`}</Text>
+            ) : (
+              <Skeleton width="180px" height="30px" />
+            )}
+          </ValueBox>
         </Flex>
       </Section>
 

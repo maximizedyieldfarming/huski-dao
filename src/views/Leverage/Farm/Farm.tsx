@@ -489,7 +489,7 @@ const Farm = () => {
         contract,
         'work',
         [id, workerAddress, amount, loan, maxReturn, dataWorker],
-        tokenName === 'BNB' ? callOptionsBNB : callOptions,
+        radio.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? callOptionsBNB : callOptions,
       )
       const receipt = await tx.wait()
       if (receipt.status) {
@@ -512,7 +512,7 @@ const Farm = () => {
     const abiCoder = ethers.utils.defaultAbiCoder
     const AssetsBorrowed = farmData ? farmData[3] : 0
     const minLPAmountValue = farmData ? farmData[12] : 0
-    const minLPAmount = minLPAmountValue.toString()
+    const minLPAmount = getDecimalAmount(new BigNumber(minLPAmountValue), 18).toString().replace(/\.(.*?\d*)/g, '') // minLPAmountValue.toString()
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
     // getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
     const maxReturn = 0
@@ -541,9 +541,10 @@ const Farm = () => {
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = (quoteTokenInput || 0)?.toString()
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
+       
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
@@ -581,6 +582,8 @@ const Farm = () => {
     console.log({
       radio,
       minLPAmount,
+      tokenName,
+      // 'ethers.utils.parseEther(farmingTokenAmount)':ethers.utils.parseEther(farmingTokenAmount),
       "ethers.utils.parseEther(minLPAmount)": ethers.utils.parseEther(minLPAmount),
       id,
       workerAddress,
@@ -594,9 +597,9 @@ const Farm = () => {
       dataStrategy,
       tokenData,
       tokenInput,
-      'a': (tokenInput),
+      'token8888Input': (tokenInput),
       quoteTokenInput,
-      'b': (quoteTokenInput)
+      'quoteToken9999Input': (quoteTokenInput)
     })
 
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
@@ -651,7 +654,7 @@ const Farm = () => {
   } else {
     allowance = tokenData.userData?.tokenAllowance
   }
-  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+  const isApproved = Number(allowance) > 0
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const quoteTokenAddress = getAddress(tokenData.TokenInfo.quoteToken.address)
   const approveContract = useERC20(tokenAddress)
@@ -727,6 +730,13 @@ const Farm = () => {
       ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
+  const getWrapText = (): string => {
+    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput: quoteTokenInput
+    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
+      return t(`Wrap BNB & ${leverageValue}x Farm`)
+    }
+    return t(`${leverageValue}x Farm`)
+  }
   return (
     <Page>
       <Text
@@ -735,7 +745,7 @@ const Farm = () => {
         fontSize="25px"
         style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}
       >
-        {t(`Farming ${token} Pools`)}
+        {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
       <SectionWrapper>
         <Section className="main">
@@ -1153,7 +1163,7 @@ const Farm = () => {
             isPending
           }
         >
-          {isPending ? t('Confirming') : t(`${leverageValue}x Farm`)}
+          {isPending ? t('Confirming') : getWrapText()}
         </Button>
       </Flex>
       {tokenInput || quoteTokenInput ? (

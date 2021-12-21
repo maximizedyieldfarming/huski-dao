@@ -2,9 +2,9 @@ import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE } from 'config'
 import { dichotomybasetoken, dichotomyfarmingtoken, RunLogic, RunLogic1, adjustRun, adjustPositionRepayDebt } from 'utils/pancakeService'
-import { BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 
-export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, tokenName?: string) => {
+export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd, tokenName?: string) => {
   const { vaultDebtVal, TokenInfo, quoteTokenVaultDebtVal, pooPerBlock, quoteTokenPoolPerBlock, tokenPriceUsd, quoteTokenPriceUsd } = farm
   const { quoteToken } = TokenInfo
   let vaultDebtValue
@@ -20,7 +20,7 @@ export const getHuskyRewards = (farm: LeverageFarm, huskiPriceBusd: BigNumber, t
   const busdTokenPrice: any = tokenName?.toUpperCase() === quoteToken?.symbol.toUpperCase() ? quoteTokenPriceUsd : tokenPriceUsd;
   const huskiPrice: any = huskiPriceBusd;
 
-  const huskyRewards = BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskiPrice).div((parseInt(vaultDebtValue) * busdTokenPrice));
+  const huskyRewards = parseInt(vaultDebtValue) ? BLOCKS_PER_YEAR.times(poolHuskyPerBlock * huskiPrice).div((parseInt(vaultDebtValue) * busdTokenPrice)) : BIG_ZERO
   return huskyRewards.toNumber();
 }
 
@@ -138,13 +138,13 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   const farmingtokenlp = farmTokenAmount// .toNumber()
   const basetokenlpborrowed = debtValue.toNumber()
 
-  // console.log({
-  //   tokenName, tokenInput, quoteTokenInput,
-  //   tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount,
-  //   farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply,
-  //   lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum),
-  //   'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum)
-  // });
+  console.log({
+    tokenName, tokenInput, quoteTokenInput,
+    tokenInputNum, quoteTokenInputNum, leverage, baseTokenAmount,
+    farmTokenAmount, basetokenlp, farmingtokenlp, lptotalSupply,
+    lpAmount, basetokenlpborrowed, 'tokenAmountTotal11': parseFloat(tokenAmountTotalNum),
+    'quoteTokenAmountTotal11': parseFloat(quoteTokenAmountTotalNum)
+  });
 
   // const tradeFee = 0.0025
   // const ClosePosFee = 5 / 100 / 100;
@@ -156,7 +156,7 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   let farmingData;
   let repayDebtData = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  if (leverage.toPrecision(3) >= currentLeverage.toPrecision(3)) {// right
+  if (leverage.toPrecision(3) > currentLeverage.toPrecision(3)) {// right
 
     tokenInputNum = 0
     quoteTokenInputNum = 0

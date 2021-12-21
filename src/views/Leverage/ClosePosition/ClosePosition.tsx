@@ -113,11 +113,10 @@ const ClosePosition = (props) => {
             <Flex alignItems="center" ml="10px">
               <Box width={24} height={24}>
                 <TokenPairImage
-                  primaryToken={quoteTokenValue}
-                  secondaryToken={tokenValue}
+                  primaryToken={tokenValue}
+                  secondaryToken={quoteTokenValue}
                   width={24}
                   height={24}
-                  variant="inverted"
                 />
               </Box>
               <Flex flexDirection="column" ml="10px">
