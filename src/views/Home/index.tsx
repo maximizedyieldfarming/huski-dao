@@ -411,13 +411,13 @@ const Home: React.FC = () => {
             >
               {t('Our contracts have been audited by')}
             </h3>
-            <Text style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px' }}>
+            <Text style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px' }} color="textSubtle">
               {t('Our Contract have been audited by best audit auditing in this field')}
             </Text>
           </Grid>
           <Box>
-            <Flex flexWrap='wrap' justifyContent='space-between'>
-              <Card
+            <Flex flexWrap='wrap' justifyContent='space-between' height="100%" alignItems="center">
+             {/*  <Card
                 className="auditedBy"
                 style={{
                   boxShadow: ' 2px 3px 5px #888888',
@@ -430,7 +430,7 @@ const Home: React.FC = () => {
                 }}
               >
                 <img src={peckshield} alt="" width="300px" />
-              </Card>
+              </Card> */}
               <Card
                 className="auditedBy"
                 style={{
@@ -446,7 +446,7 @@ const Home: React.FC = () => {
                 <img src={certikLogo} alt="" width="100%" />
               </Card>
             </Flex>
-
+{/* 
             <Flex flexWrap='wrap' justifyContent='space-between'>
               <Card
                 className="auditedBy"
@@ -476,13 +476,10 @@ const Home: React.FC = () => {
               >
                 <img src={inspect} alt="" width="100%" />
               </Card>
-            </Flex>
-
-
+            </Flex> */}
           </Box>
         </Flex>
       </StyledHeroSection>
-
       <StyledHeroSection style={{ background: '#2C353D', position: 'relative' }}>
         <StyledOurPartner />
         <div style={{ width: '100%', top: 100, left: 0 }}>
