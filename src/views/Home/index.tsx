@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import useTheme from 'hooks/useTheme'
-import { Text, Flex, Box, Button, Grid, Heading } from 'husky-uikit1.0'
+import { Text, Flex, Box, Button, Grid, Heading, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import background from './assets/Graybackground.png'
@@ -28,73 +28,74 @@ import YouTube from './assets/Youtube.svg'
 import Discord from './assets/Discord.svg'
 import dog from './assets/Dog.png'
 
-import peckshield from './assets/peckShieldLogo@2x.png';
-import slowmist from './assets/slowMistLogo@2x.png';
-import inspect from './assets/inspexLogo@2x.png';
+import peckshield from './assets/peckShieldLogo@2x.png'
+import slowmist from './assets/slowMistLogo@2x.png'
+import inspect from './assets/inspexLogo@2x.png'
 import ItemBox from './ItemBox'
 import hand from './assets/Group 8802.png'
 
-
 const StyledHeroSection = styled(Box)`
-  padding : 160px;
+  padding: 160px;
   text-align: center;
-
   &:nth-child(even) {
     background-color: ${({ theme }) => theme.colors.background};
   }
-
   &:nth-child(odd),
   &:nth-child(2) {
     background-color: ${({ theme }) => theme.colors.backgroundAlt};
   }
-  @media screen and (max-width : 1200px){
-    padding : 80px;
+  @media screen and (max-width: 1200px) {
+    padding: 80px;
   }
-  @media screen and (max-width : 900px){
-    padding : 40px
+  @media screen and (max-width: 900px) {
+    padding: 40px;
   }
-  @media screen and (max-width : 500px){
-    padding : 40px 20px;
+  @media screen and (max-width: 500px) {
+    padding: 40px 20px;
   }
 `
 const SBStyledContainer = styled(Box)`
-  background-image: url(${dog});
-  background-position: right;
+  background-image: url(${dog}), url(${joinUs});
+  background-position: right, left bottom;
   background-repeat: no-repeat;
-  padding : 160px;
-  @media screen and (max-width : 1200px){
-    padding : 80px;
+  padding: 25px;
+  position: relative;
+  height: 700px;
+  overflow: hidden;
+  @media screen and (max-width: 1200px) {
+    padding: 80px;
   }
-  @media screen and (max-width : 900px){
-    background-position : top right;
-    background-size : 50% 50vw;
-    padding : 40px
+  @media screen and (max-width: 900px) {
+    background-position: top right;
+    background-size: 50% 50vw;
+    padding: 40px;
   }
-  @media screen and (max-width : 500px){
-    padding : 40px 20px;
+  @media screen and (max-width: 500px) {
+    padding: 40px 20px;
   }
 `
 const StyledOurPartner = styled(Box)`
   width: 100%;
   height: 1600px;
-  background-image: url(${ourPartner});
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  // background-image: url(${ourPartner});
+  // background-position: center;
+  // background-size: cover;
+  // background-repeat: no-repeat;
   position: absolute;
   top: 0;
   left: 0;
 `
 const SBJoin = styled(Box)`
   width: 100%;
-  height: 700px;
+  // height: 100%;
   background-image: url(${joinUs});
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  position: absolute;
-  top: 0;
-  left: 0;
+  // position: absolute;
+  // top: 0;
+  // left: 0;
+  // z-index:-1;
 `
 const StyledCircle = styled(Box)`
   height: 650px;
@@ -109,8 +110,8 @@ const StyledCircle = styled(Box)`
 `
 
 const StyledCorner = styled(Box)`
-  max-width : 1430px;
-  max-height : 953px;
+  // max-width : 1430px;
+  max-height: 953px;
   width: 100%;
   height: calc(100vw / 1.5);
   background-image: url(${bgCorner});
@@ -122,8 +123,8 @@ const StyledCorner = styled(Box)`
   right: 0;
 `
 const StyledHuski = styled(Box)`
-  max-width : 470px;
-  max-height : 601px;
+  max-width: 470px;
+  max-height: 601px;
   width: 40%;
   height: calc(40vw * 1.3);
   background-image: url(${huski});
@@ -133,33 +134,35 @@ const StyledHuski = styled(Box)`
   position: absolute;
   top: 150px;
   right: 70px;
-  @media screen and (max-width : 1200px){
-    right : 0px;
+  @media screen and (max-width: 1200px) {
+    right: 0px;
   }
 `
 const SectionWithBgImg = styled(Box)`
-  padding : calc(100vw / 1.5 * 0.5) 160px 80px 160px;
-  height: fit-content;
+  position: relative;
+  overflow: hidden;
+  padding: calc(100vw / 1.5 * 0.5) 160px 80px 160px;
+  height: 100vh;
   background-image: url(${background});
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  @media screen and (max-width : 1200px){
-    padding-left : 80px;
-    padding-right : 80px;
+  @media screen and (max-width: 1200px) {
+    padding-left: 80px;
+    padding-right: 80px;
   }
-  @media screen and (max-width : 900px){
-    padding-left : 40px;
-    padding-right : 40px;
+  @media screen and (max-width: 900px) {
+    padding-left: 40px;
+    padding-right: 40px;
   }
-  @media screen and (max-width : 500px){
-    padding-left : 20px;
-    padding-right : 0px;
-    padding-bottom : 40px;
+  @media screen and (max-width: 500px) {
+    padding-left: 20px;
+    padding-right: 0px;
+    padding-bottom: 40px;
   }
-  @media screen and (min-width : 1300px){
-    padding-left : calc(50% - 560px);
-    padding-top : 320px;
+  @media screen and (min-width: 1300px) {
+    padding-left: calc(50% - 560px);
+    padding-top: 320px;
   }
 `
 
@@ -202,60 +205,74 @@ const Card = styled(Flex)`
   }
 `
 const TradeText = styled(Box)`
-  width : 60%;
-  font-size : 24px;
-  max-width : 700px;
-  color : #1A1A1F;
-  margin-top : 70px;
-  line-height : 39px;
-  font-weight : 400;
-  @media screen and (max-width : 768px){
-    font-size : 12px;
-    line-height : 20px;
+  width: 60%;
+  font-size: 24px;
+  max-width: 700px;
+  color: #1a1a1f;
+  margin-top: 70px;
+  line-height: 39px;
+  font-weight: 400;
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    line-height: 20px;
   }
 `
 
 const BackedImage = styled(Box)`
-  display : flex;
-  align-items : center;
-  flex-direction : column;
-  @media screen and (max-width : 1200px){
-    >div >img{
-      margin : 0 10px 20px 10px!important;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  @media screen and (max-width: 1200px) {
+    > div > img {
+      margin: 0 10px 20px 10px !important;
     }
-    >div{
-      flex-wrap : wrap;
+    > div {
+      flex-wrap: wrap;
     }
   }
-  @media screen and (max-width : 570px){
-    >div >img{
-      width : 140px!important;
-      height : 80px!important;
+  @media screen and (max-width: 570px) {
+    > div > img {
+      width: 140px !important;
+      height: 80px !important;
     }
-    >div{
-      justify-content : center!important;
+    > div {
+      justify-content: center !important;
     }
   }
 `
 const SocialIcon = styled(Flex)`
-  align-items : center;
-  justifyContent : space-between;
-  margin : 0!important;
-  @media screen and (max-width : 450px){
-    > img{
-      width :32px!important;
-      height : 32px!important;
+  align-items: center;
+  justifycontent: space-between;
+  margin: 0 !important;
+  @media screen and (max-width: 450px) {
+    > img {
+      width: 32px !important;
+      height: 32px !important;
     }
-    > svg{
-      width :32px!important;
-      height : 32px!important;
+    > svg {
+      width: 32px !important;
+      height: 32px !important;
     }
   }
-`;
+`
+const GlowSpot = styled(Box)`
+  position: absolute;
+  border-radius: 100%;
+  width: 560px;
+  height: 560px;
+  left: -468px;
+  top: 515px;
+  background: linear-gradient(135.15deg, #ae80dc 1.17%, #dc83c3 31.88%, #8084dc 65.46%);
+  mix-blend-mode: normal;
+  opacity: 0.5;
+  filter: blur(150px);
+`
 const Home: React.FC = () => {
   const { theme } = useTheme()
   const HomeSectionContainerStyles = { margin: '0', width: '100%', maxWidth: '968px' }
   const { t } = useTranslation()
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
 
   return (
     <>
@@ -264,19 +281,23 @@ const Home: React.FC = () => {
         <StyledHuski />
 
         <Box>
-          <img src={slogan} alt="slogan" style={{ position: 'relative', width: '65%', maxWidth : '700px' }} />
+          <img src={slogan} alt="slogan" style={{ position: 'relative', width: '65%', maxWidth: '700px' }} />
           <TradeText style={{}}>
             {t('Trade, earn, and win crypto on the most popular decentralized platform in the galaxy.')}
           </TradeText>
         </Box>
 
-        <Flex
-          style={{ marginTop: '20px', maxWidth: '320px' , position : 'relative' }}
-          justifyContent="space-between"
-        >
+        <Flex style={{ marginTop: '20px', maxWidth: '320px', position: 'relative' }} justifyContent="space-between">
           <ConnectWalletButton scale="sm" width={167} height={56} style={{ margin: '0' }} />
           <Button
-            style={{ background: 'transparent', color: '#1A1A1F', borderColor: '#1A1A1F', fontSize: '16px', padding: '0', margin: '0' }}
+            style={{
+              background: 'transparent',
+              color: '#1A1A1F',
+              borderColor: '#1A1A1F',
+              fontSize: '16px',
+              padding: '0',
+              margin: '0',
+            }}
             variant="secondary"
             mx="1rem"
             as={Link}
@@ -287,25 +308,36 @@ const Home: React.FC = () => {
             {t('Trade Now')}
           </Button>
         </Flex>
-        <div style={{ display: 'flex', width: '100%', textAlign: 'center' }}>
-          <img
-            style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: '30px' }}
-            alt="alet"
-            src="images/mouse.svg"
-            width="54px"
-            height="52px"
-          />
+        <div
+          style={{
+            display: 'flex',
+            width: '100%',
+            textAlign: 'center',
+            position: 'absolute',
+            bottom: '30px',
+            marginLeft: isSmallScreen ? '-20px' : 'calc(560px - 50%)',
+          }}
+        >
+          <Box
+            /* role="button"  onMouseDown={()  => window.scrollBy(0, 100 * window.innerHeight/100)} tabIndex={0} */ margin="30px auto 0"
+          >
+            <img
+              // style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: '30px' }}
+              alt="alet"
+              src="images/mouse.svg"
+              width="54px"
+              height="52px"
+            />
+          </Box>
         </div>
+        <GlowSpot />
       </SectionWithBgImg>
 
       <StyledHeroSection>
         <p style={{ marginBottom: '20px' }}>{t('FEATURES')}</p>
         <h1 style={{ fontSize: '56px', marginTop: '15px', marginBottom: '40px' }}>{t('Why Huski')}</h1>
         <div style={{ textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', maxWidth: '1120px' }}>
-          <Flex
-            flexWrap='wrap'
-            justifyContent="space-between"
-          >
+          <Flex flexWrap="wrap" justifyContent="space-between">
             <Flex flexDirection="column" width={145} mb={30}>
               <Card>
                 <img src={securityFirst} alt="" />
@@ -361,38 +393,61 @@ const Home: React.FC = () => {
               marginTop: '-2px',
             }}
           >
-            <Flex justifyContent="space-between" flexWrap='wrap'>
-              <Box width={320}>
+            <Flex justifyContent={isSmallScreen ? 'center' : 'space-between'} flexWrap="wrap">
+              <Box width={isSmallScreen ? 190 : 320}>
                 <Card
                   style={{ background: '#22282E', placeContent: 'center' }}
-                  maxWidth={320} maxHeight={320} width='100%' height={320}
+                  maxWidth={320}
+                  maxHeight={320}
+                  width="100%"
+                  height={isSmallScreen ? 190 : 320}
                 >
-                  <img src={introTo} alt="" width='220px' height='220px' />
+                  <img
+                    src={introTo}
+                    alt=""
+                    width={isSmallScreen ? '90px' : '220px'}
+                    height={isSmallScreen ? '90px' : '220px'}
+                  />
                 </Card>
                 <Text style={{ fontSize: '20px', color: 'white', marginTop: '20px', marginBottom: '20px' }}>
                   {t('Intro to HUSKI finance')}
                 </Text>
-
               </Box>
-              <Box width={320}>
+              <Box width={isSmallScreen ? 190 : 320}>
                 <Card
                   className="learnMore"
                   style={{ background: '#22282E', placeContent: 'center' }}
-                  maxWidth={320} maxHeight={320} width='100%' height='100vw'
+                  maxWidth={320}
+                  maxHeight={320}
+                  width="100%"
+                  height={isSmallScreen ? 190 : 320}
                 >
-                  <img src={tokenomics} alt="" />
+                  <img
+                    src={tokenomics}
+                    alt=""
+                    width={isSmallScreen ? '90px' : '220px'}
+                    height={isSmallScreen ? '90px' : '220px'}
+                  />
                 </Card>
                 <Text style={{ fontSize: '20px', color: 'white', marginTop: '20px', marginBottom: '20px' }}>
                   {t('Tokenomics')}
                 </Text>
               </Box>
-              <Box width={320}>
+              <Box width={isSmallScreen ? 190 : 320}>
                 <Card
                   className="learnMore"
                   style={{ background: '#22282E', placeContent: 'center' }}
-                  maxWidth={320} maxHeight={320} width='100%' height='100vw'
+                  maxWidth={320}
+                  maxHeight={320}
+                  width="100%"
+                  height={isSmallScreen ? 190 : 320}
                 >
-                  <img src={roadmap} alt="" />
+                  <img
+                    src={roadmap}
+                    alt=""
+                    width={isSmallScreen ? '90px' : '220px'}
+                    height={isSmallScreen ? '90px' : '220px'}
+                  />
                 </Card>
                 <Text style={{ fontSize: '20px', color: 'white', marginTop: '20px', marginBottom: '20px' }}>
                   {t('Roadmap')}
@@ -404,20 +459,30 @@ const Home: React.FC = () => {
       </StyledHeroSection>
 
       <StyledHeroSection style={{ background: '#ECF2F6' }}>
-        <Flex style={{ marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px', flexWrap: 'wrap', maxWidth: '1120px' }}>
+        {/* NOTE: at least for now, only leave Certik in this section */}
+        <Flex
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            paddingBottom: '80px',
+            flexWrap: 'wrap',
+            maxWidth: '1120px',
+          }}
+        >
           <Grid width={300}>
-            <h3
-              style={{ marginTop: '40px', fontWeight: 700, fontSize: '48px', textAlign: 'left' }}
-            >
+            <h3 style={{ marginTop: '40px', fontWeight: 700, fontSize: '48px', textAlign: 'left' }}>
               {t('Our contracts have been audited by')}
             </h3>
-            <Text style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px' }} color="textSubtle">
+            <Text
+              style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px' }}
+              color="textSubtle"
+            >
               {t('Our Contract have been audited by best audit auditing in this field')}
             </Text>
           </Grid>
           <Box>
-            <Flex flexWrap='wrap' justifyContent='space-between' height="100%" alignItems="center">
-             {/*  <Card
+            <Flex flexWrap="wrap" justifyContent="space-between" height="100%" alignItems="center">
+              {/*  <Card
                 className="auditedBy"
                 style={{
                   boxShadow: ' 2px 3px 5px #888888',
@@ -440,13 +505,21 @@ const Home: React.FC = () => {
                   margin: '15px',
                   padding: '20px',
                   border: 'none',
-                  flex: 'none'
+                  flex: 'none',
                 }}
               >
                 <img src={certikLogo} alt="" width="100%" />
               </Card>
             </Flex>
+            {/* 
 {/* 
+            {/* 
+{/* 
+            {/* 
+{/* 
+            {/* 
+{/* 
+            {/* 
             <Flex flexWrap='wrap' justifyContent='space-between'>
               <Card
                 className="auditedBy"
@@ -487,7 +560,7 @@ const Home: React.FC = () => {
             <Text textAlign="center" fontSize="48px" style={{ paddingTop: '30px' }} color="white">
               {t('Backed by the best')}
             </Text>
-            <BackedImage >
+            <BackedImage>
               <div style={{ display: 'flex', marginTop: '50px' }}>
                 <img
                   src="images/backed/binance.png"
@@ -608,7 +681,6 @@ const Home: React.FC = () => {
               </div>
             </BackedImage>
           </div>
-
         </div>
         {/* <div style={{ width: '100%', top: 100, left: 0 }}>
           <div style={{ marginLeft: 'auto', marginRight: 'auto', paddingBottom: '80px' }}>
@@ -660,16 +732,16 @@ const Home: React.FC = () => {
         </div> */}
       </StyledHeroSection>
 
-      <SBStyledContainer style={{ position: 'relative', height: '700px' }}>
-        <SBJoin />
+      <SBStyledContainer>
+        {/*         <SBJoin > */}
         <div style={{ width: '100%', top: 0, left: 0 }}>
           <Flex
             style={{
               marginTop: '70px',
               zIndex: 2200,
-              marginLeft: 'auto',
+              marginLeft: isSmallScreen ? '0px' : '135px',
               marginRight: 'auto',
-              maxWidth: '1120px'
+              maxWidth: '1120px',
             }}
           >
             <Box>
@@ -685,8 +757,16 @@ const Home: React.FC = () => {
                 >
                   {t('Join us')}
                 </Heading>
-                <Text style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px', position: 'relative' }}>
-                  {t('Join us on our social media channels for more update & announcement.')}
+                <Text
+                  style={{
+                    fontSize: '18px',
+                    paddingRight: '10%',
+                    textAlign: 'left',
+                    marginTop: '30px',
+                    position: 'relative',
+                  }}
+                >
+                  {t('Join us on our social media channels for more updates & announcements.')}
                 </Text>
               </div>
               <Flex style={{ marginTop: 80, flexWrap: 'wrap' }}>
@@ -800,12 +880,13 @@ const Home: React.FC = () => {
                   </SocialIcon>
                 </Card>
               </Flex>
-              <div style={{ marginTop: '90px', marginBottom: '80px' }}>
+              <div style={{ marginTop: '75px', marginBottom: '80px' }}>
                 <Text>Copyright © 2021, HuskiFinance</Text>
               </div>
             </Box>
           </Flex>
         </div>
+        {/*       </SBJoin > */}
       </SBStyledContainer>
     </>
   )
