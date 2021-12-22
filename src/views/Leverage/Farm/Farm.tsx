@@ -31,12 +31,11 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
-// import { Range } from 'react-range';
-
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
-import { getHuskyRewards, getYieldFarming, getLeverageFarmingData, getBorrowingInterest } from '../helpers'
+import { getHuskyRewards, getYieldFarming, getLeverageFarmingData } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 
 interface RouteParams {
   token: string
@@ -375,18 +374,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.token.symbol
             : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
-          <Box  width={20}
+          <Box width={20}
             height={20}>
-          <TokenImage
-            token={
-              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-              ? tokenData?.TokenInfo.token
-              : tokenData?.TokenInfo?.quoteToken
-            }
-            width={20}
-            height={20}
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.token
+                  : tokenData?.TokenInfo?.quoteToken
+              }
+              width={20}
+              height={20}
             />
-            </Box>
+          </Box>
         ),
       },
       {
@@ -399,18 +398,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
-         <Box width={20}
+          <Box width={20}
             height={20}>
-          <TokenImage
-            token={
-              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-              ? tokenData?.TokenInfo.quoteToken
-              : tokenData?.TokenInfo?.token
-            }
-            width={20}
-            height={20}
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.quoteToken
+                  : tokenData?.TokenInfo?.token
+              }
+              width={20}
+              height={20}
             />
-            </Box>
+          </Box>
         ),
       },
     ]
@@ -419,11 +418,12 @@ const Farm = () => {
   const farmingData = getLeverageFarmingData(tokenData, leverageValue, tokenInput, quoteTokenInput, radio)
   const farmData = farmingData ? farmingData[1] : []
   const { borrowingInterest } = useFarmsWithToken(tokenData, radio)
+  const { tradingFees: tradeFee } = useTradingFees(tokenData)
 
   const getApr = (lvg) => {
     const totalapr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((tokenData.tradeFee * 365) / 100) * lvg) +
+      Number(((tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return totalapr
@@ -542,7 +542,7 @@ const Farm = () => {
       } else {
         console.info('base + all ')
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
-       
+
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -731,7 +731,7 @@ const Farm = () => {
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
   const getWrapText = (): string => {
-    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput: quoteTokenInput
+    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
       return t(`Wrap BNB & ${leverageValue}x Farm`)
     }

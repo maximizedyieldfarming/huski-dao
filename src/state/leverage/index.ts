@@ -45,9 +45,9 @@ export const fetchLeverageFarmsPublicDataAsync =
 
       const farms = await fetchFarms(farmsToFetch)
       const farmsWithPrices = await fetchFarmsPrices(farms)
-      const farmsWithPricesAndTradeFee = await fetchFarmsTradeFees(farmsWithPrices)
+      // const farmsWithPricesAndTradeFee = await fetchFarmsTradeFees(farmsWithPrices)
       // Filter out price helper LP config farms
-      const farmsWithoutHelperLps = farmsWithPricesAndTradeFee.filter((farm: LeverageFarm) => {
+      const farmsWithoutHelperLps = farmsWithPrices.filter((farm: LeverageFarm) => {
         return farm.pid || farm.pid === 0
       })
       return farmsWithoutHelperLps

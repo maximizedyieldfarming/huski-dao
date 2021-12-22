@@ -18,18 +18,14 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useWeb3React } from '@web3-react/core'
 import { TokenImage, TokenPairImage } from 'components/TokenImage'
 import DebtRatioProgress from 'components/DebRatioProgress'
-
-
-// import { DebtRatioProgress } from 'components/ProgressBars'
 import {
   getHuskyRewards,
   getYieldFarming,
-  getBorrowingInterest,
   getAdjustData,
   getAdjustPositionRepayDebt,
-  getPriceImpact,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
@@ -159,7 +155,7 @@ const AdjustPosition = () => {
   const [tokenInput, setTokenInput] = useState<string>()
 
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
-  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
+  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
   const { quoteToken, token } = TokenInfo
   const { vaultAddress } = TokenInfo
   const quoteTokenVaultAddress = QuoteTokenInfo.vaultAddress
@@ -368,6 +364,7 @@ const AdjustPosition = () => {
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
+  const { tradingFees: tradeFee } = useTradingFees(data?.farmData)
   const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
   // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)

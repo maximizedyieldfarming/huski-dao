@@ -27,8 +27,9 @@ import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
+import { useTradingFees } from '../../hooks/useTradingFees'
 import { useBorrowingInterest7days } from '../../hooks/useBorrowingInterest7days'
-import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
 
@@ -119,12 +120,13 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const yieldFarmData = getYieldFarming(singleData, cakePrice)
   // const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
   const { borrowingInterest } = useFarmsWithToken(singleData, borrowingAsset)
+  const { tradingFees: tradeFee } = useTradingFees(singleData)
   const dropdown = useRef(null)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((singleData.tradeFee * 365) / 100) * lvg) +
+      Number(((tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr

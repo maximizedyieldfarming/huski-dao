@@ -5,17 +5,14 @@ import {
     Box,
     Button,
     Flex,
-    Radio,
     InfoIcon,
     Text,
     Skeleton,
     useTooltip,
-    ArrowForwardIcon,
     useMatchBreakpoints,
     AutoRenewIcon,
-    BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
+    ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
 } from 'husky-uikit1.0'
-import Select from 'components/Select/Select'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -46,11 +43,11 @@ import {
     getHuskyRewards,
     getYieldFarming,
     getLeverageFarmingData,
-    getBorrowingInterest,
     getRunLogic,
     getRunLogic1,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 
 interface LocationParams {
     singleData?: any
@@ -280,11 +277,12 @@ const FarmSA = () => {
     const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
     const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
     const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
+    const { tradingFees: tradeFee } = useTradingFees(singleFarm)
 
     const getApr = (lvg: number) => {
         const totalapr =
             Number((yieldFarmData / 100) * lvg) +
-            Number(((singleFarm?.tradeFee * 365) / 100) * lvg) +
+            Number(((tradeFee * 365) / 100) * lvg) +
             Number(huskyRewards * (lvg - 1)) -
             Number(borrowingInterest * (lvg - 1))
         return totalapr
@@ -797,7 +795,7 @@ const FarmSA = () => {
     }, [getTokenSelectOptions, marketStrategy, singleFarm, tokenInfoToUse])
 
     const yieldFarming = Number(yieldFarmData * singleLeverage)
-    const tradingFees = Number((singleFarm?.tradeFee * 365) * singleLeverage)
+    const tradingFees = Number((tradeFee * 365) * singleLeverage)
     const huskyRewardsData = Number(huskyRewards * (singleLeverage - 1)) * 100
     const borrowingInterestData = Number(borrowingInterest * (singleLeverage - 1)) * 100
     const apr = getApr(singleLeverage) * 100
@@ -855,7 +853,7 @@ const FarmSA = () => {
                     </Section>
 
                     <Section>
-                        <Flex justifyContent="space-between" style={{flexFlow: "row wrap"}}>
+                        <Flex justifyContent="space-between" style={{ flexFlow: "row wrap" }}>
                             <Flex>
                                 <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>{t(`Time Profit`)}</Text>
                                 <Text style={{ cursor: "pointer", color: chartype === 1 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 1 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(1)}>{t(`Price Profit`)}</Text>
@@ -923,17 +921,17 @@ const FarmSA = () => {
                                     </BalanceInputWrapper>
                                 </InputArea>
                                 <Box width="90%" overflow="auto">
-                                <ButtonMenu
-                                    onItemClick={setInputToFraction}
-                                    activeIndex={buttonIndex}
-                                    disabled={userTokenBalance.eq(0)}
+                                    <ButtonMenu
+                                        onItemClick={setInputToFraction}
+                                        activeIndex={buttonIndex}
+                                        disabled={userTokenBalance.eq(0)}
                                     >
-                                    <ButtonMenuItem>25%</ButtonMenuItem>
-                                    <ButtonMenuItem>50%</ButtonMenuItem>
-                                    <ButtonMenuItem>75%</ButtonMenuItem>
-                                    <ButtonMenuItem>100%</ButtonMenuItem>
-                                </ButtonMenu>
-                                    </Box>
+                                        <ButtonMenuItem>25%</ButtonMenuItem>
+                                        <ButtonMenuItem>50%</ButtonMenuItem>
+                                        <ButtonMenuItem>75%</ButtonMenuItem>
+                                        <ButtonMenuItem>100%</ButtonMenuItem>
+                                    </ButtonMenu>
+                                </Box>
                             </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
