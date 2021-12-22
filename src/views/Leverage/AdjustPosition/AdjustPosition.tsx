@@ -729,14 +729,12 @@ const AdjustPosition = () => {
   )
 
 
-  const isConfirmDisabled = isAddCollateral ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0:
-      Number(targetPositionLeverage) !== 1 &&
-      Number(targetPositionLeverage) !== Number(currentPositionLeverage) &&
-      new BigNumber(UpdatedDebtValue).lt(minimumDebt) || Number(percentageToClose) === 0
+  const isAddCollateralConfirmDisabled = Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 
+  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
+  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
 
-      console.log({percentageToClose, isConfirmDisabled})
   const principal = 1
-  const maxValue = 1 - principal / data?.farmData?.leverage
+  const maxValue = 1 - principal / (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
   const updatedDebtRatio = Number(targetPositionLeverage) === Number(currentPositionLeverage) ? debtRatio.toNumber() : 1 - principal / (remainLeverage || 1)
 
   // convert to 
@@ -1090,6 +1088,20 @@ const AdjustPosition = () => {
 
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
+  const shouldShowACRDContainer = (() => {
+    if (targetPositionLeverage === 1 && currentPositionLeverage === 1) {
+      return true
+    } if (targetPositionLeverage === currentPositionLeverage && currentPositionLeverage !== 1) {
+      return false
+    } if (targetPositionLeverage > currentPositionLeverage) {
+      return false
+    }
+     if (targetPositionLeverage < currentPositionLeverage) {
+      return true
+    }
+    return false
+  })()
+
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
       <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
@@ -1215,7 +1227,7 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 /* || currentPositionLeverage !== 1 */ ? null : <AddCollateralRepayDebtContainer
+                  {shouldShowACRDContainer ? <AddCollateralRepayDebtContainer
                     currentPositionLeverage={Number(currentPositionLeverage)}
                     targetPositionLeverage={Number(targetPositionLeverage)}
                     userQuoteTokenBalance={userQuoteTokenBalance}
@@ -1240,7 +1252,7 @@ const AdjustPosition = () => {
                       percentageToClose / 100,
                       symbolName,
                     )}
-                  />}
+                  /> : null}
                   {/*  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
@@ -1358,7 +1370,7 @@ const AdjustPosition = () => {
                     {repayDebtData ? (
                       <Flex>
                         <Text bold>
-                          {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
+                          {debtRatio.times(100).toFixed(2, 1)}% ({currentPositionLeverage}X)
                         </Text>
                         <ChevronRightIcon fontWeight="bold" />
                         <Text bold>
@@ -1384,7 +1396,7 @@ const AdjustPosition = () => {
                     {isAddCollateral && (
                       <Button
                         onClick={handleConfirm}
-                        disabled={isConfirmDisabled || !account || isPending}
+                        disabled={isAddCollateralConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1396,7 +1408,7 @@ const AdjustPosition = () => {
                     {!isAddCollateral && isConvertTo && (
                       <Button
                         onClick={handleConfirmConvertTo}
-                        // disabled={isConfirmDisabled || !account || isPending}
+                        disabled={iscConvertToConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1408,7 +1420,7 @@ const AdjustPosition = () => {
                     {!isAddCollateral && !isConvertTo && (
                       <Button
                         onClick={handleConfirmMinimize}
-                        // disabled={isConfirmDisabled || !account || isPending}
+                        disabled={isMinimizeTradingConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1419,7 +1431,7 @@ const AdjustPosition = () => {
                       </Button>
                     )}
                   </Flex>
-                  <Flex mx="auto">
+                  <Flex width="100%" alignItems="center" justifyContent="center">
                   <Text color="red">
                     {!isAddCollateral &&
                     Number(targetPositionLeverage) !== 1 &&
