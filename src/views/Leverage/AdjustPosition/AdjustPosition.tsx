@@ -726,7 +726,8 @@ const AdjustPosition = () => {
   )
 
 
-  const isAddCollateralConfirmDisabled = Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 
+  console.log("upd", UpdatedDebt, "min", minimumDebt?.toNumber())
+  const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
   const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
   const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
 
@@ -1350,7 +1351,7 @@ const AdjustPosition = () => {
                         <ChevronRightIcon fontWeight="bold" />
                         {isAddCollateral ? (
                           <Text bold>
-                            {UpdatedDebt?.toFixed(3)} {symbolName}
+                            {new BigNumber(UpdatedDebt)?.toFixed(3, 1)} {symbolName}
                           </Text>
                         ) : (
                           <Text bold>
