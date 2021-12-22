@@ -4,14 +4,14 @@ import useRefresh from 'hooks/useRefresh'
 import request, { gql } from 'graphql-request'
 import { TRADING_FEE_URL } from 'config/constants/endpoints'
 
-export const getTradingfeesfunc = async ( pairAddress) => {
+export const getTradingfeesfunc = async (pairAddress) => {
 
   const response = await request(
     TRADING_FEE_URL,
     gql`
       query getTradingfees($pairAddress: String) {
         pairDayDatas(
-        first:1
+        first:8
         orderBy:date
         orderDirection:desc
         where: {  pairAddress: $pairAddress }
@@ -27,28 +27,45 @@ export const getTradingfeesfunc = async ( pairAddress) => {
     { pairAddress },
   )
 
-  
-  return response.pairDayDatas[0]
+  return response.pairDayDatas
 }
 
-export const useTradingFees = async ( farm) => {
-  const [tradingFees, setTradingFees] = useState('0')
+export const useTradingFees = (farm) => {
+  const [tradingFees, setTradingFees] = useState(0)
 
   const LPAddresses = getAddress(farm.lpAddresses)
-  const pairAddress =  LPAddresses.toLowerCase()
+  const pairAddress = LPAddresses.toLowerCase()
 
+  useEffect(() => {
+    const fetchTradingFee = async () => {
+      const response = await getTradingfeesfunc(pairAddress)
+      let PancakeTradingFeesAPR = 0
+      if (response.length === 0) {
+        PancakeTradingFeesAPR = 0
+      } else {
+        let totalVolumeUSD = 0
+        let totalreserveUSD = 0
+        let apr
 
-useEffect(() => {
-  const fetchTradingFee = async () => {
-    const response = await getTradingfeesfunc(pairAddress)
-    setTradingFees(response.reserveUSD)
-  }
+        for (let i = 1; i < response.length; i++) {
+          totalVolumeUSD += Number(response[i].dailyVolumeUSD)
+          totalreserveUSD += Number(response[i].reserveUSD)
+        }
 
-  fetchTradingFee()
-}, [pairAddress])
+        if (totalreserveUSD > 0) {
+          apr = totalVolumeUSD * 0.17 / totalreserveUSD
+          // apr = totalVolumeUSD * 365 * 0.17 / 100 / totalreserveUSD
+          PancakeTradingFeesAPR = apr
+        }
+      }
 
-// console.info('tradingFees',tradingFees)
-  return tradingFees
+      setTradingFees(PancakeTradingFeesAPR)
+    }
+
+    fetchTradingFee()
+  }, [pairAddress])
+
+  return { tradingFees }
 }
 
 

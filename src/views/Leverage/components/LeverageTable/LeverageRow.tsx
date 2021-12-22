@@ -4,8 +4,7 @@ import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
-import { getAddress } from 'utils/addressHelpers'
-import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
 import PoolCell from './Cells/PoolCell'
 import ApyCell from './Cells/ApyCell'
 import ActionCell from './Cells/ActionCell'
@@ -58,14 +57,13 @@ const LeverageRow = ({ tokenData }) => {
   const yieldFarmData = getYieldFarming(tokenData, cakePrice)
   const { tokensLP, tokenNum, quoteTokenNum, totalTvl } = getTvl(tokenData)
   const { borrowingInterest } = useFarmsWithToken(tokenData, borrowingAsset)
-  // const { tradingFees } =
-  useTradingFees(tokenData)
+  const { tradingFees: tradeFee } = useTradingFees(tokenData)
   // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((tokenData.tradeFee * 365) / 100) * lvg) +
+      Number(((tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -107,7 +105,7 @@ const LeverageRow = ({ tokenData }) => {
           apyAtOne={getDisplayApr(getApy(1))}
           apy={getDisplayApr(getApy(childLeverage))}
           yieldFarming={yieldFarmData * childLeverage}
-          tradingFees={tokenData.tradeFee * 365 * childLeverage}
+          tradingFees={tradeFee * 365 * childLeverage}
           huskyRewards={huskyRewards * 100 * (childLeverage - 1)}
           borrowingInterest={borrowingInterest * 100 * (childLeverage - 1)}
         />
