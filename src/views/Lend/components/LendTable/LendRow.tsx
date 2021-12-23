@@ -5,7 +5,7 @@ import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
+import { getBalanceAmount } from 'utils/formatBalance'
 import NameCell from './Cells/NameCell'
 import { getAprData } from '../../helpers'
 import { useFarmsWithToken } from '../../../Leverage/hooks/useFarmsWithToken'
@@ -20,13 +20,9 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  overflow : auto;
   width : 100%;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
-  }
-  ::-webkit-scrollbar {
-    height: 4px!important;
   }
   //cursor: pointer;
 `

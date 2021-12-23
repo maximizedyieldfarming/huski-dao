@@ -5,8 +5,6 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
 const StyledRow = styled.div`
-overflow-x : auto;
-
   background-color: transparent;
   display: flex;
   flex-direction: column;
@@ -15,9 +13,6 @@ overflow-x : auto;
     flex-direction: row;
   }
   //cursor: pointer;
-  ::-webkit-scrollbar {
-    height: 4px!important;
-  }
 `
 
 const NameCell = styled(BaseCell)`
