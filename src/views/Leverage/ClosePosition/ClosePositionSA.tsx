@@ -264,10 +264,10 @@ const ClosePositionSA = () => {
                 </Text>
               </Flex>
               <Button
-                style={{ borderRadius: "18px" }}
+                style={{ borderRadius: "14px", padding : 0 }}
                 onClick={handleConfirm}
-                width="180px"
-                height="57px"
+                width="160px"
+                height="50px"
                 disabled={!account || isPending}
                 isLoading={isPending}
                 endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
@@ -323,4 +323,6 @@ const AmountPanel = styled(Box)<{ isDark? : boolean }>`
   display : flex;
   justify-content : center;
   align-items : center;
+  padding-left : 20px;
+  padding-right : 20px;
 `

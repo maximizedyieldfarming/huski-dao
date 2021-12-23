@@ -17,6 +17,7 @@ const StyledRow = styled.div`
 
 const NameCell = styled(BaseCell)`
   flex: 2;
+  min-width : 220px;
   flex-direction: row;
   justify-content: flex-start;
     align-items: start;
@@ -29,6 +30,7 @@ const NameCell = styled(BaseCell)`
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
   flex:1;
+  min-width : 80px;
   ${({ theme }) => theme.mediaQueries.md} {
     // flex: 1 0 120px;
   }
@@ -89,7 +91,7 @@ const LendHeaderRow = () => {
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" style={{width:'290px',textAlign:'right'}} color="textSubtle">
+          <Text fontWeight="600" fontSize="16px" style={{textAlign:'right'}} color="textSubtle">
             {t('Action')}
           </Text>
         </CellContent>

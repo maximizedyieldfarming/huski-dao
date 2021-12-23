@@ -18,18 +18,14 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useWeb3React } from '@web3-react/core'
 import { TokenImage, TokenPairImage } from 'components/TokenImage'
 import DebtRatioProgress from 'components/DebRatioProgress'
-
-
-// import { DebtRatioProgress } from 'components/ProgressBars'
 import {
   getHuskyRewards,
   getYieldFarming,
-  getBorrowingInterest,
   getAdjustData,
   getAdjustPositionRepayDebt,
-  getPriceImpact,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 import AddCollateralRepayDebtContainer from './components/AddCollateralRepayDebtContainer'
 import { PercentageToCloseContext, AddCollateralContext, ConvertToContext } from './context'
 
@@ -159,7 +155,7 @@ const AdjustPosition = () => {
   const [tokenInput, setTokenInput] = useState<string>()
 
   const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
-  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, tradeFee, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
+  const { TokenInfo, QuoteTokenInfo, tokenPriceUsd, quoteTokenPriceUsd, leverage, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal } = data?.farmData
   const { quoteToken, token } = TokenInfo
   const { vaultAddress } = TokenInfo
   const quoteTokenVaultAddress = QuoteTokenInfo.vaultAddress
@@ -194,6 +190,8 @@ const AdjustPosition = () => {
   let workerAddress;
   let withdrawMinimizeTradingAddress;
   let partialCloseLiquidateAddress
+  let strategyLiquidateAddress
+  let strategyWithdrawMinimizeTradingAddress
   let contract;
   let tokenInputValue;
   let quoteTokenInputValue;
@@ -217,6 +215,8 @@ const AdjustPosition = () => {
     workerAddress = TokenInfo.address
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
+    strategyLiquidateAddress = TokenInfo.strategies.StrategyLiquidate
+    strategyWithdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyWithdrawMinimizeTrading
     contract = vaultContract
     tokenInputValue = tokenInput || 0 // formatNumber(tokenInput)
     quoteTokenInputValue = quoteTokenInput || 0 // formatNumber(quoteTokenInput)
@@ -246,6 +246,8 @@ const AdjustPosition = () => {
     workerAddress = QuoteTokenInfo.address
     withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
+    strategyLiquidateAddress = QuoteTokenInfo.strategies.StrategyLiquidate
+    strategyWithdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyWithdrawMinimizeTrading
     contract = quoteTokenVaultContract
     tokenInputValue = quoteTokenInput || 0 // formatNumber(quoteTokenInput)
     quoteTokenInputValue = tokenInput || 0 // formatNumber(tokenInput)
@@ -368,6 +370,7 @@ const AdjustPosition = () => {
   const cakePrice = useCakePrice()
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
+  const { tradingFees: tradeFee } = useTradingFees(data?.farmData)
   const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
   // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
@@ -413,7 +416,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
@@ -444,7 +447,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -576,7 +579,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -618,11 +621,19 @@ const AdjustPosition = () => {
     const minbasetoken = getDecimalAmount(new BigNumber(receive), 18).toString().replace(/\.(.*?\d*)/g, '') // Number(receive).toString()
     // const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
     const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, maxDebtRepaymentValue, minbasetoken]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
+
+    let addressClose
+    if (percentageToClose === 100) {
+      addressClose = strategyLiquidateAddress
+    } else {
+      addressClose = partialCloseLiquidateAddress
+    }
+
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [addressClose, dataStrategy]);
     console.log({
       'handleConfirmConvertTo-symbolName': symbolName, maxDebtRepaymentValue,
       returnLpTokenValue, receive, id, workerAddress,
-      amount, loan, dataStrategy,
+      amount, loan, dataStrategy, addressClose,
       convertedPositionValue, partialCloseLiquidateAddress,
       minbasetoken, maxReturn, dataWorker,
       'ethers.utils.parseEther(minbasetokenvalue)': ethers.utils.parseEther(minbasetoken)
@@ -646,7 +657,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -671,9 +682,16 @@ const AdjustPosition = () => {
     const minfarmtokenvalue = getDecimalAmount(new BigNumber(minfarmtoken), 18).toString().replace(/\.(.*?\d*)/g, '')  // minfarmtoken.toString() 
     // const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minfarmtokenvalue)]);
     const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.constants.MaxUint256, minfarmtokenvalue]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+    let addressClose
+    if (percentageToClose === 100) {
+      addressClose = strategyWithdrawMinimizeTradingAddress
+    } else {
+      addressClose = withdrawMinimizeTradingAddress
+    }
 
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [addressClose, dataStrategy]);
     console.log({
+      percentageToClose,
       '这是最小化关仓': symbolName, id, returnLpTokenValue,
       workerAddress, amount, loan, convertedPositionValue, minfarmtokenvalue, maxDebtRepayment,
       'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
@@ -729,14 +747,12 @@ const AdjustPosition = () => {
   )
 
 
-  const isConfirmDisabled = isAddCollateral ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0:
-      Number(targetPositionLeverage) !== 1 &&
-      Number(targetPositionLeverage) !== Number(currentPositionLeverage) &&
-      new BigNumber(UpdatedDebtValue).lt(minimumDebt) || Number(percentageToClose) === 0
+  const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
+  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
 
-      console.log({percentageToClose, isConfirmDisabled})
   const principal = 1
-  const maxValue = 1 - principal / data?.farmData?.leverage
+  const maxValue = 1 - principal / (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
   const updatedDebtRatio = Number(targetPositionLeverage) === Number(currentPositionLeverage) ? debtRatio.toNumber() : 1 - principal / (remainLeverage || 1)
 
   // convert to 
@@ -1090,21 +1106,35 @@ const AdjustPosition = () => {
 
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
+  const shouldShowACRDContainer = (() => {
+    if (targetPositionLeverage === 1 && currentPositionLeverage === 1) {
+      return true
+    } if (targetPositionLeverage === currentPositionLeverage && currentPositionLeverage !== 1) {
+      return false
+    } if (targetPositionLeverage > currentPositionLeverage) {
+      return false
+    }
+    if (targetPositionLeverage < currentPositionLeverage) {
+      return true
+    }
+    return false
+  })()
+
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
       <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
         <PercentageToCloseContext.Provider
           value={{ percentage: percentageToClose, setPercentage: setPercentageToClose }}
         >
-          <Page>
+          <Page style={{ overflowX: 'hidden' }}>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
               {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Flex justifyContent="space-between" flexDirection={isSmallScreen ? 'column' : 'row'}>
               <Box width={isSmallScreen ? 'unset' : '60%'}>
                 <Section>
-                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }}>
-                    <Text>
+                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }} flexWrap='wrap'>
+                    <Text mb='10px'>
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
                     <CurrentPostionToken >
@@ -1132,7 +1162,7 @@ const AdjustPosition = () => {
                       : new BigNumber(targetPositionLeverage).toFixed(2, 1)}
                     x
                   </Text>
-                  <PositionX ml="auto" color="#6F767E">
+                  <PositionX ml="auto" color="#6F767E" mt='10px'>
                     <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
                   </PositionX>
                   <Flex style={{ border: 'none' }}>
@@ -1215,7 +1245,7 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  {targetPositionLeverage >= currentPositionLeverage && targetPositionLeverage !== 1 /* || currentPositionLeverage !== 1 */ ? null : <AddCollateralRepayDebtContainer
+                  {shouldShowACRDContainer ? <AddCollateralRepayDebtContainer
                     currentPositionLeverage={Number(currentPositionLeverage)}
                     targetPositionLeverage={Number(targetPositionLeverage)}
                     userQuoteTokenBalance={userQuoteTokenBalance}
@@ -1240,7 +1270,7 @@ const AdjustPosition = () => {
                       percentageToClose / 100,
                       symbolName,
                     )}
-                  />}
+                  /> : null}
                   {/*  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
@@ -1341,7 +1371,7 @@ const AdjustPosition = () => {
                         <ChevronRightIcon fontWeight="bold" />
                         {isAddCollateral ? (
                           <Text bold>
-                            {UpdatedDebt?.toFixed(3)} {symbolName}
+                            {new BigNumber(UpdatedDebt)?.toFixed(3, 1)} {symbolName}
                           </Text>
                         ) : (
                           <Text bold>
@@ -1358,7 +1388,7 @@ const AdjustPosition = () => {
                     {repayDebtData ? (
                       <Flex>
                         <Text bold>
-                          {(debtRatio.toNumber() * 100).toFixed(2)}% ({lvgAdjust.toNumber().toFixed(2)}X)
+                          {debtRatio.times(100).toFixed(2, 1)}% ({currentPositionLeverage}X)
                         </Text>
                         <ChevronRightIcon fontWeight="bold" />
                         <Text bold>
@@ -1384,7 +1414,7 @@ const AdjustPosition = () => {
                     {isAddCollateral && (
                       <Button
                         onClick={handleConfirm}
-                        disabled={isConfirmDisabled || !account || isPending}
+                        disabled={isAddCollateralConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1396,7 +1426,7 @@ const AdjustPosition = () => {
                     {!isAddCollateral && isConvertTo && (
                       <Button
                         onClick={handleConfirmConvertTo}
-                        disabled={isConfirmDisabled || !account || isPending}
+                        disabled={iscConvertToConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1408,7 +1438,7 @@ const AdjustPosition = () => {
                     {!isAddCollateral && !isConvertTo && (
                       <Button
                         onClick={handleConfirmMinimize}
-                        disabled={isConfirmDisabled || !account || isPending}
+                        disabled={isMinimizeTradingConfirmDisabled || !account || isPending}
                         isLoading={isPending}
                         endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
                         width={260}
@@ -1419,20 +1449,20 @@ const AdjustPosition = () => {
                       </Button>
                     )}
                   </Flex>
-                  <Flex mx="auto">
-                  <Text color="red">
-                    {!isAddCollateral &&
-                    Number(targetPositionLeverage) !== 1 &&
-                    Number(targetPositionLeverage) !== Number(currentPositionLeverage)
-                    ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-                    ? t('Minimum Debt Size: %minimumDebt% %name%', {
-                      minimumDebt: minimumDebt.toNumber(),
-                      name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                    })
-                    : null
-                    : null}
-                  </Text>
-                    </Flex>
+                  <Flex width="100%" alignItems="center" justifyContent="center">
+                    <Text color="red">
+                      {!isAddCollateral &&
+                        Number(targetPositionLeverage) !== 1 &&
+                        Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                        ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                          ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                            minimumDebt: minimumDebt.toNumber(),
+                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                          })
+                          : null
+                        : null}
+                    </Text>
+                  </Flex>
                 </Section>
               </Box>
               <Box width={isSmallScreen ? 'unset' : '38%'} mt={isSmallScreen ? '2rem' : 'unset'}>

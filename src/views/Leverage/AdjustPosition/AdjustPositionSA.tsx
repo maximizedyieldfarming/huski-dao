@@ -32,11 +32,11 @@ import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import {
   getHuskyRewards,
   getYieldFarming,
-  getBorrowingInterest,
   getAdjustData,
   getAdjustPositionRepayDebt,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 
 interface MoveProps {
   move: number
@@ -215,7 +215,6 @@ const AdjustPositionSA = () => {
     QuoteTokenInfo,
     tokenPriceUsd,
     quoteTokenPriceUsd,
-    tradeFee,
     leverage,
     lptotalSupply,
     tokenAmountTotal,
@@ -354,6 +353,7 @@ const AdjustPositionSA = () => {
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
   const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
+  const { tradingFees: tradeFee } = useTradingFees(data?.farmData)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)
@@ -488,7 +488,7 @@ const AdjustPositionSA = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/singleAssets')
+        history.push('/singleAssets')
       }
     } catch (error) {
       console.info('error', error)
@@ -580,7 +580,7 @@ const AdjustPositionSA = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/singleAssets')
+        history.push('/singleAssets')
       }
     } catch (error) {
       console.info('error', error)
@@ -633,8 +633,8 @@ const AdjustPositionSA = () => {
       </Text>
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
-        <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }}>
-          <Text>
+        <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap' style={{ border: 'none' }}>
+          <Text mb = '10px'>
             {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
           <CurrentPostionToken>

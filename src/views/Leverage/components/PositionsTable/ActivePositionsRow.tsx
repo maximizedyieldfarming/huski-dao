@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getDrop } from '../../helpers'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
+import { useTradingFees } from '../../hooks/useTradingFees'
 import NameCell from './Cells/NameCell'
 import ApyCell from './Cells/ApyCell'
 import PoolCell from './Cells/PoolCell'
@@ -19,7 +20,6 @@ import EquityCell from './Cells/EquityCell'
 import DebtRatioCell from './Cells/DebtRatioCell'
 import LiquidationThresholdCell from './Cells/LiquidationThresholdCell'
 import SafetyBufferCell from './Cells/SafetyBufferCell'
-import ProfitsCell from './Cells/ProfitsCell'
 import StrategyCell from './Cells/StrategyCell'
 
 const StyledRow = styled.div`
@@ -87,11 +87,12 @@ const ActivePositionsRow = ({ data }) => {
   const yieldFarmData = getYieldFarming(data?.farmData, cakePrice)
   const dropData = getDrop(data?.farmData, data, symbolName)
   const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
+  const { tradingFees: tradeFee } = useTradingFees(data?.farmData)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((data?.farmData.tradeFee * 365) / 100) * lvg) +
+      Number(((tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -142,7 +143,7 @@ const ActivePositionsRow = ({ data }) => {
           dailyApr={getApr(leverage.toNumber()) / 365 * 100}
           apy={getDisplayApr(getApy(leverage.toNumber()))}
           yieldFarming={yieldFarmData * leverage.toNumber()}
-          tradingFees={data?.farmData.tradeFee * 365 * leverage.toNumber()}
+          tradingFees={tradeFee * 365 * leverage.toNumber()}
           huskyRewards={huskyRewards * 100 * (leverage.toNumber() - 1)}
           borrowingInterest={borrowingInterest * 100 * (leverage.toNumber() - 1)}
         />

@@ -7,6 +7,7 @@ import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
+  min-width : 220px;
   flex:2;
   flex-direction: row;
   justify-content: flex-start;

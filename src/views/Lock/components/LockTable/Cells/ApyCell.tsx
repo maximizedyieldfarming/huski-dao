@@ -6,6 +6,7 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
+  min-width : 100px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }

@@ -4,14 +4,14 @@ import useRefresh from 'hooks/useRefresh'
 import request, { gql } from 'graphql-request'
 import { TRADING_FEE_URL } from 'config/constants/endpoints'
 
-export const getTradingfeesfunc = async ( pairAddress) => {
+export const getTradingfeesfunc = async (pairAddress) => {
 
   const response = await request(
     TRADING_FEE_URL,
     gql`
       query getTradingfees($pairAddress: String) {
         pairDayDatas(
-        first:1
+        first:8
         orderBy:date
         orderDirection:desc
         where: {  pairAddress: $pairAddress }
@@ -27,28 +27,85 @@ export const getTradingfeesfunc = async ( pairAddress) => {
     { pairAddress },
   )
 
-  
-  return response.pairDayDatas[0]
+  return response.pairDayDatas
 }
 
-export const useTradingFees = async ( farm) => {
-  const [tradingFees, setTradingFees] = useState('0')
+export const useTradingFees7days = (farm) => {
+  const [tradingFees7Days, setTradingFees7Days] = useState([])
 
   const LPAddresses = getAddress(farm.lpAddresses)
-  const pairAddress =  LPAddresses.toLowerCase()
+  const pairAddress = LPAddresses.toLowerCase()
+
+  useEffect(() => {
+    const fetchTradingFee = async () => {
+      const response = await getTradingfeesfunc(pairAddress)
+      let PancakeTradingFeesAPR = []
+      if (response.length === 0) {
+        PancakeTradingFeesAPR = []
+      } else {
+        let totalVolumeUSD = 0
+        let totalreserveUSD = 0
+        let apr
+
+        for (let i = 1; i < response.length; i++) {
+          totalVolumeUSD += Number(response[i].dailyVolumeUSD)
+          totalreserveUSD += Number(response[i].reserveUSD)
+          if (totalreserveUSD > 0) {
+            apr = totalVolumeUSD * 0.17 / totalreserveUSD
+            // apr = totalVolumeUSD * 365 * 0.17 / 100 / totalreserveUSD
+            PancakeTradingFeesAPR.push(apr)
+          }
+        }
+
+        // console.info('PancakeTradingFeesAPR=======', PancakeTradingFeesAPR)
+      }
+
+      setTradingFees7Days(PancakeTradingFeesAPR)
+    }
+
+    fetchTradingFee()
+  }, [pairAddress])
+
+  return { tradingFees7Days }
+}
 
 
-useEffect(() => {
-  const fetchTradingFee = async () => {
-    const response = await getTradingfeesfunc(pairAddress)
-    setTradingFees(response.reserveUSD)
-  }
+export const useTradingFees = (farm) => {
+  const [tradingFees, setTradingFees] = useState(0)
 
-  fetchTradingFee()
-}, [pairAddress])
+  const LPAddresses = getAddress(farm.lpAddresses)
+  const pairAddress = LPAddresses.toLowerCase()
 
-// console.info('tradingFees',tradingFees)
-  return tradingFees
+  useEffect(() => {
+    const fetchTradingFee = async () => {
+      const response = await getTradingfeesfunc(pairAddress)
+      let PancakeTradingFeesAPR = 0
+      if (response.length === 0) {
+        PancakeTradingFeesAPR = 0
+      } else {
+        let totalVolumeUSD = 0
+        let totalreserveUSD = 0
+        let apr
+
+        for (let i = 1; i < response.length; i++) {
+          totalVolumeUSD += Number(response[i].dailyVolumeUSD)
+          totalreserveUSD += Number(response[i].reserveUSD)
+        }
+
+        if (totalreserveUSD > 0) {
+          apr = totalVolumeUSD * 0.17 / totalreserveUSD
+          // apr = totalVolumeUSD * 365 * 0.17 / 100 / totalreserveUSD
+          PancakeTradingFeesAPR = apr
+        }
+      }
+
+      setTradingFees(PancakeTradingFeesAPR)
+    }
+
+    fetchTradingFee()
+  }, [pairAddress])
+
+  return { tradingFees }
 }
 
 

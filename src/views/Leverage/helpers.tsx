@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-properties */
 import BigNumber from 'bignumber.js'
 import { LeverageFarm } from 'state/types'
 import { CAKE_PER_YEAR, DEFAULT_TOKEN_DECIMAL, BLOCKS_PER_YEAR, LIQUIDATION_REWARDS, REINVEST_MINUTE, TRADE_FEE, CLOSE_POS_FEE, PANCAKE_TRADING_FEE, MAXIMUM_SOLD_PERCENTAGE, MINIMUM_RECEIVED_PERCENTAGE } from 'config'
@@ -85,7 +86,7 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   let quoteTokenAmountTotalNum
   let tokenInputNum
   let quoteTokenInputNum
-  if (TokenInfo?.token?.symbol?.toLowerCase() === tokenName?.toLowerCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.replace('wBNB', 'BNB').toUpperCase()) {
+  if (tokenName?.toUpperCase().replace('WBNB', 'BNB') === TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
     tokenInputNum = Number(tokenInput || 0);
     quoteTokenInputNum = Number(quoteTokenInput || 0);
     tokenAmountTotalNum = tokenAmountTotal;
@@ -99,8 +100,19 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
 
   const lptotalSupplyNum = new BigNumber(lptotalSupply).dividedBy(BIG_TEN.pow(18)).toNumber()
   // console.log({ leverage, lptotalSupplyNum, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
-  const farmdata = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNum)
-  // console.info('======farmdata======', farmdata);
+  const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNum)
+  console.info('======farmdata==11====', farmdata1);
+
+  const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNum)
+  console.info('======farmdata===22===', farmdata2);
+
+  let farmdata = [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+  if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
+    farmdata = farmdata2;
+  } else {
+    farmdata = farmdata1;
+  }
+
   return farmdata
 }
 
@@ -482,7 +494,7 @@ export const getDrop = (farm: LeverageFarm, data, tokenName?: string) => {
 
   const drop = (1 - dropValue) * 100
 
-  console.log({ 'kkkkkkk': drop1, basetokenlp, farmingtokenlp, basetokenlpborrowed, drop, TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold })
+  // console.log({ 'kkkkkkk': drop1, basetokenlp, farmingtokenlp, basetokenlpborrowed, drop, TokenInfo, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, liquidationThreshold, quoteTokenLiquidationThreshold })
   return drop
 }
 
@@ -516,14 +528,8 @@ export const getRunLogic = (riskKillThreshold, lpApr, leverage, Token0Name, Toke
     profitLossRatioSheet1Token1.push(dataList[6])
     priceRiseFall.push(m / 100 - 1)
 
-    // console.log({ '涨跌幅': m / 100 - 1, '价格': 1000 * m / 100, Token0Name, '损益比例(计价)': dataList[5], Token1Name, '损益比例+ 计价)': dataList[6] })
-
   }
-  // console.log({ priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 })
   return { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 }
-
-
-  // print('涨跌幅', m/100 - 1, '价格', 1000 * m / 100, '损益比例(' + Token0Name + '计价)', datalist[5], '损益比例(' + Token1Name + '计价)', datalist[6])
 
 }
 
@@ -542,16 +548,40 @@ export const getRunLogic1 = (priceList, riskKillThreshold, borrowingInterest, lp
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = PriceList.length // 时间长度（天）
 
-  // console.log({
-  //   RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
-  //   LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum
-  // })
-
   const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = RunLogic1(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
     LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
 
-  //     console.info('profitLossRatioToken1, ', profitLossRatioToken1 )
-  // console.info('profitLossRatioToken0, ', profitLossRatioToken0 )
-
   return { dateList, profitLossRatioToken0, profitLossRatioToken1 }
+}
+
+export const getSingle7Days = (farm: LeverageFarm, cakePrice, tradefee) => {
+  const { poolWeight, lpTotalInQuoteToken, quoteTokenPriceUsd } = farm
+  const poolWeightBigNumber: any = new BigNumber(poolWeight)
+  const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
+  const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
+  // const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
+
+  let singleApyList = []
+  let tradefeeapr
+  let yieldFarmingApr
+  let apr
+  let apy
+  if (tradefee.length === 0 || cakePrice.length === 0) {
+    singleApyList = [0, 0, 0, 0, 0, 0, 0]
+
+  } else {
+    for (let i = 1; i < tradefee.length; i++) {
+      tradefeeapr = tradefee[i] * 365 / 100
+      yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice[i]).div(poolLiquidityUsd)
+      apr = Number(tradefeeapr) + Number(yieldFarmingApr)
+      apy = ((Math.pow(1 + apr / 365, 365) - 1) * 100).toFixed(2)
+      singleApyList.push(apy)
+    }
+
+  }
+
+  console.info('singleApyList', singleApyList)
+
+  return singleApyList
+
 }

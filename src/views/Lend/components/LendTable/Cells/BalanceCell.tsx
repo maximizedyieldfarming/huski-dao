@@ -12,6 +12,7 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
   flex:1;
+  min-width : 100px;
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }

@@ -152,9 +152,9 @@ const RepayDebtConvertTo: React.FC<Props> = ({
               <Box ref={targetRef} style={{ width: '100%' }} mt="-20px">
                 <RangeInput
                   type="range"
-                  min="1.0"
+                  min="0"
                   max="100"
-                  step="0.01"
+                  step="1"
                   name="leverage"
                   value={percentage}
                   onChange={(e) => setPercentage(Number(e.target.value))}

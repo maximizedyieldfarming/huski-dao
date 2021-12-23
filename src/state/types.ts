@@ -61,9 +61,6 @@ export interface LeverageFarm extends LeverageFarmConfig {
     stakedBalance: string
     earnings: string
   }
-  tradingData?: {
-    tradingFee? : string
-  }
   lptotalSupply?: SerializedBigNumber
   tokenUserInfoLP?: SerializedBigNumber
   quoteTokenUserInfoLP?: SerializedBigNumber

@@ -294,7 +294,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const pooPerBlock = huskyPerBlock * infoFL.allocPoint / totalAllocPointFL;
   const quoteTokenPoolPerBlock = quoteTokenAlpacaPerBlock * quoteTokenInfo.allocPoint / quoteTokenTotalAllocPoint;
   const poolLendPerBlock = huskiPerBlockLend * infoLend.allocPoint / totalAllocPointLend;
-console.log({infoFL, huskyPerBlock, totalAllocPointFL })
 
 
   return {
