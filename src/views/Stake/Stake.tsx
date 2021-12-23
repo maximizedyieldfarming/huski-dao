@@ -30,6 +30,7 @@ const RewardsSummarySection = styled(Flex)`
   // ${({ theme }) => theme.mediaQueries.md} {
   //   flex-direction: row;
   // }
+  min-width : 600px!important;
   gap: 2rem;
   overflow: hidden;
   height: 220px;
@@ -50,6 +51,9 @@ const RewardsSummarySection = styled(Flex)`
       filter: drop-shadow(-6px 0px 0px white);
     }
   }
+  @media screen and (max-width : 950px){
+    min-width : unset!important;
+  }
 `
 
 const AdvertisementContainer = styled(Flex)`
@@ -58,6 +62,7 @@ const AdvertisementContainer = styled(Flex)`
   background-size: cover;
   background-position: center;
   border-radius: 12px;
+  min-height : 200px;
 `
 
 const Stake: React.FC = () => {

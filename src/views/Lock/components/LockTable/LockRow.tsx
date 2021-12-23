@@ -24,6 +24,14 @@ const StyledRow = styled.div`
   > ${Box} >${Flex} {
     &:first-child {
       border-bottom 2px solid ${({ theme }) => theme.colors.disabled};
+      @media screen and (max-width : 850px){
+        flex-direction : column!important;
+      }
+    }
+    &:nth-child(2){
+      @media screen and (max-width : 850px){
+        flex-direction : column!important;
+      }
     }
   }
   > ${Flex} {

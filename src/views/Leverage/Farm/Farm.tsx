@@ -210,7 +210,13 @@ const RangeInput = styled.input`
     }
   }
 `
-
+const SBPage = styled(Page)`
+  overflow-x : hidden;
+  @media screen and (max-width : 450px){
+    padding : 0;
+    margin : 0;
+  }
+`;
 const Farm = () => {
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { token } = useParams<RouteParams>()
@@ -375,18 +381,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.token.symbol
             : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
-          <Box  width={20}
+          <Box width={20}
             height={20}>
-          <TokenImage
-            token={
-              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-              ? tokenData?.TokenInfo.token
-              : tokenData?.TokenInfo?.quoteToken
-            }
-            width={20}
-            height={20}
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.token
+                  : tokenData?.TokenInfo?.quoteToken
+              }
+              width={20}
+              height={20}
             />
-            </Box>
+          </Box>
         ),
       },
       {
@@ -399,18 +405,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
-         <Box width={20}
+          <Box width={20}
             height={20}>
-          <TokenImage
-            token={
-              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-              ? tokenData?.TokenInfo.quoteToken
-              : tokenData?.TokenInfo?.token
-            }
-            width={20}
-            height={20}
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.quoteToken
+                  : tokenData?.TokenInfo?.token
+              }
+              width={20}
+              height={20}
             />
-            </Box>
+          </Box>
         ),
       },
     ]
@@ -542,7 +548,7 @@ const Farm = () => {
       } else {
         console.info('base + all ')
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
-       
+
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
@@ -731,29 +737,29 @@ const Farm = () => {
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
   const getWrapText = (): string => {
-    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput: quoteTokenInput
+    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
       return t(`Wrap BNB & ${leverageValue}x Farm`)
     }
     return t(`${leverageValue}x Farm`)
   }
   return (
-    <Page>
+    <SBPage>
       <Text
         as="span"
         fontWeight="bold"
         fontSize="25px"
-        style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}
+        style={{textAlign: 'center', marginBottom: '-40px' }}
       >
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
       <SectionWrapper>
         <Section className="main">
-          <Flex alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap'>
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
             </Text>
-            <Text as="span" fontSize="12px" mt="3px" color="textSubtle">
+            <Text as="span" fontSize="12px" mt="3px" color="textSubtle" minWidth={250}>
               {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
             </Text>
           </Flex>
@@ -1176,7 +1182,7 @@ const Farm = () => {
             : null}
         </Text>
       ) : null}
-    </Page>
+    </SBPage>
   )
 }
 

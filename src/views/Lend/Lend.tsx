@@ -25,6 +25,7 @@ const Section = styled(Flex)`
     // padding: 1rem;
     overflow: auto;
     gap: 2rem;
+    flex-wrap : wrap;
   }
   .block {
     background-color: ${({ theme }) => theme.colors.background};
@@ -38,6 +39,18 @@ const SBBox = styled(Box)`
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
+  min-width : 520px;
+  @media screen and (max-width : 1480px){
+    padding : 30px 0px;
+    margin-right : 0px!important;
+  }
+  @media screen and (max-width : 600px){
+    min-width : unset;
+    >h2{
+      margin-left : 20px!important;
+      font-size : 35px!important;
+    }
+  }
 `
 const VolumeBox = styled(Box)`
   padding: 30px;
@@ -57,6 +70,12 @@ const ValueBox = styled(Box)`
   border-radius: ${({ theme }) => theme.radii.default};
 `
 
+const SBPage = styled(Page)`
+  @media screen and (max-width : 425px){
+    padding-left : 5px;
+    padding-right : 5px;
+  }
+`
 const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { data: farmsData } = useLeverageFarms()
@@ -95,7 +114,7 @@ const Lend: React.FC = () => {
   const volume24h = volume24hnum
 
   return (
-    <Page>
+    <SBPage>
       <Section>
         <SBBox
           className="block"
@@ -161,7 +180,7 @@ const Lend: React.FC = () => {
       </Section>
 
       <LendTable lendData={lendData} />
-    </Page>
+    </SBPage>
   )
 }
 

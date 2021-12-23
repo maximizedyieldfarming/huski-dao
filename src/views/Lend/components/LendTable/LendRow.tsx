@@ -20,8 +20,13 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  overflow : auto;
+  width : 100%;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
+  }
+  ::-webkit-scrollbar {
+    height: 4px!important;
   }
   //cursor: pointer;
 `

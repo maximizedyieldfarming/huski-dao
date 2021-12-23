@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Box, Button, Flex, Input, Text, AutoRenewIcon,useMatchBreakpoints } from 'husky-uikit1.0'
+import { Box, Button, Flex, Input, Text, AutoRenewIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import NumberInput from 'components/NumberInput'
 import Page from 'components/Layout/Page'
 import useTokenBalance from 'hooks/useTokenBalance'
@@ -31,7 +31,7 @@ const Container = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 12px;
-  width: 510px;
+  max-width: 510px;
   max-height: 528px;
   padding: 1rem;
   > * {
@@ -178,11 +178,10 @@ const LockAction = () => {
             </Button>
           </Flex>
         </Box> */}
-        <Flex justifyContent="space-around">
+        <Flex justifyContent="space-around" flexWrap='wrap'>
           <Text color='textFarm' fontWeight='700'>Lock HUSKI for</Text>
-          <Text style={{ textDecoration: 'underline' }} color='#7B3FE4' bold>3 weeks + 3 Days</Text>
-          <Text>&</Text>
-          <Text style={{ textDecoration: 'underline' }} color='#7B3FE4' bold>Auto-Relock Monthly</Text>
+          <Text style={{ textDecoration: 'underline' }} color='#7B3FE4' bold>&nbsp;3 weeks + 3 Days & </Text>
+          <Text style={{ textDecoration: 'underline' }} color='#7B3FE4' bold>&nbsp;Auto-Relock Monthly</Text>
         </Flex>
         <Flex justifyContent="space-between" >
           <Text color="textFarm" mt='10px'>{t('APY')}</Text>
@@ -200,22 +199,23 @@ const LockAction = () => {
         >
           {isPending ? t('Confirming') : t('Confirm')}
         </Button> */}
-        <ButtonGroup flexDirection="row" justifySelf="space-between" justifyContent="space-evenly" mb="20px" mt="30px">
-          <Flex flex='0.8' style={{ alignItems: 'center', cursor: 'pointer' }}>
+        <ButtonGroup flexWrap='wrap' flexDirection="row" justifySelf="space-between" justifyContent="space-evenly" mb="20px" mt="30px!important">
+          <Flex flex='0.8' style={{ alignItems: 'center', cursor: 'pointer' }} mb='10px'>
             <img src="/images/Cheveron.svg" alt="" />
             <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }}>Back</Text>
           </Flex>
-
-          <Button
-            style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-          >
-            Confirm
-          </Button>
-          <Button
-            style={{ color: '#6F767E', backgroundColor: '#F4F4F4', width: '160px', height: '57px', borderRadius: '16px' }} disabled
-          >
-            Lock
-          </Button>
+          <Flex>
+            <Button
+              style={{ width: '150px', height: '50px', borderRadius: '16px', marginRight: '10px' }}
+            >
+              Confirm
+            </Button>
+            <Button
+              style={{ color: '#6F767E', backgroundColor: '#F4F4F4', width: '150px', height: '50px', borderRadius: '16px' }} disabled
+            >
+              Lock
+            </Button>
+          </Flex>
         </ButtonGroup>
       </Container>
       <Container className="locked">

@@ -256,17 +256,17 @@ const CloseEntirePosition = ({ data }) => {
   return (
     <>
       <Section flexDirection="column">
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" flexWrap='wrap'>
           <Box>
-            <Flex>
+            <Flex mb='10px'>
               <Text>{t('Position Value Assets')}</Text>
               {positionValueTooltipVisible && positionValueTooltip}
               <span ref={positionValueRef}>
                 <InfoIcon ml="10px" mt="2px" />
               </span>
             </Flex>
-            <BusdPriceContainer>
-              <Flex alignItems="center">
+            <BusdPriceContainer flexWrap='wrap'>
+              <Flex alignItems="center" mb='10px'>
                 <Box width={18} height={18} mr="5px">
                   <TokenImage token={TokenInfo?.token} width={20} height={20} />
                 </Box>
@@ -276,7 +276,7 @@ const CloseEntirePosition = ({ data }) => {
                   {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
-              <Flex alignItems="center">
+              <Flex alignItems="center" mb='10px'>
                 <Box width={18} height={18} mr="5px">
                   <TokenImage token={TokenInfo?.quoteToken} width={20} height={20} />
                 </Box>

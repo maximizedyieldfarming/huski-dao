@@ -52,7 +52,10 @@ const TabPanel = styled(Box)`
   height: 600px;
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 500px;
-    height: 528px;
+    height: 560px;
+  }
+  @media screen and (max-width : 550px){
+    height : 660px!important;
   }
 `
 

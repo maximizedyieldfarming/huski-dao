@@ -58,11 +58,18 @@ const FilterOption = styled(Button)`
 `
 
 const FiltersWrapper = styled(Flex)`
+  flex-wrap : wrap;
   flex-direction: column;
   gap: 1rem;
   // margin-bottom: 0.5rem;
   *::-webkit-scrollbar {
     height: 4px;
+  }
+  > ${Flex}{
+    margin-bottom : 10px;
+    @media screen and (max-width : 700px){
+      width : 100%;
+    }
   }
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
@@ -183,9 +190,9 @@ const LeverageTable = ({ leverageData }) => {
       <StyledTableBorder>
         <StyledTable role="table" ref={tableWrapperEl}>
           <FiltersWrapper>
-            <Flex alignItems="center" className="dexFilter">
+            <Flex alignItems="center" className="dexFilter" >
               <Text bold>DEX:</Text>
-              <Flex overflowX="auto">
+              <Flex overflowX='auto' overflowY='hidden'>
                 <FilterOption
                   variant="tertiary"
                   style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
@@ -214,9 +221,9 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
               </Flex>
             </Flex>
-            <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '0' : '50px'}>
+            <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
               <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
-              <Flex>
+              <Flex >
                 <FilterOption
                   variant="tertiary"
                   style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
@@ -272,7 +279,7 @@ const LeverageTable = ({ leverageData }) => {
                 </FilterOption>
               </Flex>
             </Flex>
-            <Flex className="searchSortContainer">
+            <Flex className="searchSortContainer" >
               <Text color="textSubtle" style={{ fontWeight: 400, width: '80px' }}>
                 Sort by
               </Text>

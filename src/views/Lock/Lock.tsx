@@ -29,13 +29,13 @@ const StyledButton = styled(Button)`
 `
 const RewardsSummarySection = styled(Flex)`
   flex-direction: column;
+  flex-wrap : wrap;
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
   }
    gap: 2rem;
   background-color: transparent;
   overflow:hidden;
-  height:220px;
   border-radius: ${({ theme }) => theme.radii.card};
   // padding: 1rem;
   // box-shadow: ${({ theme }) => theme.card.boxShadow};
@@ -44,18 +44,23 @@ const RewardsSummarySection = styled(Flex)`
       background: url('/images/stake/header_bg.png');
       background-repeat:no-repeat;
       background-size:cover;
-      flex:1.5 0 900px;
-      padding-right:45px;
       padding-bottom: 0;
-      border-radius: ${({ theme }) => theme.radii.card};
+      border-radius: 40px;
       // grid-template-columns: 1fr 1fr;
-      
+      ${Flex}{
+        &:nth-child(2){
+          @media screen and (max-width : 700px){
+            border : none!important;
+          }
+        }
+      }
     }
     &:nth-child(2) {
-      flex:1 0 645px;
       background: url('/images/stake/withdog.png');
       background-repeat:no-repeat;
       border-radius: 12px;
+      background-size : 100% 100%;
+     
     }
   }
 
@@ -91,6 +96,11 @@ const RewardsSummarySection = styled(Flex)`
 const Section = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   padding: 40px 1rem;
+  @media screen and (max-width : 450px){
+    padding-right : 0;
+    width : 320px;
+  }
+  flex-wrap : wrap;
   gap: 1rem;
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
@@ -116,6 +126,9 @@ const Section = styled(Flex)`
       }
       &:first-child {
         border-right: 2px solid ${({ theme }) => theme.colors.textDisabled};
+        @media screen and (max-width : 750px){
+          border : none!important;
+        }
         padding-right:50px;
       }
       &:last-child {
@@ -182,7 +195,7 @@ const Lock: React.FC = () => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
   return (
-    <Page>
+    <Page style={{ overflowX: 'hidden' }}>
       {/* <Section>
         <Box className="block" />
         <Box className="container">
@@ -195,10 +208,10 @@ const Lock: React.FC = () => {
         </Box>
       </Section> */}
       <RewardsSummarySection >
-        <Flex justifyContent="space-around">
+        <Flex justifyContent="space-around" flexWrap='wrap' >
           <Flex position="relative" flex='1.8' pt="31px" pl='21px'>
             <figure>
-              <img width='210px' height="190px" src={FlexingHuski} alt="" />
+              <img style={{ minWidth: '210px' }} height="190px" src={FlexingHuski} alt="" />
             </figure>
           </Flex>
           <Flex flex='2' flexDirection="column" justifyContent="space-between" mt='35px' mb='35px' pr="50px" ml="30px" style={{ borderRight: '2px solid white' }}>
@@ -271,7 +284,7 @@ const Lock: React.FC = () => {
               </Text>
             </Flex>
           </Flex> */}
-        <Flex flexDirection="row" alignItems="center">
+        <Flex flexDirection="row" alignItems="center" minHeight={200}>
           <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">{t('Huski Finance Advertisement')}</Text>
         </Flex>
       </RewardsSummarySection>
@@ -279,7 +292,7 @@ const Lock: React.FC = () => {
         <Section className="balanceWrapper">
           <Flex flex='1.5' justifyContent='space-between' >
 
-            <Flex alignItems='center'>
+            <Flex alignItems='center' minWidth={280}>
               <div>
                 <img src="/images/stake/Wallet.svg" alt="" />
               </div>
@@ -290,7 +303,7 @@ const Lock: React.FC = () => {
               <img src="/images/stake/MetaMask.svg" alt="" />
             </Flex>
           </Flex>
-          <Flex flex='1.5' justifyContent='space-between'>
+          <Flex flex='1.5' justifyContent='space-between' minWidth={280}>
             <Flex flex='1'>
               <img src="/images/stake/Lock.svg" alt="" />
               <Flex flexDirection="column" ml="16px">
@@ -306,7 +319,7 @@ const Lock: React.FC = () => {
             </Flex>
           </Flex>
           <Flex flex='1' justifyContent="center">
-            <Button scale="sm" width='290px' height='48px' disabled={sHuskiBalance}>
+            <Button scale="sm" width='250px' height='48px' disabled={sHuskiBalance}>
               {t('Withdraw')}
             </Button>
           </Flex>
