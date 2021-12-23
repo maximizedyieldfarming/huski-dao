@@ -140,18 +140,23 @@ const StrategyIcon = styled.div<{ market: string }>`
   }};
 `
 const SBBox = styled(Box)`
-  border-radius: ${({ theme }) => theme.radii.default};
+  border-radius: 15px !important;
   background-image: url('/images/BG.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
-  flex: 5;
-  // position: relative;
-  ${({ theme }) => theme.mediaQueries.lg} {
-    margin-right: 30px;
+  min-width : 520px;
+  @media screen and (max-width : 1480px){
+    padding : 30px 0px;
+    margin-right : 0px!important;
   }
-  display: flex;
-  align-items: center;
+  @media screen and (max-width : 600px){
+    min-width : unset;
+    >h2{
+      margin-left : 20px!important;
+      font-size : 35px!important;
+    }
+  }
 `
 
 const Section = styled(Flex)`

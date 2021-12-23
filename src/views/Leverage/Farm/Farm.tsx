@@ -209,7 +209,13 @@ const RangeInput = styled.input`
     }
   }
 `
-
+const SBPage = styled(Page)`
+  overflow-x : hidden;
+  @media screen and (max-width : 450px){
+    padding : 0;
+    margin : 0;
+  }
+`;
 const Farm = () => {
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { token } = useParams<RouteParams>()
@@ -738,22 +744,22 @@ const Farm = () => {
     return t(`${leverageValue}x Farm`)
   }
   return (
-    <Page>
+    <SBPage>
       <Text
         as="span"
         fontWeight="bold"
         fontSize="25px"
-        style={{ alignSelf: 'start', marginLeft: '250px', marginBottom: '-40px' }}
+        style={{textAlign: 'center', marginBottom: '-40px' }}
       >
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
       <SectionWrapper>
         <Section className="main">
-          <Flex alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap'>
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
             </Text>
-            <Text as="span" fontSize="12px" mt="3px" color="textSubtle">
+            <Text as="span" fontSize="12px" mt="3px" color="textSubtle" minWidth={250}>
               {t('To form a yield farming position,assets deposited will be converted to LPs based on a 50:50 ratio.')}
             </Text>
           </Flex>
@@ -1176,7 +1182,7 @@ const Farm = () => {
             : null}
         </Text>
       ) : null}
-    </Page>
+    </SBPage>
   )
 }
 

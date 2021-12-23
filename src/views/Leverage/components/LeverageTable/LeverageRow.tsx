@@ -13,8 +13,11 @@ import { useTradingFees } from '../../hooks/useTradingFees'
 import LeverageCell from './Cells/LeverageCell'
 import TvlCell from './Cells/TvlCell'
 import Borrowing from './Cells/Borrowing'
+import BaseCell from './Cells/BaseCell'
 
 const StyledRow = styled.div`
+  overflow : auto;
+  
   background-color: transparent;
   display: flex;
   flex-direction: column;
@@ -23,6 +26,13 @@ const StyledRow = styled.div`
   }
 
   //cursor: pointer;
+  > ${BaseCell}{
+    padding-top : 10px!important;
+    padding-bottom : 10px!important;
+  }
+  ::-webkit-scrollbar {
+    height: 4px!important;
+  }
 `
 
 const LeverageRow = ({ tokenData }) => {

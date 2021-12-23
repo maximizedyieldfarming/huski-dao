@@ -488,7 +488,7 @@ const AdjustPositionSA = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/singleAssets')
+        history.push('/singleAssets')
       }
     } catch (error) {
       console.info('error', error)
@@ -580,7 +580,7 @@ const AdjustPositionSA = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/singleAssets')
+        history.push('/singleAssets')
       }
     } catch (error) {
       console.info('error', error)
@@ -633,8 +633,8 @@ const AdjustPositionSA = () => {
       </Text>
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
-        <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }}>
-          <Text>
+        <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap' style={{ border: 'none' }}>
+          <Text mb = '10px'>
             {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
           <CurrentPostionToken>

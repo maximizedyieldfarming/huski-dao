@@ -64,7 +64,8 @@ const Section = styled(Box)`
   padding: 1rem;
 
   > ${Flex} {
-    padding: 1.5rem 2rem;
+    
+    padding: 1.5rem 0;
   }
 
   input[type='range'] {
@@ -85,6 +86,13 @@ const SectionWrapper = styled(Page)`
        // height:;
       }
     }
+  }
+  @media screen and (max-width : 450px)
+  {
+      margin-left : 10px;
+      margin-right : 10px;
+      padding-left : 10px;
+      padding-right : 10px;
   }
 `
 
@@ -136,7 +144,18 @@ const BalanceInputWrapper = styled(Flex)`
     }
   }
 `
+const SBPage = styled(Page)`
+  @media screen and (max-width : 450px){
+      padding-left : 10px!important;
+      padding-right : 10px!important
+  }
+`
 
+const ButtonMenuField = styled(Box)`
+::-webkit-scrollbar {
+    height: 4px!important;
+  }
+`
 const FarmSA = () => {
     const { t } = useTranslation()
     const { isMobile, isTable } = useMatchBreakpoints()
@@ -839,7 +858,7 @@ const FarmSA = () => {
 
     const [chartype, setChartType] = useState(0);
     return (
-        <Page>
+        <SBPage>
             <Text bold fontSize="3" color="secondary" mx="auto">
                 {t(
                     `Farming ${singleFarm.QuoteTokenInfo.name.toUpperCase().replace('WBNB', 'BNB')
@@ -854,19 +873,21 @@ const FarmSA = () => {
 
                     <Section>
                         <Flex justifyContent="space-between" style={{ flexFlow: "row wrap" }}>
-                            <Flex>
+                            <Flex mb='20px'>
                                 <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>{t(`Time Profit`)}</Text>
                                 <Text style={{ cursor: "pointer", color: chartype === 1 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 1 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(1)}>{t(`Price Profit`)}</Text>
                             </Flex>
-                            <Flex>
-                                <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
-                                <Text>{t('USD Value')}</Text>
+                            <Flex flexWrap='wrap'>
+                                <Flex mr="10px" mb='10px'>
+                                    <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
+                                    <Text>{t('USD Value')}</Text>
+                                </Flex>
+                                <Flex mr="10px" mb='10px'>
+                                    <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
+                                    <Text>{t('Coin Value')}</Text>
+                                </Flex>
+                                <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy.toFixed(2)}%</Text>
                             </Flex>
-                            <Flex>
-                                <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
-                                <Text>{t('Coin Value')}</Text>
-                            </Flex>
-                            <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy.toFixed(2)}%</Text>
                         </Flex>
                         {chartype === 0 ? <ReactEcharts option={getOption()} style={{ height: '500px' }} /> :
                             <ReactEcharts option={getOption2()} style={{ height: '500px' }} />}
@@ -920,7 +941,7 @@ const FarmSA = () => {
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
-                                <Box width="90%" overflow="auto">
+                                <ButtonMenuField overflow="auto">
                                     <ButtonMenu
                                         onItemClick={setInputToFraction}
                                         activeIndex={buttonIndex}
@@ -931,7 +952,7 @@ const FarmSA = () => {
                                         <ButtonMenuItem>75%</ButtonMenuItem>
                                         <ButtonMenuItem>100%</ButtonMenuItem>
                                     </ButtonMenu>
-                                </Box>
+                                </ButtonMenuField>
                             </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
@@ -1002,7 +1023,7 @@ const FarmSA = () => {
                     </Section>
                 </Flex>
             </SectionWrapper >
-        </Page >
+        </SBPage >
     )
 }
 

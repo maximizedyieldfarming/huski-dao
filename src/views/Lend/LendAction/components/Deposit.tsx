@@ -241,9 +241,9 @@ const Deposit: React.FC<DepositProps> = ({
             )} ib${name}`}</span>
           </Text>
         </Flex>
-        <Section justifyContent="space-between" style = {{background: isDark ? '#111315' : '#F7F7F8'}}>
+        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
           <Box>
-            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700}}>
+            <Text style={{ backgroundColor: 'transparent', fontSize: '28px', fontWeight: 700 }}>
               {assetsReceived !== 'NaN' ? assetsReceived : 0}
             </Text>
           </Box>
@@ -251,7 +251,7 @@ const Deposit: React.FC<DepositProps> = ({
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{fontWeight: 700 }}>ib{name}</Text>
+                <Text color="textFarm" style={{ fontWeight: 700 }}>ib{name}</Text>
               </Grid>
             </MaxContainer>
           </Box>
@@ -280,32 +280,35 @@ const Deposit: React.FC<DepositProps> = ({
             {isPending ? t('Approving') : t('Approve')}
           </Button>
         )} */}
-        {isApproved ? null : (
+        <Flex flexWrap='wrap' justifyContent="right">
+          {isApproved ? null : (
+            <Button
+              style={{ width: '160px', height: '57px', borderRadius: '16px', marginBottom: '10px' }}
+              onClick={handleApprove}
+              disabled={!account || isApproving}
+              isLoading={isApproving}
+              endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+            >
+              {isApproving ? t('Approving') : t('Approve')}
+            </Button>
+          )}
           <Button
+            onClick={handleConfirm}
             style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-            onClick={handleApprove}
-            disabled={!account || isApproving}
-            isLoading={isApproving}
-            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+            disabled={
+              !account ||
+              !isApproved ||
+              Number(amount) === 0 ||
+              amount === undefined ||
+              Number(userTokenBalance) === 0 ||
+              isPending
+            }
+            isLoading={isPending}
+            endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           >
-            {isApproving ? t('Approving') : t('Approve')}
+            {isPending ? t('Confirming') : t('Confirm')}
           </Button>
-        )}
-        <Button
-          onClick={handleConfirm}
-          disabled={
-            !account ||
-            !isApproved ||
-            Number(amount) === 0 ||
-            amount === undefined ||
-            Number(userTokenBalance) === 0 ||
-            isPending
-          }
-          isLoading={isPending}
-          endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-        >
-          {isPending ? t('Confirming') : t('Confirm')}
-        </Button>
+        </Flex>
       </ButtonGroup>
     </Page>
   )

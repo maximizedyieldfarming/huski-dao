@@ -410,7 +410,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
@@ -441,7 +441,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -573,7 +573,7 @@ const AdjustPosition = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -643,7 +643,7 @@ const AdjustPosition = () => {
       if (receipt.status) {
         console.info('receipt', receipt)
         toastSuccess(t('Successful!'), t('Your request was successfull'))
-      history.push('/farms')
+        history.push('/farms')
       }
     } catch (error) {
       console.info('error', error)
@@ -726,7 +726,6 @@ const AdjustPosition = () => {
   )
 
 
-  console.log("upd", UpdatedDebt, "min", minimumDebt?.toNumber())
   const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
   const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
   const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
@@ -1106,15 +1105,15 @@ const AdjustPosition = () => {
         <PercentageToCloseContext.Provider
           value={{ percentage: percentageToClose, setPercentage: setPercentageToClose }}
         >
-          <Page>
+          <Page style={{ overflowX: 'hidden' }}>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
               {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Flex justifyContent="space-between" flexDirection={isSmallScreen ? 'column' : 'row'}>
               <Box width={isSmallScreen ? 'unset' : '60%'}>
                 <Section>
-                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }}>
-                    <Text>
+                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }} flexWrap='wrap'>
+                    <Text mb='10px'>
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
                     <CurrentPostionToken >
@@ -1142,7 +1141,7 @@ const AdjustPosition = () => {
                       : new BigNumber(targetPositionLeverage).toFixed(2, 1)}
                     x
                   </Text>
-                  <PositionX ml="auto" color="#6F767E">
+                  <PositionX ml="auto" color="#6F767E" mt='10px'>
                     <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
                   </PositionX>
                   <Flex style={{ border: 'none' }}>
