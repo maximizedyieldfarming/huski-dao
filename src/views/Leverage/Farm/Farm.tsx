@@ -375,18 +375,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.token.symbol
             : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
-          <Box  width={20}
+          <Box width={20}
             height={20}>
-          <TokenImage
-            token={
-              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-              ? tokenData?.TokenInfo.token
-              : tokenData?.TokenInfo?.quoteToken
-            }
-            width={20}
-            height={20}
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.token
+                  : tokenData?.TokenInfo?.quoteToken
+              }
+              width={20}
+              height={20}
             />
-            </Box>
+          </Box>
         ),
       },
       {
@@ -399,18 +399,18 @@ const Farm = () => {
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
-         <Box width={20}
+          <Box width={20}
             height={20}>
-          <TokenImage
-            token={
-              selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-              ? tokenData?.TokenInfo.quoteToken
-              : tokenData?.TokenInfo?.token
-            }
-            width={20}
-            height={20}
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.quoteToken
+                  : tokenData?.TokenInfo?.token
+              }
+              width={20}
+              height={20}
             />
-            </Box>
+          </Box>
         ),
       },
     ]
@@ -530,21 +530,26 @@ const Farm = () => {
       // single base token
       if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('base + single + token input ')
-        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+        // strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddAllBaseToken
+        // dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        // dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+
+        console.info('base + all ')
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
+        strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('base + single + quote token input ')
         farmingTokenAmount = (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1', '1']) // [param.farmingTokenAmount, param.minLPAmount]) last 1, represent advanced farm
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
-       
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, minLPAmount]) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, minLPAmount, '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
@@ -555,22 +560,27 @@ const Farm = () => {
       // farm token is base token
       if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('farm + single + token input ')
-        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
-        dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+        // strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
+        // dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        // dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
+        console.info('farm + all -')
+        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (tokenInput || 0)?.toString()
+        strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('farm + single + quote token input ')
         wrapFlag = true
         farmingTokenAmount = (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
         wrapFlag = true
-        farmingTokenAmount = (tokenInput || 0)?.toString()
+        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '') // (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
@@ -605,9 +615,9 @@ const Farm = () => {
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
       // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
       // need mod commit name 
-      const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
       // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
-      console.info('wrap bnb')
+      console.info('wrap bnb', bnbMsgValue)
       handleDeposit(bnbMsgValue)
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
@@ -731,7 +741,7 @@ const Farm = () => {
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
   const getWrapText = (): string => {
-    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput: quoteTokenInput
+    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
       return t(`Wrap BNB & ${leverageValue}x Farm`)
     }
