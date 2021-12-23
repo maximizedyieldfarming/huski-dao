@@ -5,17 +5,14 @@ import {
     Box,
     Button,
     Flex,
-    Radio,
     InfoIcon,
     Text,
     Skeleton,
     useTooltip,
-    ArrowForwardIcon,
     useMatchBreakpoints,
     AutoRenewIcon,
-    BalanceInput, ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
+    ButtonMenu as UiKitButtonMenu, ButtonMenuItem as UiKitButtonMenuItem
 } from 'husky-uikit1.0'
-import Select from 'components/Select/Select'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -46,11 +43,11 @@ import {
     getHuskyRewards,
     getYieldFarming,
     getLeverageFarmingData,
-    getBorrowingInterest,
     getRunLogic,
     getRunLogic1,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 
 interface LocationParams {
     singleData?: any
@@ -299,11 +296,12 @@ const FarmSA = () => {
     const huskyRewards = getHuskyRewards(singleFarm, huskyPrice, tokenName)
     const yieldFarmData = getYieldFarming(singleFarm, cakePrice)
     const { borrowingInterest } = useFarmsWithToken(singleFarm, tokenName)
+    const { tradingFees: tradeFee } = useTradingFees(singleFarm)
 
     const getApr = (lvg: number) => {
         const totalapr =
             Number((yieldFarmData / 100) * lvg) +
-            Number(((singleFarm?.tradeFee * 365) / 100) * lvg) +
+            Number(((tradeFee * 365) / 100) * lvg) +
             Number(huskyRewards * (lvg - 1)) -
             Number(borrowingInterest * (lvg - 1))
         return totalapr
@@ -816,7 +814,7 @@ const FarmSA = () => {
     }, [getTokenSelectOptions, marketStrategy, singleFarm, tokenInfoToUse])
 
     const yieldFarming = Number(yieldFarmData * singleLeverage)
-    const tradingFees = Number((singleFarm?.tradeFee * 365) * singleLeverage)
+    const tradingFees = Number((tradeFee * 365) * singleLeverage)
     const huskyRewardsData = Number(huskyRewards * (singleLeverage - 1)) * 100
     const borrowingInterestData = Number(borrowingInterest * (singleLeverage - 1)) * 100
     const apr = getApr(singleLeverage) * 100

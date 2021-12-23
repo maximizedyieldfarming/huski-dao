@@ -32,11 +32,11 @@ import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import {
   getHuskyRewards,
   getYieldFarming,
-  getBorrowingInterest,
   getAdjustData,
   getAdjustPositionRepayDebt,
 } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
+import { useTradingFees } from '../hooks/useTradingFees'
 
 interface MoveProps {
   move: number
@@ -215,7 +215,6 @@ const AdjustPositionSA = () => {
     QuoteTokenInfo,
     tokenPriceUsd,
     quoteTokenPriceUsd,
-    tradeFee,
     leverage,
     lptotalSupply,
     tokenAmountTotal,
@@ -354,6 +353,7 @@ const AdjustPositionSA = () => {
   const huskyRewards = getHuskyRewards(data?.farmData, huskyPrice, symbolName) * 100
   // const { borrowingInterest } = getBorrowingInterest(data?.farmData, symbolName)
   const { borrowingInterest } = useFarmsWithToken(data?.farmData, symbolName)
+  const { tradingFees: tradeFee } = useTradingFees(data?.farmData)
   const yieldFarmAPR = yieldFarmData * Number(currentPositionLeverage)
   const tradingFeesAPR = Number(tradeFee) * 365 * Number(currentPositionLeverage)
   const huskiRewardsAPR = huskyRewards * (currentPositionLeverage - 1)

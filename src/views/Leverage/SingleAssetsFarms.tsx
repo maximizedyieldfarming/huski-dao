@@ -339,7 +339,7 @@ const SingleAssetsFarms: React.FC = () => {
           </Text>
           <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
             <Text mb="5px" color="textFarm" fontWeight="700" fontSize="28px">
-              {reward.toPrecision(3)}
+              {new BigNumber(reward || 0).toFixed(3, 1)}
             </Text>
             <StyledButton
               as={Link}

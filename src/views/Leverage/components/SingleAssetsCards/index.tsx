@@ -7,28 +7,24 @@ import {
   CardBody as UiKitCardBody,
   Flex,
   Text,
-  CardRibbon,
   Skeleton,
   Button,
   Box,
   Grid,
   ChevronDownIcon,
-  ArrowUpIcon,
 } from 'husky-uikit1.0'
 import styled from 'styled-components'
-import { TokenPairImage, TokenImage } from 'components/TokenImage'
+import { TokenPairImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { formatBigNumber } from 'state/utils'
-import Select from 'components/Select/Select'
 import * as echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
-import { useCakePrice, useHuskiPrice } from 'hooks/api'
+import { useCakePrice, useHuskiPrice, usePriceList } from 'hooks/api'
 import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
+import { useTradingFees, useTradingFees7days } from '../../hooks/useTradingFees'
 import { useBorrowingInterest7days } from '../../hooks/useBorrowingInterest7days'
-import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
+import { getHuskyRewards, getYieldFarming, getTvl, getSingle7Days } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
 
@@ -99,8 +95,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const [singleData, setSingleData] = useState<any>(data?.singleArray[0])
   const { isDark } = useTheme()
 
-
-  useBorrowingInterest7days()
+  const { tradingFees7Days } = useTradingFees7days(singleData)
   const [selectedPool, setSelectedPool] = useState(0)
   const { liquidationThreshold, quoteTokenLiquidationThreshold, tokenAmountTotal, quoteTokenAmountTotal } = singleData
   const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -119,12 +114,13 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const yieldFarmData = getYieldFarming(singleData, cakePrice)
   // const { borrowingInterest } = getBorrowingInterest(singleData, borrowingAsset)
   const { borrowingInterest } = useFarmsWithToken(singleData, borrowingAsset)
+  const { tradingFees: tradeFee } = useTradingFees(singleData)
   const dropdown = useRef(null)
 
   const getApr = (lvg) => {
     const apr =
       Number((yieldFarmData / 100) * lvg) +
-      Number(((singleData.tradeFee * 365) / 100) * lvg) +
+      Number(((tradeFee * 365) / 100) * lvg) +
       Number(huskyRewards * (lvg - 1)) -
       Number(borrowingInterest * (lvg - 1))
     return apr
@@ -141,6 +137,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     const dailyEarnings = ((apr / 365) * parseFloat(quoteTokenAmountTotal)) / parseFloat(tokenAmountTotal)
     return dailyEarnings
   }
+
+
+  const cakePriceList = usePriceList('pancakeswap-token')
+
+  const singleApyList = getSingle7Days(singleData, cakePriceList, tradingFees7Days)
 
   const strategies = React.useMemo(
     () => [
@@ -245,7 +246,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         {
           symbol: 'none',
           type: 'line',
-          data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
+          data: singleApyList,
           smooth: 0.3,
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -264,9 +265,9 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       ],
       grid: {
         left: 0,
-        top: 1,
+        top: 20,
         right: 0,
-        bottom: 0,
+        bottom: 10,
       },
     }
     return option
