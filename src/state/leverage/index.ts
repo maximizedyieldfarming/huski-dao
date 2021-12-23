@@ -25,11 +25,7 @@ const noAccountFarmConfig = leverageFarmsConfig.map((farm) => ({
     tokenBalance: '0',
     stakedBalance: '0',
     earnings: '0',
-  },
-  tradingData: {
-    tradingFee: '0',
-
-  },
+  }
 }))
 
 const initialState: LeverageFarmsState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false, tradingDataLoaded: false }

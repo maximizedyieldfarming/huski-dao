@@ -1,31 +1,31 @@
 import { useEffect, useState } from 'react'
 import useRefresh from 'hooks/useRefresh'
+import { getAddress } from 'utils/addressHelpers'
 import request, { gql } from 'graphql-request'
 import { VOLUME_24H } from 'config/constants/endpoints'
 import moment from 'moment'
 
-export const getPairDayDatasfunc = async (date) => {
+export const getPairDayDatasfunc = async (baseTokenAddress) => {
 
   const response = await request(
     VOLUME_24H,
     gql`
-      query getVolume($date: BigInt) {
+      query getVolume($baseTokenAddress: String) {
         vaultDayDatas(
-        first:10
-        where: {  date: $date }
+        first:8
+        where: {  baseTokenAddress: $baseTokenAddress }
       ) {
-        id
         dailyBorrowingInterestMean
       }
       }
     `,
-    { date },
+    { baseTokenAddress },
   )
 
   return response.vaultDayDatas
 }
 
-export const useBorrowingInterest7days = async () => {
+export const useBorrowingInterest7days = (farm) => {
   const [borrowingInterest7day, setBorrowingInterest7day] = useState(0)
 
   useEffect(() => {
@@ -33,15 +33,27 @@ export const useBorrowingInterest7days = async () => {
 
       try {
         // const date = moment().format('YYYY-MM-DD 00:00:00');
-        const date = moment().subtract(1, 'days').format('YYYY-MM-DD 00:00:00');
-        const timestamp = moment(date).unix()
-        console.info('date ', timestamp)
+        // const date = moment().subtract(1, 'days').format('YYYY-MM-DD 00:00:00');
+        // const timestamp = moment(date).unix()
+        console.info('date ', farm)
 
-        const response = await getPairDayDatasfunc(timestamp)
+
+        const LPAddresses = getAddress(farm.lpAddresses)
+        const pairAddress = LPAddresses.toLowerCase()
+        const response = await getPairDayDatasfunc(pairAddress)
         console.info(response)
-        const { dailyBorrowingInterestMean } = response
-        const dailyBorrowingInterest = (dailyBorrowingInterestMean || 0) * 86400 / (10 ** 18)
-        setBorrowingInterest7day(dailyBorrowingInterest)
+
+        for (let i = 1; i < response.length; i++) {
+         
+         const dailyBorrowingInterest  = response[i].dailyBorrowingInterestMean
+          const dailyBorrowingInterest7days = (dailyBorrowingInterest || 0) * 86400 / (10 ** 18)
+
+          console.info(' dailyBorrowingInterest7days', dailyBorrowingInterest7days)
+        }
+    
+
+        console.info(response)
+        // setBorrowingInterest7day(dailyBorrowingInterest)
 
       } catch (error) {
         console.error('Unable to fetch data form gql:', error)
@@ -52,7 +64,7 @@ export const useBorrowingInterest7days = async () => {
     }
 
     fetchTradingFee()
-  }, [])
+  }, [farm, farm.lpAddresses])
 
   console.info('borrowingInterest7day', borrowingInterest7day)
   return borrowingInterest7day

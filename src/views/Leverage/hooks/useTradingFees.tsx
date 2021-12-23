@@ -30,6 +30,46 @@ export const getTradingfeesfunc = async (pairAddress) => {
   return response.pairDayDatas
 }
 
+export const useTradingFees7days = (farm) => {
+  const [tradingFees7Days, setTradingFees7Days] = useState([])
+
+  const LPAddresses = getAddress(farm.lpAddresses)
+  const pairAddress = LPAddresses.toLowerCase()
+
+  useEffect(() => {
+    const fetchTradingFee = async () => {
+      const response = await getTradingfeesfunc(pairAddress)
+      let PancakeTradingFeesAPR = []
+      if (response.length === 0) {
+        PancakeTradingFeesAPR = []
+      } else {
+        let totalVolumeUSD = 0
+        let totalreserveUSD = 0
+        let apr
+
+        for (let i = 1; i < response.length; i++) {
+          totalVolumeUSD += Number(response[i].dailyVolumeUSD)
+          totalreserveUSD += Number(response[i].reserveUSD)
+          if (totalreserveUSD > 0) {
+            apr = totalVolumeUSD * 0.17 / totalreserveUSD
+            // apr = totalVolumeUSD * 365 * 0.17 / 100 / totalreserveUSD
+            PancakeTradingFeesAPR.push(apr)
+          }
+        }
+
+        // console.info('PancakeTradingFeesAPR=======', PancakeTradingFeesAPR)
+      }
+
+      setTradingFees7Days(PancakeTradingFeesAPR)
+    }
+
+    fetchTradingFee()
+  }, [pairAddress])
+
+  return { tradingFees7Days }
+}
+
+
 export const useTradingFees = (farm) => {
   const [tradingFees, setTradingFees] = useState(0)
 
