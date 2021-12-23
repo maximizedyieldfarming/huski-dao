@@ -748,7 +748,7 @@ const AdjustPosition = () => {
 
 
   const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
-  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
   const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
 
   const principal = 1
@@ -1089,7 +1089,7 @@ const AdjustPosition = () => {
     for (
       let i = 1;
       i <
-      (leverage < Number(currentPositionLeverage) ? new BigNumber(currentPositionLeverage).toFixed(2, 1) : leverage) /
+      (leverage < currentPositionLeverage ? currentPositionLeverage : leverage) /
       0.5;
       i++
     ) {
@@ -1133,11 +1133,11 @@ const AdjustPosition = () => {
             <Flex justifyContent="space-between" flexDirection={isSmallScreen ? 'column' : 'row'}>
               <Box width={isSmallScreen ? 'unset' : '60%'}>
                 <Section>
-                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }} flexWrap='wrap'>
-                    <Text mb='10px'>
+                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }} flexWrap="wrap">
+                    <Text mb="10px">
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
-                    <CurrentPostionToken >
+                    <CurrentPostionToken>
                       <Text bold>{`${symbolName}#${positionId}`}</Text>
                       <Box width={24} height={24}>
                         <TokenPairImage
@@ -1162,7 +1162,7 @@ const AdjustPosition = () => {
                       : new BigNumber(targetPositionLeverage).toFixed(2, 1)}
                     x
                   </Text>
-                  <PositionX ml="auto" color="#6F767E" mt='10px'>
+                  <PositionX ml="auto" color="#6F767E" mt="10px">
                     <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
                   </PositionX>
                   <Flex style={{ border: 'none' }}>
@@ -1176,11 +1176,7 @@ const AdjustPosition = () => {
                         <RangeInput
                           type="range"
                           min="1.0"
-                          max={
-                            leverage < Number(currentPositionLeverage)
-                              ? new BigNumber(currentPositionLeverage).toFixed(2, 1)
-                              : leverage
-                          }
+                          max={leverage < currentPositionLeverage ? currentPositionLeverage : leverage}
                           step="0.01"
                           name="leverage"
                           value={targetPositionLeverage}
@@ -1231,6 +1227,23 @@ const AdjustPosition = () => {
                       </datalist>
                     </Box>
                   </Flex>
+                  <Flex width="100%" alignItems="center" justifyContent="center">
+                    <Text color="red">
+                      {!isAddCollateral &&
+                      Number(targetPositionLeverage) !== 1 &&
+                      Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                        ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                          ? t(
+                              'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
+                              {
+                                minimumDebt: minimumDebt.toNumber(),
+                                name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                              },
+                            )
+                          : null
+                        : null}
+                    </Text>
+                  </Flex>
                   {Number(targetPositionLeverage.toFixed(2)) > Number(currentPositionLeverage.toFixed(2)) && (
                     <Flex justifyContent="space-between" alignItems="center">
                       <Text>{t(`You're Borrowing More`)}</Text>
@@ -1245,32 +1258,36 @@ const AdjustPosition = () => {
                       </BorrowingMoreContainer>
                     </Flex>
                   )}
-                  {shouldShowACRDContainer ? <AddCollateralRepayDebtContainer
-                    currentPositionLeverage={Number(currentPositionLeverage)}
-                    targetPositionLeverage={Number(targetPositionLeverage)}
-                    userQuoteTokenBalance={userQuoteTokenBalance}
-                    userTokenBalance={userTokenBalance}
-                    quoteTokenName={isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol}
-                    tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
-                    quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
-                    token={isAddCollateral ? token : tokenValue}
-                    tokenInput={tokenInput}
-                    quoteTokenInput={quoteTokenInput}
-                    setTokenInput={setTokenInput}
-                    setQuoteTokenInput={setQuoteTokenInput}
-                    symbolName={symbolName}
-                    tokenPrice={tokenPriceUsd}
-                    quoteTokenPrice={quoteTokenPriceUsd}
-                    baseTokenAmountValue={baseTokenAmount}
-                    farmTokenAmountValue={farmTokenAmount}
-                    minimizeTradingValues={getAdjustPositionRepayDebt(
-                      data.farmData,
-                      data,
-                      Number(targetPositionLeverage),
-                      percentageToClose / 100,
-                      symbolName,
-                    )}
-                  /> : null}
+                  {shouldShowACRDContainer ? (
+                    <AddCollateralRepayDebtContainer
+                      currentPositionLeverage={Number(currentPositionLeverage)}
+                      targetPositionLeverage={Number(targetPositionLeverage)}
+                      userQuoteTokenBalance={userQuoteTokenBalance}
+                      userTokenBalance={userTokenBalance}
+                      quoteTokenName={
+                        isAddCollateral ? quoteToken?.symbol.replace('wBNB', 'BNB') : quoteTokenValueSymbol
+                      }
+                      tokenName={isAddCollateral ? token?.symbol.replace('wBNB', 'BNB') : tokenValueSymbol}
+                      quoteToken={isAddCollateral ? quoteToken : quoteTokenValue}
+                      token={isAddCollateral ? token : tokenValue}
+                      tokenInput={tokenInput}
+                      quoteTokenInput={quoteTokenInput}
+                      setTokenInput={setTokenInput}
+                      setQuoteTokenInput={setQuoteTokenInput}
+                      symbolName={symbolName}
+                      tokenPrice={tokenPriceUsd}
+                      quoteTokenPrice={quoteTokenPriceUsd}
+                      baseTokenAmountValue={baseTokenAmount}
+                      farmTokenAmountValue={farmTokenAmount}
+                      minimizeTradingValues={getAdjustPositionRepayDebt(
+                        data.farmData,
+                        data,
+                        Number(targetPositionLeverage),
+                        percentageToClose / 100,
+                        symbolName,
+                      )}
+                    />
+                  ) : null}
                   {/*  {(Number(targetPositionLeverage) === 1 && Number(currentPositionLeverage.toPrecision(3))) === 1 && (
                     <AddCollateralRepayDebtContainer
                       currentPositionLeverage={Number(currentPositionLeverage)}
@@ -1445,23 +1462,8 @@ const AdjustPosition = () => {
                         height={50}
                       >
                         {isPending ? t('Confirming') : t('Confirm')}
-
                       </Button>
                     )}
-                  </Flex>
-                  <Flex width="100%" alignItems="center" justifyContent="center">
-                    <Text color="red">
-                      {!isAddCollateral &&
-                        Number(targetPositionLeverage) !== 1 &&
-                        Number(targetPositionLeverage) !== Number(currentPositionLeverage)
-                        ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-                          ? t('Minimum Debt Size: %minimumDebt% %name%', {
-                            minimumDebt: minimumDebt.toNumber(),
-                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                          })
-                          : null
-                        : null}
-                    </Text>
                   </Flex>
                 </Section>
               </Box>
