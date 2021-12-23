@@ -190,6 +190,8 @@ const AdjustPosition = () => {
   let workerAddress;
   let withdrawMinimizeTradingAddress;
   let partialCloseLiquidateAddress
+  let strategyLiquidateAddress
+  let strategyWithdrawMinimizeTradingAddress
   let contract;
   let tokenInputValue;
   let quoteTokenInputValue;
@@ -213,6 +215,8 @@ const AdjustPosition = () => {
     workerAddress = TokenInfo.address
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
+    strategyLiquidateAddress = TokenInfo.strategies.StrategyLiquidate
+    strategyWithdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyWithdrawMinimizeTrading
     contract = vaultContract
     tokenInputValue = tokenInput || 0 // formatNumber(tokenInput)
     quoteTokenInputValue = quoteTokenInput || 0 // formatNumber(quoteTokenInput)
@@ -242,6 +246,8 @@ const AdjustPosition = () => {
     workerAddress = QuoteTokenInfo.address
     withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
+    strategyLiquidateAddress = QuoteTokenInfo.strategies.StrategyLiquidate
+    strategyWithdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyWithdrawMinimizeTrading
     contract = quoteTokenVaultContract
     tokenInputValue = quoteTokenInput || 0 // formatNumber(quoteTokenInput)
     quoteTokenInputValue = tokenInput || 0 // formatNumber(tokenInput)
@@ -615,11 +621,19 @@ const AdjustPosition = () => {
     const minbasetoken = getDecimalAmount(new BigNumber(receive), 18).toString().replace(/\.(.*?\d*)/g, '') // Number(receive).toString()
     // const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
     const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, maxDebtRepaymentValue, minbasetoken]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
+
+    let addressClose
+    if (percentageToClose === 100) {
+      addressClose = strategyLiquidateAddress
+    } else {
+      addressClose = partialCloseLiquidateAddress
+    }
+
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [addressClose, dataStrategy]);
     console.log({
       'handleConfirmConvertTo-symbolName': symbolName, maxDebtRepaymentValue,
       returnLpTokenValue, receive, id, workerAddress,
-      amount, loan, dataStrategy,
+      amount, loan, dataStrategy, addressClose,
       convertedPositionValue, partialCloseLiquidateAddress,
       minbasetoken, maxReturn, dataWorker,
       'ethers.utils.parseEther(minbasetokenvalue)': ethers.utils.parseEther(minbasetoken)
@@ -668,9 +682,16 @@ const AdjustPosition = () => {
     const minfarmtokenvalue = getDecimalAmount(new BigNumber(minfarmtoken), 18).toString().replace(/\.(.*?\d*)/g, '')  // minfarmtoken.toString() 
     // const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minfarmtokenvalue)]);
     const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.constants.MaxUint256, minfarmtokenvalue]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+    let addressClose
+    if (percentageToClose === 100) {
+      addressClose = strategyWithdrawMinimizeTradingAddress
+    } else {
+      addressClose = withdrawMinimizeTradingAddress
+    }
 
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [addressClose, dataStrategy]);
     console.log({
+      percentageToClose,
       '这是最小化关仓': symbolName, id, returnLpTokenValue,
       workerAddress, amount, loan, convertedPositionValue, minfarmtokenvalue, maxDebtRepayment,
       'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
@@ -727,8 +748,8 @@ const AdjustPosition = () => {
 
 
   const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
-  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
-  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt) 
+  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
 
   const principal = 1
   const maxValue = 1 - principal / (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
@@ -1093,7 +1114,7 @@ const AdjustPosition = () => {
     } if (targetPositionLeverage > currentPositionLeverage) {
       return false
     }
-     if (targetPositionLeverage < currentPositionLeverage) {
+    if (targetPositionLeverage < currentPositionLeverage) {
       return true
     }
     return false
@@ -1429,19 +1450,19 @@ const AdjustPosition = () => {
                     )}
                   </Flex>
                   <Flex width="100%" alignItems="center" justifyContent="center">
-                  <Text color="red">
-                    {!isAddCollateral &&
-                    Number(targetPositionLeverage) !== 1 &&
-                    Number(targetPositionLeverage) !== Number(currentPositionLeverage)
-                    ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-                    ? t('Minimum Debt Size: %minimumDebt% %name%', {
-                      minimumDebt: minimumDebt.toNumber(),
-                      name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                    })
-                    : null
-                    : null}
-                  </Text>
-                    </Flex>
+                    <Text color="red">
+                      {!isAddCollateral &&
+                        Number(targetPositionLeverage) !== 1 &&
+                        Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                        ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                          ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                            minimumDebt: minimumDebt.toNumber(),
+                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                          })
+                          : null
+                        : null}
+                    </Text>
+                  </Flex>
                 </Section>
               </Box>
               <Box width={isSmallScreen ? 'unset' : '38%'} mt={isSmallScreen ? '2rem' : 'unset'}>
