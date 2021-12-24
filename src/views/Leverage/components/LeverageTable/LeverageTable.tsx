@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Button, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/Select'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
+import { BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import LeverageRow from './LeverageRow'
 import LeverageHeaderRow from './LeverageHeaderRow'
@@ -16,12 +16,18 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
-  > div:not(:last-child) {
+  > ${Box}>div:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   ${({ theme }) => theme.mediaQueries.lg} {
-    > div:not(:last-child) {
+    > ${Box}>div:not(:last-child) {
       border-bottom: none;
+    }
+  }
+  > ${Box} {
+    overflow: auto;
+    ::-webkit-scrollbar {
+      height: 8px;
     }
   }
 `
@@ -58,17 +64,17 @@ const FilterOption = styled(Button)`
 `
 
 const FiltersWrapper = styled(Flex)`
-  flex-wrap : wrap;
+  flex-wrap: wrap;
   flex-direction: column;
   gap: 1rem;
   // margin-bottom: 0.5rem;
   *::-webkit-scrollbar {
     height: 4px;
   }
-  > ${Flex}{
-    margin-bottom : 10px;
-    @media screen and (max-width : 700px){
-      width : 100%;
+  > ${Flex} {
+    margin-bottom: 10px;
+    @media screen and (max-width: 700px) {
+      width: 100%;
     }
   }
   ${({ theme }) => theme.mediaQueries.lg} {
@@ -189,128 +195,130 @@ const LeverageTable = ({ leverageData }) => {
     <>
       <StyledTableBorder>
         <StyledTable role="table" ref={tableWrapperEl}>
-          <FiltersWrapper>
-            <Flex alignItems="center" className="dexFilter" >
-              <Text bold>DEX:</Text>
-              <Flex overflowX='auto' overflowY='hidden'>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
-                  isActive={dexFilter === 'all'}
-                  onClick={() => setDexFilter('all')}
-                >
-                  {t('All')}
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
-                  startIcon={<PancakeSwapIcon />}
-                  isActive={dexFilter === 'PancakeSwap'}
-                  onClick={() => setDexFilter('PancakeSwap')}
-                >
-                  PancakeSwap
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
-                  startIcon={<img src="/images/BUSD.svg" width="32px" height="32px" alt="" />}
-                  isActive={dexFilter === 'WaultSwap'}
-                  onClick={() => setDexFilter('WaultSwap')}
-                >
-                  WaultSwap
-                </FilterOption>
+          <Box>
+            <FiltersWrapper>
+              <Flex alignItems="center" className="dexFilter">
+                <Text bold>DEX:</Text>
+                <Flex overflowX="auto" overflowY="hidden">
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
+                    isActive={dexFilter === 'all'}
+                    onClick={() => setDexFilter('all')}
+                  >
+                    {t('All')}
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
+                    startIcon={<PancakeSwapIcon />}
+                    isActive={dexFilter === 'PancakeSwap'}
+                    onClick={() => setDexFilter('PancakeSwap')}
+                  >
+                    PancakeSwap
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
+                    startIcon={<img src="/images/BUSD.svg" width="32px" height="32px" alt="" />}
+                    isActive={dexFilter === 'WaultSwap'}
+                    onClick={() => setDexFilter('WaultSwap')}
+                  >
+                    WaultSwap
+                  </FilterOption>
+                </Flex>
               </Flex>
-            </Flex>
-            <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
-              <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
-              <Flex >
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                  isActive={pairFilter === 'all'}
-                  onClick={() => setPairFilter('all')}
-                >
-                  {t('All')}
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                  startIcon={<HuskiIcon />}
-                  isActive={pairFilter === 'huski'}
-                  onClick={() => setPairFilter('huski')}
-                >
-                  Huski
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                  startIcon={<BnbIcon />}
-                  isActive={pairFilter === 'wbnb'}
-                  onClick={() => setPairFilter('wbnb')}
-                >
-                  BNB
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                  startIcon={<BusdIcon />}
-                  isActive={pairFilter === 'busd'}
-                  onClick={() => setPairFilter('busd')}
-                >
-                  BUSD
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                  startIcon={<BtcbIcon />}
-                  isActive={pairFilter === 'btcb'}
-                  onClick={() => setPairFilter('btcb')}
-                >
-                  BTCB
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                  startIcon={<EthIcon />}
-                  isActive={pairFilter === 'eth'}
-                  onClick={() => setPairFilter('eth')}
-                >
-                  ETH
-                </FilterOption>
+              <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
+                <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
+                <Flex>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    isActive={pairFilter === 'all'}
+                    onClick={() => setPairFilter('all')}
+                  >
+                    {t('All')}
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    startIcon={<HuskiIcon />}
+                    isActive={pairFilter === 'huski'}
+                    onClick={() => setPairFilter('huski')}
+                  >
+                    Huski
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    startIcon={<BnbIcon />}
+                    isActive={pairFilter === 'wbnb'}
+                    onClick={() => setPairFilter('wbnb')}
+                  >
+                    BNB
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    startIcon={<BusdIcon />}
+                    isActive={pairFilter === 'busd'}
+                    onClick={() => setPairFilter('busd')}
+                  >
+                    BUSD
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    startIcon={<BtcbIcon />}
+                    isActive={pairFilter === 'btcb'}
+                    onClick={() => setPairFilter('btcb')}
+                  >
+                    BTCB
+                  </FilterOption>
+                  <FilterOption
+                    variant="tertiary"
+                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    startIcon={<EthIcon />}
+                    isActive={pairFilter === 'eth'}
+                    onClick={() => setPairFilter('eth')}
+                  >
+                    ETH
+                  </FilterOption>
+                </Flex>
               </Flex>
-            </Flex>
-            <Flex className="searchSortContainer" >
-              <Text color="textSubtle" style={{ fontWeight: 400, width: '80px' }}>
-                Sort by
-              </Text>
-              <Select
-                options={[
-                  {
-                    label: `${t('Default')}`,
-                    value: 'default',
-                  },
-                  {
-                    label: `${t('APY')}`,
-                    value: 'apy',
-                  },
-                  {
-                    label: `${t('TVL')}`,
-                    value: 'tvl',
-                  },
-                  {
-                    label: `${t('Leverage')}`,
-                    value: 'leverage',
-                  },
-                ]}
-                onChange={handleSortOptionChange}
-              />
-              <SearchInput onChange={handleChangeQuery} placeholder="Search" />
-            </Flex>
-          </FiltersWrapper>
-          {!(isMobile || isTablet) && <LeverageHeaderRow />}
-          {farmsData.map((token) => (
-            <LeverageRow tokenData={token} key={token?.pid} />
-          ))}
+              <Flex className="searchSortContainer">
+                <Text color="textSubtle" style={{ fontWeight: 400, width: '80px' }}>
+                  Sort by
+                </Text>
+                <Select
+                  options={[
+                    {
+                      label: `${t('Default')}`,
+                      value: 'default',
+                    },
+                    {
+                      label: `${t('APY')}`,
+                      value: 'apy',
+                    },
+                    {
+                      label: `${t('TVL')}`,
+                      value: 'tvl',
+                    },
+                    {
+                      label: `${t('Leverage')}`,
+                      value: 'leverage',
+                    },
+                  ]}
+                  onChange={handleSortOptionChange}
+                />
+                <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+              </Flex>
+            </FiltersWrapper>
+            {!(isMobile || isTablet) && <LeverageHeaderRow />}
+            {farmsData.map((token) => (
+              <LeverageRow tokenData={token} key={token?.pid} />
+            ))}
+          </Box>
         </StyledTable>
       </StyledTableBorder>
     </>

@@ -16,6 +16,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useTheme from 'hooks/useTheme'
 import { useGetPositions } from 'hooks/api'
 import { usePositions } from './hooks/usePositions'
+import { usePositionsFormContract } from './hooks/usePositionsFormContract'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
@@ -129,7 +130,8 @@ const Leverage: React.FC = () => {
   const { isDark } = useTheme()
   usePollLeverageFarmsWithUserData()
   const data = useGetPositions(account)
-  const positionData = usePositions(data)
+  const positionData = usePositionsFormContract(farmsData, account)
+  // const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []
   if (

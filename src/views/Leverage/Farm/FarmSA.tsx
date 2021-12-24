@@ -536,10 +536,14 @@ const FarmSA = () => {
 
     const getOption = () => {
         const option = {
-
-            tooltip: {
-                trigger: 'axis'
+           tooltip: {
+            formatter: (params) => {
+              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
+                params[1].marker
+              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
             },
+            trigger: 'axis',
+          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -556,7 +560,7 @@ const FarmSA = () => {
             },
             series: [
                 {
-                    name: '邮件营销1',
+                    name: t('USD Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
@@ -569,7 +573,7 @@ const FarmSA = () => {
                     data: data1
                 },
                 {
-                    name: '视频广告',
+                    name: t('Coin Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
@@ -582,13 +586,16 @@ const FarmSA = () => {
         return option
     }
 
-
     const getOption2 = () => {
         const option = {
-
             tooltip: {
-                trigger: 'axis'
+            formatter: (params) => {
+              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
+                params[1].marker
+              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
             },
+            trigger: 'axis',
+          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -605,7 +612,7 @@ const FarmSA = () => {
             },
             series: [
                 {
-                    name: '邮件营销1',
+                    name: t('USD Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
@@ -618,7 +625,7 @@ const FarmSA = () => {
                     data: data11
                 },
                 {
-                    name: '视频广告',
+                    name: t('Coin Value'),
                     type: 'line',
                     stack: '总量',
                     symbol: 'none',
@@ -665,7 +672,7 @@ const FarmSA = () => {
                 selected: 4  // 默认选中的范围，值为上面 buttons 数组的下标（从 0 开始）
             },
             chart: {
-                backgroundColor: isDark ? "#111315" : "white",
+                backgroundColor: "transparent",
                 polar: true,
                 type: 'line',
                 color: "white"
@@ -682,8 +689,12 @@ const FarmSA = () => {
             series: [{
                 // type: 'line',
                 id: '000001',
-                name: '平安银行',
-                data: tokenPriceList
+                name: 'Price',
+                data: tokenPriceList,
+                tooltip: {
+                    valueDecimals: 2,
+                    pointFormat: '{series.name}: <b>&dollar;{point.y}</b><br/>',
+              },
             }]
 
         };

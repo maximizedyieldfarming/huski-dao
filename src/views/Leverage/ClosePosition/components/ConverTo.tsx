@@ -268,8 +268,8 @@ const ConverTo = ({ data }) => {
           </Box>
           {data ? (
             <Text bold>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-              {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(baseTokenAmount).lt(0.001) ? new BigNumber(baseTokenAmount).toFixed(6, 1) : new BigNumber(baseTokenAmount).toFixed(3, 1)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -285,7 +285,7 @@ const ConverTo = ({ data }) => {
           </Flex>
           {data ? (
             <Text bold>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
