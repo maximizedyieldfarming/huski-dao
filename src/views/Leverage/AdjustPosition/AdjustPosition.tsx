@@ -747,9 +747,36 @@ const AdjustPosition = () => {
   )
 
 
-  const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
-  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const isAddCollateralConfirmDisabled = (() => {
+    if (currentPositionLeverage > targetPositionLeverage) {
+      return Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0
+    }
+    if (currentPositionLeverage < targetPositionLeverage) {
+      return new BigNumber(UpdatedDebt).lt(minimumDebt)
+    }
+    return true
+  })()
+
+  const iscConvertToConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage !== 1) {
+      return  new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+    }
+    return true
+  })()
+
+    // targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const isMinimizeTradingConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage !== 1) {
+      return  new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+    }
+    return true
+  })()
 
   const principal = 1
   const maxValue = 1 - principal / (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
