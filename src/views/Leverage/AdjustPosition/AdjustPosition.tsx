@@ -10,6 +10,7 @@ import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import { TRADE_FEE } from 'config'
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
@@ -756,15 +757,34 @@ const AdjustPosition = () => {
     }
     return true
   })()
-  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+
+  const iscConvertToConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage !== 1) {
+      return new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+    }
+    return true
+  })()
+
+  // targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const isMinimizeTradingConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage !== 1) {
+      return new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+    }
+    return true
+  })()
 
   const principal = 1
   const maxValue = 1 - principal / (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
   const updatedDebtRatio = Number(targetPositionLeverage) === Number(currentPositionLeverage) ? debtRatio.toNumber() : 1 - principal / (remainLeverage || 1)
 
   // convert to 
-  const convertedPositionValueAssets = Number(needCloseBase) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(needCloseFarm) * (1 - 0.0025) + farmingtokenBegin)
+  const convertedPositionValueAssets = Number(needCloseBase) + basetokenBegin - farmingtokenBegin * basetokenBegin / (Number(needCloseFarm) * (1 - TRADE_FEE) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   // minimize trading
@@ -774,7 +794,7 @@ const AdjustPosition = () => {
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
     amountToTrade = 0;
   } else {
-    amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - 0.0025)
+    amountToTrade = (basetokenBegin * farmingtokenBegin / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) - farmingtokenBegin) / (1 - TRADE_FEE)
   }
 
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
@@ -1238,16 +1258,16 @@ const AdjustPosition = () => {
                   <Flex width="100%" alignItems="center" justifyContent="center">
                     <Text color="red">
                       {!isAddCollateral &&
-                      Number(targetPositionLeverage) !== 1 &&
-                      Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                        Number(targetPositionLeverage) !== 1 &&
+                        Number(targetPositionLeverage) !== Number(currentPositionLeverage)
                         ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
                           ? t(
-                              'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
-                              {
-                                minimumDebt: minimumDebt.toNumber(),
-                                name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                              },
-                            )
+                            'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
+                            {
+                              minimumDebt: minimumDebt.toNumber(),
+                              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                            },
+                          )
                           : null
                         : null}
                     </Text>
