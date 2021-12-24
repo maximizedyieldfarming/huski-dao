@@ -144,9 +144,10 @@ const Leverage: React.FC = () => {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
-        if (
+        if ((
           farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ||
-          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()
+          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()) &&
+          pdata.serialCode === '1'
         ) {
           pfarmData = pdata
           pfarmData.farmData = farm

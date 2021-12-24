@@ -40,9 +40,7 @@ export const fetchPositionsFormContract = async (farmsToFetch, account) => {
         return self.findIndex(el => el.positionId === element.positionId) === index
     })
 
-    console.info('returnArr===', returnArr)
     return returnArr;
-
 }
 
 export const fetchPositionInfo = async (positions) => {
@@ -59,8 +57,7 @@ export const fetchPositionInfo = async (positions) => {
 
     const positionsWorker = await multicall(VaultABI, calls)
 
-    console.info('positionsWorker', positionsWorker)
-
+    // console.info('positionsWorker', positionsWorker)
     const positionsData = positionsWorker.map((data, index) => {
 
         return {
@@ -72,10 +69,7 @@ export const fetchPositionInfo = async (positions) => {
             serialCode: new BigNumber(data.serialCode._hex).toJSON(), // parseInt(data.serialCode._hex),
         }
     });
-
-
-    console.info('positionsData', positionsData)
-
+    // console.info('positionsData', positionsData)
 
     return positionsData
 }
@@ -97,6 +91,7 @@ export const fetchPositionInfo = async (positions) => {
 
 //     return parsedVaultAllowances
 // }
+
 export const fetchLpAmount = async (data) => {
 
     const calls = data.map((farm, index) => {
@@ -142,25 +137,24 @@ export const usePositionsFormContract = (data, account) => {
         const positions = async () => {
             const positionsOwner = await fetchPositionsFormContract(data, account);
             const positionsWorker = await fetchPositionInfo(positionsOwner);
-
             // const debtShares = await fetchDebtShares(positionsWorker);
             const lpAmount = await fetchLpAmount(positionsWorker);
             const positionInfo = await fetchPositionsInfo(positionsWorker);
             const positionsData = positionsWorker.map((worker, index) => {
 
-                console.info('worker', worker)
                 return {
                     positionId: worker.positionId,
                     worker: worker.worker,
                     vault: worker.vault,
                     owner: worker.owner,
                     debtShares: worker.debtShares,
+                    serialCode: worker.serialCode,
                     lpAmount: lpAmount[index],
                     debtValue: positionInfo[index][1],
                     positionValueBase: positionInfo[index][0],
                 }
             });
-            console.info('=====', positionsData)
+
             const positionsDataFilter = positionsData.filter((position) => position.positionsOwner !== '0')
             setPositionData(positionsDataFilter)
             return positionsDataFilter
