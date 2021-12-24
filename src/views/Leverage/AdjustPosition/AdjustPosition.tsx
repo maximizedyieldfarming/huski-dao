@@ -757,8 +757,27 @@ const AdjustPosition = () => {
     }
     return true
   })()
-  const iscConvertToConfirmDisabled = targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
-  const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+
+  const iscConvertToConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage !== 1) {
+      return new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+    }
+    return true
+  })()
+
+  // targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+  const isMinimizeTradingConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage !== 1) {
+      return new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+    }
+    return true
+  })()
 
   const principal = 1
   const maxValue = 1 - principal / (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
@@ -1239,16 +1258,16 @@ const AdjustPosition = () => {
                   <Flex width="100%" alignItems="center" justifyContent="center">
                     <Text color="red">
                       {!isAddCollateral &&
-                      Number(targetPositionLeverage) !== 1 &&
-                      Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                        Number(targetPositionLeverage) !== 1 &&
+                        Number(targetPositionLeverage) !== Number(currentPositionLeverage)
                         ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
                           ? t(
-                              'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
-                              {
-                                minimumDebt: minimumDebt.toNumber(),
-                                name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                              },
-                            )
+                            'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
+                            {
+                              minimumDebt: minimumDebt.toNumber(),
+                              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                            },
+                          )
                           : null
                         : null}
                     </Text>
