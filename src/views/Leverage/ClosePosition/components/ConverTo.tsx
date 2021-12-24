@@ -11,6 +11,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
 import { useWeb3React } from '@web3-react/core'
 import { useHistory } from 'react-router-dom'
+import { TRADE_FEE } from 'config'
 import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
@@ -108,11 +109,11 @@ const ConverTo = ({ data }) => {
   const convertedPositionValueAssets =
     Number(baseTokenAmount) +
     basetokenBegin -
-    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
+    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - TRADE_FEE) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   const priceImpact = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
-  const tradingFees = Number(farmTokenAmount) * 0.0025
+  const tradingFees = Number(farmTokenAmount) * TRADE_FEE
 
   const [isPending, setIsPending] = React.useState(false)
   const { account } = useWeb3React()

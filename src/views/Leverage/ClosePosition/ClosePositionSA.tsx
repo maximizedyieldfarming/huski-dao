@@ -9,6 +9,7 @@ import styled,{useTheme} from 'styled-components'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import { TRADE_FEE } from 'config'
 import { ethers } from 'ethers'
 import { TokenPairImage } from 'components/TokenImage'
 import { ArrowDownIcon } from 'assets'
@@ -149,7 +150,7 @@ const ClosePositionSA = () => {
   const convertedPositionValueAssets =
     Number(baseTokenAmount) +
     basetokenBegin -
-    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
+    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - TRADE_FEE) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   const [isPending, setIsPending] = useState<boolean>(false)
