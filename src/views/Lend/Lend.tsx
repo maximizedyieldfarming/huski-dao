@@ -97,14 +97,17 @@ const Lend: React.FC = () => {
   console.log({ lendData })
 
   let depositTotalToken = 0
+  let depositTotalDebtVal = 0
   lendData.map((farm) => {
-    const { totalToken, tokenPriceUsd } = farm
+    const { totalToken, vaultDebtVal, tokenPriceUsd } = farm
     const totalSupplyUSD = (Number(totalToken) * Number(tokenPriceUsd)) / 10 ** 18
+    const totalBorrowedUSD = (Number(vaultDebtVal) * Number(tokenPriceUsd)) / 10 ** 18
     depositTotalToken += totalSupplyUSD
-    return depositTotalToken
+    depositTotalDebtVal += totalBorrowedUSD
+    return { depositTotalToken, depositTotalDebtVal }
   })
 
-  const totalValueLocked = Number(lpTokensTvl) + Number(depositTotalToken)
+  const totalValueLocked = Number(lpTokensTvl) + Number(depositTotalToken) - Number(depositTotalDebtVal)
   const totalValueLockedValue = totalValueLocked.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
   usePollLeverageFarmsWithUserData()
 
