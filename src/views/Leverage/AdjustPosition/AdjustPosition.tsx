@@ -747,7 +747,15 @@ const AdjustPosition = () => {
   )
 
 
-  const isAddCollateralConfirmDisabled = currentPositionLeverage > targetPositionLeverage ? Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0 : new BigNumber(UpdatedDebt).lt(minimumDebt)
+  const isAddCollateralConfirmDisabled = (() => {
+    if (currentPositionLeverage > targetPositionLeverage) {
+      return Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0
+    }
+    if (currentPositionLeverage < targetPositionLeverage) {
+      return new BigNumber(UpdatedDebt).lt(minimumDebt)
+    }
+    return true
+  })()
   const iscConvertToConfirmDisabled = targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0  : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
   const isMinimizeTradingConfirmDisabled = targetPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
 
