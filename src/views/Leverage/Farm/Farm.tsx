@@ -704,8 +704,8 @@ const Farm = () => {
     }
   }
 
-  const { isMobile, isTable } = useMatchBreakpoints()
-  const isMobileOrTable = isMobile || isTable
+  const { isMobile, isTableT } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTableT
 
   const principal = 1
   const maxValue = 1 - principal / tokenData?.leverage
@@ -811,28 +811,28 @@ const Farm = () => {
               <ButtonArea justifyContent="space-between" background="backgroundAlt">
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   25%
                 </StyledButton>
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   50%
                 </StyledButton>
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   75%
                 </StyledButton>
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   100%
@@ -872,28 +872,28 @@ const Farm = () => {
               <ButtonArea justifyContent="space-between">
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   25%
                 </StyledButton>
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   50%
                 </StyledButton>
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   75%
                 </StyledButton>
                 <StyledButton
                   variant="secondary"
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   100%

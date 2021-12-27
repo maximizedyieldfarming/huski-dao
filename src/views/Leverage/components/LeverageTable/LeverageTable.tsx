@@ -44,7 +44,7 @@ const FilterOption = styled(Button)`
   font-size: 13px;
   background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.input : theme.colors.inputSecondary)};
+  color: ${({ theme, isActive }) => (isActive ? theme.colors.text : theme.colors.textSubtle)};
   border-radius: 10px;
   margin: 0 5px;
   > svg {
@@ -229,7 +229,7 @@ const LeverageTable = ({ leverageData }) => {
                 </Flex>
               </Flex>
               <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
-                <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
+                <Text bold>{t('Paired Assets:')}</Text>
                 <Flex>
                   <FilterOption
                     variant="tertiary"
@@ -287,8 +287,8 @@ const LeverageTable = ({ leverageData }) => {
                 </Flex>
               </Flex>
               <Flex className="searchSortContainer">
-                <Text color="textSubtle" style={{ fontWeight: 400, width: '80px' }}>
-                  Sort by
+                <Text bold >
+                  {t('Sort by:')}
                 </Text>
                 <Select
                   options={[

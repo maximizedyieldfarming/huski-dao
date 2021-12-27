@@ -107,16 +107,18 @@ const InputArea = styled(Flex)`
 
 const ButtonMenu = styled(UiKitButtonMenu)`
 
+  // background-color: ${({ theme }) => (theme.colors.silver )};
   border-radius: 12px;
   border: unset;
   width: 100%;
 `
 
 const ButtonMenuItem = styled(UiKitButtonMenuItem)`
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : theme.colors.text)};
+  color: ${({ theme, isActive }) => (isActive ? theme.colors.text : theme.colors.textDisabled)};
   box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
+  // background-color: ${({ theme, isActive }) => (theme.colors.silver )};
   &:hover:not(:disabled):not(:active) {
-    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.textSubtle)};
+    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.disabled)};
   }
   &:first-child {
     border-top-right-radius: 0;
@@ -151,15 +153,10 @@ const SBPage = styled(Page)`
   }
 `
 
-const ButtonMenuField = styled(Box)`
-::-webkit-scrollbar {
-    height: 4px!important;
-  }
-`
 const FarmSA = () => {
     const { t } = useTranslation()
-    const { isMobile, isTable } = useMatchBreakpoints()
-    const isMobileOrTable = isMobile || isTable
+    const { isMobile, isTablet } = useMatchBreakpoints()
+    const isSmallScreen = isMobile || isTablet
     const { account } = useWeb3React()
 
     const {
@@ -960,18 +957,17 @@ const FarmSA = () => {
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
-                                <ButtonMenuField overflow="auto">
                                     <ButtonMenu
                                         onItemClick={setInputToFraction}
                                         activeIndex={buttonIndex}
                                         disabled={userTokenBalance.eq(0)}
+                                        scale={isSmallScreen ? 'sm' : 'md'}
                                     >
                                         <ButtonMenuItem>25%</ButtonMenuItem>
                                         <ButtonMenuItem>50%</ButtonMenuItem>
                                         <ButtonMenuItem>75%</ButtonMenuItem>
                                         <ButtonMenuItem>100%</ButtonMenuItem>
                                     </ButtonMenu>
-                                </ButtonMenuField>
                             </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
