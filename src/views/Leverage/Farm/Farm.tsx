@@ -683,18 +683,18 @@ const Farm = () => {
     getAddress(tokenData?.TokenInfo?.token?.address),
     tokenData?.TokenInfo?.vaultAddress,
   )
-    let allowance = '0'
-    if (
-      radio?.toUpperCase().replace('WBNB', 'BNB') ===
-      tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
-    ) {
-      allowance =
-        Number(tokenData.userData?.quoteTokenAllowance) > 0
-          ? tokenData.userData?.quoteTokenAllowance
-          : quoteTokenAllowance.toString()
-    } else {
-      allowance = Number(tokenData.userData?.tokenAllowance) > 0 ? tokenData.userData?.tokenAllowance : tokenAllowance.toString()
-    }
+  let allowance = '0'
+  if (
+    radio?.toUpperCase().replace('WBNB', 'BNB') ===
+    tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  ) {
+    allowance =
+      Number(tokenData.userData?.quoteTokenAllowance) > 0
+        ? tokenData.userData?.quoteTokenAllowance
+        : quoteTokenAllowance.toString()
+  } else {
+    allowance = Number(tokenData.userData?.tokenAllowance) > 0 ? tokenData.userData?.tokenAllowance : tokenAllowance.toString()
+  }
 
   const isApproved = Number(allowance) > 0
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
@@ -706,15 +706,18 @@ const Farm = () => {
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
     let contract
+    let approveAddress
     if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
       contract = approveContract // quoteTokenApproveContract
+      approveAddress = quoteTokenVaultAddress
     } else {
       contract = quoteTokenApproveContract // approveContract
+      approveAddress = vaultAddress // quoteTokenVaultAddress
     }
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
-      const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await contract.approve(approveAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
