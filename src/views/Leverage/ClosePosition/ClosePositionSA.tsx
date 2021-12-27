@@ -82,11 +82,11 @@ const ClosePositionSA = () => {
   const { balance: tokenBalance } = useTokenBalance(getAddress(TokenInfo.token.address))
   const { balance: bnbBalance } = useGetBnbBalance()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(data.farmData?.TokenInfo.vaultAddress).balance).toJSON()
-  console.log(userTokenBalanceIb);
+  // console.log(userTokenBalanceIb);
 
   const userTokenBalance = getBalanceAmount(TokenInfo.token.symbol.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
 
-  console.log(data);
+  // console.log(data);
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenVaultAddress = TokenInfo?.vaultAddress
@@ -298,10 +298,10 @@ const ClosePositionSA = () => {
               </Box>
               <Box ml="5px">
                 <Text style={{ whiteSpace: 'nowrap' }} ml="5px" bold>
-                  {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace("WBNB", "BNB")}
+                  {lpSymbolName.toUpperCase().replace("WBNB", "BNB")}
                 </Text>
                 <Text style={{ whiteSpace: 'nowrap' }} ml="5px" fontSize="12px" color="#6F767E">
-                  {lpSymbolName.split(' ')[1].replace('Worker', '')}
+                  {data?.farmData?.lpExchange}
                 </Text>
               </Box>
             </Flex>
