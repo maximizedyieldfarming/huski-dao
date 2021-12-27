@@ -743,7 +743,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.trx,
       vaultAddress: "0xf846fa18682f985138cE43BCC6F989B6eD69bc81",
       pId: 442,
-      name: "TRX-BUSD Worker",
+      name: "TRX-BUSD",
       address: "0xE10FdB63d6e4Add164d216b07533d4C6044f7291",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -760,7 +760,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.busd,
       vaultAddress: "0xf846fa18682f985138cE43BCC6F989B6eD69bc81",
       pId: 442,
-      name: "TRX-BUSD Worker",
+      name: "TRX-BUSD",
       address: "0xE10FdB63d6e4Add164d216b07533d4C6044f7291",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -788,7 +788,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.btt,
       vaultAddress: "0xf846fa18682f985138cE43BCC6F989B6eD69bc81",
       pId: 443,
-      name: "BTT-BUSD Worker",
+      name: "BTT-BUSD",
       address: "0xdD22094261D304AA43C1D26A31eAB411E8856342",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -805,7 +805,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.busd,
       vaultAddress: "0xf846fa18682f985138cE43BCC6F989B6eD69bc81",
       pId: 443,
-      name: "BTT-BUSD Worker",
+      name: "BTT-BUSD",
       address: "0xdD22094261D304AA43C1D26A31eAB411E8856342",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -833,7 +833,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.ada,
       vaultAddress: "0xcc1477f75872876673Fbdf6829Cd89dfe9455956",
       pId: 253,
-      name: "ADA-BNB Worker",
+      name: "ADA-BNB",
       address: "0x4cFefA8684057b61c480c1a48044E292AFa386EE",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -850,7 +850,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.wbnb,
       vaultAddress: "0xcc1477f75872876673Fbdf6829Cd89dfe9455956",
       pId: 253,
-      name: "ADA-BNB Worker",
+      name: "ADA-BNB",
       address: "0x4cFefA8684057b61c480c1a48044E292AFa386EE",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -878,7 +878,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.axs,
       vaultAddress: "0xcc1477f75872876673Fbdf6829Cd89dfe9455956",
       pId: 430,
-      name: "AXS-BNB Worker",
+      name: "AXS-BNB",
       address: "0x3De7Dc76A676e223226AE1F6e2FDdaba42406776",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -895,7 +895,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.wbnb,
       vaultAddress: "0xcc1477f75872876673Fbdf6829Cd89dfe9455956",
       pId: 430,
-      name: "AXS-BNB Worker",
+      name: "AXS-BNB",
       address: "0x3De7Dc76A676e223226AE1F6e2FDdaba42406776",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -924,7 +924,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.cake,
       vaultAddress: "0xbD91429B7546AFe01c2CC4a4587bBB2E66302534",
       pId: 422,
-      name: "CAKE-USDT Worker",
+      name: "CAKE-USDT",
       address: "0x9CF453e5CeECEdB0A8A2799EabD1557cE93364EE",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -941,7 +941,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.usdt,
       vaultAddress: "0xbD91429B7546AFe01c2CC4a4587bBB2E66302534",
       pId: 422,
-      name: "CAKE-USDT Worker",
+      name: "CAKE-USDT",
       address: "0x9CF453e5CeECEdB0A8A2799EabD1557cE93364EE",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -969,7 +969,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.usdc,
       vaultAddress: "0xbD91429B7546AFe01c2CC4a4587bBB2E66302534",
       pId: 423,
-      name: "USDC-USDT Worker",
+      name: "USDC-USDT",
       address: "0xDd6E310AF88BdE13AE9a9Fc16BF0A125d927015d",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -986,7 +986,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.usdt,
       vaultAddress: "0xe363355790cfC313F5aB1939155356e72bf662Fb",
       pId: 423,
-      name: "USDT-USDC Worker",
+      name: "USDT-USDC",
       address: "0xdc822cb4334a8C27dDc6B392a985fC3395c30e1E",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {

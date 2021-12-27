@@ -13,8 +13,9 @@ import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import useTheme from 'hooks/useTheme'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { useGetPositions } from 'hooks/api'
-import { usePositions } from './hooks/usePositions'
+// import { useGetPositions } from 'hooks/api'
+// import { usePositions } from './hooks/usePositions'
+import { usePositionsFormContract } from './hooks/usePositionsFormContract'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 import SingleAssetsCard from './components/SingleAssetsCards'
@@ -193,8 +194,8 @@ const SingleAssetsFarms: React.FC = () => {
   const bnbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'wBNB')
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
   const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
-  const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ALPACA') // HUSKI
-  const cakeArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'CAKE')
+  const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'HUSKI')
+  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'CAKE' && f.singleFlag ===0 )
 
   let singlesData = []
 
@@ -204,14 +205,6 @@ const SingleAssetsFarms: React.FC = () => {
       singleArray: bnbArray,
     }
     singlesData.push(tokenObject)
-
-    // let single
-    // const farmData = bnbArray
-    // marketArray.map((item) => {
-    //   const newObject = { farmData }
-    //   single = { ...newObject, ...item }
-    //   singlesData.push(single)
-    // })
   }
   if (btcbArray && btcbArray !== null && btcbArray !== undefined && btcbArray !== [] && btcbArray.length !== 0) {
     const tokenObject = {
@@ -219,22 +212,8 @@ const SingleAssetsFarms: React.FC = () => {
       singleArray: btcbArray,
     }
     singlesData.push(tokenObject)
-    // let single
-    // const farmData = btcbArray
-    // marketArray.map((item) => {
-    //   const newObject = { farmData }
-    //   single = { ...newObject, ...item }
-    //   singlesData.push(single)
-    // })
   }
   if (ethArray && ethArray !== null && ethArray !== undefined && ethArray !== [] && ethArray.length !== 0) {
-    // let single
-    // const farmData = ethArray
-    // marketArray.map((item) => {
-    //   const newObject = { farmData }
-    //   single = { ...newObject, ...item }
-    //   singlesData.push(single)
-    // })
     const tokenObject = {
       name: 'ETH',
       singleArray: ethArray,
@@ -243,7 +222,7 @@ const SingleAssetsFarms: React.FC = () => {
   }
   if (huskiArray && huskiArray !== null && huskiArray !== undefined && huskiArray !== [] && huskiArray.length !== 0) {
     const tokenObject = {
-      name: 'ALPACA',
+      name: 'HUSKI',
       singleArray: huskiArray,
     }
     singlesData.push(tokenObject)
@@ -257,13 +236,6 @@ const SingleAssetsFarms: React.FC = () => {
     // })
   }
   if (cakeArray && cakeArray !== null && cakeArray !== undefined && cakeArray !== [] && cakeArray.length !== 0) {
-    // let single
-    // const farmData = cakeArray
-    // marketArray.map((item) => {
-    //   const newObject = { farmData }
-    //   single = { ...newObject, ...item }
-    //   singlesData.push(single)
-    // })
     const tokenObject = {
       name: 'CAKE',
       singleArray: cakeArray,
@@ -271,8 +243,9 @@ const SingleAssetsFarms: React.FC = () => {
     singlesData.push(tokenObject)
   }
 
-  const data = useGetPositions(account)
-  const positionData = usePositions(data)
+  // const data = useGetPositions(account)
+  // const positionData = usePositions(data)
+  const positionData = usePositionsFormContract(farmsData, account)
   const positionFarmsData = []
   if (
     positionData &&
@@ -284,9 +257,10 @@ const SingleAssetsFarms: React.FC = () => {
     positionData.map((pdata) => {
       let pfarmData
       farmsData.map((farm) => {
-        if (
+        if ((
           farm.TokenInfo.address.toUpperCase() === pdata.worker.toUpperCase() ||
-          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()
+          farm.QuoteTokenInfo.address.toUpperCase() === pdata.worker.toUpperCase()) &&
+          pdata.serialCode !== '1'
         ) {
           pfarmData = pdata
           pfarmData.farmData = farm
@@ -312,7 +286,7 @@ const SingleAssetsFarms: React.FC = () => {
   if (dexFilter !== 'all') {
     singlesData = singlesData.filter((pool) => pool?.singleArray[0]?.lpExchange === dexFilter)
   }
-
+console.info('singlesData',singlesData)
   return (
     <Page>
       <Section>

@@ -14,8 +14,8 @@ import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useClaimFairLaunch } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useTheme from 'hooks/useTheme'
-import { useGetPositions } from 'hooks/api'
-import { usePositions } from './hooks/usePositions'
+// import { useGetPositions } from 'hooks/api'
+// import { usePositions } from './hooks/usePositions'
 import { usePositionsFormContract } from './hooks/usePositionsFormContract'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
@@ -129,7 +129,7 @@ const Leverage: React.FC = () => {
   const [isActivePos, setActive] = useState(true)
   const { isDark } = useTheme()
   usePollLeverageFarmsWithUserData()
-  const data = useGetPositions(account)
+  // const data = useGetPositions(account)
   const positionData = usePositionsFormContract(farmsData, account)
   // const positionData = usePositions(data)
   console.info('positionData', positionData)

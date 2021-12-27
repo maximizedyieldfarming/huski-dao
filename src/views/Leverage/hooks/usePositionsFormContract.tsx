@@ -39,7 +39,7 @@ export const fetchPositionsFormContract = async (farmsToFetch, account) => {
     returnArr = positionList.filter((element, index, self) => {
         return self.findIndex(el => el.positionId === element.positionId) === index
     })
-
+    console.info('====returnArr===', returnArr)
     return returnArr;
 }
 
@@ -57,7 +57,7 @@ export const fetchPositionInfo = async (positions) => {
 
     const positionsWorker = await multicall(VaultABI, calls)
 
-    // console.info('positionsWorker', positionsWorker)
+    console.info('positionsWorker', positionsWorker)
     const positionsData = positionsWorker.map((data, index) => {
 
         return {
@@ -75,30 +75,30 @@ export const fetchPositionInfo = async (positions) => {
 }
 
 
-// export const fetchDebtShares = async (data) => {
-//     const calls = data.map((farm) => {
-//         return {
-//             address: farm.worker,
-//             name: 'shares',
-//             params: [farm.positionId]
-//         }
-//     })
+export const fetchDebtShares = async (data) => {
+    const calls = data.map((farm) => {
+        return {
+            address: farm.worker,
+            name: 'shares',
+            params: [farm.positionId]
+        }
+    })
 
-//     const rawVaultAllowances = await multicall(WorkerABI, calls)
-//     const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
-//         return new BigNumber(lpBalance).toJSON()
-//     })
+    const rawVaultAllowances = await multicall(WorkerABI, calls)
+    const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
+        return new BigNumber(lpBalance).toJSON()
+    })
+    // console.info('fetchDebtShares',parsedVaultAllowances)
+    return parsedVaultAllowances
+}
 
-//     return parsedVaultAllowances
-// }
-
-export const fetchLpAmount = async (data) => {
+export const fetchLpAmount = async (data, debtShares) => {
 
     const calls = data.map((farm, index) => {
         return {
             address: farm.worker,
             name: 'shareToBalance',
-            params: [farm.debtShares]
+            params: [debtShares[index]]
         }
     })
 
@@ -137,8 +137,8 @@ export const usePositionsFormContract = (data, account) => {
         const positions = async () => {
             const positionsOwner = await fetchPositionsFormContract(data, account);
             const positionsWorker = await fetchPositionInfo(positionsOwner);
-            // const debtShares = await fetchDebtShares(positionsWorker);
-            const lpAmount = await fetchLpAmount(positionsWorker);
+            const debtShares = await fetchDebtShares(positionsWorker);
+            const lpAmount = await fetchLpAmount(positionsWorker, debtShares);
             const positionInfo = await fetchPositionsInfo(positionsWorker);
             const positionsData = positionsWorker.map((worker, index) => {
 
