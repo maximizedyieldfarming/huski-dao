@@ -155,7 +155,7 @@ export const usePositionsFormContract = (data, account) => {
                 }
             });
 
-            const positionsDataFilter = positionsData.filter((position) => position.positionsOwner !== '0')
+            const positionsDataFilter = positionsData.filter((position) => position.debtShares !== '0')
             setPositionData(positionsDataFilter)
             return positionsDataFilter
         };

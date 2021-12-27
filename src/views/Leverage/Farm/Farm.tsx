@@ -1,12 +1,10 @@
 import React, { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react'
 import { useParams, useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
-import { hexZeroPad } from '@ethersproject/bytes'
 import {
   Box,
   Button,
   Flex,
-  Radio,
   InfoIcon,
   Text,
   Skeleton,
@@ -18,7 +16,7 @@ import {
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance, useTokenAllowance } from 'hooks/useTokenBalance'
 import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
@@ -31,7 +29,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
@@ -227,14 +225,13 @@ const Farm = () => {
   } = useLocation<LocationParams>()
   const history = useHistory()
 
-  const [tokenData, setTokenData] = useState(data)
+  const tokenData = data
   const quoteTokenName = tokenData?.TokenInfo?.quoteToken?.symbol
   const tokenName = tokenData?.TokenInfo?.token?.symbol
 
   const [radio, setRadio] = useState(selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
-  const [testvalues, setTestValues] = useState([50])
   const handleSliderChange = (e) => {
     const value = e?.target?.value
     setLeverageValue(value)
@@ -648,12 +645,27 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  let allowance = '0'
-  if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
-    allowance = tokenData.userData?.quoteTokenAllowance
-  } else {
-    allowance = tokenData.userData?.tokenAllowance
-  }
+  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+    getAddress(tokenData?.QuoteTokenInfo?.token?.address),
+    tokenData?.QuoteTokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.token?.address),
+    tokenData?.TokenInfo?.vaultAddress,
+  )
+    let allowance = '0'
+    if (
+      radio?.toUpperCase().replace('WBNB', 'BNB') ===
+      tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    ) {
+      allowance =
+        Number(tokenData.userData?.quoteTokenAllowance) > 0
+          ? tokenData.userData?.quoteTokenAllowance
+          : quoteTokenAllowance.toString()
+    } else {
+      allowance = Number(tokenData.userData?.tokenAllowance) > 0 ? tokenData.userData?.tokenAllowance : tokenAllowance.toString()
+    }
+
   const isApproved = Number(allowance) > 0
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const quoteTokenAddress = getAddress(tokenData.TokenInfo.quoteToken.address)
@@ -664,7 +676,7 @@ const Farm = () => {
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
     let contract
-    if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+    if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
       contract = approveContract // quoteTokenApproveContract
     } else {
       contract = quoteTokenApproveContract // approveContract

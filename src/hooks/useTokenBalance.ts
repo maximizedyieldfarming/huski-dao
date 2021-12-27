@@ -5,7 +5,6 @@ import { getBep20Contract, getCakeContract, getClaimFairLaunchContract } from 'u
 import { BIG_ZERO } from 'utils/bigNumber'
 import { simpleRpcProvider } from 'utils/providers'
 import { getFairLaunch } from 'utils/env'
-import { getFairLaunchAddress } from 'utils/addressHelpers'
 import useRefresh from './useRefresh'
 import useLastUpdated from './useLastUpdated'
 
@@ -145,3 +144,32 @@ export const useGetBnbBalance = () => {
 }
 
 export default useTokenBalance
+
+export const useTokenAllowance = (tokenAddress: string, vaultAddress: string) => {
+  const { NOT_FETCHED, SUCCESS, FAILED } = FetchStatus
+  const [allowanceState, setAllowanceState] = useState({allowance: BIG_ZERO, fetchStatus: NOT_FETCHED})
+  const { account } = useWeb3React()
+  const { fastRefresh } = useRefresh()
+
+  useEffect(() => {
+    const fetchAllowance = async () => {
+      const contract = getBep20Contract(tokenAddress)
+      try {
+        const res = await contract.allowance(account, vaultAddress)
+        setAllowanceState({ allowance: new BigNumber(res.toString()), fetchStatus: SUCCESS })
+      }  catch (e) {
+        console.error(e)
+        setAllowanceState((prev) => ({
+          ...prev,
+          fetchStatus: FAILED,
+        }))
+      }
+    }
+
+    if (account) {
+      fetchAllowance()
+    }
+  }, [account, fastRefresh, setAllowanceState, tokenAddress, vaultAddress, SUCCESS, FAILED])
+
+  return  allowanceState
+}
