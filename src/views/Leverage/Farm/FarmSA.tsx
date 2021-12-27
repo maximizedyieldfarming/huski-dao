@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react'
-import { useParams, useLocation, useHistory } from 'react-router'
+import React, { useState, useCallback } from 'react'
+import { useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
     Box,
@@ -15,7 +15,7 @@ import {
 } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance, useTokenAllowance } from 'hooks/useTokenBalance'
 import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
@@ -38,7 +38,7 @@ import HighchartsReact from 'highcharts-react-official';
 import useTheme from 'hooks/useTheme'
 import { useWeb3React } from '@web3-react/core'
 import SingleFarmSelect from 'components/Select/SingleFarmSelect'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import {
     getHuskyRewards,
     getYieldFarming,
@@ -169,7 +169,7 @@ const FarmSA = () => {
 
     const singleFarm = data
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
-    const { isDark, toggleTheme } = useTheme()
+    const { isDark } = useTheme()
     const priceList = usePriceList(coingeckoId)
 
     const getSingleLeverage = (selStrategy: string): number => {
@@ -211,7 +211,15 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-    const allowance = singleFarm?.userData?.quoteTokenAllowance
+  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
+    singleFarm?.QuoteTokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(singleFarm?.TokenInfo?.token?.address),
+    singleFarm?.TokenInfo?.vaultAddress,
+  )
+    const allowance = Number(singleFarm?.userData?.quoteTokenAllowance) > 0 ? singleFarm?.userData?.quoteTokenAllowance : quoteTokenAllowance
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
     const isApproved: boolean = Number(allowance) > 0
@@ -1021,10 +1029,10 @@ const FarmSA = () => {
                                     scale="md"
                                     width="70%"
                                     onClick={handleApprove}
-                                    isLoading={isPending}
-                                    endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                                    isLoading={isApproving}
+                                    endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
                                 >
-                                    {isPending ? t('Approving') : t('Approve')}
+                                    {isApproving ? t('Approving') : t('Approve')}
                                 </Button>
                             )}
                         </Flex>
