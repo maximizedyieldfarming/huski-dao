@@ -1,32 +1,24 @@
 /* eslint-disable no-unused-expressions */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
 import { Box, Flex, Text } from 'husky-uikit1.0'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance, useTokenAllowance } from 'hooks/useTokenBalance'
 import { useTranslation } from 'contexts/Localization'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
 import useTheme from 'hooks/useTheme'
-
-import Switch from 'react-switch'
-import { Bone, Bone2 } from 'assets'
-import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
+import { getBalanceAmount } from 'utils/formatBalance'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
-import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useHuskiPrice } from 'hooks/api'
 import { useFarmsWithToken } from '../../Leverage/hooks/useFarmsWithToken'
 import { getAprData } from '../helpers'
 import Deposit from './components/Deposit'
 import Withdraw from './components/Withdraw'
 
-interface Props {
-  active: boolean
-}
 interface RouteParams {
   action: string
   tokenName: string
@@ -54,8 +46,8 @@ const TabPanel = styled(Box)`
     width: 500px;
     height: 560px;
   }
-  @media screen and (max-width : 550px){
-    height : 660px!important;
+  @media screen and (max-width: 550px) {
+    height: 660px !important;
   }
 `
 
@@ -105,9 +97,6 @@ const LendAction = () => {
     state: { token },
   } = useLocation<LocationParams>()
 
-  const [withDraw, setWithDraw] = useState(false)
-  const [deposit, setDeposit] = useState(false)
-
   const { data: farmsData } = useLeverageFarms()
   const hash = {}
   const lendData = farmsData.reduce((cur, next) => {
@@ -118,7 +107,12 @@ const LendAction = () => {
   usePollLeverageFarmsWithUserData()
 
   const tokenData = lendData.find((item) => item.TokenInfo.token.poolId === token?.TokenInfo.token.poolId)
-  const allowance = tokenData.userData?.allowance ? tokenData.userData?.allowance : token?.userData?.allowance
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.token?.address),
+    tokenData?.TokenInfo?.vaultAddress,
+  )
+
+  const allowance = Number(token?.userData?.allowance) > 0 ? token?.userData?.allowance : tokenAllowance.toString()
 
   const { action, tokenName } = useParams<RouteParams>()
   const [isDeposit, setIsDeposit] = useState(action === 'deposit')
@@ -155,7 +149,7 @@ const LendAction = () => {
           {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
-      <TabPanel >
+      <TabPanel>
         <Header>
           {isDeposit ? (
             <Box
