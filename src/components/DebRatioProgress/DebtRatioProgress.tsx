@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Flex,InfoIcon } from 'husky-uikit1.0'
+import { Box, Flex, InfoIcon } from 'husky-uikit1.0'
 
 interface DotProps {
   text: string
@@ -65,16 +65,16 @@ const ProgressTrack = styled.div`
     color: ${({ theme }) => theme.colors.text};
   }
 `
-const CustomInfo = styled(InfoIcon)`
+const CustomInfo = styled(InfoIcon) <{ overlap: boolean }>`
   position:absolute;
-  top:-23px;
+  top:${({ overlap }) => overlap ? '-39px' : '-23px'};
   left:40px;
   color:${({ theme }) => theme.colors.textSubtle};
   width:14px;
   height:14px;
 
 `
-const Progress = styled(Box)<ProgressProps>`
+const Progress = styled(Box) <ProgressProps>`
   position: relative;
   width: ${({ percentage }) => percentage}%;
   transition: width 0.2s ease-in-out;
@@ -157,8 +157,8 @@ const Dot = styled.span<DotProps>`
       width:100px;
       font-size:12px;
       ${({ overlap, theme }) =>
-        overlap &&
-        `transform: translateY(-55%);
+    overlap &&
+    `transform: translateY(-90%);
      
       `}
     }
@@ -168,7 +168,7 @@ const Dot = styled.span<DotProps>`
       content: ${({ text }) => `'${text}%'`};
       position: absolute;
       top: 100%;
-      // ${({ overlap }) => overlap && `transform: translateY(-100%);`}
+      ${({ overlap }) => overlap && `transform: translateY(110%);`}
     }
   }
 `
@@ -177,15 +177,15 @@ const DebtRatioProgress = ({ debtRatio, liquidationThreshold, max }) => {
     <ProgressTrack>
       <div className="start" />
       <Progress percentage={debtRatio?.toString()} className="colored">
-        <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={debtRatio.toFixed(2) === max.toFixed(2)} ><div className="circle"><CustomInfo /></div></Dot>
+        <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={Math.abs(debtRatio - max) < 10} ><div className="circle" ><CustomInfo overlap={Math.abs(debtRatio - max) < 10} /></div></Dot>
       </Progress>
       <Progress percentage={max?.toString()}>
         <Dot className="dot max" text={max?.toFixed(2)} ><div className="circle" /></Dot>
       </Progress>
       <Progress percentage={liquidationThreshold}>
-        <Dot className="dot liquidationRatio" text={liquidationThreshold?.toFixed(2)} ><div className="circle"  /></Dot>
+        <Dot className="dot liquidationRatio" text={liquidationThreshold?.toFixed(2)} overlap={Math.abs(debtRatio - max) < 10}><div className="circle" /></Dot>
       </Progress>
-      <div className = "end" />
+      <div className="end" />
     </ProgressTrack>
   )
 }

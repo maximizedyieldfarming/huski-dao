@@ -36,9 +36,9 @@ export const dark = {
     "inset": "inset 0px 2px 2px -1px rgba(74, 74, 104, 0.1)"
   },
   "radii": {
-    "small": "4px",
-    "default": "16px",
-    "card": "24px",
+    "small": "8px",
+    "default": "8px",
+    "card": "8px",
     "circle": "50%"
   },
   "zIndices": {
@@ -47,7 +47,7 @@ export const dark = {
   },
   "isDark": true,
   "alert": {
-    "background": "#27262c"
+    "background": "#1A1D1F"
   },
   "colors": {
     "failure": "#ED4B9E",
@@ -64,7 +64,7 @@ export const dark = {
     "bronze": "#E7974D",
     "background": "#08060B",
     "backgroundDisabled": "#3c3742",
-    "backgroundAlt": "#27262c",
+    "backgroundAlt": "#1A1D1F",
     "cardBorder": "#383241",
     "contrast": "#FFFFFF",
     "dropdown": "#1E1D20",
@@ -90,7 +90,7 @@ export const dark = {
     }
   },
   "card": {
-    "background": "#27262c",
+    "background": "#1A1D1F",
     "boxShadow": "0px 2px 12px -8px rgba(25, 19, 38, 0.1), 0px 1px 1px rgba(25, 19, 38, 0.05)",
     "boxShadowActive": "0px 0px 0px 1px #0098A1, 0px 0px 4px 8px rgba(31, 199, 212, 0.4)",
     "boxShadowSuccess": "0px 0px 0px 1px #31D0AA, 0px 0px 0px 4px rgba(49, 208, 170, 0.2)",
@@ -104,20 +104,20 @@ export const dark = {
     "dropShadow": "drop-shadow(0px 1px 4px rgba(25, 19, 38, 0.15))"
   },
   "toggle": {
-    "handleBackground": "#27262c"
+    "handleBackground": "#1A1D1F"
   },
   "nav": {
-    "background": "#27262c"
+    "background": "#1A1D1F"
   },
   "modal": {
-    "background": "#27262c"
+    "background": "#1A1D1F"
   },
   "pancakeToggle": {
-    "handleBackground": "#27262c",
+    "handleBackground": "#1A1D1F",
     "handleShadow": "#666171"
   },
   "radio": {
-    "handleBackground": "#27262c"
+    "handleBackground": "#1A1D1F"
   },
   "tooltip": {
     "background": "#FFFFFF",
@@ -250,7 +250,7 @@ export const light = {
     "handleBackground": "#FFFFFF"
   },
   "tooltip": {
-    "background": "#27262c",
+    "background": "#1A1D1F",
     "text": "#F4EEFF",
     "boxShadow": "0px 0px 2px rgba(0, 0, 0, 0.2), 0px 4px 12px -8px rgba(14, 14, 44, 0.1)"
   }

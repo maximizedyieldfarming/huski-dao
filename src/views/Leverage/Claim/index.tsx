@@ -37,7 +37,8 @@ const Cell = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   padding: 1rem;
   margin : 0.7rem;
-  width : 70%;
+  width : 100%;
+  max-width : 850px;
   border-radius: ${({ theme }) => theme.radii.default};
   justify-content: space-between;
 `
@@ -142,7 +143,7 @@ const Claim: React.FC = () => {
             token={pool?.TokenInfo?.token}
           />
         ))}
-        <Flex style={{ alignItems: 'center', cursor: 'pointer' }} width="70%" mt="20px">
+        <Flex style={{ alignItems: 'center', cursor: 'pointer' }} width="100%" mt="20px">
           <img src="/images/Cheveron.svg" alt="" />
           <Text
             color="textSubtle"

@@ -198,14 +198,14 @@ const ClosePositionSA = () => {
 
   return (
     <Page>
-      <Box mx="auto" mt="1rem">
-        <img src="/images/ClosePositionSA.svg" alt="ClosePositionSA" />
+      <Box mx="auto">
+        <img src="/images/ClosePositionSA.svg" alt="ClosePositionSA" width = '48px'/>
       </Box>
       <Text fontSize="36px" textTransform="capitalize" mx="auto" mt="-30px">
         {t('Close Position')}
       </Text>
       <Box mx="auto">
-        <Container mt="1rem" >
+        <Container >
           <Section className="gray" mt="1rem" flexDirection="column">
             <Flex justifyContent="space-between" alignItems="center">
               <Text bold>{t('Position Value')}</Text>
@@ -280,7 +280,7 @@ const ClosePositionSA = () => {
         </Container>
       </Box>
       <Flex justifyContent="center">
-        <Container mt="1rem">
+        <Container >
           <Bubble justifyContent="space-between" alignItems="center">
             <Flex alignItems="center">
               <Text bold>{symbolName}</Text>

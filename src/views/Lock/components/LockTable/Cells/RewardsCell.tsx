@@ -29,7 +29,7 @@ const RewardsCell = ({ rewards }) => {
       <Text fontSize="16px" color="textSubtle" textAlign="left">
           {t('HUSKI Rewards')}
         </Text>
-        <Text color='textSecondary' fontWeight="700">0.234</Text>
+        <Text  fontWeight="700">0.234</Text>
       </CellContent>
     </StyledCell>
   )

@@ -38,7 +38,7 @@ const FilterOption = styled(Button)`
   font-size: 13px;
   background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.input : theme.colors.inputSecondary)};
+  color: ${({ theme, isActive }) => (isActive ? 'white' : '#6F767E')};
   border-radius: 10px;
   margin: 0 5px;
   > svg {
@@ -190,7 +190,7 @@ const LeverageTable = ({ leverageData }) => {
       <StyledTableBorder>
         <StyledTable role="table" ref={tableWrapperEl}>
           <FiltersWrapper>
-            <Flex alignItems="center" className="dexFilter" >
+            <Flex alignItems="center" className="dexFilter" width={300}>
               <Text bold>DEX:</Text>
               <Flex overflowX='auto' overflowY='hidden'>
                 <FilterOption
@@ -208,21 +208,12 @@ const LeverageTable = ({ leverageData }) => {
                   isActive={dexFilter === 'PancakeSwap'}
                   onClick={() => setDexFilter('PancakeSwap')}
                 >
-                  PancakeSwap
-                </FilterOption>
-                <FilterOption
-                  variant="tertiary"
-                  style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
-                  startIcon={<img src="/images/BUSD.svg" width="32px" height="32px" alt="" />}
-                  isActive={dexFilter === 'WaultSwap'}
-                  onClick={() => setDexFilter('WaultSwap')}
-                >
-                  WaultSwap
+                  &nbsp;PancakeSwap
                 </FilterOption>
               </Flex>
             </Flex>
             <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
-              <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
+              <Text style={{ fontWeight: 700 }} >{t('Paired Assets:')}</Text>
               <Flex >
                 <FilterOption
                   variant="tertiary"
@@ -280,31 +271,35 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
             </Flex>
             <Flex className="searchSortContainer" >
-              <Text color="textSubtle" style={{ fontWeight: 400, width: '80px' }}>
-                Sort by
+              <Text style={{ fontWeight: 400, color : '#6F767E' }} >
+                Sort by:
               </Text>
-              <Select
-                options={[
-                  {
-                    label: `${t('Default')}`,
-                    value: 'default',
-                  },
-                  {
-                    label: `${t('APY')}`,
-                    value: 'apy',
-                  },
-                  {
-                    label: `${t('TVL')}`,
-                    value: 'tvl',
-                  },
-                  {
-                    label: `${t('Leverage')}`,
-                    value: 'leverage',
-                  },
-                ]}
-                onChange={handleSortOptionChange}
-              />
-              <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+              <Box mr='10px'>
+                <Select
+                  options={[
+                    {
+                      label: `${t('Default')}`,
+                      value: 'default',
+                    },
+                    {
+                      label: `${t('APY')}`,
+                      value: 'apy',
+                    },
+                    {
+                      label: `${t('TVL')}`,
+                      value: 'tvl',
+                    },
+                    {
+                      label: `${t('Leverage')}`,
+                      value: 'leverage',
+                    },
+                  ]}
+                  onChange={handleSortOptionChange}
+                />
+              </Box>
+              <Box width={238}>
+                <SearchInput onChange={handleChangeQuery} placeholder="Search farms" />
+              </Box>
             </Flex>
           </FiltersWrapper>
           {!(isMobile || isTablet) && <LeverageHeaderRow />}

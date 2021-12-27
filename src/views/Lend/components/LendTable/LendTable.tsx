@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Button, ChevronUpIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
@@ -13,17 +13,12 @@ const StyledTable = styled.div`
 
   background-position: right; 
   background-size:350px 400px;
-  > div:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
-  }
+  // > div:not(:last-child) {
+  //   border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+  // }
   > div:first-child {
-    // border-bottom:'1px solid #EFEFEF'!important;
+    border-bottom:1px solid #EFEFEF!important;
   }
-   ${({ theme }) => theme.mediaQueries.lg} {
-     >div {
-       border-bottom: none !important;
-     }
-    }
 `
 
 const StyledTableBorder = styled.div`
@@ -49,13 +44,14 @@ const LendTable = ({ lendData }) => {
   }
 
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const [isShown, setIsShown] = useState(-1);
 
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {!(isMobile || isTablet) && <LendHeaderRow />}
-        {lendData.map((token) => (
-          <LendRow tokenData={token} key={token?.pid} />
+        {lendData.map((token, index) => (
+          <LendRow tokenData={token} key={token?.pid} index={index} isShown={isShown} setIsShown={setIsShown} />
         ))}
         {/*   <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>

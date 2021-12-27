@@ -16,8 +16,7 @@ import Borrowing from './Cells/Borrowing'
 import BaseCell from './Cells/BaseCell'
 
 const StyledRow = styled.div`
-  overflow : auto;
-  
+    
   background-color: transparent;
   display: flex;
   flex-direction: column;

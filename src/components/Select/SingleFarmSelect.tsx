@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { ArrowDropDownIcon, Text, Flex } from 'husky-uikit1.0'
 import { TokenImage } from 'components/TokenImage'
+import useTheme from 'hooks/useTheme'
 
-const DropDownHeader = styled.div`
+const DropDownHeader = styled.div<{ isDark: boolean }>`
   width: 100%;
   height: 40px;
   display: flex;
@@ -11,18 +12,18 @@ const DropDownHeader = styled.div`
   justify-content: space-between;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid #EFEFEF;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.input};
+  border: ${({ isDark }) => isDark ? '1px solid #272B30' : '1px solid #efefef'};
+  border-radius: 12px;
+  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
   transition: border-radius 0.15s;
 `
 
-const DropDownListContainer = styled.div`
+const DropDownListContainer = styled.div<{ isDark: boolean }>`
   min-width: 136px;
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.input};
+  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
@@ -123,12 +124,13 @@ export interface OptionProps {
   icon: any
 }
 
-const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onChange, width, reset}) => {
+const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onChange, width, reset }) => {
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const { isDark } = useTheme();
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)
@@ -167,7 +169,7 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize} width={width}>
       {containerSize.width !== 0 && (
-        <DropDownHeader onClick={toggling}>
+        <DropDownHeader onClick={toggling} isDark={isDark}>
           <Flex alignItems="center">
             {options[selectedOptionIndex].icon === "bull" || options[selectedOptionIndex].icon === "bear" || options[selectedOptionIndex].icon === "neutral" ? <StrategyIcon market={options[selectedOptionIndex].icon} /> :
               <TokenImage token={options[selectedOptionIndex].icon} width={24} height={24} style={{ width: "24px" }} />}
@@ -176,7 +178,7 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
         </DropDownHeader>
       )}
       <ArrowDropDownIcon color="text" onClick={toggling} />
-      <DropDownListContainer>
+      <DropDownListContainer isDark={isDark}>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (

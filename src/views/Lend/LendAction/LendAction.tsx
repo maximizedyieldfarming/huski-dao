@@ -49,24 +49,26 @@ const TabPanel = styled(Box)`
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 20px;
   width: 95%;
-  height: 600px;
+  height: 640px;
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 500px;
-    height: 560px;
+    height: 600px;
   }
   @media screen and (max-width : 550px){
-    height : 660px!important;
+    height : 700px!important;
   }
 `
 
 const Balance = styled(Flex)`
   background-color: ${({ theme }) => theme.card.background};
   padding: 1rem;
-  border-radius: 20px;
+  border-radius: 12px;
   width: 95%;
+  height : 84px;
   ${({ theme }) => theme.mediaQueries.lg} {
-    width: 510px;
+    width: 500px;
   }
+  flex : unset!important;
   justify-content: space-between;
   align-items: center;
 `
@@ -150,8 +152,8 @@ const LendAction = () => {
   return (
     <StyledPage>
       <div style={{ textAlign: 'center' }}>
-        <img src="/images/HuskiPaw.png" alt="" />
-        <Text fontSize="25px" color="fontFarm" fontWeight="600" textTransform="capitalize">
+        <img src="/images/HuskiPaw.png" alt="" width="48px" />
+        <Text fontSize="25px" fontWeight="600" textTransform="capitalize">
           {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
@@ -166,7 +168,7 @@ const LendAction = () => {
                 backgroundColor: isDark ? '#111315' : '#f4f4f4',
               }}
             >
-              <Flex style={{ width: '98%', height: '52px' }}>
+              <Flex style={{ height: '52px' }}>
                 <HeaderButton
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
                   replace
@@ -191,7 +193,7 @@ const LendAction = () => {
                   onClick={handleWithdrawClick}
                   to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
                   replace
-                  style={{ fontSize: '15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px' }}
+                  style={{ fontSize: '15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px', marginRight: '4px' }}
                 >
                   {t('Withdraw')}
                 </HeaderButton>
@@ -206,7 +208,7 @@ const LendAction = () => {
                 backgroundColor: isDark ? '#111315 ' : '#f4f4f4',
               }}
             >
-              <Flex style={{ width: '98%', height: '52px' }}>
+              <Flex style={{ height: '52px' }}>
                 <HeaderButton
                   onClick={handleDepositClick}
                   to={(location) => ({ ...location, pathname: `/lend/deposit/${tokenName}` })}
@@ -230,6 +232,7 @@ const LendAction = () => {
                     backgroundColor: isDark ? '#272B30' : 'white',
                     color: isDark ? 'white' : '#1A1D1F',
                     boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
+                    marginRight: '4px'
                   }}
                 >
                   {t('Withdraw')}
@@ -264,8 +267,8 @@ const LendAction = () => {
         </Body>
       </TabPanel>
       <Balance>
-        <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{t('Deposit APY')}</Text>
-        <Text style={{ color: '#1A1D1F', fontWeight: 800 }}>{apyCell(apy)}</Text>
+        <Text style={{ fontWeight: 800 }}>{t('Deposit APY')}</Text>
+        <Text style={{ fontWeight: 800 }}>{apyCell(apy)}</Text>
       </Balance>
       <Box>
         <Text>

@@ -73,6 +73,12 @@ const Section = styled(Flex)`
   // }
 `
 const SBBox = styled(Box)`
+  >h2{
+    font-family : 'BalooBhaijaan';
+  }
+  align-items : center;
+  display : flex;
+
   border-radius: 15px !important;
   background-image: url('/images/leverage.png');
   background-position: right;

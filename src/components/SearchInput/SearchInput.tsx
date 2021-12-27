@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react'
-import { Input ,Flex, SearchIcon} from 'husky-uikit1.0'
+import { Input, Flex, SearchIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import debounce from 'lodash/debounce'
 import { useTranslation } from 'contexts/Localization'
+import useTheme from 'hooks/useTheme'
 
-const StyledInput = styled(Input)`
-border: none;
-background:#F4F4F4;
-margin-left: auto;
-padding-left:30px;
+const StyledInput = styled(Input) <{ isDark: boolean }>`
+  border: none;
+  background:${({ isDark }) => isDark ? '#272B30' : '#F4F4F4'};
+  margin-left: auto;
+  padding-left:30px;
 `
 
 const InputWrapper = styled(Flex)`
@@ -40,10 +41,11 @@ const SearchInput: React.FC<Props> = ({ onChange: onChangeCallback, placeholder 
     debouncedOnChange(e)
   }
 
+  const { isDark } = useTheme();
   return (
     <InputWrapper>
-      <StyledInput value={searchText} onChange={onChange} placeholder={t(placeholder)} />
-      <SearchIcon style={{position:'absolute',top:10,left:5,width:'19px',height:'19px'}} />
+      <StyledInput value={searchText} onChange={onChange} placeholder={t(placeholder)} isDark={isDark} />
+      <SearchIcon style={{ position: 'absolute', top: 10, left: 5, width: '19px', height: '19px' }} />
     </InputWrapper>
   )
 }

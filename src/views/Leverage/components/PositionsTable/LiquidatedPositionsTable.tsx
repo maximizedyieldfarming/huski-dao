@@ -32,7 +32,7 @@ const LiquidatedPositionsTable = ({ data }) => {
   const [isLoading, setIsLoading] = React.useState(true)
   React.useEffect(() => {
     setTimeout(() => {
-      if (data.length === 0) {
+      if (data && data.length === 0) {
         setIsLoading(false)
       }
     }, 8000)

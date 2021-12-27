@@ -1,16 +1,17 @@
 import React from 'react'
 import { CardHeader as UiKitCardHeader, Heading, Text, Flex, Grid, ArrowDownIcon, ArrowUpIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
+import useTheme from 'hooks/useTheme'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage, TokenPairImage } from 'components/TokenImage'
 
 
-const Wrapper = styled(UiKitCardHeader)`
+const Wrapper = styled(UiKitCardHeader) <{ isDark: boolean }>`
   background: ${({ theme }) => theme.card.background};
   border-radius: ${({ theme }) => `${theme.radii.card} ${theme.radii.card} 0 0`};
   padding-bottom: 0;
   .marketWrapper {
-    border-bottom: 2px solid #EFEFEF;;
+    border-bottom: ${({ isDark }) => isDark ? '2px solid #272B30' : '2px solid #EFEFEF'};
     padding-bottom: 0.7rem;
   }
 `
@@ -18,9 +19,9 @@ const Wrapper = styled(UiKitCardHeader)`
 
 const CardHeader = ({ data, pool }) => {
   const { t } = useTranslation()
-
+  const { isDark } = useTheme();
   return (
-    <Wrapper>
+    <Wrapper isDark={isDark}>
       <Flex alignItems="center" className="marketWrapper">
         <Grid gridTemplateColumns="40px 1fr" alignItems="center">
           <TokenImage token={data?.TokenInfo?.token} width={40} height={40} />
