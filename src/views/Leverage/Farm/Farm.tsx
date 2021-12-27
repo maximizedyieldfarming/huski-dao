@@ -475,6 +475,25 @@ const Farm = () => {
     }
   }
 
+  const approveContractbnb = useERC20(bnbVaultAddress)
+  const handleApproveBnb = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    // setIsApproving(true)
+    try {
+      const tx = await approveContractbnb.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      // setIsApproving(false)
+    }
+  }
+
 
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -606,12 +625,17 @@ const Farm = () => {
     })
 
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
-      // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
-      // need mod commit name 
       const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
-      // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+
       console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
+
+      const allowance = tokenData?.userData?.allowance // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      console.info('wbnb  allowance ', allowance)
+      if (Number(allowance) === 0) {
+        handleApproveBnb()
+      }
+
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -761,7 +785,7 @@ const Farm = () => {
         as="span"
         fontWeight="bold"
         fontSize="25px"
-        style={{textAlign: 'center', marginBottom: '-40px' }}
+        style={{ textAlign: 'center', marginBottom: '-40px' }}
       >
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
