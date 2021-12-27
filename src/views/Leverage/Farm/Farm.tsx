@@ -475,6 +475,25 @@ const Farm = () => {
     }
   }
 
+  const approveContractbnb = useERC20(bnbVaultAddress)
+  const handleApproveBnb = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    // setIsApproving(true)
+    try {
+      const tx = await approveContractbnb.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      // setIsApproving(false)
+    }
+  }
+
 
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -606,6 +625,13 @@ const Farm = () => {
       const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
       console.info('wrap bnb', bnbMsgValue)
       handleDeposit(bnbMsgValue)
+
+      const allowance = tokenData?.userData?.allowance // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      console.info('wbnb  allowance ', allowance)
+      if (Number(allowance) === 0) {
+        handleApproveBnb()
+      }
+
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
