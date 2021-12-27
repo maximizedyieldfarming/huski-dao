@@ -40,11 +40,11 @@ export const fetchFarmUserQuoteTokenAllowances = async (account: string, farmsTo
   })
 
   const rawLpAllowances = await multicall(erc20ABI, calls)
-  const parsedLpAllowances = rawLpAllowances.map((lpBalance) => {
+  const quoteTokenAllowances = rawLpAllowances.map((lpBalance) => {
     return new BigNumber(lpBalance).toJSON()
   })
 
-  return parsedLpAllowances
+  return quoteTokenAllowances
 }
 
 export const fetchFarmUserTokenBalancesIB = async (account: string, farmsToFetch: LeverageFarmConfig[]) => {
