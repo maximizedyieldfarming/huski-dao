@@ -483,19 +483,19 @@ const AdjustPosition = () => {
       if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('base + single + token input ')
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1','1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('base + single + quote token input ')
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, '1']) // minLPAmount  [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) 
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
 
@@ -508,21 +508,21 @@ const AdjustPosition = () => {
       if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('farm + single + token input ')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) !== 0) {
         console.info('farm + single +1 quote token input ')
         wrapFlag = true
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')//  (quoteTokenInputValue)?.toString()
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
         wrapFlag = true
         farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [farmingTokenAmount, '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
 
@@ -534,7 +534,6 @@ const AdjustPosition = () => {
     // 'parseUnits(farmingTokenAmount': ethers.utils.parseUnits(farmingTokenAmount, 18), 
     // 'parseUnits(minLPAmount, ':ethers.utils.parseUnits(minLPAmount, 18) ,
     console.log({
-
       'id====': id,
       adjustData,
       assetsBorrowed,
