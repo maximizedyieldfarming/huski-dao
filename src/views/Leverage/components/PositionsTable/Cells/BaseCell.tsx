@@ -20,7 +20,7 @@ export const CellContent = styled(Flex)`
   }
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: column;
     justify-content: unset;

@@ -30,13 +30,12 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
 
   return (
     <StyledCell role="cell">
-      <CellContent>
+      <CellContent alignItems='start'>
         {token?.totalSupply && account ? (
           // {true?
           <Button
             style={{
               background: '#7B3FE4',
-              border: '1px solid #EFEFEF',
               boxSizing: 'border-box',
               borderRadius: '10px',
               width: '114px',
@@ -61,7 +60,6 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
           <div
             style={{
               background: '#D3D3D3',
-              border: '1px solid #EFEFEF',
               boxSizing: 'border-box',
               borderRadius: '10px',
               width: '114px',

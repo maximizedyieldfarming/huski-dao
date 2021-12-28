@@ -14,7 +14,7 @@ import headerBg from './BG.png'
 const Section = styled(Flex)`
   background-color: 'transparent';
   font-family: inter;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   gap: 0.5rem;
   // border-radius: ${({ theme }) => theme.radii.default};
   // height: 224px;
@@ -25,7 +25,7 @@ const Section = styled(Flex)`
     // padding: 1rem;
     overflow: auto;
     gap: 2rem;
-    flex-wrap : wrap;
+    flex-wrap: wrap;
   }
   .block {
     background-color: ${({ theme }) => theme.colors.background};
@@ -34,47 +34,57 @@ const Section = styled(Flex)`
   }
 `
 const SBBox = styled(Box)`
+  > h2 {
+    font-family: 'BalooBhaijaan';
+  }
+  align-items: center;
+  display: flex;
   border-radius: 15px !important;
   background-image: url(${headerBg});
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
-  min-width : 520px;
-  @media screen and (max-width : 1480px){
-    padding : 30px 0px;
-    margin-right : 0px!important;
+  min-width: 520px;
+  @media screen and (max-width: 1480px) {
+    padding: 30px 0px;
+    margin-right: 0px !important;
   }
-  @media screen and (max-width : 600px){
-    min-width : unset;
-    >h2{
-      margin-left : 20px!important;
-      font-size : 35px!important;
+  @media screen and (max-width: 600px) {
+    min-width: unset;
+    > h2 {
+      margin-left: 20px !important;
+      font-size: 35px !important;
     }
   }
 `
 const VolumeBox = styled(Box)`
   padding: 30px;
-  flexdirection: column;
-  justifycontent: space-evenly;
+  flex-direction: column;
+  justify-content: space-evenly;
   // background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
   // width: 20%;
-  marginright: 25px;
+  margin-right: 25px;
   border-radius: ${({ theme }) => theme.radii.default};
 `
 const ValueBox = styled(Box)`
   padding: 30px;
-  flexdirection: column;
-  justifycontent: space-evenly;
+  flex-direction: column;
+  justify-content: space-evenly;
   // background: isDark ? 'rgb(44,30,73)' : '#D6C7F0';
   // width: 20%;
   border-radius: ${({ theme }) => theme.radii.default};
 `
 
 const SBPage = styled(Page)`
-  @media screen and (max-width : 425px){
-    padding-left : 5px;
-    padding-right : 5px;
+  @media screen and (max-width: 425px) {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 2%;
+    margin-right: 2%;
   }
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 40px;
 `
 const Lend: React.FC = () => {
   const { t } = useTranslation()
@@ -146,7 +156,7 @@ const Lend: React.FC = () => {
               {t(`Total Volume 24H:`)}
             </Text>
             {volume24h ? (
-              <Text fontSize="30px" color="textFarm">
+              <Text fontSize="30px" color="textFarm" fontFamily="LexendDeca">
                 {volume24h}
               </Text>
             ) : (
@@ -174,6 +184,7 @@ const Lend: React.FC = () => {
                 style={{ letterSpacing: '-0.01em' }}
                 color="textFarm"
                 fontWeight="bold"
+                fontFamily="LexendDeca"
               >{`${totalValueLockedValue}`}</Text>
             ) : (
               <Skeleton width="180px" height="30px" />

@@ -74,26 +74,32 @@ const Section = styled(Flex)`
   // }
 `
 const SBBox = styled(Box)`
+  > h2 {
+    font-family: 'BalooBhaijaan';
+  }
+  align-items: center;
+  display: flex;
+
   border-radius: 15px !important;
   background-image: url('/images/leverage.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
-  width : calc(100% - 300px);
-  min-width : 520px;
-  padding-top : 30px;
-  @media screen and (max-width : 960px){
-    width : 100%;
+  width: calc(100% - 300px);
+  min-width: 520px;
+  padding-top: 30px;
+  @media screen and (max-width: 960px) {
+    width: 100%;
   }
-  @media screen and (max-width : 1480px){
-    padding : 30px 0px;
-    margin-right : 0px!important;
+  @media screen and (max-width: 1480px) {
+    padding: 30px 0px;
+    margin-right: 0px !important;
   }
-  @media screen and (max-width : 600px){
-    min-width : unset;
-    >h2{
-      margin-left : 20px!important;
-      font-size : 35px!important;
+  @media screen and (max-width: 600px) {
+    min-width: unset;
+    > h2 {
+      margin-left: 20px !important;
+      font-size: 35px !important;
     }
   }
 `
@@ -117,9 +123,9 @@ const StyledTableBorder = styled.div`
   padding: 1rem 1.5rem;
 `
 const SBPage = styled(Page)`
-  @media screen and (max-width : 450px){
-    padding-left : 10px;
-    padding-right : 10px;
+  @media screen and (max-width: 450px) {
+    padding-left: 10px;
+    padding-right: 10px;
   }
 `
 const Leverage: React.FC = () => {

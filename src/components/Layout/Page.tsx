@@ -8,7 +8,6 @@ import { DEFAULT_META, getCustomMeta } from 'config/constants/meta'
 import Container from './Container'
 
 const StyledPage = styled(Container)`
-  min-height: calc(100vh - 64px);
   padding-top: 16px;
   padding-bottom: 16px;
   display: flex;

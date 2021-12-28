@@ -93,7 +93,7 @@ const CopyAddress: React.FC<CopyAddressProps> = ({ account, ...props }) => {
 
   return (
     <Box position="relative" {...props} >
-      <Wrapper style={{ background: isDark ? "#111315" : "white" }}>
+      <Wrapper style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
         <Address title={account}>
           <input type="text" readOnly value={account}  />
         </Address>

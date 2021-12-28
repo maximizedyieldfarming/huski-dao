@@ -15,6 +15,7 @@ interface Props {
 const TabPanel = styled(Box)`
 
   padding: 2rem;
+  padding-bottom : 1rem;
   @media screen and (max-width : 500px){
     padding-left : 16px;
     padding-right : 16px
@@ -100,7 +101,7 @@ const ClosePosition = (props) => {
   // const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
 
   return (
-    <Page>
+    <Page style={{ maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto'}}>
       <Text fontSize="36px" textTransform="capitalize" mx="auto">
         {t('Close Position')}
       </Text>
@@ -137,12 +138,12 @@ const ClosePosition = (props) => {
         </Flex>
         <Header isDark={isDark}>
           <HeaderTabs onClick={handleDepositClick} active={isDeposit} isDark={isDark}>
-            <Text bold fontSize="15px">
+            <Text bold fontSize="15px" color={!isDeposit ? '#6F767E' : (!isDark ? '#1A1D1F' : 'white')}>
               {t('Convert To')} {symbolName}
             </Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} isDark={isDark}>
-            <Text bold fontSize="15px">
+            <Text bold fontSize="15px" color={isDeposit ? '#6F767E' : (!isDark ? '#1A1D1F' : 'white')}>
               {t('Minimize Trading')}
             </Text>
           </HeaderTabs>

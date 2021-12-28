@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
+import useTheme from 'hooks/useTheme'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
@@ -61,7 +62,6 @@ const RangeInput = styled.input`
   overflow: hidden;
   display: block;
   appearance: none;
-  max-width: 850px;
   width: 100%;
   margin: 0;
   height: 32px;
@@ -71,7 +71,7 @@ const RangeInput = styled.input`
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 32px;
-    background: linear-gradient(to right, #b488ff, #3a009e) 100% 50% / 100% 4px no-repeat transparent;
+    background: linear-gradient(to right, #7B3FE4, #7B3FE4) 100% 50% / 100% 4px no-repeat transparent;
   }
 
   &:focus {
@@ -84,14 +84,14 @@ const RangeInput = styled.input`
     height: 32px;
     width: 28px;
 
-    background-image: url('/images/RangeHandle.png');
+    background-image: url('/images/blueslider.png');
     background-position: center center;
     background-repeat: no-repeat;
-
+    background-size : 100% 100%;
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    box-shadow: ${makeLongShadow('rgb(189,159,242)', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
@@ -108,10 +108,10 @@ const Section = styled(Box)`
   background-color: ${({ theme }) => theme.card.background}!important;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem;
+  padding: 0.5rem 1.5rem;
   &:not(:first-child) {
     > ${Flex} {
-      padding: 1.5rem 0;
+      padding: 1.3rem 0;
       &:not(:last-child) {
         border-bottom: 1px solid #a41ff81a;
       }
@@ -119,7 +119,7 @@ const Section = styled(Box)`
   }
   &:first-child {
     > ${Flex} {
-      padding: 1.5rem 0;
+      padding: 1.3rem 0;
       &:not(:last-child) {
         border-bottom: 1px solid #a41ff81a;
       }
@@ -134,7 +134,7 @@ const BorrowingMoreContainer = styled(Flex)`
 border: 1px solid #EFEFEF;
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 10px;
-  gap: 1.5rem;
+  gap: 1.2rem;
   input {
     border: none;
     box-shadow: none;
@@ -358,14 +358,12 @@ const AdjustPosition = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / 2) * moveVal.width
-    if (tt === 0) {
-      setMargin(tt - targetPositionLeverage * 9 + 10)
-    } else {
-      setMargin(tt - targetPositionLeverage * 9)
-    }
-  }, [targetPositionLeverage, moveVal.width])
+    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 32)
 
+    setMargin(tt)
+  }, [targetPositionLeverage, moveVal.width, leverage])
+
+  const { isDark } = useTheme()
   // for apr
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
@@ -846,7 +844,7 @@ const AdjustPosition = () => {
   let lastSection
   if (!isAddCollateral && Number(targetPositionLeverage) === 1) {
     lastSection = (
-      <Section>
+      <Section >
         <Flex justifyContent="space-between">
           <Text>{t('Amount to Trade')}</Text>
           {isConvertTo ? (
@@ -939,7 +937,7 @@ const AdjustPosition = () => {
     )
   } else if (!isAddCollateral && Number(targetPositionLeverage) <= Number(currentPositionLeverage.toFixed(2))) {
     lastSection = (
-      <Section>
+      <Section >
         <Flex justifyContent="space-between">
           <Text>{t('Amount to Trade')}</Text>
           {isConvertTo ? (
@@ -1013,7 +1011,7 @@ const AdjustPosition = () => {
     )
   } else {
     lastSection = (
-      <Section>
+      <Section >
         {/*         {Number(targetPositionLeverage) > Number(currentPositionLeverage.toFixed(2)) ? null : (
           <Flex justifyContent="space-between">
             <Text>{t('Position Value Assets')}</Text>
@@ -1155,7 +1153,13 @@ const AdjustPosition = () => {
     ) {
       datalistSteps.push(`${(1 + 0.5 * (-1 + i)).toFixed(2)}x`)
     }
-    return datalistSteps.map((value) => <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />)
+    // datalistSteps.pop();
+    return datalistSteps.map((value, i) => {
+      if (i === datalistSteps.length - 1)
+        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+
+      return <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+    })
   })()
 
   useEffect(() => {
@@ -1186,15 +1190,15 @@ const AdjustPosition = () => {
         <PercentageToCloseContext.Provider
           value={{ percentage: percentageToClose, setPercentage: setPercentageToClose }}
         >
-          <Page style={{ overflowX: 'hidden' }}>
+          <Page style={{ overflowX: 'hidden', minHeight: 'unset', paddingTop: '1rem' }}>
             <Text fontWeight="bold" style={{ alignSelf: 'center' }} fontSize="3">
               {t('Adjust Position')} {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
-            <Flex justifyContent="space-between" flexDirection={isSmallScreen ? 'column' : 'row'}>
-              <Box width={isSmallScreen ? 'unset' : '60%'}>
-                <Section>
-                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }} flexWrap="wrap">
-                    <Text mb="10px">
+            <Flex justifyContent="center" flexDirection={isSmallScreen ? 'column' : 'row'}>
+              <Box width={isSmallScreen ? 'unset' : '60%'} maxWidth={850}>
+                <Section >
+                  <Flex alignItems="center" justifyContent="space-between" style={{ border: 'none' }} flexWrap='wrap'>
+                    <Text mb='10px'>
                       {t('Current Position Leverage')}: {new BigNumber(currentPositionLeverage).toFixed(2, 1)}x
                     </Text>
                     <CurrentPostionToken>
@@ -1215,24 +1219,26 @@ const AdjustPosition = () => {
                       </Box>
                     </CurrentPostionToken>
                   </Flex>
-                  <Text bold>
-                    {t('Target Position Leverage')}:{' '}
-                    {tokenInput || quoteTokenInput
-                      ? leverageAfter
-                      : new BigNumber(targetPositionLeverage).toFixed(2, 1)}
-                    x
-                  </Text>
-                  <PositionX ml="auto" color="#6F767E" mt="10px">
-                    <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
-                  </PositionX>
-                  <Flex style={{ border: 'none' }}>
-                    <Box style={{ width: '100%' }}>
+                  <Flex justifyContent='space-between' alignItems='center' border='none!important' paddingTop='0!important'>
+                    <Text bold>
+                      {t('Target Position Leverage')}:{' '}
+                      {tokenInput || quoteTokenInput
+                        ? leverageAfter
+                        : new BigNumber(targetPositionLeverage).toFixed(2, 1)}
+                      x
+                    </Text>
+                    <PositionX ml="auto" color="#6F767E" >
+                      <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
+                    </PositionX>
+                  </Flex>
+                  <Flex style={{ border: 'none', paddingTop: '5px' }}>
+                    <Box style={{ width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
                       <MoveBox move={margin}>
                         <Text color="#7B3FE4" bold>
-                          {targetPositionLeverage}x
+                          {targetPositionLeverage.toFixed(2)}x
                         </Text>
                       </MoveBox>
-                      <Box ref={targetRef} style={{ width: '100%' }}>
+                      <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
                         <RangeInput
                           type="range"
                           min="1.0"
@@ -1251,7 +1257,7 @@ const AdjustPosition = () => {
                           style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
                         />
                         {targetPositionLeverage < 1.5 ? (
-                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
                         ) : (
                           <div
                             className="middle"
@@ -1259,7 +1265,7 @@ const AdjustPosition = () => {
                           />
                         )}
                         {targetPositionLeverage < 2 ? (
-                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
                         ) : (
                           <div
                             className="middle"
@@ -1267,7 +1273,7 @@ const AdjustPosition = () => {
                           />
                         )}
                         {targetPositionLeverage < 2.5 ? (
-                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                          <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
                         ) : (
                           <div
                             className="middle"
@@ -1276,7 +1282,7 @@ const AdjustPosition = () => {
                         )}
                         <div
                           className="middle"
-                          style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
+                          style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }}
                         />
                       </Flex>
                       <datalist
@@ -1378,7 +1384,7 @@ const AdjustPosition = () => {
                   )} */}
                 </Section>
 
-                <Section mt="40px">
+                <Section mt="30px" >
                   <Flex justifyContent="space-between">
                     {Number(targetPositionLeverage) < Number(currentPositionLeverage) && isAddCollateral && (
                       <>
@@ -1477,19 +1483,20 @@ const AdjustPosition = () => {
                       <Skeleton width="80px" height="16px" />
                     )}
                   </Flex>
-                  <Text small color="text" fontSize="16px" mt="30px">
+                  <Text small color="text" fontSize="16px" mt="16px">
                     {t('My Debt Status')}
                   </Text>
-                  <Flex height="150px" alignItems="center" style={{ border: 'none' }}>
+                  <Flex height="130px" alignItems="center" style={{ border: 'none', paddingTop: 0 }}>
                     <DebtRatioProgress
                       debtRatio={updatedDebtRatio * 100}
                       liquidationThreshold={liquidationThresholdData}
                       max={maxValue * 100}
                     />
                   </Flex>
-                  <Flex mx="auto" display="flex" justifyContent="center">
+                  <Flex mx="auto" display="flex" justifyContent="center" paddingTop='0px!important'>
                     {isAddCollateral && (
                       <Button
+                        style={{ border: !isDark && '1px solid lightgray' }}
                         onClick={handleConfirm}
                         disabled={isAddCollateralConfirmDisabled || !account || isPending}
                         isLoading={isPending}
@@ -1502,6 +1509,7 @@ const AdjustPosition = () => {
                     )}
                     {!isAddCollateral && isConvertTo && (
                       <Button
+                        style={{ border: !isDark && '1px solid lightgray' }}
                         onClick={handleConfirmConvertTo}
                         disabled={iscConvertToConfirmDisabled || !account || isPending}
                         isLoading={isPending}
@@ -1525,10 +1533,28 @@ const AdjustPosition = () => {
                       </Button>
                     )}
                   </Flex>
+                  {!isAddCollateral &&
+                    Number(targetPositionLeverage) !== 1 &&
+                    Number(targetPositionLeverage) !== Number(currentPositionLeverage) &&
+                    (new BigNumber(UpdatedDebtValue).lt(minimumDebt)) &&
+                    <Flex width="100%" alignItems="center" justifyContent="center">
+                      <Text color="red">
+                        {!isAddCollateral &&
+                          Number(targetPositionLeverage) !== 1 &&
+                          Number(targetPositionLeverage) !== Number(currentPositionLeverage)
+                          ? new BigNumber(UpdatedDebtValue).lt(minimumDebt)
+                            ? t('Minimum Debt Size: %minimumDebt% %name%', {
+                              minimumDebt: minimumDebt.toNumber(),
+                              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                            })
+                            : null
+                          : null}
+                      </Text>
+                    </Flex>}
                 </Section>
               </Box>
-              <Box width={isSmallScreen ? 'unset' : '38%'} mt={isSmallScreen ? '2rem' : 'unset'}>
-                <Section mb="40px">
+              <Box width={isSmallScreen ? 'unset' : '38%'} mt={isSmallScreen ? '2rem' : 'unset'} maxWidth={500} ml='40px'>
+                <Section mb="30px" >
                   <Flex justifyContent="space-between">
                     <Text>{t('Yields Farm APR')}</Text>
                     {yieldFarmAPR ? (

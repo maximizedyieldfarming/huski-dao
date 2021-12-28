@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import LendRow from './LendRow'
@@ -10,24 +10,13 @@ const StyledTable = styled.div`
   background-color: ${({ theme }) => theme.card.background};
   background-repeat: no-repeat;
 
-  background-position: right;
-  background-size: 350px 400px;
-  > ${Box}> div:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
-  }
-  > ${Box}> div:first-child {
-    // border-bottom:'1px solid #EFEFEF'!important;
-  }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    > ${Box}> div {
-      border-bottom: none !important;
-    }
-  }
-  > ${Box} {
-    overflow: auto;
-    ::-webkit-scrollbar {
-      height: 8px;
-    }
+  background-position: right; 
+  background-size:350px 400px;
+  // > div:not(:last-child) {
+  //   border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+  // }
+  > div:first-child {
+    border-bottom:1px solid #EFEFEF!important;
   }
 `
 
@@ -58,12 +47,16 @@ const LendTable = ({ lendData }) => {
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
-        <Box>
-          {!(isMobile || isTablet) && <LendHeaderRow />}
-          {lendData.map((token) => (
-            <LendRow tokenData={token} key={token?.pid} />
-          ))}
-        </Box>
+        {!(isMobile || isTablet) && <LendHeaderRow />}
+        {lendData.map((token) => (
+          <LendRow tokenData={token} key={token?.pid} />
+        ))}
+        {/*   <ScrollButtonContainer>
+          <Button variant="text" onClick={scrollToTop}>
+            To Top
+            <ChevronUpIcon color="primary" />
+          </Button>
+        </ScrollButtonContainer> */}
       </StyledTable>
     </StyledTableBorder>
   )

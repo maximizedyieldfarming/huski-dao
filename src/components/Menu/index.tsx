@@ -15,13 +15,14 @@ import GlobalSettings from './GlobalSettings'
 import huskiLogo from './logo.png'
 import huskiLogo1 from './HomeLogo.png'
 import certikLogo from './certik.png'
-import certikLogo1 from './certik_dark.png'
+import certikLogo1 from './certik_dark.svg'
+import metamask from './metamask.svg';
 
 const Logo = () => <img src={huskiLogo} height="100%" width="50px" alt="HUSKI Logo" />
 const Logo1 = () => <img src={huskiLogo1} height="100%" width="50px" alt="HUSKI Logo" />
 
-const CertikLogo = () => <img src={certikLogo} style={{paddingLeft:'30px',paddingTop:'15px'}} height="62px" width="175px" alt="HUSKI Logo" />
-const CertikLogo1 = () => <img src={certikLogo1} style={{paddingLeft:'30px',paddingTop:'15px'}} height="62px" width="175px" alt="HUSKI Logo" />
+const CertikLogo = () => <img src={certikLogo} style={{ paddingLeft: '30px'}} height="62px" width="175px" alt="HUSKI Logo" />
+const CertikLogo1 = () => <img src={certikLogo1} style={{ paddingLeft: '30px' }} height="62px" width="175px" alt="HUSKI Logo" />
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
@@ -35,10 +36,10 @@ const Menu = (props) => {
 
   return (
     <UikitMenu
-      certikLogo={isDark?(<CertikLogo />):(<CertikLogo1 />)}
+      certikLogo={isDark ? (<CertikLogo />) : (<CertikLogo1 />)}
       userMenu={<UserMenu />}
       account={account}
-      globalMenu={!isHome?<GlobalSettings />:null}
+      globalMenu={!isHome ? <GlobalSettings /> : null}
       isDark={isDark}
       toggleTheme={toggleTheme}
       currentLang={currentLanguage.code}
@@ -46,15 +47,16 @@ const Menu = (props) => {
       setLang={setLanguage}
       cakePriceUsd={null}
       links={config(t)}
-      logo={isHome?<Logo1 />:<Logo />}
+      logo={isHome ? <Logo1 /> : <Logo />}
+      metamask={metamask}
       huskiPriceUsd={new BigNumber(huskyPrice || 0).toFixed(3, 1)}
-     /*  profile={{
-        username: profile?.username,
-        image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
-        profileLink: '/profile',
-        noProfileLink: '/profile',
-        showPip: !profile?.username,
-      }} */
+      /*  profile={{
+         username: profile?.username,
+         image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
+         profileLink: '/profile',
+         noProfileLink: '/profile',
+         showPip: !profile?.username,
+       }} */
       {...props}
     />
   )

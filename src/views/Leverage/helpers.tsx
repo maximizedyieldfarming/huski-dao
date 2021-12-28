@@ -125,13 +125,13 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   let tokenInputNum
   let quoteTokenInputNum
   if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-    tokenInputNum = Number(tokenInput);
-    quoteTokenInputNum = Number(quoteTokenInput);
+    tokenInputNum = Number(tokenInput || 0);
+    quoteTokenInputNum = Number(quoteTokenInput || 0);
     tokenAmountTotalNum = tokenAmountTotal;
     quoteTokenAmountTotalNum = quoteTokenAmountTotal;
   } else {
-    tokenInputNum = Number(tokenInput);
-    quoteTokenInputNum = Number(quoteTokenInput);
+    tokenInputNum = Number(tokenInput || 0);
+    quoteTokenInputNum = Number(quoteTokenInput || 0);
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
