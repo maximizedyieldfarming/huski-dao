@@ -84,7 +84,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
           </Text>
         )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
-        <Flex alignItems="center" style={{ marginTop: '15px' }}>
+        <Flex alignItems="start" style={{ marginTop: '15px' }}>
           {tvl ? (
             <>
               <Text color="text" fontWeight="600">

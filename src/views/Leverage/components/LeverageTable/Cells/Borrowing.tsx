@@ -67,13 +67,13 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
 
   return (
     <StyledCell role="cell">
-      <CellContent pt="5px">
+      <CellContent pt="5px" alignItems='start'>
         {(isMobile || isTablet) && (
           <Text fontSize="12px" color="textSubtle" textAlign="left">
             {t('Borrowing')}
           </Text>
         )}
-        <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)} />
+        <Select options={options()} onChange={(option) => onBorrowingAssetChange(option.value)}/>
       </CellContent>
     </StyledCell>
   )

@@ -19,12 +19,12 @@ const NameCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
   padding-left: 12px;
+  justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 200px;
     padding-left: 32px;
-  }
-  ${CellContent} {
-    flex: 1;
+    flex: 1 0 150px;
+    align-items: center;
+    // padding-left: 32px;
   }
 `
 const StyledCellLever = styled(BaseCell)`
@@ -39,15 +39,15 @@ const StyledCellLever = styled(BaseCell)`
     flex: 1;
   }
 `
-const StyledCell = styled(BaseCell)`
+const ApyCell = styled(BaseCell)`
   flex: 1 0 50px;
+  align-items : start;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 150px;
+    flex: 1 0 120px;
   }
   ${CellContent} {
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
+    justify-content: space-between;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -55,21 +55,18 @@ const StyledCell = styled(BaseCell)`
 `
 const ActionCell = styled(BaseCell)`
   flex: 1 0 50px;
-  justify-content: flex-end!important;
-    align-items: end!important;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 150px;
-    justify-content:flex-end!important;
-    align-items:end!important;
+    flex: 1 0 120px;
   }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-end!important;
-    align-items: end!important;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
-  }`
+  align-items : start;
+`
+const StyledCell = styled(BaseCell)`
+  flex: 1 0 50px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex: 1 0 120px;
+  }
+  align-items : start;
+`
 
 const LeverageHeaderRow = () => {
   const { t } = useTranslation()
@@ -77,18 +74,18 @@ const LeverageHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text style={{ marginRight: 'auto', marginLeft: '-10px' }} bold small color="textSubtle">
+          <Text style={{ marginRight: 'auto', }} bold small color="textSubtle">
             {t('Pool')}
           </Text>
         </CellContent>
       </NameCell>
-      <StyledCell>
+      <ApyCell>
         <CellContent>
           <Text style={{ marginRight: 'auto' }} bold small color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>
-      </StyledCell>
+      </ApyCell>
       <StyledCell>
         <CellContent>
           <Text style={{ marginRight: 'auto' }} bold small color="textSubtle">
@@ -105,7 +102,7 @@ const LeverageHeaderRow = () => {
       </StyledCell>
       <StyledCellLever>
         <CellContent>
-          <Text style={{ marginLeft: '20px' }} bold small color="textSubtle">
+          <Text style={{}} bold small color="textSubtle">
             {t('Leverage')}
           </Text>
         </CellContent>

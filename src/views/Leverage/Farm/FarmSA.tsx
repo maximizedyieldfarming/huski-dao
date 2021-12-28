@@ -54,7 +54,7 @@ interface LocationParams {
     marketStrategy?: string
 }
 
-const Section = styled(Box)`
+const Section = styled(Box) < { isDark?: boolean }>`
   &.gray {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
@@ -64,8 +64,8 @@ const Section = styled(Box)`
   padding: 1rem;
 
   > ${Flex} {
-    
-    padding: 1.5rem 0;
+    padding: 20px 0;
+    border-bottom : ${({ isDark }) => isDark ? '2px solid #272B30' : '2px solid #EFEFEF'};
   }
 
   input[type='range'] {
@@ -106,31 +106,18 @@ const InputArea = styled(Flex)`
 `
 
 const ButtonMenu = styled(UiKitButtonMenu)`
-
-  // background-color: ${({ theme }) => (theme.colors.silver )};
+    // background : #F4F4F4;
   border-radius: 12px;
-  border: unset;
   width: 100%;
+  height : 54px;
+  padding : 5px;
 `
 
 const ButtonMenuItem = styled(UiKitButtonMenuItem)`
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.text : theme.colors.textDisabled)};
-  box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
-  // background-color: ${({ theme, isActive }) => (theme.colors.silver )};
-  &:hover:not(:disabled):not(:active) {
-    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.disabled)};
-  }
-  &:first-child {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  &:last-child {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  &:not(:last-child):not(:first-child) {
-    border-radius: 0;
-  }
+font-weight : 600;
+
+  color: ${({ theme, isActive }) => (isActive ? '#FF6A55' : '#6F767E')};
+  box-shadow: ${({ isActive }) => isActive ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);' : 'none'};
 `
 
 const BalanceInputWrapper = styled(Flex)`
@@ -153,6 +140,12 @@ const SBPage = styled(Page)`
   }
 `
 
+const ButtonMenuField = styled(Box)`
+
+::-webkit-scrollbar {
+    height: 4px!important;
+  }
+`
 const FarmSA = () => {
     const { t } = useTranslation()
     const { isMobile, isTablet } = useMatchBreakpoints()
@@ -883,11 +876,11 @@ const FarmSA = () => {
             </Text>
             <SectionWrapper>
                 <Flex className="graphSide" flex="2" >
-                    <Section style={{ height: "500px" }}>
+                    <Section isDark={isDark} style={{ height: "500px" }}>
                         <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} />
                     </Section>
 
-                    <Section>
+                    <Section isDark={isDark}>
                         <Flex justifyContent="space-between" style={{ flexFlow: "row wrap" }}>
                             <Flex mb='20px'>
                                 <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>{t(`Time Profit`)}</Text>
@@ -910,8 +903,7 @@ const FarmSA = () => {
                     </Section>
                 </Flex>
                 <Flex className="infoSide" flex="1">
-                    <Section>
-                        <Box>
+                    <Section isDark={isDark}>
                             <Flex>
                                 <SingleFarmSelect
                                     options={getSelectOptions()}
@@ -920,7 +912,7 @@ const FarmSA = () => {
                                         setInputValue('')
                                         setButtonIndex(null)
                                     }}
-                                    width="calc(80%)"
+                                    width="278px"
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
@@ -932,7 +924,7 @@ const FarmSA = () => {
                                         setInputValue('')
                                         setButtonIndex(null)
                                     }}
-                                    width="140px"
+                                    width="128px"
                                     reset={resetWatcher}
                                 />
                             </Flex>
@@ -960,23 +952,21 @@ const FarmSA = () => {
                                     <ButtonMenu
                                         onItemClick={setInputToFraction}
                                         activeIndex={buttonIndex}
-                                        disabled={userTokenBalance.eq(0)}
-                                        scale={isSmallScreen ? 'sm' : 'md'}
+                                        isDark={isDark}
                                     >
                                         <ButtonMenuItem>25%</ButtonMenuItem>
                                         <ButtonMenuItem>50%</ButtonMenuItem>
                                         <ButtonMenuItem>75%</ButtonMenuItem>
                                         <ButtonMenuItem>100%</ButtonMenuItem>
                                     </ButtonMenu>
-                            </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
-                        <Flex alignItems="center" justifyContent="space-between">
+                        <Flex alignItems="center" justifyContent="space-between" mt='20px'>
                             <Flex>
                                 <Text  >{t('APY')}</Text>
                                 {tooltipVisible && tooltip}
                                 <span ref={targetRef}>
-                                    <InfoIcon ml="10px" width="25px" height="25px" />
+                                    <InfoIcon ml="10px" width="20px" height="20px" mt='2px' />
                                 </span>
                             </Flex>
                             <Text fontWeight="bold">{apy.toFixed(2)}%</Text>
@@ -1001,9 +991,11 @@ const FarmSA = () => {
                                 <Skeleton width="80px" height="16px" />
                             )}
                         </Flex>
-                        <Flex>
+                        <Flex border='none!important'>
                             {isApproved ? (
                                 <Button
+                                    width={260}
+                                    height={50}
                                     mx="auto"
                                     scale="sm"
                                     onClick={handleConfirm}
@@ -1021,9 +1013,10 @@ const FarmSA = () => {
                                 </Button>
                             ) : (
                                 <Button
+                                    width={260}
+                                    height={50}
                                     mx="auto"
                                     scale="md"
-                                    width="70%"
                                     onClick={handleApprove}
                                     isLoading={isApproving}
                                     endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
@@ -1032,7 +1025,7 @@ const FarmSA = () => {
                                 </Button>
                             )}
                         </Flex>
-                        <Flex>
+                        <Flex border='none!important'>
                             {inputValue ? <Text mx="auto" color='red'>{new BigNumber(farmData[3]).lt(minimumDebt) ? t('Minimum Debt Size: %minimumDebt% %tokenName%', { minimumDebt: minimumDebt.toNumber(), tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB') }) : null}</Text> : null}
                         </Flex>
                     </Section>

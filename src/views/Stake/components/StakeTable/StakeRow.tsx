@@ -51,7 +51,7 @@ const collapseAnimation = keyframes`
   }
 `
 
-const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
@@ -81,7 +81,6 @@ const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
 `
 const StakeContainer = styled(Flex)`
   &:not(:last-child) {
-    margin-bottom: 1rem;
   }
   ${({ theme }) => theme.mediaQueries.lg} {
     flex: 1 0 300px;
@@ -94,7 +93,7 @@ const StakeContainer = styled(Flex)`
 interface Props {
   disabled: boolean
 }
-const StyledButton = styled(Button)<Props>`
+const StyledButton = styled(Button) <Props>`
   background: ${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
   border-radius: 10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
@@ -109,7 +108,7 @@ const MaxContainer = styled(Flex)`
     align-items: center;
   }
   justify-content: space-between;
-  height: 100%;
+  height: 60px;
   background: ${({ theme }) => theme.colors.background};
   border-radius: 12px;
   padding: 6px;
@@ -141,6 +140,9 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
 const MaxButton = styled.button`
   width: 48px;
   height: 48px;
+  display : flex;
+  justify-content : center;
+  align-items : center;
   border-radius: 8px;
   // background: isDark ? '#272B30' : '#FFFFFF';
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -338,7 +340,7 @@ const StakeRow = ({ tokenData }) => {
 
   return (
     <StyledRow role="row" huski={tokenData?.symbol.toLowerCase() === 'shuski'} expanded={expanded}>
-      <Flex onClick={toggleExpanded} mr="20px" ml="20px">
+      <Flex onClick={toggleExpanded} mr="20px" ml="20px" alignItems='center'>
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
         <MyPosCell staked={userStakedBalance} />
@@ -367,7 +369,7 @@ const StakeRow = ({ tokenData }) => {
                     placeholder="0.00"
                     onChange={handleStakeInput}
                     value={stakeAmount}
-                    style={{ background: 'unset', border: 'none' }}
+                    style={{ background: 'unset', border: 'none', padding: 0, color: '#1A1D1F', fontSize: '28px', fontWeight: 'bold', paddingLeft: '20px' }}
                   />
                   <Flex alignItems="center" justifyContent="space-between">
                     <Box>
@@ -433,7 +435,7 @@ const StakeRow = ({ tokenData }) => {
                     placeholder="0.00"
                     onChange={handleUnstakeInput}
                     value={unstakeAmount}
-                    style={{ background: 'unset', border: 'none' }}
+                    style={{ background: 'unset', border: 'none', padding: 0, color: '#1A1D1F', fontSize: '28px', fontWeight: 'bold', paddingLeft: '20px' }}
                   />
 
                   <Flex alignItems="center" justifyContent="space-between">

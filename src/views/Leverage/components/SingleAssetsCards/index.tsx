@@ -246,6 +246,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         {
           symbol: 'none',
           type: 'line',
+          // data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
           data: singleApyList,
           smooth: 0.3,
           areaStyle: {
@@ -425,21 +426,26 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
           <Grid gridTemplateColumns="1fr 1fr" paddingTop="20px">
             <Flex flexDirection="column" justifyContent="center">
-              <Text>{t('APY')}</Text>
+              <Text color='#6F767E' fontSize='13px' mb='5px'>{t('APY')}</Text>
               {apy ? (
                 <>
                   <Text bold fontSize="3">
                     {apy}%
                   </Text>
-                  <Flex alignItems="center">
+                  <Flex alignItems="center" my='5px'>
                     {/*                     <Text color="#27C73F">{apyPercentageDiff}</Text>
                     <ArrowUpIcon color="#27C73F" /> */}
-                    <Text>
-                      {t(
-                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
-                        } than 1x yield farm`,
-                        { apyPercentageDiff },
-                      )}
+                    <Text fontSize='12px'>
+                      <span style={{ color }}>
+                        {t(
+                          `${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'} %apyPercentageDiff%% 
+                          `,
+                          { apyPercentageDiff },
+                        )}
+                      </span>
+                      <span style={{ color: '#6F767E' }}>
+                        than 1x yield farm
+                      </span>
                     </Text>
                   </Flex>
                 </>
@@ -450,12 +456,12 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                 </>
               )}
             </Flex>
-            <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '200px' }} />
+            <ReactEcharts option={getOption()} theme="Imooc" style={{ height: '76px' }} />
           </Grid>
         </Box>
         <Box padding="0.5rem 0">
-          <Flex justifyContent="space-between">
-            <Text>{t('TVL')}</Text>
+          <Flex justifyContent="space-between" my='12px'>
+            <Text color='#6F767E'>{t('TVL')}</Text>
             {tvl && !Number.isNaN(tvl) && tvl !== undefined ? (
               <Text>{`$${nFormatter(tvl)}`}</Text>
             ) : (
@@ -463,14 +469,14 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
             )}
           </Flex>
 
-          <Flex justifyContent="space-between">
-            <Text>{t('Risk Level')}</Text>
+          <Flex justifyContent="space-between" my='12px'>
+            <Text color='#6F767E'>{t('Risk Level')}</Text>
             <Text color={color} fontWeight="bold">
               {riskLevel}
             </Text>
           </Flex>
-          <Flex justifyContent="space-between">
-            <Text>{t('Daily Earn')}</Text>
+          <Flex justifyContent="space-between" my='12px'>
+            <Text color='#6F767E'>{t('Daily Earn')}</Text>
             {dailyEarnings ? (
               <Text>
                 {t('%dailyEarnings% %quoteTokenSymbol% per %tokenSymbol%', {

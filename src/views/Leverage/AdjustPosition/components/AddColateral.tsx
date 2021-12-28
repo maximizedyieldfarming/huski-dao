@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { Box, Button, Flex, Text, Skeleton } from 'husky-uikit1.0'
+import useTheme from 'hooks/useTheme'
 import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
 import BigNumber from 'bignumber.js'
@@ -8,8 +9,8 @@ import { useTranslation } from 'contexts/Localization'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useAddCollateralContext } from '../context'
 
-const InputArea = styled(Flex)`
-  background: #f7f7f8;
+const InputArea = styled(Flex) <{ isDark?: boolean }>`
+  background: ${({ isDark }) => isDark ? "#111315" : '#f7f7f8'};
   border-radius: 12px;
   padding: 0.5rem;
   flex: 1;
@@ -57,7 +58,7 @@ const AddColateral = ({
     },
     [setQuoteTokenInput, userQuoteTokenBalance],
   )
-   const setQuoteTokenInputToFraction = (e: any) => {
+  const setQuoteTokenInputToFraction = (e: any) => {
     if (e.target.innerText === '25%') {
       setQuoteTokenInput(userQuoteTokenBalance.times(0.25).toString())
     } else if (e.target.innerText === '50%') {
@@ -67,6 +68,8 @@ const AddColateral = ({
     } else if (e.target.innerText === '100%') {
       setQuoteTokenInput(userQuoteTokenBalance.toString())
     }
+    setActive1(Number(e.target.innerText.replace('%', '')) / 25 - 1);
+
   }
 
   const handleTokenInput = useCallback(
@@ -93,9 +96,11 @@ const AddColateral = ({
     } else if (e.target.innerText === '100%') {
       setTokenInput(userTokenBalance.toString())
     }
+    setActive2(Number(e.target.innerText.replace('%', '')) / 25 - 1);
   }
   // cleanup input when changing between repay debt and add collateral
   const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
+  const { isDark } = useTheme();
   React.useEffect(() => {
     setTokenInput('')
     setQuoteTokenInput('')
@@ -135,7 +140,7 @@ const AddColateral = ({
                 </Text>
               </Flex>
             </Flex>
-            <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt">
+            <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt" isDark={isDark}>
               <Flex alignItems="center" flex="1">
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={quoteToken} width={40} height={40} />
@@ -149,17 +154,17 @@ const AddColateral = ({
               </Flex>
               <Text bold>{quoteTokenName}</Text>
             </InputArea>
-            <Flex justifyContent="space-around" background="#F4F4F4" padding="4px" borderRadius="12px">
-              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 0}>
+            <Flex justifyContent="space-around" background={isDark ? "#111315" : "#F4F4F4"} padding="4px" borderRadius="12px">
+              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 0}>
                 25%
               </CustomButton>
-              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 1}>
+              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 1}>
                 50%
               </CustomButton>
-              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 2}>
+              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 2}>
                 75%
               </CustomButton>
-              <CustomButton variant="secondary" onClick={setQuoteTokenInputToFraction} active={active1 === 3}>
+              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 3}>
                 100%
               </CustomButton>
             </Flex>
@@ -182,7 +187,7 @@ const AddColateral = ({
                 </Text>
               </Flex>
             </Flex>
-            <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0">
+            <InputArea justifyContent="space-between" mb="1rem" background="backgroundAlt.0" isDark={isDark}>
               <Flex alignItems="center" flex="1">
                 <Box width={40} height={40} mr="5px">
                   <TokenImage token={token} width={40} height={40} />
@@ -191,17 +196,17 @@ const AddColateral = ({
               </Flex>
               <Text bold>{tokenName}</Text>
             </InputArea>
-            <Flex justifyContent="space-around" background="#F4F4F4" padding="4px" borderRadius="12px">
-              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 0}>
+            <Flex justifyContent="space-around" background={isDark ? "#111315" : "#F4F4F4"} padding="4px" borderRadius="12px">
+              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 0}>
                 25%
               </CustomButton>
-              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 1}>
+              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 1}>
                 50%
               </CustomButton>
-              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 2}>
+              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 2}>
                 75%
               </CustomButton>
-              <CustomButton variant="secondary" onClick={setTokenInputToFraction} active={active2 === 3}>
+              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 3}>
                 100%
               </CustomButton>
             </Flex>
@@ -212,14 +217,17 @@ const AddColateral = ({
   )
 }
 interface custombuttonprops {
-  active: boolean
+  active: boolean,
+  isDark: boolean,
 }
-const CustomButton = styled(Button)<custombuttonprops>`
-  box-shadow: ${({ active, theme }) =>
+const CustomButton = styled(Button) <custombuttonprops>`
+  box-shadow: ${({ active, isDark }) =>
     active
-      ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'
-      : 'none'};
-  color: ${({ active }) => (active ? 'black' : 'lightgrey')};
+      ? (isDark ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)' :
+        '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)')
+      : 'none'}!important;
+  color: ${({ active, isDark }) => (active ? (isDark ? '#FF6A55' : 'black') : 'lightgrey')}!important;
+  background : ${({ active, isDark }) => (active ? (isDark ? '#272B30' : 'white') : 'transparent')}!important;
   border: none !important;
   width: 25%;
 `

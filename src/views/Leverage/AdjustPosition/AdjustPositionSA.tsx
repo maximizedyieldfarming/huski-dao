@@ -20,6 +20,7 @@ import { getAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import useTheme from 'hooks/useTheme';
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
@@ -69,7 +70,6 @@ const RangeInput = styled.input`
   overflow: hidden;
   display: block;
   appearance: none;
-  max-width: 850px;
   width: 100%;
   margin: 0;
   height: 32px;
@@ -79,7 +79,7 @@ const RangeInput = styled.input`
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 32px;
-    background: linear-gradient(to right, #b488ff, #3a009e) 100% 50% / 100% 4px no-repeat transparent;
+    background: linear-gradient(to right, #7B3FE4, #7B3FE4) 100% 50% / 100% 4px no-repeat transparent;
   }
 
   &:focus {
@@ -95,11 +95,12 @@ const RangeInput = styled.input`
     background-image: url('/images/RangeHandle.png');
     background-position: center center;
     background-repeat: no-repeat;
+    background-size : 100% 100%;
 
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    box-shadow: ${makeLongShadow('rgb(189,159,242)', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
@@ -113,7 +114,6 @@ const RangeInput1 = styled.input`
   overflow: hidden;
   display: block;
   appearance: none;
-  max-width: 850px;
   width: 100%;
   margin: 0;
   height: 32px;
@@ -140,10 +140,12 @@ const RangeInput1 = styled.input`
     background-position: center center;
     background-repeat: no-repeat;
 
+    background-size : 100% 100%;
+
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    box-shadow: ${makeLongShadow('rgb(193,223,183)', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
@@ -158,6 +160,7 @@ interface LocationParams {
 }
 
 const Section = styled(Box)`
+  max-width : 850px;
   &:first-of-type {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
@@ -170,10 +173,10 @@ const Section = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem;
+  padding: 2rem;
   &:not(:first-child) {
     > ${Flex} {
-      padding: 1.5rem 0;
+      padding: 1rem 0;
       
     }
   }
@@ -191,6 +194,7 @@ const BalanceInputWrapper = styled(Flex)`
 `
 
 const AdjustPositionSA = () => {
+  const { isDark } = useTheme()
   const { account } = useWeb3React()
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { t } = useTranslation()
@@ -383,7 +387,7 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 26)
+    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 42)
 
     setMargin(tt)
 
@@ -461,7 +465,11 @@ const AdjustPositionSA = () => {
     for (let i = 1; i < leverage / 0.5; i++) {
       datalistSteps.push(1 + 0.5 * (-1 + i))
     }
-    return datalistSteps.map((value) => <option value={value} label={`${value.toFixed(2)}x`} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />)
+    return datalistSteps.map((value, i) => {
+      if (i === datalistSteps.length - 1)
+        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+      return <option value={value} label={`${value.toFixed(2)}x`} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+    })
   })()
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -634,7 +642,7 @@ const AdjustPositionSA = () => {
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
         <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap' style={{ border: 'none' }}>
-          <Text mb = '10px'>
+          <Text mb='10px'>
             {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
           <CurrentPostionToken>
@@ -655,20 +663,20 @@ const AdjustPositionSA = () => {
             </Box>
           </CurrentPostionToken>
         </Flex>
-        <Flex mt="-20px">
+        <Flex mt="-20px" border='none!important'>
           <Text bold>{t('Target Position Leverage')}</Text>
           <PositionX ml="auto" color="#6F767E">
             <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
           </PositionX>
         </Flex>
         <Flex>
-          <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
+          <Box style={{ width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
             <MoveBox move={margin}>
               <Text color="#7B3FE4" bold>
-                {targetPositionLeverage}x
+                {targetPositionLeverage.toFixed(2)}x
               </Text>
             </MoveBox>
-            <Box ref={targetRef} style={{ width: '100%' }}>
+            <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
               <RangeInput
                 type="range"
                 min="1.0"
@@ -691,7 +699,7 @@ const AdjustPositionSA = () => {
                 style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
               />
               {targetPositionLeverage < 1.5 ? (
-                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
               ) : (
                 <div
                   className="middle"
@@ -699,7 +707,7 @@ const AdjustPositionSA = () => {
                 />
               )}
               {targetPositionLeverage < 2 ? (
-                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
               ) : (
                 <div
                   className="middle"
@@ -707,7 +715,7 @@ const AdjustPositionSA = () => {
                 />
               )}
               {targetPositionLeverage < 2.5 ? (
-                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
               ) : (
                 <div
                   className="middle"
@@ -716,7 +724,7 @@ const AdjustPositionSA = () => {
               )}
               <div
                 className="middle"
-                style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
+                style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }}
               />
             </Flex>
             <Text>
@@ -746,18 +754,22 @@ const AdjustPositionSA = () => {
                   {t('Adding collateral')}
                 </Text>
               </Text>
-              <Box>
-                <Flex mt="30px">
-                  <Text>{t(`You're Repaying Debt`)}</Text>
+              <Flex justifyContent='space-between' mt='10px'>
+                <Flex>
+                  <Text>{t(`You're repaying debt`)}</Text>
                   <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                 </Flex>
-              </Box>
-              <Flex justifyContent="space-between">
-                <Text>{t('Updated Debt')}</Text>
-                <Text bold>
-                  {formatDisplayedBalance(debtValueNumber, tokenValue?.decimalsDigits)} {tokenValueSymbol}
-                </Text>
+                <Flex>
+                  <Text fontSize="12px" color="#6F767E">
+                    {t('Balance:')}
+                  </Text>
+                  <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
+                    userTokenBalance,
+                    tokenValue?.decimalsDigits,
+                  )} ${tokenValueSymbol}`}</Text>
+                </Flex>
               </Flex>
+
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
@@ -801,7 +813,7 @@ const AdjustPositionSA = () => {
               </Text>
               <Box>
                 <Flex justifyContent="space-between" mt="30px" alignItems="center">
-                  <Flex mt="30px">
+                  <Flex>
                     <Text>{t(`You're adding collateral`)}</Text>
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
@@ -874,22 +886,22 @@ const AdjustPositionSA = () => {
                 </Text>
               </Text>
 
-              <Box>
-                <Flex mt="30px">
+              <Flex justifyContent='space-between' mt='10px'>
+                <Flex>
                   <Text>{t(`You're repaying debt`)}</Text>
                   <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                 </Flex>
-              </Box>
-              <Flex justifyContent="space-between">
-                <Text>{t('Updated Debt')}</Text>
-                <Text bold>
-                  {formatDisplayedBalance(
-                    new BigNumber(debtValueNumber).minus(UpdatedDebt).toNumber(),
+                <Flex>
+                  <Text fontSize="12px" color="#6F767E">
+                    {t('Balance:')}
+                  </Text>
+                  <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
+                    userTokenBalance,
                     tokenValue?.decimalsDigits,
-                  )}{' '}
-                  {tokenValueSymbol}
-                </Text>
+                  )} ${tokenValueSymbol}`}</Text>
+                </Flex>
               </Flex>
+
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
@@ -933,11 +945,11 @@ const AdjustPositionSA = () => {
               </Text>
               <Box>
                 <Flex justifyContent="space-between" mt="30px" alignItems="center">
-                  <Flex mt="30px">
+                  <Flex >
                     <Text>{t(`You're adding collateral`)}</Text>
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
-                  <Flex>
+                  <Flex >
                     <Text fontSize="12px" color="#6F767E">
                       {t('Balance:')}
                     </Text>
@@ -992,16 +1004,18 @@ const AdjustPositionSA = () => {
         {/* if target > current */}
         {targetPositionLeverage > currentPositionLeverage ? (
           <>
-            <Box>
-              <Flex mt="30px">
+            <Flex justifyContent='space-between' alignItems='center' mt="30px">
+              <Flex>
                 <Text>{t(`You're borrowing more:`)}</Text>
                 <InfoIcon mt="3px" ml="3px" color="#6F767E" />
               </Flex>
-
-              <Text>
-                {assetsBorrowed?.toFixed(2)} {symbolName}
-              </Text>
-            </Box>
+              <Flex>
+                <Text fontSize="12px" color="#6F767E">
+                  {t('Balance:')}
+                </Text>
+                <Text fontSize="12px" color="#6F767E">{assetsBorrowed?.toFixed(2)} {symbolName}</Text>
+              </Flex>
+            </Flex>
             <Flex justifyContent="space-between">
               <Text>{t('APY')}</Text>
               {apy ? (
@@ -1049,27 +1063,31 @@ const AdjustPositionSA = () => {
                   {t('Adding collateral')}
                 </Text>
               </Text>
-              <Box>
-                <Flex mt="30px">
-                  <Text>{t(`You're Repaying Debt`)}</Text>
+              <Flex justifyContent='space-between' mt='10px'>
+                <Flex>
+                  <Text>{t(`You're repaying debt`)}</Text>
                   <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                 </Flex>
-              </Box>
-              <Flex justifyContent="space-between">
-                <Text>{t('Updated Debt')}</Text>
-                <Text bold>
-                  {formatDisplayedBalance(debtValueNumber, tokenValue?.decimalsDigits)} {tokenValueSymbol}
-                </Text>
+                <Flex>
+                  <Text fontSize="12px" color="#6F767E">
+                    {t('Balance:')}
+                  </Text>
+                  <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
+                    userTokenBalance,
+                    tokenValue?.decimalsDigits,
+                  )} ${tokenValueSymbol}`}</Text>
+                </Flex>
               </Flex>
+
               <Text>{t('What percentage would you like to close? (After repay all debt)')}</Text>
               <Flex mt="30px">
-                <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <Box style={{ width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
                   <MoveBox1 move={margin1}>
                     <Text color="#83BF6E" bold>
-                      {percentageToClose}%
+                      {percentageToClose.toFixed(0)}%
                     </Text>
                   </MoveBox1>
-                  <Box ref={targetRef1} style={{ width: '100%' }}>
+                  <Box ref={targetRef1} style={{ width: '100%', position: 'relative' }}>
                     <RangeInput1
                       type="range"
                       min="1.0"
@@ -1205,7 +1223,7 @@ const AdjustPositionSA = () => {
         </Text>
         <Flex>
           <Button
-            style={{ width: '260px', height: '60px' }}
+            style={{ width: '260px', height: '60px', border: !isDark ? '1px solid gray' : '' }}
             onClick={isRepayDebt ? handleConfirmConvertTo : handleConfirm}
             disabled={
               !account ||

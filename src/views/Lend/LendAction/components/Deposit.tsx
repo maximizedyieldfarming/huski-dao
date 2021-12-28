@@ -34,6 +34,8 @@ const ButtonGroup = styled(Flex)`
   align-items: center;
 `
 const Section = styled(Flex)`
+  align-items : center;
+  height : 100px;
   background-color: #f7f7f8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
@@ -197,7 +199,7 @@ const Deposit: React.FC<DepositProps> = ({
               placeholder="0.00"
               onChange={handleAmountChange}
               value={amount}
-              style={{ background: 'unset', border: 'transparent' }}
+              style={{ background: 'unset', border: 'transparent', padding: '0', color: '#1A1D1F  ', fontSize: '28px', fontWeight: 'bold' }}
             />
           </Box>
           <Box>
@@ -210,6 +212,10 @@ const Deposit: React.FC<DepositProps> = ({
                     border: '1px solid #DDDFE0',
                     background: 'transparent',
                     cursor: 'pointer',
+                    padding: '7px 8px',
+                    color: '#1A1D1F',
+                    fontSize: '14px',
+                    fontWeight: 500
                   }}
                   onClick={setAmountToMax}
                 >
@@ -218,7 +224,7 @@ const Deposit: React.FC<DepositProps> = ({
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }}>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
                   {name}
                 </Text>
               </Grid>
@@ -251,13 +257,13 @@ const Deposit: React.FC<DepositProps> = ({
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }}>ib{name}</Text>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>ib{name}</Text>
               </Grid>
             </MaxContainer>
           </Box>
         </Section>
       </Flex>
-      <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
+      <ButtonGroup flexDirection="row" justifyContent="space-between" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
           <Text
@@ -283,7 +289,7 @@ const Deposit: React.FC<DepositProps> = ({
         <Flex flexWrap='wrap' justifyContent="right">
           {isApproved ? null : (
             <Button
-              style={{ width: '160px', height: '57px', borderRadius: '16px', marginBottom: '10px' }}
+              style={{ width: '160px', height: '57px', borderRadius: '16px', marginBottom: '10px', marginRight: '10px' }}
               onClick={handleApprove}
               disabled={!account || isApproving}
               isLoading={isApproving}
@@ -306,7 +312,7 @@ const Deposit: React.FC<DepositProps> = ({
             isLoading={isPending}
             endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
           >
-            {isPending ? t('Confirming') : t('Confirm')}
+            {isPending ? t('Transfering') : t('Transfer')}
           </Button>
         </Flex>
       </ButtonGroup>

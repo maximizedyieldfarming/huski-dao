@@ -36,6 +36,8 @@ const Section = styled(Flex)`
   background-color: #f7f7f8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
+  height : 100px;
+  align-items : center;
 `
 
 const MaxContainer = styled(Flex)`
@@ -141,9 +143,14 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
           <Text fontWeight="700" color="textFarm" fontSize="14px">
             {t('From')}
           </Text>
-          <Text color="textSubtle" fontSize="12px">
-            {t('Balance')}: <span style={{fontWeight: 700 }}>{`${balance} ib${name}`}</span>
-          </Text>
+          <Flex>
+            <Text color="textSubtle" fontSize="12px">
+              {t('Balance')}:
+            </Text>
+            <Text fontSize='12px' fontWeight='bold' ml="5px">
+              {`${balance} ib${name}`}
+            </Text>
+          </Flex>
         </Flex>
         <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }} flexDirection={isSmallScreen ? 'column' : 'row'}>
           <Box>
@@ -152,7 +159,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
               placeholder="0.00"
               onChange={handleAmountChange}
               value={amount}
-              style={{ background: "transparent", border: "none" }}
+              style={{ background: 'unset', border: 'transparent', padding: '0', color: '#1A1D1F  ', fontSize: '28px', fontWeight: 'bold' }}
             />
           </Box>
           <Box>
@@ -165,6 +172,10 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
                     border: '1px solid #DDDFE0',
                     background: 'transparent',
                     cursor: 'pointer',
+                    padding: '7px 8px',
+                    color: '#1A1D1F',
+                    fontSize: '14px',
+                    fontWeight: 500
                   }}
                   onClick={setAmountToMax}
                 >
@@ -173,7 +184,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }}>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
                   ib{name}
                 </Text>
               </Grid>
@@ -188,13 +199,17 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
           <Text fontWeight="700" color="textFarm" fontSize="14px">
             {t('Recieve (Estimated)')}
           </Text>
-          <Text color="textSubtle" fontSize="12px">
-            {t('Balance')}:{' '}
-            <span style={{fontWeight: 700 }}>{`${formatDisplayedBalance(
-              userTokenBalance,
-              tokenData.TokenInfo?.token?.decimalsDigits,
-            )} ${name}`}</span>
-          </Text>
+          <Flex>
+            <Text color="textSubtle" fontSize="12px">
+              {t('Balance')}:{' '}
+            </Text>
+            <Text fontSize='12px' fontWeight='bold' ml='5px'>
+              {`${formatDisplayedBalance(
+                userTokenBalance,
+                tokenData.TokenInfo?.token?.decimalsDigits,
+              )} ${name}`}
+            </Text>
+          </Flex>
         </Flex>
         <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
           <Box>
@@ -206,13 +221,13 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text style={{fontWeight: 700 }}>{name}</Text>
+                <Text style={{ fontWeight: 700 }} width={40}>{name}</Text>
               </Grid>
             </MaxContainer>
           </Box>
         </Section>
       </Flex>
-      <ButtonGroup flexDirection="row" justifySelf="flex-end" justifyContent="space-evenly" mb="20px" mt="30px">
+      <ButtonGroup flexDirection="row" justifyContent="space-between" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
           <Text

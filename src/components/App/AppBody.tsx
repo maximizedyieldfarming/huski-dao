@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Card } from 'husky-uikit1.0'
 
 export const BodyWrapper = styled(Card)`
-  border-radius: 24px;
+  border-radius: 8px;
   max-width: 436px;
   width: 100%;
   z-index: 1;

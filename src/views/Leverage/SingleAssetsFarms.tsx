@@ -38,9 +38,7 @@ const PositionsButton = styled(ActionButton)`
 `
 
 const PositionButtonsContainer = styled(Box)`
-  > div {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
-  }
+ 
   ${({ theme }) => theme.mediaQueries.md} {
     order: 1;
   }
@@ -138,12 +136,24 @@ const StrategyIcon = styled.div<{ market: string }>`
   }};
 `
 const SBBox = styled(Box)`
+  
+  >h2{
+    font-family : 'BalooBhaijaan';
+  }
+  align-items : center;
+  display : flex;
+
   border-radius: 15px !important;
   background-image: url('/images/BG.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
+  width : calc(100% - 300px);
   min-width : 520px;
+  padding-top : 30px;
+  @media screen and (max-width : 960px){
+    width : 100%;
+  }
   @media screen and (max-width : 1480px){
     padding : 30px 0px;
     margin-right : 0px!important;
@@ -329,6 +339,7 @@ const SingleAssetsFarms: React.FC = () => {
             justifyContent: 'space-between',
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+            maxWidth : '316px'
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />
@@ -404,7 +415,7 @@ const SingleAssetsFarms: React.FC = () => {
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex className="strategyFilter" alignItems="center">
+        <Flex className="strategyFilter" alignItems="center" borderRight='none!important'>
           <Text>{t('Strategy:')}</Text>
           <Flex overflowX="auto" alignItems="center">
             <FilterOption

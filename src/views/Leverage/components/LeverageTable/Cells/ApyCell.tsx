@@ -12,7 +12,6 @@ const StyledCell = styled(BaseCell)`
   ${CellContent} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
     ${({ theme }) => theme.mediaQueries.md} {
       flex-direction: column;
     }
@@ -67,10 +66,10 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
           </Text>
         )}
         {apy ? (
-          <Flex alignItems="center" style={{ marginTop: '17px' }}>
+          <Flex style={{ marginTop: '17px' }} >
             <Text style={{ fontWeight: 700 }} color="text">{apyAtOne}%</Text>
             <ChevronRightIcon />
-            <Text bold fontSize='20px' mt="-3px" color="primaryPurple">{apy}%</Text>
+            <Text bold fontSize='20px' mt="-3px" color="#7B3FE4">{apy}%</Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />

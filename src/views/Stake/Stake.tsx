@@ -198,7 +198,6 @@ const Stake: React.FC = () => {
                 isLoading={isPending}
                 disabled={!account || Number(unlockedRewards) === 0}
                 endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                mx="auto"
               >
                 {isPending ? t('Claiming') : t('Claim')}
               </StyledButton>
