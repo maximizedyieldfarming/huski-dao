@@ -1,8 +1,6 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState, useEffect } from 'react'
-import useDelayedUnmount from 'hooks/useDelayedUnmount'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { useMatchBreakpoints } from 'husky-uikit1.0'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getTvl } from '../../helpers'
 import PoolCell from './Cells/PoolCell'
@@ -16,37 +14,23 @@ import Borrowing from './Cells/Borrowing'
 import BaseCell from './Cells/BaseCell'
 
 const StyledRow = styled.div`
-  // overflow : auto;
-  
   background-color: transparent;
   display: flex;
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-
-  //cursor: pointer;
   > ${BaseCell}{
     padding-top : 10px!important;
     padding-bottom : 10px!important;
-  }
-  ::-webkit-scrollbar {
-    height: 4px!important;
   }
 `
 
 const LeverageRow = ({ tokenData }) => {
   const { lpSymbol, leverage } = tokenData
-  const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
-  const isLargerScreen = isLg || isXl || isXxl
-  const [expanded, setExpanded] = useState(false)
-  const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  const toggleExpanded = () => {
-    setExpanded((prev) => !prev)
-  }
-
+  
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -70,9 +54,17 @@ const LeverageRow = ({ tokenData }) => {
   const { tradingFees: tradeFee } = useTradingFees(tokenData)
   // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
-  // console.log("for apr", {yieldFarmData, tradeFee, huskyRewards, borrowingInterest})
   const getApr = (lvg) => {
-    if (tradeFee === (0 || NaN) || huskyRewards === (0 || NaN) || borrowingInterest === (0 || NaN) || yieldFarmData === (0 || NaN)) {
+    if (
+      Number(tradeFee) === 0 ||
+      Number(huskyRewards) === 0 ||
+      Number(borrowingInterest) === 0 ||
+      Number(yieldFarmData) === 0 ||
+      Number.isNaN(tradeFee) ||
+      Number.isNaN(huskyRewards) ||
+      Number.isNaN(borrowingInterest) ||
+      Number.isNaN(yieldFarmData)
+    ) {
       return null
     }
     const apr =
@@ -85,6 +77,9 @@ const LeverageRow = ({ tokenData }) => {
 
   const getApy = (lvg) => {
     const apr = getApr(lvg)
+    if (apr === null) { 
+      return null
+    }
     const apy = Math.pow(1 + apr / 365, 365) - 1
     return apy * 100
   }
@@ -113,7 +108,7 @@ const LeverageRow = ({ tokenData }) => {
 
   return (
     <>
-      <StyledRow role="row" onClick={toggleExpanded}>
+      <StyledRow role="row">
         <PoolCell pool={lpSymbol.replace(' LP', '')} tokenData={tokenData} />
         <ApyCell
           apyAtOne={getDisplayApr(getApy(1))}
