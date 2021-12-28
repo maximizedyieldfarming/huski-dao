@@ -16,7 +16,7 @@ import {
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getAddress } from 'utils/addressHelpers'
+import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
@@ -213,7 +213,7 @@ const AdjustPositionSA = () => {
   const [tokenInput, setTokenInput] = useState<string>()
   // const [quoteTokenInput, setQuoteTokenInput] = useState(0)
 
-  const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
+  const { positionId, debtValue, lpAmount, vault, positionValueBase, serialCode } = data
   const {
     TokenInfo,
     QuoteTokenInfo,
@@ -248,10 +248,12 @@ const AdjustPositionSA = () => {
   let lpSymbolName
   let tokenValue
   let quoteTokenValue
+  let inputValue
   let tokenPrice
   let quoteTokenPrice
   let tokenValueSymbol
   let quoteTokenValueSymbol
+  let inputSymbol
   let baseTokenAmount
   let farmTokenAmount
   let basetokenBegin
@@ -264,6 +266,7 @@ const AdjustPositionSA = () => {
   let quoteTokenInputValue
   let userTokenBalance
   let userQuoteTokenBalance
+  let userInputBalance
   let minimumDebt
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
@@ -272,10 +275,12 @@ const AdjustPositionSA = () => {
     lpSymbolName = TokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = token
     quoteTokenValue = quoteToken
+    inputValue = serialCode === '221' ? tokenValue : quoteTokenValue
     tokenPrice = tokenPriceUsd
     quoteTokenPrice = quoteTokenPriceUsd
     tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
+    inputSymbol = serialCode === '221' ? tokenValueSymbol : quoteTokenValueSymbol
     baseTokenAmount = (Number(tokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     farmTokenAmount = (Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     basetokenBegin = parseInt(tokenAmountTotal)
@@ -290,6 +295,7 @@ const AdjustPositionSA = () => {
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     )
+    userInputBalance = serialCode === '221' ? userTokenBalance : userQuoteTokenBalance
     minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   } else {
     //  console.log('case 2')
@@ -297,10 +303,12 @@ const AdjustPositionSA = () => {
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = quoteToken
     quoteTokenValue = token
+    inputValue = serialCode === '221' ? tokenValue : quoteTokenValue
     tokenPrice = quoteTokenPriceUsd
     quoteTokenPrice = tokenPriceUsd
     tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
+    inputSymbol = serialCode === '221' ? tokenValueSymbol : quoteTokenValueSymbol
     baseTokenAmount = (Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     farmTokenAmount = (Number(tokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     // baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -311,12 +319,13 @@ const AdjustPositionSA = () => {
     withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
     contract = quoteTokenVaultContract
-    tokenInputValue = 0 // formatNumber(quoteTokenInput)
+    tokenInputValue = 0
     quoteTokenInputValue = tokenInput || 0
     userTokenBalance = getBalanceAmount(
       tokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     )
     userQuoteTokenBalance = getBalanceAmount(quoteTokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance)
+    userInputBalance = serialCode === '221' ? userTokenBalance : userQuoteTokenBalance
     minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   }
   // console.info('use this', {
@@ -328,6 +337,7 @@ const AdjustPositionSA = () => {
   //   quoteTokenPrice,
   //   tokenValueSymbol,
   //   quoteTokenValueSymbol,
+  //   inputSymbol,
   //   baseTokenAmount,
   //   farmTokenAmount,
   //   basetokenBegin,
@@ -388,13 +398,12 @@ const AdjustPositionSA = () => {
 
   useEffect(() => {
     const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 42)
-
     setMargin(tt)
 
   }, [targetPositionLeverage, moveVal.width, leverage])
 
 
-  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, 0, symbolName)
+  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, quoteTokenInputValue, tokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
   let assetsBorrowed
   let baseTokenInPosition
@@ -436,13 +445,13 @@ const AdjustPositionSA = () => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = new BigNumber(input).gt(userTokenBalance) ? input : input
+        const finalValue = new BigNumber(input).gt(userInputBalance) ? input : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
       }
     },
-    [userTokenBalance],
+    [userInputBalance],
   )
   useLayoutEffect(() => {
     if (targetRef1.current !== null && targetRef1.current !== undefined) {
@@ -474,6 +483,36 @@ const AdjustPositionSA = () => {
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isPending, setIsPending] = useState(false)
+
+  const bnbVaultAddress = getWbnbAddress()
+  const depositContract = useVault(bnbVaultAddress)
+  const handleDeposit = async (bnbMsgValue) => {
+
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: bnbMsgValue,
+    }
+    // setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [bnbMsgValue],
+        callOptionsBNB,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+        history.push('/farms')
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+    }
+  }
+
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -509,7 +548,7 @@ const AdjustPositionSA = () => {
 
   const handleConfirm = async () => {
     const id = positionId
-    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber
+    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
@@ -519,40 +558,42 @@ const AdjustPositionSA = () => {
     let strategiesAddress
     let dataStrategy
     let dataWorker
-
+    let wrapFlag = false
     // base token is base token
     if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
       // single base token
-      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+      // if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+        if(inputSymbol === tokenValueSymbol){
         console.info('base + single + token input ')
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
-        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
-        console.info('base + single + quote token input ---')
-        farmingTokenAmount = quoteTokenInputValue || '0'
+        console.info('base + single + quote token input ')
+        // farmingTokenAmount = quoteTokenInputValue || '0'
+        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
+      amount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
     } else {
       // farm token is base token
       if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('farm + single + token input ')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
-        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
         console.info('farm + single +1 quote token input ')
-        farmingTokenAmount = quoteTokenInputValue || '0'
+        wrapFlag = true
+        // farmingTokenAmount = quoteTokenInputValue || '0'
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
     }
 
     console.log({
@@ -569,6 +610,13 @@ const AdjustPositionSA = () => {
       tokenInputValue,
       quoteTokenInputValue,
     })
+
+
+    if (lpSymbolName.toUpperCase().includes('BNB') && wrapFlag && inputSymbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB') {
+      const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      handleDeposit(bnbMsgValue)
+    }
+
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -764,9 +812,9 @@ const AdjustPositionSA = () => {
                     {t('Balance:')}
                   </Text>
                   <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                    userTokenBalance,
-                    tokenValue?.decimalsDigits,
-                  )} ${tokenValueSymbol}`}</Text>
+                    userInputBalance,
+                    inputValue?.decimalsDigits,
+                  )} ${inputSymbol}`}</Text>
                 </Flex>
               </Flex>
 
@@ -822,18 +870,18 @@ const AdjustPositionSA = () => {
                       {t('Balance:')}
                     </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                      userTokenBalance,
-                      tokenValue?.decimalsDigits,
-                    )} ${tokenValueSymbol}`}</Text>
+                      userInputBalance,
+                      inputValue?.decimalsDigits,
+                    )} ${inputSymbol}`}</Text>
                   </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
                   <Box width={24} height={24} mr="5px">
-                    <TokenImage token={tokenValue} width={24} height={24} />
+                    <TokenImage token={inputValue} width={24} height={24} />
                   </Box>
                   <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
-                    {tokenValueSymbol}
+                    {inputSymbol}
                   </Text>
                 </BalanceInputWrapper>
               </Box>
@@ -896,9 +944,9 @@ const AdjustPositionSA = () => {
                     {t('Balance:')}
                   </Text>
                   <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                    userTokenBalance,
-                    tokenValue?.decimalsDigits,
-                  )} ${tokenValueSymbol}`}</Text>
+                    userInputBalance,
+                    inputValue?.decimalsDigits,
+                  )} ${inputSymbol}`}</Text>
                 </Flex>
               </Flex>
 
@@ -954,18 +1002,18 @@ const AdjustPositionSA = () => {
                       {t('Balance:')}
                     </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                      userTokenBalance,
-                      tokenValue?.decimalsDigits,
-                    )} ${tokenValueSymbol}`}</Text>
+                      userInputBalance,
+                      inputValue?.decimalsDigits,
+                    )} ${inputSymbol}`}</Text>
                   </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
                   <Box width={24} height={24} mr="5px">
-                    <TokenImage token={tokenValue} width={40} height={40} />
+                    <TokenImage token={inputValue} width={40} height={40} />
                   </Box>
                   <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
-                    {tokenValueSymbol}
+                    {inputSymbol}
                   </Text>
                 </BalanceInputWrapper>
               </Box>
@@ -1013,7 +1061,7 @@ const AdjustPositionSA = () => {
                 <Text fontSize="12px" color="#6F767E">
                   {t('Balance:')}
                 </Text>
-                <Text fontSize="12px" color="#6F767E">{assetsBorrowed?.toFixed(2)} {symbolName}</Text>
+                <Text fontSize="12px" color="#6F767E">{assetsBorrowed?.toFixed(2)} {inputSymbol}</Text>
               </Flex>
             </Flex>
             <Flex justifyContent="space-between">
@@ -1073,9 +1121,9 @@ const AdjustPositionSA = () => {
                     {t('Balance:')}
                   </Text>
                   <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                    userTokenBalance,
-                    tokenValue?.decimalsDigits,
-                  )} ${tokenValueSymbol}`}</Text>
+                    userInputBalance,
+                    inputValue?.decimalsDigits,
+                  )} ${inputSymbol}`}</Text>
                 </Flex>
               </Flex>
 
@@ -1165,18 +1213,18 @@ const AdjustPositionSA = () => {
                       {t('Balance:')}
                     </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                      userTokenBalance,
-                      tokenValue?.decimalsDigits,
-                    )} ${tokenValueSymbol}`}</Text>
+                      userInputBalance,
+                      inputValue?.decimalsDigits,
+                    )} ${inputSymbol}`}</Text>
                   </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
                   <Box width={24} height={24} mr="5px">
-                    <TokenImage token={tokenValue} width={24} height={24} />
+                    <TokenImage token={inputValue} width={24} height={24} />
                   </Box>
                   <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
-                    {tokenValueSymbol}
+                    {inputSymbol}
                   </Text>
                 </BalanceInputWrapper>
               </Box>

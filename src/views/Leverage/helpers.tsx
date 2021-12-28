@@ -580,7 +580,7 @@ export const getSingle7Days = (farm: LeverageFarm, cakePrice, tradefee) => {
 
   }
 
-  console.info('singleApyList', singleApyList)
+  // console.info('singleApyList', singleApyList)
 
   return singleApyList
 
