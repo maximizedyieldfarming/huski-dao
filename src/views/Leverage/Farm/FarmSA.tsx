@@ -211,14 +211,14 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-  const { allowance: quoteTokenAllowance } = useTokenAllowance(
-    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
-    singleFarm?.QuoteTokenInfo?.vaultAddress,
-  )
-  const { allowance: tokenAllowance } = useTokenAllowance(
-    getAddress(singleFarm?.TokenInfo?.token?.address),
-    singleFarm?.TokenInfo?.vaultAddress,
-  )
+    const { allowance: quoteTokenAllowance } = useTokenAllowance(
+        getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
+        singleFarm?.QuoteTokenInfo?.vaultAddress,
+    )
+    const { allowance: tokenAllowance } = useTokenAllowance(
+        getAddress(singleFarm?.TokenInfo?.token?.address),
+        singleFarm?.TokenInfo?.vaultAddress,
+    )
     const allowance = Number(singleFarm?.userData?.quoteTokenAllowance) > 0 ? singleFarm?.userData?.quoteTokenAllowance : quoteTokenAllowance
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -276,16 +276,19 @@ const FarmSA = () => {
 
     const handleApprove = async () => {
         let contract
+        let approveAddress
         if (marketStrategy.includes('bull')) {
             contract = approveContract
+            approveAddress = quoteTokenVaultAddress
         } else {
             contract = quoteTokenApproveContract //  approveContract
+            approveAddress = vaultAddress
         }
 
         setIsApproving(true)
         try {
             toastInfo(t('Approving...'), t('Please Wait!'))
-            const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
+            const tx = await contract.approve(approveAddress, ethers.constants.MaxUint256)
             const receipt = await tx.wait()
             if (receipt.status) {
                 toastSuccess(t('Approved!'), t('Your request has been approved'))
@@ -387,6 +390,24 @@ const FarmSA = () => {
         }
     }
 
+    const approveContractbnb = useERC20(bnbVaultAddress)
+    const handleApproveBnb = async () => {
+        toastInfo(t('Approving...'), t('Please Wait!'))
+        // setIsApproving(true)
+        try {
+            const tx = await approveContractbnb.approve(vaultAddress, ethers.constants.MaxUint256)
+            const receipt = await tx.wait()
+            if (receipt.status) {
+                toastSuccess(t('Approved!'), t('Your request has been approved'))
+            } else {
+                toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+            }
+        } catch (error: any) {
+            toastWarning(t('Error'), error.message)
+        } finally {
+            // setIsApproving(false)
+        }
+    }
 
     const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
         const callOptions = {
@@ -445,7 +466,7 @@ const FarmSA = () => {
                 tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '001'])
+                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
                 console.info('!== tokenName')
@@ -453,7 +474,7 @@ const FarmSA = () => {
                 quoteTokenInputValue = inputValue || 0
                 farmingTokenAmount = getDecimalAmount(new BigNumber(inputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '010'])
+                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212'])
                 dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
 
@@ -468,16 +489,16 @@ const FarmSA = () => {
                 tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
-                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '001'])
+                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
-                console.info('!!!==tokenname', tokenName)
+                console.info('!!!=====tokenname', tokenName)
                 tokenInputValue = 0;
                 // quoteTokenInputValue = inputValue || 0
                 // farmingTokenAmount = (quoteTokenInputValue)?.toString()
                 farmingTokenAmount = getDecimalAmount(new BigNumber(inputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1' , '010'])
+                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
             contract = vaultContract
@@ -507,6 +528,12 @@ const FarmSA = () => {
             const bnbMsgValue = getDecimalAmount(new BigNumber(inputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
             // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
             handleDeposit(bnbMsgValue)
+
+            const allowances = singleFarm?.userData?.allowance // ? singleFarm?.userData?.allowance : token?.userData?.allowance
+            console.info('wbnb  allowance ', allowances)
+            if (Number(allowances) === 0) {
+                handleApproveBnb()
+            }
         }
 
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
@@ -531,14 +558,13 @@ const FarmSA = () => {
 
     const getOption = () => {
         const option = {
-           tooltip: {
-            formatter: (params) => {
-              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
-                params[1].marker
-              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+            tooltip: {
+                formatter: (params) => {
+                    return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker
+                        } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                },
+                trigger: 'axis',
             },
-            trigger: 'axis',
-          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -584,13 +610,12 @@ const FarmSA = () => {
     const getOption2 = () => {
         const option = {
             tooltip: {
-            formatter: (params) => {
-              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
-                params[1].marker
-              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                formatter: (params) => {
+                    return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker
+                        } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                },
+                trigger: 'axis',
             },
-            trigger: 'axis',
-          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -689,7 +714,7 @@ const FarmSA = () => {
                 tooltip: {
                     valueDecimals: 2,
                     pointFormat: '{series.name}: <b>&dollar;{point.y}</b><br/>',
-              },
+                },
             }]
 
         };
