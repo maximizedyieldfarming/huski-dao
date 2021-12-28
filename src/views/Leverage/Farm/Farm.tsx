@@ -1,12 +1,10 @@
 import React, { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react'
 import { useParams, useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
-import { hexZeroPad } from '@ethersproject/bytes'
 import {
   Box,
   Button,
   Flex,
-  Radio,
   InfoIcon,
   Text,
   Skeleton,
@@ -18,7 +16,7 @@ import {
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance, useTokenAllowance } from 'hooks/useTokenBalance'
 import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
@@ -32,7 +30,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import NumberInput from 'components/NumberInput'
 import DebtRatioProgress from 'components/DebRatioProgress'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { getHuskyRewards, getYieldFarming, getLeverageFarmingData } from '../helpers'
 import { useFarmsWithToken } from '../hooks/useFarmsWithToken'
@@ -229,7 +227,7 @@ const Farm = () => {
   } = useLocation<LocationParams>()
   const history = useHistory()
 
-  const [tokenData, setTokenData] = useState(data)
+  const tokenData = data
   const quoteTokenName = tokenData?.TokenInfo?.quoteToken?.symbol
   const tokenName = tokenData?.TokenInfo?.token?.symbol
 
@@ -482,6 +480,25 @@ const Farm = () => {
     }
   }
 
+  const approveContractbnb = useERC20(bnbVaultAddress)
+  const handleApproveBnb = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    // setIsApproving(true)
+    try {
+      const tx = await approveContractbnb.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      // setIsApproving(false)
+    }
+  }
+
 
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -613,12 +630,17 @@ const Farm = () => {
     })
 
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
-      // if(tokenData?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' || tokenData?.QuoteTokenInfo?.token?.symbolto.UpperCase().replace('WBNB', 'BNB') === 'BNB'){// bnb is farm token 
-      // need mod commit name 
       const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
-      // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
+
       console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
+
+      const allowance = tokenData?.userData?.allowance // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      console.info('wbnb  allowance ', allowance)
+      if (Number(allowance) === 0) {
+        handleApproveBnb()
+      }
+
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -658,12 +680,27 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
+  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+    getAddress(tokenData?.QuoteTokenInfo?.token?.address),
+    tokenData?.QuoteTokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.token?.address),
+    tokenData?.TokenInfo?.vaultAddress,
+  )
   let allowance = '0'
-  if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
-    allowance = tokenData.userData?.quoteTokenAllowance
+  if (
+    radio?.toUpperCase().replace('WBNB', 'BNB') ===
+    tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  ) {
+    allowance =
+      Number(tokenData.userData?.quoteTokenAllowance) > 0
+        ? tokenData.userData?.quoteTokenAllowance
+        : quoteTokenAllowance.toString()
   } else {
-    allowance = tokenData.userData?.tokenAllowance
+    allowance = Number(tokenData.userData?.tokenAllowance) > 0 ? tokenData.userData?.tokenAllowance : tokenAllowance.toString()
   }
+
   const isApproved = Number(allowance) > 0
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const quoteTokenAddress = getAddress(tokenData.TokenInfo.quoteToken.address)
@@ -674,15 +711,18 @@ const Farm = () => {
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
     let contract
-    if (radio?.toUpperCase() === tokenData?.quoteToken?.symbol.toUpperCase()) {
+    let approveAddress
+    if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
       contract = approveContract // quoteTokenApproveContract
+      approveAddress = quoteTokenVaultAddress
     } else {
       contract = quoteTokenApproveContract // approveContract
+      approveAddress = vaultAddress // quoteTokenVaultAddress
     }
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
-      const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await contract.approve(approveAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
@@ -696,8 +736,8 @@ const Farm = () => {
     }
   }
 
-  const { isMobile, isTable } = useMatchBreakpoints()
-  const isMobileOrTable = isMobile || isTable
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
 
   const principal = 1
   const maxValue = 1 - principal / tokenData?.leverage
@@ -805,28 +845,28 @@ const Farm = () => {
               <ButtonArea justifyContent="space-between" background="backgroundAlt" isDark={isDark}>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   25%
                 </StyledButton>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   50%
                 </StyledButton>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   75%
                 </StyledButton>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   100%
@@ -867,28 +907,28 @@ const Farm = () => {
               <ButtonArea justifyContent="space-between" isDark={isDark}>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   25%
                 </StyledButton>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   50%
                 </StyledButton>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   75%
                 </StyledButton>
                 <StyledButton
                   variant="secondary" isDark={isDark}
-                  scale={isMobileOrTable ? 'sm' : 'md'}
+                  scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   100%

@@ -25,7 +25,7 @@ const Section = styled(Flex)`
     // padding: 1rem;
     overflow: auto;
     gap: 2rem;
-    flex-wrap : wrap;
+    flex-wrap: wrap;
   }
   .block {
     background-color: ${({ theme }) => theme.colors.background};
@@ -34,26 +34,26 @@ const Section = styled(Flex)`
   }
 `
 const SBBox = styled(Box)`
-  >h2{
-    font-family : 'BalooBhaijaan';
+  > h2 {
+    font-family: 'BalooBhaijaan';
   }
-  align-items : center;
-  display : flex;
+  align-items: center;
+  display: flex;
   border-radius: 15px !important;
   background-image: url(${headerBg});
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
-  min-width : 520px;
-  @media screen and (max-width : 1480px){
-    padding : 30px 0px;
-    margin-right : 0px!important;
+  min-width: 520px;
+  @media screen and (max-width: 1480px) {
+    padding: 30px 0px;
+    margin-right: 0px !important;
   }
-  @media screen and (max-width : 600px){
-    min-width : unset;
-    >h2{
-      margin-left : 20px!important;
-      font-size : 35px!important;
+  @media screen and (max-width: 600px) {
+    min-width: unset;
+    > h2 {
+      margin-left: 20px !important;
+      font-size: 35px !important;
     }
   }
 `
@@ -76,15 +76,15 @@ const ValueBox = styled(Box)`
 `
 
 const SBPage = styled(Page)`
-  @media screen and (max-width : 425px){
-    padding-left : 5px;
-    padding-right : 5px;
-    margin-left : 2%;
-    margin-right : 2%;
+  @media screen and (max-width: 425px) {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 2%;
+    margin-right: 2%;
   }
-  margin-left : 0px;
-  margin-right : 0px;
-  padding-left : 40px;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 40px;
 `
 const Lend: React.FC = () => {
   const { t } = useTranslation()
@@ -107,14 +107,17 @@ const Lend: React.FC = () => {
   console.log({ lendData })
 
   let depositTotalToken = 0
+  let depositTotalDebtVal = 0
   lendData.map((farm) => {
-    const { totalToken, tokenPriceUsd } = farm
+    const { totalToken, vaultDebtVal, tokenPriceUsd } = farm
     const totalSupplyUSD = (Number(totalToken) * Number(tokenPriceUsd)) / 10 ** 18
+    const totalBorrowedUSD = (Number(vaultDebtVal) * Number(tokenPriceUsd)) / 10 ** 18
     depositTotalToken += totalSupplyUSD
-    return depositTotalToken
+    depositTotalDebtVal += totalBorrowedUSD
+    return { depositTotalToken, depositTotalDebtVal }
   })
 
-  const totalValueLocked = Number(lpTokensTvl) + Number(depositTotalToken)
+  const totalValueLocked = Number(lpTokensTvl) + Number(depositTotalToken) - Number(depositTotalDebtVal)
   const totalValueLockedValue = totalValueLocked.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
   usePollLeverageFarmsWithUserData()
 
@@ -153,7 +156,7 @@ const Lend: React.FC = () => {
               {t(`Total Volume 24H:`)}
             </Text>
             {volume24h ? (
-              <Text fontSize="30px" color="textFarm" fontFamily='LexendDeca'>
+              <Text fontSize="30px" color="textFarm" fontFamily="LexendDeca">
                 {volume24h}
               </Text>
             ) : (
@@ -181,7 +184,7 @@ const Lend: React.FC = () => {
                 style={{ letterSpacing: '-0.01em' }}
                 color="textFarm"
                 fontWeight="bold"
-                fontFamily='LexendDeca'
+                fontFamily="LexendDeca"
               >{`${totalValueLockedValue}`}</Text>
             ) : (
               <Skeleton width="180px" height="30px" />

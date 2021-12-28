@@ -9,6 +9,7 @@ import styled,{useTheme} from 'styled-components'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import { TRADE_FEE } from 'config'
 import { ethers } from 'ethers'
 import { TokenPairImage } from 'components/TokenImage'
 import { ArrowDownIcon } from 'assets'
@@ -81,11 +82,11 @@ const ClosePositionSA = () => {
   const { balance: tokenBalance } = useTokenBalance(getAddress(TokenInfo.token.address))
   const { balance: bnbBalance } = useGetBnbBalance()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(data.farmData?.TokenInfo.vaultAddress).balance).toJSON()
-  console.log(userTokenBalanceIb);
+  // console.log(userTokenBalanceIb);
 
   const userTokenBalance = getBalanceAmount(TokenInfo.token.symbol.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
 
-  console.log(data);
+  // console.log(data);
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenVaultAddress = TokenInfo?.vaultAddress
@@ -149,7 +150,7 @@ const ClosePositionSA = () => {
   const convertedPositionValueAssets =
     Number(baseTokenAmount) +
     basetokenBegin -
-    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
+    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - TRADE_FEE) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   const [isPending, setIsPending] = useState<boolean>(false)
@@ -297,10 +298,10 @@ const ClosePositionSA = () => {
               </Box>
               <Box ml="5px">
                 <Text style={{ whiteSpace: 'nowrap' }} ml="5px" bold>
-                  {lpSymbolName.replace(' PancakeswapWorker', '').toUpperCase().replace("WBNB", "BNB")}
+                  {lpSymbolName.toUpperCase().replace("WBNB", "BNB")}
                 </Text>
                 <Text style={{ whiteSpace: 'nowrap' }} ml="5px" fontSize="12px" color="#6F767E">
-                  {lpSymbolName.split(' ')[1].replace('Worker', '')}
+                  {data?.farmData?.lpExchange}
                 </Text>
               </Box>
             </Flex>

@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Button, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/Select'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
+import { BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
 import LeverageRow from './LeverageRow'
 import LeverageHeaderRow from './LeverageHeaderRow'
@@ -16,12 +16,18 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
-  > div:not(:last-child) {
+  > ${Box}>div:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
   ${({ theme }) => theme.mediaQueries.lg} {
-    > div:not(:last-child) {
+    > ${Box}>div:not(:last-child) {
       border-bottom: none;
+    }
+  }
+  > ${Box} {
+    overflow: auto;
+    ::-webkit-scrollbar {
+      height: 8px;
     }
   }
 `
@@ -58,17 +64,17 @@ const FilterOption = styled(Button)`
 `
 
 const FiltersWrapper = styled(Flex)`
-  flex-wrap : wrap;
+  flex-wrap: wrap;
   flex-direction: column;
   gap: 1rem;
   // margin-bottom: 0.5rem;
   *::-webkit-scrollbar {
     height: 4px;
   }
-  > ${Flex}{
-    margin-bottom : 10px;
-    @media screen and (max-width : 700px){
-      width : 100%;
+  > ${Flex} {
+    margin-bottom: 10px;
+    @media screen and (max-width: 700px) {
+      width: 100%;
     }
   }
   ${({ theme }) => theme.mediaQueries.lg} {

@@ -5,14 +5,12 @@ import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
+import { Box, Button, Flex, Text, Grid, CardsLayout} from 'husky-uikit1.0'
+import { PancakeSwapIcon  } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
-import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { useClaimFairLaunch } from 'hooks/useContract'
+import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import useTheme from 'hooks/useTheme'
-import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useGetPositions } from 'hooks/api'
 import { usePositions } from './hooks/usePositions'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
@@ -56,17 +54,12 @@ const StyledTableBorder = styled.div`
   padding: 1rem 1.5rem;
 `
 
-const CardsWrapper = styled(Grid)`
-  grid-template-columns: repeat(auto-fit, minmax(300px, 500px));
-  justify-content: space-between;
-`
-
 const FilterOption = styled(Button)`
   padding: 10px;
   font-size: 13px;
-  background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
+  background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme, isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
+  color: ${({ isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
   border-radius: 10px;
   color: #9d9d9d;
   > img {
@@ -112,8 +105,13 @@ const FiltersWrapper = styled(Flex)`
   }
   .strategyFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      border-right: 2px solid #efefef;
+      // border-right: 2px solid #efefef;
       border-left: 2px solid #efefef;
+      justify-content: center;
+    }
+    }
+  .dexFilter {
+    ${({ theme }) => theme.mediaQueries.lg} {
       justify-content: center;
     }
   }
@@ -450,11 +448,11 @@ const SingleAssetsFarms: React.FC = () => {
           </Flex>
         </Flex>
       </FiltersWrapper>
-      <CardsWrapper>
+      <CardsLayout>
         {singlesData?.map((asset) => (
           <SingleAssetsCard data={asset} key={asset?.name} strategyFilter={strategyFilter} />
         ))}
-      </CardsWrapper>
+      </CardsLayout>
     </Page>
   )
 }

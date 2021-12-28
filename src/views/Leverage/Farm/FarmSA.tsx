@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react'
-import { useParams, useLocation, useHistory } from 'react-router'
+import React, { useState, useCallback } from 'react'
+import { useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
     Box,
@@ -15,7 +15,7 @@ import {
 } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetBnbBalance, useTokenAllowance } from 'hooks/useTokenBalance'
 import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
@@ -38,7 +38,7 @@ import HighchartsReact from 'highcharts-react-official';
 import useTheme from 'hooks/useTheme'
 import { useWeb3React } from '@web3-react/core'
 import SingleFarmSelect from 'components/Select/SingleFarmSelect'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import {
     getHuskyRewards,
     getYieldFarming,
@@ -117,7 +117,7 @@ const ButtonMenuItem = styled(UiKitButtonMenuItem)`
 font-weight : 600;
 
   color: ${({ theme, isActive }) => (isActive ? '#FF6A55' : '#6F767E')};
-  box-shadow: ${({ isActive }) => isActive ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);' : 'none'}
+  box-shadow: ${({ isActive }) => isActive ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);' : 'none'};
 `
 
 const BalanceInputWrapper = styled(Flex)`
@@ -148,8 +148,8 @@ const ButtonMenuField = styled(Box)`
 `
 const FarmSA = () => {
     const { t } = useTranslation()
-    const { isMobile, isTable } = useMatchBreakpoints()
-    const isMobileOrTable = isMobile || isTable
+    const { isMobile, isTablet } = useMatchBreakpoints()
+    const isSmallScreen = isMobile || isTablet
     const { account } = useWeb3React()
 
     const {
@@ -159,7 +159,7 @@ const FarmSA = () => {
 
     const singleFarm = data
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
-    const { isDark, toggleTheme } = useTheme()
+    const { isDark } = useTheme()
     const priceList = usePriceList(coingeckoId)
 
     const getSingleLeverage = (selStrategy: string): number => {
@@ -201,7 +201,15 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-    const allowance = singleFarm?.userData?.quoteTokenAllowance
+  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
+    singleFarm?.QuoteTokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(singleFarm?.TokenInfo?.token?.address),
+    singleFarm?.TokenInfo?.vaultAddress,
+  )
+    const allowance = Number(singleFarm?.userData?.quoteTokenAllowance) > 0 ? singleFarm?.userData?.quoteTokenAllowance : quoteTokenAllowance
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
     const isApproved: boolean = Number(allowance) > 0
@@ -526,10 +534,14 @@ const FarmSA = () => {
 
     const getOption = () => {
         const option = {
-
-            tooltip: {
-                trigger: 'axis'
+           tooltip: {
+            formatter: (params) => {
+              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
+                params[1].marker
+              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
             },
+            trigger: 'axis',
+          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -546,7 +558,7 @@ const FarmSA = () => {
             },
             series: [
                 {
-                    name: '邮件营销1',
+                    name: t('USD Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
@@ -559,7 +571,7 @@ const FarmSA = () => {
                     data: data1
                 },
                 {
-                    name: '视频广告',
+                    name: t('Coin Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
@@ -572,13 +584,16 @@ const FarmSA = () => {
         return option
     }
 
-
     const getOption2 = () => {
         const option = {
-
             tooltip: {
-                trigger: 'axis'
+            formatter: (params) => {
+              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
+                params[1].marker
+              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
             },
+            trigger: 'axis',
+          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -595,7 +610,7 @@ const FarmSA = () => {
             },
             series: [
                 {
-                    name: '邮件营销1',
+                    name: t('USD Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
@@ -608,7 +623,7 @@ const FarmSA = () => {
                     data: data11
                 },
                 {
-                    name: '视频广告',
+                    name: t('Coin Value'),
                     type: 'line',
                     stack: '总量',
                     symbol: 'none',
@@ -655,7 +670,7 @@ const FarmSA = () => {
                 selected: 4  // 默认选中的范围，值为上面 buttons 数组的下标（从 0 开始）
             },
             chart: {
-                backgroundColor: isDark ? "#111315" : "white",
+                backgroundColor: "transparent",
                 polar: true,
                 type: 'line',
                 color: "white"
@@ -672,8 +687,12 @@ const FarmSA = () => {
             series: [{
                 // type: 'line',
                 id: '000001',
-                name: '平安银行',
-                data: tokenPriceList
+                name: 'Price',
+                data: tokenPriceList,
+                tooltip: {
+                    valueDecimals: 2,
+                    pointFormat: '{series.name}: <b>&dollar;{point.y}</b><br/>',
+              },
             }]
 
         };
@@ -885,7 +904,6 @@ const FarmSA = () => {
                 </Flex>
                 <Flex className="infoSide" flex="1">
                     <Section isDark={isDark}>
-                        <Box>
                             <Flex>
                                 <SingleFarmSelect
                                     options={getSelectOptions()}
@@ -931,7 +949,6 @@ const FarmSA = () => {
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
-                                <ButtonMenuField overflow="auto" >
                                     <ButtonMenu
                                         onItemClick={setInputToFraction}
                                         activeIndex={buttonIndex}
@@ -942,8 +959,6 @@ const FarmSA = () => {
                                         <ButtonMenuItem>75%</ButtonMenuItem>
                                         <ButtonMenuItem>100%</ButtonMenuItem>
                                     </ButtonMenu>
-                                </ButtonMenuField>
-                            </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
                         <Flex alignItems="center" justifyContent="space-between" mt='20px'>
@@ -1003,10 +1018,10 @@ const FarmSA = () => {
                                     mx="auto"
                                     scale="md"
                                     onClick={handleApprove}
-                                    isLoading={isPending}
-                                    endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                                    isLoading={isApproving}
+                                    endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
                                 >
-                                    {isPending ? t('Approving') : t('Approve')}
+                                    {isApproving ? t('Approving') : t('Approve')}
                                 </Button>
                             )}
                         </Flex>

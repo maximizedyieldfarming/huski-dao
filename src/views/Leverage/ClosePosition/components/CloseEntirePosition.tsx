@@ -11,6 +11,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
 import { useWeb3React } from '@web3-react/core'
 import { useHistory } from 'react-router-dom'
+import { TRADE_FEE } from 'config'
 import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
@@ -116,7 +117,7 @@ const CloseEntirePosition = ({ data }) => {
     amountToTrade =
       ((basetokenBegin * farmingtokenBegin) / (basetokenBegin - Number(debtValueNumber) + Number(baseTokenAmount)) -
         farmingtokenBegin) /
-      (1 - 0.0025)
+      (1 - TRADE_FEE)
   }
   const convertedPositionValue = Number(farmTokenAmount) - amountToTrade
   if (Number(baseTokenAmount) >= Number(debtValueNumber)) {
@@ -132,7 +133,7 @@ const CloseEntirePosition = ({ data }) => {
   }
 
   const priceImpact = getPriceImpact(data.farmData, amountToTrade, symbolName)
-  const tradingFees = Number(amountToTrade) * 0.0025
+  const tradingFees = Number(amountToTrade) * TRADE_FEE
 
   const [isPending, setIsPending] = React.useState(false)
   const { account } = useWeb3React()
@@ -290,8 +291,8 @@ const CloseEntirePosition = ({ data }) => {
           </Box>
           {baseTokenAmount ? (
             <Text bold>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-              {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(baseTokenAmount).lt(0.001) ? new BigNumber(baseTokenAmount).toFixed(6, 1) : new BigNumber(baseTokenAmount).toFixed(3, 1)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -339,8 +340,8 @@ const CloseEntirePosition = ({ data }) => {
           </Flex>
           {convertedPositionValue ? (
             <Text bold>
-              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-              {Number(convertedPositionValueToken).toPrecision(4)} {tokenValueSymbol}{' '}
+              {new BigNumber(convertedPositionValue).lt(0.001) ?  new BigNumber(convertedPositionValue).toFixed(6, 1) : new BigNumber(convertedPositionValue).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(convertedPositionValueToken).lt(0.001) ?  new BigNumber(convertedPositionValueToken).toFixed(6, 1) : new BigNumber(convertedPositionValueToken).toFixed(3, 1)} {tokenValueSymbol}{' '}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -354,13 +355,9 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
-          {debtValueNumber ? (
             <Text bold>
-              {debtValueNumber.toPrecision(4)} {tokenValueSymbol}{' '}
+              {new BigNumber(debtValueNumber).toFixed(3)} {tokenValueSymbol}{' '}
             </Text>
-          ) : (
-            <Skeleton height="16px" width="80px" />
-          )}
         </Flex>
       </Section>
       <Section flexDirection="column">
@@ -368,8 +365,8 @@ const CloseEntirePosition = ({ data }) => {
           <Text>{t('You will receive approximately')}</Text>
           {convertedPositionValue ? (
             <Text bold>
-              {Number(convertedPositionValue).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-              {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}
+              {new BigNumber(convertedPositionValue).lt(0.001) ?  new BigNumber(convertedPositionValue).toFixed(6, 1) : new BigNumber(convertedPositionValue).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(tokenReceive).lt(0.001) ?  new BigNumber(tokenReceive).toFixed(6, 1) : new BigNumber(tokenReceive).toFixed(3, 1)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -385,8 +382,8 @@ const CloseEntirePosition = ({ data }) => {
           </Flex>
           {convertedPositionValue ? (
             <Text bold>
-              {(Number(convertedPositionValue) * 0.995).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-              {Number(tokenReceive).toPrecision(4)} {tokenValueSymbol}{' '}
+              {new BigNumber(convertedPositionValue).lt(0.001) ?  new BigNumber(convertedPositionValue).times(0.995).toFixed(6, 1) : new BigNumber(convertedPositionValue).times(0.995).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(tokenReceive).lt(0.001) ?  new BigNumber(tokenReceive).toFixed(6, 1) : new BigNumber(tokenReceive).toFixed(3, 1)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />

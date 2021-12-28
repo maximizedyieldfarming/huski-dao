@@ -800,7 +800,7 @@ const AdjustPositionSA = () => {
             <>
               {' '}
               <Text bold>
-                {t('You can customize your position with partially')}{' '}
+                {t('You can customize your position by partially')}{' '}
                 <Text
                   as="span"
                   onClick={(e) => setIsRepayDebt(true)}
@@ -808,7 +808,7 @@ const AdjustPositionSA = () => {
                   bold
                   color="#7B3FE4"
                 >
-                  {t('Repay Debt')}
+                  {t('Repaying Debt')}
                 </Text>
               </Text>
               <Box>
@@ -932,7 +932,7 @@ const AdjustPositionSA = () => {
           ) : (
             <>
               <Text bold>
-                {t('You can customize your position with partially')}{' '}
+                {t('You can customize your position by partially')}{' '}
                 <Text
                   color="#7B3FE4"
                   as="span"
@@ -940,7 +940,7 @@ const AdjustPositionSA = () => {
                   style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
                   bold
                 >
-                  {t('Repay Your Debt')}
+                  {t('Repaying Debt')}
                 </Text>
               </Text>
               <Box>
@@ -1143,7 +1143,7 @@ const AdjustPositionSA = () => {
           ) : (
             <>
               <Text bold>
-                {t('You can customize your position with ')}{' '}
+                {t('You can customize your position by ')}{' '}
                 <Text
                   color="#7B3FE4"
                   bold
@@ -1151,7 +1151,7 @@ const AdjustPositionSA = () => {
                   onClick={(e) => setIsRepayDebt(true)}
                   style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '10px' }}
                 >
-                  {t('Partially Close Your Position')}
+                  {t('Partially Closing Your Position')}
                 </Text>
               </Text>
               <Box>

@@ -11,6 +11,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { TokenImage } from 'components/TokenImage'
 import { useWeb3React } from '@web3-react/core'
 import { useHistory } from 'react-router-dom'
+import { TRADE_FEE } from 'config'
 import { getPriceImpact } from '../../helpers'
 
 const Section = styled(Flex)`
@@ -108,11 +109,11 @@ const ConverTo = ({ data }) => {
   const convertedPositionValueAssets =
     Number(baseTokenAmount) +
     basetokenBegin -
-    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - 0.0025) + farmingtokenBegin)
+    (farmingtokenBegin * basetokenBegin) / (Number(farmTokenAmount) * (1 - TRADE_FEE) + farmingtokenBegin)
   const convertedPositionValue = convertedPositionValueAssets - Number(debtValueNumber)
 
   const priceImpact = getPriceImpact(data.farmData, farmTokenAmount, symbolName)
-  const tradingFees = Number(farmTokenAmount) * 0.0025
+  const tradingFees = Number(farmTokenAmount) * TRADE_FEE
 
   const [isPending, setIsPending] = React.useState(false)
   const { account } = useWeb3React()
@@ -268,8 +269,8 @@ const ConverTo = ({ data }) => {
           </Box>
           {data ? (
             <Text bold>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
-              {Number(baseTokenAmount).toPrecision(4)} {tokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(baseTokenAmount).lt(0.001) ? new BigNumber(baseTokenAmount).toFixed(6, 1) : new BigNumber(baseTokenAmount).toFixed(3, 1)} {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -285,7 +286,7 @@ const ConverTo = ({ data }) => {
           </Flex>
           {data ? (
             <Text bold>
-              {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />

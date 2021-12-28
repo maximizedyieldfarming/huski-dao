@@ -9,36 +9,28 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   Button,
-  Input,
   AutoRenewIcon,
 } from 'husky-uikit1.0'
 import { useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { useClaimFairLaunch, useERC20 } from 'hooks/useContract'
 import useTheme from 'hooks/useTheme'
 import useToast from 'hooks/useToast'
-import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import { getAddress, getFairLaunchAddress } from 'utils/addressHelpers'
 import NumberInput from 'components/NumberInput'
-
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
-import useTokenBalance, { useStakedibTokenBalance } from 'hooks/useTokenBalance'
+import useTokenBalance, { useStakedibTokenBalance, useTokenAllowance } from 'hooks/useTokenBalance'
 import { getStakeApy } from '../../helpers'
 import AprCell from './Cells/AprCell'
-import ActionCell from './Cells/ActionCell'
 import TotalVolumeCell from './Cells/TotalVolumeCell'
 import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
-import RewardsCell from './Cells/RewardsCell'
-
-// import ClaimCell from './Cells/'
-import StakedCell from './Cells/StakedCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
 const expandAnimation = keyframes`
@@ -158,8 +150,7 @@ const MaxButton = styled.button`
 
 const StakeRow = ({ tokenData }) => {
   const { account } = useWeb3React()
-  const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop, isMobile } = useMatchBreakpoints()
-  const isLargerScreen = isLg || isXl || isXxl
+  const { isTablet, isMobile } = useMatchBreakpoints()
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskiPrice()
@@ -170,7 +161,7 @@ const StakeRow = ({ tokenData }) => {
   }
   const isSmallScreen = isMobile || isTablet
 
-  const { totalToken, totalSupply, vaultDebtVal, totalValueStaked } = tokenData
+  const { totalToken, totalSupply, totalValueStaked } = tokenData
   // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
   const { isDark } = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance)
@@ -191,7 +182,12 @@ const StakeRow = ({ tokenData }) => {
     .times(Number(totalToken) / Number(totalSupply) || 0)
   // console.log('totalVolLocked', totalVolLocked.toJSON(), "totalVAluestaked", totalValueStaked)
 
-  const allowance = tokenData?.userData?.allowance
+
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(tokenData?.token?.address),
+    getAddress(tokenData.vaultAddress)
+  )
+  const allowance = Number(tokenData?.userData?.allowance) > 0 ? tokenData?.userData?.allowance : tokenAllowance.toString()
 
   // stake operations
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -350,25 +346,9 @@ const StakeRow = ({ tokenData }) => {
         <MyPosCell staked={userStakedBalance} />
         <TotalValueCell valueStaked={totalValueStaked} />
         <TotalVolumeCell volumeLocked={totalVolLocked} />
-        {/* <ActionCell token={tokenData} /> */}
         {shouldRenderActionPanel ? <ChevronUpIcon mr="10px" /> : <ChevronDownIcon mr="10px" />}
       </Flex>
       <StyledActionPanel flexDirection="column" expanded={expanded}>
-        {/* {shouldRenderActionPanel ? (
-          <>
-            <ChevronUpIcon mx="auto" />
-            <Flex className="expandedArea">
-              <Box className="titleContainer">
-                <Text>{t('My Positions')}</Text>
-              </Box>
-              <StakedCell staked={userStakedBalance.toPrecision(4)} name={tokenData?.symbol} />
-              <RewardsCell token={tokenData} />
-              <ClaimCell token={tokenData} />
-            </Flex>
-          </>
-        ) : (
-          <ChevronDownIcon mx="auto" />
-        )} */}
         {shouldRenderActionPanel ? (
           <>
             <Flex className="expandedArea" style={{ overflowX: 'scroll' }}>

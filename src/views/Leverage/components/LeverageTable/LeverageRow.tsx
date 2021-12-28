@@ -16,7 +16,8 @@ import Borrowing from './Cells/Borrowing'
 import BaseCell from './Cells/BaseCell'
 
 const StyledRow = styled.div`
-    
+  // overflow : auto;
+  
   background-color: transparent;
   display: flex;
   flex-direction: column;
@@ -69,7 +70,11 @@ const LeverageRow = ({ tokenData }) => {
   const { tradingFees: tradeFee } = useTradingFees(tokenData)
   // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
 
+  // console.log("for apr", {yieldFarmData, tradeFee, huskyRewards, borrowingInterest})
   const getApr = (lvg) => {
+    if (tradeFee === (0 || NaN) || huskyRewards === (0 || NaN) || borrowingInterest === (0 || NaN) || yieldFarmData === (0 || NaN)) {
+      return null
+    }
     const apr =
       Number((yieldFarmData / 100) * lvg) +
       Number(((tradeFee * 365) / 100) * lvg) +

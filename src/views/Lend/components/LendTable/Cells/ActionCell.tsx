@@ -41,7 +41,7 @@ const StyledButton = styled(Button) <Props>`
   border:${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
 `
 
-const ActionCell = ({ token, active }) => {
+const ActionCell = ({ token }) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
   // const tokenData = token
@@ -55,18 +55,18 @@ const ActionCell = ({ token, active }) => {
         <StyledButton
           as={Link}
           to={{
-            pathname: active && `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
+            pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
             state: { exchangeRate, token },
           }}
-          disabled={!token?.userData?.tokenBalanceIB || !account || !active}
+          disabled={!token?.userData?.tokenBalanceIB || !account }
           onClick={(e) => !account && e.preventDefault()}
         >
           {t('Deposit')}
         </StyledButton>
         <StyledButton
           as={Link}
-          to={{ pathname: active && `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { exchangeRate, token } }}
-          disabled={!token?.userData?.tokenBalanceIB || !account || !active}
+          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { exchangeRate, token } }}
+          disabled={!token?.userData?.tokenBalanceIB || !account }
           onClick={(e) => !account && e.preventDefault()}
         >
           {t('Withdraw')}

@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, useMatchBreakpoints } from 'husky-uikit1.0'
-import { useTranslation } from 'contexts/Localization'
+import { useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import LendRow from './LendRow'
 import LendHeaderRow from './LendHeaderRow'
 
@@ -44,14 +43,13 @@ const LendTable = ({ lendData }) => {
   }
 
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const [isShown, setIsShown] = useState(-1);
 
   return (
     <StyledTableBorder>
       <StyledTable role="table" ref={tableWrapperEl}>
         {!(isMobile || isTablet) && <LendHeaderRow />}
-        {lendData.map((token, index) => (
-          <LendRow tokenData={token} key={token?.pid} index={index} isShown={isShown} setIsShown={setIsShown} />
+        {lendData.map((token) => (
+          <LendRow tokenData={token} key={token?.pid} />
         ))}
         {/*   <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop}>
