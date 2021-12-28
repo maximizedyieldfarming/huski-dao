@@ -25,7 +25,6 @@ const StyledTable = styled.div`
     }
   }
   > ${Box} {
-    overflow: auto;
     ::-webkit-scrollbar {
       height: 8px;
     }

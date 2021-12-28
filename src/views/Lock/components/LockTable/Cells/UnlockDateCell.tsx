@@ -5,6 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
+  margin-top : 15px;
   flex: 1 0 50px;
  
   ${({ theme }) => theme.mediaQueries.md} {
@@ -28,7 +29,7 @@ const UnlockDateCell = ({ date }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize="16px" color="textSubtle" textAlign="left">
-          {t('My HUSKI unlock date')}
+          {t('Unlock date')}
         </Text>
         <Text>{date}</Text>
         <Text fontWeight='600'>July 13th, 2020</Text>

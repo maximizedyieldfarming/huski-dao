@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints, ArrowDropDownIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -1147,9 +1147,7 @@ const AdjustPosition = () => {
   const datalistOptions = (() => {
     for (
       let i = 1;
-      i <
-      (leverage < currentPositionLeverage ? currentPositionLeverage : leverage) /
-      0.5;
+      i < leverage / 0.5;
       i++
     ) {
       datalistSteps.push(`${(1 + 0.5 * (-1 + i)).toFixed(2)}x`)
@@ -1185,6 +1183,10 @@ const AdjustPosition = () => {
     return false
   })()
 
+  useEffect(() => {
+    if (leverageAfter)
+      setTargetPositionLeverage(Number(leverageAfter));
+  }, [leverageAfter])
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
       <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
@@ -1240,6 +1242,8 @@ const AdjustPosition = () => {
                         </Text>
                       </MoveBox>
                       <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
+                        <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((currentPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
+
                         <RangeInput
                           type="range"
                           min="1.0"
