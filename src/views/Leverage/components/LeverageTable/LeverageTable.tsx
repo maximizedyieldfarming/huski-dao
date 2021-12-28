@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Button, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
@@ -42,9 +42,8 @@ const StyledTableBorder = styled.div`
 const FilterOption = styled(Button)`
   padding: 5px;
   font-size: 13px;
-  background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
-  // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme, isActive }) => (isActive ? 'white' : '#6F767E')};
+  background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? 'white' : '#6F767E')};
   border-radius: 10px;
   margin: 0 5px;
   > svg {
@@ -67,7 +66,6 @@ const FiltersWrapper = styled(Flex)`
   flex-wrap: wrap;
   flex-direction: column;
   gap: 1rem;
-  // margin-bottom: 0.5rem;
   *::-webkit-scrollbar {
     height: 4px;
   }
@@ -100,12 +98,6 @@ const FiltersWrapper = styled(Flex)`
 `
 
 const LeverageTable = ({ leverageData }) => {
-  const tableWrapperEl = useRef<HTMLDivElement>(null)
-  const scrollToTop = (): void => {
-    tableWrapperEl.current.scrollIntoView({
-      behavior: 'smooth',
-    })
-  }
   let farmsData = leverageData
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
@@ -194,7 +186,7 @@ const LeverageTable = ({ leverageData }) => {
   return (
     <>
       <StyledTableBorder>
-        <StyledTable role="table" ref={tableWrapperEl}>
+        <StyledTable role="table">
           <FiltersWrapper>
             <Flex alignItems="center" className="dexFilter" width={300}>
               <Text bold>DEX:</Text>
@@ -219,7 +211,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
             </Flex>
             <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
-              <Text style={{ fontWeight: 700 }} >{t('Paired Assets:')}</Text>
+              <Text bold>{t('Paired Assets:')}</Text>
               <Flex >
                 <FilterOption
                   variant="tertiary"
@@ -277,7 +269,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
             </Flex>
             <Flex className="searchSortContainer" >
-              <Text style={{ fontWeight: 400, color : '#6F767E' }} >
+              <Text bold>
                 Sort by:
               </Text>
               <Box mr='10px'>
@@ -303,9 +295,7 @@ const LeverageTable = ({ leverageData }) => {
                   onChange={handleSortOptionChange}
                 />
               </Box>
-              <Box width={238}>
                 <SearchInput onChange={handleChangeQuery} placeholder="Search farms" />
-              </Box>
             </Flex>
           </FiltersWrapper>
           {!(isMobile || isTablet) && <LeverageHeaderRow />}

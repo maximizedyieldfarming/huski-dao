@@ -2,9 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
-import BigNumber from 'bignumber.js'
+import { useMatchBreakpoints, Button } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -41,12 +39,9 @@ const StyledButton = styled(Button) <Props>`
   border:${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
 `
 
-const ActionCell = ({ token }) => {
-  const { isMobile } = useMatchBreakpoints()
+const ActionCell = ({ token, apyReady }) => {
   const { account } = useWeb3React()
-  // const tokenData = token
   const name = token?.TokenInfo.token?.symbol
-  const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
   const { t } = useTranslation()
 
   return (
@@ -56,18 +51,18 @@ const ActionCell = ({ token }) => {
           as={Link}
           to={{
             pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
-            state: { exchangeRate, token },
+            state: { token },
           }}
-          disabled={!token?.userData?.tokenBalanceIB || !account }
-          onClick={(e) => !account && e.preventDefault()}
+          disabled={!apyReady || !account}
+          onClick={(e) => !account || !apyReady && e.preventDefault()}
         >
           {t('Deposit')}
         </StyledButton>
         <StyledButton
           as={Link}
-          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { exchangeRate, token } }}
-          disabled={!token?.userData?.tokenBalanceIB || !account }
-          onClick={(e) => !account && e.preventDefault()}
+          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { token } }}
+          disabled={!apyReady || !account}
+          onClick={(e) => !account || !apyReady && e.preventDefault()}
         >
           {t('Withdraw')}
         </StyledButton>

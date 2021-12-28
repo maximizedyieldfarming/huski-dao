@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { ChevronDownIcon, ChevronUpIcon, Flex, Input, Text, useMatchBreakpoints, Box, Button } from 'husky-uikit1.0'
-import BigNumber from 'bignumber.js'
+import { ChevronDownIcon, ChevronUpIcon, Flex, Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -56,13 +54,14 @@ export default function LeverageCell({ leverage, onChange, childLeverage }: { le
   }, [lvgValue, onChange])
 
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
-      <CellContent >
-        {(isMobile || isTablet) && (
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
+      <CellContent>
+        {isSmallScreen && (
+          <Text bold color="textSubtle" textAlign="left">
             {t('Leverage')}
           </Text>
         )}
