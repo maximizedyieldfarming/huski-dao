@@ -17,33 +17,28 @@ import TotalBorrowedCell from './Cells/TotalBorrowedCell'
 import BalanceCell from './Cells/BalanceCell'
 import ActionCell from './Cells/ActionCell'
 
-const StyledRow = styled.div<{ isShown: boolean, isDark: boolean }>`
+const StyledRow = styled.div`
   border-radius: 12px;
-  background-color: ${({ isShown, isDark }) => isShown ? (isDark ? '#272B30' : '#F7F7F8') : 'transparent'};
   display: flex;
   flex-direction: column;
-  width : 100%;
+  width: 100%;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
   //cursor: pointer;
 `
 
-const LendRow = ({ tokenData, index, setIsShown, isShown }) => {
+const LendRow = ({ tokenData }) => {
   const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
   const isLargerScreen = isLg || isXl || isXxl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
 
   const huskyPrice = useHuskiPrice()
-  const tokenName = tokenData?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB');
+  const tokenName = tokenData?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
 
   const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
-  const { isDark } = useTheme();
 
-  const toggleExpanded = () => {
-    setExpanded((prev) => !prev)
-  }
   const { totalToken, vaultDebtVal, userData, TokenInfo, tokenPriceUsd } = tokenData
   const totalSupplyUSD = Number(totalToken) * Number(tokenPriceUsd)
   const totalBorrowedUSD = Number(vaultDebtVal) * Number(tokenPriceUsd)
@@ -57,8 +52,7 @@ const LendRow = ({ tokenData, index, setIsShown, isShown }) => {
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
   return (
     <>
-      <StyledRow
-        role="row" onClick={() => { toggleExpanded(); setIsShown(index) }} isShown={isShown === index} isDark={isDark}>
+      <StyledRow role="row">
         <NameCell token={tokenData} />
         <ApyCell getApyData={getAprData(tokenData, huskyPrice, borrowingInterest)} token={tokenData} />
         <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />
@@ -70,7 +64,7 @@ const LendRow = ({ tokenData, index, setIsShown, isShown }) => {
           name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
           decimals={TokenInfo?.token?.decimalsDigits}
         />
-        <ActionCell token={tokenData} active={isShown === index} />
+        <ActionCell token={tokenData} />
       </StyledRow>
     </>
   )
