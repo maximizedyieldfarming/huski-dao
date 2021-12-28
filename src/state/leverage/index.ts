@@ -70,7 +70,7 @@ export const fetchLeverageFarmUserDataAsync =
       const farmsToFetch = leverageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
       const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
       const userFarmTokenAllowances = await fetchFarmUserTokenAllowances(account, farmsToFetch)
-      const userFarmLPAllowances = await fetchFarmUserQuoteTokenAllowances(account, farmsToFetch)
+      const userFarmQuoteTokenAllowances = await fetchFarmUserQuoteTokenAllowances(account, farmsToFetch)
       const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
       const userFarmTokenBalancesIB = await fetchFarmUserTokenBalancesIB(account, farmsToFetch)
       const userFarmQuoteTokenBalances = await fetchFarmUserQuoteTokenBalances(account, farmsToFetch)
@@ -83,7 +83,7 @@ export const fetchLeverageFarmUserDataAsync =
           pid: farmsToFetch[index].pid,
           allowance: userFarmAllowances[index],
           tokenAllowance: userFarmTokenAllowances[index],
-          quoteTokenAllowance: userFarmLPAllowances[index],
+          quoteTokenAllowance: userFarmQuoteTokenAllowances[index],
           tokenBalance: userFarmTokenBalances[index],
           tokenBalanceIB: userFarmTokenBalancesIB[index],
           quoteTokenBalance: userFarmQuoteTokenBalances[index],
