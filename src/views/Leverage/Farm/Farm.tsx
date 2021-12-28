@@ -635,7 +635,7 @@ const Farm = () => {
       console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
 
-      const allowance = tokenData?.userData?.allowance // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      const allowance = tokenData?.userData?.tokenAllowance // ? tokenData?.userData?.allowance : token?.userData?.allowance
       console.info('wbnb  allowance ', allowance)
       if (Number(allowance) === 0) {
         handleApproveBnb()
