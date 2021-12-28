@@ -682,7 +682,7 @@ const Farm = () => {
 
   const { allowance: quoteTokenAllowance } = useTokenAllowance(
     getAddress(tokenData?.QuoteTokenInfo?.token?.address),
-    tokenData?.QuoteTokenInfo?.vaultAddress,
+    tokenData?.TokenInfo?.vaultAddress,
   )
   const { allowance: tokenAllowance } = useTokenAllowance(
     getAddress(tokenData?.TokenInfo?.token?.address),
