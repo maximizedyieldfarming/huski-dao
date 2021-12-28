@@ -519,7 +519,7 @@ const FarmSA = () => {
             // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
             handleDeposit(bnbMsgValue)
 
-            const allowances = singleFarm?.userData?.allowance // ? singleFarm?.userData?.allowance : token?.userData?.allowance
+            const allowances = singleFarm?.userData?.tokenAllowance // ? singleFarm?.userData?.allowance : token?.userData?.allowance
             console.info('wbnb  allowance ', allowances)
             if (Number(allowances) === 0) {
                 handleApproveBnb()
