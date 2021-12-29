@@ -8,10 +8,6 @@ const StyledTable = styled.div`
  border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
-  background-repeat: no-repeat;
-
-  background-position: right;
-  background-size: 350px 400px;
   > ${Box}> div:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
   }
