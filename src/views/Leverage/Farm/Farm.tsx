@@ -636,20 +636,16 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
-    getAddress(tokenData?.QuoteTokenInfo?.token?.address),
-    tokenData?.TokenInfo?.vaultAddress,
-  )
-  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
-    getAddress(tokenData?.TokenInfo?.token?.address),
-    tokenData?.TokenInfo?.vaultAddress,
-  )
-  let allowance = '0'
+  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.token?.address), tokenData?.TokenInfo?.vaultAddress,)
+  const { allowance: quoteTokenUserTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.TokenInfo?.vaultAddress,)
+  const { allowance: tokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.token?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
 
+  let allowance = '0'
   if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-    // jie base
+
     if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
-      allowance = tokenData.userData?.tokenUserTokenAllowances  // > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+      allowance = tokenData.userData?.tokenUserTokenAllowances // > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
       console.info('token token ')
     } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
       allowance = tokenData.userData?.quoteTokenUserTokenAllowances
@@ -660,7 +656,6 @@ const Farm = () => {
     } else {
       console.info('token all === 0 ')
       allowance = '1'
-
     }
 
   } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
@@ -698,7 +693,7 @@ const Farm = () => {
         contract = quoteTokenApproveContract
         approveAddress = vaultAddress
       } else {
-        console.info('token-- approveContract vaultAddress ')
+        console.info('token approveContract vaultAddress ')
         contract = approveContract
         approveAddress = vaultAddress
       }
@@ -1043,7 +1038,7 @@ const Farm = () => {
                   isPending
                 }
               >
-          {isPending ? t('Confirming') : getWrapText()}
+                {isPending ? t('Confirming') : getWrapText()}
               </Button>
             ) : (
               <Button
@@ -1061,9 +1056,9 @@ const Farm = () => {
             <Text mx="auto" color="red" textAlign="center">
               {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
                 ? t('Minimum Debt Size: %minimumDebt% %radio%', {
-                    minimumDebt: minimumDebt.toNumber(),
-                    radio: radio.toUpperCase().replace('WBNB', 'BNB'),
-                  })
+                  minimumDebt: minimumDebt.toNumber(),
+                  radio: radio.toUpperCase().replace('WBNB', 'BNB'),
+                })
                 : null}
             </Text>
           ) : null}
