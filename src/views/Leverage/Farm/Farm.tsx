@@ -832,7 +832,7 @@ const Farm = () => {
       </Text>
       <SectionWrapper>
         <Section className="main">
-          <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap'>
+          <Flex alignItems="center" justifyContent="space-between" flexWrap="wrap">
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
             </Text>
@@ -841,7 +841,7 @@ const Farm = () => {
             </Text>
           </Flex>
 
-          <Flex flexDirection="column" justifyContent="space-between" flex="1" paddingTop='0!important'>
+          <Flex flexDirection="column" justifyContent="space-between" flex="1" paddingTop="0!important">
             <div style={{ display: 'flex' }}>
               <Text as="span" mr="1rem" color="textSubtle">
                 {t('Balance:')}
@@ -877,28 +877,32 @@ const Farm = () => {
               </InputArea>
               <ButtonArea justifyContent="space-between" background="backgroundAlt" isDark={isDark}>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   25%
                 </StyledButton>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   50%
                 </StyledButton>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
                   75%
                 </StyledButton>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setQuoteTokenInputToFraction}
                 >
@@ -939,28 +943,32 @@ const Farm = () => {
               </InputArea>
               <ButtonArea justifyContent="space-between" isDark={isDark}>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   25%
                 </StyledButton>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   50%
                 </StyledButton>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
                   75%
                 </StyledButton>
                 <StyledButton
-                  variant="secondary" isDark={isDark}
+                  variant="secondary"
+                  isDark={isDark}
                   scale={isSmallScreen ? 'sm' : 'md'}
                   onClick={setTokenInputToFraction}
                 >
@@ -1046,8 +1054,32 @@ const Farm = () => {
               <Select options={options()} onChange={(option) => setRadio(option.value)} />
             </Flex>
           </Box>
-          <Flex justifyContent="space-evenly" paddingBottom='20px!important'>
-            {isApproved ? null : (
+          {/* <Box>
+            <Text small color="failure">
+              {t(
+                'Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.',
+              )}
+            </Text>
+          </Box> */}
+          <Flex justifyContent="space-evenly" paddingBottom="20px!important">
+            {isApproved ? (
+              <Button
+                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+                onClick={handleConfirm}
+                isLoading={isPending}
+                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                disabled={
+                  !account ||
+                  !isApproved ||
+                  (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+                  (tokenInput === undefined && quoteTokenInput === undefined) ||
+                  (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
+                  isPending
+                }
+              >
+          {isPending ? t('Confirming') : getWrapText()}
+              </Button>
+            ) : (
               <Button
                 style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
                 onClick={handleApprove}
@@ -1058,36 +1090,20 @@ const Farm = () => {
                 {isApproving ? t('Approving') : t('Approve')}
               </Button>
             )}
-            <Button
-              style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-              onClick={handleConfirm}
-              isLoading={isPending}
-              endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-              disabled={
-                !account ||
-                !isApproved ||
-                (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
-                (tokenInput === undefined && quoteTokenInput === undefined) ||
-                (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
-                isPending
-              }
-            >
-              {isPending ? t('Confirming') : t('Confirm')}
-            </Button>
           </Flex>
           {tokenInput || quoteTokenInput ? (
-            <Text mx="auto" color="red" textAlign='center'>
+            <Text mx="auto" color="red" textAlign="center">
               {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
                 ? t('Minimum Debt Size: %minimumDebt% %radio%', {
-                  minimumDebt: minimumDebt.toNumber(),
-                  radio: radio.toUpperCase().replace('WBNB', 'BNB'),
-                })
+                    minimumDebt: minimumDebt.toNumber(),
+                    radio: radio.toUpperCase().replace('WBNB', 'BNB'),
+                  })
                 : null}
             </Text>
           ) : null}
         </Section>
 
-        <Flex className="sideSection" >
+        <Flex className="sideSection">
           <Section>
             <Text small color="text" fontSize="16px">
               {t('My Debt Status')}
@@ -1208,13 +1224,9 @@ const Farm = () => {
                 <Text>{getDisplayApr(getApy(leverageValue))}%</Text>
               </Flex>
             </Flex> */}
-
           </Section>
         </Flex>
-
       </SectionWrapper>
-
-
     </SBPage>
   )
 }
