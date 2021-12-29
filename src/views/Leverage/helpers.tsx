@@ -30,8 +30,7 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
   const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
-  const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
-
+  const yieldFarmingApr = cakePrice ? yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100) : BIG_ZERO
   return yieldFarmingApr.toNumber();
 }
 

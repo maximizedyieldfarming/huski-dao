@@ -781,8 +781,11 @@ const AdjustPosition = () => {
     if (currentPositionLeverage > targetPositionLeverage || currentPositionLeverage === 1 && targetPositionLeverage === 1) {
       return Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0
     }
-    if (currentPositionLeverage < targetPositionLeverage) {
+    if (currentPositionLeverage === 1 && targetPositionLeverage > currentPositionLeverage) {
       return new BigNumber(UpdatedDebt).lt(minimumDebt)
+    }
+    if (targetPositionLeverage > currentPositionLeverage) {
+      return false
     }
     return true
   })()
