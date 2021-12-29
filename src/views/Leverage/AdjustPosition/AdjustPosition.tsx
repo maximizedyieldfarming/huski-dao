@@ -789,8 +789,11 @@ const AdjustPosition = () => {
   })()
 
   const iscConvertToConfirmDisabled = (() => {
-    if (targetPositionLeverage === 1) {
+    if (targetPositionLeverage === 1 && currentPositionLeverage === 1) {
       return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage === 1 && currentPositionLeverage !== 1) {
+      return false
     }
     if (targetPositionLeverage !== 1) {
       return new BigNumber(UpdatedDebtValue).lt(minimumDebt)
@@ -800,8 +803,11 @@ const AdjustPosition = () => {
 
   // targetPositionLeverage === 1 && currentPositionLeverage === 1 ? Number(percentageToClose) === 0 : new BigNumber(UpdatedDebtValue).lt(minimumDebt)
   const isMinimizeTradingConfirmDisabled = (() => {
-    if (targetPositionLeverage === 1) {
+    if (targetPositionLeverage === 1 && currentPositionLeverage === 1) {
       return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage === 1 && currentPositionLeverage !== 1) {
+      return false
     }
     if (targetPositionLeverage !== 1) {
       return new BigNumber(UpdatedDebtValue).lt(minimumDebt)

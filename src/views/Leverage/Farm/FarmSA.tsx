@@ -201,15 +201,27 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-    const { allowance: quoteTokenAllowance } = useTokenAllowance(
-        getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
-        singleFarm?.QuoteTokenInfo?.vaultAddress,
-    )
-    const { allowance: tokenAllowance } = useTokenAllowance(
-        getAddress(singleFarm?.TokenInfo?.token?.address),
-        singleFarm?.TokenInfo?.vaultAddress,
-    )
-    const allowance = Number(singleFarm?.userData?.quoteTokenAllowance) > 0 ? singleFarm?.userData?.quoteTokenAllowance : quoteTokenAllowance
+  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
+    singleFarm?.TokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenAllowance } = useTokenAllowance(
+    getAddress(singleFarm?.TokenInfo?.token?.address),
+    singleFarm?.TokenInfo?.vaultAddress,
+  )
+  // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenAllowance : tokenAllowance
+
+  // console.log("allowances",{quoteTokenAllowance: quoteTokenAllowance.toString(), tokenAllowance: tokenAllowance.toString()}, "data", {singleFarm, selectedToken})
+  let allowance = '0'
+  if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
+    allowance =
+      Number(singleFarm.userData?.quoteTokenAllowance) > 0
+        ? singleFarm.userData?.quoteTokenAllowance
+        : quoteTokenAllowance.toString()
+  } else {
+    allowance =
+      Number(singleFarm.userData?.tokenAllowance) > 0 ? singleFarm.userData?.tokenAllowance : tokenAllowance.toString()
+  }
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
     const isApproved: boolean = Number(allowance) > 0
@@ -300,18 +312,33 @@ const FarmSA = () => {
     const { tradingFees: tradeFee } = useTradingFees(singleFarm)
 
     const getApr = (lvg: number) => {
-        const totalapr =
-            Number((yieldFarmData / 100) * lvg) +
-            Number(((tradeFee * 365) / 100) * lvg) +
-            Number(huskyRewards * (lvg - 1)) -
-            Number(borrowingInterest * (lvg - 1))
-        return totalapr
+      if (
+        Number(tradeFee) === 0 ||
+        Number(huskyRewards) === 0 ||
+        Number(borrowingInterest) === 0 ||
+        Number(yieldFarmData) === 0 ||
+        Number.isNaN(tradeFee) ||
+        Number.isNaN(huskyRewards) ||
+        Number.isNaN(borrowingInterest) ||
+        Number.isNaN(yieldFarmData)
+      ) {
+        return null
+      }
+      const totalapr =
+        Number((yieldFarmData / 100) * lvg) +
+        Number(((tradeFee * 365) / 100) * lvg) +
+        Number(huskyRewards * (lvg - 1)) -
+        Number(borrowingInterest * (lvg - 1))
+      return totalapr
     }
     const getApy = (lvg: number) => {
-        const totalapr = getApr(lvg)
-        // eslint-disable-next-line no-restricted-properties
-        const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
-        return totalapy * 100
+      const totalapr = getApr(lvg)
+      if (totalapr === null) {
+        return null
+      }
+      // eslint-disable-next-line no-restricted-properties
+      const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
+      return totalapy * 100
     }
 
     let tokenInputValue
@@ -851,27 +878,27 @@ const FarmSA = () => {
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Trading Fees')}</Text>
-                <Text>{tradingFees.toFixed(2)}%</Text>
+                <Text>{tradingFees?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Huski Rewards')}</Text>
-                <Text>{huskyRewardsData.toFixed(2)}%</Text>
+                <Text>{huskyRewardsData?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Borrowing Interest')}</Text>
-                <Text>-{Number(borrowingInterestData).toFixed(2)}%</Text>
+                <Text>-{Number(borrowingInterestData)?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Total APR')}</Text>
-                <Text>{apr.toFixed(2)}%</Text>
+                <Text>{apr?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Total APY')}</Text>
-                <Text>{apy.toFixed(2)}%</Text>
+                <Text>{apy?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Daily APR')}</Text>
-                <Text>{dailyApr.toFixed(2)}%</Text>
+                <Text>{dailyApr?.toFixed(2)}%</Text>
             </Flex>
         </>,
         { placement: 'right' },
@@ -907,7 +934,7 @@ const FarmSA = () => {
                                     <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
                                     <Text>{t('Coin Value')}</Text>
                                 </Flex>
-                                <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy.toFixed(2)}%</Text>
+                                    <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : {apy ? apy?.toFixed(2) : <Skeleton width="25px" height="1rem" />}%</Text>
                             </Flex>
                         </Flex>
                         {chartype === 0 ? <ReactEcharts option={getOption()} style={{ height: '500px' }} /> :
@@ -981,7 +1008,7 @@ const FarmSA = () => {
                                     <InfoIcon ml="10px" width="20px" height="20px" mt='2px' />
                                 </span>
                             </Flex>
-                            <Text fontWeight="bold">{apy.toFixed(2)}%</Text>
+                            {apy ? <Text fontWeight="bold">{apy?.toFixed(2)}%</Text> : <Skeleton width="80px" height="1rem" />}
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between">
                             <Text small>{t('Equity')}</Text>

@@ -715,7 +715,28 @@ const AdjustPositionSA = () => {
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
+  const isAddCollateralConfirmDisabled = (() => {
+    if (currentPositionLeverage > targetPositionLeverage) {
+      return Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0
+    }
+    if (currentPositionLeverage < targetPositionLeverage) {
+      return new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
+    }
+    return true
+  })()
 
+  const iscConvertToConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1 && currentPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage === 1 && currentPositionLeverage !== 1) {
+      return false
+    }
+    if (targetPositionLeverage !== 1) {
+      return new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
+    }
+    return true
+  })()
 
   return (
     <Page>
@@ -1309,10 +1330,8 @@ const AdjustPositionSA = () => {
             style={{ width: '260px', height: '60px', border: !isDark ? '1px solid gray' : '' }}
             onClick={isRepayDebt ? handleConfirmConvertTo : handleConfirm}
             disabled={
+              isRepayDebt ? iscConvertToConfirmDisabled : isAddCollateralConfirmDisabled || 
               !account ||
-              (!isRepayDebt && !tokenInput) ||
-              (isRepayDebt && targetPositionLeverage !== currentPositionLeverage) ||
-              (isRepayDebt && targetPositionLeverage === 1 && currentPositionLeverage === 1 && percentageToClose !== 0) ||
               isPending
             }
             isLoading={isPending}

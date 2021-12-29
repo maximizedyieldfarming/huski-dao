@@ -1,9 +1,9 @@
 import React from 'react'
-import { CardHeader as UiKitCardHeader, Heading, Text, Flex, Grid, ArrowDownIcon, ArrowUpIcon } from 'husky-uikit1.0'
+import { CardHeader as UiKitCardHeader, Heading, Flex, Grid } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import { useTranslation } from 'contexts/Localization'
-import { TokenImage, TokenPairImage } from 'components/TokenImage'
+import { TokenImage } from 'components/TokenImage'
 
 
 const Wrapper = styled(UiKitCardHeader) <{ isDark: boolean }>`
@@ -17,7 +17,7 @@ const Wrapper = styled(UiKitCardHeader) <{ isDark: boolean }>`
 `
 
 
-const CardHeader = ({ data, pool }) => {
+const CardHeader = ({ data }) => {
   const { t } = useTranslation()
   const { isDark } = useTheme();
   return (
