@@ -338,90 +338,44 @@ const Farm = () => {
   }
 
   const options = () => {
-    if (
-      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'CAKE' ||
-      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'USDC' ||
-      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'SUSHI' ||
-      tokenData?.TokenInfo.quoteToken.symbol.toUpperCase() === 'DOT'
-    ) {
+    if (tokenData?.switchFlag === 1) {
       return [
         {
-          label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
-          value: tokenData?.TokenInfo.token.symbol,
-          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} /></Box>,
+          label: tokenData?.TokenInfo.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.token?.symbol,
+          icon: (
+            <Box width={20} height={20}>
+              <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+            </Box>
+          ),
         },
         {
-          label: tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB'),
-          value: tokenData?.TokenInfo.token.symbol,
-          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} /></Box>,
-        },
-      ]
-    }
-    if (
-      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'CAKE' ||
-      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'USDC' ||
-      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'SUSHI' ||
-      tokenData?.TokenInfo.token.symbol.toUpperCase() === 'DOT'
-    ) {
-      return [
-        {
-          label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
-          value: tokenData?.TokenInfo.quoteToken.symbol,
-          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} /></Box>,
-        },
-        {
-          label: tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB'),
-          value: tokenData?.TokenInfo.quoteToken.symbol,
-          icon: <Box width={20} height={20}><TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} /></Box>,
+          label: tokenData?.TokenInfo.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+          value: tokenData?.TokenInfo.token?.symbol,
+          icon: (
+            <Box width={20} height={20}>
+              <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+            </Box>
+          ),
         },
       ]
     }
     return [
       {
-        label:
-          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-            ? tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB')
-            : tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-        value:
-          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-            ? tokenData?.TokenInfo.token.symbol
-            : tokenData?.TokenInfo?.quoteToken?.symbol,
+        label: tokenData?.TokenInfo.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        value: tokenData?.TokenInfo.token?.symbol,
         icon: (
-          <Box width={20}
-            height={20}>
-            <TokenImage
-              token={
-                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-                  ? tokenData?.TokenInfo.token
-                  : tokenData?.TokenInfo?.quoteToken
-              }
-              width={20}
-              height={20}
-            />
+          <Box width={20} height={20}>
+            <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
           </Box>
         ),
       },
       {
-        label:
-          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-            ? tokenData?.TokenInfo.quoteToken.symbol
-            : tokenData?.TokenInfo?.token?.symbol,
-        value:
-          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-            ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
-            : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        label: tokenData?.TokenInfo.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        value: tokenData?.TokenInfo.quoteToken?.symbol,
         icon: (
-          <Box width={20}
-            height={20}>
-            <TokenImage
-              token={
-                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
-                  ? tokenData?.TokenInfo.quoteToken
-                  : tokenData?.TokenInfo?.token
-              }
-              width={20}
-              height={20}
-            />
+          <Box width={20} height={20}>
+            <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />
           </Box>
         ),
       },
