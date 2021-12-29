@@ -245,9 +245,14 @@ const Farm = () => {
   const datalistSteps = []
   const datalistOptions = (() => {
     for (let i = 1; i < leverage / 0.5; i++) {
-      datalistSteps.push(1 + 0.5 * (-1 + i))
+      datalistSteps.push(`${(1 + 0.5 * (-1 + i)).toFixed(2)}x`)
     }
-    return datalistSteps.map((value) => <option value={value} label={`${value}x`} />)
+    return datalistSteps.map((value, i) => {
+      if (i === datalistSteps.length - 1)
+        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+
+      return <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+    })
   })()
 
   const { balance: bnbBalance } = useGetBnbBalance()
@@ -1024,7 +1029,7 @@ const Farm = () => {
                   {leverageValue}x
                 </Text>
               </MoveBox>
-              <Box ref={targetRef} style={{ width: '100%' }}>
+              <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
                 <RangeInput
                   type="range"
                   min="1.0"

@@ -30,7 +30,7 @@ interface Props {
   disabled: boolean
 }
 const StyledButton = styled(Button) <Props>`
-  background:${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
+  background-color:${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
   border-radius:10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
   text-align: center;
@@ -47,7 +47,11 @@ const ActionCell = ({ token, apyReady }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <StyledButton
+        <Button
+          style={{
+            width: '140px',
+            height: '40px'
+          }}
           as={Link}
           to={{
             pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
@@ -57,15 +61,19 @@ const ActionCell = ({ token, apyReady }) => {
           onClick={(e) => !account || !apyReady && e.preventDefault()}
         >
           {t('Deposit')}
-        </StyledButton>
-        <StyledButton
+        </Button>
+        <Button
+          style={{
+            width: '140px',
+            height: '40px'
+          }}
           as={Link}
           to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { token } }}
           disabled={!apyReady || !account}
           onClick={(e) => !account || !apyReady && e.preventDefault()}
         >
           {t('Withdraw')}
-        </StyledButton>
+        </Button>
       </CellContent>
     </StyledCell>
   )

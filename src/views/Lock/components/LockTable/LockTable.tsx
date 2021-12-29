@@ -77,8 +77,6 @@ const LockTable = ({ data }) => {
       <StyledTable role="table" ref={tableWrapperEl}>
         {/* {data?.map((token) => ( */}
           <LockRow lockData={tempData} key={tempData.pid} />
-          <LockRow lockData={tempData} key={tempData.pid} />
-          <LockRow lockData={tempData} key={tempData.pid} />
         {/* ))} */}
       </StyledTable>
     </StyledTableBorder>
