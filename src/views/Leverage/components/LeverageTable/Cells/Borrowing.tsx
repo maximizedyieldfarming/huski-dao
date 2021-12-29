@@ -18,6 +18,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
   const quoteToken = tokenData?.TokenInfo?.quoteToken?.symbol
   const token = tokenData?.TokenInfo?.token?.symbol
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   const { t } = useTranslation()
 
   const options = () => {
@@ -67,9 +68,9 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
 
   return (
     <StyledCell role="cell">
-      <CellContent pt="5px">
-        {(isMobile || isTablet) && (
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
+      <CellContent>
+        {isSmallScreen && (
+          <Text bold color="textSubtle" textAlign="left">
             {t('Borrowing')}
           </Text>
         )}

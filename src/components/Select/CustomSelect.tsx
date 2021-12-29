@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { ArrowDropDownIcon, Text, Flex } from 'husky-uikit1.0'
+import useTheme from 'hooks/useTheme'
 
-const DropDownHeader = styled.div`
+const DropDownHeader = styled.div<{ isDark: boolean }>`
   width: 100%;
   height: 40px;
   display: flex;
@@ -10,18 +11,18 @@ const DropDownHeader = styled.div`
   justify-content: space-between;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid #EFEFEF;
+  border: ${({ isDark }) => isDark ? '1px solid #272B30' : '1px solid #efefef'};
   border-radius: 12px;
-  background: ${({ theme }) => theme.colors.input};
+  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
   transition: border-radius 0.15s;
 `
 
-const DropDownListContainer = styled.div`
+const DropDownListContainer = styled.div<{ isDark: boolean }>`
   min-width: 136px;
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.input};
+  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
@@ -112,6 +113,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, icon 
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const { isDark } = useTheme()
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)
@@ -147,7 +149,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, icon 
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       <Flex justifyContent='space-between'>
         {containerSize.width !== 0 && (
-          <DropDownHeader onClick={toggling}>
+          <DropDownHeader onClick={toggling} isDark={isDark}>
             <Flex>
               {icon}
               <Text >&nbsp;&nbsp;{options[selectedOptionIndex].label}</Text>
@@ -156,7 +158,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, icon 
           </DropDownHeader>
         )}
       </Flex>
-      <DropDownListContainer>
+      <DropDownListContainer isDark={isDark}>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (

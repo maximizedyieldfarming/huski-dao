@@ -54,7 +54,7 @@ interface LocationParams {
     marketStrategy?: string
 }
 
-const Section = styled(Box)`
+const Section = styled(Box) < { isDark?: boolean }>`
   &.gray {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
@@ -64,8 +64,8 @@ const Section = styled(Box)`
   padding: 1rem;
 
   > ${Flex} {
-    
-    padding: 1.5rem 0;
+    padding: 20px 0;
+    border-bottom : ${({ isDark }) => isDark ? '2px solid #272B30' : '2px solid #EFEFEF'};
   }
 
   input[type='range'] {
@@ -106,29 +106,18 @@ const InputArea = styled(Flex)`
 `
 
 const ButtonMenu = styled(UiKitButtonMenu)`
-
+    // background : #F4F4F4;
   border-radius: 12px;
-  border: unset;
   width: 100%;
+  height : 54px;
+  padding : 5px;
 `
 
 const ButtonMenuItem = styled(UiKitButtonMenuItem)`
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.backgroundAlt : theme.colors.text)};
-  box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);
-  &:hover:not(:disabled):not(:active) {
-    background-color: ${({ theme, isActive }) => (isActive ? theme.colors.gold : theme.colors.textSubtle)};
-  }
-  &:first-child {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  &:last-child {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  &:not(:last-child):not(:first-child) {
-    border-radius: 0;
-  }
+font-weight : 600;
+
+  color: ${({ theme, isActive }) => (isActive ? '#FF6A55' : '#6F767E')};
+  box-shadow: ${({ isActive }) => isActive ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25);' : 'none'};
 `
 
 const BalanceInputWrapper = styled(Flex)`
@@ -152,14 +141,15 @@ const SBPage = styled(Page)`
 `
 
 const ButtonMenuField = styled(Box)`
+
 ::-webkit-scrollbar {
     height: 4px!important;
   }
 `
 const FarmSA = () => {
     const { t } = useTranslation()
-    const { isMobile, isTable } = useMatchBreakpoints()
-    const isMobileOrTable = isMobile || isTable
+    const { isMobile, isTablet } = useMatchBreakpoints()
+    const isSmallScreen = isMobile || isTablet
     const { account } = useWeb3React()
 
     const {
@@ -211,15 +201,27 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
     getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
-    singleFarm?.QuoteTokenInfo?.vaultAddress,
+    singleFarm?.TokenInfo?.vaultAddress,
   )
-  const { allowance: tokenAllowance } = useTokenAllowance(
+  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
     getAddress(singleFarm?.TokenInfo?.token?.address),
     singleFarm?.TokenInfo?.vaultAddress,
   )
-    const allowance = Number(singleFarm?.userData?.quoteTokenAllowance) > 0 ? singleFarm?.userData?.quoteTokenAllowance : quoteTokenAllowance
+  // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenUserQuoteTokenAllowances : tokenUserTokenAllowances
+
+  // console.log("allowances",{quoteTokenUserQuoteTokenAllowances: quoteTokenUserQuoteTokenAllowances.toString(), tokenUserTokenAllowances: tokenUserTokenAllowances.toString()}, "data", {singleFarm, selectedToken})
+  let allowance = '0'
+  if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
+    allowance =
+      Number(singleFarm.userData?.quoteTokenUserQuoteTokenAllowances) > 0
+        ? singleFarm.userData?.quoteTokenUserQuoteTokenAllowances
+        : quoteTokenUserQuoteTokenAllowances.toString()
+  } else {
+    allowance =
+      Number(singleFarm.userData?.tokenUserTokenAllowances) > 0 ? singleFarm.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+  }
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
     const isApproved: boolean = Number(allowance) > 0
@@ -276,16 +278,19 @@ const FarmSA = () => {
 
     const handleApprove = async () => {
         let contract
+        let approveAddress
         if (marketStrategy.includes('bull')) {
             contract = approveContract
+            approveAddress = quoteTokenVaultAddress
         } else {
             contract = quoteTokenApproveContract //  approveContract
+            approveAddress = vaultAddress
         }
 
         setIsApproving(true)
         try {
             toastInfo(t('Approving...'), t('Please Wait!'))
-            const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
+            const tx = await contract.approve(approveAddress, ethers.constants.MaxUint256)
             const receipt = await tx.wait()
             if (receipt.status) {
                 toastSuccess(t('Approved!'), t('Your request has been approved'))
@@ -307,18 +312,33 @@ const FarmSA = () => {
     const { tradingFees: tradeFee } = useTradingFees(singleFarm)
 
     const getApr = (lvg: number) => {
-        const totalapr =
-            Number((yieldFarmData / 100) * lvg) +
-            Number(((tradeFee * 365) / 100) * lvg) +
-            Number(huskyRewards * (lvg - 1)) -
-            Number(borrowingInterest * (lvg - 1))
-        return totalapr
+      if (
+        Number(tradeFee) === 0 ||
+        Number(huskyRewards) === 0 ||
+        Number(borrowingInterest) === 0 ||
+        Number(yieldFarmData) === 0 ||
+        Number.isNaN(tradeFee) ||
+        Number.isNaN(huskyRewards) ||
+        Number.isNaN(borrowingInterest) ||
+        Number.isNaN(yieldFarmData)
+      ) {
+        return null
+      }
+      const totalapr =
+        Number((yieldFarmData / 100) * lvg) +
+        Number(((tradeFee * 365) / 100) * lvg) +
+        Number(huskyRewards * (lvg - 1)) -
+        Number(borrowingInterest * (lvg - 1))
+      return totalapr
     }
     const getApy = (lvg: number) => {
-        const totalapr = getApr(lvg)
-        // eslint-disable-next-line no-restricted-properties
-        const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
-        return totalapy * 100
+      const totalapr = getApr(lvg)
+      if (totalapr === null) {
+        return null
+      }
+      // eslint-disable-next-line no-restricted-properties
+      const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
+      return totalapy * 100
     }
 
     let tokenInputValue
@@ -387,6 +407,24 @@ const FarmSA = () => {
         }
     }
 
+    const approveContractbnb = useERC20(bnbVaultAddress)
+    const handleApproveBnb = async () => {
+        toastInfo(t('Approving...'), t('Please Wait!'))
+        // setIsApproving(true)
+        try {
+            const tx = await approveContractbnb.approve(vaultAddress, ethers.constants.MaxUint256)
+            const receipt = await tx.wait()
+            if (receipt.status) {
+                toastSuccess(t('Approved!'), t('Your request has been approved'))
+            } else {
+                toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+            }
+        } catch (error: any) {
+            toastWarning(t('Error'), error.message)
+        } finally {
+            // setIsApproving(false)
+        }
+    }
 
     const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
         const callOptions = {
@@ -445,7 +483,7 @@ const FarmSA = () => {
                 tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '001'])
+                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
                 console.info('!== tokenName')
@@ -453,7 +491,7 @@ const FarmSA = () => {
                 quoteTokenInputValue = inputValue || 0
                 farmingTokenAmount = getDecimalAmount(new BigNumber(inputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
                 strategiesAddress = singleFarm?.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '010'])
+                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212'])
                 dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
 
@@ -468,16 +506,16 @@ const FarmSA = () => {
                 tokenInputValue = inputValue || 0
                 quoteTokenInputValue = 0;
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddAllBaseToken
-                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '001'])
+                dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             } else {
-                console.info('!!!==tokenname', tokenName)
+                console.info('!!!=====tokenname', tokenName)
                 tokenInputValue = 0;
                 // quoteTokenInputValue = inputValue || 0
                 // farmingTokenAmount = (quoteTokenInputValue)?.toString()
                 farmingTokenAmount = getDecimalAmount(new BigNumber(inputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
                 strategiesAddress = singleFarm?.TokenInfo.strategies.StrategyAddTwoSidesOptimal
-                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1' , '010'])
+                dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212'])
                 dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
             }
             contract = vaultContract
@@ -507,6 +545,12 @@ const FarmSA = () => {
             const bnbMsgValue = getDecimalAmount(new BigNumber(inputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
             // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
             handleDeposit(bnbMsgValue)
+
+            const allowances = singleFarm?.userData?.tokenAllowance // ? singleFarm?.userData?.allowance : token?.userData?.allowance
+            console.info('wbnb  allowance ', allowances)
+            if (Number(allowances) === 0) {
+                handleApproveBnb()
+            }
         }
 
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
@@ -531,14 +575,13 @@ const FarmSA = () => {
 
     const getOption = () => {
         const option = {
-           tooltip: {
-            formatter: (params) => {
-              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
-                params[1].marker
-              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+            tooltip: {
+                formatter: (params) => {
+                    return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker
+                        } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                },
+                trigger: 'axis',
             },
-            trigger: 'axis',
-          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -584,13 +627,12 @@ const FarmSA = () => {
     const getOption2 = () => {
         const option = {
             tooltip: {
-            formatter: (params) => {
-              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
-                params[1].marker
-              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                formatter: (params) => {
+                    return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker
+                        } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                },
+                trigger: 'axis',
             },
-            trigger: 'axis',
-          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -689,7 +731,7 @@ const FarmSA = () => {
                 tooltip: {
                     valueDecimals: 2,
                     pointFormat: '{series.name}: <b>&dollar;{point.y}</b><br/>',
-              },
+                },
             }]
 
         };
@@ -836,27 +878,27 @@ const FarmSA = () => {
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Trading Fees')}</Text>
-                <Text>{tradingFees.toFixed(2)}%</Text>
+                <Text>{tradingFees?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Huski Rewards')}</Text>
-                <Text>{huskyRewardsData.toFixed(2)}%</Text>
+                <Text>{huskyRewardsData?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Borrowing Interest')}</Text>
-                <Text>-{Number(borrowingInterestData).toFixed(2)}%</Text>
+                <Text>-{Number(borrowingInterestData)?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Total APR')}</Text>
-                <Text>{apr.toFixed(2)}%</Text>
+                <Text>{apr?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Total APY')}</Text>
-                <Text>{apy.toFixed(2)}%</Text>
+                <Text>{apy?.toFixed(2)}%</Text>
             </Flex>
             <Flex justifyContent="space-between" alignItems="center">
                 <Text small>{t('Daily APR')}</Text>
-                <Text>{dailyApr.toFixed(2)}%</Text>
+                <Text>{dailyApr?.toFixed(2)}%</Text>
             </Flex>
         </>,
         { placement: 'right' },
@@ -873,11 +915,11 @@ const FarmSA = () => {
             </Text>
             <SectionWrapper>
                 <Flex className="graphSide" flex="2" >
-                    <Section style={{ height: "500px" }}>
+                    <Section isDark={isDark} style={{ height: "500px" }}>
                         <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} />
                     </Section>
 
-                    <Section>
+                    <Section isDark={isDark}>
                         <Flex justifyContent="space-between" style={{ flexFlow: "row wrap" }}>
                             <Flex mb='20px'>
                                 <Text style={{ marginRight: "40px", cursor: "pointer", color: chartype === 0 ? "#623CE7" : "", fontWeight: "bold", borderBottom: chartype === 0 ? "3px solid #623CE7" : "", paddingBottom: "10px" }} onClick={() => setChartType(0)}>{t(`Time Profit`)}</Text>
@@ -892,7 +934,7 @@ const FarmSA = () => {
                                     <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
                                     <Text>{t('Coin Value')}</Text>
                                 </Flex>
-                                <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : &nbsp;&nbsp;{apy.toFixed(2)}%</Text>
+                                    <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : {apy ? apy?.toFixed(2) : <Skeleton width="25px" height="1rem" />}%</Text>
                             </Flex>
                         </Flex>
                         {chartype === 0 ? <ReactEcharts option={getOption()} style={{ height: '500px' }} /> :
@@ -900,8 +942,7 @@ const FarmSA = () => {
                     </Section>
                 </Flex>
                 <Flex className="infoSide" flex="1">
-                    <Section>
-                        <Box>
+                    <Section isDark={isDark}>
                             <Flex>
                                 <SingleFarmSelect
                                     options={getSelectOptions()}
@@ -910,7 +951,7 @@ const FarmSA = () => {
                                         setInputValue('')
                                         setButtonIndex(null)
                                     }}
-                                    width="calc(80%)"
+                                    width="278px"
                                 />
                             </Flex>
                             <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
@@ -922,7 +963,7 @@ const FarmSA = () => {
                                         setInputValue('')
                                         setButtonIndex(null)
                                     }}
-                                    width="140px"
+                                    width="128px"
                                     reset={resetWatcher}
                                 />
                             </Flex>
@@ -947,30 +988,27 @@ const FarmSA = () => {
                                         </Text>
                                     </BalanceInputWrapper>
                                 </InputArea>
-                                <ButtonMenuField overflow="auto">
                                     <ButtonMenu
                                         onItemClick={setInputToFraction}
                                         activeIndex={buttonIndex}
-                                        disabled={userTokenBalance.eq(0)}
+                                        isDark={isDark}
                                     >
                                         <ButtonMenuItem>25%</ButtonMenuItem>
                                         <ButtonMenuItem>50%</ButtonMenuItem>
                                         <ButtonMenuItem>75%</ButtonMenuItem>
                                         <ButtonMenuItem>100%</ButtonMenuItem>
                                     </ButtonMenu>
-                                </ButtonMenuField>
-                            </Box>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
-                        <Flex alignItems="center" justifyContent="space-between">
+                        <Flex alignItems="center" justifyContent="space-between" mt='20px'>
                             <Flex>
                                 <Text  >{t('APY')}</Text>
                                 {tooltipVisible && tooltip}
                                 <span ref={targetRef}>
-                                    <InfoIcon ml="10px" width="25px" height="25px" />
+                                    <InfoIcon ml="10px" width="20px" height="20px" mt='2px' />
                                 </span>
                             </Flex>
-                            <Text fontWeight="bold">{apy.toFixed(2)}%</Text>
+                            {apy ? <Text fontWeight="bold">{apy?.toFixed(2)}%</Text> : <Skeleton width="80px" height="1rem" />}
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between">
                             <Text small>{t('Equity')}</Text>
@@ -992,9 +1030,11 @@ const FarmSA = () => {
                                 <Skeleton width="80px" height="16px" />
                             )}
                         </Flex>
-                        <Flex>
+                        <Flex border='none!important'>
                             {isApproved ? (
                                 <Button
+                                    width={260}
+                                    height={50}
                                     mx="auto"
                                     scale="sm"
                                     onClick={handleConfirm}
@@ -1012,9 +1052,10 @@ const FarmSA = () => {
                                 </Button>
                             ) : (
                                 <Button
+                                    width={260}
+                                    height={50}
                                     mx="auto"
                                     scale="md"
-                                    width="70%"
                                     onClick={handleApprove}
                                     isLoading={isApproving}
                                     endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
@@ -1023,7 +1064,7 @@ const FarmSA = () => {
                                 </Button>
                             )}
                         </Flex>
-                        <Flex>
+                        <Flex border='none!important'>
                             {inputValue ? <Text mx="auto" color='red'>{new BigNumber(farmData[3]).lt(minimumDebt) ? t('Minimum Debt Size: %minimumDebt% %tokenName%', { minimumDebt: minimumDebt.toNumber(), tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB') }) : null}</Text> : null}
                         </Flex>
                     </Section>

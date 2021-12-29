@@ -1,17 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Skeleton, Text, useMatchBreakpoints, Box, Flex, InfoIcon, useTooltip, Grid } from 'husky-uikit1.0'
-import BigNumber from 'bignumber.js'
-
+import { Skeleton, Text, useMatchBreakpoints, Flex, InfoIcon, useTooltip, Grid } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
-import { TokenImage, TokenPairImage } from 'components/TokenImage'
+import { TokenImage } from 'components/TokenImage'
 import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
-
-interface InfoParams {
-  show: boolean
-}
 
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
@@ -22,6 +15,7 @@ const StyledCell = styled(BaseCell)`
 
 const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   const { tokenPriceUsd, quoteTokenPriceUsd } = tokenData
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token
@@ -78,13 +72,13 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        {(isMobile || isTablet) && (
-          <Text fontSize="12px" color="textSubtle" textAlign="left">
+        {isSmallScreen && (
+          <Text bold color="textSubtle" textAlign="left">
             {t('TVL')}
           </Text>
         )}
         {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
-        <Flex alignItems="center" style={{ marginTop: '15px' }}>
+        <Flex alignItems="start" style={{ marginTop: '15px' }}>
           {tvl ? (
             <>
               <Text color="text" fontWeight="600">

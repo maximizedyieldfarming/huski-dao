@@ -2,9 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
-import BigNumber from 'bignumber.js'
+import { useMatchBreakpoints, Button } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -30,13 +28,12 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
 
   return (
     <StyledCell role="cell">
-      <CellContent>
+      <CellContent alignItems='start'>
         {token?.totalSupply && account ? (
           // {true?
           <Button
             style={{
               background: '#7B3FE4',
-              border: '1px solid #EFEFEF',
               boxSizing: 'border-box',
               borderRadius: '10px',
               width: '114px',
@@ -61,7 +58,6 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
           <div
             style={{
               background: '#D3D3D3',
-              border: '1px solid #EFEFEF',
               boxSizing: 'border-box',
               borderRadius: '10px',
               width: '114px',

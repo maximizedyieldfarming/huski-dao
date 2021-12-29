@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { ArrowDropDownIcon, Text } from 'husky-uikit1.0'
+import useTheme from 'hooks/useTheme'
 
-const DropDownHeader = styled.div`
+const DropDownHeader = styled.div<{ isDark: boolean }>`
   min-width: max-content;
   height: 40px;
   display: flex;
@@ -11,18 +12,18 @@ const DropDownHeader = styled.div`
   gap: 8px;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid #efefef;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.input};
+  border: ${({ isDark }) => isDark ? '1px solid #272B30' : '1px solid #efefef'};
+  border-radius: 10px;
+  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
   transition: border-radius 0.15s;
 `
 
-const DropDownListContainer = styled.div`
+const DropDownListContainer = styled.div<{ isDark: boolean }>`
   min-width: 136px;
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.input};
+  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
@@ -35,12 +36,12 @@ const DropDownListContainer = styled.div`
   }
 `
 
-const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: number }>`
+const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: number; isDark: boolean }>`
   cursor: pointer;
   // width: ${({ width }) => width}px;
   position: relative;
   background: ${({ theme }) => theme.colors.input};
-  border-radius: 16px;
+  border-radius: 10px;
   height: 40px;
   min-width: max-content;
   // width: 110px;
@@ -54,9 +55,8 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
     props.isOpen &&
     css`
       ${DropDownHeader} {
-        border-bottom: 1px solid #efefef;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
-        border-radius: 16px 16px 0 0;
+        border-radius: 10px 10px 0 0;
       }
 
       ${DropDownListContainer} {
@@ -64,9 +64,8 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         max-height: 300px;
         transform: scaleY(1);
         opacity: 1;
-        border: 1px solid #efefef;
         border-top-width: 0;
-        border-radius: 0 0 16px 16px;
+        border-radius: 0 0 10px 10px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         overflow: auto;
       }
@@ -116,6 +115,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const { isDark } = useTheme();
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)
@@ -148,20 +148,20 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
   }, [])
 
   return (
-    <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
+    <DropDownContainer isOpen={isOpen} isDark={isDark} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
-        <DropDownHeader onClick={toggling}>
+        <DropDownHeader onClick={toggling} isDark={isDark}>
           {options[selectedOptionIndex]?.icon ? options[selectedOptionIndex]?.icon : null}
           <Text>{options[selectedOptionIndex].label.toUpperCase().replace('WBNB', 'BNB')}</Text>
         </DropDownHeader>
       )}
       <ArrowDropDownIcon color="text" onClick={toggling} style={{ position: 'absolute', right: '0' }} />
-      <DropDownListContainer>
+      <DropDownListContainer isDark={isDark}>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
-                {option.icon ? option.icon :  null}
+                {option.icon ? option.icon : null}
                 <Text>{option.label.toUpperCase().replace('WBNB', 'BNB')}</Text>
               </ListItem>
             ) : null,

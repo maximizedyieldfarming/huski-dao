@@ -310,7 +310,7 @@ const Lock: React.FC = () => {
                 <Text fontWeight='600' color="textNeutral">{t('My Current HUSKI locks')}</Text>
                 <Flex>
                   <Text color="textSubtle">{t('Unlock Remaining:')}</Text>
-                  <Text ml='5px' color="textSecondary" fontSize='18px' bold>{t('3 weeks')}</Text>
+                  <Text ml='5px' fontSize='18px' bold>{t('3 weeks')}</Text>
                 </Flex>
               </Flex>
             </Flex>

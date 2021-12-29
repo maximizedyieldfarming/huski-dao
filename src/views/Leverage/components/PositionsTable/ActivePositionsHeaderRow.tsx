@@ -1,15 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Text, useTooltip, InfoIcon, Flex } from 'husky-uikit1.0'
+import useTheme from 'hooks/useTheme'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
-const StyledRow = styled.div`
+const StyledRow = styled.div<{ isDark: boolean }>`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid #efefef;
+  border-bottom: ${({ isDark }) => isDark ? '1px solid #272B30' : '2px solid #efefef'};
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -18,26 +19,15 @@ const StyledRow = styled.div`
 
 const NameCell = styled(BaseCell)`
   flex: 1 0 50px;
-  flex-direction: column;
-  // padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 100px;
-    // padding-left: 32px;
-  }
-  ${CellContent} {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-      flex-direction: column;
-    }
+    flex: 1 0 120px;
   }
 `
 const PoolCell = styled(BaseCell)`
   align-items: start;
   flex: 5;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 2 0 170px;
+    flex: 2 0 150px;
   }
   ${Text} {
     white-space: nowrap;
@@ -169,8 +159,9 @@ const ActivePositionsHeaderRow = () => {
     </>,
     { placement: 'top-start' },
   )
+  const { isDark } = useTheme();
   return (
-    <StyledRow>
+    <StyledRow isDark={isDark}>
       <NameCell>
         <CellContent>
           <Text fontSize="13px" bold color="textSubtle">
@@ -291,7 +282,7 @@ const ActivePositionsHeaderRow = () => {
           </Flex>
         </CellContent>
       </StyledCell>
-     {/*  <StyledCell>
+      {/*  <StyledCell>
         <CellContent>
           <Flex alignItems="center">
             <Text fontSize="13px" bold color="textSubtle">
@@ -307,7 +298,7 @@ const ActivePositionsHeaderRow = () => {
       <StyledCell>
         <CellContent>
           <Flex alignItems="center" justifyContent="flex-end">
-            <Text fontSize="13px" style={{ width: '230px', textAlign: 'right' }} bold color="textSubtle">
+            <Text fontSize="13px" style={{ width: '230px' }} bold color="textSubtle">
               {t('Action')}
             </Text>
             {profitLossTooltipVisible && profitLossTooltip}

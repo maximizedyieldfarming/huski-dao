@@ -1,11 +1,11 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import LendRow from './LendRow'
 import LendHeaderRow from './LendHeaderRow'
 
 const StyledTable = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
+ border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
   background-repeat: no-repeat;
@@ -38,26 +38,12 @@ const StyledTableBorder = styled.div`
   box-shadow: ${({ theme }) => theme.card.boxShadow};
 `
 
-const ScrollButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`
-
 const LendTable = ({ lendData }) => {
-  const tableWrapperEl = useRef<HTMLDivElement>(null)
-  const scrollToTop = (): void => {
-    tableWrapperEl.current.scrollIntoView({
-      behavior: 'smooth',
-    })
-  }
-
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   return (
     <StyledTableBorder>
-      <StyledTable role="table" ref={tableWrapperEl}>
+      <StyledTable role="table">
         <Box>
           {!(isMobile || isTablet) && <LendHeaderRow />}
           {lendData.map((token) => (

@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Flex,InfoIcon } from 'husky-uikit1.0'
+import { Box, Flex, InfoIcon } from 'husky-uikit1.0'
 
 interface DotProps {
   text: string
-  overlap?: boolean
+  overlap?: number
 }
 
 interface ProgressProps {
@@ -51,30 +51,34 @@ const ProgressTrack = styled.div`
     position: absolute;
     content: '100%';
     right: 10px;
-    top: 10px;
+    top: 17px;
+    font-weight : 600;
     // transform: translate(calc(100% + 8px), -50%);
-    transform: translate(calc(100% - 8px), 50%);
-    color: ${({ theme }) => theme.colors.text};
+    transform: translate(calc(100% - 8px), 52%);
+    font-size : 13px;
+    color: ${({ theme }) => theme.colors.textSubtle};
   }
   &::before {
     position: absolute;
     content: '0%';
     left: 0;
-    top: 17px;
+    top: 22px;
     transform: translate(calc(-100% +8px), 200%);
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.textSubtle};
+    font-weight : 600;
+    font-size : 13px;
   }
 `
-const CustomInfo = styled(InfoIcon)`
+const CustomInfo = styled(InfoIcon) <{ overlap: number }>`
   position:absolute;
-  top:-23px;
+  top:${({ overlap }) => overlap === 2 ? '-39px' : '-23px'};
   left:40px;
   color:${({ theme }) => theme.colors.textSubtle};
   width:14px;
   height:14px;
 
 `
-const Progress = styled(Box)<ProgressProps>`
+const Progress = styled(Box) <ProgressProps>`
   position: relative;
   width: ${({ percentage }) => percentage}%;
   transition: width 0.2s ease-in-out;
@@ -119,13 +123,15 @@ const Dot = styled.span<DotProps>`
       top:-19px;
       font-weight:600;
       font-size:12px;
+      left : -12px;
     }
     
     &::after {
       color: ${({ theme }) => theme.colors.textSubtle};
       content: ${({ text }) => `'${text}%'`};
       position: absolute;
-      top: 100%;
+      top: 120%;;
+      font-size : 13px;
     }
   }
   &.max {
@@ -142,7 +148,8 @@ const Dot = styled.span<DotProps>`
       color: ${({ theme }) => theme.colors.textSubtle};
       content: ${({ text }) => `'${text}%'`};
       position: absolute;
-      top: 100%;
+      top: 120%;;
+      font-size : 13px;
     }
   }
   &.debtRatio {
@@ -157,35 +164,43 @@ const Dot = styled.span<DotProps>`
       width:100px;
       font-size:12px;
       ${({ overlap, theme }) =>
-        overlap &&
-        `transform: translateY(-55%);
-     
-      `}
+    overlap === 2 ? `transform: translateY(-90%)` : ''};
     }
 
     &::after {
       color: ${({ theme }) => theme.colors.textSubtle};
       content: ${({ text }) => `'${text}%'`};
       position: absolute;
-      top: 100%;
-      // ${({ overlap }) => overlap && `transform: translateY(-100%);`}
+      top: 120%;;
+      font-size : 13px;
+      ${({ overlap }) => overlap && `transform: translateY(110%);`}
     }
   }
 `
 const DebtRatioProgress = ({ debtRatio, liquidationThreshold, max }) => {
+  let type;
+  if (Math.abs(debtRatio - max) < 15 || Math.abs(debtRatio - liquidationThreshold) < 15)
+    type = 2;
+  else if (Math.abs(debtRatio - 0) < 8)
+    type = 1;
+  else type = 0;
   return (
     <ProgressTrack>
       <div className="start" />
       <Progress percentage={debtRatio?.toString()} className="colored">
-        <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={debtRatio.toFixed(2) === max.toFixed(2)} ><div className="circle"><CustomInfo /></div></Dot>
+        <Dot className="dot debtRatio" text={debtRatio?.toFixed(2)} overlap={type}>
+          <div className="circle" >
+            <CustomInfo overlap={type} />
+          </div>
+        </Dot>
       </Progress>
       <Progress percentage={max?.toString()}>
         <Dot className="dot max" text={max?.toFixed(2)} ><div className="circle" /></Dot>
       </Progress>
       <Progress percentage={liquidationThreshold}>
-        <Dot className="dot liquidationRatio" text={liquidationThreshold?.toFixed(2)} ><div className="circle"  /></Dot>
+        <Dot className="dot liquidationRatio" text={liquidationThreshold?.toFixed(2)} ><div className="circle" /></Dot>
       </Progress>
-      <div className = "end" />
+      <div className="end" />
     </ProgressTrack>
   )
 }

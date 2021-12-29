@@ -12,14 +12,16 @@ import {
   InfoIcon,
   ChevronRightIcon,
   AutoRenewIcon,
+  ArrowDropDownIcon
 } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getAddress } from 'utils/addressHelpers'
+import { getAddress, getWbnbAddress } from 'utils/addressHelpers'
 import { getBalanceAmount, getDecimalAmount, formatNumber } from 'utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
+import useTheme from 'hooks/useTheme';
 import { ethers } from 'ethers'
 import { useTranslation } from 'contexts/Localization'
 import { useVault } from 'hooks/useContract'
@@ -69,7 +71,6 @@ const RangeInput = styled.input`
   overflow: hidden;
   display: block;
   appearance: none;
-  max-width: 850px;
   width: 100%;
   margin: 0;
   height: 32px;
@@ -79,7 +80,7 @@ const RangeInput = styled.input`
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 32px;
-    background: linear-gradient(to right, #b488ff, #3a009e) 100% 50% / 100% 4px no-repeat transparent;
+    background: linear-gradient(to right, #7B3FE4, #7B3FE4) 100% 50% / 100% 4px no-repeat transparent;
   }
 
   &:focus {
@@ -92,14 +93,14 @@ const RangeInput = styled.input`
     height: 32px;
     width: 28px;
 
-    background-image: url('/images/RangeHandle.png');
+    background-image: url('/images/blueslider.png');
     background-position: center center;
     background-repeat: no-repeat;
-
+    background-size : 100% 100%;
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    box-shadow: ${makeLongShadow('rgb(189,159,242)', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
@@ -113,7 +114,6 @@ const RangeInput1 = styled.input`
   overflow: hidden;
   display: block;
   appearance: none;
-  max-width: 850px;
   width: 100%;
   margin: 0;
   height: 32px;
@@ -140,10 +140,12 @@ const RangeInput1 = styled.input`
     background-position: center center;
     background-repeat: no-repeat;
 
+    background-size : 100% 100%;
+
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    box-shadow: ${makeLongShadow('rgb(193,223,183)', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
@@ -158,6 +160,7 @@ interface LocationParams {
 }
 
 const Section = styled(Box)`
+  max-width : 850px;
   &:first-of-type {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
@@ -170,10 +173,10 @@ const Section = styled(Box)`
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem;
+  padding: 2rem;
   &:not(:first-child) {
     > ${Flex} {
-      padding: 1.5rem 0;
+      padding: 1rem 0;
       
     }
   }
@@ -191,6 +194,7 @@ const BalanceInputWrapper = styled(Flex)`
 `
 
 const AdjustPositionSA = () => {
+  const { isDark } = useTheme()
   const { account } = useWeb3React()
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { t } = useTranslation()
@@ -209,7 +213,7 @@ const AdjustPositionSA = () => {
   const [tokenInput, setTokenInput] = useState<string>()
   // const [quoteTokenInput, setQuoteTokenInput] = useState(0)
 
-  const { positionId, debtValue, lpAmount, vault, positionValueBase } = data
+  const { positionId, debtValue, lpAmount, vault, positionValueBase, serialCode } = data
   const {
     TokenInfo,
     QuoteTokenInfo,
@@ -244,10 +248,12 @@ const AdjustPositionSA = () => {
   let lpSymbolName
   let tokenValue
   let quoteTokenValue
+  let inputValue
   let tokenPrice
   let quoteTokenPrice
   let tokenValueSymbol
   let quoteTokenValueSymbol
+  let inputSymbol
   let baseTokenAmount
   let farmTokenAmount
   let basetokenBegin
@@ -255,11 +261,13 @@ const AdjustPositionSA = () => {
   let workerAddress
   let withdrawMinimizeTradingAddress
   let partialCloseLiquidateAddress
+  let strategyLiquidateAddress
   let contract
   let tokenInputValue
   let quoteTokenInputValue
   let userTokenBalance
   let userQuoteTokenBalance
+  let userInputBalance
   let minimumDebt
 
   if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
@@ -268,10 +276,12 @@ const AdjustPositionSA = () => {
     lpSymbolName = TokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = token
     quoteTokenValue = quoteToken
+    inputValue = serialCode === '221' ? tokenValue : quoteTokenValue
     tokenPrice = tokenPriceUsd
     quoteTokenPrice = quoteTokenPriceUsd
     tokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
+    inputSymbol = serialCode === '221' ? tokenValueSymbol : quoteTokenValueSymbol
     baseTokenAmount = (Number(tokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     farmTokenAmount = (Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     basetokenBegin = parseInt(tokenAmountTotal)
@@ -279,6 +289,7 @@ const AdjustPositionSA = () => {
     workerAddress = TokenInfo.address
     withdrawMinimizeTradingAddress = TokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = TokenInfo.strategies.StrategyPartialCloseLiquidate
+    strategyLiquidateAddress = TokenInfo.strategies.StrategyLiquidate
     contract = vaultContract
     tokenInputValue = tokenInput || 0
     quoteTokenInputValue = 0 // formatNumber(quoteTokenInput)
@@ -286,6 +297,7 @@ const AdjustPositionSA = () => {
     userQuoteTokenBalance = getBalanceAmount(
       quoteTokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     )
+    userInputBalance = serialCode === '221' ? userTokenBalance : userQuoteTokenBalance
     minimumDebt = new BigNumber(data.farmData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   } else {
     //  console.log('case 2')
@@ -293,10 +305,12 @@ const AdjustPositionSA = () => {
     lpSymbolName = QuoteTokenInfo?.name.replace(' PancakeswapWorker', '')
     tokenValue = quoteToken
     quoteTokenValue = token
+    inputValue = serialCode === '221' ? tokenValue : quoteTokenValue
     tokenPrice = quoteTokenPriceUsd
     quoteTokenPrice = tokenPriceUsd
     tokenValueSymbol = quoteToken?.symbol.replace('wBNB', 'BNB')
     quoteTokenValueSymbol = token?.symbol.replace('wBNB', 'BNB')
+    inputSymbol = serialCode === '221' ? tokenValueSymbol : quoteTokenValueSymbol
     baseTokenAmount = (Number(quoteTokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     farmTokenAmount = (Number(tokenAmountTotal) / Number(lptotalSupplyNum)) * lpAmount
     // baseTokenAmount = new BigNumber(quoteTokenAmountTotal).div(new BigNumber(lptotalSupply)).times(lpAmount)
@@ -306,13 +320,15 @@ const AdjustPositionSA = () => {
     workerAddress = QuoteTokenInfo.address
     withdrawMinimizeTradingAddress = QuoteTokenInfo.strategies.StrategyPartialCloseMinimizeTrading
     partialCloseLiquidateAddress = QuoteTokenInfo.strategies.StrategyPartialCloseLiquidate
+    strategyLiquidateAddress = QuoteTokenInfo.strategies.StrategyLiquidate
     contract = quoteTokenVaultContract
-    tokenInputValue = 0 // formatNumber(quoteTokenInput)
+    tokenInputValue = 0
     quoteTokenInputValue = tokenInput || 0
     userTokenBalance = getBalanceAmount(
       tokenValueSymbol === 'BNB' ? bnbBalance : quoteTokenBalance,
     )
     userQuoteTokenBalance = getBalanceAmount(quoteTokenValueSymbol === 'BNB' ? bnbBalance : tokenBalance)
+    userInputBalance = serialCode === '221' ? userTokenBalance : userQuoteTokenBalance
     minimumDebt = new BigNumber(data.farmData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
   }
   // console.info('use this', {
@@ -324,6 +340,7 @@ const AdjustPositionSA = () => {
   //   quoteTokenPrice,
   //   tokenValueSymbol,
   //   quoteTokenValueSymbol,
+  //   inputSymbol,
   //   baseTokenAmount,
   //   farmTokenAmount,
   //   basetokenBegin,
@@ -383,14 +400,14 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 26)
+    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 32)
 
     setMargin(tt)
 
   }, [targetPositionLeverage, moveVal.width, leverage])
 
 
-  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, tokenInput, 0, symbolName)
+  const { farmingData, repayDebtData } = getAdjustData(data.farmData, data, targetPositionLeverage, quoteTokenInputValue, tokenInputValue, symbolName)
   const adjustData = farmingData ? farmingData[1] : []
   let assetsBorrowed
   let baseTokenInPosition
@@ -432,13 +449,13 @@ const AdjustPositionSA = () => {
       // check if input is a number and includes decimals
       if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
         const input = event.target.value
-        const finalValue = new BigNumber(input).gt(userTokenBalance) ? input : input
+        const finalValue = new BigNumber(input).gt(userInputBalance) ? input : input
         setTokenInput(finalValue)
       } else {
         event.preventDefault()
       }
     },
-    [userTokenBalance],
+    [userInputBalance],
   )
   useLayoutEffect(() => {
     if (targetRef1.current !== null && targetRef1.current !== undefined) {
@@ -461,11 +478,45 @@ const AdjustPositionSA = () => {
     for (let i = 1; i < leverage / 0.5; i++) {
       datalistSteps.push(1 + 0.5 * (-1 + i))
     }
-    return datalistSteps.map((value) => <option value={value} label={`${value.toFixed(2)}x`} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />)
+    return datalistSteps.map((value, i) => {
+      if (i === datalistSteps.length - 1)
+        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+      return <option value={value} label={`${value.toFixed(2)}x`} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+    })
   })()
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const [isPending, setIsPending] = useState(false)
+
+  const bnbVaultAddress = getWbnbAddress()
+  const depositContract = useVault(bnbVaultAddress)
+  const handleDeposit = async (bnbMsgValue) => {
+
+    const callOptionsBNB = {
+      gasLimit: 380000,
+      value: bnbMsgValue,
+    }
+    // setIsPending(true)
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [bnbMsgValue],
+        callOptionsBNB,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+        history.push('/farms')
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+    }
+  }
+
   const handleFarm = async (id, address, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
       gasLimit: 3800000,
@@ -501,7 +552,7 @@ const AdjustPositionSA = () => {
 
   const handleConfirm = async () => {
     const id = positionId
-    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber
+    const AssetsBorrowed = adjustData ? assetsBorrowed : debtValueNumber.toNumber()
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '') // 815662939548462.2--- >  815662939548462
     const maxReturn = 0
     const abiCoder = ethers.utils.defaultAbiCoder
@@ -511,40 +562,42 @@ const AdjustPositionSA = () => {
     let strategiesAddress
     let dataStrategy
     let dataWorker
-
+    let wrapFlag = false
     // base token is base token
     if (vault.toUpperCase() === TokenInfo.vaultAddress.toUpperCase()) {
       // single base token
-      if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+      // if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
+      if (inputSymbol === tokenValueSymbol) {
         console.info('base + single + token input ')
         strategiesAddress = TokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
-        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
-        console.info('base + single + quote token input ---')
-        farmingTokenAmount = quoteTokenInputValue || '0'
+        console.info('base + single + quote token input ')
+        // farmingTokenAmount = quoteTokenInputValue || '0'
+        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = TokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
+      amount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
     } else {
       // farm token is base token
       if (Number(tokenInputValue) !== 0 && Number(quoteTokenInputValue) === 0) {
         console.info('farm + single + token input ')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddAllBaseToken
-        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
+        dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256'], ['1', '221'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
-        // if (Number(tokenInputValue || 0) === 0 && Number(quoteTokenInputValue || 0) !== 0) {
         console.info('farm + single +1 quote token input ')
-        farmingTokenAmount = quoteTokenInputValue || '0'
+        wrapFlag = true
+        // farmingTokenAmount = quoteTokenInputValue || '0'
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
         strategiesAddress = QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
-        dataStrategy = abiCoder.encode(['uint256', 'uint256'], [ethers.utils.parseEther(farmingTokenAmount), '1']) // [param.farmingTokenAmount, param.minLPAmount])
+        dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '212']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
-      amount = getDecimalAmount(new BigNumber(tokenInputValue), 18).toString()
+      amount = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
     }
 
     console.log({
@@ -561,6 +614,13 @@ const AdjustPositionSA = () => {
       tokenInputValue,
       quoteTokenInputValue,
     })
+
+
+    if (lpSymbolName.toUpperCase().includes('BNB') && wrapFlag && inputSymbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB') {
+      const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInputValue || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      handleDeposit(bnbMsgValue)
+    }
+
 
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -591,40 +651,96 @@ const AdjustPositionSA = () => {
   }
 
   const handleConfirmConvertTo = async () => {
-    let receive = 0;
-    let closeRationum;
-    if (Number(targetPositionLeverage) === 1) {
-      receive = Number(minimumReceived)
-      closeRationum = closeRatio
+
+    if (percentageToClose === 100) {
+      handleConfirmConvertToAll()
     } else {
-      receive = 0
-      closeRationum = closeRatioValue
+      handleConfirmConvertToPartial()
     }
-    const returnLpTokenValue = (lpAmount * closeRationum).toString()
+
+  }
+
+  const handleConfirmConvertToAll = async () => {
     const id = positionId
     const amount = 0
-    const loan = 0;
-    const minbasetoken = Number(receive).toString()
-    const minbasetokenvalue = getDecimalAmount(new BigNumber((minbasetoken)), 18).toString()
-    const maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
-    const maxDebtRepayment = Number(maxDebtRepay).toString()
-    const abiCoder = ethers.utils.defaultAbiCoder;
-    const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
-    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, ethers.utils.parseEther(maxDebtRepayment), ethers.utils.parseEther(minbasetokenvalue)]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
-    console.log({
-      'handleConfirmConvertTo-symbolName': symbolName,
-      returnLpTokenValue, receive, id, workerAddress,
-      minbasetokenvalue, amount, loan, dataStrategy, maxDebtRepayment,
-      partialCloseLiquidateAddress,
-      minbasetoken, maxReturn, dataWorker,
-      'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment),
-      'ethers.utils.parseEther(minbasetokenvalue)': ethers.utils.parseEther(minbasetokenvalue)
-    })
+    const loan = 0
+    const abiCoder = ethers.utils.defaultAbiCoder
+    const maxReturn = ethers.constants.MaxUint256
+    const receive = Number(minimumReceived) > 0 ? Number(minimumReceived) : 0
+    const minbasetoken = getDecimalAmount(new BigNumber(receive), 18).toString().replace(/\.(.*?\d*)/g, '')
+    const dataStrategy = abiCoder.encode(['uint256'], [minbasetoken])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [strategyLiquidateAddress, dataStrategy])
+    console.log({ '======100': id, workerAddress, amount, loan, minbasetoken, maxReturn, dataWorker })
     handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
 
+  const handleConfirmConvertToPartial = async () => {
+    const id = positionId
+    const amount = 0
+    const loan = 0;
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    let receive = 0;
+    let closeRationum;
+    let maxDebtRepay
+    let maxReturn
+    let maxDebtRepaymentValue
+    if (Number(targetPositionLeverage) === 1) {
+      receive = Number(minimumReceived) > 0 ? Number(minimumReceived) : 0
+      closeRationum = closeRatio
+      maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
+      maxReturn = ethers.constants.MaxUint256
+      maxDebtRepaymentValue = ethers.constants.MaxUint256
+    } else {
+      receive = 0
+      closeRationum = closeRatioValue
+      maxDebtRepay = Number(UpdatedDebt) > 0 ? Number(UpdatedDebt) : 0
+      const maxDebtRepayment = getDecimalAmount(new BigNumber(maxDebtRepay), 18).toString().replace(/\.(.*?\d*)/g, '') // Number(maxDebtRepay).toString()
+      maxReturn = maxDebtRepayment // ethers.utils.parseEther(maxDebtRepayment)
+      maxDebtRepaymentValue = maxDebtRepayment // ethers.utils.parseEther(maxDebtRepayment)    try 
+    }
+    const returnLpTokenValue = (lpAmount * closeRationum).toString()
+    const maxDebtRepayment = Number(maxDebtRepay).toString()
+    const minbasetoken = getDecimalAmount(new BigNumber(receive), 18).toString().replace(/\.(.*?\d*)/g, '')
+    // const maxReturn = ethers.utils.parseEther(maxDebtRepayment);
+    const dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [returnLpTokenValue, maxDebtRepaymentValue, minbasetoken]);
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [partialCloseLiquidateAddress, dataStrategy]);
+    console.log({
+      'handleConfirmConvertTo-symbolName': symbolName,
+      returnLpTokenValue, receive, id, workerAddress,
+      amount, loan, dataStrategy, maxDebtRepayment,
+      partialCloseLiquidateAddress,
+      minbasetoken, maxReturn, dataWorker,
+      'ethers.utils.parseEther(maxDebtRepayment)': ethers.utils.parseEther(maxDebtRepayment)
+    })
+    handleFarmConvertTo(id, workerAddress, amount, loan, maxReturn, dataWorker)
+  }
+
+  const isAddCollateralConfirmDisabled = (() => {
+    if (currentPositionLeverage > targetPositionLeverage || currentPositionLeverage === 1 && targetPositionLeverage === 1) {
+      return Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0
+    }
+    if (currentPositionLeverage === 1 && targetPositionLeverage > currentPositionLeverage) {
+      return new BigNumber(UpdatedDebt).lt(minimumDebt)
+    }
+    if (targetPositionLeverage > currentPositionLeverage) {
+      return false
+    }
+    return true
+  })()
+
+  const iscConvertToConfirmDisabled = (() => {
+    if (targetPositionLeverage === 1 && currentPositionLeverage === 1) {
+      return Number(percentageToClose) === 0
+    }
+    if (targetPositionLeverage === 1 && currentPositionLeverage !== 1) {
+      return false
+    }
+    if (targetPositionLeverage !== 1) {
+      return new BigNumber(new BigNumber(debtValueNumber).minus(UpdatedDebt)).lt(minimumDebt)
+    }
+    return true
+  })()
 
   return (
     <Page>
@@ -634,7 +750,7 @@ const AdjustPositionSA = () => {
       <Section>
         {/* <Text bold>{t('Current Position Leverage:')} {currentPositionLeverage.toPrecision(3)}x</Text> */}
         <Flex alignItems="center" justifyContent="space-between" flexWrap='wrap' style={{ border: 'none' }}>
-          <Text mb = '10px'>
+          <Text mb='10px'>
             {t('Current Position Leverage:')} {currentPositionLeverage}x
           </Text>
           <CurrentPostionToken>
@@ -655,28 +771,25 @@ const AdjustPositionSA = () => {
             </Box>
           </CurrentPostionToken>
         </Flex>
-        <Flex mt="-20px">
+        <Flex mt="-20px" border='none!important'>
           <Text bold>{t('Target Position Leverage')}</Text>
           <PositionX ml="auto" color="#6F767E">
             <Text textAlign="right">{new BigNumber(targetPositionLeverage).toFixed(2, 1)}x</Text>
           </PositionX>
         </Flex>
         <Flex>
-          <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
+          <Box style={{ width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
             <MoveBox move={margin}>
               <Text color="#7B3FE4" bold>
-                {targetPositionLeverage}x
+                {targetPositionLeverage.toFixed(2)}x
               </Text>
             </MoveBox>
-            <Box ref={targetRef} style={{ width: '100%' }}>
+            <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
+              <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((currentPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
               <RangeInput
                 type="range"
                 min="1.0"
-                max={
-                  new BigNumber(leverage).lt(currentPositionLeverage)
-                    ? new BigNumber(currentPositionLeverage).toString()
-                    : leverage
-                }
+                max={leverage < currentPositionLeverage ? currentPositionLeverage : leverage}
                 step="0.01"
                 name="leverage"
                 value={targetPositionLeverage}
@@ -691,7 +804,7 @@ const AdjustPositionSA = () => {
                 style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
               />
               {targetPositionLeverage < 1.5 ? (
-                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
               ) : (
                 <div
                   className="middle"
@@ -699,7 +812,7 @@ const AdjustPositionSA = () => {
                 />
               )}
               {targetPositionLeverage < 2 ? (
-                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
               ) : (
                 <div
                   className="middle"
@@ -707,7 +820,7 @@ const AdjustPositionSA = () => {
                 />
               )}
               {targetPositionLeverage < 2.5 ? (
-                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }} />
+                <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
               ) : (
                 <div
                   className="middle"
@@ -716,7 +829,7 @@ const AdjustPositionSA = () => {
               )}
               <div
                 className="middle"
-                style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#E7E7E7' }}
+                style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }}
               />
             </Flex>
             <Text>
@@ -746,18 +859,22 @@ const AdjustPositionSA = () => {
                   {t('Adding collateral')}
                 </Text>
               </Text>
-              <Box>
-                <Flex mt="30px">
-                  <Text>{t(`You're Repaying Debt`)}</Text>
+              <Flex justifyContent='space-between' mt='10px'>
+                <Flex>
+                  <Text>{t(`You're repaying debt`)}</Text>
                   <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                 </Flex>
-              </Box>
-              <Flex justifyContent="space-between">
-                <Text>{t('Updated Debt')}</Text>
-                <Text bold>
-                  {formatDisplayedBalance(debtValueNumber, tokenValue?.decimalsDigits)} {tokenValueSymbol}
-                </Text>
+                <Flex>
+                  <Text fontSize="12px" color="#6F767E">
+                    {t('Balance:')}
+                  </Text>
+                  <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
+                    userInputBalance,
+                    inputValue?.decimalsDigits,
+                  )} ${inputSymbol}`}</Text>
+                </Flex>
               </Flex>
+
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
@@ -801,7 +918,7 @@ const AdjustPositionSA = () => {
               </Text>
               <Box>
                 <Flex justifyContent="space-between" mt="30px" alignItems="center">
-                  <Flex mt="30px">
+                  <Flex>
                     <Text>{t(`You're adding collateral`)}</Text>
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
@@ -810,18 +927,18 @@ const AdjustPositionSA = () => {
                       {t('Balance:')}
                     </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                      userTokenBalance,
-                      tokenValue?.decimalsDigits,
-                    )} ${tokenValueSymbol}`}</Text>
+                      userInputBalance,
+                      inputValue?.decimalsDigits,
+                    )} ${inputSymbol}`}</Text>
                   </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
                   <Box width={24} height={24} mr="5px">
-                    <TokenImage token={tokenValue} width={24} height={24} />
+                    <TokenImage token={inputValue} width={24} height={24} />
                   </Box>
                   <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
-                    {tokenValueSymbol}
+                    {inputSymbol}
                   </Text>
                 </BalanceInputWrapper>
               </Box>
@@ -874,22 +991,22 @@ const AdjustPositionSA = () => {
                 </Text>
               </Text>
 
-              <Box>
-                <Flex mt="30px">
+              <Flex justifyContent='space-between' mt='10px'>
+                <Flex>
                   <Text>{t(`You're repaying debt`)}</Text>
                   <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                 </Flex>
-              </Box>
-              <Flex justifyContent="space-between">
-                <Text>{t('Updated Debt')}</Text>
-                <Text bold>
-                  {formatDisplayedBalance(
-                    new BigNumber(debtValueNumber).minus(UpdatedDebt).toNumber(),
-                    tokenValue?.decimalsDigits,
-                  )}{' '}
-                  {tokenValueSymbol}
-                </Text>
+                <Flex>
+                  <Text fontSize="12px" color="#6F767E">
+                    {t('Balance:')}
+                  </Text>
+                  <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
+                    userInputBalance,
+                    inputValue?.decimalsDigits,
+                  )} ${inputSymbol}`}</Text>
+                </Flex>
               </Flex>
+
               <Flex justifyContent="space-between">
                 <Text>{t('APY')}</Text>
                 {apy ? (
@@ -933,27 +1050,27 @@ const AdjustPositionSA = () => {
               </Text>
               <Box>
                 <Flex justifyContent="space-between" mt="30px" alignItems="center">
-                  <Flex mt="30px">
+                  <Flex >
                     <Text>{t(`You're adding collateral`)}</Text>
                     <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                   </Flex>
-                  <Flex>
+                  <Flex >
                     <Text fontSize="12px" color="#6F767E">
                       {t('Balance:')}
                     </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                      userTokenBalance,
-                      tokenValue?.decimalsDigits,
-                    )} ${tokenValueSymbol}`}</Text>
+                      userInputBalance,
+                      inputValue?.decimalsDigits,
+                    )} ${inputSymbol}`}</Text>
                   </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
                   <Box width={24} height={24} mr="5px">
-                    <TokenImage token={tokenValue} width={40} height={40} />
+                    <TokenImage token={inputValue} width={40} height={40} />
                   </Box>
                   <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
-                    {tokenValueSymbol}
+                    {inputSymbol}
                   </Text>
                 </BalanceInputWrapper>
               </Box>
@@ -992,16 +1109,18 @@ const AdjustPositionSA = () => {
         {/* if target > current */}
         {targetPositionLeverage > currentPositionLeverage ? (
           <>
-            <Box>
-              <Flex mt="30px">
+            <Flex justifyContent='space-between' alignItems='center' mt="30px">
+              <Flex>
                 <Text>{t(`You're borrowing more:`)}</Text>
                 <InfoIcon mt="3px" ml="3px" color="#6F767E" />
               </Flex>
-
-              <Text>
-                {assetsBorrowed?.toFixed(2)} {symbolName}
-              </Text>
-            </Box>
+              <Flex>
+                <Text fontSize="12px" color="#6F767E">
+                  {t('Balance:')}
+                </Text>
+                <Text fontSize="12px" color="#6F767E">{assetsBorrowed?.toFixed(2)} {inputSymbol}</Text>
+              </Flex>
+            </Flex>
             <Flex justifyContent="space-between">
               <Text>{t('APY')}</Text>
               {apy ? (
@@ -1049,27 +1168,31 @@ const AdjustPositionSA = () => {
                   {t('Adding collateral')}
                 </Text>
               </Text>
-              <Box>
-                <Flex mt="30px">
-                  <Text>{t(`You're Repaying Debt`)}</Text>
+              <Flex justifyContent='space-between' mt='10px'>
+                <Flex>
+                  <Text>{t(`You're repaying debt`)}</Text>
                   <InfoIcon mt="3px" ml="3px" color="#6F767E" />
                 </Flex>
-              </Box>
-              <Flex justifyContent="space-between">
-                <Text>{t('Updated Debt')}</Text>
-                <Text bold>
-                  {formatDisplayedBalance(debtValueNumber, tokenValue?.decimalsDigits)} {tokenValueSymbol}
-                </Text>
+                <Flex>
+                  <Text fontSize="12px" color="#6F767E">
+                    {t('Balance:')}
+                  </Text>
+                  <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
+                    userInputBalance,
+                    inputValue?.decimalsDigits,
+                  )} ${inputSymbol}`}</Text>
+                </Flex>
               </Flex>
+
               <Text>{t('What percentage would you like to close? (After repay all debt)')}</Text>
               <Flex mt="30px">
-                <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <Box style={{ width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
                   <MoveBox1 move={margin1}>
                     <Text color="#83BF6E" bold>
-                      {percentageToClose}%
+                      {percentageToClose.toFixed(0)}%
                     </Text>
                   </MoveBox1>
-                  <Box ref={targetRef1} style={{ width: '100%' }}>
+                  <Box ref={targetRef1} style={{ width: '100%', position: 'relative' }}>
                     <RangeInput1
                       type="range"
                       min="1.0"
@@ -1147,18 +1270,18 @@ const AdjustPositionSA = () => {
                       {t('Balance:')}
                     </Text>
                     <Text fontSize="12px" color="#6F767E">{`${formatDisplayedBalance(
-                      userTokenBalance,
-                      tokenValue?.decimalsDigits,
-                    )} ${tokenValueSymbol}`}</Text>
+                      userInputBalance,
+                      inputValue?.decimalsDigits,
+                    )} ${inputSymbol}`}</Text>
                   </Flex>
                 </Flex>
                 <BalanceInputWrapper alignItems="center" flex="1" padding="0" mt="16px">
                   <Box width={24} height={24} mr="5px">
-                    <TokenImage token={tokenValue} width={24} height={24} />
+                    <TokenImage token={inputValue} width={24} height={24} />
                   </Box>
                   <NumberInput bold placeholder="0.00" value={tokenInput} onChange={handleTokenInput} style={{ background: "transparent" }} />
                   <Text mr="5px" small bold>
-                    {tokenValueSymbol}
+                    {inputSymbol}
                   </Text>
                 </BalanceInputWrapper>
               </Box>
@@ -1205,13 +1328,11 @@ const AdjustPositionSA = () => {
         </Text>
         <Flex>
           <Button
-            style={{ width: '260px', height: '60px' }}
+            style={{ width: '260px', height: '60px', border: !isDark ? '1px solid gray' : '' }}
             onClick={isRepayDebt ? handleConfirmConvertTo : handleConfirm}
             disabled={
+              isRepayDebt ? iscConvertToConfirmDisabled : isAddCollateralConfirmDisabled || 
               !account ||
-              (!isRepayDebt && !tokenInput) ||
-              (isRepayDebt && targetPositionLeverage !== currentPositionLeverage) ||
-              (isRepayDebt && targetPositionLeverage === 1 && currentPositionLeverage === 1 && percentageToClose !== 0) ||
               isPending
             }
             isLoading={isPending}

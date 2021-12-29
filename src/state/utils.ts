@@ -5,7 +5,7 @@ const web3 = new Web3(getDomain());
 
 export const formatBigNumber = (value) => {
   return parseFloat(web3.utils.fromWei(BigInt(value).toString())).toLocaleString(
-    'en-US',
+    'en-US'
     // {
     //   minimumFractionDigits: 2,
     //   maximumFractionDigits: 2,

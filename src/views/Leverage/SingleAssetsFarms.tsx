@@ -5,14 +5,13 @@ import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, Grid } from 'husky-uikit1.0'
-import { AllFilterIcon, BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
+import { Box, Button, Flex, Text, Grid, CardsLayout} from 'husky-uikit1.0'
+import { PancakeSwapIcon  } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
-import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { useClaimFairLaunch } from 'hooks/useContract'
+import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import useTheme from 'hooks/useTheme'
-import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+// import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 // import { useGetPositions } from 'hooks/api'
 // import { usePositions } from './hooks/usePositions'
 import { usePositionsFormContract } from './hooks/usePositionsFormContract'
@@ -41,9 +40,7 @@ const PositionsButton = styled(ActionButton)`
 `
 
 const PositionButtonsContainer = styled(Box)`
-  > div {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
-  }
+ 
   ${({ theme }) => theme.mediaQueries.md} {
     order: 1;
   }
@@ -59,17 +56,12 @@ const StyledTableBorder = styled.div`
   padding: 1rem 1.5rem;
 `
 
-const CardsWrapper = styled(Grid)`
-  grid-template-columns: repeat(auto-fit, minmax(300px, 500px));
-  justify-content: space-between;
-`
-
 const FilterOption = styled(Button)`
   padding: 10px;
   font-size: 13px;
-  background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
+  background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme, isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
+  color: ${({ isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
   border-radius: 10px;
   color: #9d9d9d;
   > img {
@@ -115,8 +107,13 @@ const FiltersWrapper = styled(Flex)`
   }
   .strategyFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      border-right: 2px solid #efefef;
+      // border-right: 2px solid #efefef;
       border-left: 2px solid #efefef;
+      justify-content: center;
+    }
+    }
+  .dexFilter {
+    ${({ theme }) => theme.mediaQueries.lg} {
       justify-content: center;
     }
   }
@@ -141,12 +138,24 @@ const StrategyIcon = styled.div<{ market: string }>`
   }};
 `
 const SBBox = styled(Box)`
+  
+  >h2{
+    font-family : 'BalooBhaijaan';
+  }
+  align-items : center;
+  display : flex;
+
   border-radius: 15px !important;
   background-image: url('/images/BG.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
+  width : calc(100% - 300px);
   min-width : 520px;
+  padding-top : 30px;
+  @media screen and (max-width : 960px){
+    width : 100%;
+  }
   @media screen and (max-width : 1480px){
     padding : 30px 0px;
     margin-right : 0px!important;
@@ -305,6 +314,7 @@ console.info('singlesData',singlesData)
             justifyContent: 'space-between',
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+            maxWidth : '316px'
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />
@@ -380,7 +390,7 @@ console.info('singlesData',singlesData)
             </FilterOption>
           </Flex>
         </Flex>
-        <Flex className="strategyFilter" alignItems="center">
+        <Flex className="strategyFilter" alignItems="center" borderRight='none!important'>
           <Text>{t('Strategy:')}</Text>
           <Flex overflowX="auto" alignItems="center">
             <FilterOption
@@ -413,11 +423,11 @@ console.info('singlesData',singlesData)
           </Flex>
         </Flex>
       </FiltersWrapper>
-      <CardsWrapper>
+      <CardsLayout>
         {singlesData?.map((asset) => (
           <SingleAssetsCard data={asset} key={asset?.name} strategyFilter={strategyFilter} />
         ))}
-      </CardsWrapper>
+      </CardsLayout>
     </Page>
   )
 }

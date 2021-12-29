@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
     padding-left: 32px;
-    flex: 1 0 150px;
+    flex: 1.5 0 150px;
     align-items: center;
     // padding-left: 32px;
   }

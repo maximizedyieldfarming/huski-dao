@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Button, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
 import SearchInput from 'components/SearchInput'
@@ -42,9 +42,8 @@ const StyledTableBorder = styled.div`
 const FilterOption = styled(Button)`
   padding: 5px;
   font-size: 13px;
-  background-color: ${({ theme, isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
-  // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.input : theme.colors.inputSecondary)};
+  background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? 'white' : '#6F767E')};
   border-radius: 10px;
   margin: 0 5px;
   > svg {
@@ -67,7 +66,6 @@ const FiltersWrapper = styled(Flex)`
   flex-wrap: wrap;
   flex-direction: column;
   gap: 1rem;
-  // margin-bottom: 0.5rem;
   *::-webkit-scrollbar {
     height: 4px;
   }
@@ -100,12 +98,6 @@ const FiltersWrapper = styled(Flex)`
 `
 
 const LeverageTable = ({ leverageData }) => {
-  const tableWrapperEl = useRef<HTMLDivElement>(null)
-  const scrollToTop = (): void => {
-    tableWrapperEl.current.scrollIntoView({
-      behavior: 'smooth',
-    })
-  }
   let farmsData = leverageData
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
@@ -194,10 +186,10 @@ const LeverageTable = ({ leverageData }) => {
   return (
     <>
       <StyledTableBorder>
-        <StyledTable role="table" ref={tableWrapperEl}>
+        <StyledTable role="table">
           <Box>
             <FiltersWrapper>
-              <Flex alignItems="center" className="dexFilter">
+              <Flex alignItems="center" className="dexFilter" width={300}>
                 <Text bold>DEX:</Text>
                 <Flex overflowX="auto" overflowY="hidden">
                   <FilterOption
@@ -215,21 +207,12 @@ const LeverageTable = ({ leverageData }) => {
                     isActive={dexFilter === 'PancakeSwap'}
                     onClick={() => setDexFilter('PancakeSwap')}
                   >
-                    PancakeSwap
-                  </FilterOption>
-                  <FilterOption
-                    variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
-                    startIcon={<img src="/images/BUSD.svg" width="32px" height="32px" alt="" />}
-                    isActive={dexFilter === 'WaultSwap'}
-                    onClick={() => setDexFilter('WaultSwap')}
-                  >
-                    WaultSwap
+                    &nbsp;PancakeSwap
                   </FilterOption>
                 </Flex>
               </Flex>
               <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
-                <Text style={{ fontWeight: 700, color: '#131313' }}>{t('Paired Assets:')}</Text>
+                <Text bold>{t('Paired Assets:')}</Text>
                 <Flex>
                   <FilterOption
                     variant="tertiary"
@@ -287,31 +270,31 @@ const LeverageTable = ({ leverageData }) => {
                 </Flex>
               </Flex>
               <Flex className="searchSortContainer">
-                <Text color="textSubtle" style={{ fontWeight: 400, width: '80px' }}>
-                  Sort by
-                </Text>
-                <Select
-                  options={[
-                    {
-                      label: `${t('Default')}`,
-                      value: 'default',
-                    },
-                    {
-                      label: `${t('APY')}`,
-                      value: 'apy',
-                    },
-                    {
-                      label: `${t('TVL')}`,
-                      value: 'tvl',
-                    },
-                    {
-                      label: `${t('Leverage')}`,
-                      value: 'leverage',
-                    },
-                  ]}
-                  onChange={handleSortOptionChange}
-                />
-                <SearchInput onChange={handleChangeQuery} placeholder="Search" />
+                <Text bold>Sort by:</Text>
+                <Box mr="10px">
+                  <Select
+                    options={[
+                      {
+                        label: `${t('Default')}`,
+                        value: 'default',
+                      },
+                      {
+                        label: `${t('APY')}`,
+                        value: 'apy',
+                      },
+                      {
+                        label: `${t('TVL')}`,
+                        value: 'tvl',
+                      },
+                      {
+                        label: `${t('Leverage')}`,
+                        value: 'leverage',
+                      },
+                    ]}
+                    onChange={handleSortOptionChange}
+                  />
+                </Box>
+                <SearchInput onChange={handleChangeQuery} placeholder="Search farms" />
               </Flex>
             </FiltersWrapper>
             {!(isMobile || isTablet) && <LeverageHeaderRow />}

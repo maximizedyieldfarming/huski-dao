@@ -8,8 +8,10 @@ import {
   fetchFarmlpUserEarnings,
   fetchFarmUserEarnings,
   fetchFarmUserAllowances,
-  fetchFarmUserTokenAllowances,
-  fetchFarmUserQuoteTokenAllowances,
+  fetchTokenUserTokenAllowances,
+  fetchQuoteTokenUserQuoteTokenAllowances,
+  fetchQuoteTokenUserTokenAllowances,
+  fetchTokenUserQuoteTokenAllowances,
   fetchFarmUserTokenBalances,
   fetchFarmUserTokenBalancesIB,
   fetchFarmUserQuoteTokenBalances,
@@ -54,7 +56,10 @@ export const fetchLeverageFarmsPublicDataAsync =
 interface LeverageFarmUserDataResponse {
   pid: number
   allowance: string
-  quoteTokenAllowance: string
+  tokenUserTokenAllowances: string
+  quoteTokenUserTokenAllowances: string
+  quoteTokenUserQuoteTokenAllowances: string
+  tokenUserQuoteTokenAllowances: string
   tokenBalance: string
   stakedBalance: string
   quoteTokenBalance: string
@@ -69,8 +74,10 @@ export const fetchLeverageFarmUserDataAsync =
     async ({ account, pids }) => {
       const farmsToFetch = leverageFarmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
       const userFarmAllowances = await fetchFarmUserAllowances(account, farmsToFetch)
-      const userFarmTokenAllowances = await fetchFarmUserTokenAllowances(account, farmsToFetch)
-      const userFarmLPAllowances = await fetchFarmUserQuoteTokenAllowances(account, farmsToFetch)
+      const tokenUserTokenAllowances = await fetchTokenUserTokenAllowances(account, farmsToFetch)
+      const quoteTokenUserTokenAllowances = await fetchQuoteTokenUserTokenAllowances(account, farmsToFetch)
+      const quoteTokenUserQuoteTokenAllowances = await fetchQuoteTokenUserQuoteTokenAllowances(account, farmsToFetch)
+      const tokenUserQuoteTokenAllowances = await fetchTokenUserQuoteTokenAllowances(account, farmsToFetch)
       const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
       const userFarmTokenBalancesIB = await fetchFarmUserTokenBalancesIB(account, farmsToFetch)
       const userFarmQuoteTokenBalances = await fetchFarmUserQuoteTokenBalances(account, farmsToFetch)
@@ -82,8 +89,10 @@ export const fetchLeverageFarmUserDataAsync =
         return {
           pid: farmsToFetch[index].pid,
           allowance: userFarmAllowances[index],
-          tokenAllowance: userFarmTokenAllowances[index],
-          quoteTokenAllowance: userFarmLPAllowances[index],
+          tokenUserTokenAllowances: tokenUserTokenAllowances[index],
+          quoteTokenUserTokenAllowances: quoteTokenUserTokenAllowances[index],
+          quoteTokenUserQuoteTokenAllowances: quoteTokenUserQuoteTokenAllowances[index],
+          tokenUserQuoteTokenAllowances: tokenUserQuoteTokenAllowances[index],
           tokenBalance: userFarmTokenBalances[index],
           tokenBalanceIB: userFarmTokenBalancesIB[index],
           quoteTokenBalance: userFarmQuoteTokenBalances[index],

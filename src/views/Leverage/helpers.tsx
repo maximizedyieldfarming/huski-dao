@@ -30,8 +30,7 @@ export const getYieldFarming = (farm: LeverageFarm, cakePrice: BigNumber) => {
   const poolWeightBigNumber: any = new BigNumber(poolWeight)
   const poolLiquidityUsd = new BigNumber(lpTotalInQuoteToken).times(quoteTokenPriceUsd)
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
-  const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
-
+  const yieldFarmingApr = cakePrice ? yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100) : BIG_ZERO
   return yieldFarmingApr.toNumber();
 }
 
@@ -101,10 +100,10 @@ export const getLeverageFarmingData = (farm: LeverageFarm, leverage, tokenInput,
   const lptotalSupplyNum = new BigNumber(lptotalSupply).dividedBy(BIG_TEN.pow(18)).toNumber()
   // console.log({ leverage, lptotalSupplyNum, lptotalSupply, tokenAmountTotal, quoteTokenAmountTotal, tokenInputNum, quoteTokenInputNum, 'tokenAmountTotalNum': parseFloat(tokenAmountTotalNum), 'quoteTokenAmountTotalNum': parseFloat(quoteTokenAmountTotalNum) })
   const farmdata1 = dichotomybasetoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNum)
-  console.info('======farmdata==11====', farmdata1);
+  // console.info('======farmdata==11====', farmdata1);
 
   const farmdata2 = dichotomyfarmingtoken(leverage, TRADE_FEE, tokenInputNum, quoteTokenInputNum, 0, 0, 0, parseFloat(tokenAmountTotalNum), parseFloat(quoteTokenAmountTotalNum), true, lptotalSupplyNum)
-  console.info('======farmdata===22===', farmdata2);
+  // console.info('======farmdata===22===', farmdata2);
 
   let farmdata = [0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
   if (farmdata1[0] === 0 && farmdata1[1][3] === 0 && farmdata1[2] === 0) {
@@ -125,13 +124,13 @@ export const getAdjustData = (farm: LeverageFarm, data, leverage, tokenInput, qu
   let tokenInputNum
   let quoteTokenInputNum
   if (TokenInfo?.token?.symbol?.toUpperCase() === tokenName?.toUpperCase() || tokenName?.toUpperCase() === TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-    tokenInputNum = Number(tokenInput);
-    quoteTokenInputNum = Number(quoteTokenInput);
+    tokenInputNum = Number(tokenInput || 0);
+    quoteTokenInputNum = Number(quoteTokenInput || 0);
     tokenAmountTotalNum = tokenAmountTotal;
     quoteTokenAmountTotalNum = quoteTokenAmountTotal;
   } else {
-    tokenInputNum = Number(tokenInput);
-    quoteTokenInputNum = Number(quoteTokenInput);
+    tokenInputNum = Number(tokenInput || 0);
+    quoteTokenInputNum = Number(quoteTokenInput || 0);
     tokenAmountTotalNum = quoteTokenAmountTotal;
     quoteTokenAmountTotalNum = tokenAmountTotal;
   }
@@ -580,7 +579,7 @@ export const getSingle7Days = (farm: LeverageFarm, cakePrice, tradefee) => {
 
   }
 
-  console.info('singleApyList', singleApyList)
+  // console.info('singleApyList', singleApyList)
 
   return singleApyList
 

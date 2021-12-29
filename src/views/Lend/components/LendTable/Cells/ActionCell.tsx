@@ -2,9 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
-import BigNumber from 'bignumber.js'
+import { useMatchBreakpoints, Button } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -31,46 +29,51 @@ const StyledCell = styled(BaseCell)`
 interface Props {
   disabled: boolean
 }
-const StyledButton = styled(Button)<Props>`
-  background:${({ disabled }) => (disabled?'#FFFFFF':'#7B3FE4')};
+const StyledButton = styled(Button) <Props>`
+  background-color:${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
   border-radius:10px;
-  color: ${({disabled}) => (!disabled?'white':'#6F767E')};
+  color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
   text-align: center;
   width:140px;
   height:40px;
-  border:${({disabled}) => (disabled?'1px solid #EFEFEF':'none')};
+  border:${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
 `
 
-const ActionCell = ({ token }) => {
-  const { isMobile } = useMatchBreakpoints()
+const ActionCell = ({ token, apyReady }) => {
   const { account } = useWeb3React()
-  // const tokenData = token
   const name = token?.TokenInfo.token?.symbol
-  const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
   const { t } = useTranslation()
 
   return (
     <StyledCell role="cell">
       <CellContent>
-        <StyledButton
+        <Button
+          style={{
+            width: '140px',
+            height: '40px'
+          }}
           as={Link}
           to={{
             pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
-            state: { exchangeRate, token },
+            state: { token },
           }}
-          disabled={!token?.userData?.tokenBalanceIB || !account}
-          onClick={(e) => !account || !token?.userData?.tokenBalanceIB && e.preventDefault()}
+          disabled={!apyReady || !account}
+          onClick={(e) => !account || !apyReady && e.preventDefault()}
         >
           {t('Deposit')}
-        </StyledButton>
-        <StyledButton
+        </Button>
+        <Button
+          style={{
+            width: '140px',
+            height: '40px'
+          }}
           as={Link}
-          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { exchangeRate, token } }}
-          disabled={!token?.userData?.tokenBalanceIB || !account}
-          onClick={(e) => !account || !token?.userData?.tokenBalanceIB && e.preventDefault()}
+          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { token } }}
+          disabled={!apyReady || !account}
+          onClick={(e) => !account || !apyReady && e.preventDefault()}
         >
           {t('Withdraw')}
-        </StyledButton>
+        </Button>
       </CellContent>
     </StyledCell>
   )

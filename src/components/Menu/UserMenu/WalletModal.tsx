@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {
+  Box,
   ButtonMenu,
   ButtonMenuItem,
   CloseIcon,
@@ -24,7 +25,8 @@ export enum WalletView {
 }
 
 interface WalletModalProps extends InjectedModalProps {
-  initialView?: WalletView
+  initialView?: WalletView,
+  onDismiss?: any
 }
 
 export const LOW_BNB_BALANCE = new BigNumber('2000000000') // 2 Gwei
@@ -41,26 +43,27 @@ const WalletModal: React.FC<WalletModalProps> = ({ initialView = WalletView.WALL
   const { t } = useTranslation()
   const { balance, fetchStatus } = useGetBnbBalance()
   const hasLowBnbBalance = fetchStatus === FetchStatus.SUCCESS && balance.lte(LOW_BNB_BALANCE)
-  const {isDark} = useTheme();
+  const { isDark } = useTheme();
 
   const handleClick = (newIndex: number) => {
     setView(newIndex)
   }
 
   return (
-    <ModalContainer title={t('Welcome!')} minWidth="350px" >
+    <ModalContainer title={t('Welcome!')} minWidth="350px" isDark={isDark}>
       <ModalHeader>
         <ModalTitle>
           <Heading>{t('Your Wallet')}</Heading>
         </ModalTitle>
         <IconButton variant="text" onClick={onDismiss}>
-          <CloseIcon width={24}  />
+          <CloseIcon width={24} />
         </IconButton>
       </ModalHeader>
       <Tabs>
-        <ButtonMenu scale="sm" variant="subtle" onItemClick={handleClick} activeIndex={view} fullWidth isDark = {isDark}>
+        <ButtonMenu scale="sm" variant="subtle" onItemClick={handleClick} activeIndex={view} fullWidth isDark={isDark}>
           <ButtonMenuItem>{t('Wallet')}</ButtonMenuItem>
           <ButtonMenuItem>{t('Transactions')}</ButtonMenuItem>
+
         </ButtonMenu>
       </Tabs>
       <ModalBody p="24px" maxWidth="400px" width="100%">
