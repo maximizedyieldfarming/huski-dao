@@ -15,7 +15,7 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     items: [
       {
         label: t('Single Assets'),
-        href: '/singleAssets'
+        href: '/single-assets'
       },
       {
         label: t('Advanced Farm'),
