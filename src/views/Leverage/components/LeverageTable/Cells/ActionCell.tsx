@@ -13,12 +13,22 @@ const StyledCell = styled(BaseCell)`
   }
 `
 const StyledButton = styled(Button)`
-  padding: 0.75rem;
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  box-shadow: none;
-  word-break: initial;
+  // padding: 0.75rem;
+  // font-size: 14px;
+  // font-weight: 400;
+  // height: auto;
+  // box-shadow: none;
+  // word-break: initial;
+  background-color: ${({ disabled }) => (disabled ? '#D3D3D3' : '#7B3FE4')};
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 114px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${({disabled})=> disabled ? 'not-allowed' : 'pointer'};
+  color: ${({disabled})=> disabled ? '#6F767E' : 'white'};
 `
 
 const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
@@ -29,21 +39,7 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
   return (
     <StyledCell role="cell">
       <CellContent alignItems='start'>
-        {token?.totalSupply && account ? (
-          // {true?
-          <Button
-            style={{
-              background: '#7B3FE4',
-              boxSizing: 'border-box',
-              borderRadius: '10px',
-              width: '114px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: 'white',
-            }}
+          <StyledButton
             as={Link}
             to={(location) => ({
               pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
@@ -53,25 +49,7 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
             onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
           >
             {t('Farm')}
-          </Button>
-        ) : (
-          <div
-            style={{
-              background: '#D3D3D3',
-              boxSizing: 'border-box',
-              borderRadius: '10px',
-              width: '114px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: 'white',
-            }}
-          >
-            {t('Farm')}
-          </div>
-        )}
+          </StyledButton>
       </CellContent>
     </StyledCell>
   )
