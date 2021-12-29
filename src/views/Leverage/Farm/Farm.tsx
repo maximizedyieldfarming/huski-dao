@@ -245,9 +245,14 @@ const Farm = () => {
   const datalistSteps = []
   const datalistOptions = (() => {
     for (let i = 1; i < leverage / 0.5; i++) {
-      datalistSteps.push(1 + 0.5 * (-1 + i))
+      datalistSteps.push(`${(1 + 0.5 * (-1 + i)).toFixed(2)}x`)
     }
-    return datalistSteps.map((value) => <option value={value} label={`${value}x`} />)
+    return datalistSteps.map((value, i) => {
+      if (i === datalistSteps.length - 1)
+        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+
+      return <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+    })
   })()
 
   const { balance: bnbBalance } = useGetBnbBalance()
@@ -793,7 +798,7 @@ const Farm = () => {
         as="span"
         fontWeight="bold"
         fontSize="25px"
-        style={{ textAlign: 'center', marginBottom: '-40px', marginTop : '1rem' }}
+        style={{ textAlign: 'center', marginBottom: '-40px', marginTop: '1rem' }}
       >
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
@@ -808,7 +813,7 @@ const Farm = () => {
             </Text>
           </Flex>
 
-          <Flex flexDirection="column" justifyContent="space-between" flex="1" paddingTop = '0!important'>
+          <Flex flexDirection="column" justifyContent="space-between" flex="1" paddingTop='0!important'>
             <div style={{ display: 'flex' }}>
               <Text as="span" mr="1rem" color="textSubtle">
                 {t('Balance:')}
@@ -950,7 +955,7 @@ const Farm = () => {
                   {leverageValue}x
                 </Text>
               </MoveBox>
-              <Box ref={targetRef} style={{ width: '100%' }}>
+              <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
                 <RangeInput
                   type="range"
                   min="1.0"

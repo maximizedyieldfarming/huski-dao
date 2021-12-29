@@ -5,6 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
+margin-top : 15px;
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
@@ -26,7 +27,7 @@ const HuskiLockedCell = ({ sHuskiLocked }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-      <Text fontSize="16px" color="textSubtle" textAlign="left">
+        <Text fontSize="16px" color="textSubtle" textAlign="left">
           {t('sHUSKI Locked-')}
         </Text>
         <Text fontWeight='600' color='text'>{sHuskiLocked}</Text>

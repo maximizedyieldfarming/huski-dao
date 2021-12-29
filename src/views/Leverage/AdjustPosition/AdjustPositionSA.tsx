@@ -12,6 +12,7 @@ import {
   InfoIcon,
   ChevronRightIcon,
   AutoRenewIcon,
+  ArrowDropDownIcon
 } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
@@ -92,11 +93,10 @@ const RangeInput = styled.input`
     height: 32px;
     width: 28px;
 
-    background-image: url('/images/RangeHandle.png');
+    background-image: url('/images/blueslider.png');
     background-position: center center;
     background-repeat: no-repeat;
     background-size : 100% 100%;
-
     border: 0;
     top: 50%;
     transform: translateY(-50%);
@@ -387,7 +387,7 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 42)
+    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 32)
 
     setMargin(tt)
 
@@ -698,14 +698,11 @@ const AdjustPositionSA = () => {
               </Text>
             </MoveBox>
             <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
+              <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((currentPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
               <RangeInput
                 type="range"
                 min="1.0"
-                max={
-                  new BigNumber(leverage).lt(currentPositionLeverage)
-                    ? new BigNumber(currentPositionLeverage).toString()
-                    : leverage
-                }
+                max={leverage < currentPositionLeverage ? currentPositionLeverage : leverage}
                 step="0.01"
                 name="leverage"
                 value={targetPositionLeverage}
