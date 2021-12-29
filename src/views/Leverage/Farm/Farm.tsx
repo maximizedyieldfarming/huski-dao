@@ -546,7 +546,7 @@ const Farm = () => {
     const minLPAmountValue = farmData ? farmData[12] : 0
     const minLPAmount = getDecimalAmount(new BigNumber(minLPAmountValue), 18).toString().replace(/\.(.*?\d*)/g, '') // minLPAmountValue.toString()
     const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
-    // getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString()
+
     const maxReturn = 0
     let amount
     let workerAddress
@@ -626,9 +626,7 @@ const Farm = () => {
       dataStrategy,
       tokenData,
       tokenInput,
-      'token8888Input': (tokenInput),
       quoteTokenInput,
-      'quoteToken9999Input': (quoteTokenInput)
     })
 
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
@@ -636,7 +634,7 @@ const Farm = () => {
       console.info('wrap bnb', bnbMsgValue)
       handleDeposit(bnbMsgValue)
 
-      const allowance = tokenData?.userData?.tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
       console.info('wbnb  allowance ', allowance)
       if (Number(allowance) === 0) {
         handleApproveBnb()
@@ -690,21 +688,7 @@ const Farm = () => {
     tokenData?.TokenInfo?.vaultAddress,
   )
   let allowance = '0'
-  // if (
-  //   radio?.toUpperCase().replace('WBNB', 'BNB') ===
-  //   tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
-  // ) {
-  //   allowance =
-  //     Number(tokenData.userData?.quoteTokenUserQuoteTokenAllowances) > 0
-  //       ? tokenData.userData?.quoteTokenUserQuoteTokenAllowances
-  //       : quoteTokenUserQuoteTokenAllowances.toString()
-  // } else {
-  //   allowance = Number(tokenData.userData?.tokenUserTokenAllowances) > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
-  // }
 
-
-
-  // 判断 借哪个， 然后input输入的是哪个
   if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
     // jie base
     if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
@@ -733,11 +717,9 @@ const Farm = () => {
     } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) !== 0) {
       console.info('quotetoken all !== 0  youdianwenti xuyao yanzheng shifou qufen')
       allowance = Number(tokenData.userData?.tokenUserQuoteTokenAllowances) > 0 ? tokenData.userData?.tokenUserQuoteTokenAllowances : tokenData.userData?.tokenUserQuoteTokenAllowances
-
     } else {
       console.info('quotetoken all === 0 ')
       allowance = '1'
-
     }
 
   }
@@ -750,26 +732,12 @@ const Farm = () => {
   const [isApproving, setIsApproving] = useState<boolean>(false)
   console.log({ 'approve===': tokenData, isApproved })
   const handleApprove = async () => {
-    // not sure contract param is right? but can sussess
     let contract
     let approveAddress
-    // if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
-    //   contract = quoteTokenApproveContract // quoteTokenApproveContract
-    //   approveAddress = quoteTokenVaultAddress // vaultAddress
-    //   console.info('app quoteToken quoteTokenApproveContract quoteTokenVaultAddress')
-    // } else {
-    //   contract = quoteTokenApproveContract // approveContract
-    //   approveAddress = vaultAddress // quoteTokenVaultAddress
-    //   console.info('app quoteToken quoteTokenApproveContract vaultAddress')
-    // }
-
-
 
     if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-      // jie base
       if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('token quoteTokenApproveContract vaultAddress ')
-        //  token quotetoken
         contract = quoteTokenApproveContract
         approveAddress = vaultAddress
       } else {
@@ -779,7 +747,6 @@ const Farm = () => {
       }
 
     } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-
       if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         contract = quoteTokenApproveContract
         approveAddress = quoteTokenVaultAddress
@@ -1238,19 +1205,6 @@ const Farm = () => {
                 <Skeleton width="80px" height="16px" />
               )}
             </Flex>
-            {/* <Flex justifyContent="space-between">
-              <Text>{t('APR')}</Text>
-              <Text>{totalAprDisplay.toFixed(2)}%</Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text>{t('APY')}</Text>
-              <Flex>
-                <Text>{getDisplayApr(getApy(1))}%</Text>
-                <ArrowForwardIcon />
-                <Text>{getDisplayApr(getApy(leverageValue))}%</Text>
-              </Flex>
-            </Flex> */}
-
           </Section>
         </Flex>
 
