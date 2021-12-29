@@ -38,7 +38,7 @@ const ClaimCell = ({ data, sHuskiLocked }) => {
           width='114px' height='40px'
           
         >
-           <Text color='textSubtle' style={{border:'1px solid #EFEFEF'}}> {t('Claim')}</Text>
+           <Text color='textSubtle' style={{border:'1px solid #EFEFEF'}}> {t('Withdraw')}</Text>
         </Button>
       </CellContent>
     </StyledCell>

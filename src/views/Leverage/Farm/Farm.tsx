@@ -245,9 +245,14 @@ const Farm = () => {
   const datalistSteps = []
   const datalistOptions = (() => {
     for (let i = 1; i < leverage / 0.5; i++) {
-      datalistSteps.push(1 + 0.5 * (-1 + i))
+      datalistSteps.push(`${(1 + 0.5 * (-1 + i)).toFixed(2)}x`)
     }
-    return datalistSteps.map((value) => <option value={value} label={`${value}x`} />)
+    return datalistSteps.map((value, i) => {
+      if (i === datalistSteps.length - 1)
+        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+
+      return <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+    })
   })()
 
   const { balance: bnbBalance } = useGetBnbBalance()
@@ -631,7 +636,7 @@ const Farm = () => {
       console.info('wrap bnb', bnbMsgValue)
       handleDeposit(bnbMsgValue)
 
-      const allowance = tokenData?.userData?.tokenAllowance // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      const allowance = tokenData?.userData?.tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
       console.info('wbnb  allowance ', allowance)
       if (Number(allowance) === 0) {
         handleApproveBnb()
@@ -676,25 +681,65 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
     getAddress(tokenData?.QuoteTokenInfo?.token?.address),
     tokenData?.TokenInfo?.vaultAddress,
   )
-  const { allowance: tokenAllowance } = useTokenAllowance(
+  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
     getAddress(tokenData?.TokenInfo?.token?.address),
     tokenData?.TokenInfo?.vaultAddress,
   )
   let allowance = '0'
-  if (
-    radio?.toUpperCase().replace('WBNB', 'BNB') ===
-    tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
-  ) {
-    allowance =
-      Number(tokenData.userData?.quoteTokenAllowance) > 0
-        ? tokenData.userData?.quoteTokenAllowance
-        : quoteTokenAllowance.toString()
-  } else {
-    allowance = Number(tokenData.userData?.tokenAllowance) > 0 ? tokenData.userData?.tokenAllowance : tokenAllowance.toString()
+  // if (
+  //   radio?.toUpperCase().replace('WBNB', 'BNB') ===
+  //   tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  // ) {
+  //   allowance =
+  //     Number(tokenData.userData?.quoteTokenUserQuoteTokenAllowances) > 0
+  //       ? tokenData.userData?.quoteTokenUserQuoteTokenAllowances
+  //       : quoteTokenUserQuoteTokenAllowances.toString()
+  // } else {
+  //   allowance = Number(tokenData.userData?.tokenUserTokenAllowances) > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+  // }
+
+
+
+  // 判断 借哪个， 然后input输入的是哪个
+  if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
+    // jie base
+    if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
+      allowance = tokenData.userData?.tokenUserTokenAllowances  // > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+      console.info('token token ')
+    } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
+      allowance = tokenData.userData?.quoteTokenUserTokenAllowances
+      console.info('token quotetoken ')
+    } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) !== 0) {
+      console.info('token all ! == 0 ')
+      allowance = Number(tokenData.userData?.tokenUserTokenAllowances) > 0 ? tokenData.userData?.quoteTokenUserTokenAllowances : tokenData.userData?.tokenUserTokenAllowances
+    } else {
+      console.info('token all === 0 ')
+      allowance = '1'
+
+    }
+
+  } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
+
+    if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
+      allowance = tokenData.userData?.quoteTokenUserQuoteTokenAllowances
+      console.info('quotetoken token ')
+    } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
+      allowance = tokenData.userData?.tokenUserQuoteTokenAllowances
+      console.info('quotetoken quotetoken ')
+    } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) !== 0) {
+      console.info('quotetoken all !== 0  youdianwenti xuyao yanzheng shifou qufen')
+      allowance = Number(tokenData.userData?.tokenUserQuoteTokenAllowances) > 0 ? tokenData.userData?.tokenUserQuoteTokenAllowances : tokenData.userData?.tokenUserQuoteTokenAllowances
+
+    } else {
+      console.info('quotetoken all === 0 ')
+      allowance = '1'
+
+    }
+
   }
 
   const isApproved = Number(allowance) > 0
@@ -703,18 +748,52 @@ const Farm = () => {
   const approveContract = useERC20(tokenAddress)
   const quoteTokenApproveContract = useERC20(quoteTokenAddress)
   const [isApproving, setIsApproving] = useState<boolean>(false)
-
+  console.log({ 'approve===': tokenData, isApproved })
   const handleApprove = async () => {
     // not sure contract param is right? but can sussess
     let contract
     let approveAddress
-    if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
-      contract = approveContract // quoteTokenApproveContract
-      approveAddress = quoteTokenVaultAddress
-    } else {
-      contract = quoteTokenApproveContract // approveContract
-      approveAddress = vaultAddress // quoteTokenVaultAddress
+    // if (radio?.toUpperCase() === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase()) {
+    //   contract = quoteTokenApproveContract // quoteTokenApproveContract
+    //   approveAddress = quoteTokenVaultAddress // vaultAddress
+    //   console.info('app quoteToken quoteTokenApproveContract quoteTokenVaultAddress')
+    // } else {
+    //   contract = quoteTokenApproveContract // approveContract
+    //   approveAddress = vaultAddress // quoteTokenVaultAddress
+    //   console.info('app quoteToken quoteTokenApproveContract vaultAddress')
+    // }
+
+
+
+    if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
+      // jie base
+      if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
+        console.info('token quoteTokenApproveContract vaultAddress ')
+        //  token quotetoken
+        contract = quoteTokenApproveContract
+        approveAddress = vaultAddress
+      } else {
+        console.info('token-- approveContract vaultAddress ')
+        contract = approveContract
+        approveAddress = vaultAddress
+      }
+
+    } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
+
+      if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
+        contract = quoteTokenApproveContract
+        approveAddress = quoteTokenVaultAddress
+        console.info(' quoteTokenApproveContract quoteTokenVaultAddress ')
+      } else {
+        console.info(' approveContract quoteTokenVaultAddress ')
+        contract = approveContract
+        approveAddress = quoteTokenVaultAddress
+      }
+
     }
+
+    console.log({ contract, approveAddress })
+
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
     try {
@@ -789,7 +868,7 @@ const Farm = () => {
         as="span"
         fontWeight="bold"
         fontSize="25px"
-        style={{ textAlign: 'center', marginBottom: '-40px', marginTop : '1rem' }}
+        style={{ textAlign: 'center', marginBottom: '-40px', marginTop: '1rem' }}
       >
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
@@ -804,7 +883,7 @@ const Farm = () => {
             </Text>
           </Flex>
 
-          <Flex flexDirection="column" justifyContent="space-between" flex="1" paddingTop = '0!important'>
+          <Flex flexDirection="column" justifyContent="space-between" flex="1" paddingTop='0!important'>
             <div style={{ display: 'flex' }}>
               <Text as="span" mr="1rem" color="textSubtle">
                 {t('Balance:')}
@@ -946,7 +1025,7 @@ const Farm = () => {
                   {leverageValue}x
                 </Text>
               </MoveBox>
-              <Box ref={targetRef} style={{ width: '100%' }}>
+              <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
                 <RangeInput
                   type="range"
                   min="1.0"
@@ -1006,69 +1085,13 @@ const Farm = () => {
               {t('Which asset would you like to borrow?')}
             </Text>
             <Flex mt="10px">
-              {/* {quoteTokenName.toLowerCase() !== 'cake' && (
-                <Flex alignItems="center" marginRight="10px">
-                  <Text mr="5px">{quoteTokenName.replace('wBNB', 'BNB')}</Text>
-                  <Radio
-                    // name="token"
-                    scale="sm"
-                    value={quoteTokenName}
-                    onChange={handleChange}
-                    checked={radio === quoteTokenName}
-                  />
-                </Flex>
-              )}
-              {tokenName.toLowerCase() !== 'cake' && (
-                <Flex alignItems="center">
-                  <Text mr="5px">{tokenName.replace('wBNB', 'BNB')}</Text>
-                  <Radio
-                    //  name="token"
-                    scale="sm"
-                    value={tokenName}
-                    onChange={handleChange}
-                    checked={radio === tokenName}
-                  />
-                </Flex>
-              )} */}
-
               <Select options={options()} onChange={(option) => setRadio(option.value)} />
             </Flex>
-            {/*   <Flex justifyContent="space-evenly" mt="20px">
-              {isApproved ? null : (
-                <Button style={{ width: '290px', height: '60px', borderRadius: '16px' }} onClick={handleApprove}>
-                  {t('Confirm')}
-                </Button>
-              )}
-              <Button
-                width="290px"
-                height="60px"
-                onClick={handleConfirm}
-                isLoading={isPending}
-                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                disabled={
-                  !account ||
-                  !isApproved ||
-                  (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
-                  (tokenInput === undefined && quoteTokenInput === undefined) ||
-                  isPending
-                }
-              >
-                {isPending ? t('Confirming') : t(`Confirm`)}
-              </Button>
-            </Flex> */}
           </Box>
-          {/* <Box>
-            <Text small color="failure">
-              {t(
-                'Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.',
-              )}
-            </Text>
-          </Box> */}
           <Flex justifyContent="space-evenly" paddingBottom='20px!important'>
             {isApproved ? null : (
               <Button
                 style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-
                 onClick={handleApprove}
                 disabled={isApproving}
                 isLoading={isApproving}

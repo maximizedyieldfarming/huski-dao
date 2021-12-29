@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import Page from 'components/Layout/Page'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, ChevronRightIcon, AutoRenewIcon, useMatchBreakpoints, ArrowDropDownIcon } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -173,8 +173,6 @@ const AdjustPosition = () => {
   const [margin, setMargin] = useState(0)
 
   const lptotalSupplyNum = new BigNumber(lptotalSupply)
-
-  // BigNumber.config({ DECIMAL_PLACES: data.farmData.TokenInfo.token.decimals, EXPONENTIAL_AT: 18 })
 
   let symbolName;
   let lpSymbolName;
@@ -779,11 +777,14 @@ const AdjustPosition = () => {
 
 
   const isAddCollateralConfirmDisabled = (() => {
-    if (currentPositionLeverage > targetPositionLeverage) {
+    if (currentPositionLeverage > targetPositionLeverage || currentPositionLeverage === 1 && targetPositionLeverage === 1) {
       return Number(tokenInputValue) === 0 && Number(quoteTokenInputValue) === 0
     }
-    if (currentPositionLeverage < targetPositionLeverage) {
+    if (currentPositionLeverage === 1 && targetPositionLeverage > currentPositionLeverage) {
       return new BigNumber(UpdatedDebt).lt(minimumDebt)
+    }
+    if (targetPositionLeverage > currentPositionLeverage) {
+      return false
     }
     return true
   })()
@@ -1151,7 +1152,7 @@ const AdjustPosition = () => {
   const datalistSteps = []
   const datalistOptions = (() => {
     for (
-      let i = 1;
+     let i = 1;
       i <
       (leverage < currentPositionLeverage ? currentPositionLeverage : leverage) /
       0.5;
@@ -1190,6 +1191,10 @@ const AdjustPosition = () => {
     return false
   })()
 
+  useEffect(() => {
+    if (leverageAfter)
+      setTargetPositionLeverage(Number(leverageAfter));
+  }, [leverageAfter])
   return (
     <AddCollateralContext.Provider value={{ isAddCollateral, handleIsAddCollateral: setIsAddCollateral }}>
       <ConvertToContext.Provider value={{ isConvertTo, handleIsConvertTo: setIsConvertTo }}>
@@ -1245,6 +1250,8 @@ const AdjustPosition = () => {
                         </Text>
                       </MoveBox>
                       <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
+                        <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((currentPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
+
                         <RangeInput
                           type="range"
                           min="1.0"

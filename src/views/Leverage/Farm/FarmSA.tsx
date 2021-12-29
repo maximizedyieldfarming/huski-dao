@@ -201,26 +201,26 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-  const { allowance: quoteTokenAllowance } = useTokenAllowance(
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
     getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
     singleFarm?.TokenInfo?.vaultAddress,
   )
-  const { allowance: tokenAllowance } = useTokenAllowance(
+  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
     getAddress(singleFarm?.TokenInfo?.token?.address),
     singleFarm?.TokenInfo?.vaultAddress,
   )
-  // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenAllowance : tokenAllowance
+  // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenUserQuoteTokenAllowances : tokenUserTokenAllowances
 
-  // console.log("allowances",{quoteTokenAllowance: quoteTokenAllowance.toString(), tokenAllowance: tokenAllowance.toString()}, "data", {singleFarm, selectedToken})
+  // console.log("allowances",{quoteTokenUserQuoteTokenAllowances: quoteTokenUserQuoteTokenAllowances.toString(), tokenUserTokenAllowances: tokenUserTokenAllowances.toString()}, "data", {singleFarm, selectedToken})
   let allowance = '0'
   if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
     allowance =
-      Number(singleFarm.userData?.quoteTokenAllowance) > 0
-        ? singleFarm.userData?.quoteTokenAllowance
-        : quoteTokenAllowance.toString()
+      Number(singleFarm.userData?.quoteTokenUserQuoteTokenAllowances) > 0
+        ? singleFarm.userData?.quoteTokenUserQuoteTokenAllowances
+        : quoteTokenUserQuoteTokenAllowances.toString()
   } else {
     allowance =
-      Number(singleFarm.userData?.tokenAllowance) > 0 ? singleFarm.userData?.tokenAllowance : tokenAllowance.toString()
+      Number(singleFarm.userData?.tokenUserTokenAllowances) > 0 ? singleFarm.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
   }
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
