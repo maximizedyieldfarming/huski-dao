@@ -560,26 +560,30 @@ export const getSingle7Days = (farm: LeverageFarm, cakePrice, tradefee) => {
   const yearlyCakeRewardAllocation = CAKE_PER_YEAR.times(poolWeightBigNumber)
   // const yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice).div(poolLiquidityUsd).times(100)
 
-  let singleApyList = []
+  let singleApy = []
   let tradefeeapr
   let yieldFarmingApr
   let apr
   let apy
   if (tradefee.length === 0 || cakePrice.length === 0) {
-    singleApyList = [0, 0, 0, 0, 0, 0, 0]
+    singleApy = [0, 0, 0, 0, 0, 0, 0]
 
   } else {
+    const priceLen = cakePrice.length
     for (let i = 1; i < tradefee.length; i++) {
       tradefeeapr = tradefee[i] * 365 / 100
-      yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice[i]).div(poolLiquidityUsd)
+      yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice[priceLen - i]).div(poolLiquidityUsd)
       apr = Number(tradefeeapr) + Number(yieldFarmingApr)
       apy = ((Math.pow(1 + apr / 365, 365) - 1) * 100).toFixed(2)
-      singleApyList.push(apy)
+      singleApy.push(apy)
     }
 
   }
 
-  // console.info('singleApyList', singleApyList)
+  const singleApyList = []
+  for (let i = 0; i < singleApy.length; i++) {
+    singleApyList.unshift(singleApy[i])
+  }
 
   return singleApyList
 
