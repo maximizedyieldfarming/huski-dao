@@ -688,13 +688,13 @@ const Farm = () => {
     let approveAddress
 
     if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-      if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
-        console.info('token quoteTokenApproveContract vaultAddress ')
-        contract = quoteTokenApproveContract
-        approveAddress = vaultAddress
-      } else {
+      if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('token approveContract vaultAddress ')
         contract = approveContract
+        approveAddress = vaultAddress
+      } else {
+        console.info('token quoteTokenApproveContract vaultAddress ')
+        contract = quoteTokenApproveContract
         approveAddress = vaultAddress
       }
 
