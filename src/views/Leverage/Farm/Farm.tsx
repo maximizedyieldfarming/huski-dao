@@ -633,20 +633,16 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
-    getAddress(tokenData?.QuoteTokenInfo?.token?.address),
-    tokenData?.TokenInfo?.vaultAddress,
-  )
-  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
-    getAddress(tokenData?.TokenInfo?.token?.address),
-    tokenData?.TokenInfo?.vaultAddress,
-  )
-  let allowance = '0'
+  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.token?.address), tokenData?.TokenInfo?.vaultAddress,)
+  const { allowance: quoteTokenUserTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.TokenInfo?.vaultAddress,)
+  const { allowance: tokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.token?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
 
+  let allowance = '0'
   if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-    // jie base
+
     if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
-      allowance = tokenData.userData?.tokenUserTokenAllowances  // > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+      allowance = tokenData.userData?.tokenUserTokenAllowances // > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
       console.info('token token ')
     } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
       allowance = tokenData.userData?.quoteTokenUserTokenAllowances
@@ -657,7 +653,6 @@ const Farm = () => {
     } else {
       console.info('token all === 0 ')
       allowance = '1'
-
     }
 
   } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
@@ -695,7 +690,7 @@ const Farm = () => {
         contract = quoteTokenApproveContract
         approveAddress = vaultAddress
       } else {
-        console.info('token-- approveContract vaultAddress ')
+        console.info('token approveContract vaultAddress ')
         contract = approveContract
         approveAddress = vaultAddress
       }
@@ -770,19 +765,19 @@ const Farm = () => {
     }
     return { selectedToken }
   }
-  const { selectedToken } = getSelectedToken(radio)
   const minimumDebt =
     radio === tokenData?.TokenInfo?.token?.symbol
       ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
+  const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
   const getWrapText = (): string => {
-    const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
     if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
       return t(`Wrap BNB & ${leverageValue}x Farm`)
     }
     return t(`${leverageValue}x Farm`)
   }
+
   return (
     <SBPage>
       <Text
@@ -941,14 +936,9 @@ const Farm = () => {
             </Box>
             <Flex alignItems="center" justifyContent="space-between" mt="20px" mb="20px">
               <Text fontWeight="500">{t('Target Position Leverage')}</Text>
-              <Text color="textSubtle">{t('3.00X')}</Text>
+              <Text color="textSubtle">{new BigNumber(leverageValue)?.toFixed(2, 1)}X</Text>
             </Flex>
             <Box>
-              {/* <Text color="textSubtle" small>
-                {t(
-                  'You can increasing or decrease leverage by adding or reducing collateral,more leverage means more yields and higher risk,vice versa.',
-                )}
-              </Text> */}
               <MoveBox move={margin}>
                 <Text color="#7B3FE4" bold>
                   {leverageValue}x
@@ -967,6 +957,8 @@ const Farm = () => {
                   style={{ width: '100%' }}
                 />
               </Box>
+              {/*  NOTE: 3 is not the max value leverage can have, some go up to 6, 
+              so you need to generate the dots dinamically based on the leverage (tokenData.leverage) */}
               <Flex justifyContent="space-between" mt="-22px" mb="10px">
                 <div
                   className="middle"
@@ -1017,14 +1009,37 @@ const Farm = () => {
               <Select options={options()} onChange={(option) => setRadio(option.value)} />
             </Flex>
           </Box>
-          {/* <Box>
-            <Text small color="failure">
-              {t(
-                'Please keep in mind that when you leverage above 2x, you will have a slight short on the borrowed asset.The other paired asset will have typical long exposure, so choose which asset you borrow wisely.',
-              )}
-            </Text>
-          </Box> */}
-          <Flex justifyContent="space-evenly" paddingBottom="20px!important">
+          <Flex justifyContent="center" paddingBottom="20px!important">
+            {isApproved ? null : tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
+              radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
+              bnbInput ? (
+              <Button
+                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+                onClick={handleConfirm}
+                isLoading={isPending}
+                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                disabled={
+                  !account ||
+                  !isApproved ||
+                  (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+                  (tokenInput === undefined && quoteTokenInput === undefined) ||
+                  (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
+                  isPending
+                }
+              >
+                {isPending ? t('Confirming') : getWrapText()}
+              </Button>
+            ) : (
+              <Button
+                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+                onClick={handleApprove}
+                disabled={isApproving}
+                isLoading={isApproving}
+                endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+              >
+                {isApproving ? t('Approving') : t('Approve')}
+              </Button>
+            )}
             {isApproved ? (
               <Button
                 style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
@@ -1040,19 +1055,9 @@ const Farm = () => {
                   isPending
                 }
               >
-          {isPending ? t('Confirming') : getWrapText()}
+                {isPending ? t('Confirming') : getWrapText()}
               </Button>
-            ) : (
-              <Button
-                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-                onClick={handleApprove}
-                disabled={isApproving}
-                isLoading={isApproving}
-                endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-              >
-                {isApproving ? t('Approving') : t('Approve')}
-              </Button>
-            )}
+            ) : null}
           </Flex>
           {tokenInput || quoteTokenInput ? (
             <Text mx="auto" color="red" textAlign="center">
@@ -1090,7 +1095,6 @@ const Farm = () => {
                   {t('APR')}
                 </Text>
                 <span>
-                  {' '}
                   <InfoIcon color="textSubtle" ml="10px" />
                 </span>
               </Flex>

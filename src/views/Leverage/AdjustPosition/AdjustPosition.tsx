@@ -379,7 +379,7 @@ const AdjustPosition = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 32)
+    const tt = ((Math.min(targetPositionLeverage, leverage) - 1) / (leverage - 1)) * (moveVal.width - 32)
 
     setMargin(tt)
   }, [targetPositionLeverage, moveVal.width, leverage])
@@ -1389,20 +1389,12 @@ const AdjustPosition = () => {
                         </Text>
                       </MoveBox>
                       <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
-                        <ArrowDropDownIcon
-                          width={32}
-                          style={{
-                            position: 'absolute',
-                            top: '-12px',
-                            fill: '#7B3FE4',
-                            left: ((currentPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 14) - 10,
-                          }}
-                        />
+                        <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((Math.min(currentPositionLeverage, leverage) - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
 
                         <RangeInput
                           type="range"
                           min="1.0"
-                          max={leverage < currentPositionLeverage ? currentPositionLeverage : leverage}
+                          max={leverage}
                           step="0.01"
                           name="leverage"
                           value={targetPositionLeverage}
@@ -1474,7 +1466,7 @@ const AdjustPosition = () => {
                       </datalist>
                     </Box>
                   </Flex>
-                  <Flex width="100%" alignItems="center" justifyContent="center">
+                  <Flex width="100%" alignItems="center" justifyContent="center" border='none!important'>
                     <Text color="red">
                       {showNotice
                         ? t(

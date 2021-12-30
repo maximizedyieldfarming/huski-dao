@@ -76,16 +76,16 @@ const App: React.FC = () => {
             <Route exact path="/farms">
               <Leverage />
             </Route>
-            <Route exact path="/singleAssets">
+            <Route exact path="/single-assets">
               <SingleAssetsFarms />
             </Route>
-            <Route exact path="/farms/closeposition/:token" component={ClosePosition} />
-            <Route exact path="/farms/adjustPosition/:token" component={AdjustPosition} />
+            <Route exact path="/farms/close-position/:token" component={ClosePosition} />
+            <Route exact path="/farms/adjust-position/:token" component={AdjustPosition} />
             <Route exact path="/farms/farm/:token" component={Farm} />
             <Route exact path="/farms/claim" component={Claim} />
-            <Route exact path="/singleAssets/farm/:token" component={FarmSA} />
-            <Route exact path="/singleAssets/adjustPosition/:token" component={AdjustPositionSA} />
-            <Route exact path="/singleAssets/closeposition/:token" component={ClosePositionSA} />
+            <Route exact path="/single-assets/farm/:token" component={FarmSA} />
+            <Route exact path="/single-assets/adjust-position/:token" component={AdjustPositionSA} />
+            <Route exact path="/single-assets/close-position/:token" component={ClosePositionSA} />
             {/*             <Route component={NotFound} /> */}
             <Route path="*">
               <Redirect to="/lend" />
