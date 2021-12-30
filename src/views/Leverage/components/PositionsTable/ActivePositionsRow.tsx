@@ -1,10 +1,9 @@
 /* eslint-disable no-restricted-properties */
-import React, { useState } from 'react'
-import useDelayedUnmount from 'hooks/useDelayedUnmount'
+import React from 'react'
 import styled from 'styled-components'
 import { useMatchBreakpoints } from 'husky-uikit1.0'
 import BigNumber from 'bignumber.js'
-import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
+import { BIG_TEN } from 'utils/bigNumber'
 import { useLocation } from 'react-router-dom'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { getHuskyRewards, getYieldFarming, getDrop } from '../../helpers'
@@ -25,7 +24,7 @@ import StrategyCell from './Cells/StrategyCell'
 const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
-  padding-top:15px;
+  padding-top: 15px;
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
@@ -35,9 +34,6 @@ const StyledRow = styled.div`
 `
 
 const ActivePositionsRow = ({ data }) => {
-  const { isXs, isSm, isMd, isLg, isXl, isXxl, isTablet, isDesktop } = useMatchBreakpoints()
-  const isLargerScreen = isLg || isXl || isXxl
-  const [expanded, setExpanded] = useState(false)
   const { pathname } = useLocation()
 
   const { positionId, debtValue, lpAmount, positionValueBase, vault } = data
@@ -90,6 +86,18 @@ const ActivePositionsRow = ({ data }) => {
   const { tradingFees: tradeFee } = useTradingFees(data?.farmData)
 
   const getApr = (lvg) => {
+    if (
+      Number(tradeFee) === 0 ||
+      Number(huskyRewards) === 0 ||
+      Number(borrowingInterest) === 0 ||
+      Number(yieldFarmData) === 0 ||
+      Number.isNaN(tradeFee) ||
+      Number.isNaN(huskyRewards) ||
+      Number.isNaN(borrowingInterest) ||
+      Number.isNaN(yieldFarmData)
+    ) {
+      return null
+    }
     const apr =
       Number((yieldFarmData / 100) * lvg) +
       Number(((tradeFee * 365) / 100) * lvg) +
@@ -100,6 +108,9 @@ const ActivePositionsRow = ({ data }) => {
 
   const getApy = (lvg) => {
     const apr = getApr(lvg)
+    if (apr === null) { 
+      return null
+    }
     const apy = Math.pow(1 + apr / 365, 365) - 1
     return apy * 100
   }
@@ -113,7 +124,7 @@ const ActivePositionsRow = ({ data }) => {
 
   const profitLoss = undefined
 
-  const liquidationThresholdData = parseInt(liquidationThresholdValue) / 100
+  const liquidationThresholdData = Number(liquidationThresholdValue) / 100
   const debtRatioRound: any = debtRatio ? debtRatio.toNumber() * 100 : 0
   const safetyBuffer = Math.round(liquidationThresholdData - debtRatioRound)
 
