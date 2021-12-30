@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText, Box } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
 import { LinearProgress } from '@material-ui/core'
 import BaseCell, { CellContent } from './BaseCell'
@@ -10,7 +10,9 @@ interface Props {
   quoteTokenName: string
   tokenName: string
   priceDrop: number | string
-  noDebt?: boolean
+  noDebt?: boolean,
+  debtRatioRound?: any,
+  liquidationThresholdData?: any
 }
 
 const StyledCell = styled(BaseCell)`
@@ -19,9 +21,16 @@ const StyledCell = styled(BaseCell)`
     flex: 1 0 120px;
   }
 `
-const SBLinearProgress = styled(LinearProgress)`
-  .MuiLinearProgress-barColorPrimary {
-    background-color: #7b3fe4 !important;
+const SBLinearProgress = styled.div`
+  display : flex;
+  position : relative;
+  background-color : #E2E2E2;
+  width : 60px;
+  height : 6px;
+  border-radius : 6px;
+  >div{
+    height : 6px;
+    position : absolute;
   }
 `
 const Circle = styled.div`
@@ -37,35 +46,30 @@ const Circle = styled.div`
   }
 `
 
-const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop, noDebt }) => {
+const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop, noDebt, liquidationThresholdData, debtRatioRound }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    <>
-      <Text>{t('Risk Ratio = Liquidation Ratio - Debt Ratio')}</Text>
-    </>,
-    { placement: 'top-start' },
-  )
-  const {
-    targetRef: bufferTargetRef,
+  console.log(safetyBuffer);
+  const { targetRef: bufferTargetRef,
     tooltip: bufferTooltip,
-    tooltipVisible: bufferTooltipVisible,
+    tooltipVisible: bufferTooltipVisible, } = useTooltip(
+      <>
+        <Text>
+          Debt Ratio - {debtRatioRound.toFixed(2)}%
+        </Text>
+      </>,
+      { placement: 'bottom', bgcolor: '#2E2D2E' },
+    )
+  const {
+
+    targetRef, tooltip, tooltipVisible
   } = useTooltip(
     <>
-      <Text style={{ borderBottom: '1px solid black' }}>
-        {t(
-          'At the current safety buffer, %quoteTokenName% price can drop -%priceDrop%% against %tokenName% before your position would be in danger of liquidation.',
-          { quoteTokenName, tokenName, priceDrop },
-        )}
-      </Text>
       <Text>
-        <Text bold>{t('Disclaimer: ')}</Text>
-        {t(
-          'This is only an estimate and the actual liquidation price can vary based on other factors such as your position size relative to the pools liquidity.',
-        )}
+        Liquidation Ratio - {liquidationThresholdData.toFixed(2)}%
       </Text>
     </>,
-    { placement: 'top-start' },
+    { placement: 'bottom', bgcolor: '#7B3FE4' },
   )
   if (noDebt) {
     return (
@@ -88,21 +92,32 @@ const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, token
         )}
         {safetyBuffer ? (
           <>
-            {bufferTooltipVisible && bufferTooltip}
 
-            <Flex alignItems="center" style={{ gap: '10px' }} mt="8px" ref={bufferTargetRef}>
+
+            <Flex alignItems="center" style={{ gap: '10px' }} mt="8px" >
               <Text color="text" fontWeight="600" fontSize="16px">
                 {safetyBuffer}%
               </Text>
-              <SBLinearProgress
+              {/* <SBLinearProgress
                 variant="determinate"
                 value={safetyBuffer}
                 style={{ height: '6px', width: '40px', color: '#7B3FE4', background: '#CCCCCC', borderRadius: 6 }}
-              />
-              {tooltipVisible && tooltip}
+              /> */}
+              <SBLinearProgress>
+                {bufferTooltipVisible && bufferTooltip}
+                <Box borderRadius='50%' width='6px' background='#2E2D2E' zIndex={1} ref={bufferTargetRef}
+                  left={`${debtRatioRound / 100 * 60}px`} />
+                <Box background='#9054DB'
+                  left={`${Math.min(liquidationThresholdData, debtRatioRound) / 100 * 60 + 4}px`}
+                  width={`${Math.abs(liquidationThresholdData - debtRatioRound) / 100 * 60}px`} />
+                {tooltipVisible && tooltip}
+                <Box borderRadius='50%' width='6px' background='#5D12DD' zIndex={1} ref={targetRef}
+                  left={`${liquidationThresholdData / 100 * 60}px`} />
+              </SBLinearProgress>
+              {/* {tooltipVisible && tooltip}
               <span ref={targetRef} style={{ marginTop: '8px' }}>
                 <InfoIcon ml="10px" />
-              </span>
+              </span> */}
             </Flex>
           </>
         ) : (

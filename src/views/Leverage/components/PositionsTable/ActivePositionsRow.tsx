@@ -155,6 +155,8 @@ const ActivePositionsRow = ({ data }) => {
           </>
         ) : null}
         <SafetyBufferCell
+          liquidationThresholdData={liquidationThresholdData}
+          debtRatioRound={debtRatioRound}
           safetyBuffer={safetyBuffer}
           tokenName={tokenValue?.symbol}
           quoteTokenName={quoteTokenValue?.symbol}

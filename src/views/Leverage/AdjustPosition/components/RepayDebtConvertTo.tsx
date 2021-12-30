@@ -66,11 +66,12 @@ const RangeInput = styled.input`
     background-image: url('/images/RangeHandle1.png');
     background-position: center center;
     background-repeat: no-repeat;
-
+    background-size : 100% 100%;
+    
     border: 0;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: ${makeLongShadow('#E7E7E7', '-13px')};
+    box-shadow: ${makeLongShadow('rgb(193,223,183)', '-13px')};
     transition: background-color 150ms;
     &::before {
       height: 32px;
@@ -131,8 +132,8 @@ const RepayDebtConvertTo: React.FC<Props> = ({
   return (
     <Wrapper>
       <GrayBox isDark={isDark}>
-        <InfoIcon mr="10px" />
-        <Text color="#6F767E" small>
+        <InfoIcon mr="3px" />
+        <Text color="#6F767E" fontSize='12px'>
           {t('Your position value will all be converted to %tokenName% and returned to you after paying back the debt.', { tokenName })}
         </Text>
       </GrayBox>

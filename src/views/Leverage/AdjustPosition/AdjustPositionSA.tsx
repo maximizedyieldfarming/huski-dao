@@ -387,7 +387,7 @@ const AdjustPositionSA = () => {
   }, [targetPositionLeverage])
 
   useEffect(() => {
-    const tt = ((targetPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 32)
+    const tt = ((Math.min(targetPositionLeverage, leverage) - 1) / (leverage - 1)) * (moveVal.width - 32)
 
     setMargin(tt)
 
@@ -677,11 +677,11 @@ const AdjustPositionSA = () => {
               </Text>
             </MoveBox>
             <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
-              <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((currentPositionLeverage - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
+              <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((Math.min(currentPositionLeverage, leverage) - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
               <RangeInput
                 type="range"
                 min="1.0"
-                max={leverage < currentPositionLeverage ? currentPositionLeverage : leverage}
+                max={leverage}
                 step="0.01"
                 name="leverage"
                 value={targetPositionLeverage}
@@ -1087,7 +1087,7 @@ const AdjustPositionSA = () => {
                   <Box ref={targetRef1} style={{ width: '100%', position: 'relative' }}>
                     <RangeInput1
                       type="range"
-                      min="1.0"
+                      min="0.0"
                       max="100"
                       step="0.01"
                       name="leverage"
