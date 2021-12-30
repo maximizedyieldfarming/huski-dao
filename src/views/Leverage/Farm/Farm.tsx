@@ -1023,7 +1023,6 @@ const Farm = () => {
                 endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
                 disabled={
                   !account ||
-                  !isApproved ||
                   (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
                   (tokenInput === undefined && quoteTokenInput === undefined) ||
                   (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
@@ -1051,7 +1050,6 @@ const Farm = () => {
                 endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
                 disabled={
                   !account ||
-                  !isApproved ||
                   (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
                   (tokenInput === undefined && quoteTokenInput === undefined) ||
                   (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
