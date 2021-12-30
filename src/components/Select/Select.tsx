@@ -152,7 +152,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling} isDark={isDark}>
           {options[selectedOptionIndex]?.icon ? options[selectedOptionIndex]?.icon : null}
-          <Text>{options[selectedOptionIndex].label.toUpperCase().replace('WBNB', 'BNB')}</Text>
+          <Text>{options[selectedOptionIndex]?.label.toUpperCase().replace('WBNB', 'BNB')}</Text>
         </DropDownHeader>
       )}
       <ArrowDropDownIcon color="text" onClick={toggling} style={{ position: 'absolute', right: '0' }} />
