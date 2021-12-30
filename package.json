@@ -64,7 +64,7 @@
     "graphql-request": "^3.4.0",
     "highcharts": "^9.3.2",
     "highcharts-react-official": "^3.1.0",
-    "husky-uikit1.0": "^0.3.3",
+    "husky-uikit1.0": "^0.3.4",
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",

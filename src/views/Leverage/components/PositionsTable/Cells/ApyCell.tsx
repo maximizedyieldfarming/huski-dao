@@ -71,9 +71,9 @@ const ApyCell = ({ apy, huskyRewards, apr,dailyApr, borrowingInterest, yieldFarm
               {apy}%
             </Text>
             {tooltipVisible && tooltip}
-            <span ref={targetRef} style={{marginTop: "8px"}}>
+            {/* <span ref={targetRef} style={{marginTop: "8px"}}>
               <InfoIcon ml="10px" />
-            </span>
+            </span> */}
           </Flex>
         ) : (
           <Skeleton width="80px" height="16px" />
