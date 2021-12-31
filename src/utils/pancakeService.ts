@@ -298,7 +298,7 @@ export const exchangefarmingtoken = (exchangeValue, leverage, tradefee, basetoke
 
     const minLPAmountfarmingtoken = farmingtokenLpend + farmingtokenBalance + exchangeValue * ((1 - tradefee) * MINIMUM_RECEIVED_PERCENTAGE - 2)
 
-    const farmingTokenAmountTotal =  farmingtokenBegin// basetokenBegin// quoteTokenAmountTotal  tokenAmountTotal // 中选是 farmingtoken的
+    const farmingTokenAmountTotal = farmingtokenBegin// basetokenBegin// quoteTokenAmountTotal  tokenAmountTotal // 中选是 farmingtoken的
     const minLPAmount = minLPAmountfarmingtoken * lptotalSupply / farmingTokenAmountTotal
 
     return [
@@ -404,8 +404,8 @@ export const RunLogic1 = (RiskKillThreshold, LiquidationRewards, ReinvestMinute,
             debtNum += debtNum * BorrowingInterestList / 365
             dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList, dataList)
             dateList.push(i)
-            profitLossRatioToken0.push(dataList[5])
-            profitLossRatioToken1.push(dataList[6])
+            profitLossRatioToken0.push(dataList[6])
+            profitLossRatioToken1.push(dataList[5])
         }
 
     }
@@ -447,8 +447,8 @@ export const func = (LiquidationRewards, RiskKillThreshold, baseToken, tokenInit
             winlossToken1 = (lpValueToken0 - debtTokenNum) * tokenPrice / tokenInitNum1 - 1
             winlossToken0 = (lpValueToken0 - debtTokenNum) / tokenInitNum0 - 1
         } else {
-            winlossToken1 = (lpValueToken1 + debtTokenNum) / tokenInitNum1 - 1
-            winlossToken0 = (lpValueToken1 + debtTokenNum) / tokenPrice / tokenInitNum0 - 1
+            winlossToken1 = (lpValueToken1 - debtTokenNum) / tokenInitNum1 - 1
+            winlossToken0 = (lpValueToken1 - debtTokenNum) / tokenPrice / tokenInitNum0 - 1
         }
 
     } else if (dataList[4] < RiskKillThreshold) {
@@ -456,8 +456,8 @@ export const func = (LiquidationRewards, RiskKillThreshold, baseToken, tokenInit
             winlossToken1 = (lpValueToken0 * (1 - LiquidationRewards) - debtTokenNum) * tokenPrice / tokenInitNum1 - 1
             winlossToken0 = (lpValueToken0 * (1 - LiquidationRewards) - debtTokenNum) / tokenInitNum0 - 1
         } else {
-            winlossToken1 = (lpValueToken1 * (1 - LiquidationRewards) + debtTokenNum) / tokenInitNum1 - 1
-            winlossToken0 = (lpValueToken1 * (1 - LiquidationRewards) + debtTokenNum) / tokenPrice / tokenInitNum0 - 1
+            winlossToken1 = (lpValueToken1 * (1 - LiquidationRewards) - debtTokenNum) / tokenInitNum1 - 1
+            winlossToken0 = (lpValueToken1 * (1 - LiquidationRewards) - debtTokenNum) / tokenPrice / tokenInitNum0 - 1
         }
 
     } else {
