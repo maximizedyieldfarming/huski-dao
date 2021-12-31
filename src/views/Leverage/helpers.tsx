@@ -541,27 +541,23 @@ export const getRunLogic1 = (priceList, quoteTokenPriceList, riskKillThreshold, 
   // const Token1Name = 'USD' // token1名称
   const BorrowingInterestList = borrowingInterest // 0.05
   const LPAPRList = lpApr // LP历史日均年化
-  const PriceList0 = [] // 历史日均价格 token0_usd / token1_usd
-  // const PriceList1 = []
+  const PriceList = [] // 历史日均价格 token0_usd / token1_usd
 
   for (let i = 0; i < priceList.length; i++) {
     const priceRatio = priceList[i] / quoteTokenPriceList[i]
-    // const priceRatio1 = quoteTokenPriceList[i] / priceList[i]
-    PriceList0.push(priceRatio)
-    // PriceList1.push(priceRatio1)
+    PriceList.push(priceRatio)
   }
 
   // 注意三个List的长度一致
   const BaseTokenName = tokenName // 填Token0Name 或 Token1Name
-  const PriceList = PriceList0 // BaseTokenName === Token0Name ? PriceList0 : PriceList0
   const LeverageOpen = leverage // 初始杠杆
   const DayNum = PriceList.length // 时间长度（天）
   // console.log({ PriceList,quoteTokenPriceList,  priceList,  'riskKillThreshold-------':Number(riskKillThreshold),RiskKillThreshold, borrowingInterest, lpApr, leverage, Token0Name, Token1Name, tokenName })
-  const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = RunLogic1(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
+  const { profitLossRatioToken0, profitLossRatioToken1 } = RunLogic1(RiskKillThreshold, LiquidationRewards, ReinvestMinute, Token0Name, Token1Name, BorrowingInterestList,
     LPAPRList, PriceList, BaseTokenName, LeverageOpen, DayNum)
 
-  // console.log({  dateList, profitLossRatioToken0, profitLossRatioToken1 })
-  return { dateList, profitLossRatioToken0, profitLossRatioToken1 }
+  // console.log({ profitLossRatioToken0, profitLossRatioToken1 })
+  return { profitLossRatioToken0, profitLossRatioToken1 }
 }
 
 export const getSingle7Days = (farm: LeverageFarm, cakePrice, tradefee) => {

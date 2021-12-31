@@ -43,6 +43,7 @@ export const useGetPositions = (account) => {
 
 export const usePriceList = (coingeckoId) => {
   const [priceList, setPriceList] = useState([])
+  const [dateList, setDateList] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,20 +58,24 @@ export const usePriceList = (coingeckoId) => {
         const responseData = await res.json();
 
         const priceListValue = [];
+        const dateValue = [];
         for (let i = 1; i < responseData.prices.length; i++) {
           priceListValue.push(responseData.prices[i][1])
+          const dateStr = new Date(parseInt(responseData.prices[i][0])).toLocaleString()
+          const dateArr = dateStr.trim().split(' ')
+          dateValue.push(dateArr[0])
         }
-
         setPriceList(priceListValue)
+        setDateList(dateValue)
       } catch (error) {
         console.error('Unable to fetch data:', error)
       }
     }
 
     fetchData()
-  }, [coingeckoId, setPriceList])
+  }, [coingeckoId])
 
-  return priceList
+  return { priceList, dateList }
 }
 
 export const useTokenPriceList = (coingeckoId) => {

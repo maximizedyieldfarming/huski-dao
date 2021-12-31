@@ -33,11 +33,33 @@ import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
+const expandAnimation = keyframes`
+  from {
+    max-height: 20px;
+  }
+  to {
+    max-height: 700px;
+  }
+`
 
-const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
-  max-height : ${({ expanded }) => expanded ? '700px' : '0px'};
-  transition : max-height 0.2s;
-  overflow-y : hidden;
+const collapseAnimation = keyframes`
+  from {
+    max-height: 700px;
+  }
+  to {
+    max-height: 20px;
+  }
+`
+
+const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
+  animation: ${({ expanded }) =>
+    expanded
+      ? css`
+          ${expandAnimation} 300ms linear forwards
+        `
+      : css`
+          ${collapseAnimation} 300ms linear forwards
+        `};
   .expandedArea {
     ::-webkit-scrollbar {
       height: 8px;
@@ -59,6 +81,7 @@ const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
 `
 const StakeContainer = styled(Flex)`
   &:not(:last-child) {
+    margin-bottom: 1rem;
   }
   ${({ theme }) => theme.mediaQueries.lg} {
     flex: 1 0 300px;
@@ -68,10 +91,7 @@ const StakeContainer = styled(Flex)`
   }
 `
 
-interface Props {
-  disabled: boolean
-}
-const StyledButton = styled(Button) <Props>`
+const StyledButton = styled(Button)`
   background: ${({ disabled }) => (disabled ? '#FFFFFF' : '#7B3FE4')};
   border-radius: 10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
@@ -86,7 +106,7 @@ const MaxContainer = styled(Flex)`
     align-items: center;
   }
   justify-content: space-between;
-  height: 60px;
+  height: 100%;
   background: ${({ theme }) => theme.colors.background};
   border-radius: 12px;
   padding: 6px;
@@ -110,17 +130,17 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
       flex-direction: row;
     }
   }
-  > ${Flex}:first-child {
-    border-bottom: 2px solid ${({ theme, expanded }) => (expanded ? theme.colors.disabled : 'transparent')};
-  }
+  // > ${Flex}:first-child {
+  //   border-bottom: 2px solid ${({ theme, expanded }) => (expanded ? theme.colors.disabled : 'transparent')};
+  // }
 `
 
 const MaxButton = styled.button`
   width: 48px;
   height: 48px;
-  display : flex;
-  justify-content : center;
-  align-items : center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 8px;
   // background: isDark ? '#272B30' : '#FFFFFF';
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -160,12 +180,12 @@ const StakeRow = ({ tokenData }) => {
     .times(Number(totalToken) / Number(totalSupply) || 0)
   // console.log('totalVolLocked', totalVolLocked.toJSON(), "totalVAluestaked", totalValueStaked)
 
-
   const { allowance: tokenAllowance } = useTokenAllowance(
     getAddress(tokenData?.token?.address),
-    getAddress(tokenData.vaultAddress)
+    getAddress(tokenData.vaultAddress),
   )
-  const allowance = Number(tokenData?.userData?.allowance) > 0 ? tokenData?.userData?.allowance : tokenAllowance.toString()
+  const allowance =
+    Number(tokenData?.userData?.allowance) > 0 ? tokenData?.userData?.allowance : tokenAllowance.toString()
 
   // stake operations
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -318,7 +338,7 @@ const StakeRow = ({ tokenData }) => {
 
   return (
     <StyledRow role="row" huski={tokenData?.symbol.toLowerCase() === 'shuski'} expanded={expanded}>
-      <Flex onClick={toggleExpanded} mr="20px" ml="20px" alignItems='center'>
+      <Flex onClick={toggleExpanded} >
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
         <MyPosCell staked={userStakedBalance} />
@@ -327,151 +347,172 @@ const StakeRow = ({ tokenData }) => {
         {shouldRenderActionPanel ? <ChevronUpIcon mr="10px" /> : <ChevronDownIcon mr="10px" />}
       </Flex>
       <StyledActionPanel flexDirection="column" expanded={expanded}>
-        <Flex className="expandedArea" style={{ overflowX: 'scroll', overflowY: 'hidden'}}>
-          <StakeContainer flexDirection="column">
-            <Flex alignItems="center" justifyContent="space-between">
-              <Text color="text" fontSize="14px" fontWeight="700">
-                {t('I Want to Stake')}
-              </Text>
-              <Text color="textSubtle" fontSize="12px">
-                {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
-                <span style={{ fontSize: '12px', fontWeight: 700 }}>
-                  {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
-                </span>
-              </Text>
-            </Flex>
-            <MaxContainer flexDirection={isSmallScreen ? 'column' : 'row'}>
-              <NumberInput
-                placeholder="0.00"
-                onChange={handleStakeInput}
-                value={stakeAmount}
-                style={{ background: 'unset', border: 'none', padding: 0, color: '#1A1D1F', fontSize: '28px', fontWeight: 'bold', paddingLeft: '20px' }}
-              />
-              <Flex alignItems="center" justifyContent="space-between">
-                <Box>
-                  <MaxButton
-                    type="button"
+        {shouldRenderActionPanel ? (
+          <>
+            <Flex className="expandedArea" style={{ overflow: 'auto' }}>
+              <StakeContainer flexDirection="column">
+                <Flex alignItems="center" justifyContent="space-between">
+                  <Text color="text" fontSize="14px" fontWeight="700">
+                    {t('I Want to Stake')}
+                  </Text>
+                  <Text color="textSubtle" fontSize="12px">
+                    {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>
+                      {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
+                    </span>
+                  </Text>
+                </Flex>
+                <MaxContainer flexDirection={isSmallScreen ? 'column' : 'row'}>
+                  <NumberInput
+                    placeholder="0.00"
+                    onChange={handleStakeInput}
+                    value={stakeAmount}
                     style={{
-                      background: isDark ? '#272B30' : '#FFFFFF',
+                      background: 'unset',
+                      border: 'none',
+                      padding: 0,
+                      color: '#1A1D1F',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      paddingLeft: '20px',
                     }}
-                    onClick={setStakeAmountToMax}
-                    disabled={Number(userTokenBalance) === 0 || Number(allowance) === 0}
-                  >
-                    <Text>{t('MAX')}</Text>
-                  </MaxButton>
-                </Box>
-                {Number(allowance) !== 0 ? (
-                  <StyledButton
-                    onClick={handleStakeConfirm}
-                    disabled={
-                      !account ||
-                      !(Number(allowance) > 0) ||
-                      Number(stakeAmount) === 0 ||
-                      stakeAmount === undefined ||
-                      Number(userTokenBalance) === 0 ||
-                      isPending
-                    }
-                    isLoading={isPending}
-                    endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
-                  >
-                    {isPending ? t('Staking') : t('Stake')}
-                  </StyledButton>
-                ) : (
-                  <StyledButton
-                    onClick={handleApprove}
-                    disabled={!account || isPending}
-                    isLoading={isApproving}
-                    endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                  >
-                    {isApproving ? t('Approving') : t('Approve')}
-                  </StyledButton>
-                )}
-              </Flex>
-            </MaxContainer>
-          </StakeContainer>
-          <StakeContainer
-            flexDirection="column"
-            mr={isSmallScreen ? '0' : '60px'}
-            ml={isSmallScreen ? '0' : '30px'}
-          >
-            <Flex alignItems="center" justifyContent="space-between">
-              <Text color="text" fontSize="14px" fontWeight="700">
-                {t('I Want to Unstake')}
-              </Text>
-              <Text color="textSubtle" fontSize="12px">
-                {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
-                <span style={{ fontSize: '12px', fontWeight: 700 }}>
-                  {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)}
-                </span>
-              </Text>
-            </Flex>
-            <MaxContainer flexDirection={isSmallScreen ? 'column' : 'row'}>
-              <NumberInput
-                pattern="^[0-9]*[.,]?[0-9]{0,18}$"
-                placeholder="0.00"
-                onChange={handleUnstakeInput}
-                value={unstakeAmount}
-                style={{ background: 'unset', border: 'none', padding: 0, color: '#1A1D1F', fontSize: '28px', fontWeight: 'bold', paddingLeft: '20px' }}
-              />
+                  />
+                  <Flex alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <MaxButton
+                        type="button"
+                        style={{
+                          background: isDark ? '#272B30' : '#FFFFFF',
+                        }}
+                        onClick={setStakeAmountToMax}
+                        disabled={Number(userTokenBalance) === 0 || Number(allowance) === 0}
+                      >
+                        <Text>{t('MAX')}</Text>
+                      </MaxButton>
+                    </Box>
+                    {Number(allowance) !== 0 ? (
+                      <StyledButton
+                        onClick={handleStakeConfirm}
+                        disabled={
+                          !account ||
+                          !(Number(allowance) > 0) ||
+                          Number(stakeAmount) === 0 ||
+                          stakeAmount === undefined ||
+                          Number(userTokenBalance) === 0 ||
+                          isPending
+                        }
+                        isLoading={isPending}
+                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                      >
+                        {isPending ? t('Staking') : t('Stake')}
+                      </StyledButton>
+                    ) : (
+                      <StyledButton
+                        onClick={handleApprove}
+                        disabled={!account || isPending}
+                        isLoading={isApproving}
+                        endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                      >
+                        {isApproving ? t('Approving') : t('Approve')}
+                      </StyledButton>
+                    )}
+                  </Flex>
+                </MaxContainer>
+              </StakeContainer>
+              <StakeContainer
+                flexDirection="column"
+                mr={isSmallScreen ? '0' : '60px'}
+                ml={isSmallScreen ? '0' : '30px'}
+              >
+                <Flex alignItems="center" justifyContent="space-between">
+                  <Text color="text" fontSize="14px" fontWeight="700">
+                    {t('I Want to Unstake')}
+                  </Text>
+                  <Text color="textSubtle" fontSize="12px">
+                    {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>
+                      {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)}
+                    </span>
+                  </Text>
+                </Flex>
+                <MaxContainer flexDirection={isSmallScreen ? 'column' : 'row'}>
+                  <NumberInput
+                    pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+                    placeholder="0.00"
+                    onChange={handleUnstakeInput}
+                    value={unstakeAmount}
+                    style={{
+                      background: 'unset',
+                      border: 'none',
+                      padding: 0,
+                      color: '#1A1D1F',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      paddingLeft: '20px',
+                    }}
+                  />
 
-              <Flex alignItems="center" justifyContent="space-between">
-                <Box>
-                  <MaxButton
-                    type="button"
-                    style={{
-                      background: isDark ? '#272B30' : '#FFFFFF',
-                    }}
-                    onClick={setUnstakeAmountToMax}
-                    disabled={Number(userStakedBalance) === 0}
-                  >
-                    <Text>{t('MAX')}</Text>
-                  </MaxButton>
-                </Box>
-                <StyledButton
-                  onClick={handleUnstakeConfirm}
-                  disabled={
-                    !account ||
-                    Number(unstakeAmount) === 0 ||
-                    unstakeAmount === undefined ||
-                    Number(userStakedBalance) === 0 ||
-                    isPendingUnstake
-                  }
-                  isLoading={isPendingUnstake}
-                  endIcon={isPendingUnstake ? <AutoRenewIcon spin color="primary" /> : null}
-                >
-                  {isPendingUnstake ? t('Unstaking') : t('Unstake')}
-                </StyledButton>
-              </Flex>
-            </MaxContainer>
-          </StakeContainer>
-          <StakeContainer
-            flexDirection="column"
-            pl={isSmallScreen ? '0' : '60px'}
-            style={isSmallScreen ? null : { borderLeft: '2px solid #EFEFEF' }}
-          >
-            <Flex alignItems="center" justifyContent="space-between">
-              <Text color="text" fontSize="14px" fontWeight="700">
-                {t('HUSKI Rewards')}
-              </Text>
+                  <Flex alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <MaxButton
+                        type="button"
+                        style={{
+                          background: isDark ? '#272B30' : '#FFFFFF',
+                        }}
+                        onClick={setUnstakeAmountToMax}
+                        disabled={Number(userStakedBalance) === 0}
+                      >
+                        <Text>{t('MAX')}</Text>
+                      </MaxButton>
+                    </Box>
+                    <StyledButton
+                      onClick={handleUnstakeConfirm}
+                      disabled={
+                        !account ||
+                        Number(unstakeAmount) === 0 ||
+                        unstakeAmount === undefined ||
+                        Number(userStakedBalance) === 0 ||
+                        isPendingUnstake
+                      }
+                      isLoading={isPendingUnstake}
+                      endIcon={isPendingUnstake ? <AutoRenewIcon spin color="primary" /> : null}
+                    >
+                      {isPendingUnstake ? t('Unstaking') : t('Unstake')}
+                    </StyledButton>
+                  </Flex>
+                </MaxContainer>
+              </StakeContainer>
+              <StakeContainer
+                flexDirection="column"
+                pl={isSmallScreen ? '0' : '60px'}
+                style={isSmallScreen ? null : { borderLeft: '2px solid #EFEFEF' }}
+              >
+                <Flex alignItems="center" justifyContent="space-between">
+                  <Text color="text" fontSize="14px" fontWeight="700">
+                    {t('HUSKI Rewards')}
+                  </Text>
+                </Flex>
+                <MaxContainer>
+                  <Text color="textFarm" fontSize="28px" fontWeight="700">
+                    {reward.gt(0) ? (reward.lt(0.01) ? reward.toFixed(4, 1) : reward.toFixed(2, 1)) : '0.00'}
+                  </Text>
+                  <Flex alignItems="center">
+                    <StyledButton
+                      disabled={!account || Number(reward) === 0 || isPendingClaim}
+                      onClick={handleClaimConfirm}
+                      scale="sm"
+                      isLoading={isPendingClaim}
+                      endIcon={isPendingClaim ? <AutoRenewIcon spin color="primary" /> : null}
+                    >
+                      {isPendingClaim ? t('Claiming') : t('Claim')}
+                    </StyledButton>
+                  </Flex>
+                </MaxContainer>
+              </StakeContainer>
             </Flex>
-            <MaxContainer>
-              <Text color="textFarm" fontSize="28px" fontWeight="700">
-                {reward.gt(0) ? (reward.lt(0.01) ? reward.toFixed(4, 1) : reward.toFixed(2, 1)) : '0.00'}
-              </Text>
-              <Flex alignItems="center">
-                <StyledButton
-                  disabled={!account || Number(reward) === 0 || isPendingClaim}
-                  onClick={handleClaimConfirm}
-                  scale="sm"
-                  isLoading={isPendingClaim}
-                  endIcon={isPendingClaim ? <AutoRenewIcon spin color="primary" /> : null}
-                >
-                  {isPendingClaim ? t('Claiming') : t('Claim')}
-                </StyledButton>
-              </Flex>
-            </MaxContainer>
-          </StakeContainer>
-        </Flex>
+            /
+          </>
+        ) : null}
       </StyledActionPanel>
     </StyledRow>
   )
