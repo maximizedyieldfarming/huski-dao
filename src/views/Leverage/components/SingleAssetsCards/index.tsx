@@ -108,10 +108,10 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const dropdown = useRef(null)
 
   const getApr = (lvg) => {
+    // Number(huskyRewards) === 0 ||
+    // Number(borrowingInterest) === 0 ||
     if (
       Number(tradeFee) === 0 ||
-      Number(huskyRewards) === 0 ||
-      Number(borrowingInterest) === 0 ||
       Number(yieldFarmData) === 0 ||
       Number.isNaN(tradeFee) ||
       Number.isNaN(huskyRewards) ||
