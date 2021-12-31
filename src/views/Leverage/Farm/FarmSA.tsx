@@ -140,12 +140,6 @@ const SBPage = styled(Page)`
   }
 `
 
-const ButtonMenuField = styled(Box)`
-
-::-webkit-scrollbar {
-    height: 4px!important;
-  }
-`
 const FarmSA = () => {
     const { t } = useTranslation()
     const { isMobile, isTablet } = useMatchBreakpoints()
@@ -159,8 +153,10 @@ const FarmSA = () => {
 
     const singleFarm = data
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+    const quoteTokenCoingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
     const { isDark } = useTheme()
     const priceList = usePriceList(coingeckoId)
+    const quoteTokenPriceList = usePriceList(quoteTokenCoingeckoId)
 
     const getSingleLeverage = (selStrategy: string): number => {
         if (selStrategy.toLowerCase() === 'bull3x' || selStrategy.toLowerCase() === 'bear') {
@@ -183,7 +179,6 @@ const FarmSA = () => {
         return 'TokenInfo'
     }
     const tokenInfoToUse = getDefaultTokenInfo(marketStrategy)
-
 
     const [selectedToken, setSelectedToken] = useState(singleFarm?.[tokenInfoToUse]?.token)
 
@@ -557,7 +552,7 @@ const FarmSA = () => {
     }
 
     const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
-    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
+    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, quoteTokenPriceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
 
     // for test data
     const xAxisdata = dateList
@@ -722,6 +717,9 @@ const FarmSA = () => {
             tooltip: {
                 split: false,
                 shared: true
+            },
+            credits: {
+                enabled: false     // 去掉highcharts网站url
             },
             series: [{
                 // type: 'line',
