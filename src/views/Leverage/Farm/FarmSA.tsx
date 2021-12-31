@@ -540,18 +540,13 @@ const FarmSA = () => {
     const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
     const { profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(basetokenPriceList, quoteTokenPriceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
 
-    // for test data
-    const xAxisdata = dateList
-
-    const data1 = profitLossRatioToken0
-
-    const data2 = profitLossRatioToken1
-
-    const xAxisdata1 = priceRiseFall
-
-    const data11 = profitLossRatioSheet1Token0
-
-    const data22 = profitLossRatioSheet1Token1
+    // for charts data
+    const xAxisdataTime = dateList
+    const timeChartData1 = profitLossRatioToken0
+    const timeChartData2 = profitLossRatioToken1
+    const xAxisdataPrice = priceRiseFall
+    const priceChartData1 = profitLossRatioSheet1Token0
+    const priceChartData2 = profitLossRatioSheet1Token1
 
 
     const getTimeOption = () => {
@@ -573,7 +568,7 @@ const FarmSA = () => {
             xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: xAxisdata,
+                data: xAxisdataTime,
             },
             yAxis: {
                 type: 'value',
@@ -592,19 +587,19 @@ const FarmSA = () => {
                     symbolSize: 8,
                     itemStyle: {
                         normal: {
-                            color: 'red',
-                            borderColor: 'red',
+                            color: '#FF7D04',
+                            borderColor: '#FF7D04',
                         }
                     },
-                    data: data1
+                    data: timeChartData1
                 },
                 {
                     name: t('Coin Value'),
                     type: 'line',
                     symbol: 'none',
                     symbolSize: 8,
-                    color: ['blue'],
-                    data: data2
+                    color: ['#7B3FE4'],
+                    data: timeChartData2
                 },
             ]
         };
@@ -630,7 +625,7 @@ const FarmSA = () => {
             xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: xAxisdata1,
+                data: xAxisdataPrice,
             },
             yAxis: {
                 type: 'value'
@@ -643,20 +638,20 @@ const FarmSA = () => {
                     symbolSize: 8,
                     itemStyle: {
                         normal: {
-                            color: 'red',
-                            borderColor: 'red',
+                            color: '#FF7D04',
+                            borderColor: '#FF7D04',
                         }
                     },
-                    data: data11
+                    data: priceChartData1
                 },
                 {
                     name: t('Coin Value'),
                     type: 'line',
-                    stack: '总量',
+                    // stack: '总量',
                     symbol: 'none',
                     symbolSize: 8,
-                    color: ['blue'],
-                    data: data22
+                    color: ['#7B3FE4'],
+                    data: priceChartData2
                 },
 
             ]
@@ -923,7 +918,7 @@ const FarmSA = () => {
                             </Flex>
                             <Flex flexWrap='wrap'>
                                 <Flex mr="10px" mb='10px'>
-                                    <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
+                                    <Box background="#FF7D04" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
                                     <Text>{t('USD Value')}</Text>
                                 </Flex>
                                 <Flex mr="10px" mb='10px'>
