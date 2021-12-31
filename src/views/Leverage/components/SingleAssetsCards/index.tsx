@@ -315,10 +315,10 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   // because of useState for setting which token pair and strategy is being used,
   // the data inside the card gets stale (doesn't update) this forces it to update
   // if theres not apy data,
-  // theres also a code to prevent user from change token pair or strategy if theres no apy data
+  // console.log("data", {data})
   useEffect(() => {
     if (!apy) {
-      setSingleData(data?.singleArray[0])
+      setSingleData(prev => data?.singleArray.find(item => item?.pid === prev?.pid))
     }
   }, [data, apy])
 
@@ -330,14 +330,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
           <Flex alignItems="center" flexDirection="column">
             <Box style={{ position: 'relative', width: '100%' }} ref={dropdown}>
               <Flex
-                onClick={
-                  apy
-                    ? () => {
-                        setIsSelect(!isselect)
-                      }
-                    : null
-                }
-                style={{ cursor: apy ? 'pointer' : 'not-allowed' }}
+                onClick={() => setIsSelect(!isselect)}
+                style={{ cursor: 'pointer' }}
                 background={`${color}1A`}
                 height="80px"
                 border={`1px solid  ${color}`}
