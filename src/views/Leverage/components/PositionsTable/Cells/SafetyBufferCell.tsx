@@ -49,7 +49,6 @@ const Circle = styled.div`
 const SafetyBufferCell: React.FC<Props> = ({ safetyBuffer, quoteTokenName, tokenName, priceDrop, noDebt, liquidationThresholdData, debtRatioRound }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
-  console.log(safetyBuffer);
   const { targetRef: bufferTargetRef,
     tooltip: bufferTooltip,
     tooltipVisible: bufferTooltipVisible, } = useTooltip(
