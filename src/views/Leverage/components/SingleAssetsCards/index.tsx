@@ -143,7 +143,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     return dailyEarnings
   }
 
-  const cakePriceList = usePriceList('pancakeswap-token')
+  const { priceList: cakePriceList } = usePriceList('pancakeswap-token')
 
   const singleApyList = getSingle7Days(singleData, cakePriceList, tradingFees7Days)
 
@@ -435,8 +435,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     <ArrowUpIcon color="#27C73F" /> */}
                     <Text>
                       {t(
-                        `%apyPercentageDiff% ${
-                          Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
                         { apyPercentageDiff },
                       )}

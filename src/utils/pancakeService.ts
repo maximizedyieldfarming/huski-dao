@@ -394,7 +394,7 @@ export const RunLogic1 = (RiskKillThreshold, LiquidationRewards, ReinvestMinute,
     }
 
     let dataList;
-    const dateList = []
+    // const dateList = []
     const profitLossRatioToken0 = []
     const profitLossRatioToken1 = []
 
@@ -403,14 +403,14 @@ export const RunLogic1 = (RiskKillThreshold, LiquidationRewards, ReinvestMinute,
         if (dataList[4] < RiskKillThreshold) {
             debtNum += debtNum * BorrowingInterestList / 365
             dataList = func(LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtNum, i, PriceList[i], ReinvestMinute, lpAprList, dataList)
-            dateList.push(i)
+            // dateList.push(i)
             profitLossRatioToken0.push(dataList[6])
             profitLossRatioToken1.push(dataList[5])
         }
 
     }
 
-    return { dateList, profitLossRatioToken0, profitLossRatioToken1 } // dataList
+    return { profitLossRatioToken0, profitLossRatioToken1 } // dataList
 };
 
 export const func = (LiquidationRewards, RiskKillThreshold, baseToken, tokenInitNum0, tokenInitNum1, debtTokenNum, i, tokenPrice, ReinvestMinute, LP_APR, dataList) => {

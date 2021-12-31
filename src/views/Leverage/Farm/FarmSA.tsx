@@ -155,8 +155,8 @@ const FarmSA = () => {
     const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
     const quoteTokenCoingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
     const { isDark } = useTheme()
-    const priceList = usePriceList(coingeckoId)
-    const quoteTokenPriceList = usePriceList(quoteTokenCoingeckoId)
+    const { priceList: basetokenPriceList, dateList } = usePriceList(coingeckoId)
+    const { priceList: quoteTokenPriceList } = usePriceList(quoteTokenCoingeckoId)
 
     const getSingleLeverage = (selStrategy: string): number => {
         if (selStrategy.toLowerCase() === 'bull3x' || selStrategy.toLowerCase() === 'bear') {
@@ -196,27 +196,27 @@ const FarmSA = () => {
     const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
-    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
-    singleFarm?.TokenInfo?.vaultAddress,
-  )
-  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
-    getAddress(singleFarm?.TokenInfo?.token?.address),
-    singleFarm?.TokenInfo?.vaultAddress,
-  )
-  // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenUserQuoteTokenAllowances : tokenUserTokenAllowances
+    const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
+        getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
+        singleFarm?.TokenInfo?.vaultAddress,
+    )
+    const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
+        getAddress(singleFarm?.TokenInfo?.token?.address),
+        singleFarm?.TokenInfo?.vaultAddress,
+    )
+    // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenUserQuoteTokenAllowances : tokenUserTokenAllowances
 
-  // console.log("allowances",{quoteTokenUserQuoteTokenAllowances: quoteTokenUserQuoteTokenAllowances.toString(), tokenUserTokenAllowances: tokenUserTokenAllowances.toString()}, "data", {singleFarm, selectedToken})
-  let allowance = '0'
-  if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
-    allowance =
-      Number(singleFarm.userData?.quoteTokenUserQuoteTokenAllowances) > 0
-        ? singleFarm.userData?.quoteTokenUserQuoteTokenAllowances
-        : quoteTokenUserQuoteTokenAllowances.toString()
-  } else {
-    allowance =
-      Number(singleFarm.userData?.tokenUserTokenAllowances) > 0 ? singleFarm.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
-  }
+    // console.log("allowances",{quoteTokenUserQuoteTokenAllowances: quoteTokenUserQuoteTokenAllowances.toString(), tokenUserTokenAllowances: tokenUserTokenAllowances.toString()}, "data", {singleFarm, selectedToken})
+    let allowance = '0'
+    if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
+        allowance =
+            Number(singleFarm.userData?.quoteTokenUserQuoteTokenAllowances) > 0
+                ? singleFarm.userData?.quoteTokenUserQuoteTokenAllowances
+                : quoteTokenUserQuoteTokenAllowances.toString()
+    } else {
+        allowance =
+            Number(singleFarm.userData?.tokenUserTokenAllowances) > 0 ? singleFarm.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+    }
 
     const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
     const isApproved: boolean = Number(allowance) > 0
@@ -304,33 +304,33 @@ const FarmSA = () => {
     const { tradingFees: tradeFee } = useTradingFees(singleFarm)
 
     const getApr = (lvg: number) => {
-      if (
-        Number(tradeFee) === 0 ||
-        Number(huskyRewards) === 0 ||
-        Number(borrowingInterest) === 0 ||
-        Number(yieldFarmData) === 0 ||
-        Number.isNaN(tradeFee) ||
-        Number.isNaN(huskyRewards) ||
-        Number.isNaN(borrowingInterest) ||
-        Number.isNaN(yieldFarmData)
-      ) {
-        return null
-      }
-      const totalapr =
-        Number((yieldFarmData / 100) * lvg) +
-        Number(((tradeFee * 365) / 100) * lvg) +
-        Number(huskyRewards * (lvg - 1)) -
-        Number(borrowingInterest * (lvg - 1))
-      return totalapr
+        if (
+            Number(tradeFee) === 0 ||
+            Number(huskyRewards) === 0 ||
+            Number(borrowingInterest) === 0 ||
+            Number(yieldFarmData) === 0 ||
+            Number.isNaN(tradeFee) ||
+            Number.isNaN(huskyRewards) ||
+            Number.isNaN(borrowingInterest) ||
+            Number.isNaN(yieldFarmData)
+        ) {
+            return null
+        }
+        const totalapr =
+            Number((yieldFarmData / 100) * lvg) +
+            Number(((tradeFee * 365) / 100) * lvg) +
+            Number(huskyRewards * (lvg - 1)) -
+            Number(borrowingInterest * (lvg - 1))
+        return totalapr
     }
     const getApy = (lvg: number) => {
-      const totalapr = getApr(lvg)
-      if (totalapr === null) {
-        return null
-      }
-      // eslint-disable-next-line no-restricted-properties
-      const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
-      return totalapy * 100
+        const totalapr = getApr(lvg)
+        if (totalapr === null) {
+            return null
+        }
+        // eslint-disable-next-line no-restricted-properties
+        const totalapy = Math.pow(1 + totalapr / 365, 365) - 1
+        return totalapy * 100
     }
 
     let tokenInputValue
@@ -538,84 +538,27 @@ const FarmSA = () => {
 
 
     const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(riskKillThreshold, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
-    const { dateList, profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(priceList, quoteTokenPriceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
+    const { profitLossRatioToken0, profitLossRatioToken1 } = getRunLogic1(basetokenPriceList, quoteTokenPriceList, riskKillThreshold, borrowingInterest, getApr(1), singleLeverage, Token0Name, Token1Name, tokenName)
 
-    // for test data
-    const xAxisdata = dateList
-
-    const data1 = profitLossRatioToken0
-
-    const data2 = profitLossRatioToken1
-
-    const xAxisdata1 = priceRiseFall
-
-    const data11 = profitLossRatioSheet1Token0
-
-    const data22 = profitLossRatioSheet1Token1
+    // for charts data
+    const xAxisdataTime = dateList
+    const timeChartData1 = profitLossRatioToken0
+    const timeChartData2 = profitLossRatioToken1
+    const xAxisdataPrice = priceRiseFall
+    const priceChartData1 = profitLossRatioSheet1Token0
+    const priceChartData2 = profitLossRatioSheet1Token1
 
 
-    const getOption = () => {
-        const option = {
-           tooltip: {
-            formatter: (params) => {
-              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
-                params[1].marker
-              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
-            },
-            trigger: 'axis',
-          },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'category',
-                boundaryGap: false,
-                data: xAxisdata,
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [
-                {
-                    name: t('USD Value'),
-                    type: 'line',
-                    symbol: 'none',
-                    symbolSize: 8,
-                    itemStyle: {
-                        normal: {
-                            color: 'red',
-                            borderColor: 'red',
-                        }
-                    },
-                    data: data1
-                },
-                {
-                    name: t('Coin Value'),
-                    type: 'line',
-                    symbol: 'none',
-                    symbolSize: 8,
-                    color: ['blue'],
-                    data: data2
-                },
-            ]
-        };
-
-        return option
-    }
-
-    const getOption2 = () => {
+    const getTimeOption = () => {
         const option = {
             tooltip: {
-            formatter: (params) => {
-              return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${
-                params[1].marker
-              } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                formatter: (params) => {
+                    return `${params[1].name}<br />
+                            ${params[0].marker} ${params[0].seriesName}: ${(params[0].data * 100).toFixed(2)}%<br />
+                            ${params[1].marker} ${params[1].seriesName}: ${(params[1].data * 100).toFixed(2)}%`
+                },
+                trigger: 'axis',
             },
-            trigger: 'axis',
-          },
             grid: {
                 left: '3%',
                 right: '4%',
@@ -625,7 +568,64 @@ const FarmSA = () => {
             xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: xAxisdata1,
+                data: xAxisdataTime,
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: (value) => {
+                        return `${value * 100
+                            }%`
+                    },
+                }
+            },
+            series: [
+                {
+                    name: t('USD Value'),
+                    type: 'line',
+                    symbol: 'none',
+                    symbolSize: 8,
+                    itemStyle: {
+                        normal: {
+                            color: '#FF7D04',
+                            borderColor: '#FF7D04',
+                        }
+                    },
+                    data: timeChartData1
+                },
+                {
+                    name: t('Coin Value'),
+                    type: 'line',
+                    symbol: 'none',
+                    symbolSize: 8,
+                    color: ['#7B3FE4'],
+                    data: timeChartData2
+                },
+            ]
+        };
+
+        return option
+    }
+
+    const getPriceOption = () => {
+        const option = {
+            tooltip: {
+                formatter: (params) => {
+                    return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker
+                        } ${params[1].seriesName}: ${params[1].data.toFixed(2)}`
+                },
+                trigger: 'axis',
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: xAxisdataPrice,
             },
             yAxis: {
                 type: 'value'
@@ -638,20 +638,20 @@ const FarmSA = () => {
                     symbolSize: 8,
                     itemStyle: {
                         normal: {
-                            color: 'red',
-                            borderColor: 'red',
+                            color: '#FF7D04',
+                            borderColor: '#FF7D04',
                         }
                     },
-                    data: data11
+                    data: priceChartData1
                 },
                 {
                     name: t('Coin Value'),
                     type: 'line',
-                    stack: '总量',
+                    // stack: '总量',
                     symbol: 'none',
                     symbolSize: 8,
-                    color: ['blue'],
-                    data: data22
+                    color: ['#7B3FE4'],
+                    data: priceChartData2
                 },
 
             ]
@@ -660,7 +660,7 @@ const FarmSA = () => {
         return option
     }
 
-    const getOption1 = () => {
+    const getStockChartOption = () => {
 
         const option = {
 
@@ -709,15 +709,20 @@ const FarmSA = () => {
             credits: {
                 enabled: false     // 去掉highcharts网站url
             },
+            // navigator : { // 下部导航条
+            //     enabled : false  // 取消下部导航条，与scrollbar配合使用
+            // },
+            scrollbar: { // 下部滚动条
+                enabled: false  // 取消下部滚动条  不写就是默认，要显示的
+            },
             series: [{
-                // type: 'line',
                 id: '000001',
                 name: 'Price',
                 data: tokenPriceList,
                 tooltip: {
                     valueDecimals: 2,
                     pointFormat: '{series.name}: <b>&dollar;{point.y}</b><br/>',
-              },
+                },
             }]
 
         };
@@ -902,7 +907,7 @@ const FarmSA = () => {
             <SectionWrapper>
                 <Flex className="graphSide" flex="2" >
                     <Section isDark={isDark} style={{ height: "500px" }}>
-                        <HighchartsReact highcharts={Highcharts} options={getOption1()} constructorType='stockChart' style={{ height: '500px' }} />
+                        <HighchartsReact highcharts={Highcharts} options={getStockChartOption()} constructorType='stockChart' style={{ height: '500px' }} />
                     </Section>
 
                     <Section isDark={isDark}>
@@ -913,77 +918,77 @@ const FarmSA = () => {
                             </Flex>
                             <Flex flexWrap='wrap'>
                                 <Flex mr="10px" mb='10px'>
-                                    <Box background="#FF6A55" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
+                                    <Box background="#FF7D04" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
                                     <Text>{t('USD Value')}</Text>
                                 </Flex>
                                 <Flex mr="10px" mb='10px'>
                                     <Box background="#7B3FE4" height="7px" width="30px" marginTop="7px" marginRight=" 5px"> </Box>
                                     <Text>{t('Coin Value')}</Text>
                                 </Flex>
-                                    <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : {apy ? apy?.toFixed(2) : <Skeleton width="25px" height="1rem" />}%</Text>
+                                <Text style={{ border: "0.5px #C3C1C1 solid", height: "30px", padding: "0px 20px", borderRadius: "12px" }}>APY : {apy ? apy?.toFixed(2) : <Skeleton width="25px" height="1rem" />}%</Text>
                             </Flex>
                         </Flex>
-                        {chartype === 0 ? <ReactEcharts option={getOption()} style={{ height: '500px' }} /> :
-                            <ReactEcharts option={getOption2()} style={{ height: '500px' }} />}
+                        {chartype === 0 ? <ReactEcharts option={getTimeOption()} style={{ height: '500px' }} /> :
+                            <ReactEcharts option={getPriceOption()} style={{ height: '500px' }} />}
                     </Section>
                 </Flex>
                 <Flex className="infoSide" flex="1">
                     <Section isDark={isDark}>
+                        <Flex>
+                            <SingleFarmSelect
+                                options={getSelectOptions()}
+                                onChange={(option) => {
+                                    setMarketStrategy(option.value)
+                                    setInputValue('')
+                                    setButtonIndex(null)
+                                }}
+                                width="278px"
+                            />
+                        </Flex>
+                        <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
+                            <Text>{t('Collateral')}</Text>
+                            <SingleFarmSelect
+                                options={tokenSelectOptions}
+                                onChange={(option) => {
+                                    setSelectedToken(option.value)
+                                    setInputValue('')
+                                    setButtonIndex(null)
+                                }}
+                                width="128px"
+                                reset={resetWatcher}
+                            />
+                        </Flex>
+                        <Box>
                             <Flex>
-                                <SingleFarmSelect
-                                    options={getSelectOptions()}
-                                    onChange={(option) => {
-                                        setMarketStrategy(option.value)
-                                        setInputValue('')
-                                        setButtonIndex(null)
-                                    }}
-                                    width="278px"
-                                />
+                                <Text mr="5px" small color="textSubtle">
+                                    {t('Balance:')}
+                                </Text>
+                                <Text small color="textSubtle">
+                                    {balanceNumber}
+                                </Text>
                             </Flex>
-                            <Flex justifyContent="space-between" alignItems="center" paddingTop="20px">
-                                <Text>{t('Collateral')}</Text>
-                                <SingleFarmSelect
-                                    options={tokenSelectOptions}
-                                    onChange={(option) => {
-                                        setSelectedToken(option.value)
-                                        setInputValue('')
-                                        setButtonIndex(null)
-                                    }}
-                                    width="128px"
-                                    reset={resetWatcher}
-                                />
-                            </Flex>
-                            <Box>
-                                <Flex>
-                                    <Text mr="5px" small color="textSubtle">
-                                        {t('Balance:')}
-                                    </Text>
-                                    <Text small color="textSubtle">
-                                        {balanceNumber}
-                                    </Text>
-                                </Flex>
-                                <InputArea justifyContent="space-between" mt="10px" mb="1rem" style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
-                                    <BalanceInputWrapper alignItems="center" flex="1" style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
-                                        <Box width={50} height={50} ml="5px" mt="15px">
-                                            <TokenImage token={selectedToken} width={50} height={50} />
-                                        </Box>
-                                        <NumberInput fontSize="16px" fontWeight="bold" placeholder="0.00" value={inputValue} onChange={handleInput} style={{ background: "unset" }} />
+                            <InputArea justifyContent="space-between" mt="10px" mb="1rem" style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
+                                <BalanceInputWrapper alignItems="center" flex="1" style={{ background: isDark ? "#111315" : "#F7F7F8" }}>
+                                    <Box width={50} height={50} ml="5px" mt="15px">
+                                        <TokenImage token={selectedToken} width={50} height={50} />
+                                    </Box>
+                                    <NumberInput fontSize="16px" fontWeight="bold" placeholder="0.00" value={inputValue} onChange={handleInput} style={{ background: "unset" }} />
 
-                                        <Text fontSize="16px" fontWeight="bold" mr="5px">
-                                            {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}
-                                        </Text>
-                                    </BalanceInputWrapper>
-                                </InputArea>
-                                    <ButtonMenu
-                                        onItemClick={setInputToFraction}
-                                        activeIndex={buttonIndex}
-                                        isDark={isDark}
-                                    >
-                                        <ButtonMenuItem>25%</ButtonMenuItem>
-                                        <ButtonMenuItem>50%</ButtonMenuItem>
-                                        <ButtonMenuItem>75%</ButtonMenuItem>
-                                        <ButtonMenuItem>100%</ButtonMenuItem>
-                                    </ButtonMenu>
+                                    <Text fontSize="16px" fontWeight="bold" mr="5px">
+                                        {selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB')}
+                                    </Text>
+                                </BalanceInputWrapper>
+                            </InputArea>
+                            <ButtonMenu
+                                onItemClick={setInputToFraction}
+                                activeIndex={buttonIndex}
+                                isDark={isDark}
+                            >
+                                <ButtonMenuItem>25%</ButtonMenuItem>
+                                <ButtonMenuItem>50%</ButtonMenuItem>
+                                <ButtonMenuItem>75%</ButtonMenuItem>
+                                <ButtonMenuItem>100%</ButtonMenuItem>
+                            </ButtonMenu>
                         </Box>
                         <Text fontSize="12px" color="#6F767E" mt="10px">Ethereum is a global, open-source platform for decentralized applications. </Text>
                         <Flex alignItems="center" justifyContent="space-between" mt='20px'>
