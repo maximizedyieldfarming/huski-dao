@@ -780,6 +780,16 @@ const Farm = () => {
     }
     return t(`${leverageValue}x Farm`)
   }
+  
+  const getDots = (): React.ReactNode => {
+    const dot = []
+    const steps = leverage / 0.5 - 1
+    for (let i = 1; i <= steps; i++) {
+      const value = 1 + 0.5 * (-1 + i)
+      dot.push(<Box key={i} borderRadius="50%" width="12px" height="12px" background={Number(leverageValue) >= value ?'#7B3FE4' : 'rgb(189,159,242)'} />)
+    }
+    return dot
+  }
 
   return (
     <SBPage>
@@ -961,40 +971,9 @@ const Farm = () => {
                 />
               </Box>
               {/*  NOTE: 3 is not the max value leverage can have, some go up to 6, 
-              so you need to generate the dots dinamically based on the leverage (tokenData.leverage) */}
+              so you I'm dinamically generating the dots based on the leverage (tokenData.leverage) */}
               <Flex justifyContent="space-between" mt="-22px" mb="10px">
-                <div
-                  className="middle"
-                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
-                />
-                {leverageValue < 1.5 ? (
-                  <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
-                ) : (
-                  <div
-                    className="middle"
-                    style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
-                  />
-                )}
-                {leverageValue < 2 ? (
-                  <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
-                ) : (
-                  <div
-                    className="middle"
-                    style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
-                  />
-                )}
-                {leverageValue < 2.5 ? (
-                  <div style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }} />
-                ) : (
-                  <div
-                    className="middle"
-                    style={{ borderRadius: '50%', width: '12px', height: '12px', background: '#7B3FE4' }}
-                  />
-                )}
-                <div
-                  className="middle"
-                  style={{ borderRadius: '50%', width: '12px', height: '12px', background: 'rgb(189,159,242)' }}
-                />
+                {getDots()}
               </Flex>
               <Text>
                 <datalist style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} id="leverage">
