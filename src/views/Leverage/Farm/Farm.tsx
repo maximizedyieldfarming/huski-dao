@@ -362,20 +362,50 @@ const Farm = () => {
     }
     return [
       {
-        label: tokenData?.TokenInfo.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-        value: tokenData?.TokenInfo.token?.symbol,
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol
+            : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
-          <Box width={20} height={20}>
-            <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+          <Box width={20}
+            height={20}>
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.token
+                  : tokenData?.TokenInfo?.quoteToken
+              }
+              width={20}
+              height={20}
+            />
           </Box>
         ),
       },
       {
-        label: tokenData?.TokenInfo.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-        value: tokenData?.TokenInfo.quoteToken?.symbol,
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol
+            : tokenData?.TokenInfo?.token?.symbol,
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
-          <Box width={20} height={20}>
-            <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />
+          <Box width={20}
+            height={20}>
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.quoteToken
+                  : tokenData?.TokenInfo?.token
+              }
+              width={20}
+              height={20}
+            />
           </Box>
         ),
       },
