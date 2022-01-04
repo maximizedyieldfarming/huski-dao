@@ -7,47 +7,87 @@ import WorkerABI from 'config/abi/PancakeswapV2Worker.json'
 
 
 export const fetchPositionsFormContract = async (farmsToFetch, account) => {
-    const positionList = []
-    const calls = farmsToFetch.map((farm) => {
-        const vaultContractAddress = (farm.TokenInfo.vaultAddress)
-        return {
-            address: vaultContractAddress,
-            name: 'positionsOfOwner',
-            params: [account],
-        }
-    })
+    // const positionList = []
+    // const calls = farmsToFetch.map((farm) => {
+    //     const vaultContractAddress = (farm.TokenInfo.vaultAddress)
+    //     return {
+    //         address: vaultContractAddress,
+    //         name: 'positionsOfOwner',
+    //         params: [account],
+    //     }
+    // })
 
-    const positionsOwner = await multicall(VaultABI, calls)
+    // const positionsOwner = await multicall(VaultABI, calls)
 
-    let positionArr
-    for (let i = 0; i < positionsOwner.length; i++) {
+    // let positionArr
+    // for (let i = 0; i < positionsOwner.length; i++) {
 
-        if (positionsOwner[i][0].length !== 0) {
-            positionArr = positionsOwner[i][0]
-            for (let j = 0; j < positionArr.length; j++) {
-                const tokenObject = {
-                    positionId: parseInt(positionArr[j]._hex),
-                    farmData: farmsToFetch[i],
-                }
-                positionList.push(tokenObject)
-                // positionList.push(positionArr[j]._hex)
+    //     if (positionsOwner[i][0].length !== 0) {
+    //         positionArr = positionsOwner[i][0]
+    //         for (let j = 0; j < positionArr.length; j++) {
+    //             const tokenObject = {
+    //                 positionId: parseInt(positionArr[j]._hex),
+    //                 farmData: farmsToFetch[i].TokenInfo.vaultAddress,
+    //             }
+    //             positionList.push(tokenObject)
+    //             // positionList.push(positionArr[j]._hex)
+    //         }
+    //     }
+    // }
+
+    // let returnArr = [];
+    // returnArr = positionList.filter((element, index, self) => {
+    //     return self.findIndex(el => el.positionId === element.positionId) === index
+    // })
+    // console.info('====returnArr===', returnArr)
+
+
+    /* new */
+
+    const [bnbPositionOwner, busdPositionOwner] =
+        await multicall(VaultABI, [
+            {
+                address: '0xcc1477f75872876673Fbdf6829Cd89dfe9455956',
+                name: 'positionsOfOwner',
+                params: [account],
+            },
+            {
+                address: '0xf846fa18682f985138cE43BCC6F989B6eD69bc81',
+                name: 'positionsOfOwner',
+                params: [account],
             }
+        ])
+
+    console.log({ bnbPositionOwner, busdPositionOwner })
+    const bnbPositions = bnbPositionOwner[0]
+    const busdPositions = busdPositionOwner[0]
+    const positionsList = []
+
+    for (let i = 0; i < bnbPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(bnbPositions[i]._hex),
+            vaultContractAddress: '0xcc1477f75872876673Fbdf6829Cd89dfe9455956',
         }
+        positionsList.push(tokenObject)
+    }
+    for (let i = 0; i < busdPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(busdPositions[i]._hex),
+            vaultContractAddress: '0xf846fa18682f985138cE43BCC6F989B6eD69bc81',
+        }
+        positionsList.push(tokenObject)
     }
 
-    let returnArr = [];
-    returnArr = positionList.filter((element, index, self) => {
-        return self.findIndex(el => el.positionId === element.positionId) === index
-    })
-    console.info('====returnArr===', returnArr)
-    return returnArr;
+    console.log({ positionsList })
+
+    return positionsList // positionList;
 }
 
 export const fetchPositionInfo = async (positions) => {
 
     const calls = positions.map((farm) => {
-        const { positionId } = farm
-        const vaultContractAddress = (farm.farmData.TokenInfo.vaultAddress)
+        const { positionId, vaultContractAddress } = farm
+        // const vaultContractAddress = farm.farmData // (farm.farmData.TokenInfo.vaultAddress)
         return {
             address: vaultContractAddress,
             name: 'positions',
@@ -57,13 +97,13 @@ export const fetchPositionInfo = async (positions) => {
 
     const positionsWorker = await multicall(VaultABI, calls)
 
-    console.info('positionsWorker', positionsWorker)
+    console.info('positionsWorker=======', positionsWorker)
     const positionsData = positionsWorker.map((data, index) => {
 
         return {
             positionId: positions[index].positionId,
             worker: data.worker,
-            vault: positions[index].farmData.TokenInfo.vaultAddress,
+            vault: positions[index].vaultContractAddress, // .TokenInfo.vaultAddress,
             owner: data.owner,
             debtShares: new BigNumber(data.debtShare._hex).toJSON(), // parseInt(data.debtShare._hex),
             serialCode: new BigNumber(data.serialCode._hex).toJSON(), // parseInt(data.serialCode._hex),
@@ -137,9 +177,13 @@ export const usePositionsFormContract = (data, account) => {
         const positions = async () => {
             const positionsOwner = await fetchPositionsFormContract(data, account);
             const positionsWorker = await fetchPositionInfo(positionsOwner);
+            console.info('positionsWorker--', positionsWorker)
             const debtShares = await fetchDebtShares(positionsWorker);
+            console.info('debtShares--', debtShares)
             const lpAmount = await fetchLpAmount(positionsWorker, debtShares);
+            console.info('lpAmount--', lpAmount)
             const positionInfo = await fetchPositionsInfo(positionsWorker);
+            console.info('positionInfo--', positionInfo)
             const positionsData = positionsWorker.map((worker, index) => {
 
                 return {
@@ -154,8 +198,9 @@ export const usePositionsFormContract = (data, account) => {
                     positionValueBase: positionInfo[index][0],
                 }
             });
-
+            console.info('positionsData--', positionsData)
             const positionsDataFilter = positionsData.filter((position) => position.debtShares !== '0')
+            console.info('positionsDataFilter--', positionsDataFilter)
             setPositionData(positionsDataFilter)
             return positionsDataFilter
         };
