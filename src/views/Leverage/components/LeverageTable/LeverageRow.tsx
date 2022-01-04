@@ -11,7 +11,6 @@ import { useTradingFees } from '../../hooks/useTradingFees'
 import LeverageCell from './Cells/LeverageCell'
 import TvlCell from './Cells/TvlCell'
 import Borrowing from './Cells/Borrowing'
-import BaseCell from './Cells/BaseCell'
 
 const StyledRow = styled.div`
   background-color: transparent;
@@ -19,10 +18,6 @@ const StyledRow = styled.div`
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
-  }
-  > ${BaseCell}{
-    padding-top : 10px!important;
-    padding-bottom : 10px!important;
   }
 `
 

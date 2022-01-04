@@ -12,9 +12,9 @@ const DropDownHeader = styled.div<{ isDark: boolean }>`
   gap: 8px;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: ${({ isDark }) => isDark ? '1px solid #272B30' : '1px solid #efefef'};
+  border: ${({ isDark }) => (isDark ? '1px solid #272B30' : '1px solid #efefef')};
   border-radius: 10px;
-  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
+  background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
   transition: border-radius 0.15s;
 `
 
@@ -23,7 +23,7 @@ const DropDownListContainer = styled.div<{ isDark: boolean }>`
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
+  background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
@@ -38,13 +38,11 @@ const DropDownListContainer = styled.div<{ isDark: boolean }>`
 
 const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: number; isDark: boolean }>`
   cursor: pointer;
-  // width: ${({ width }) => width}px;
   position: relative;
   background: ${({ theme }) => theme.colors.input};
   border-radius: 10px;
   height: 40px;
   min-width: max-content;
-  // width: 110px;
   user-select: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {
@@ -53,7 +51,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
 
   ${(props) =>
     props.isOpen &&
-    css`
+    css<{ isDark?: boolean }>`
       ${DropDownHeader} {
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         border-radius: 10px 10px 0 0;
@@ -64,6 +62,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         max-height: 300px;
         transform: scaleY(1);
         opacity: 1;
+        border: ${({ isDark }) => (isDark ? '1px solid #272B30' : '1px solid #efefef')};
         border-top-width: 0;
         border-radius: 0 0 10px 10px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
@@ -115,7 +114,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)

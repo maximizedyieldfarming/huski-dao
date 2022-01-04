@@ -391,7 +391,7 @@ console.info('singlesData',singlesData)
           </Flex>
         </Flex>
         <Flex className="strategyFilter" alignItems="center" borderRight='none!important'>
-          <Text>{t('Strategy:')}</Text>
+          <Text bold>{t('Strategy:')}</Text>
           <Flex overflowX="auto" alignItems="center">
             <FilterOption
               style={{ height: '30px' }}

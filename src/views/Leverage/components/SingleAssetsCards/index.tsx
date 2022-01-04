@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, Skeleton, Button, Box, Grid, ChevronDownIcon } from 'husky-uikit1.0'
+import { CardBody as UiKitCardBody, Flex, Text, Skeleton, Button, Box, Grid, ChevronDownIcon, useMatchBreakpoints } from 'husky-uikit1.0'
 import styled from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
@@ -322,6 +322,9 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     }
   }, [data, apy])
 
+  const {isMobile, isTablet} = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
+
   return (
     <Card>
       <CardHeader data={singleData} />
@@ -348,7 +351,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     ml="20px"
                   />
                   <Flex flexDirection="column" marginLeft="30px">
-                    <Text fontSize="18px" fontWeight="600" textTransform="capitalize">
+                    <Text fontSize={isSmallScreen ? "1rem" : "18px"} fontWeight="600" textTransform="capitalize">
                       {strategyName}
                     </Text>
                     <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(
@@ -404,10 +407,10 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                             <StrategyIcon market={option.label.split(' ')[0].toLowerCase()} />
                           </Box>
                           <Flex justifyContent="space-between" style={{ cursor: 'pointer' }} width="100%">
-                            <Text fontSize="16px" color={isDark ? 'white' : 'black'}>
+                            <Text fontSize="1rem" color={isDark ? 'white' : 'black'}>
                               {option.label.split(' ')[0]} {option.label.split(' ')[1]}
                             </Text>
-                            <Text fontSize="16px" color={isDark ? 'white' : 'black'}>
+                            <Text fontSize="1rem" color={isDark ? 'white' : 'black'}>
                               {option.label.split(' ')[2]}
                             </Text>
                           </Flex>
