@@ -242,7 +242,7 @@ const BackedImage = styled(Box)`
 `
 const SocialIcon = styled(Flex)`
   align-items: center;
-  justifycontent: space-between;
+  justify-content: space-between;
   margin: 0 !important;
   @media screen and (max-width: 450px) {
     > img {
@@ -881,7 +881,7 @@ const Home: React.FC = () => {
                 </Card>
               </Flex>
               <div style={{ marginTop: '75px', marginBottom: '80px' }}>
-                <Text>Copyright © 2021, HuskiFinance</Text>
+                <Text>Copyright&copy; 2021, HuskiFinance</Text>
               </div>
             </Box>
           </Flex>
