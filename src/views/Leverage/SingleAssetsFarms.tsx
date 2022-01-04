@@ -254,7 +254,7 @@ const SingleAssetsFarms: React.FC = () => {
 
   // const data = useGetPositions(account)
   // const positionData = usePositions(data)
-  const positionData = usePositionsFormContract(farmsData, account)
+  const positionData = usePositionsFormContract(account)
   const positionFarmsData = []
   if (
     positionData &&

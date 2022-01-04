@@ -136,7 +136,7 @@ const Leverage: React.FC = () => {
   const { isDark } = useTheme()
   usePollLeverageFarmsWithUserData()
   // const data = useGetPositions(account)
-  const positionData = usePositionsFormContract(farmsData, account)
+  const positionData = usePositionsFormContract(account)
   // const positionData = usePositions(data)
   console.info('positionData', positionData)
   const positionFarmsData = []

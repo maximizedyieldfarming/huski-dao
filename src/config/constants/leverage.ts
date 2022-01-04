@@ -957,19 +957,19 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 423,
-    lpSymbol: 'USDC-USDT',
+    lpSymbol: 'USDT-USDC',
     lpAddresses: {
       97: '',
       56: '0xec6557348085aa57c72514d67070dc863c0a5a8c',
     },
     lpExchange: 'PancakeSwap',
     switchFlag: 0,
-    TokenInfo: {
+    QuoteTokenInfo: {
       token: tokens.usdt,
       quoteToken: tokens.usdc,
       vaultAddress: "0xbD91429B7546AFe01c2CC4a4587bBB2E66302534",
       pId: 423,
-      name: "USDC-USDT",
+      name: "USDT-USDC",
       address: "0xDd6E310AF88BdE13AE9a9Fc16BF0A125d927015d",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
@@ -981,12 +981,12 @@ const leverageFarms: LeverageFarmConfig[] = [
         StrategyPartialCloseMinimizeTrading: "0x74346297Bf66fc0C20B75b72e4baB434D1c239b8"
       }
     },
-    QuoteTokenInfo: {
+    TokenInfo: {
       token: tokens.usdc,
       quoteToken: tokens.usdt,
       vaultAddress: "0xe363355790cfC313F5aB1939155356e72bf662Fb",
       pId: 423,
-      name: "USDT-USDC",
+      name: "USDC-USDT",
       address: "0xdc822cb4334a8C27dDc6B392a985fC3395c30e1E",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {

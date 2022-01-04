@@ -1,93 +1,125 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import multicall from 'utils/multicall'
 import useRefresh from 'hooks/useRefresh'
+import { BNB_VAULT_ADDRESS, BUSD_VAULT_ADDRESS, ETH_VAULT_ADDRESS, BTCB_VAULT_ADDRESS, USDT_VAULT_ADDRESS, USDC_VAULT_ADDRESS, HUSKI_VAULT_ADDRESS } from 'utils/config'
 import VaultABI from 'config/abi/vault.json'
 import WorkerABI from 'config/abi/PancakeswapV2Worker.json'
 
 
-export const fetchPositionsFormContract = async (farmsToFetch, account) => {
-    // const positionList = []
-    // const calls = farmsToFetch.map((farm) => {
-    //     const vaultContractAddress = (farm.TokenInfo.vaultAddress)
-    //     return {
-    //         address: vaultContractAddress,
-    //         name: 'positionsOfOwner',
-    //         params: [account],
-    //     }
-    // })
-
-    // const positionsOwner = await multicall(VaultABI, calls)
-
-    // let positionArr
-    // for (let i = 0; i < positionsOwner.length; i++) {
-
-    //     if (positionsOwner[i][0].length !== 0) {
-    //         positionArr = positionsOwner[i][0]
-    //         for (let j = 0; j < positionArr.length; j++) {
-    //             const tokenObject = {
-    //                 positionId: parseInt(positionArr[j]._hex),
-    //                 farmData: farmsToFetch[i].TokenInfo.vaultAddress,
-    //             }
-    //             positionList.push(tokenObject)
-    //             // positionList.push(positionArr[j]._hex)
-    //         }
-    //     }
-    // }
-
-    // let returnArr = [];
-    // returnArr = positionList.filter((element, index, self) => {
-    //     return self.findIndex(el => el.positionId === element.positionId) === index
-    // })
-    // console.info('====returnArr===', returnArr)
 
 
-    /* new */
+export const fetchPositionsFormContract = async (account) => {
 
-    const [bnbPositionOwner, busdPositionOwner] =
+    const [bnbPositionOwner, busdPositionOwner, ethPositionOwner, btcbPositionOwner, usdtPositionOwner, usdcPositionOwner, huskiPositionOwner] =
         await multicall(VaultABI, [
             {
-                address: '0xcc1477f75872876673Fbdf6829Cd89dfe9455956',
+                address: BNB_VAULT_ADDRESS,
                 name: 'positionsOfOwner',
                 params: [account],
             },
             {
-                address: '0xf846fa18682f985138cE43BCC6F989B6eD69bc81',
+                address: BUSD_VAULT_ADDRESS,
                 name: 'positionsOfOwner',
                 params: [account],
-            }
+            },
+            {
+                address: ETH_VAULT_ADDRESS,
+                name: 'positionsOfOwner',
+                params: [account],
+            },
+            {
+                address: BTCB_VAULT_ADDRESS,
+                name: 'positionsOfOwner',
+                params: [account],
+            },
+            {
+                address: USDT_VAULT_ADDRESS,
+                name: 'positionsOfOwner',
+                params: [account],
+            },
+            {
+                address: USDC_VAULT_ADDRESS,
+                name: 'positionsOfOwner',
+                params: [account],
+            },
+            {
+                address: HUSKI_VAULT_ADDRESS,
+                name: 'positionsOfOwner',
+                params: [account],
+            },
         ])
 
-    console.log({ bnbPositionOwner, busdPositionOwner })
+    console.log({ bnbPositionOwner, busdPositionOwner, ethPositionOwner, btcbPositionOwner, usdtPositionOwner, usdcPositionOwner, huskiPositionOwner })
     const bnbPositions = bnbPositionOwner[0]
     const busdPositions = busdPositionOwner[0]
+    const ethPositions = ethPositionOwner[0]
+    const btcbPositions = btcbPositionOwner[0]
+    const usdtPositions = usdtPositionOwner[0]
+    const usdcPositions = usdcPositionOwner[0]
+    const huskiPositions = huskiPositionOwner[0]
+
     const positionsList = []
 
     for (let i = 0; i < bnbPositions.length; i++) {
         const tokenObject = {
             positionId: parseInt(bnbPositions[i]._hex),
-            vaultContractAddress: '0xcc1477f75872876673Fbdf6829Cd89dfe9455956',
+            vaultContractAddress: BNB_VAULT_ADDRESS,
         }
         positionsList.push(tokenObject)
     }
     for (let i = 0; i < busdPositions.length; i++) {
         const tokenObject = {
             positionId: parseInt(busdPositions[i]._hex),
-            vaultContractAddress: '0xf846fa18682f985138cE43BCC6F989B6eD69bc81',
+            vaultContractAddress: BUSD_VAULT_ADDRESS,
+        }
+        positionsList.push(tokenObject)
+    }
+    for (let i = 0; i < ethPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(ethPositions[i]._hex),
+            vaultContractAddress: ETH_VAULT_ADDRESS,
+        }
+        positionsList.push(tokenObject)
+    }
+    for (let i = 0; i < btcbPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(btcbPositions[i]._hex),
+            vaultContractAddress: BTCB_VAULT_ADDRESS,
+        }
+        positionsList.push(tokenObject)
+    }
+    for (let i = 0; i < usdtPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(usdtPositions[i]._hex),
+            vaultContractAddress: USDT_VAULT_ADDRESS,
+        }
+        positionsList.push(tokenObject)
+    }
+    for (let i = 0; i < usdcPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(usdcPositions[i]._hex),
+            vaultContractAddress: USDC_VAULT_ADDRESS,
+        }
+        positionsList.push(tokenObject)
+    }
+    for (let i = 0; i < huskiPositions.length; i++) {
+        const tokenObject = {
+            positionId: parseInt(huskiPositions[i]._hex),
+            vaultContractAddress: HUSKI_VAULT_ADDRESS,
         }
         positionsList.push(tokenObject)
     }
 
     console.log({ positionsList })
 
-    return positionsList // positionList;
+    return positionsList
 }
 
 export const fetchPositionInfo = async (positions) => {
 
     const calls = positions.map((farm) => {
         const { positionId, vaultContractAddress } = farm
-        // const vaultContractAddress = farm.farmData // (farm.farmData.TokenInfo.vaultAddress)
         return {
             address: vaultContractAddress,
             name: 'positions',
@@ -97,19 +129,17 @@ export const fetchPositionInfo = async (positions) => {
 
     const positionsWorker = await multicall(VaultABI, calls)
 
-    console.info('positionsWorker=======', positionsWorker)
     const positionsData = positionsWorker.map((data, index) => {
 
         return {
             positionId: positions[index].positionId,
             worker: data.worker,
-            vault: positions[index].vaultContractAddress, // .TokenInfo.vaultAddress,
+            vault: positions[index].vaultContractAddress,
             owner: data.owner,
-            debtShares: new BigNumber(data.debtShare._hex).toJSON(), // parseInt(data.debtShare._hex),
+            debtShares: new BigNumber(data.debtShare._hex).toJSON(),
             serialCode: new BigNumber(data.serialCode._hex).toJSON(), // parseInt(data.serialCode._hex),
         }
     });
-    // console.info('positionsData', positionsData)
 
     return positionsData
 }
@@ -128,7 +158,7 @@ export const fetchDebtShares = async (data) => {
     const parsedVaultAllowances = rawVaultAllowances.map((lpBalance) => {
         return new BigNumber(lpBalance).toJSON()
     })
-    // console.info('fetchDebtShares',parsedVaultAllowances)
+
     return parsedVaultAllowances
 }
 
@@ -168,22 +198,18 @@ export const fetchPositionsInfo = async (data) => {
 }
 
 
-export const usePositionsFormContract = (data, account) => {
+export const usePositionsFormContract = (account) => {
     BigNumber.config({ EXPONENTIAL_AT: 1e9 })
 
     const [positionData, setPositionData] = useState([])
 
     useEffect(() => {
         const positions = async () => {
-            const positionsOwner = await fetchPositionsFormContract(data, account);
+            const positionsOwner = await fetchPositionsFormContract(account);
             const positionsWorker = await fetchPositionInfo(positionsOwner);
-            console.info('positionsWorker--', positionsWorker)
             const debtShares = await fetchDebtShares(positionsWorker);
-            console.info('debtShares--', debtShares)
             const lpAmount = await fetchLpAmount(positionsWorker, debtShares);
-            console.info('lpAmount--', lpAmount)
             const positionInfo = await fetchPositionsInfo(positionsWorker);
-            console.info('positionInfo--', positionInfo)
             const positionsData = positionsWorker.map((worker, index) => {
 
                 return {
@@ -198,14 +224,12 @@ export const usePositionsFormContract = (data, account) => {
                     positionValueBase: positionInfo[index][0],
                 }
             });
-            console.info('positionsData--', positionsData)
             const positionsDataFilter = positionsData.filter((position) => position.debtShares !== '0')
-            console.info('positionsDataFilter--', positionsDataFilter)
             setPositionData(positionsDataFilter)
             return positionsDataFilter
         };
         positions();
-    }, [account, data])
+    }, [account])
 
 
     return positionData;
