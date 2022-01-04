@@ -16,7 +16,6 @@ import BalanceCell from './Cells/BalanceCell'
 import ActionCell from './Cells/ActionCell'
 
 const StyledRow = styled.div`
-  border-radius: 12px;
   display: flex;
   flex-direction: column;
   width: 100%;
