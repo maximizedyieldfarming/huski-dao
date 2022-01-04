@@ -271,7 +271,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
               <Flex className="searchSortContainer">
                 <Text bold>Sort by:</Text>
-                <Box mr="10px">
+                <Box mr={isSmallScreen ? null : "10px"} mb={isSmallScreen ? "1rem!important" : null}>
                   <Select
                     options={[
                       {

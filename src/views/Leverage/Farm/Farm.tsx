@@ -362,20 +362,50 @@ const Farm = () => {
     }
     return [
       {
-        label: tokenData?.TokenInfo.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-        value: tokenData?.TokenInfo.token?.symbol,
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.token.symbol
+            : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
-          <Box width={20} height={20}>
-            <TokenImage token={tokenData?.TokenInfo.token} width={20} height={20} />
+          <Box width={20}
+            height={20}>
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.token
+                  : tokenData?.TokenInfo?.quoteToken
+              }
+              width={20}
+              height={20}
+            />
           </Box>
         ),
       },
       {
-        label: tokenData?.TokenInfo.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB'),
-        value: tokenData?.TokenInfo.quoteToken?.symbol,
+        label:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol
+            : tokenData?.TokenInfo?.token?.symbol,
+        value:
+          selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+            ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
+            : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
-          <Box width={20} height={20}>
-            <TokenImage token={tokenData?.TokenInfo.quoteToken} width={20} height={20} />
+          <Box width={20}
+            height={20}>
+            <TokenImage
+              token={
+                selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
+                  ? tokenData?.TokenInfo.quoteToken
+                  : tokenData?.TokenInfo?.token
+              }
+              width={20}
+              height={20}
+            />
           </Box>
         ),
       },
@@ -639,38 +669,62 @@ const Farm = () => {
   const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
 
   let allowance = '0'
-  if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-
+  if (
+    radio?.toUpperCase().replace('WBNB', 'BNB') ===
+    tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  ) {
     if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
-      allowance = tokenData.userData?.tokenUserTokenAllowances // > 0 ? tokenData.userData?.tokenUserTokenAllowances : tokenUserTokenAllowances.toString()
+      allowance =
+        Number(tokenData.userData?.tokenUserTokenAllowances) > 0
+          ? tokenData.userData?.tokenUserTokenAllowances
+          : tokenUserTokenAllowances.toString()
       console.info('token token ')
     } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
-      allowance = tokenData.userData?.quoteTokenUserTokenAllowances
+      allowance =
+        Number(tokenData.userData?.quoteTokenUserTokenAllowances) > 0
+          ? tokenData.userData?.quoteTokenUserTokenAllowances
+          : quoteTokenUserTokenAllowances.toString()
       console.info('token quotetoken ')
     } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) !== 0) {
       console.info('token all ! == 0 ')
-      allowance = Number(tokenData.userData?.tokenUserTokenAllowances) > 0 ? tokenData.userData?.quoteTokenUserTokenAllowances : tokenData.userData?.tokenUserTokenAllowances
+      allowance =
+        Number(tokenData.userData?.tokenUserTokenAllowances) > 0
+          ? Number(tokenData.userData?.quoteTokenUserTokenAllowances) > 0
+            ? tokenData.userData?.quoteTokenUserTokenAllowances
+            : quoteTokenUserTokenAllowances.toString()
+          : Number(tokenData.userData?.tokenUserTokenAllowances) > 0
+            ? tokenData.userData?.tokenUserTokenAllowances
+            : tokenUserTokenAllowances.toString()
     } else {
       console.info('token all === 0 ')
       allowance = '1'
     }
-
-  } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
-
+  } else if (
+    radio?.toUpperCase().replace('WBNB', 'BNB') ===
+    tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  ) {
     if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
-      allowance = tokenData.userData?.quoteTokenUserQuoteTokenAllowances
+      allowance =
+        Number(tokenData.userData?.quoteTokenUserQuoteTokenAllowances) > 0
+          ? tokenData.userData?.quoteTokenUserQuoteTokenAllowances
+          : quoteTokenUserQuoteTokenAllowances.toString()
       console.info('quotetoken token ')
     } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
-      allowance = tokenData.userData?.tokenUserQuoteTokenAllowances
+      allowance =
+        Number(tokenData.userData?.tokenUserQuoteTokenAllowances) > 0
+          ? tokenData.userData?.tokenUserQuoteTokenAllowances
+          : tokenUserQuoteTokenAllowances.toString()
       console.info('quotetoken quotetoken ')
     } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) !== 0) {
       console.info('quotetoken all !== 0  youdianwenti xuyao yanzheng shifou qufen')
-      allowance = Number(tokenData.userData?.tokenUserQuoteTokenAllowances) > 0 ? tokenData.userData?.tokenUserQuoteTokenAllowances : tokenData.userData?.tokenUserQuoteTokenAllowances
+      allowance =
+        Number(tokenData.userData?.tokenUserQuoteTokenAllowances) > 0
+          ? tokenData.userData?.tokenUserQuoteTokenAllowances
+          : tokenUserQuoteTokenAllowances.toString()
     } else {
       console.info('quotetoken all === 0 ')
       allowance = '1'
     }
-
   }
 
   const isApproved = Number(allowance) > 0

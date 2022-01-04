@@ -28,10 +28,15 @@ const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDeb
     </>,
     { placement: 'top-start' },
   )
- if (noDebt) {
+  if (noDebt) {
     return (
       <StyledCell role="cell">
         <CellContent>
+          {(isMobile || isTablet) && (
+              <Text fontSize="12px" color="textSubtle" textAlign="left">
+                {t('Liquidation Threshold')}
+              </Text>
+          )}
           <Text>{t('No Debt')}</Text>
         </CellContent>
       </StyledCell>
@@ -45,13 +50,19 @@ const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDeb
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('Liquidation Threshold')}
             </Text>
-           {/*  {tooltipVisible && tooltip}
+            {/*  {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
             </span> */}
           </Flex>
         )}
-        {liquidationThreshold ? <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{liquidationThreshold}%</Text> : <Skeleton width="80px" height="16px" />}
+        {liquidationThreshold ? (
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            {liquidationThreshold}%
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )
