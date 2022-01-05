@@ -86,7 +86,7 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
           </Text>
         )}
         {tvl ? (
-          <Flex alignItems="center" style={{ marginTop: '17px' }}>
+          <Flex alignItems="center">
             <Text bold color="text">
               {nFormatter(tvl)}
             </Text>

@@ -68,7 +68,7 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
           </Text>
         )}
         {apy ? (
-          <Flex alignItems="center" style={{ marginTop: '17px' }}>
+          <Flex alignItems="center">
             <Text bold color="text">
               {apyAtOne}%
             </Text>

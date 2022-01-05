@@ -22,16 +22,16 @@ const LeverageContainer = styled(Flex)`
   height: 40px;
   text-align: center;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border: 1px solid ${({ theme }) => theme.colors.lvgBorder};
 `
 
 const CustomButton = styled(Button)`
   border-radius: 0;
   border: none;
-  border-left: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border-left: 1px solid ${({ theme }) => theme.colors.lvgBorder};
   padding: 0;
   &:first-child {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.lvgBorder};
   }
 `
 
