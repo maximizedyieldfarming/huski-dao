@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
-import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 

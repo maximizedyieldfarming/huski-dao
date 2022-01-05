@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints, Box, Grid } from '@huskifinance/huski-frontend-uikit'
+import {  Text, useMatchBreakpoints, Box, Grid } from '@huskifinance/huski-frontend-uikit'
 import { TokenPairImage } from 'components/TokenImage'
-import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -14,12 +13,10 @@ const StyledCell = styled(BaseCell)`
     padding-left: 32px;
     flex: 1.5 0 150px;
     align-items: center;
-    // padding-left: 32px;
   }
 `
 
 const PoolCell = ({ pool, tokenData }) => {
-  const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token

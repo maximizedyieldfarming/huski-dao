@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { useMatchBreakpoints, Box } from '@huskifinance/huski-frontend-uikit'
 import LendRow from './LendRow'
