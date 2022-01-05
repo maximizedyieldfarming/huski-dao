@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Flex, Text, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
@@ -8,10 +8,9 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
- 
+
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 1 0 120px;
-    
   }
 `
 const NameCell = ({ data }) => {
@@ -20,10 +19,10 @@ const NameCell = ({ data }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Flex alignItems='center'>
+        <Flex alignItems="center">
           {/* <TokenImage token={token?.token} width={40} height={40} mr="8px" /> */}
-          <img width='44px' src="/images/lock/sHuski.png" alt="" />
-          <Text color="text" fontWeight="600" bold={!isMobile} small={isMobile} ml='15px'> 
+          <img width="44px" src="/images/lock/sHuski.png" alt="" />
+          <Text color="text" fontWeight="600" bold={!isMobile} small={isMobile} ml="15px">
             {data.name}
           </Text>
         </Flex>

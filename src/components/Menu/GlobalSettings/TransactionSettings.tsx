@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, Button, Input, Flex, Box } from 'husky-uikit1.0'
+import { Text, Button, Input, Flex, Box } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
 import { useTheme } from 'styled-components'
@@ -76,7 +76,9 @@ const SlippageTabs = () => {
     <Flex flexDirection="column">
       <Flex flexDirection="column" mb="24px">
         <Flex mb="12px">
-          <Text fontSize="14px" bold >{t('Slippage Tolerance')}</Text>
+          <Text fontSize="14px" bold>
+            {t('Slippage Tolerance')}
+          </Text>
           <QuestionHelper
             text={t(
               'Setting a high slippage tolerance can help transactions succeed, but you may not get such a good price. Use with caution.',
@@ -89,39 +91,42 @@ const SlippageTabs = () => {
           <Button
             mt="4px"
             mr="4px"
-            width={60} height={35}
+            width={60}
+            height={35}
             onClick={() => {
               setSlippageInput('')
               setUserSlippageTolerance(10)
             }}
             variant={userSlippageTolerance === 10 ? 'primary' : 'tertiary'}
-            style={{ fontSize: "14px", fontWeight: "normal", padding: 0, }}
+            style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
           >
             0.1%
           </Button>
           <Button
             mt="4px"
             mr="4px"
-            width={60} height={35}
+            width={60}
+            height={35}
             onClick={() => {
               setSlippageInput('')
               setUserSlippageTolerance(50)
             }}
             variant={userSlippageTolerance === 50 ? 'primary' : 'tertiary'}
-            style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
+            style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
           >
             0.5%
           </Button>
           <Button
             mr="4px"
             mt="4px"
-            width={60} height={35}
+            width={60}
+            height={35}
             onClick={() => {
               setSlippageInput('')
               setUserSlippageTolerance(100)
             }}
             variant={userSlippageTolerance === 100 ? 'primary' : 'tertiary'}
-            style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
+            style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
           >
             1.0%
           </Button>
@@ -136,12 +141,19 @@ const SlippageTabs = () => {
                 onChange={(e) => parseCustomSlippage(e.target.value)}
                 isWarning={!slippageInputIsValid}
                 isSuccess={![10, 50, 100].includes(userSlippageTolerance)}
-                style={{ borderRadius: "10px", border: isDark ? "1px solid #272B30" : "none", height: "35px", marginTop: "2px", fontWeight: "normal", fontSize: "14px", color: "#7B3FE4", backgroundColor: isDark ? "transparent" : "#F4F4F4" }}
+                style={{
+                  borderRadius: '10px',
+                  border: isDark ? '1px solid #272B30' : 'none',
+                  height: '35px',
+                  marginTop: '2px',
+                  fontWeight: 'normal',
+                  fontSize: '14px',
+                  color: '#7B3FE4',
+                  backgroundColor: isDark ? 'transparent' : '#F4F4F4',
+                }}
               />
             </Box>
-            <Text ml="2px">
-              %
-            </Text>
+            <Text ml="2px">%</Text>
           </Flex>
         </Flex>
         {!!slippageError && (
@@ -149,12 +161,11 @@ const SlippageTabs = () => {
             {slippageError === SlippageError.InvalidInput
               ? t('Enter a valid slippage percentage')
               : slippageError === SlippageError.RiskyLow
-                ? t('Your transaction may fail')
-                : t('Your transaction may be frontrun')}
+              ? t('Your transaction may fail')
+              : t('Your transaction may be frontrun')}
           </Text>
         )}
       </Flex>
-
     </Flex>
   )
 }

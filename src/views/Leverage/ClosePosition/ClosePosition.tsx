@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Flex, Text } from 'husky-uikit1.0'
+import { Box, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import Page from 'components/Layout/Page'
 import styled, { useTheme } from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'
@@ -8,17 +8,16 @@ import ConverTo from './components/ConverTo'
 import MinimizeTrading from './components/MinimizeTrading'
 
 interface Props {
-  active: boolean,
-  isDark: boolean,
+  active: boolean
+  isDark: boolean
 }
 
 const TabPanel = styled(Box)`
-
   padding: 2rem;
-  padding-bottom : 1rem;
-  @media screen and (max-width : 500px){
-    padding-left : 16px;
-    padding-right : 16px
+  padding-bottom: 1rem;
+  @media screen and (max-width: 500px) {
+    padding-left: 16px;
+    padding-right: 16px;
   }
   background-color: ${({ theme }) => theme.card.background};
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
@@ -27,9 +26,9 @@ const TabPanel = styled(Box)`
   // height: 528px;
 `
 
-const Header = styled(Flex) <{ isDark: boolean }>`
+const Header = styled(Flex)<{ isDark: boolean }>`
   margin-top: 20px;
-  background: ${({ isDark }) => isDark ? '#111315' : '#f4f4f4'};
+  background: ${({ isDark }) => (isDark ? '#111315' : '#f4f4f4')};
   border-radius: 12px;
   padding: 4px;
   height: 54px;
@@ -39,9 +38,9 @@ const HeaderTabs = styled.div<Props>`
   flex: 1;
   box-shadow: ${({ active, isDark }) =>
     active
-      ? (isDark ?
-        '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)' :
-        '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)')
+      ? isDark
+        ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)'
+        : '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'
       : ''};
   background-color: ${({ active, isDark }) => (active ? (isDark ? '#272B30' : '#FFFFFF') : 'transparent')};
   padding: 1rem;
@@ -97,18 +96,18 @@ const ClosePosition = (props) => {
   }
 
   const [isCloseEntire, setCloseEntire] = useState(true)
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
   // const handleSelectChange = (e) => setCloseEntire(e.value === 'close_all')
 
   return (
-    <Page style={{ maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto'}}>
+    <Page style={{ maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto' }}>
       <Text fontSize="36px" textTransform="capitalize" mx="auto">
         {t('Close Position')}
       </Text>
 
       <TabPanel>
-        <Flex alignItems="center" flexWrap='wrap'>
-          <Flex alignItems="center" justifySelf="flex-start" flex="1" mb='10px'>
+        <Flex alignItems="center" flexWrap="wrap">
+          <Flex alignItems="center" justifySelf="flex-start" flex="1" mb="10px">
             <Text mr="1rem" fontWeight="900" fontSize="18px">
               {t('Which method would you like to use?')}
             </Text>
@@ -118,12 +117,7 @@ const ClosePosition = (props) => {
             <Text fontWeight="500">#{positionId}</Text>
             <Flex alignItems="center" ml="10px">
               <Box width={24} height={24}>
-                <TokenPairImage
-                  primaryToken={tokenValue}
-                  secondaryToken={quoteTokenValue}
-                  width={24}
-                  height={24}
-                />
+                <TokenPairImage primaryToken={tokenValue} secondaryToken={quoteTokenValue} width={24} height={24} />
               </Box>
               <Flex flexDirection="column" ml="10px">
                 <Text style={{ whiteSpace: 'nowrap' }} fontWeight="500">
@@ -138,12 +132,12 @@ const ClosePosition = (props) => {
         </Flex>
         <Header isDark={isDark}>
           <HeaderTabs onClick={handleDepositClick} active={isDeposit} isDark={isDark}>
-            <Text bold fontSize="15px" color={!isDeposit ? '#6F767E' : (!isDark ? '#1A1D1F' : 'white')}>
+            <Text bold fontSize="15px" color={!isDeposit ? '#6F767E' : !isDark ? '#1A1D1F' : 'white'}>
               {t('Convert To')} {symbolName}
             </Text>
           </HeaderTabs>
           <HeaderTabs onClick={handleWithdrawClick} active={!isDeposit} isDark={isDark}>
-            <Text bold fontSize="15px" color={isDeposit ? '#6F767E' : (!isDark ? '#1A1D1F' : 'white')}>
+            <Text bold fontSize="15px" color={isDeposit ? '#6F767E' : !isDark ? '#1A1D1F' : 'white'}>
               {t('Minimize Trading')}
             </Text>
           </HeaderTabs>

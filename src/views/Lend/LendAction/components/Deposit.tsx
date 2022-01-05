@@ -1,5 +1,14 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid, useMatchBreakpoints } from 'husky-uikit1.0'
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  AutoRenewIcon,
+  Input,
+  Grid,
+  useMatchBreakpoints,
+} from '@huskifinance/huski-frontend-uikit'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
@@ -34,8 +43,8 @@ const ButtonGroup = styled(Flex)`
   align-items: center;
 `
 const Section = styled(Flex)`
-  align-items : center;
-  height : 100px;
+  align-items: center;
+  height: 100px;
   background-color: #f7f7f8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
@@ -182,7 +191,7 @@ const Deposit: React.FC<DepositProps> = ({
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: isDark ? "white" : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+            <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
               userTokenBalance,
               tokenData.TokenInfo?.token?.decimalsDigits,
             )} ${name}`}</span>
@@ -199,7 +208,14 @@ const Deposit: React.FC<DepositProps> = ({
               placeholder="0.00"
               onChange={handleAmountChange}
               value={amount}
-              style={{ background: 'unset', border: 'transparent', padding: '0', color: '#1A1D1F  ', fontSize: '28px', fontWeight: 'bold' }}
+              style={{
+                background: 'unset',
+                border: 'transparent',
+                padding: '0',
+                color: '#1A1D1F  ',
+                fontSize: '28px',
+                fontWeight: 'bold',
+              }}
             />
           </Box>
           <Box>
@@ -215,7 +231,7 @@ const Deposit: React.FC<DepositProps> = ({
                     padding: '7px 8px',
                     color: '#1A1D1F',
                     fontSize: '14px',
-                    fontWeight: 500
+                    fontWeight: 500,
                   }}
                   onClick={setAmountToMax}
                 >
@@ -257,7 +273,9 @@ const Deposit: React.FC<DepositProps> = ({
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>ib{name}</Text>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
+                  ib{name}
+                </Text>
               </Grid>
             </MaxContainer>
           </Box>
@@ -266,12 +284,7 @@ const Deposit: React.FC<DepositProps> = ({
       <ButtonGroup flexDirection="row" justifyContent="space-between" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
-          <Text
-            fontWeight="bold"
-            fontSize="16px"
-            style={{ height: '100%' }}
-            onClick={() => history.push('/lend')}
-          >
+          <Text fontWeight="bold" fontSize="16px" style={{ height: '100%' }} onClick={() => history.push('/lend')}>
             {t('Back')}
           </Text>
         </Flex>
@@ -286,10 +299,16 @@ const Deposit: React.FC<DepositProps> = ({
             {isPending ? t('Approving') : t('Approve')}
           </Button>
         )} */}
-        <Flex flexWrap='wrap' justifyContent="right">
+        <Flex flexWrap="wrap" justifyContent="right">
           {isApproved ? null : (
             <Button
-              style={{ width: '160px', height: '57px', borderRadius: '16px', marginBottom: '10px', marginRight: '10px' }}
+              style={{
+                width: '160px',
+                height: '57px',
+                borderRadius: '16px',
+                marginBottom: '10px',
+                marginRight: '10px',
+              }}
               onClick={handleApprove}
               disabled={!account || isApproving}
               isLoading={isApproving}

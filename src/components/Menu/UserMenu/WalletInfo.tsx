@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Flex, InjectedModalProps, LinkExternal, Message, Text } from 'husky-uikit1.0'
+import { Box, Button, Flex, InjectedModalProps, LinkExternal, Message, Text } from '@huskifinance/huski-frontend-uikit'
 import { useWeb3React } from '@web3-react/core'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getCakeAddress } from 'utils/addressHelpers'
@@ -49,10 +49,12 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
         <Text bold>{getFullDisplayBalance(cakeBalance, 18, 3)} HUSKI</Text>
       </Flex>
       <Flex alignItems="center" mb="24px" justifyContent="space-between">
-        <Text color="#7B3FE4" bold>{t('View on BscScan')}</Text>
-        <LinkExternal href={getBscScanLink(account, 'address')} width={20} color='#292D32' />
+        <Text color="#7B3FE4" bold>
+          {t('View on BscScan')}
+        </Text>
+        <LinkExternal href={getBscScanLink(account, 'address')} width={20} color="#292D32" />
       </Flex>
-      <Button  width="100%" onClick={handleLogout}>
+      <Button width="100%" onClick={handleLogout}>
         {t('Disconnect Wallet')}
       </Button>
     </>

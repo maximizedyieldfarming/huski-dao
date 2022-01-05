@@ -1,5 +1,5 @@
 import React from 'react'
-import { HistoryIcon, Button, useModal } from 'husky-uikit1.0'
+import { HistoryIcon, Button, useModal } from '@huskifinance/huski-frontend-uikit'
 import TransactionsModal from './TransactionsModal'
 
 const Transactions = () => {

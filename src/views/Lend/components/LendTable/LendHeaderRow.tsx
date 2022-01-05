@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text} from 'husky-uikit1.0'
+import { Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
@@ -12,15 +12,15 @@ const StyledRow = styled.div`
     flex-direction: row;
   }
   //cursor: pointer;
-  margin-bottom : 10px;
+  margin-bottom: 10px;
 `
 
 const NameCell = styled(BaseCell)`
-  min-width : 220px;
-  flex:2;
+  min-width: 220px;
+  flex: 2;
   flex-direction: row;
   justify-content: flex-start;
-    align-items: start;
+  align-items: start;
   ${({ theme }) => theme.mediaQueries.sm} {
     // flex: 1 0 350;
     //  padding-left: 32px;
@@ -28,20 +28,19 @@ const NameCell = styled(BaseCell)`
 `
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
-  flex:1;
-  min-width : 10px;
+  flex: 1;
+  min-width: 10px;
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
 `
-
 
 const LendHeaderRow = () => {
   const { t } = useTranslation()
   return (
     <StyledRow>
       <NameCell>
-        <CellContent >
+        <CellContent>
           <Text fontWeight="600" fontSize="16px" color="textSubtle">
             {t('POOL Name')}
           </Text>

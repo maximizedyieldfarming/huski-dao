@@ -1,6 +1,13 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { ChevronDownIcon, ChevronUpIcon, Flex, Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Flex,
+  Text,
+  useMatchBreakpoints,
+  Button,
+} from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -12,35 +19,35 @@ const StyledCell = styled(BaseCell)`
 `
 const LeverageContainer = styled(Flex)`
   border-radius: 10px;
-  height:40px;
+  height: 40px;
   text-align: center;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border: 1px solid ${({ theme }) => theme.colors.lvgBorder};
 `
 
 const CustomButton = styled(Button)`
   border-radius: 0;
   border: none;
-  border-left: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border-left: 1px solid ${({ theme }) => theme.colors.lvgBorder};
   padding: 0;
   &:first-child {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.lvgBorder};
   }
 `
 
-// const LeverageCell = ({ leverage }) => {
-export default function LeverageCell({ leverage, onChange, childLeverage }: { leverage: any; onChange: (value: any) => void; childLeverage: any }) {
+export default function LeverageCell({
+  leverage,
+  onChange,
+  childLeverage,
+}: {
+  leverage: any
+  onChange: (value: any) => void
+  childLeverage: any
+}) {
   const [lvgValue, setLvgValue] = useState(childLeverage)
   React.useEffect(() => {
-
     setLvgValue(childLeverage)
   }, [childLeverage])
-  // const increaseLvgValue = (e) => {
-  //   setLvgValue(lvgValue + 0.5)
-  // }
-  // const decreaseLvgValue = (e) => {
-  //   setLvgValue(lvgValue - 0.5)
-  // }
 
   const increaseLvgValue = useCallback(() => {
     const input = lvgValue + 0.5
@@ -65,9 +72,11 @@ export default function LeverageCell({ leverage, onChange, childLeverage }: { le
             {t('Leverage')}
           </Text>
         )}
-        <LeverageContainer alignItems='start'>
+        <LeverageContainer alignItems="start">
           <Flex padding="1rem">
-            <Text color='text' fontWeight="500">{lvgValue?.toFixed(2)}</Text>
+            <Text color="text" fontWeight="500">
+              {lvgValue?.toFixed(2)}
+            </Text>
           </Flex>
           <Flex flexDirection="column">
             <CustomButton scale="xs" variant="secondary" onClick={increaseLvgValue} disabled={lvgValue === leverage}>
@@ -82,5 +91,3 @@ export default function LeverageCell({ leverage, onChange, childLeverage }: { le
     </StyledCell>
   )
 }
-
-// export default LeverageCell

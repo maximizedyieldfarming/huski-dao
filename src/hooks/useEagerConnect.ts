@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { connectorLocalStorageKey, ConnectorNames } from 'husky-uikit1.0'
+import { connectorLocalStorageKey, ConnectorNames } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
 
 const _binanceChainListener = async () =>

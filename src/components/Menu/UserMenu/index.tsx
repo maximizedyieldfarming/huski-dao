@@ -8,7 +8,7 @@ import {
   UserMenuDivider,
   UserMenuItem,
   Button,
-} from 'husky-uikit1.0'
+} from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
 import { useProfile } from 'state/profile/hooks'
 import ConnectWalletButton from 'components/ConnectWalletButton'
@@ -35,10 +35,10 @@ const UserMenu = () => {
   if (pathname === '/') {
     return (
       <>
-        <Button mr="10px" variant="secondary" style={{border:'none',background:'transparent',color:'white'}}>
+        <Button mr="10px" variant="secondary" style={{ border: 'none', background: 'transparent', color: 'white' }}>
           Buy HUSKI
         </Button>
-        <Button as={Link} to="/lend"  style={{background:'white',color:'black',border:'none'}}>
+        <Button as={Link} to="/lend" style={{ background: 'white', color: 'black', border: 'none' }}>
           Launch App
         </Button>
       </>

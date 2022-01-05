@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { Box, Flex, Text, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
+import { Box, Flex, Text, InfoIcon, ChevronRightIcon } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
@@ -24,10 +24,10 @@ const Wrapper = styled(Box)`
   }
 `
 
-const GrayBox = styled(Flex) <{ isDark: boolean }>`
-  background-color: ${({ isDark }) => isDark ? '#111315' : '#F4F4F4'};
+const GrayBox = styled(Flex)<{ isDark: boolean }>`
+  background-color: ${({ isDark }) => (isDark ? '#111315' : '#F4F4F4')};
   padding: 16px 24px;
-  padding-right : 0;
+  padding-right: 0;
   border-radius: 12px;
 `
 
@@ -35,11 +35,11 @@ interface MoveProps {
   move: number
 }
 
-const MoveBox = styled(Box) <MoveProps>`
+const MoveBox = styled(Box)<MoveProps>`
   margin-left: ${({ move }) => move}px;
   margin-top: -20px;
   margin-bottom: 10px;
-  color: #83BF6E;
+  color: #83bf6e;
 `
 
 const makeLongShadow = (color: any, size: any) => {
@@ -67,7 +67,7 @@ const RangeInput = styled.input`
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 32px;
-    background: linear-gradient(to right, #83BF6E, #83BF6E) 100% 50% / 100% 4px no-repeat transparent;
+    background: linear-gradient(to right, #83bf6e, #83bf6e) 100% 50% / 100% 4px no-repeat transparent;
   }
 
   &:focus {
@@ -83,7 +83,7 @@ const RangeInput = styled.input`
     background-image: url('/images/RangeHandle1.png');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size : 100% 100%;
+    background-size: 100% 100%;
 
     border: 0;
     top: 50%;
@@ -104,37 +104,39 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
   quoteTokenName,
   tokenName,
   baseTokenAmountValue,
-  farmTokenAmountValue
+  farmTokenAmountValue,
 }) => {
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm } =
-    minimizeTradingValues
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm } = minimizeTradingValues
   const { t } = useTranslation()
   const { percentage, setPercentage } = usePercentageToCloseContext()
   const targetRef = React.useRef<any>()
   const [moveVal, setMoveVal] = useState({ width: 0, height: 0 })
   const [margin, setMargin] = useState(0)
 
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
   useLayoutEffect(() => {
     if (targetRef.current !== null && targetRef.current !== undefined) {
       setMoveVal({
         width: targetRef?.current?.offsetWidth,
         height: targetRef?.current?.offsetHeight,
       })
-      console.log("!!!!", targetRef?.current?.offsetWidth);
+      console.log('!!!!', targetRef?.current?.offsetWidth)
     }
   }, [percentage])
 
   useEffect(() => {
-    setMargin((moveVal.width - 32) / 100 * percentage);
+    setMargin(((moveVal.width - 32) / 100) * percentage)
   }, [percentage, moveVal.width])
 
   return (
     <Wrapper>
       <GrayBox isDark={isDark}>
         <InfoIcon />
-        <Text color="textSubtle" fontSize='12px' ml='3px'>
-          {t('We will convert the minimun required amount to tokens into USDT to payback the debt and return the remaining assets to you.', { tokenName })}
+        <Text color="textSubtle" fontSize="12px" ml="3px">
+          {t(
+            'We will convert the minimun required amount to tokens into USDT to payback the debt and return the remaining assets to you.',
+            { tokenName },
+          )}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (
@@ -145,7 +147,9 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
           </Text>
 
           <Flex>
-            <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto', marginTop: "20px" }}>
+            <Box
+              style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px' }}
+            >
               <MoveBox move={margin}>
                 <Text color="#83BF6E" bold>
                   {percentage}%
@@ -168,11 +172,11 @@ const RepayDebtMinimizeTrading: React.FC<Props> = ({
                 style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '-15px' }}
                 id="percentageToClose"
               >
-                <option value={0} label='0%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={25} label='25%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={50} label='50%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={75} label='75%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={100} label='100%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                <option value={0} label="0%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={25} label="25%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={50} label="50%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={75} label="75%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={100} label="100%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
               </datalist>
             </Box>
           </Flex>

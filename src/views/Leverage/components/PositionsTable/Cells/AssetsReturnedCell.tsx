@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -42,7 +42,13 @@ const AssetsReturnedCell = ({ assetsReturned }) => {
             </span> */}
           </Flex>
         )}
-        {assetsReturned ? <Text  color="text" fontWeight="600" fontSize="16px" mt='8px'>{assetsReturned}</Text> : <Skeleton width="80px" height="16px" />}
+        {assetsReturned ? (
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            {assetsReturned}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

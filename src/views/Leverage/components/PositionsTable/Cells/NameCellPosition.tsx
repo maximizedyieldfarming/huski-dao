@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Text, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenPairImage } from 'components/TokenImage'
@@ -20,11 +20,13 @@ const NameCell = ({ name, positionId }) => {
 
   return (
     <StyledCell role="cell">
-      <CellContent >
-      <Text color="text" fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
+      <CellContent>
+        <Text color="text" fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
           {name}
         </Text>
-        <Text color="textSubtle" fontSize="12px" mt="8px">#{positionId}</Text>
+        <Text color="textSubtle" fontSize="12px" mt="8px">
+          #{positionId}
+        </Text>
       </CellContent>
     </StyledCell>
   )

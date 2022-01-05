@@ -12,7 +12,7 @@ import {
   ArrowForwardIcon,
   useMatchBreakpoints,
   AutoRenewIcon,
-} from 'husky-uikit1.0'
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { TokenImage } from 'components/TokenImage'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
@@ -57,7 +57,6 @@ const Section = styled(Box)`
 
   > ${Flex} {
     padding: 1.2rem 0;
-   
   }
 
   input[type='range'] {
@@ -66,29 +65,29 @@ const Section = styled(Box)`
 `
 const SectionWrapper = styled(Page)`
   display: flex;
-  justify-content : center;
-  min-height : unset;
+  justify-content: center;
+  min-height: unset;
   flex-direction: column;
-  padding-bottom : 0;
+  padding-bottom: 0;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
   > .main {
-   ${({ theme }) => theme.mediaQueries.lg} {
-    width: 850px;
+    ${({ theme }) => theme.mediaQueries.lg} {
+      width: 850px;
+    }
   }
-}
   > .sideSection {
     flex-direction: column;
     gap: 1rem;
-   ${({ theme }) => theme.mediaQueries.lg} {
-    width: 500px;
+    ${({ theme }) => theme.mediaQueries.lg} {
+      width: 500px;
+    }
   }
-}
 `
 
-const InputArea = styled(Flex) <{ isDark: boolean }>`
-  background-color: ${({ isDark }) => isDark ? '#111315' : '#F7F7F8'};
+const InputArea = styled(Flex)<{ isDark: boolean }>`
+  background-color: ${({ isDark }) => (isDark ? '#111315' : '#F7F7F8')};
   border-radius: '12px';
   height: 80px;
   padding: 0.5rem;
@@ -103,16 +102,19 @@ const customBotton = styled(Button)`
   margin-top: 4px;
   margin-bottom: 4px;
 `
-const StyledButton = styled(customBotton) <{ isDark: boolean }>`
+const StyledButton = styled(customBotton)<{ isDark: boolean }>`
   &:focus {
     width: 25%;
     border-color: transparent !important;
-    background: ${({ isDark }) => isDark ? '#272B30' : 'white'};
+    background: ${({ isDark }) => (isDark ? '#272B30' : 'white')};
     margin-top: 4px;
     margin-bottom: 4px;
     border-radius: 12px;
     color: #ff6a55 !important;
-    box-shadow: ${({ isDark }) => isDark ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)' : '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'};
+    box-shadow: ${({ isDark }) =>
+      isDark
+        ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)'
+        : '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'};
   }
   &:visited {
     width: 25%;
@@ -130,14 +132,14 @@ interface MoveProps {
   move: number
 }
 
-const MoveBox = styled(Box) <MoveProps>`
+const MoveBox = styled(Box)<MoveProps>`
   margin-left: ${({ move }) => move}px;
   margin-top: -20px;
   margin-bottom: 10px;
   color: #7b3fe4;
 `
-const ButtonArea = styled(Flex) <{ isDark: boolean }>`
-  background-color: ${({ isDark }) => isDark ? '#111315' : '#F7F7F8'};
+const ButtonArea = styled(Flex)<{ isDark: boolean }>`
+  background-color: ${({ isDark }) => (isDark ? '#111315' : '#F7F7F8')};
   border-radius: 12px;
   padding-left: 4px;
   padding-right: 4px;
@@ -176,7 +178,7 @@ const RangeInput = styled.input`
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 32px;
-    background: linear-gradient(to right, #7B3FE4, #7B3FE4) 100% 50% / 100% 4px no-repeat transparent;
+    background: linear-gradient(to right, #7b3fe4, #7b3fe4) 100% 50% / 100% 4px no-repeat transparent;
   }
 
   &:focus {
@@ -192,7 +194,7 @@ const RangeInput = styled.input`
     background-image: url('/images/blueslider.png');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size : 100% 100%;
+    background-size: 100% 100%;
     border: 0;
     top: 50%;
     transform: translateY(-50%);
@@ -207,15 +209,15 @@ const RangeInput = styled.input`
 `
 
 const SBPage = styled(Page)`
-  overflow-x : hidden;
-  min-height : unset;
-  padding-top : 0px;
-  padding-bottom : 20px;
-  @media screen and (max-width : 450px){
-    padding : 0;
-    margin : 0;
+  overflow-x: hidden;
+  min-height: unset;
+  padding-top: 0px;
+  padding-bottom: 20px;
+  @media screen and (max-width: 450px) {
+    padding: 0;
+    margin: 0;
   }
-`;
+`
 const Farm = () => {
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { token } = useParams<RouteParams>()
@@ -249,9 +251,9 @@ const Farm = () => {
     }
     return datalistSteps.map((value, i) => {
       if (i === datalistSteps.length - 1)
-        return <option value={value} label="MAX" style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+        return <option value={value} label="MAX" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
 
-      return <option value={value} label={value} style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+      return <option value={value} label={value} style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
     })
   })()
 
@@ -371,8 +373,7 @@ const Farm = () => {
             ? tokenData?.TokenInfo.token.symbol
             : tokenData?.TokenInfo?.quoteToken?.symbol,
         icon: (
-          <Box width={20}
-            height={20}>
+          <Box width={20} height={20}>
             <TokenImage
               token={
                 selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
@@ -395,8 +396,7 @@ const Farm = () => {
             ? tokenData?.TokenInfo.quoteToken.symbol.toUpperCase().replace('WBNB', 'BNB')
             : tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB'),
         icon: (
-          <Box width={20}
-            height={20}>
+          <Box width={20} height={20}>
             <TokenImage
               token={
                 selectedBorrowing === tokenData?.TokenInfo?.token?.symbol
@@ -444,7 +444,6 @@ const Farm = () => {
   const bnbVaultAddress = getWbnbAddress()
   const depositContract = useVault(bnbVaultAddress)
   const handleDeposit = async (bnbMsgValue) => {
-
     const callOptionsBNB = {
       gasLimit: 380000,
       value: bnbMsgValue,
@@ -452,12 +451,7 @@ const Farm = () => {
     // setIsPending(true)
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
-      const tx = await callWithGasPrice(
-        depositContract,
-        'deposit',
-        [bnbMsgValue],
-        callOptionsBNB,
-      )
+      const tx = await callWithGasPrice(depositContract, 'deposit', [bnbMsgValue], callOptionsBNB)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
@@ -487,7 +481,6 @@ const Farm = () => {
       // setIsApproving(false)
     }
   }
-
 
   const handleFarm = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptions = {
@@ -528,8 +521,12 @@ const Farm = () => {
     const abiCoder = ethers.utils.defaultAbiCoder
     const AssetsBorrowed = farmData ? farmData[3] : 0
     const minLPAmountValue = farmData ? farmData[12] : 0
-    const minLPAmount = getDecimalAmount(new BigNumber(minLPAmountValue), 18).toString().replace(/\.(.*?\d*)/g, '') // minLPAmountValue.toString()
-    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18).toString().replace(/\.(.*?\d*)/g, '')
+    const minLPAmount = getDecimalAmount(new BigNumber(minLPAmountValue), 18)
+      .toString()
+      .replace(/\.(.*?\d*)/g, '') // minLPAmountValue.toString()
+    const loan = getDecimalAmount(new BigNumber(AssetsBorrowed), 18)
+      .toString()
+      .replace(/\.(.*?\d*)/g, '')
 
     const maxReturn = 0
     let amount
@@ -551,20 +548,27 @@ const Farm = () => {
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         console.info('base + single + quote token input ')
-        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18)
+          .toString()
+          .replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])  last 1, represent advanced farm
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('base + all ')
-        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+        farmingTokenAmount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18)
+          .toString()
+          .replace(/\.(.*?\d*)/g, '') // (quoteTokenInput || 0)?.toString()
 
         strategiesAddress = tokenData.TokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, minLPAmount, '1'])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = vaultContract
-      amount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      amount = getDecimalAmount(new BigNumber(tokenInput || 0), 18)
+        .toString()
+        .replace(/\.(.*?\d*)/g, '')
+
       workerAddress = tokenData.TokenInfo.address
     } else {
       // farm token is base token
@@ -576,20 +580,26 @@ const Farm = () => {
       } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('farm + single + quote token input ')
         wrapFlag = true
-        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInput || 0), 18)
+          .toString()
+          .replace(/\.(.*?\d*)/g, '') // (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1']) // [param.farmingTokenAmount, param.minLPAmount])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
         console.info('farm + all ')
         wrapFlag = true
-        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+        farmingTokenAmount = getDecimalAmount(new BigNumber(tokenInput || 0), 18)
+          .toString()
+          .replace(/\.(.*?\d*)/g, '') // (tokenInput || 0)?.toString()
         strategiesAddress = tokenData.QuoteTokenInfo.strategies.StrategyAddTwoSidesOptimal
         dataStrategy = abiCoder.encode(['uint256', 'uint256', 'uint256'], [farmingTokenAmount, '1', '1'])
         dataWorker = abiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       }
       contract = quoteTokenVaultContract
-      amount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
+      amount = getDecimalAmount(new BigNumber(quoteTokenInput || 0), 18)
+        .toString()
+        .replace(/\.(.*?\d*)/g, '')
       workerAddress = tokenData.QuoteTokenInfo.address
     }
 
@@ -597,7 +607,8 @@ const Farm = () => {
       radio,
       minLPAmount,
       tokenName,
-      "ethers.utils.parseEther(minLPAmount)": ethers.utils.parseEther(minLPAmount),
+      // 'ethers.utils.parseEther(farmingTokenAmount)':ethers.utils.parseEther(farmingTokenAmount),
+      'ethers.utils.parseEther(minLPAmount)': ethers.utils.parseEther(minLPAmount),
       id,
       workerAddress,
       amount,
@@ -613,9 +624,16 @@ const Farm = () => {
       quoteTokenInput,
     })
 
-    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && wrapFlag) {
-      const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInput || 0), 18).toString().replace(/\.(.*?\d*)/g, '')
-      console.info('wrap bnb', bnbMsgValue)
+    if (
+      tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
+      radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
+      wrapFlag
+    ) {
+      const bnbMsgValue = getDecimalAmount(new BigNumber(tokenInput || 0), 18)
+        .toString()
+        .replace(/\.(.*?\d*)/g, '')
+
+      console.info('wrap bnb')
       handleDeposit(bnbMsgValue)
 
       const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
@@ -623,7 +641,6 @@ const Farm = () => {
       if (Number(allowance) === 0) {
         handleApproveBnb()
       }
-
     }
     handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
@@ -663,10 +680,22 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
-  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.token?.address), tokenData?.TokenInfo?.vaultAddress,)
-  const { allowance: quoteTokenUserTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.TokenInfo?.vaultAddress,)
-  const { allowance: tokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.token?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
-  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(getAddress(tokenData?.TokenInfo?.quoteToken?.address), tokenData?.QuoteTokenInfo?.vaultAddress,)
+  const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.token?.address),
+    tokenData?.TokenInfo?.vaultAddress,
+  )
+  const { allowance: quoteTokenUserTokenAllowances } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.quoteToken?.address),
+    tokenData?.TokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenUserQuoteTokenAllowances } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.token?.address),
+    tokenData?.QuoteTokenInfo?.vaultAddress,
+  )
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
+    getAddress(tokenData?.TokenInfo?.quoteToken?.address),
+    tokenData?.QuoteTokenInfo?.vaultAddress,
+  )
 
   let allowance = '0'
   if (
@@ -693,8 +722,8 @@ const Farm = () => {
             ? tokenData.userData?.quoteTokenUserTokenAllowances
             : quoteTokenUserTokenAllowances.toString()
           : Number(tokenData.userData?.tokenUserTokenAllowances) > 0
-            ? tokenData.userData?.tokenUserTokenAllowances
-            : tokenUserTokenAllowances.toString()
+          ? tokenData.userData?.tokenUserTokenAllowances
+          : tokenUserTokenAllowances.toString()
     } else {
       console.info('token all === 0 ')
       allowance = '1'
@@ -738,7 +767,10 @@ const Farm = () => {
     let contract
     let approveAddress
 
-    if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
+    if (
+      radio?.toUpperCase().replace('WBNB', 'BNB') ===
+      tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    ) {
       if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
         console.info('token approveContract vaultAddress ')
         contract = approveContract
@@ -748,8 +780,10 @@ const Farm = () => {
         contract = quoteTokenApproveContract
         approveAddress = vaultAddress
       }
-
-    } else if (radio?.toUpperCase().replace('WBNB', 'BNB') === tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')) {
+    } else if (
+      radio?.toUpperCase().replace('WBNB', 'BNB') ===
+      tokenData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    ) {
       if (Number(tokenInput || 0) === 0 && Number(quoteTokenInput || 0) !== 0) {
         contract = quoteTokenApproveContract
         approveAddress = quoteTokenVaultAddress
@@ -759,7 +793,6 @@ const Farm = () => {
         contract = approveContract
         approveAddress = quoteTokenVaultAddress
       }
-
     }
 
     console.log({ contract, approveAddress })
@@ -824,20 +857,33 @@ const Farm = () => {
       ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
 
-  const bnbInput = tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
+  const bnbInput =
+    tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
   const getWrapText = (): string => {
-    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') && radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' && bnbInput) {
+    if (
+      tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
+      radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
+      bnbInput
+    ) {
       return t(`Wrap BNB & ${leverageValue}x Farm`)
     }
     return t(`${leverageValue}x Farm`)
   }
-  
+
   const getDots = (): React.ReactNode => {
     const dot = []
     const steps = leverage / 0.5 - 1
     for (let i = 1; i <= steps; i++) {
       const value = 1 + 0.5 * (-1 + i)
-      dot.push(<Box key={i} borderRadius="50%" width="12px" height="12px" background={Number(leverageValue) >= value ?'#7B3FE4' : 'rgb(189,159,242)'} />)
+      dot.push(
+        <Box
+          key={i}
+          borderRadius="50%"
+          width="12px"
+          height="12px"
+          background={Number(leverageValue) >= value ? '#7B3FE4' : 'rgb(189,159,242)'}
+        />,
+      )
     }
     return dot
   }

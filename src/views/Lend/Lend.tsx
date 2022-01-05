@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import React from 'react'
-import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Text, Flex, Box, Skeleton, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import Page from 'components/Layout/Page'
@@ -134,7 +134,15 @@ const Lend: React.FC = () => {
           className="block"
           style={{ position: 'relative', marginRight: '25px', display: 'flex', alignItems: 'center' }}
         >
-          <h2 style={{ fontFamily: 'Baloo Bhaijaan', color: '#FFFFFF', fontSize: '64px', marginLeft: '80px', fontWeight: 400 }}>
+          <h2
+            style={{
+              fontFamily: 'Baloo Bhaijaan',
+              color: '#FFFFFF',
+              fontSize: '64px',
+              marginLeft: '80px',
+              fontWeight: 400,
+            }}
+          >
             Huski Finance
           </h2>
         </SBBox>
@@ -156,7 +164,14 @@ const Lend: React.FC = () => {
               {t(`Total Volume 24H:`)}
             </Text>
             {volume24h ? (
-              <Text fontSize="28px" color="textFarm" style={{ letterSpacing: '-0.01em' }} fontFamily="LexendDeca" fontWeight="400" lineHeight="48px">
+              <Text
+                fontSize="28px"
+                color="textFarm"
+                style={{ letterSpacing: '-0.01em' }}
+                fontFamily="LexendDeca"
+                fontWeight="400"
+                lineHeight="48px"
+              >
                 {volume24h}
               </Text>
             ) : (
@@ -183,7 +198,9 @@ const Lend: React.FC = () => {
                 fontSize="28px"
                 style={{ letterSpacing: '-0.01em' }}
                 color="textFarm"
-                fontFamily="LexendDeca" fontWeight="400" lineHeight="48px"
+                fontFamily="LexendDeca"
+                fontWeight="400"
+                lineHeight="48px"
               >{`${totalValueLockedValue}`}</Text>
             ) : (
               <Skeleton width="180px" height="30px" />

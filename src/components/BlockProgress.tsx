@@ -1,5 +1,5 @@
 import React from 'react'
-import { Progress, ProgressProps } from 'husky-uikit1.0'
+import { Progress, ProgressProps } from '@huskifinance/huski-frontend-uikit'
 import { useBlock } from 'state/block/hooks'
 
 interface BlockProgressProps extends ProgressProps {

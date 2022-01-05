@@ -1,5 +1,14 @@
 import React, { memo, useCallback, useMemo, useState, useEffect } from 'react'
-import { Button, Text, CheckmarkIcon, CogIcon, Input, Toggle, LinkExternal, useTooltip } from 'husky-uikit1.0'
+import {
+  Button,
+  Text,
+  CheckmarkIcon,
+  CogIcon,
+  Input,
+  Toggle,
+  LinkExternal,
+  useTooltip,
+} from '@huskifinance/huski-frontend-uikit'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { TokenList, Version } from '@uniswap/token-lists'

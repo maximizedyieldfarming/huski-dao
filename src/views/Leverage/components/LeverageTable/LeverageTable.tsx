@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Button, Flex, Box, Text, useMatchBreakpoints } from 'husky-uikit1.0'
+import { Button, Flex, Box, Text, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/Select'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
@@ -271,7 +271,7 @@ const LeverageTable = ({ leverageData }) => {
               </Flex>
               <Flex className="searchSortContainer">
                 <Text bold>Sort by:</Text>
-                <Box mr={isSmallScreen ? null : "10px"} mb={isSmallScreen ? "1rem!important" : null}>
+                <Box mr={isSmallScreen ? null : '10px'} mb={isSmallScreen ? '1rem!important' : null}>
                   <Select
                     options={[
                       {

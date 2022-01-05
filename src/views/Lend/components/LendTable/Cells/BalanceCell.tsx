@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Box } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Box } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { getBalanceAmount, getBalanceNumber, formatNumber } from 'utils/formatBalance'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
@@ -11,8 +11,8 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
-  flex:1;
-  min-width : 100px;
+  flex: 1;
+  min-width: 100px;
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
@@ -35,7 +35,7 @@ const BalanceCell = ({ balance, balanceIb, name, decimals }) => {
         )}
         {balanceIb ? (
           <Box>
-            <Text small textAlign="left" fontSize="12px" bold style={{marginBottom:'7px'}}>
+            <Text small textAlign="left" fontSize="12px" bold style={{ marginBottom: '7px' }}>
               {ibFormatedBalance} ib{name}
             </Text>
             <Text small textAlign="left" fontSize="12px" bold color="text">

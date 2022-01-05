@@ -1,5 +1,5 @@
 import React from 'react'
-import { ToastContainer } from 'husky-uikit1.0'
+import { ToastContainer } from '@huskifinance/huski-frontend-uikit'
 import useToast from 'hooks/useToast'
 
 const ToastListener = () => {

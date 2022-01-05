@@ -1,15 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
-  flex:1;
-  min-width : 80px;
+  flex: 1;
+  min-width: 80px;
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
@@ -31,7 +31,13 @@ const UtilRateCell = ({ utilRate }) => {
             {t('Utilization')}
           </Text>
         )}
-        {utilRate ? <Text style={{fontWeight:600,fontSize:'16px', marginTop:'10px'}} color="text">{utilizationRateToPercentage(utilRate)}</Text> : <Skeleton width="80px" height="16px" />}
+        {utilRate ? (
+          <Text style={{ fontWeight: 600, fontSize: '16px', marginTop: '10px' }} color="text">
+            {utilizationRateToPercentage(utilRate)}
+          </Text>
+        ) : (
+          <Skeleton width="80px" height="16px" />
+        )}
       </CellContent>
     </StyledCell>
   )

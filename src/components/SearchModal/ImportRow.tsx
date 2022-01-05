@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react'
 import { Token } from '@pancakeswap/sdk'
-import { Button, Text, CheckmarkCircleIcon } from 'husky-uikit1.0'
+import { Button, Text, CheckmarkCircleIcon } from '@huskifinance/huski-frontend-uikit'
 import { AutoRow, RowFixed } from 'components/Layout/Row'
 import { AutoColumn } from 'components/Layout/Column'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'

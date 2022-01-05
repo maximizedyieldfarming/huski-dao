@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, Grid, CardsLayout} from 'husky-uikit1.0'
-import { PancakeSwapIcon  } from 'assets'
+import { Box, Button, Flex, Text, Grid, CardsLayout } from '@huskifinance/huski-frontend-uikit'
+import { PancakeSwapIcon } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
@@ -40,7 +40,6 @@ const PositionsButton = styled(ActionButton)`
 `
 
 const PositionButtonsContainer = styled(Box)`
- 
   ${({ theme }) => theme.mediaQueries.md} {
     order: 1;
   }
@@ -62,7 +61,7 @@ const FilterOption = styled(Button)`
   background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
   color: ${({ isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
-  border-radius: 10px;
+  border-radius: 12px;
   color: #9d9d9d;
   > img {
     height: 26px;
@@ -90,7 +89,8 @@ const FiltersWrapper = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
-  padding: 10px 0;
+  padding: 18px 0px;
+  border-radius: 12px;
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   *::-webkit-scrollbar {
     height: 4px;
@@ -100,21 +100,20 @@ const FiltersWrapper = styled(Flex)`
     gap: 0;
   }
   > ${Flex} {
-    padding-left: 1rem;
+    padding-left: 24px;
     padding-right: 1rem;
-    font-size: 13px;
-    flex: 1;
+    font-size: 16px;
+    // flex: 1;
   }
   .strategyFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      // border-right: 2px solid #efefef;
       border-left: 2px solid #efefef;
-      justify-content: center;
+      justify-content: left;
     }
-    }
+  }
   .dexFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      justify-content: center;
+      justify-content: left;
     }
   }
 `
@@ -138,33 +137,32 @@ const StrategyIcon = styled.div<{ market: string }>`
   }};
 `
 const SBBox = styled(Box)`
-  
-  >h2{
-    font-family : 'BalooBhaijaan';
+  > h2 {
+    font-family: 'BalooBhaijaan';
   }
-  align-items : center;
-  display : flex;
+  align-items: center;
+  display: flex;
 
   border-radius: 15px !important;
   background-image: url('/images/BG.png');
   background-position: right;
   background-size: cover;
   background-repeat: no-repeat;
-  width : calc(100% - 300px);
-  min-width : 520px;
-  padding-top : 30px;
-  @media screen and (max-width : 960px){
-    width : 100%;
+  width: calc(100% - 300px);
+  min-width: 520px;
+  padding-top: 30px;
+  @media screen and (max-width: 960px) {
+    width: 100%;
   }
-  @media screen and (max-width : 1480px){
-    padding : 30px 0px;
-    margin-right : 0px!important;
+  @media screen and (max-width: 1480px) {
+    padding: 30px 0px;
+    margin-right: 0px !important;
   }
-  @media screen and (max-width : 600px){
-    min-width : unset;
-    >h2{
-      margin-left : 20px!important;
-      font-size : 35px!important;
+  @media screen and (max-width: 600px) {
+    min-width: unset;
+    > h2 {
+      margin-left: 20px !important;
+      font-size: 35px !important;
     }
   }
 `
@@ -301,8 +299,7 @@ console.info('singlesData',singlesData)
       <Section>
         <SBBox>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
-            Huski
-            <br /> Finance
+            Huski Finance
           </h2>
         </SBBox>
 
@@ -314,7 +311,7 @@ console.info('singlesData',singlesData)
             justifyContent: 'space-between',
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
-            maxWidth : '316px'
+            maxWidth: '316px',
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />
@@ -359,12 +356,12 @@ console.info('singlesData',singlesData)
       </StyledTableBorder>
 
       <FiltersWrapper>
-        <Flex alignItems="center" className="dexFilter">
-          <Text bold>DEX:</Text>
-          <Flex overflowX="auto" paddingLeft="5px">
+        <Flex alignItems="left" className="dexFilter">
+          <Text bold lineHeight="1.9">DEX:</Text>
+          <Flex overflowX="auto" pl="10px">
             <FilterOption
               variant="tertiary"
-              style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
+              style={{ width: '60px', height: '30px', justifySelf: 'flex-start' }}
               isActive={dexFilter === 'all'}
               onClick={() => setDexFilter('all')}
             >
@@ -372,14 +369,14 @@ console.info('singlesData',singlesData)
             </FilterOption>
             <FilterOption
               variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-start' }}
               startIcon={<PancakeSwapIcon />}
               isActive={dexFilter === 'PancakeSwap'}
               onClick={() => setDexFilter('PancakeSwap')}
             >
               PancakeSwap
             </FilterOption>
-            <FilterOption
+            {/* <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
               startIcon={<img src="/images/Uniswap.svg" width="32px" height="32px" alt="" />}
@@ -387,12 +384,12 @@ console.info('singlesData',singlesData)
               onClick={() => setDexFilter('UniSwap')}
             >
               UniSwap
-            </FilterOption>
+            </FilterOption> */}
           </Flex>
         </Flex>
-        <Flex className="strategyFilter" alignItems="center" borderRight='none!important'>
-          <Text bold>{t('Strategy:')}</Text>
-          <Flex overflowX="auto" alignItems="center">
+        <Flex className="strategyFilter" alignItems="left" borderRight="none!important">
+          <Text bold lineHeight="1.9">{t('Strategy:')}</Text>
+          <Flex overflowX="auto"  pl="10px" alignItems="left">
             <FilterOption
               style={{ height: '30px' }}
               variant="tertiary"

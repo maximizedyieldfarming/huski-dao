@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { Input } from 'husky-uikit1.0'
+import { Input } from '@huskifinance/huski-frontend-uikit'
 
 const NumberInput = (props) => {
   // FIX for scroll-wheel changing input of number type

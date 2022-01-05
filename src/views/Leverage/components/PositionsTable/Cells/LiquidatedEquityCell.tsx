@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, InfoIcon } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -33,7 +33,7 @@ const LiquidatedEquityCell = ({ liqEquity }) => {
             <Text fontSize="12px" color="textSubtle" textAlign="left">
               {t('Liquidated Equity')}
             </Text>
-           {/*  {tooltipVisible && tooltip}
+            {/*  {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="10px" />
             </span> */}

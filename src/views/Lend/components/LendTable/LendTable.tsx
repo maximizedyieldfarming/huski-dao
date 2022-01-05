@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { useMatchBreakpoints, Box } from 'husky-uikit1.0'
+import { useMatchBreakpoints, Box } from '@huskifinance/huski-frontend-uikit'
 import LendRow from './LendRow'
 import LendHeaderRow from './LendHeaderRow'
 
 const StyledTable = styled.div`
- border-radius: ${({ theme }) => theme.radii.card};
+  border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
   > ${Box}> div:not(:last-child) {

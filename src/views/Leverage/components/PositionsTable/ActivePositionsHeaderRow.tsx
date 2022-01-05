@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useTooltip, InfoIcon, Flex } from 'husky-uikit1.0'
+import { Text, useTooltip, InfoIcon, Flex } from '@huskifinance/huski-frontend-uikit'
 import useTheme from 'hooks/useTheme'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -10,7 +10,7 @@ const StyledRow = styled.div<{ isDark: boolean }>`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: ${({ isDark }) => isDark ? '1px solid #272B30' : '2px solid #efefef'};
+  border-bottom: ${({ isDark }) => (isDark ? '1px solid #272B30' : '2px solid #efefef')};
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -159,7 +159,7 @@ const ActivePositionsHeaderRow = () => {
     </>,
     { placement: 'top-start' },
   )
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
   return (
     <StyledRow isDark={isDark}>
       <NameCell>

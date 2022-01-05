@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -43,7 +43,7 @@ const AprCell = ({ getApyData }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize={isMobile || isTablet ? "1rem" : "12px"} color="textSubtle" textAlign="left" mb="auto">
+        <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left" mb="auto">
           {t('APY')}
         </Text>
         {apy ? (

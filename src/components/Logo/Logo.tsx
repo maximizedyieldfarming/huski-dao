@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HelpIcon } from 'husky-uikit1.0'
+import { HelpIcon } from '@huskifinance/huski-frontend-uikit'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}
 

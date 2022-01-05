@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
-import { Language } from 'husky-uikit1.0'
+import { Language } from '@huskifinance/huski-frontend-uikit'
 import { EN, languages } from 'config/localization/languages'
 import translations from 'config/localization/translations.json'
 import { ContextApi, ContextData, ProviderState } from './types'

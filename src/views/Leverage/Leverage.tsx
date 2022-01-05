@@ -7,7 +7,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
@@ -188,7 +188,6 @@ const Leverage: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const farmEarnings = new BigNumber(parseFloat(farm?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
-    // console.info('farmEarnings', farmEarnings)
     reward += farmEarnings
     return reward
   })
@@ -198,8 +197,7 @@ const Leverage: React.FC = () => {
       <Section>
         <SBBox>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
-            Huski
-            <br /> Finance
+            Huski Finance
           </h2>
         </SBBox>
 

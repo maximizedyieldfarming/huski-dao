@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Button, Text } from 'husky-uikit1.0'
+import { Flex, Button, Text } from '@huskifinance/huski-frontend-uikit'
 import QuestionHelper from 'components/QuestionHelper'
 import { useTranslation } from 'contexts/Localization'
 import { GAS_PRICE_GWEI, GAS_PRICE } from 'state/user/hooks/helpers'
@@ -12,7 +12,9 @@ const GasSettings = () => {
   return (
     <Flex flexDirection="column">
       <Flex mb="12px" alignItems="center">
-        <Text fontSize="14px" bold>{t('Default Transaction Speed (GWEI)')}</Text>
+        <Text fontSize="14px" bold>
+          {t('Default Transaction Speed (GWEI)')}
+        </Text>
         <QuestionHelper
           text={t(
             'Adjusts the gas price (transaction fee) for your transaction. Higher GWEI = higher speed = higher fees',
@@ -31,7 +33,7 @@ const GasSettings = () => {
             setGasPrice(GAS_PRICE_GWEI.default)
           }}
           variant={gasPrice === GAS_PRICE_GWEI.default ? 'primary' : 'tertiary'}
-          style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
+          style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
         >
           {t('Standard (%gasPrice%)', { gasPrice: GAS_PRICE.default })}
         </Button>
@@ -44,7 +46,7 @@ const GasSettings = () => {
             setGasPrice(GAS_PRICE_GWEI.fast)
           }}
           variant={gasPrice === GAS_PRICE_GWEI.fast ? 'primary' : 'tertiary'}
-          style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
+          style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
         >
           {t('Fast (%gasPrice%)', { gasPrice: GAS_PRICE.fast })}
         </Button>
@@ -57,7 +59,7 @@ const GasSettings = () => {
             setGasPrice(GAS_PRICE_GWEI.instant)
           }}
           variant={gasPrice === GAS_PRICE_GWEI.instant ? 'primary' : 'tertiary'}
-          style={{ fontSize: "14px", fontWeight: "normal", padding: 0 }}
+          style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
         >
           {t('Instant (%gasPrice%)', { gasPrice: GAS_PRICE.instant })}
         </Button>

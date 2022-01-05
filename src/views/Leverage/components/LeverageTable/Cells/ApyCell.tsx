@@ -1,6 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, ChevronRightIcon, useTooltip } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  InfoIcon,
+  ChevronRightIcon,
+  useTooltip,
+} from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -60,13 +68,17 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
           </Text>
         )}
         {apy ? (
-          <Flex alignItems="center" style={{ marginTop: '17px' }}>
-            <Text bold color="text">{apyAtOne}%</Text>
+          <Flex alignItems="center">
+            <Text bold color="text">
+              {apyAtOne}%
+            </Text>
             <ChevronRightIcon />
-            <Text bold fontSize='20px' mt="-3px" color="#7B3FE4">{apy}%</Text>
+            <Text bold fontSize="20px" color="#7B3FE4">
+              {apy}%
+            </Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon ml="7px" color="textSubtle" />
             </span>
           </Flex>
         ) : (

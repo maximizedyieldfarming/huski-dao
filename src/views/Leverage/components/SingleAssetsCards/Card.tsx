@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card as UiKitCard } from 'husky-uikit1.0'
+import { Card as UiKitCard } from '@huskifinance/huski-frontend-uikit'
 
 export const Card = styled(UiKitCard)`
   margin: 0 0px 24px;
@@ -11,9 +11,9 @@ export const Card = styled(UiKitCard)`
   background: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
-  ${({ theme }) => theme.mediaQueries.lg} {
-    padding: 1rem;
-  }
+  // ${({ theme }) => theme.mediaQueries.lg} {
+  //   padding: 0px;
+  // }
 `
 
 export default Card

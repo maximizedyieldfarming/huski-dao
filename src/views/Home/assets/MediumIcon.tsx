@@ -1,5 +1,5 @@
 import React from 'react'
-import { Svg, SvgProps } from 'husky-uikit1.0'
+import { Svg, SvgProps } from '@huskifinance/huski-frontend-uikit'
 
 const MediumIcon: React.FC<SvgProps> = () => {
   return (

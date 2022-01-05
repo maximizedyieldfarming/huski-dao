@@ -1,4 +1,4 @@
-import { Language } from 'husky-uikit1.0'
+import { Language } from '@huskifinance/huski-frontend-uikit'
 
 export const AR: Language = { locale: 'ar-SA', language: 'العربية', code: 'ar' }
 export const BN: Language = { locale: 'bn-BD', language: 'বাংলা', code: 'bn' }
@@ -30,10 +30,10 @@ export const ZHCN: Language = { locale: 'zh-CN', language: '简体中文', code:
 export const ZHTW: Language = { locale: 'zh-TW', language: '繁體中文', code: 'zh-tw' }
 
 export const languages = {
-   'en-US': EN,
+  'en-US': EN,
   'ja-JP': JA,
   'ko-KR': KO,
-  
+
   'zh-TW': ZHTW,
 }
 

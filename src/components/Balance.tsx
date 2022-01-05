@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import CountUp from 'react-countup'
-import { Text, TextProps } from 'husky-uikit1.0'
+import { Text, TextProps } from '@huskifinance/huski-frontend-uikit'
 
 interface BalanceProps extends TextProps {
   value: number

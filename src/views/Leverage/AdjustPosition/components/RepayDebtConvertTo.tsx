@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { Box, Flex, Text, InfoIcon, ChevronRightIcon } from 'husky-uikit1.0'
+import { Box, Flex, Text, InfoIcon, ChevronRightIcon } from '@huskifinance/huski-frontend-uikit'
 import styled, { useTheme } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { usePercentageToCloseContext } from '../context'
@@ -18,11 +18,11 @@ interface MoveProps {
   move: number
 }
 
-const MoveBox = styled(Box) <MoveProps>`
+const MoveBox = styled(Box)<MoveProps>`
   margin-left: ${({ move }) => move}px;
   margin-top: -20px;
   margin-bottom: 10px;
-  color: #83BF6E;
+  color: #83bf6e;
 `
 
 const makeLongShadow = (color: any, size: any) => {
@@ -50,7 +50,7 @@ const RangeInput = styled.input`
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 32px;
-    background: linear-gradient(to right, #83BF6E, #83BF6E) 100% 50% / 100% 4px no-repeat transparent;
+    background: linear-gradient(to right, #83bf6e, #83bf6e) 100% 50% / 100% 4px no-repeat transparent;
   }
 
   &:focus {
@@ -66,8 +66,8 @@ const RangeInput = styled.input`
     background-image: url('/images/RangeHandle1.png');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size : 100% 100%;
-    
+    background-size: 100% 100%;
+
     border: 0;
     top: 50%;
     transform: translateY(-50%);
@@ -89,8 +89,8 @@ const Wrapper = styled(Box)`
     }
   }
 `
-const GrayBox = styled(Flex) <{ isDark: boolean }>`
-  background-color: ${({ isDark }) => isDark ? '#111315' : '#F4F4F4'};
+const GrayBox = styled(Flex)<{ isDark: boolean }>`
+  background-color: ${({ isDark }) => (isDark ? '#111315' : '#F4F4F4')};
   padding: 16px 24px;
   border-radius: 12px;
 `
@@ -102,13 +102,12 @@ const RepayDebtConvertTo: React.FC<Props> = ({
   tokenName,
   quoteTokenName,
   baseTokenAmountValue,
-  farmTokenAmountValue
+  farmTokenAmountValue,
 }) => {
-  const { needCloseBase, needCloseFarm, remainBase, remainFarm } =
-    convertToValues
+  const { needCloseBase, needCloseFarm, remainBase, remainFarm } = convertToValues
 
   const { t } = useTranslation()
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
   const { percentage, setPercentage } = usePercentageToCloseContext()
 
   const targetRef = React.useRef<any>()
@@ -121,20 +120,23 @@ const RepayDebtConvertTo: React.FC<Props> = ({
         width: targetRef?.current?.offsetWidth,
         height: targetRef?.current?.offsetHeight,
       })
-      console.log("!!!!", targetRef?.current?.offsetWidth);
+      console.log('!!!!', targetRef?.current?.offsetWidth)
     }
   }, [percentage])
 
   useEffect(() => {
-    setMargin((moveVal.width - 32) / 100 * percentage);
+    setMargin(((moveVal.width - 32) / 100) * percentage)
   }, [percentage, moveVal.width])
 
   return (
     <Wrapper>
       <GrayBox isDark={isDark}>
         <InfoIcon mr="3px" />
-        <Text color="#6F767E" fontSize='12px'>
-          {t('Your position value will all be converted to %tokenName% and returned to you after paying back the debt.', { tokenName })}
+        <Text color="#6F767E" fontSize="12px">
+          {t(
+            'Your position value will all be converted to %tokenName% and returned to you after paying back the debt.',
+            { tokenName },
+          )}
         </Text>
       </GrayBox>
       {(currentPositionLeverage === 1 || targetPositionLeverage === 1) && (
@@ -144,7 +146,9 @@ const RepayDebtConvertTo: React.FC<Props> = ({
             {currentPositionLeverage !== 1 && t('(After repay all debt)')}
           </Text>
           <Flex>
-            <Box style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto', marginTop: "20px" }}>
+            <Box
+              style={{ width: '100%', maxWidth: '850px', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px' }}
+            >
               <MoveBox move={margin}>
                 <Text color="#83BF6E" bold>
                   {percentage}%
@@ -167,15 +171,15 @@ const RepayDebtConvertTo: React.FC<Props> = ({
                 style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '-15px' }}
                 id="leverage"
               >
-                <option value={0} label='0%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={25} label='25%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={50} label='50%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={75} label='75%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
-                <option value={100} label='100%' style={{ color: "#6F767E", fontWeight: "bold", fontSize: "13px" }} />
+                <option value={0} label="0%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={25} label="25%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={50} label="50%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={75} label="75%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
+                <option value={100} label="100%" style={{ color: '#6F767E', fontWeight: 'bold', fontSize: '13px' }} />
               </datalist>
             </Box>
           </Flex>
-        </Box >
+        </Box>
       )}
       <Flex justifyContent="space-between" alignItems="center">
         <Flex>
@@ -195,14 +199,13 @@ const RepayDebtConvertTo: React.FC<Props> = ({
           <Text color="textSubtle" bold>
             {farmTokenAmountValue?.toFixed(3)} {quoteTokenName} + {baseTokenAmountValue?.toFixed(3)} {tokenName}
           </Text>
-          <ChevronRightIcon style={{ fontWeight: "bold" }} />
+          <ChevronRightIcon style={{ fontWeight: 'bold' }} />
           <Text bold>
             {remainFarm?.toFixed(3)} {quoteTokenName} + {remainBase?.toFixed(3)} {tokenName}
-
           </Text>
         </Flex>
       </Flex>
-    </Wrapper >
+    </Wrapper>
   )
 }
 

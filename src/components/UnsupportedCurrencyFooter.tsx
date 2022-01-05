@@ -1,6 +1,6 @@
 import React from 'react'
 import { Currency, Token } from '@pancakeswap/sdk'
-import { Button, Text, Modal, useModal, InjectedModalProps, Link } from 'husky-uikit1.0'
+import { Button, Text, Modal, useModal, InjectedModalProps, Link } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { AutoRow } from 'components/Layout/Row'
 import { AutoColumn } from 'components/Layout/Column'

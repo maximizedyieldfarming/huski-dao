@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Skeleton, UserMenuItem } from 'husky-uikit1.0'
+import { Flex, Skeleton, UserMenuItem } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import history from 'routerHistory'
 

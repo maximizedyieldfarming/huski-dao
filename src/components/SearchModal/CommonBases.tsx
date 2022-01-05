@@ -1,6 +1,6 @@
 import React from 'react'
 import { ChainId, Currency, currencyEquals, ETHER, Token } from '@pancakeswap/sdk'
-import { Text } from 'husky-uikit1.0'
+import { Text } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 

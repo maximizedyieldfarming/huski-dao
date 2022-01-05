@@ -1,6 +1,15 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Box, Text, ExpandableLabel, LinkExternal, Grid, HelpIcon, useTooltip } from 'husky-uikit1.0'
+import {
+  Flex,
+  Box,
+  Text,
+  ExpandableLabel,
+  LinkExternal,
+  Grid,
+  HelpIcon,
+  useTooltip,
+} from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { getApy } from 'utils/compoundApyHelpers'
 

@@ -1,20 +1,20 @@
 import React, { useState, useMemo } from 'react'
-import { Input, Flex, SearchIcon } from 'husky-uikit1.0'
+import { Input, Flex, SearchIcon } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import debounce from 'lodash/debounce'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 
-const StyledInput = styled(Input) <{ isDark: boolean }>`
+const StyledInput = styled(Input)<{ isDark: boolean }>`
   border: none;
-  background:${({ isDark }) => isDark ? '#272B30' : '#F4F4F4'};
+  background: ${({ isDark }) => (isDark ? '#272B30' : '#F4F4F4')};
   margin-left: auto;
-  padding-left:30px;
+  padding-left: 30px;
 `
 
 const InputWrapper = styled(Flex)`
   border-radius: 16px;
-  width:240px;
+  width: 240px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.sm} {
     display: block;
@@ -41,7 +41,7 @@ const SearchInput: React.FC<Props> = ({ onChange: onChangeCallback, placeholder 
     debouncedOnChange(e)
   }
 
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
   return (
     <InputWrapper>
       <StyledInput value={searchText} onChange={onChange} placeholder={t(placeholder)} isDark={isDark} />

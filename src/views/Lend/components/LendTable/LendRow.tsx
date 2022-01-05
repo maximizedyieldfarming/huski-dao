@@ -39,22 +39,20 @@ const LendRow = ({ tokenData }) => {
   const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
 
   return (
-    <>
-      <StyledRow role="row">
-        <NameCell token={tokenData} />
-        <ApyCell getApyData={getAprData(tokenData, huskyPrice, borrowingInterest)} token={tokenData} />
-        <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />
-        <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} />
-        <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
-        <BalanceCell
-          balance={userTokenBalance}
-          balanceIb={userTokenBalanceIb}
-          name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
-          decimals={TokenInfo?.token?.decimalsDigits}
-        />
-        <ActionCell token={tokenData} apyReady={!!apy} />
-      </StyledRow>
-    </>
+    <StyledRow role="row">
+      <NameCell token={tokenData} />
+      <ApyCell getApyData={getAprData(tokenData, huskyPrice, borrowingInterest)} token={tokenData} />
+      <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />
+      <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} />
+      <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
+      <BalanceCell
+        balance={userTokenBalance}
+        balanceIb={userTokenBalanceIb}
+        name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+        decimals={TokenInfo?.token?.decimalsDigits}
+      />
+      <ActionCell token={tokenData} apyReady={!!apy} />
+    </StyledRow>
   )
 }
 

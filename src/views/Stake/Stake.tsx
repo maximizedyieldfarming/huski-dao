@@ -5,7 +5,15 @@ import { BIG_ZERO, BIG_TEN } from 'utils/bigNumber'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { Text, Button, Flex, Box, Skeleton, Grid, useMatchBreakpoints, AutoRenewIcon } from 'husky-uikit1.0'
+import {
+  Text,
+  Button,
+  Flex,
+  Box,
+  Skeleton,
+  useMatchBreakpoints,
+  AutoRenewIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import { useStakeWithUserData, useStakes } from 'state/stake/hooks'
 import styled from 'styled-components'
 import Page from 'components/Layout/Page'
@@ -13,7 +21,7 @@ import { useTranslation } from 'contexts/Localization'
 import { getHuskiAddress } from 'utils/addressHelpers'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { WalletIcon, LockIcon, FlexingHuski } from 'assets'
+import { FlexingHuski } from 'assets'
 import StakeTable from './components/StakeTable/StakeTable'
 
 const StyledButton = styled(Button)`
@@ -30,7 +38,7 @@ const RewardsSummarySection = styled(Flex)`
   // ${({ theme }) => theme.mediaQueries.md} {
   //   flex-direction: row;
   // }
-  min-width : 600px!important;
+  min-width: 600px !important;
   gap: 2rem;
   overflow: hidden;
   height: 220px;
@@ -51,8 +59,8 @@ const RewardsSummarySection = styled(Flex)`
       filter: drop-shadow(-6px 0px 0px white);
     }
   }
-  @media screen and (max-width : 950px){
-    min-width : unset!important;
+  @media screen and (max-width: 950px) {
+    min-width: unset !important;
   }
 `
 
@@ -62,14 +70,14 @@ const AdvertisementContainer = styled(Flex)`
   background-size: cover;
   background-position: center;
   border-radius: 12px;
-  min-height : 200px;
+  min-height: 200px;
 `
 
 const Stake: React.FC = () => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const { data: farmsData } = useStakes()
-  console.log({ ' 数据': farmsData })
+  console.log({ farmsData })
   useStakeWithUserData()
 
   const { callWithGasPrice } = useCallWithGasPrice()

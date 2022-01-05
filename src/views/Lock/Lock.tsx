@@ -2,7 +2,15 @@ import React, { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
-import { Text, Button, Flex, Box, Skeleton, useMatchBreakpoints, AutoRenewIcon } from 'husky-uikit1.0'
+import {
+  Text,
+  Button,
+  Flex,
+  Box,
+  Skeleton,
+  useMatchBreakpoints,
+  AutoRenewIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import Page from 'components/Layout/Page'
@@ -16,51 +24,48 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import LockTable from './components/LockTable/LockTable'
 
-
-
 const StyledButton = styled(Button)`
   padding: 0.75rem;
   font-size: 14px;
   font-weight: 400;
   box-shadow: none;
-  width:114px;
-  height:32px;
-  margin-left:75px;
+  width: 114px;
+  height: 32px;
+  margin-left: 75px;
 `
 const RewardsSummarySection = styled(Flex)`
   flex-direction: column;
-  flex-wrap : wrap;
+  flex-wrap: wrap;
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
   }
-   gap: 2rem;
+  gap: 2rem;
   background-color: transparent;
-  overflow:hidden;
+  overflow: hidden;
   border-radius: ${({ theme }) => theme.radii.card};
   // padding: 1rem;
   // box-shadow: ${({ theme }) => theme.card.boxShadow};
   > ${Flex} {
     &:first-child {
       background: url('/images/stake/header_bg.png');
-      background-repeat:no-repeat;
-      background-size:cover;
+      background-repeat: no-repeat;
+      background-size: cover;
       padding-bottom: 0;
       border-radius: 40px;
       // grid-template-columns: 1fr 1fr;
-      ${Flex}{
-        &:nth-child(2){
-          @media screen and (max-width : 700px){
-            border : none!important;
+      ${Flex} {
+        &:nth-child(2) {
+          @media screen and (max-width: 700px) {
+            border: none !important;
           }
         }
       }
     }
     &:nth-child(2) {
       background: url('/images/stake/withdog.png');
-      background-repeat:no-repeat;
+      background-repeat: no-repeat;
       border-radius: 12px;
-      background-size : 100% 100%;
-     
+      background-size: 100% 100%;
     }
   }
 
@@ -96,11 +101,11 @@ const RewardsSummarySection = styled(Flex)`
 const Section = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   padding: 40px 1rem;
-  @media screen and (max-width : 450px){
-    padding-right : 0;
-    width : 320px;
+  @media screen and (max-width: 450px) {
+    padding-right: 0;
+    width: 320px;
   }
-  flex-wrap : wrap;
+  flex-wrap: wrap;
   gap: 1rem;
   border-radius: 12px;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
@@ -115,8 +120,8 @@ const Section = styled(Flex)`
     border-radius: ${({ theme }) => theme.radii.small};
   }
   &.balanceWrapper {
-    flex:1;
-    justify-content:space-between;
+    flex: 1;
+    justify-content: space-between;
     > ${Flex} {
       padding: 5px 10px;
       flex-direction: column;
@@ -126,10 +131,10 @@ const Section = styled(Flex)`
       }
       &:first-child {
         border-right: 2px solid ${({ theme }) => theme.colors.textDisabled};
-        @media screen and (max-width : 750px){
-          border : none!important;
+        @media screen and (max-width: 750px) {
+          border: none !important;
         }
-        padding-right:50px;
+        padding-right: 50px;
       }
       &:last-child {
         // border-left: 1px solid ${({ theme }) => theme.colors.textDisabled};
@@ -207,20 +212,31 @@ const Lock: React.FC = () => {
           {volumeLocked ? <Text color="secondary">{`$${volumeLocked}`}</Text> : <Skeleton width="80px" height="16px" />}
         </Box>
       </Section> */}
-      <RewardsSummarySection >
-        <Flex justifyContent="space-around" flexWrap='wrap' >
-          <Flex position="relative" flex='1.8' pt="31px" pl='21px'>
+      <RewardsSummarySection>
+        <Flex justifyContent="space-around" flexWrap="wrap">
+          <Flex position="relative" flex="1.8" pt="31px" pl="21px">
             <figure>
               <img style={{ minWidth: '210px' }} height="190px" src={FlexingHuski} alt="" />
             </figure>
           </Flex>
-          <Flex flex='2' flexDirection="column" justifyContent="space-between" mt='35px' mb='35px' pr="50px" ml="30px" style={{ borderRight: '2px solid white' }}>
+          <Flex
+            flex="2"
+            flexDirection="column"
+            justifyContent="space-between"
+            mt="35px"
+            mb="35px"
+            pr="50px"
+            ml="30px"
+            style={{ borderRight: '2px solid white' }}
+          >
             <Flex>
               <Flex>
                 <img src="/images/stake/BNB.svg" alt="" />
               </Flex>
               <Flex flexDirection="column">
-                <Text ml="25px" color="white" fontSize="13px">{t('HUSKI earned:')}</Text>
+                <Text ml="25px" color="white" fontSize="13px">
+                  {t('HUSKI earned:')}
+                </Text>
                 {reward ? (
                   <Text fontSize="28px" color="white" bold ml="25px">
                     {reward.toPrecision(3)}
@@ -233,12 +249,14 @@ const Lock: React.FC = () => {
                 )}
               </Flex>
             </Flex>
-            <Flex flexDirection="row" >
+            <Flex flexDirection="row">
               <Flex>
                 <img src="/images/stake/Wallet.svg" alt="" />
               </Flex>
               <Flex flexDirection="column">
-                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>{t('My HUSKI Wallet Balance')}</Text>
+                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>
+                  {t('My HUSKI Wallet Balance')}
+                </Text>
                 {alpacaBalance ? (
                   <Text fontSize="28px" color="white" bold ml="25px">
                     {alpacaBalance.toNumber().toPrecision(3)}
@@ -251,11 +269,22 @@ const Lock: React.FC = () => {
               </Flex>
             </Flex>
           </Flex>
-          <Flex flex='2' justifyContent="space-between" mt='35px' mb='45px' pr="50px" ml="20px" flexDirection="column" alignItems="center">
+          <Flex
+            flex="2"
+            justifyContent="space-between"
+            mt="35px"
+            mb="45px"
+            pr="50px"
+            ml="20px"
+            flexDirection="column"
+            alignItems="center"
+          >
             <Flex ml="25px">
               <img src="/images/stake/Lock.svg" alt="" />
               <Flex flexDirection="column">
-                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>{t('Unstaked Rewards')}</Text>
+                <Text color="white" fontSize="13px" ml={isSmallScreen ? '0px' : '25px'}>
+                  {t('Unstaked Rewards')}
+                </Text>
                 <Text fontSize="28px" color="white" bold ml="25px">
                   964,342.49
                 </Text>
@@ -285,41 +314,58 @@ const Lock: React.FC = () => {
             </Flex>
           </Flex> */}
         <Flex flexDirection="row" alignItems="center" minHeight={200}>
-          <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">{t('Huski Finance Advertisement')}</Text>
+          <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">
+            {t('Huski Finance Advertisement')}
+          </Text>
         </Flex>
       </RewardsSummarySection>
       <Flex>
         <Section className="balanceWrapper">
-          <Flex flex='1.5' justifyContent='space-between' >
-
-            <Flex alignItems='center' minWidth={280}>
+          <Flex flex="1.5" justifyContent="space-between">
+            <Flex alignItems="center" minWidth={280}>
               <div>
                 <img src="/images/stake/Wallet.svg" alt="" />
               </div>
-              <Text color="textNeutral" ml="16px" fontWeight='600'>{t('My sHUSKI Wallet Balance -')}</Text>
+              <Text color="textNeutral" ml="16px" fontWeight="600">
+                {t('My sHUSKI Wallet Balance -')}
+              </Text>
             </Flex>
-            <Flex alignItems='center'>
-              {sHuskiBalance ? <Text color='textFarm' fontSize='24px' fontWeight='700' mr='8px'>{sHuskiBalance}123123</Text> : <Text color='text' fontSize='24px' fontWeight='700' mr='8px'>{sHuskiBalance}960,924,34</Text>}
+            <Flex alignItems="center">
+              {sHuskiBalance ? (
+                <Text color="textFarm" fontSize="24px" fontWeight="700" mr="8px">
+                  {sHuskiBalance}123123
+                </Text>
+              ) : (
+                <Text color="text" fontSize="24px" fontWeight="700" mr="8px">
+                  {sHuskiBalance}960,924,34
+                </Text>
+              )}
               <img src="/images/stake/MetaMask.svg" alt="" />
             </Flex>
           </Flex>
-          <Flex flex='1.5' justifyContent='space-between' minWidth={280}>
-            <Flex flex='1'>
+          <Flex flex="1.5" justifyContent="space-between" minWidth={280}>
+            <Flex flex="1">
               <img src="/images/stake/Lock.svg" alt="" />
               <Flex flexDirection="column" ml="16px">
-                <Text fontWeight='600' color="textNeutral">{t('My Current HUSKI locks')}</Text>
+                <Text fontWeight="600" color="textNeutral">
+                  {t('My Current HUSKI locks')}
+                </Text>
                 <Flex>
                   <Text color="textSubtle">{t('Unlock Remaining:')}</Text>
-                  <Text ml='5px' fontSize='18px' bold>{t('3 weeks')}</Text>
+                  <Text ml="5px" fontSize="18px" bold>
+                    {t('3 weeks')}
+                  </Text>
                 </Flex>
               </Flex>
             </Flex>
-            <Flex alignItems='center'>
-              <Text color='textFarm' fontSize="24px" fontWeight='700'>969,932.53</Text>
+            <Flex alignItems="center">
+              <Text color="textFarm" fontSize="24px" fontWeight="700">
+                969,932.53
+              </Text>
             </Flex>
           </Flex>
-          <Flex flex='1' justifyContent="center">
-            <Button scale="sm" width='250px' height='48px' disabled={sHuskiBalance}>
+          <Flex flex="1" justifyContent="center">
+            <Button scale="sm" width="250px" height="48px" disabled={sHuskiBalance}>
               {t('Withdraw')}
             </Button>
           </Flex>

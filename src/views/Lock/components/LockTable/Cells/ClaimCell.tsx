@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Button } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -35,10 +35,13 @@ const ClaimCell = ({ data, sHuskiLocked }) => {
         <Button
           disabled={!account || !sHuskiLocked}
           onClick={(e) => !account && e.preventDefault()}
-          width='114px' height='40px'
-          
+          width="114px"
+          height="40px"
         >
-           <Text color='textSubtle' style={{border:'1px solid #EFEFEF'}}> {t('Withdraw')}</Text>
+          <Text color="textSubtle" style={{ border: '1px solid #EFEFEF' }}>
+            {' '}
+            {t('Withdraw')}
+          </Text>
         </Button>
       </CellContent>
     </StyledCell>

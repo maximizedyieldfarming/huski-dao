@@ -3,7 +3,17 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, Skeleton, Button, Box, Grid, ChevronDownIcon, useMatchBreakpoints } from 'husky-uikit1.0'
+import {
+  CardBody as UiKitCardBody,
+  Flex,
+  Text,
+  Skeleton,
+  Button,
+  Box,
+  Grid,
+  ChevronDownIcon,
+  useMatchBreakpoints,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
@@ -14,7 +24,6 @@ import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import { useTradingFees, useTradingFees7days } from '../../hooks/useTradingFees'
-import { useBorrowingInterest7days } from '../../hooks/useBorrowingInterest7days'
 import { getHuskyRewards, getYieldFarming, getTvl, getSingle7Days } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -144,7 +153,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   }
 
   const { priceList: cakePriceList } = usePriceList('pancakeswap-token')
-
   const singleApyList = getSingle7Days(singleData, cakePriceList, tradingFees7Days)
 
   const strategies = React.useMemo(
@@ -248,7 +256,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         {
           symbol: 'none',
           type: 'line',
-          // data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
           data: singleApyList,
           smooth: 0.3,
           areaStyle: {
@@ -318,11 +325,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   // console.log("data", {data})
   useEffect(() => {
     if (!apy) {
-      setSingleData(prev => data?.singleArray.find(item => item?.pid === prev?.pid))
+      setSingleData((prev) => data?.singleArray.find((item) => item?.pid === prev?.pid))
     }
   }, [data, apy])
 
-  const {isMobile, isTablet} = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
 
   return (
@@ -351,7 +358,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     ml="20px"
                   />
                   <Flex flexDirection="column" marginLeft="30px">
-                    <Text fontSize={isSmallScreen ? "1rem" : "18px"} fontWeight="600" textTransform="capitalize">
+                    <Text fontSize={isSmallScreen ? '1rem' : '18px'} fontWeight="600" textTransform="capitalize">
                       {strategyName}
                     </Text>
                     <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(
@@ -438,7 +445,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     <ArrowUpIcon color="#27C73F" /> */}
                     <Text>
                       {t(
-                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%apyPercentageDiff% ${
+                          Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
                         { apyPercentageDiff },
                       )}

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Box, Text, Button, AutoRenewIcon } from 'husky-uikit1.0'
+import { Flex, Box, Text, Button, AutoRenewIcon } from '@huskifinance/huski-frontend-uikit'
 import Page from 'components/Layout/Page'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
@@ -24,10 +24,10 @@ interface LocationState {
 }
 
 const Wrapper = styled(Flex)`
-  display : flex;
-  flex-direction : column;
-  justify-content : center;
-  align-items : center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   // justify-content: space-between;
   // align-content: space-between;
   // align-items: center;
@@ -36,9 +36,9 @@ const Wrapper = styled(Flex)`
 const Cell = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   padding: 1rem;
-  margin : 0.7rem;
-  width : 100%;
-  max-width : 850px;
+  margin: 0.7rem;
+  width: 100%;
+  max-width: 850px;
   border-radius: ${({ theme }) => theme.radii.default};
   justify-content: space-between;
 `
@@ -73,17 +73,19 @@ const Rewards: React.FC<RewardsProps> = ({ name, earnings, token, debtPoolId }) 
       <Flex alignItems="center" width="300px">
         <TokenImage token={token} width={44} height={44} mr="8px" />
         <Box>
-          <Text fontSize="12px" color="#6F767E">{t(`Rewards from positions on`)}</Text>
-          <Text >{t(`${name} pairs`)}</Text>
+          <Text fontSize="12px" color="#6F767E">
+            {t(`Rewards from positions on`)}
+          </Text>
+          <Text>{t(`${name} pairs`)}</Text>
         </Box>
       </Flex>
-      <Box >
+      <Box>
         <Text>{t('HUSKI Earned')}</Text>
         <Text bold color="secondary">
           {rewards.toPrecision(4)}
         </Text>
       </Box>
-      <Box >
+      <Box>
         <Button
           disabled={isPending || !rewards}
           isLoading={isPending}
@@ -126,7 +128,7 @@ const Claim: React.FC = () => {
   })
 
   return (
-    <Page >
+    <Page>
       <Flex justifyContent="center">
         <img src="/images/harvest.png" alt="haverst" width="193px" height="75px" />
       </Flex>

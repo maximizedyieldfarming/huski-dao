@@ -1,6 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, TooltipText, InfoIcon } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  useTooltip,
+  TooltipText,
+  InfoIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -11,7 +19,6 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
- 
 `
 
 const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
@@ -44,7 +51,7 @@ const DebtCell = ({ debt, borrowedAssets, borrowingInterest, name }) => {
             {debt.toNumber().toFixed(3)} {name}
           </Text>
         ) : (
-           <Skeleton width="80px" height="16px" />
+          <Skeleton width="80px" height="16px" />
         )}
       </CellContent>
     </StyledCell>

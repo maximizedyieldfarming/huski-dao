@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text, useMatchBreakpoints, Box, Grid } from 'husky-uikit1.0'
+import {  Text, useMatchBreakpoints, Box, Grid } from '@huskifinance/huski-frontend-uikit'
 import { TokenPairImage } from 'components/TokenImage'
-import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -14,12 +13,10 @@ const StyledCell = styled(BaseCell)`
     padding-left: 32px;
     flex: 1.5 0 150px;
     align-items: center;
-    // padding-left: 32px;
   }
 `
 
 const PoolCell = ({ pool, tokenData }) => {
-  const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const quoteToken = tokenData?.TokenInfo.quoteToken
   const token = tokenData?.TokenInfo.token
@@ -28,13 +25,7 @@ const PoolCell = ({ pool, tokenData }) => {
     <StyledCell role="cell">
       <CellContent>
         <Grid gridTemplateColumns="24px 1fr" gridGap="1rem">
-          <TokenPairImage
-            primaryToken={token}
-            secondaryToken={quoteToken}
-            width={24}
-            height={24}
-            mr="1rem"
-          />
+          <TokenPairImage primaryToken={token} secondaryToken={quoteToken} width={24} height={24} mr="1rem" />
           <Box>
             <Text mt="-3px" bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
               {pool.toUpperCase().replace('WBNB', 'BNB')}
