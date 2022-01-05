@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { Flex, Skeleton, Text, useMatchBreakpoints, Box } from 'husky-uikit1.0'
 import { useTranslation } from 'contexts/Localization'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -19,7 +18,7 @@ const StyledCell = styled(BaseCell)`
 `
 
 const NameCell = ({ token }) => {
-  const { t } = useTranslation()
+
   const { isMobile } = useMatchBreakpoints()
   const exchangeRate = parseInt(token.totalToken) / parseInt(token.totalSupply)
 
@@ -31,11 +30,11 @@ const NameCell = ({ token }) => {
             <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
           </Box>
           <Box>
-            <Text bold={!isMobile} small={isMobile} mb="5px" color="text">
+            <Text bold={!isMobile} small={isMobile} mb="5px" marginLeft="5px" marginTop="5px" color="text">
               {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (
-              <Text small color="textSubtle" fontWeight="500" fontSize="12px" style={{ whiteSpace: 'nowrap' }}>
+              <Text small color="textSubtle" fontWeight="500" fontSize="12px" marginLeft="5px" style={{ whiteSpace: 'nowrap' }}>
                 1 ib{token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
                 {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
               </Text>

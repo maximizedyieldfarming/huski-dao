@@ -3,8 +3,7 @@ import styled from 'styled-components'
 import { useHuskiPrice } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
-import useTheme from 'hooks/useTheme'
+import { getBalanceAmount } from 'utils/formatBalance'
 import NameCell from './Cells/NameCell'
 import { getAprData } from '../../helpers'
 import { useFarmsWithToken } from '../../../Leverage/hooks/useFarmsWithToken'
@@ -37,7 +36,7 @@ const LendRow = ({ tokenData }) => {
     TokenInfo.token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
   ).toJSON()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
-  const {apy} = getAprData(tokenData, huskyPrice, borrowingInterest)
+  const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
 
   return (
     <>
@@ -53,7 +52,7 @@ const LendRow = ({ tokenData }) => {
           name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
           decimals={TokenInfo?.token?.decimalsDigits}
         />
-        <ActionCell token={tokenData} apyReady={!!apy}/>
+        <ActionCell token={tokenData} apyReady={!!apy} />
       </StyledRow>
     </>
   )
