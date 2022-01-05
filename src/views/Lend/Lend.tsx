@@ -83,7 +83,7 @@ const SBPage = styled(Page)`
     margin-left: 2%;
     margin-right: 2%;
   }
-  margin-left: 0px;
+  margin-left: 12px;
   margin-right: 32px;
   padding-left: 40px;
 `
