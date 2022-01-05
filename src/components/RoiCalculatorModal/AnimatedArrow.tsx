@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Flex, ArrowDownIcon, ArrowUpIcon } from 'husky-uikit1.0'
+import { Flex, ArrowDownIcon, ArrowUpIcon } from '@huskifinance/huski-frontend-uikit'
 import styled, { keyframes } from 'styled-components'
 import { CalculatorMode, RoiCalculatorReducerState } from './useRoiCalculatorReducer'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Text, useMatchBreakpoints, Flex, Grid } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Flex, Grid } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { TokenPairImage } from 'components/TokenImage'
@@ -29,18 +29,14 @@ const PoolCell = ({ pool, quoteToken, token, exchange }) => {
             {t('Pool')}
           </Text>
         )}
-        <Grid  alignItems="center" gridTemplateColumns="50px 1fr">
-          <TokenPairImage
-            primaryToken={token}
-            secondaryToken={quoteToken}
-            width={24}
-            height={24}
-            mr="8px"
-          />
-          <Text color="text" ml='-10px' mt='-12px' fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
+        <Grid alignItems="center" gridTemplateColumns="50px 1fr">
+          <TokenPairImage primaryToken={token} secondaryToken={quoteToken} width={24} height={24} mr="8px" />
+          <Text color="text" ml="-10px" mt="-12px" fontWeight="600" fontSize="16px" bold={!isMobile} small={isMobile}>
             {pool}
           </Text>
-          <Text fontSize="12px" ml='40px' mt='-3px' color="textSubtle">{exchange}</Text> 
+          <Text fontSize="12px" ml="40px" mt="-3px" color="textSubtle">
+            {exchange}
+          </Text>
         </Grid>
       </CellContent>
     </StyledCell>

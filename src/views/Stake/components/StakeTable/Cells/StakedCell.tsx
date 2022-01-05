@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 

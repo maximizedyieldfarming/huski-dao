@@ -1,4 +1,13 @@
-import { Box, Button, Flex, Text, Skeleton, InfoIcon, useTooltip, AutoRenewIcon } from 'husky-uikit1.0'
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  Skeleton,
+  InfoIcon,
+  useTooltip,
+  AutoRenewIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
@@ -235,17 +244,17 @@ const ConverTo = ({ data }) => {
   return (
     <>
       <Section flexDirection="column" mt="40px">
-        <Flex justifyContent="space-between" flexWrap='wrap'>
+        <Flex justifyContent="space-between" flexWrap="wrap">
           <Box>
-            <Flex mb='10px'>
+            <Flex mb="10px">
               <Text>{t('Position Value Assets')}</Text>
               {positionValueTooltipVisible && positionValueTooltip}
               <span ref={positionValueRef}>
                 <InfoIcon ml="10px" mt="2px" />
               </span>
             </Flex>
-            <BusdPriceContainer flexWrap='wrap'>
-              <Flex alignItems="center" mb='10px'>
+            <BusdPriceContainer flexWrap="wrap">
+              <Flex alignItems="center" mb="10px">
                 <Box width={18} height={18} mr="5px">
                   <TokenImage token={TokenInfo?.token} width={20} height={20} />
                 </Box>
@@ -255,7 +264,7 @@ const ConverTo = ({ data }) => {
                   {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
-              <Flex alignItems="center" mb='10px'>
+              <Flex alignItems="center" mb="10px">
                 <Box width={18} height={18} mr="5px">
                   <TokenImage token={TokenInfo?.quoteToken} width={20} height={20} />
                 </Box>
@@ -269,8 +278,14 @@ const ConverTo = ({ data }) => {
           </Box>
           {data ? (
             <Text bold>
-              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
-              {new BigNumber(baseTokenAmount).lt(0.001) ? new BigNumber(baseTokenAmount).toFixed(6, 1) : new BigNumber(baseTokenAmount).toFixed(3, 1)} {tokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001)
+                ? new BigNumber(farmTokenAmount).toFixed(6, 1)
+                : new BigNumber(farmTokenAmount).toFixed(3, 1)}{' '}
+              {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(baseTokenAmount).lt(0.001)
+                ? new BigNumber(baseTokenAmount).toFixed(6, 1)
+                : new BigNumber(baseTokenAmount).toFixed(3, 1)}{' '}
+              {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -286,7 +301,10 @@ const ConverTo = ({ data }) => {
           </Flex>
           {data ? (
             <Text bold>
-              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001)
+                ? new BigNumber(farmTokenAmount).toFixed(6, 1)
+                : new BigNumber(farmTokenAmount).toFixed(3, 1)}{' '}
+              {quoteTokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Box } from 'husky-uikit1.0'
+import { Box } from '@huskifinance/huski-frontend-uikit'
 
 const Card = styled(Box)<{
   width?: string

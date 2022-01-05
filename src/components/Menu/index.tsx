@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router'
-import { Menu as UikitMenu } from 'husky-uikit1.0'
+import { Menu as UikitMenu } from '@huskifinance/huski-frontend-uikit'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
@@ -16,13 +16,17 @@ import huskiLogo from './logo.png'
 import huskiLogo1 from './HomeLogo.png'
 import certikLogo from './certik.png'
 import certikLogo1 from './certik_dark.svg'
-import metamask from './metamask.svg';
+import metamask from './metamask.svg'
 
 const Logo = () => <img src={huskiLogo} height="100%" width="50px" alt="HUSKI Logo" />
 const Logo1 = () => <img src={huskiLogo1} height="100%" width="50px" alt="HUSKI Logo" />
 
-const CertikLogo = () => <img src={certikLogo} style={{ paddingLeft: '30px'}} height="62px" width="175px" alt="HUSKI Logo" />
-const CertikLogo1 = () => <img src={certikLogo1} style={{ paddingLeft: '30px' }} height="62px" width="175px" alt="HUSKI Logo" />
+const CertikLogo = () => (
+  <img src={certikLogo} style={{ paddingLeft: '30px' }} height="62px" width="175px" alt="HUSKI Logo" />
+)
+const CertikLogo1 = () => (
+  <img src={certikLogo1} style={{ paddingLeft: '30px' }} height="62px" width="175px" alt="HUSKI Logo" />
+)
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
@@ -32,11 +36,11 @@ const Menu = (props) => {
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
   const { pathname } = useLocation()
-  const isHome = pathname === '/';
+  const isHome = pathname === '/'
 
   return (
     <UikitMenu
-      certikLogo={isDark ? (<CertikLogo />) : (<CertikLogo1 />)}
+      certikLogo={isDark ? <CertikLogo /> : <CertikLogo1 />}
       userMenu={<UserMenu />}
       account={account}
       globalMenu={!isHome ? <GlobalSettings /> : null}

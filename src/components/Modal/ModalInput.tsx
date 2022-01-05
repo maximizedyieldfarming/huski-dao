@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, Button, Input, InputProps, Flex, Link } from 'husky-uikit1.0'
+import { Text, Button, Input, InputProps, Flex, Link } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { BigNumber } from 'bignumber.js'
 

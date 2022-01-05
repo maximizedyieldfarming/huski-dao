@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card as UiKitCard } from 'husky-uikit1.0'
+import { Card as UiKitCard } from '@huskifinance/huski-frontend-uikit'
 
 export const Card = styled(UiKitCard)`
   margin: 0 0px 24px;

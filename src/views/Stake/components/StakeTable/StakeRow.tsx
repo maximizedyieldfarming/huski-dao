@@ -10,7 +10,7 @@ import {
   ChevronUpIcon,
   Button,
   AutoRenewIcon,
-} from 'husky-uikit1.0'
+} from '@huskifinance/huski-frontend-uikit'
 import { useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import BigNumber from 'bignumber.js'
@@ -338,7 +338,7 @@ const StakeRow = ({ tokenData }) => {
 
   return (
     <StyledRow role="row" huski={tokenData?.symbol.toLowerCase() === 'shuski'} expanded={expanded}>
-      <Flex onClick={toggleExpanded} >
+      <Flex onClick={toggleExpanded}>
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
         <MyPosCell staked={userStakedBalance} />

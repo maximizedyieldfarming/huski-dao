@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { formatBigNumber } from 'state/utils'

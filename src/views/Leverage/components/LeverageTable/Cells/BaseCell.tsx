@@ -1,4 +1,4 @@
-import { Flex, Text } from 'husky-uikit1.0'
+import { Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 
 const BaseCell = styled.div`

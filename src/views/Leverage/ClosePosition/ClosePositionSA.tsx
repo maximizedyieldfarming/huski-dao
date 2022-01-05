@@ -1,11 +1,20 @@
 import React, { useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
-import { Box, Flex, Text, useTooltip, InfoIcon, Skeleton, Button, AutoRenewIcon } from 'husky-uikit1.0'
+import {
+  Box,
+  Flex,
+  Text,
+  useTooltip,
+  InfoIcon,
+  Skeleton,
+  Button,
+  AutoRenewIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import useToast from 'hooks/useToast'
 import { useVault } from 'hooks/useContract'
 import { useTranslation } from 'contexts/Localization'
 import Page from 'components/Layout/Page'
-import styled,{useTheme} from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
@@ -18,8 +27,6 @@ import { getBalanceAmount, formatNumber } from 'utils/formatBalance'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { getAddress } from 'utils/addressHelpers'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
-
-
 
 interface LocationParams {
   data: any
@@ -37,9 +44,9 @@ const Container = styled(Box)`
   box-shadow: 0px 0px 10px 0px rgba(191, 190, 190, 0.29);
   border-radius: 12px;
   width: 95%;
-  ${({ theme }) => theme.mediaQueries.lg}{
-  width: 510px;
-}
+  ${({ theme }) => theme.mediaQueries.lg} {
+    width: 510px;
+  }
   max-height: 528px;
   padding: 1rem;
   > * {
@@ -84,7 +91,9 @@ const ClosePositionSA = () => {
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(data.farmData?.TokenInfo.vaultAddress).balance).toJSON()
   // console.log(userTokenBalanceIb);
 
-  const userTokenBalance = getBalanceAmount(TokenInfo.token.symbol.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance).toJSON()
+  const userTokenBalance = getBalanceAmount(
+    TokenInfo.token.symbol.toLowerCase() === 'bnb' ? bnbBalance : tokenBalance,
+  ).toJSON()
 
   // console.log(data);
 
@@ -94,7 +103,7 @@ const ClosePositionSA = () => {
   const vaultContract = useVault(tokenVaultAddress)
   const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-  const {isDark} = useTheme();
+  const { isDark } = useTheme()
 
   let symbolName
   let tokenValue
@@ -167,7 +176,12 @@ const ClosePositionSA = () => {
     setIsPending(true)
     try {
       toastInfo(t('Closing Position...'), t('Please Wait!'))
-      const tx = await callWithGasPrice(contract, 'work', [id, address, amount, loan, maxReturn, dataWorker], symbolName === 'BNB' ? callOptionsBNB : callOptions)
+      const tx = await callWithGasPrice(
+        contract,
+        'work',
+        [id, address, amount, loan, maxReturn, dataWorker],
+        symbolName === 'BNB' ? callOptionsBNB : callOptions,
+      )
       const receipt = await tx.wait()
       if (receipt.status) {
         console.info('receipt', receipt)
@@ -186,39 +200,50 @@ const ClosePositionSA = () => {
     const id = positionId
     const amount = 0
     const loan = 0
-    const maxReturn = ethers.constants.MaxUint256;
+    const maxReturn = ethers.constants.MaxUint256
     const minfarmtoken = (Number(convertedPositionValue) * 0.995).toString()
-    const abiCoder = ethers.utils.defaultAbiCoder;
+    const abiCoder = ethers.utils.defaultAbiCoder
 
-    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)]);
-    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy]);
+    const dataStrategy = abiCoder.encode(['uint256'], [ethers.utils.parseEther(minfarmtoken)])
+    const dataWorker = abiCoder.encode(['address', 'bytes'], [withdrawMinimizeTradingAddress, dataStrategy])
 
-    console.log({ symbolName, id, workerAddress, amount, loan, convertedPositionValue, withdrawMinimizeTradingAddress, minfarmtoken, maxReturn, dataWorker })
+    console.log({
+      symbolName,
+      id,
+      workerAddress,
+      amount,
+      loan,
+      convertedPositionValue,
+      withdrawMinimizeTradingAddress,
+      minfarmtoken,
+      maxReturn,
+      dataWorker,
+    })
     handleFarm(id, workerAddress, amount, loan, maxReturn, dataWorker)
   }
 
   return (
     <Page>
       <Box mx="auto">
-        <img src="/images/ClosePositionSA.svg" alt="ClosePositionSA" width = '48px'/>
+        <img src="/images/ClosePositionSA.svg" alt="ClosePositionSA" width="48px" />
       </Box>
       <Text fontSize="36px" textTransform="capitalize" mx="auto" mt="-30px">
         {t('Close Position')}
       </Text>
       <Box mx="auto">
-        <Container >
+        <Container>
           <Section className="gray" mt="1rem" flexDirection="column">
             <Flex justifyContent="space-between" alignItems="center">
               <Text bold>{t('Position Value')}</Text>
               <Text fontSize="12px">
-                  {t('Balance')}:{' '}
-                  <span style={{ fontWeight: 700 }}>{`${formatDisplayedBalance(
-                    userTokenBalance,
-                    TokenInfo?.token?.decimalsDigits,
-                  )} ${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
-                </Text>
+                {t('Balance')}:{' '}
+                <span style={{ fontWeight: 700 }}>{`${formatDisplayedBalance(
+                  userTokenBalance,
+                  TokenInfo?.token?.decimalsDigits,
+                )} ${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
+              </Text>
             </Flex>
-            <AmountPanel mt="10px" isDark = {isDark}>
+            <AmountPanel mt="10px" isDark={isDark}>
               {baseTokenAmount ? (
                 <Text bold fontSize="28px">
                   {Number(farmTokenAmount).toPrecision(4)} {quoteTokenValueSymbol} +{' '}
@@ -230,7 +255,7 @@ const ClosePositionSA = () => {
             </AmountPanel>
           </Section>
           <Section className="gray" mt="1rem" flexDirection="column">
-            <Flex flexDirection="column" >
+            <Flex flexDirection="column">
               <ArrowDownIcon mx="auto" />
               <Flex alignItems="center" justifyContent="space-between">
                 <Text bold>{t('Receive (Estimated)')}</Text>
@@ -243,7 +268,7 @@ const ClosePositionSA = () => {
                   )} i${TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}`}</span>
                 </Text>
               </Flex>
-              <AmountPanel mt="10px" isDark = {isDark}>
+              <AmountPanel mt="10px" isDark={isDark}>
                 {convertedPositionValue ? (
                   <Text bold fontSize="28px">
                     {convertedPositionValue.toFixed(3)} {tokenValueSymbol}
@@ -254,18 +279,14 @@ const ClosePositionSA = () => {
               </AmountPanel>
             </Flex>
             <Flex justifyContent="space-between" mt="1rem">
-              <Flex style={{ cursor: 'pointer' }} alignItems='center'>
+              <Flex style={{ cursor: 'pointer' }} alignItems="center">
                 <img src="/images/Cheveron.svg" alt="" />
-                <Text
-                  fontWeight="bold"
-                  fontSize="16px"
-                  onClick={() => history.goBack()}
-                >
+                <Text fontWeight="bold" fontSize="16px" onClick={() => history.goBack()}>
                   {t('Back')}
                 </Text>
               </Flex>
               <Button
-                style={{ borderRadius: "14px", padding : 0 }}
+                style={{ borderRadius: '14px', padding: 0 }}
                 onClick={handleConfirm}
                 width="160px"
                 height="50px"
@@ -277,28 +298,24 @@ const ClosePositionSA = () => {
               </Button>
             </Flex>
           </Section>
-
         </Container>
       </Box>
       <Flex justifyContent="center">
-        <Container >
+        <Container>
           <Bubble justifyContent="space-between" alignItems="center">
             <Flex alignItems="center">
               <Text bold>{symbolName}</Text>
-              <Text color="#6F767E" fontSize="12px">#{positionId}</Text>
+              <Text color="#6F767E" fontSize="12px">
+                #{positionId}
+              </Text>
             </Flex>
             <Flex alignItems="center">
               <Box width={24} height={24}>
-                <TokenPairImage
-                  primaryToken={tokenValue}
-                  secondaryToken={quoteTokenValue}
-                  width={24}
-                  height={24}
-                />
+                <TokenPairImage primaryToken={tokenValue} secondaryToken={quoteTokenValue} width={24} height={24} />
               </Box>
               <Box ml="5px">
                 <Text style={{ whiteSpace: 'nowrap' }} ml="5px" bold>
-                  {lpSymbolName.toUpperCase().replace("WBNB", "BNB")}
+                  {lpSymbolName.toUpperCase().replace('WBNB', 'BNB')}
                 </Text>
                 <Text style={{ whiteSpace: 'nowrap' }} ml="5px" fontSize="12px" color="#6F767E">
                   {data?.farmData?.lpExchange}
@@ -308,22 +325,21 @@ const ClosePositionSA = () => {
           </Bubble>
         </Container>
       </Flex>
-
     </Page>
   )
 }
 
 export default ClosePositionSA
 
-const AmountPanel = styled(Box)<{ isDark? : boolean }>`
-  background: ${({ isDark }) => isDark ? '#111315' :'#F7F7F8' };
-  border: 1px solid #C6C6C6;
+const AmountPanel = styled(Box)<{ isDark?: boolean }>`
+  background: ${({ isDark }) => (isDark ? '#111315' : '#F7F7F8')};
+  border: 1px solid #c6c6c6;
   box-sizing: border-box;
   border-radius: 12px;
   height: 100px;
-  display : flex;
-  justify-content : center;
-  align-items : center;
-  padding-left : 20px;
-  padding-right : 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
 `

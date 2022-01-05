@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ArrowDropDownIcon, Text, Flex } from 'husky-uikit1.0'
+import { ArrowDropDownIcon, Text, Flex } from '@huskifinance/huski-frontend-uikit'
 import useTheme from 'hooks/useTheme'
 
 const DropDownHeader = styled.div<{ isDark: boolean }>`
@@ -11,9 +11,9 @@ const DropDownHeader = styled.div<{ isDark: boolean }>`
   justify-content: space-between;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: ${({ isDark }) => isDark ? '1px solid #272B30' : '1px solid #efefef'};
+  border: ${({ isDark }) => (isDark ? '1px solid #272B30' : '1px solid #efefef')};
   border-radius: 12px;
-  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
+  background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
   transition: border-radius 0.15s;
 `
 
@@ -22,7 +22,7 @@ const DropDownListContainer = styled.div<{ isDark: boolean }>`
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
+  background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
@@ -39,7 +39,6 @@ const StyledArrowDropDownIcon = styled(ArrowDropDownIcon)`
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-
 `
 
 const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: number }>`
@@ -50,9 +49,9 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   border-radius: 12px;
   height: 40px;
   min-width: 100%;
-  width:100%;
+  width: 100%;
   user-select: none;
-  padding-right:0;
+  padding-right: 0;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 110px;
@@ -62,7 +61,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
     props.isOpen &&
     css`
       ${DropDownHeader} {
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid #efefef;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         border-radius: 12px 12px 0 0;
       }
@@ -71,14 +70,12 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         height: auto;
         transform: scaleY(1);
         opacity: 1;
-        border: 1px solid #EFEFEF;
+        border: 1px solid #efefef;
         border-top-width: 0;
         border-radius: 0 0 12px 12px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
       }
     `}
-
-   
 `
 
 const DropDownList = styled.ul`
@@ -147,12 +144,12 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, icon 
 
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
-      <Flex justifyContent='space-between'>
+      <Flex justifyContent="space-between">
         {containerSize.width !== 0 && (
           <DropDownHeader onClick={toggling} isDark={isDark}>
             <Flex>
               {icon}
-              <Text >&nbsp;&nbsp;{options[selectedOptionIndex].label}</Text>
+              <Text>&nbsp;&nbsp;{options[selectedOptionIndex].label}</Text>
             </Flex>
             <ArrowDropDownIcon color="text" onClick={toggling} />
           </DropDownHeader>

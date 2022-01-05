@@ -1,5 +1,5 @@
 import { Currency, ETHER, Token } from '@pancakeswap/sdk'
-import { BinanceIcon } from 'husky-uikit1.0'
+import { BinanceIcon } from '@huskifinance/huski-frontend-uikit'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import useHttpLocations from '../../hooks/useHttpLocations'

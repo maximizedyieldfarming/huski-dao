@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Text, Flex, Message, Modal, InjectedModalProps, Checkbox } from 'husky-uikit1.0'
+import { Button, Text, Flex, Message, Modal, InjectedModalProps, Checkbox } from '@huskifinance/huski-frontend-uikit'
 import { useExpertModeManager } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 

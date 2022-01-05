@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps } from 'husky-uikit1.0'
+import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps } from '@huskifinance/huski-frontend-uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
@@ -64,7 +64,7 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
         <Flex flexDirection="column">
           <GasSettings />
         </Flex>
-        <Flex pt="24px" flexDirection="column" >
+        <Flex pt="24px" flexDirection="column">
           <TransactionSettings />
         </Flex>
       </Flex>

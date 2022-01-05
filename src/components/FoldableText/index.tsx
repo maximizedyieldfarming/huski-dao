@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { ExpandableLabel, Flex, FlexProps, Text } from 'husky-uikit1.0'
+import { ExpandableLabel, Flex, FlexProps, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface FoldableTextProps extends FlexProps {

@@ -1,7 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  InfoIcon,
+  useTooltip,
+  TooltipText,
+} from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import Tooltip from 'components/Tooltip'
@@ -33,9 +41,9 @@ const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDeb
       <StyledCell role="cell">
         <CellContent>
           {(isMobile || isTablet) && (
-              <Text fontSize="12px" color="textSubtle" textAlign="left">
-                {t('Liquidation Threshold')}
-              </Text>
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              {t('Liquidation Threshold')}
+            </Text>
           )}
           <Text>{t('No Debt')}</Text>
         </CellContent>

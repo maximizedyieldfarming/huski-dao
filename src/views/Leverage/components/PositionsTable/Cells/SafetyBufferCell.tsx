@@ -1,6 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText, Box } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  InfoIcon,
+  useTooltip,
+  TooltipText,
+  Box,
+} from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { LinearProgress } from '@material-ui/core'
 import BaseCell, { CellContent } from './BaseCell'
@@ -66,10 +75,10 @@ const SafetyBufferCell: React.FC<Props> = ({
       <StyledCell role="cell">
         <CellContent>
           {(isMobile || isTablet) && (
-              <Text fontSize="12px" color="textSubtle" textAlign="left">
-                {t('Safety Buffer')}
-              </Text>
-         )}
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              {t('Safety Buffer')}
+            </Text>
+          )}
           <Text>{t('No Debt')}</Text>
         </CellContent>
       </StyledCell>

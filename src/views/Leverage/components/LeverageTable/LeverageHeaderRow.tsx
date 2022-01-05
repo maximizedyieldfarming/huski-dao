@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
@@ -8,7 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid #EFEFEF;
+  border-bottom: 1px solid #efefef;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -32,7 +32,7 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
-  align-items : start;
+  align-items: start;
 `
 
 const LeverageHeaderRow = () => {
@@ -75,7 +75,7 @@ const LeverageHeaderRow = () => {
         </CellContent>
       </StyledCell>
       <StyledCell>
-        <CellContent >
+        <CellContent>
           <Text bold small color="textSubtle">
             {t('Action')}
           </Text>

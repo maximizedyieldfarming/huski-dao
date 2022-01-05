@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { useMatchBreakpoints, Grid, Skeleton, Flex, Box, Text } from 'husky-uikit1.0'
+import { useMatchBreakpoints, Grid, Skeleton, Flex, Box, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useLocation } from 'react-router-dom'
 import ActivePositionsRow from './ActivePositionsRow'

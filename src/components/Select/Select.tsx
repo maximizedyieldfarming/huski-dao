@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ArrowDropDownIcon, Text } from 'husky-uikit1.0'
+import { ArrowDropDownIcon, Text } from '@huskifinance/huski-frontend-uikit'
 import useTheme from 'hooks/useTheme'
 
 const DropDownHeader = styled.div<{ isDark: boolean }>`

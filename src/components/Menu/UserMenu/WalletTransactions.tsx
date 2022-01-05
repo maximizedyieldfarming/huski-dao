@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { Box, Button, Flex, Text } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import { AppDispatch } from 'state'
 import { useAllTransactions } from 'state/transactions/hooks'
 import { useTranslation } from 'contexts/Localization'
@@ -23,7 +23,7 @@ const WalletTransactions: React.FC = () => {
   }
 
   return (
-    <Box >
+    <Box>
       <Flex alignItems="center" justifyContent="space-between" mb="24px">
         <Text bold fontSize="14px" textTransform="uppercase" fontWeight="bold">
           {t('Recent Transactions')}

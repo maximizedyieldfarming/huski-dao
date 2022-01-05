@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text } from 'husky-uikit1.0'
+import { Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import Select from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
 import RepayDebtMinimizeTrading from './RepayDebtMinimizeTrading'
@@ -13,7 +13,7 @@ const RepayDebt = ({
   quoteTokenName,
   tokenName,
   baseTokenAmountValue,
-  farmTokenAmountValue
+  farmTokenAmountValue,
 }) => {
   const { t } = useTranslation()
   const { isConvertTo, handleIsConvertTo } = useConvertToContext()
@@ -27,26 +27,22 @@ const RepayDebt = ({
 
   return (
     <>
-        <Flex justifyContent="space-between" alignItems="center">
+      <Flex justifyContent="space-between" alignItems="center">
         <Text>{t('Which method would you like to repay the debt?')}</Text>
-        {
-          Number(targetPositionLeverage) === 1 ?
-            <Select
-              options={[
-                { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
-                { label: `${t('Minimize Trading')}`, value: 'minimizeTrading' },
-              ]}
-              onChange={handleSelect}
-            />
-            :
-            <Select
-              options={[
-                { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
-              ]}
-              onChange={handleSelect}
-            />
-        }
-
+        {Number(targetPositionLeverage) === 1 ? (
+          <Select
+            options={[
+              { label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' },
+              { label: `${t('Minimize Trading')}`, value: 'minimizeTrading' },
+            ]}
+            onChange={handleSelect}
+          />
+        ) : (
+          <Select
+            options={[{ label: `${t('Convert To')} ${tokenName}`, value: 'convertTo' }]}
+            onChange={handleSelect}
+          />
+        )}
       </Flex>
       {isConvertTo ? (
         <RepayDebtConvertTo

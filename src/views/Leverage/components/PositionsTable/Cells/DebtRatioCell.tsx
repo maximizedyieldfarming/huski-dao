@@ -1,6 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  InfoIcon,
+  useTooltip,
+  TooltipText,
+} from '@huskifinance/huski-frontend-uikit'
 
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -36,9 +44,11 @@ const DebtRatioCell = ({ debtRatio }) => {
           </Flex>
         )}
         {debtRatio && !debtRatio.isNaN() ? (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            {(debtRatio.toNumber() * 100).toFixed(2)}%
+          </Text>
         ) : (
-           <Skeleton width="80px" height="16px" />
+          <Skeleton width="80px" height="16px" />
         )}
       </CellContent>
     </StyledCell>

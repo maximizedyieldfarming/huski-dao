@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import React from 'react'
 import styled from 'styled-components'
-import { useMatchBreakpoints } from 'husky-uikit1.0'
+import { useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import { useLocation } from 'react-router-dom'
@@ -108,7 +108,7 @@ const ActivePositionsRow = ({ data }) => {
 
   const getApy = (lvg) => {
     const apr = getApr(lvg)
-    if (apr === null) { 
+    if (apr === null) {
       return null
     }
     const apy = Math.pow(1 + apr / 365, 365) - 1
@@ -151,7 +151,7 @@ const ActivePositionsRow = ({ data }) => {
         <EquityCell equity={totalPositionValueInToken.toNumber() - debtValueNumber.toNumber()} name={symbolName} />
         <ApyCell
           apr={getApr(leverage.toNumber()) * 100}
-          dailyApr={getApr(leverage.toNumber()) / 365 * 100}
+          dailyApr={(getApr(leverage.toNumber()) / 365) * 100}
           apy={getDisplayApr(getApy(leverage.toNumber()))}
           yieldFarming={yieldFarmData * leverage.toNumber()}
           tradingFees={tradeFee * 365 * leverage.toNumber()}
@@ -162,7 +162,10 @@ const ActivePositionsRow = ({ data }) => {
         {pathname.includes('farms') ? (
           <>
             <DebtRatioCell debtRatio={debtRatio} />
-            <LiquidationThresholdCell liquidationThreshold={liquidationThresholdData} noDebt={debtValueNumber.toNumber() === 0 && debtRatio.toNumber() === 0} />{' '}
+            <LiquidationThresholdCell
+              liquidationThreshold={liquidationThresholdData}
+              noDebt={debtValueNumber.toNumber() === 0 && debtRatio.toNumber() === 0}
+            />{' '}
           </>
         ) : null}
         <SafetyBufferCell

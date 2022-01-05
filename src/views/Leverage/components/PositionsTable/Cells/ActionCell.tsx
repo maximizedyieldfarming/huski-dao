@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { useMatchBreakpoints, Button ,Flex} from 'husky-uikit1.0'
+import { useMatchBreakpoints, Button, Flex } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -31,7 +31,6 @@ const ActionCellContent = styled(Flex)`
   flex-direction: row;
   justify-content: center;
   max-height: 40px;
-  
 `
 
 const ActionCell = ({ posData, disabled, name }) => {
@@ -44,7 +43,7 @@ const ActionCell = ({ posData, disabled, name }) => {
     <StyledCell role="cell">
       <ActionCellContent>
         <Button
-          style={{width:'114px',height:'40px'}}
+          style={{ width: '114px', height: '40px' }}
           scale="sm"
           as={Link}
           to={(location) => ({
@@ -57,7 +56,7 @@ const ActionCell = ({ posData, disabled, name }) => {
           {t('Adjust')}
         </Button>
         <Button
-         style={{width:'114px',height:'40px'}}
+          style={{ width: '114px', height: '40px' }}
           scale="sm"
           as={Link}
           to={(location) => ({

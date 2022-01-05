@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heading, Text } from 'husky-uikit1.0'
+import { Heading, Text } from '@huskifinance/huski-frontend-uikit'
 import { NormalComponents, SpecialComponents } from 'react-markdown/src/ast-to-react'
 import styled from 'styled-components'
 

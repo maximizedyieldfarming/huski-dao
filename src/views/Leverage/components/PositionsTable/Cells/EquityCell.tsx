@@ -1,6 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  InfoIcon,
+  useTooltip,
+  TooltipText,
+} from '@huskifinance/huski-frontend-uikit'
 
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -36,7 +44,7 @@ const EquityCell = ({ equity, name }) => {
           </Flex>
         )}
         {equity ? (
-         <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
             {equity.toFixed(3)} {name}
           </Text>
         ) : (

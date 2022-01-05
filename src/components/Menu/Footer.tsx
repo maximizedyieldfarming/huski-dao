@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ButtonMenu, ButtonMenuItem, LinkExternal, Flex, Svg, Image, Button } from 'husky-uikit1.0'
+import { ButtonMenu, ButtonMenuItem, LinkExternal, Flex, Svg, Image, Button } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const Wrapper = styled.div`

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from 'husky-uikit1.0'
+import { Button, ChevronUpIcon } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 
 import StakeRow from './StakeRow'

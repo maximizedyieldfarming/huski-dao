@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Box } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Box } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import Select from 'components/Select/Select'
 import { TokenImage } from 'components/TokenImage'

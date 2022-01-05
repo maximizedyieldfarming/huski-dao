@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useTooltip, InfoIcon, Flex } from 'husky-uikit1.0'
+import { Text, useTooltip, InfoIcon, Flex } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './Cells/BaseCell'
 
@@ -8,7 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid #EFEFEF;
+  border-bottom: 2px solid #efefef;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -16,18 +16,18 @@ const StyledRow = styled.div`
 `
 
 const NameCell = styled(BaseCell)`
-flex: 0.2 0 50px;
-${({ theme }) => theme.mediaQueries.md} {
-  flex: 0.2 0 80px;
-}
-${CellContent} {
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: start;
+  flex: 0.2 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: column;
+    flex: 0.2 0 80px;
   }
-}
+  ${CellContent} {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: start;
+    ${({ theme }) => theme.mediaQueries.md} {
+      flex-direction: column;
+    }
+  }
 `
 const TransactionCell = styled(BaseCell)`
   flex: 5;
@@ -65,18 +65,18 @@ flex: 5;
 }
 `
 const StyledCell = styled(BaseCell)`
-flex: 1 0 50px;
+  flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-  flex: 1 0 120px;
-}
-  ${CellContent} {
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: start;
-    ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: column;
+    flex: 1 0 120px;
   }
-}
+  ${CellContent} {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: start;
+    ${({ theme }) => theme.mediaQueries.md} {
+      flex-direction: column;
+    }
+  }
 `
 
 const LiquidatedPositionsHeaderRow = () => {
@@ -121,7 +121,7 @@ const LiquidatedPositionsHeaderRow = () => {
         {t(
           `The position value will be converted into base tokens(BUSD or BNB).Part of it will pay back your debt, accrued interest, and the liquidation fee.Then, you'll receive the remaining tokens in your wallet.`,
         )}
-      </Text >
+      </Text>
     </>,
     { placement: 'top-start' },
   )
@@ -137,7 +137,7 @@ const LiquidatedPositionsHeaderRow = () => {
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text fontSize="13px" bold color="textSubtle" style={{marginLeft:'-10px'}}>
+          <Text fontSize="13px" bold color="textSubtle" style={{ marginLeft: '-10px' }}>
             {t('Pool')}
           </Text>
         </CellContent>
@@ -196,8 +196,8 @@ const LiquidatedPositionsHeaderRow = () => {
       </StyledCell>
       <TransactionCell>
         <CellContent>
-          <Flex justifyContent='end' alignItems="end"> 
-            <Text fontSize="13px" bold color="textSubtle" >
+          <Flex justifyContent="end" alignItems="end">
+            <Text fontSize="13px" bold color="textSubtle">
               {t('Transaction Record')}
             </Text>
           </Flex>

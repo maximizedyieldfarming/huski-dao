@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ChevronDownIcon, ChevronUpIcon, Text } from 'husky-uikit1.0'
+import { ChevronDownIcon, ChevronUpIcon, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 
 export interface ExpandableSectionButtonProps {

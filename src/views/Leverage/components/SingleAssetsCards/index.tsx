@@ -3,7 +3,17 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { CardBody as UiKitCardBody, Flex, Text, Skeleton, Button, Box, Grid, ChevronDownIcon, useMatchBreakpoints } from 'husky-uikit1.0'
+import {
+  CardBody as UiKitCardBody,
+  Flex,
+  Text,
+  Skeleton,
+  Button,
+  Box,
+  Grid,
+  ChevronDownIcon,
+  useMatchBreakpoints,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { TokenPairImage } from 'components/TokenImage'
 import { useTranslation } from 'contexts/Localization'
@@ -318,11 +328,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   // console.log("data", {data})
   useEffect(() => {
     if (!apy) {
-      setSingleData(prev => data?.singleArray.find(item => item?.pid === prev?.pid))
+      setSingleData((prev) => data?.singleArray.find((item) => item?.pid === prev?.pid))
     }
   }, [data, apy])
 
-  const {isMobile, isTablet} = useMatchBreakpoints()
+  const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
 
   return (
@@ -351,7 +361,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     ml="20px"
                   />
                   <Flex flexDirection="column" marginLeft="30px">
-                    <Text fontSize={isSmallScreen ? "1rem" : "18px"} fontWeight="600" textTransform="capitalize">
+                    <Text fontSize={isSmallScreen ? '1rem' : '18px'} fontWeight="600" textTransform="capitalize">
                       {strategyName}
                     </Text>
                     <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(
@@ -438,7 +448,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     <ArrowUpIcon color="#27C73F" /> */}
                     <Text>
                       {t(
-                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%apyPercentageDiff% ${
+                          Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
                         { apyPercentageDiff },
                       )}

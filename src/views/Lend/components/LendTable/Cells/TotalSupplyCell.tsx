@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Box } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Box } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import nFormatter from 'utils/nFormatter'
@@ -10,8 +10,8 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   // flex: 1 0 50px;
-  flex:1;
-  min-width : 80px;
+  flex: 1;
+  min-width: 80px;
   ${({ theme }) => theme.mediaQueries.lg} {
     // flex: 1 0 120px;
   }
@@ -34,7 +34,9 @@ const TotalSupplyCell = ({ supply, supplyUSD }) => {
         )}
         {supply ? (
           <Box>
-            <Text fontSize="16px" bold color="text" style={{marginBottom:'9px'}}>{nFormatter(formatedSupply)}</Text>
+            <Text fontSize="16px" bold color="text" style={{ marginBottom: '9px' }}>
+              {nFormatter(formatedSupply)}
+            </Text>
             <Text fontSize="12px" color="textSubtle">{`$${nFormatter(formatedSupplyUSD)}`}</Text>
           </Box>
         ) : (

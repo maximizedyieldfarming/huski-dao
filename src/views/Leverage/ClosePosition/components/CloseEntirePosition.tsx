@@ -1,5 +1,14 @@
 import React from 'react'
-import { Box, Button, Flex, Text, Skeleton, useTooltip, InfoIcon, AutoRenewIcon } from 'husky-uikit1.0'
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  Skeleton,
+  useTooltip,
+  InfoIcon,
+  AutoRenewIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
@@ -257,17 +266,17 @@ const CloseEntirePosition = ({ data }) => {
   return (
     <>
       <Section flexDirection="column">
-        <Flex justifyContent="space-between" flexWrap='wrap'>
+        <Flex justifyContent="space-between" flexWrap="wrap">
           <Box>
-            <Flex mb='10px'>
+            <Flex mb="10px">
               <Text>{t('Position Value Assets')}</Text>
               {positionValueTooltipVisible && positionValueTooltip}
               <span ref={positionValueRef}>
                 <InfoIcon ml="10px" mt="2px" />
               </span>
             </Flex>
-            <BusdPriceContainer flexWrap='wrap'>
-              <Flex alignItems="center" mb='10px'>
+            <BusdPriceContainer flexWrap="wrap">
+              <Flex alignItems="center" mb="10px">
                 <Box width={18} height={18} mr="5px">
                   <TokenImage token={TokenInfo?.token} width={20} height={20} />
                 </Box>
@@ -277,7 +286,7 @@ const CloseEntirePosition = ({ data }) => {
                   {TokenInfo?.quoteToken?.symbol.replace('wBNB', 'BNB')}
                 </Text>
               </Flex>
-              <Flex alignItems="center" mb='10px'>
+              <Flex alignItems="center" mb="10px">
                 <Box width={18} height={18} mr="5px">
                   <TokenImage token={TokenInfo?.quoteToken} width={20} height={20} />
                 </Box>
@@ -291,8 +300,14 @@ const CloseEntirePosition = ({ data }) => {
           </Box>
           {baseTokenAmount ? (
             <Text bold>
-              {new BigNumber(farmTokenAmount).lt(0.001) ? new BigNumber(farmTokenAmount).toFixed(6, 1) : new BigNumber(farmTokenAmount).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
-              {new BigNumber(baseTokenAmount).lt(0.001) ? new BigNumber(baseTokenAmount).toFixed(6, 1) : new BigNumber(baseTokenAmount).toFixed(3, 1)} {tokenValueSymbol}
+              {new BigNumber(farmTokenAmount).lt(0.001)
+                ? new BigNumber(farmTokenAmount).toFixed(6, 1)
+                : new BigNumber(farmTokenAmount).toFixed(3, 1)}{' '}
+              {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(baseTokenAmount).lt(0.001)
+                ? new BigNumber(baseTokenAmount).toFixed(6, 1)
+                : new BigNumber(baseTokenAmount).toFixed(3, 1)}{' '}
+              {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -340,8 +355,14 @@ const CloseEntirePosition = ({ data }) => {
           </Flex>
           {convertedPositionValue ? (
             <Text bold>
-              {new BigNumber(convertedPositionValue).lt(0.001) ?  new BigNumber(convertedPositionValue).toFixed(6, 1) : new BigNumber(convertedPositionValue).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
-              {new BigNumber(convertedPositionValueToken).lt(0.001) ?  new BigNumber(convertedPositionValueToken).toFixed(6, 1) : new BigNumber(convertedPositionValueToken).toFixed(3, 1)} {tokenValueSymbol}{' '}
+              {new BigNumber(convertedPositionValue).lt(0.001)
+                ? new BigNumber(convertedPositionValue).toFixed(6, 1)
+                : new BigNumber(convertedPositionValue).toFixed(3, 1)}{' '}
+              {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(convertedPositionValueToken).lt(0.001)
+                ? new BigNumber(convertedPositionValueToken).toFixed(6, 1)
+                : new BigNumber(convertedPositionValueToken).toFixed(3, 1)}{' '}
+              {tokenValueSymbol}{' '}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -355,9 +376,9 @@ const CloseEntirePosition = ({ data }) => {
               <InfoIcon ml="10px" mt="2px" />
             </span>
           </Flex>
-            <Text bold>
-              {new BigNumber(debtValueNumber).toFixed(3)} {tokenValueSymbol}{' '}
-            </Text>
+          <Text bold>
+            {new BigNumber(debtValueNumber).toFixed(3)} {tokenValueSymbol}{' '}
+          </Text>
         </Flex>
       </Section>
       <Section flexDirection="column">
@@ -365,8 +386,14 @@ const CloseEntirePosition = ({ data }) => {
           <Text>{t('You will receive approximately')}</Text>
           {convertedPositionValue ? (
             <Text bold>
-              {new BigNumber(convertedPositionValue).lt(0.001) ?  new BigNumber(convertedPositionValue).toFixed(6, 1) : new BigNumber(convertedPositionValue).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
-              {new BigNumber(tokenReceive).lt(0.001) ?  new BigNumber(tokenReceive).toFixed(6, 1) : new BigNumber(tokenReceive).toFixed(3, 1)} {tokenValueSymbol}
+              {new BigNumber(convertedPositionValue).lt(0.001)
+                ? new BigNumber(convertedPositionValue).toFixed(6, 1)
+                : new BigNumber(convertedPositionValue).toFixed(3, 1)}{' '}
+              {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(tokenReceive).lt(0.001)
+                ? new BigNumber(tokenReceive).toFixed(6, 1)
+                : new BigNumber(tokenReceive).toFixed(3, 1)}{' '}
+              {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />
@@ -382,8 +409,14 @@ const CloseEntirePosition = ({ data }) => {
           </Flex>
           {convertedPositionValue ? (
             <Text bold>
-              {new BigNumber(convertedPositionValue).lt(0.001) ?  new BigNumber(convertedPositionValue).times(0.995).toFixed(6, 1) : new BigNumber(convertedPositionValue).times(0.995).toFixed(3, 1)} {quoteTokenValueSymbol} +{' '}
-              {new BigNumber(tokenReceive).lt(0.001) ?  new BigNumber(tokenReceive).toFixed(6, 1) : new BigNumber(tokenReceive).toFixed(3, 1)} {tokenValueSymbol}
+              {new BigNumber(convertedPositionValue).lt(0.001)
+                ? new BigNumber(convertedPositionValue).times(0.995).toFixed(6, 1)
+                : new BigNumber(convertedPositionValue).times(0.995).toFixed(3, 1)}{' '}
+              {quoteTokenValueSymbol} +{' '}
+              {new BigNumber(tokenReceive).lt(0.001)
+                ? new BigNumber(tokenReceive).toFixed(6, 1)
+                : new BigNumber(tokenReceive).toFixed(3, 1)}{' '}
+              {tokenValueSymbol}
             </Text>
           ) : (
             <Skeleton height="16px" width="80px" />

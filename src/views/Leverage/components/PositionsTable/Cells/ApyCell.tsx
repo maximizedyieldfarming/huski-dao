@@ -1,7 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip, TooltipText } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  InfoIcon,
+  useTooltip,
+  TooltipText,
+} from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -15,7 +23,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const ApyCell = ({ apy, huskyRewards, apr,dailyApr, borrowingInterest, yieldFarming, tradingFees }) => {
+const ApyCell = ({ apy, huskyRewards, apr, dailyApr, borrowingInterest, yieldFarming, tradingFees }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(

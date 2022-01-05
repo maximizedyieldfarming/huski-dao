@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ArrowDropDownIcon, Text, Flex } from 'husky-uikit1.0'
+import { ArrowDropDownIcon, Text, Flex } from '@huskifinance/huski-frontend-uikit'
 import { TokenImage } from 'components/TokenImage'
 import useTheme from 'hooks/useTheme'
 
@@ -12,9 +12,9 @@ const DropDownHeader = styled.div<{ isDark: boolean }>`
   justify-content: space-between;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: ${({ isDark }) => isDark ? '1px solid #272B30' : '1px solid #efefef'};
+  border: ${({ isDark }) => (isDark ? '1px solid #272B30' : '1px solid #efefef')};
   border-radius: 12px;
-  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
+  background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
   transition: border-radius 0.15s;
 `
 
@@ -23,7 +23,7 @@ const DropDownListContainer = styled.div<{ isDark: boolean }>`
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: ${({ isDark }) => isDark ? '#1A1D1F' : 'white'};
+  background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
@@ -54,7 +54,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
     props.isOpen &&
     css`
       ${DropDownHeader} {
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid #efefef;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         border-radius: 16px 16px 0 0;
       }
@@ -63,7 +63,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         height: auto;
         transform: scaleY(1);
         opacity: 1;
-        border: 1px solid #EFEFEF;
+        border: 1px solid #efefef;
         border-top-width: 0;
         border-radius: 0 0 16px 16px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
@@ -130,7 +130,7 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)
@@ -171,8 +171,13 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling} isDark={isDark}>
           <Flex alignItems="center">
-            {options[selectedOptionIndex].icon === "bull" || options[selectedOptionIndex].icon === "bear" || options[selectedOptionIndex].icon === "neutral" ? <StrategyIcon market={options[selectedOptionIndex].icon} /> :
-              <TokenImage token={options[selectedOptionIndex].icon} width={24} height={24} style={{ width: "24px" }} />}
+            {options[selectedOptionIndex].icon === 'bull' ||
+            options[selectedOptionIndex].icon === 'bear' ||
+            options[selectedOptionIndex].icon === 'neutral' ? (
+              <StrategyIcon market={options[selectedOptionIndex].icon} />
+            ) : (
+              <TokenImage token={options[selectedOptionIndex].icon} width={24} height={24} style={{ width: '24px' }} />
+            )}
             <Text paddingLeft="10px">{options[selectedOptionIndex].label}</Text>
           </Flex>
         </DropDownHeader>
@@ -184,8 +189,11 @@ const SingleFarmSelect: React.FunctionComponent<SelectProps> = ({ options, onCha
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
                 <Flex alignItems="center">
-                  {option.icon === "bull" || option.icon === "bear" || option.icon === "neutral" ? <StrategyIcon market={option.icon} /> :
-                    <TokenImage token={option.icon} width={24} height={24} />}
+                  {option.icon === 'bull' || option.icon === 'bear' || option.icon === 'neutral' ? (
+                    <StrategyIcon market={option.icon} />
+                  ) : (
+                    <TokenImage token={option.icon} width={24} height={24} />
+                  )}
                   <Text paddingLeft="10px">{option.label}</Text>
                 </Flex>
               </ListItem>

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex } from 'husky-uikit1.0'
+import { Flex } from '@huskifinance/huski-frontend-uikit'
 import Footer from 'components/Menu/Footer'
 import SubNav from 'components/Menu/SubNav'
 

@@ -1,6 +1,13 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { ChevronDownIcon, ChevronUpIcon, Flex, Text, useMatchBreakpoints, Button } from 'husky-uikit1.0'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Flex,
+  Text,
+  useMatchBreakpoints,
+  Button,
+} from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -12,7 +19,7 @@ const StyledCell = styled(BaseCell)`
 `
 const LeverageContainer = styled(Flex)`
   border-radius: 10px;
-  height:40px;
+  height: 40px;
   text-align: center;
   align-items: center;
   border: 1px solid ${({ theme }) => theme.colors.cardBorder};
@@ -28,10 +35,17 @@ const CustomButton = styled(Button)`
   }
 `
 
-export default function LeverageCell({ leverage, onChange, childLeverage }: { leverage: any; onChange: (value: any) => void; childLeverage: any }) {
+export default function LeverageCell({
+  leverage,
+  onChange,
+  childLeverage,
+}: {
+  leverage: any
+  onChange: (value: any) => void
+  childLeverage: any
+}) {
   const [lvgValue, setLvgValue] = useState(childLeverage)
   React.useEffect(() => {
-
     setLvgValue(childLeverage)
   }, [childLeverage])
 
@@ -58,9 +72,11 @@ export default function LeverageCell({ leverage, onChange, childLeverage }: { le
             {t('Leverage')}
           </Text>
         )}
-        <LeverageContainer alignItems='start'>
+        <LeverageContainer alignItems="start">
           <Flex padding="1rem">
-            <Text color='text' fontWeight="500">{lvgValue?.toFixed(2)}</Text>
+            <Text color="text" fontWeight="500">
+              {lvgValue?.toFixed(2)}
+            </Text>
           </Flex>
           <Flex flexDirection="column">
             <CustomButton scale="xs" variant="secondary" onClick={increaseLvgValue} disabled={lvgValue === leverage}>

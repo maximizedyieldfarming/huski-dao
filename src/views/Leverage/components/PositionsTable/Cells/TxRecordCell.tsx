@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button, Flex } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Button, Flex } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'

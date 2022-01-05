@@ -1,6 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Skeleton, Text, useMatchBreakpoints, Flex, InfoIcon, useTooltip, Grid } from 'husky-uikit1.0'
+import {
+  Skeleton,
+  Text,
+  useMatchBreakpoints,
+  Flex,
+  InfoIcon,
+  useTooltip,
+  Grid,
+} from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
 import nFormatter from 'utils/nFormatter'

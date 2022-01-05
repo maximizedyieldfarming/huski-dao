@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, UserMenuItem, WarningIcon } from 'husky-uikit1.0'
+import { Flex, UserMenuItem, WarningIcon } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface WalletUserMenuItemProps {

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { Box, Button, Flex, Text, Skeleton } from 'husky-uikit1.0'
+import { Box, Button, Flex, Text, Skeleton } from '@huskifinance/huski-frontend-uikit'
 import useTheme from 'hooks/useTheme'
 import styled from 'styled-components'
 import NumberInput from 'components/NumberInput'
@@ -9,8 +9,8 @@ import { useTranslation } from 'contexts/Localization'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { useAddCollateralContext } from '../context'
 
-const InputArea = styled(Flex) <{ isDark?: boolean }>`
-  background: ${({ isDark }) => isDark ? "#111315" : '#f7f7f8'};
+const InputArea = styled(Flex)<{ isDark?: boolean }>`
+  background: ${({ isDark }) => (isDark ? '#111315' : '#f7f7f8')};
   border-radius: 12px;
   padding: 0.5rem;
   flex: 1;
@@ -68,8 +68,7 @@ const AddColateral = ({
     } else if (e.target.innerText === '100%') {
       setQuoteTokenInput(userQuoteTokenBalance.toString())
     }
-    setActive1(Number(e.target.innerText.replace('%', '')) / 25 - 1);
-
+    setActive1(Number(e.target.innerText.replace('%', '')) / 25 - 1)
   }
 
   const handleTokenInput = useCallback(
@@ -96,11 +95,11 @@ const AddColateral = ({
     } else if (e.target.innerText === '100%') {
       setTokenInput(userTokenBalance.toString())
     }
-    setActive2(Number(e.target.innerText.replace('%', '')) / 25 - 1);
+    setActive2(Number(e.target.innerText.replace('%', '')) / 25 - 1)
   }
   // cleanup input when changing between repay debt and add collateral
   const { isAddCollateral, handleIsAddCollateral } = useAddCollateralContext()
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
   React.useEffect(() => {
     setTokenInput('')
     setQuoteTokenInput('')
@@ -154,17 +153,42 @@ const AddColateral = ({
               </Flex>
               <Text bold>{quoteTokenName}</Text>
             </InputArea>
-            <Flex justifyContent="space-around" background={isDark ? "#111315" : "#F4F4F4"} padding="4px" borderRadius="12px">
-              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 0}>
+            <Flex
+              justifyContent="space-around"
+              background={isDark ? '#111315' : '#F4F4F4'}
+              padding="4px"
+              borderRadius="12px"
+            >
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setQuoteTokenInputToFraction}
+                active={active1 === 0}
+              >
                 25%
               </CustomButton>
-              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 1}>
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setQuoteTokenInputToFraction}
+                active={active1 === 1}
+              >
                 50%
               </CustomButton>
-              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 2}>
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setQuoteTokenInputToFraction}
+                active={active1 === 2}
+              >
                 75%
               </CustomButton>
-              <CustomButton variant="secondary" isDark={isDark} onClick={setQuoteTokenInputToFraction} active={active1 === 3}>
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setQuoteTokenInputToFraction}
+                active={active1 === 3}
+              >
                 100%
               </CustomButton>
             </Flex>
@@ -196,17 +220,42 @@ const AddColateral = ({
               </Flex>
               <Text bold>{tokenName}</Text>
             </InputArea>
-            <Flex justifyContent="space-around" background={isDark ? "#111315" : "#F4F4F4"} padding="4px" borderRadius="12px">
-              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 0}>
+            <Flex
+              justifyContent="space-around"
+              background={isDark ? '#111315' : '#F4F4F4'}
+              padding="4px"
+              borderRadius="12px"
+            >
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setTokenInputToFraction}
+                active={active2 === 0}
+              >
                 25%
               </CustomButton>
-              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 1}>
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setTokenInputToFraction}
+                active={active2 === 1}
+              >
                 50%
               </CustomButton>
-              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 2}>
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setTokenInputToFraction}
+                active={active2 === 2}
+              >
                 75%
               </CustomButton>
-              <CustomButton variant="secondary" isDark={isDark} onClick={setTokenInputToFraction} active={active2 === 3}>
+              <CustomButton
+                variant="secondary"
+                isDark={isDark}
+                onClick={setTokenInputToFraction}
+                active={active2 === 3}
+              >
                 100%
               </CustomButton>
             </Flex>
@@ -217,17 +266,18 @@ const AddColateral = ({
   )
 }
 interface custombuttonprops {
-  active: boolean,
-  isDark: boolean,
+  active: boolean
+  isDark: boolean
 }
-const CustomButton = styled(Button) <custombuttonprops>`
+const CustomButton = styled(Button)<custombuttonprops>`
   box-shadow: ${({ active, isDark }) =>
     active
-      ? (isDark ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)' :
-        '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)')
+      ? isDark
+        ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)'
+        : '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'
       : 'none'}!important;
   color: ${({ active, isDark }) => (active ? (isDark ? '#FF6A55' : 'black') : 'lightgrey')}!important;
-  background : ${({ active, isDark }) => (active ? (isDark ? '#272B30' : 'white') : 'transparent')}!important;
+  background: ${({ active, isDark }) => (active ? (isDark ? '#272B30' : 'white') : 'transparent')}!important;
   border: none !important;
   width: 25%;
 `

@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
-import { Box, Flex, Text } from 'husky-uikit1.0'
+import { Box, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -46,8 +46,8 @@ const TabPanel = styled(Box)`
     width: 500px;
     height: 600px;
   }
-  @media screen and (max-width : 550px){
-    height : 700px!important;
+  @media screen and (max-width: 550px) {
+    height: 700px !important;
   }
 `
 
@@ -56,11 +56,11 @@ const Balance = styled(Flex)`
   padding: 1rem;
   border-radius: 12px;
   width: 95%;
-  height : 84px;
+  height: 84px;
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 500px;
   }
-  flex : unset!important;
+  flex: unset !important;
   justify-content: space-between;
   align-items: center;
 `
@@ -187,7 +187,14 @@ const LendAction = () => {
                   onClick={handleWithdrawClick}
                   to={(location) => ({ ...location, pathname: `/lend/withdraw/${tokenName}` })}
                   replace
-                  style={{ fontSize: '15px', width: '50%', color: '#6F767E', textAlign: 'center', paddingTop: '22px', marginRight: '4px' }}
+                  style={{
+                    fontSize: '15px',
+                    width: '50%',
+                    color: '#6F767E',
+                    textAlign: 'center',
+                    paddingTop: '22px',
+                    marginRight: '4px',
+                  }}
                 >
                   {t('Withdraw')}
                 </HeaderButton>
@@ -226,7 +233,7 @@ const LendAction = () => {
                     backgroundColor: isDark ? '#272B30' : 'white',
                     color: isDark ? 'white' : '#1A1D1F',
                     boxShadow: '0px 4px 8px -4px rgba(0, 0, 0, 0.25)',
-                    marginRight: '4px'
+                    marginRight: '4px',
                   }}
                 >
                   {t('Withdraw')}

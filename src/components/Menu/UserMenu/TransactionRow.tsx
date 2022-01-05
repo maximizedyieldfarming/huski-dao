@@ -1,5 +1,12 @@
 import React from 'react'
-import { BlockIcon, CheckmarkCircleIcon, Flex, Link, OpenNewIcon, RefreshIcon } from 'husky-uikit1.0'
+import {
+  BlockIcon,
+  CheckmarkCircleIcon,
+  Flex,
+  Link,
+  OpenNewIcon,
+  RefreshIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { TransactionDetails } from 'state/transactions/reducer'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'

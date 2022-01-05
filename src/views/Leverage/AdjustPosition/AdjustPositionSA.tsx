@@ -13,7 +13,7 @@ import {
   ChevronRightIcon,
   AutoRenewIcon,
   ArrowDropDownIcon,
-} from 'husky-uikit1.0'
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { useCakePrice, useHuskiPrice, useGetPositions } from 'hooks/api'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
@@ -746,7 +746,16 @@ const AdjustPositionSA = () => {
               </Text>
             </MoveBox>
             <Box ref={targetRef} style={{ width: '100%', position: 'relative' }}>
-              <ArrowDropDownIcon width={32} style={{ position: 'absolute', top: '-12px', fill: '#7B3FE4', left: ((Math.min(currentPositionLeverage, leverage) - 1) / (leverage - 1)) * (moveVal.width - 14) - 10 }} />
+              <ArrowDropDownIcon
+                width={32}
+                style={{
+                  position: 'absolute',
+                  top: '-12px',
+                  fill: '#7B3FE4',
+                  left:
+                    ((Math.min(currentPositionLeverage, leverage) - 1) / (leverage - 1)) * (moveVal.width - 14) - 10,
+                }}
+              />
               <RangeInput
                 type="range"
                 min="1.0"

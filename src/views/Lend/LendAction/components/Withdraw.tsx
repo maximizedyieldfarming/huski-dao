@@ -1,5 +1,14 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Button, Flex, Text, AutoRenewIcon, Input, Grid, useMatchBreakpoints } from 'husky-uikit1.0'
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  AutoRenewIcon,
+  Input,
+  Grid,
+  useMatchBreakpoints,
+} from '@huskifinance/huski-frontend-uikit'
 import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -36,8 +45,8 @@ const Section = styled(Flex)`
   background-color: #f7f7f8;
   padding: 1rem;
   border-radius: ${({ theme }) => theme.radii.card};
-  height : 100px;
-  align-items : center;
+  height: 100px;
+  align-items: center;
 `
 
 const MaxContainer = styled(Flex)`
@@ -147,19 +156,30 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <Text color="textSubtle" fontSize="12px">
               {t('Balance')}:
             </Text>
-            <Text fontSize='12px' fontWeight='bold' ml="5px">
+            <Text fontSize="12px" fontWeight="bold" ml="5px">
               {`${balance} ib${name}`}
             </Text>
           </Flex>
         </Flex>
-        <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }} flexDirection={isSmallScreen ? 'column' : 'row'}>
+        <Section
+          justifyContent="space-between"
+          style={{ background: isDark ? '#111315' : '#F7F7F8' }}
+          flexDirection={isSmallScreen ? 'column' : 'row'}
+        >
           <Box>
             <Input
               pattern="^[0-9]*[.,]?[0-9]{0,18}$"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={amount}
-              style={{ background: 'unset', border: 'transparent', padding: '0', color: '#1A1D1F  ', fontSize: '28px', fontWeight: 'bold' }}
+              style={{
+                background: 'unset',
+                border: 'transparent',
+                padding: '0',
+                color: '#1A1D1F  ',
+                fontSize: '28px',
+                fontWeight: 'bold',
+              }}
             />
           </Box>
           <Box>
@@ -175,7 +195,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
                     padding: '7px 8px',
                     color: '#1A1D1F',
                     fontSize: '14px',
-                    fontWeight: 500
+                    fontWeight: 500,
                   }}
                   onClick={setAmountToMax}
                 >
@@ -203,11 +223,8 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <Text color="textSubtle" fontSize="12px">
               {t('Balance')}:{' '}
             </Text>
-            <Text fontSize='12px' fontWeight='bold' ml='5px'>
-              {`${formatDisplayedBalance(
-                userTokenBalance,
-                tokenData.TokenInfo?.token?.decimalsDigits,
-              )} ${name}`}
+            <Text fontSize="12px" fontWeight="bold" ml="5px">
+              {`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}
             </Text>
           </Flex>
         </Flex>
@@ -221,7 +238,9 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text style={{ fontWeight: 700 }} width={40}>{name}</Text>
+                <Text style={{ fontWeight: 700 }} width={40}>
+                  {name}
+                </Text>
               </Grid>
             </MaxContainer>
           </Box>

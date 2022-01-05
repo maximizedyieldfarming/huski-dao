@@ -11,7 +11,7 @@ import {
   ModalContainer,
   ModalHeader as UIKitModalHeader,
   ModalTitle,
-} from 'husky-uikit1.0'
+} from '@huskifinance/huski-frontend-uikit'
 import styled, { useTheme } from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -25,14 +25,13 @@ export enum WalletView {
 }
 
 interface WalletModalProps extends InjectedModalProps {
-  initialView?: WalletView,
+  initialView?: WalletView
   onDismiss?: any
 }
 
 export const LOW_BNB_BALANCE = new BigNumber('2000000000') // 2 Gwei
 
-const ModalHeader = styled(UIKitModalHeader)`
-`
+const ModalHeader = styled(UIKitModalHeader)``
 
 const Tabs = styled.div`
   padding: 16px 24px;
@@ -43,7 +42,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ initialView = WalletView.WALL
   const { t } = useTranslation()
   const { balance, fetchStatus } = useGetBnbBalance()
   const hasLowBnbBalance = fetchStatus === FetchStatus.SUCCESS && balance.lte(LOW_BNB_BALANCE)
-  const { isDark } = useTheme();
+  const { isDark } = useTheme()
 
   const handleClick = (newIndex: number) => {
     setView(newIndex)
@@ -63,7 +62,6 @@ const WalletModal: React.FC<WalletModalProps> = ({ initialView = WalletView.WALL
         <ButtonMenu scale="sm" variant="subtle" onItemClick={handleClick} activeIndex={view} fullWidth isDark={isDark}>
           <ButtonMenuItem>{t('Wallet')}</ButtonMenuItem>
           <ButtonMenuItem>{t('Transactions')}</ButtonMenuItem>
-
         </ButtonMenu>
       </Tabs>
       <ModalBody p="24px" maxWidth="400px" width="100%">

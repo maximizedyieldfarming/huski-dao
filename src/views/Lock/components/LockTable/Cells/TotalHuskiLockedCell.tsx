@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from 'husky-uikit1.0'
+import { Text, useMatchBreakpoints, Skeleton, Flex, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -27,8 +27,13 @@ const TotalHuskiLockedCell = ({ totalsHuskiLocked }) => {
         <Text fontSize="12px" color="textSubtle" textAlign="left">
           {t('Total sHUSKI Locked')}
         </Text>
-        {totalsHuskiLocked?<Text>{totalsHuskiLocked}</Text>:<Text fontWeight="600" mt='10px'>1744.23</Text>}
-        
+        {totalsHuskiLocked ? (
+          <Text>{totalsHuskiLocked}</Text>
+        ) : (
+          <Text fontWeight="600" mt="10px">
+            1744.23
+          </Text>
+        )}
       </CellContent>
     </StyledCell>
   )

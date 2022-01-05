@@ -1,7 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex, useTooltip, TooltipText, InfoIcon } from 'husky-uikit1.0'
+import {
+  Text,
+  useMatchBreakpoints,
+  Skeleton,
+  Flex,
+  useTooltip,
+  TooltipText,
+  InfoIcon,
+} from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 
 import { useTranslation } from 'contexts/Localization'
@@ -40,13 +48,18 @@ const ProfitsCell = ({ profitLoss }) => {
             </span> */}
           </Flex>
         )}
-        {profitLoss ?
-          <Text color="text" fontWeight="700" fontSize="16px">{profitLoss}</Text> :
-          <Flex alignItems='center'>
-            <Text style={{color:'#28BA01',marginRight:'15px'}} fontWeight="600" fontSize="16px" mt="8px">+{3.92}%</Text>
-            <img src="/images/husky2.svg" alt="" width="24px" height="24px" style={{marginTop:'8px'}} />
+        {profitLoss ? (
+          <Text color="text" fontWeight="700" fontSize="16px">
+            {profitLoss}
+          </Text>
+        ) : (
+          <Flex alignItems="center">
+            <Text style={{ color: '#28BA01', marginRight: '15px' }} fontWeight="600" fontSize="16px" mt="8px">
+              +{3.92}%
+            </Text>
+            <img src="/images/husky2.svg" alt="" width="24px" height="24px" style={{ marginTop: '8px' }} />
           </Flex>
-        }
+        )}
       </CellContent>
     </StyledCell>
   )

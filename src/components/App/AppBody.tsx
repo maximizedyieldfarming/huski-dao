@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Card } from 'husky-uikit1.0'
+import { Card } from '@huskifinance/huski-frontend-uikit'
 
 export const BodyWrapper = styled(Card)`
   border-radius: 8px;
