@@ -51,7 +51,7 @@ const collapseAnimation = keyframes`
   }
 `
 
-const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
@@ -152,15 +152,12 @@ const StakeRow = ({ tokenData }) => {
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
   const huskyPrice = useHuskiPrice()
-  // console.log({ huskyPrice })
   const { t } = useTranslation()
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
   const isSmallScreen = isMobile || isTablet
-
   const { totalToken, totalSupply, totalValueStaked } = tokenData
-  // console.log('totaltoken', Number(totalToken), 'totalsupply', Number(totalSupply), 'vaultDebt', Number(vaultDebtVal))
   const { isDark } = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance)
   const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance))
@@ -178,7 +175,6 @@ const StakeRow = ({ tokenData }) => {
   const totalVolLocked = new BigNumber(totalValueStaked || 0)
     .times(tokenData?.token?.busdPrice || 0)
     .times(Number(totalToken) / Number(totalSupply) || 0)
-  // console.log('totalVolLocked', totalVolLocked.toJSON(), "totalVAluestaked", totalValueStaked)
 
   const { allowance: tokenAllowance } = useTokenAllowance(
     getAddress(tokenData?.token?.address),

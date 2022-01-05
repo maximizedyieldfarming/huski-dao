@@ -1,8 +1,5 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from '@huskifinance/huski-frontend-uikit'
-import { useTranslation } from 'contexts/Localization'
-
 import StakeRow from './StakeRow'
 
 const StyledTable = styled.div`
@@ -21,12 +18,6 @@ const StyledTableBorder = styled.div`
   // background-size: 400% 400%;
 `
 
-const ScrollButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`
 
 const StakeTable = ({ stakeData }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)

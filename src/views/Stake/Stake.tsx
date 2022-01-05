@@ -11,7 +11,6 @@ import {
   Flex,
   Box,
   Skeleton,
-  Grid,
   useMatchBreakpoints,
   AutoRenewIcon,
 } from '@huskifinance/huski-frontend-uikit'
@@ -22,7 +21,7 @@ import { useTranslation } from 'contexts/Localization'
 import { getHuskiAddress } from 'utils/addressHelpers'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
-import { WalletIcon, LockIcon, FlexingHuski } from 'assets'
+import { FlexingHuski } from 'assets'
 import StakeTable from './components/StakeTable/StakeTable'
 
 const StyledButton = styled(Button)`
@@ -78,7 +77,7 @@ const Stake: React.FC = () => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const { data: farmsData } = useStakes()
-  console.log({ ' 数据': farmsData })
+  console.log({ farmsData })
   useStakeWithUserData()
 
   const { callWithGasPrice } = useCallWithGasPrice()

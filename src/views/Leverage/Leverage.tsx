@@ -185,7 +185,6 @@ const Leverage: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const farmEarnings = new BigNumber(parseFloat(farm?.userData?.farmEarnings)).div(DEFAULT_TOKEN_DECIMAL).toNumber()
-    // console.info('farmEarnings', farmEarnings)
     reward += farmEarnings
     return reward
   })
@@ -195,8 +194,7 @@ const Leverage: React.FC = () => {
       <Section>
         <SBBox>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
-            Huski
-            <br /> Finance
+            Huski Finance
           </h2>
         </SBBox>
 

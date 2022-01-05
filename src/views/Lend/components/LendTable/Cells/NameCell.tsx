@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Flex, Skeleton, Text, useMatchBreakpoints, Box } from '@huskifinance/huski-frontend-uikit'
-import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -29,7 +28,7 @@ const NameCell = ({ token }) => {
             <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
           </Box>
           <Box>
-            <Text bold={!isMobile} small={isMobile} mb="5px" marginLeft="5px" marginTop="5px" color="text">
+            <Text bold={!isMobile} small={isMobile} mb="8px" ml="5px" mt="3px" color="text">
               {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (
