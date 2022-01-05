@@ -50,7 +50,7 @@ interface MoveProps {
   move: number
 }
 
-const MoveBox = styled(Box)<MoveProps>`
+const MoveBox = styled(Box) <MoveProps>`
   margin-left: ${({ move }) => move}px;
   margin-top: -20px;
   margin-bottom: 10px;
@@ -412,7 +412,7 @@ const AdjustPosition = () => {
     Number(adjustBorrowingInterestAPR)
   const adjustedApy = Math.pow(1 + adjustedApr / 100 / 365, 365) - 1
 
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const { toastError, toastSuccess, toastInfo } = useToast()
   const [isPending, setIsPending] = useState(false)
   const { account } = useWeb3React()
 
@@ -935,7 +935,7 @@ const AdjustPosition = () => {
   const maxValue =
     1 -
     principal /
-      (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
+    (currentPositionLeverage > Number(data.farmData.leverage) ? currentPositionLeverage : data?.farmData?.leverage)
   const updatedDebtRatio =
     Number(targetPositionLeverage) === Number(currentPositionLeverage)
       ? debtRatio.toNumber()
@@ -1397,7 +1397,7 @@ const AdjustPosition = () => {
                             fill: '#7B3FE4',
                             left:
                               ((Math.min(currentPositionLeverage, leverage) - 1) / (leverage - 1)) *
-                                (moveVal.width - 14) -
+                              (moveVal.width - 14) -
                               10,
                           }}
                         />
@@ -1480,12 +1480,12 @@ const AdjustPosition = () => {
                     <Text color="red">
                       {showNotice
                         ? t(
-                            'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
-                            {
-                              minimumDebt: minimumDebt.toNumber(),
-                              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                            },
-                          )
+                          'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
+                          {
+                            minimumDebt: minimumDebt.toNumber(),
+                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                          },
+                        )
                         : null}
                     </Text>
                   </Flex>

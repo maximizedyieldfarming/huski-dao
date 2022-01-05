@@ -11,9 +11,9 @@ export const Card = styled(UiKitCard)`
   background: ${({ theme }) => theme.card.background};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   border-radius: ${({ theme }) => theme.radii.card};
-  ${({ theme }) => theme.mediaQueries.lg} {
-    padding: 1rem;
-  }
+  // ${({ theme }) => theme.mediaQueries.lg} {
+  //   padding: 0px;
+  // }
 `
 
 export default Card

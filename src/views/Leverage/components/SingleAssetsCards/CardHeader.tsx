@@ -2,10 +2,9 @@ import React from 'react'
 import { CardHeader as UiKitCardHeader, Heading, Flex, Grid } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
-import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
 
-const Wrapper = styled(UiKitCardHeader)<{ isDark: boolean }>`
+const Wrapper = styled(UiKitCardHeader) <{ isDark: boolean }>`
   background: ${({ theme }) => theme.card.background};
   border-radius: ${({ theme }) => `${theme.radii.card} ${theme.radii.card} 0 0`};
   padding-bottom: 0;
@@ -16,7 +15,6 @@ const Wrapper = styled(UiKitCardHeader)<{ isDark: boolean }>`
 `
 
 const CardHeader = ({ data }) => {
-  const { t } = useTranslation()
   const { isDark } = useTheme()
   return (
     <Wrapper isDark={isDark}>

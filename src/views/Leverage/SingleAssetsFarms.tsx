@@ -59,7 +59,7 @@ const FilterOption = styled(Button)`
   background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
   color: ${({ isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
-  border-radius: 10px;
+  border-radius: 12px;
   color: #9d9d9d;
   > img {
     height: 26px;
@@ -87,7 +87,8 @@ const FiltersWrapper = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
-  padding: 10px 0;
+  padding: 18px 0px;
+  border-radius: 12px;
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   *::-webkit-scrollbar {
     height: 4px;
@@ -97,21 +98,20 @@ const FiltersWrapper = styled(Flex)`
     gap: 0;
   }
   > ${Flex} {
-    padding-left: 1rem;
+    padding-left: 24px;
     padding-right: 1rem;
-    font-size: 13px;
-    flex: 1;
+    font-size: 16px;
+    // flex: 1;
   }
   .strategyFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      // border-right: 2px solid #efefef;
       border-left: 2px solid #efefef;
-      justify-content: center;
+      justify-content: left;
     }
   }
   .dexFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
-      justify-content: center;
+      justify-content: left;
     }
   }
 `
@@ -324,8 +324,7 @@ const SingleAssetsFarms: React.FC = () => {
       <Section>
         <SBBox>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
-            Huski
-            <br /> Finance
+            Huski Finance
           </h2>
         </SBBox>
 
@@ -382,12 +381,12 @@ const SingleAssetsFarms: React.FC = () => {
       </StyledTableBorder>
 
       <FiltersWrapper>
-        <Flex alignItems="center" className="dexFilter">
-          <Text bold>DEX:</Text>
-          <Flex overflowX="auto" paddingLeft="5px">
+        <Flex alignItems="left" className="dexFilter">
+          <Text bold lineHeight="1.9">DEX:</Text>
+          <Flex overflowX="auto" pl="10px">
             <FilterOption
               variant="tertiary"
-              style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
+              style={{ width: '60px', height: '30px', justifySelf: 'flex-start' }}
               isActive={dexFilter === 'all'}
               onClick={() => setDexFilter('all')}
             >
@@ -395,14 +394,14 @@ const SingleAssetsFarms: React.FC = () => {
             </FilterOption>
             <FilterOption
               variant="tertiary"
-              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
+              style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-start' }}
               startIcon={<PancakeSwapIcon />}
               isActive={dexFilter === 'PancakeSwap'}
               onClick={() => setDexFilter('PancakeSwap')}
             >
               PancakeSwap
             </FilterOption>
-            <FilterOption
+            {/* <FilterOption
               variant="tertiary"
               style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
               startIcon={<img src="/images/Uniswap.svg" width="32px" height="32px" alt="" />}
@@ -410,12 +409,12 @@ const SingleAssetsFarms: React.FC = () => {
               onClick={() => setDexFilter('UniSwap')}
             >
               UniSwap
-            </FilterOption>
+            </FilterOption> */}
           </Flex>
         </Flex>
-        <Flex className="strategyFilter" alignItems="center" borderRight="none!important">
-          <Text bold>{t('Strategy:')}</Text>
-          <Flex overflowX="auto" alignItems="center">
+        <Flex className="strategyFilter" alignItems="left" borderRight="none!important">
+          <Text bold lineHeight="1.9">{t('Strategy:')}</Text>
+          <Flex overflowX="auto"  pl="10px" alignItems="left">
             <FilterOption
               style={{ height: '30px' }}
               variant="tertiary"

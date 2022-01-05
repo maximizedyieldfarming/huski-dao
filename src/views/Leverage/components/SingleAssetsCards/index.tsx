@@ -24,7 +24,6 @@ import useTheme from 'hooks/useTheme'
 import nFormatter from 'utils/nFormatter'
 import { useFarmsWithToken } from '../../hooks/useFarmsWithToken'
 import { useTradingFees, useTradingFees7days } from '../../hooks/useTradingFees'
-import { useBorrowingInterest7days } from '../../hooks/useBorrowingInterest7days'
 import { getHuskyRewards, getYieldFarming, getTvl, getSingle7Days } from '../../helpers'
 import { Card } from './Card'
 import CardHeader from './CardHeader'
@@ -154,7 +153,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   }
 
   const { priceList: cakePriceList } = usePriceList('pancakeswap-token')
-
   const singleApyList = getSingle7Days(singleData, cakePriceList, tradingFees7Days)
 
   const strategies = React.useMemo(
@@ -258,7 +256,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
         {
           symbol: 'none',
           type: 'line',
-          // data: [1000, 2000, 1500, 2000, 2000, 1200, 800],
           data: singleApyList,
           smooth: 0.3,
           areaStyle: {
