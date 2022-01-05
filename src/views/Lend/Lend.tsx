@@ -68,6 +68,7 @@ const VolumeBox = styled(Box)`
 `
 const ValueBox = styled(Box)`
   padding: 30px;
+  margin-left: -30px;
   flex-direction: column;
   justify-content: space-evenly;
   // background: isDark ? 'rgb(44,30,73)' : '#D6C7F0';
@@ -83,7 +84,7 @@ const SBPage = styled(Page)`
     margin-right: 2%;
   }
   margin-left: 0px;
-  margin-right: 0px;
+  margin-right: 32px;
   padding-left: 40px;
 `
 const Lend: React.FC = () => {
@@ -133,9 +134,8 @@ const Lend: React.FC = () => {
           className="block"
           style={{ position: 'relative', marginRight: '25px', display: 'flex', alignItems: 'center' }}
         >
-          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
-            Huski
-            <br /> Finance
+          <h2 style={{ fontFamily: 'Baloo Bhaijaan', color: '#FFFFFF', fontSize: '64px', marginLeft: '80px', fontWeight: 400 }}>
+            Huski Finance
           </h2>
         </SBBox>
         <Flex className="container">
@@ -156,7 +156,7 @@ const Lend: React.FC = () => {
               {t(`Total Volume 24H:`)}
             </Text>
             {volume24h ? (
-              <Text fontSize="30px" color="textFarm" fontFamily="LexendDeca">
+              <Text fontSize="28px" color="textFarm" style={{ letterSpacing: '-0.01em' }} fontFamily="LexendDeca" fontWeight="400" lineHeight="48px">
                 {volume24h}
               </Text>
             ) : (
@@ -183,8 +183,7 @@ const Lend: React.FC = () => {
                 fontSize="28px"
                 style={{ letterSpacing: '-0.01em' }}
                 color="textFarm"
-                fontWeight="bold"
-                fontFamily="LexendDeca"
+                fontFamily="LexendDeca" fontWeight="400" lineHeight="48px"
               >{`${totalValueLockedValue}`}</Text>
             ) : (
               <Skeleton width="180px" height="30px" />

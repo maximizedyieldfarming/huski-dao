@@ -62,7 +62,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         max-height: 300px;
         transform: scaleY(1);
         opacity: 1;
-        border: ${({ isDark }) => (isDark ? '1px solid #272B30' : '1px solid #efefef')};
+        border: ${({ theme }) => (theme.isDark ? '1px solid #272B30' : '1px solid #efefef')};
         border-top-width: 0;
         border-radius: 0 0 10px 10px;
         box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
