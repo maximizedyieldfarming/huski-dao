@@ -11,7 +11,7 @@ const DropDownHeader = styled.div<{ isDark: boolean }>`
   justify-content: flex-start;
   gap: 8px;
   padding: 0px 16px;
-  box-shadow: ${({ theme }) => theme.shadows.inset};
+  // box-shadow: ${({ theme }) => theme.shadows.inset};
   border: ${({ isDark }) => (isDark ? '1px solid #272B30' : '1px solid #efefef')};
   border-radius: 10px;
   background: ${({ isDark }) => (isDark ? '#1A1D1F' : 'white')};
@@ -53,7 +53,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
     props.isOpen &&
     css`
       ${DropDownHeader} {
-        box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
+        // box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         border-radius: 10px 10px 0 0;
       }
 
@@ -65,7 +65,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
         border: ${({ theme }) => (theme.isDark ? '1px solid #272B30' : '1px solid #efefef')};
         border-top-width: 0;
         border-radius: 0 0 10px 10px;
-        box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
+        // box-shadow: ${({ theme }) => theme.tooltip.boxShadow};
         overflow: auto;
       }
     `}
