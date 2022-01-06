@@ -5,7 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -27,7 +27,7 @@ const PositionValueCell = ({ position, name }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
+            <Text color="textSubtle" textAlign="left">
               {t('Position')}
             </Text>
             {/* {tooltipVisible && tooltip}
@@ -37,7 +37,7 @@ const PositionValueCell = ({ position, name }) => {
           </Flex>
         )}
         {position && !position.isNaN() ? (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+          <Text bold>
             {position.toNumber().toFixed(3)} {name}
           </Text>
         ) : (

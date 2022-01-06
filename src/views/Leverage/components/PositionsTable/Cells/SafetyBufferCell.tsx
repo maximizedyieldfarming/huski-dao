@@ -25,7 +25,7 @@ interface Props {
 }
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -75,11 +75,11 @@ const SafetyBufferCell: React.FC<Props> = ({
       <StyledCell role="cell">
         <CellContent>
           {(isMobile || isTablet) && (
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
-              {t('Safety Buffer')}
-            </Text>
-          )}
-          <Text>{t('No Debt')}</Text>
+              <Text color="textSubtle" textAlign="left">
+                {t('Safety Buffer')}
+              </Text>
+         )}
+          <Text bold>{t('No Debt')}</Text>
         </CellContent>
       </StyledCell>
     )
@@ -89,15 +89,15 @@ const SafetyBufferCell: React.FC<Props> = ({
       <CellContent>
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
+            <Text color="textSubtle" textAlign="left">
               {t('Safety Buffer')}
             </Text>
           </Flex>
         )}
         {safetyBuffer ? (
           <>
-            <Flex alignItems="center" style={{ gap: '10px' }} mt="8px">
-              <Text color="text" fontWeight="600" fontSize="16px">
+            <Flex alignItems="center" style={{ gap: '10px' }}>
+              <Text bold>
                 {safetyBuffer}%
               </Text>
               {/* <SBLinearProgress

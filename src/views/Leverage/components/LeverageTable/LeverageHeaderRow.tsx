@@ -18,19 +18,23 @@ const StyledRow = styled.div`
 const NameCell = styled(BaseCell)`
   flex: 5;
   flex-direction: row;
-  padding-left: 12px;
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding-left: 32px;
-    flex: 1.5 0 150px;
+    flex: 1 0 150px;
     align-items: center;
-    // padding-left: 32px;
   }
 `
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
+  }
+  align-items: start;
+`
+const ActionCell = styled(BaseCell)`
+  flex: 1 0 50px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex: 0.25 0 100px;
   }
   align-items: start;
 `
@@ -74,13 +78,13 @@ const LeverageHeaderRow = () => {
           </Text>
         </CellContent>
       </StyledCell>
-      <StyledCell>
+      <ActionCell>
         <CellContent>
           <Text bold small color="textSubtle">
             {t('Action')}
           </Text>
         </CellContent>
-      </StyledCell>
+      </ActionCell>
     </StyledRow>
   )
 }

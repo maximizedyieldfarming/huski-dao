@@ -14,7 +14,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -34,7 +34,7 @@ const DebtRatioCell = ({ debtRatio }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
+            <Text color="textSubtle" textAlign="left">
               {t('Debt Ratio')}
             </Text>
             {/* {tooltipVisible && tooltip}
@@ -44,9 +44,7 @@ const DebtRatioCell = ({ debtRatio }) => {
           </Flex>
         )}
         {debtRatio && !debtRatio.isNaN() ? (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
-            {(debtRatio.toNumber() * 100).toFixed(2)}%
-          </Text>
+          <Text bold>{(debtRatio.toNumber() * 100).toFixed(2)}%</Text>
         ) : (
           <Skeleton width="80px" height="16px" />
         )}

@@ -11,10 +11,13 @@ const StyledPage = styled(Container)`
   padding-top: 16px;
   padding-bottom: 16px;
   display: flex;
-  gap: 2rem;
+  // gap: 2rem;
+  >div {
+    margin-bottom: 2rem;
+  }
   flex-direction: column;
-  margin-left: 2%;
-  margin-right: 2%;
+ // margin-left: 2%;
+ // margin-right: 2%;
   max-width: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {

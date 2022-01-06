@@ -182,6 +182,7 @@ const ActivePositionsRow = ({ data }) => {
           posData={{ data, liquidationThresholdData }}
           disabled={!getDisplayApr(yieldFarmData * leverage.toNumber())}
           name={lpSymbolName.replace(' PancakeswapWorker', '')}
+          positionId={positionId}
         />
       </StyledRow>
     </>

@@ -16,8 +16,10 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  padding: 10px 0;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
+    padding: 0;
   }
 `
 
@@ -25,7 +27,7 @@ const LeverageRow = ({ tokenData }) => {
   const { lpSymbol, leverage } = tokenData
   const huskyPrice = useHuskiPrice()
   const cakePrice = useCakePrice()
-  
+
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
       return cakeRewardsApr.toLocaleString('en-US', { maximumFractionDigits: 2 })
@@ -72,7 +74,7 @@ const LeverageRow = ({ tokenData }) => {
 
   const getApy = (lvg) => {
     const apr = getApr(lvg)
-    if (apr === null) { 
+    if (apr === null) {
       return null
     }
     const apy = Math.pow(1 + apr / 365, 365) - 1
@@ -113,7 +115,13 @@ const LeverageRow = ({ tokenData }) => {
           huskyRewards={huskyRewards * 100 * (childLeverage - 1)}
           borrowingInterest={borrowingInterest * 100 * (childLeverage - 1)}
         />
-        <TvlCell tvl={totalTvl.toNumber()} tokenData={tokenData} lpTokens={tokensLP} tokenNum={tokenNum} quoteTokenNum={quoteTokenNum} />
+        <TvlCell
+          tvl={totalTvl.toNumber()}
+          tokenData={tokenData}
+          lpTokens={tokensLP}
+          tokenNum={tokenNum}
+          quoteTokenNum={quoteTokenNum}
+        />
         <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} childLeverage={childLeverage} />
         <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />

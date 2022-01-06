@@ -7,7 +7,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   justify-content: center;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
@@ -33,7 +33,7 @@ const ActionCellContent = styled(Flex)`
   max-height: 40px;
 `
 
-const ActionCell = ({ posData, disabled, name }) => {
+const ActionCell = ({ posData, disabled, name, positionId}) => {
   const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
   const { data, liquidationThresholdData } = posData
@@ -47,7 +47,7 @@ const ActionCell = ({ posData, disabled, name }) => {
           scale="sm"
           as={Link}
           to={(location) => ({
-            pathname: `${location.pathname}/adjust-position/${name.toUpperCase().replace('WBNB', 'BNB')}`,
+            pathname: `${location.pathname}/adjust-position/${name.toUpperCase().replace('WBNB', 'BNB')}?positionId=${positionId}`,
             state: { data, liquidationThresholdData },
           })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}
@@ -60,7 +60,7 @@ const ActionCell = ({ posData, disabled, name }) => {
           scale="sm"
           as={Link}
           to={(location) => ({
-            pathname: `${location.pathname}/close-position/${name.toUpperCase().replace('WBNB', 'BNB')}`,
+            pathname: `${location.pathname}/close-position/${name.toUpperCase().replace('WBNB', 'BNB')}?positionId=${positionId}`,
             state: { data },
           })}
           onClick={(e) => (!account || disabled) && e.preventDefault()}

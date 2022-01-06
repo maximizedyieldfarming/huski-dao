@@ -32,6 +32,10 @@ const PositionsButton = styled(ActionButton)`
   background-color: unset;
   border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.secondary}` : 'unset')};
   color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.secondary : theme.colors.textSubtle)};
+  font-size: 12px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    font-size: 1rem;
+  }
   font-weight: bold;
   border-radius: unset;
   padding: unset;
@@ -53,25 +57,17 @@ const StyledButton = styled(Button)`
   flex-direction: column;
 `
 const Section = styled(Flex)`
-  // background-color: 'transparent';
-  // padding: 0.5rem;
-  gap: 1rem;
-  // border-radius: ${({ theme }) => theme.radii.default};
-  // height: 224px;
+  > ${Box}:first-child {
+    margin-bottom: 1rem;
+  }
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.lg} {
+    > ${Box}:first-child {
+      margin-bottom: 0;
+      margin-right: 1rem;
+    }
     flex-direction: row;
   }
-  // .container {
-  //   background-color: ${({ theme }) => theme.colors.background};
-  //   padding: 1rem;
-  //   border-radius: ${({ theme }) => theme.radii.small};
-  // }
-  // .block {
-  //   background-color: ${({ theme }) => theme.colors.background};
-  //   flex: 1;
-  //   border-radius: ${({ theme }) => theme.radii.small};
-  // }
 `
 const SBBox = styled(Box)`
   > h2 {
@@ -121,12 +117,6 @@ const StyledTableBorder = styled.div`
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   overflow: hidden;
   padding: 1rem 1.5rem;
-`
-const SBPage = styled(Page)`
-  @media screen and (max-width: 450px) {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
 `
 const Leverage: React.FC = () => {
   const { t } = useTranslation()

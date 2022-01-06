@@ -65,9 +65,13 @@ const FilterOption = styled(Button)`
 const FiltersWrapper = styled(Flex)`
   flex-wrap: wrap;
   flex-direction: column;
-  gap: 1rem;
+  // hide scrollbar
   *::-webkit-scrollbar {
-    height: 4px;
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
   > ${Flex} {
     margin-bottom: 10px;
@@ -80,6 +84,9 @@ const FiltersWrapper = styled(Flex)`
     gap: 0;
   }
   > .dexFilter {
+    > ${Flex} {
+      overflow: auto;
+    }
   }
   > .tokenFilter {
     > ${Flex} {
@@ -189,12 +196,17 @@ const LeverageTable = ({ leverageData }) => {
         <StyledTable role="table">
           <Box>
             <FiltersWrapper>
-              <Flex alignItems="center" className="dexFilter" width={300}>
+              <Flex
+                alignItems={isSmallScreen ? null : 'center'}
+                flexDirection={isSmallScreen ? 'column' : null}
+                className="dexFilter"
+                width={300}
+              >
                 <Text bold>DEX:</Text>
-                <Flex overflowX="auto" overflowY="hidden">
+                <Flex>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: '60px', height: '30px', justifySelf: 'flex-end' }}
+                    style={{ width: '60px', height: '30px' }}
                     isActive={dexFilter === 'all'}
                     onClick={() => setDexFilter('all')}
                   >
@@ -202,7 +214,7 @@ const LeverageTable = ({ leverageData }) => {
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end' }}
+                    style={{ width: 'fit-content', height: '30px' }}
                     startIcon={<PancakeSwapIcon />}
                     isActive={dexFilter === 'PancakeSwap'}
                     onClick={() => setDexFilter('PancakeSwap')}
@@ -211,12 +223,17 @@ const LeverageTable = ({ leverageData }) => {
                   </FilterOption>
                 </Flex>
               </Flex>
-              <Flex alignItems="center" className="tokenFilter" ml={isSmallScreen ? '5px' : '5px'}>
+              <Flex
+                alignItems={isSmallScreen ? null : 'center'}
+                flexDirection={isSmallScreen ? 'column' : null}
+                className="tokenFilter"
+                ml={isSmallScreen ? '0' : '5px'}
+              >
                 <Text bold>{t('Paired Assets:')}</Text>
-                <Flex>
+                <Flex padding="4px 0">
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: '60px', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    style={{ width: '60px', height: '30px' }}
                     isActive={pairFilter === 'all'}
                     onClick={() => setPairFilter('all')}
                   >
@@ -224,17 +241,18 @@ const LeverageTable = ({ leverageData }) => {
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
+                    style={{ width: 'fit-content', height: '30px' }}
                     startIcon={<HuskiIcon />}
                     isActive={pairFilter === 'huski'}
+                    small
                     onClick={() => setPairFilter('huski')}
                   >
                     Huski
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                    startIcon={<BnbIcon />}
+                    style={{ width: 'fit-content', height: '30px' }}
+                    startIcon={<BnbIcon width="1rem !important" height="1rem !important" />}
                     isActive={pairFilter === 'wbnb'}
                     onClick={() => setPairFilter('wbnb')}
                   >
@@ -242,8 +260,8 @@ const LeverageTable = ({ leverageData }) => {
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                    startIcon={<BusdIcon />}
+                    style={{ width: 'fit-content', height: '30px' }}
+                    startIcon={<BusdIcon width="1rem !important" height="1rem !important" />}
                     isActive={pairFilter === 'busd'}
                     onClick={() => setPairFilter('busd')}
                   >
@@ -251,8 +269,8 @@ const LeverageTable = ({ leverageData }) => {
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                    startIcon={<BtcbIcon />}
+                    style={{ width: 'fit-content', height: '30px' }}
+                    startIcon={<BtcbIcon width="1rem !important" height="1rem !important" />}
                     isActive={pairFilter === 'btcb'}
                     onClick={() => setPairFilter('btcb')}
                   >
@@ -260,8 +278,8 @@ const LeverageTable = ({ leverageData }) => {
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
-                    style={{ width: 'fit-content', height: '30px', justifySelf: 'flex-end', marginTop: '4px' }}
-                    startIcon={<EthIcon />}
+                    style={{ width: 'fit-content', height: '30px' }}
+                    startIcon={<EthIcon width="1rem !important" height="1rem !important" />}
                     isActive={pairFilter === 'eth'}
                     onClick={() => setPairFilter('eth')}
                   >
@@ -270,7 +288,7 @@ const LeverageTable = ({ leverageData }) => {
                 </Flex>
               </Flex>
               <Flex className="searchSortContainer">
-                <Text bold>Sort by:</Text>
+                <Text bold>{t('Sort by:')}</Text>
                 <Box mr={isSmallScreen ? null : '10px'} mb={isSmallScreen ? '1rem!important' : null}>
                   <Select
                     options={[
@@ -294,7 +312,7 @@ const LeverageTable = ({ leverageData }) => {
                     onChange={handleSortOptionChange}
                   />
                 </Box>
-                <SearchInput onChange={handleChangeQuery} placeholder="Search farms" />
+                <SearchInput onChange={handleChangeQuery} placeholder={t('Search farms')} />
               </Flex>
             </FiltersWrapper>
             {!(isMobile || isTablet) && <LeverageHeaderRow />}

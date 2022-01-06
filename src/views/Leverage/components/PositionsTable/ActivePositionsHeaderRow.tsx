@@ -171,7 +171,7 @@ const ActivePositionsHeaderRow = () => {
       </NameCell>
       <PoolCell>
         <CellContent>
-          <Text fontSize="13px" style={{ marginLeft: '-10px' }} bold color="textSubtle">
+          <Text fontSize="13px" bold color="textSubtle">
             {t('Pool')}
           </Text>
         </CellContent>

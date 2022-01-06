@@ -925,7 +925,7 @@ const FarmSA = () => {
 
   const [chartype, setChartType] = useState(0)
   return (
-    <SBPage>
+    <Page>
       <Text bold fontSize="3" color="secondary" mx="auto">
         {t(
           `Farming ${singleFarm.QuoteTokenInfo.name
@@ -935,7 +935,7 @@ const FarmSA = () => {
         )}
       </Text>
       <SectionWrapper>
-        <Flex className="graphSide" flex="2">
+        <Flex className="graphSide" flex="2" mr={isSmallScreen ? null : "2rem"}>
           <Section isDark={isDark} style={{ height: '500px' }}>
             <HighchartsReact
               highcharts={Highcharts}
@@ -1150,7 +1150,7 @@ const FarmSA = () => {
           </Section>
         </Flex>
       </SectionWrapper>
-    </SBPage>
+    </Page>
   )
 }
 
