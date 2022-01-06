@@ -7,7 +7,7 @@ import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -69,7 +69,7 @@ const Borrowing = ({ tokenData, onBorrowingAssetChange }) => {
     <StyledCell role="cell">
       <CellContent>
         {isSmallScreen && (
-          <Text bold color="textSubtle" textAlign="left">
+          <Text color="textSubtle" textAlign="left">
             {t('Borrowing')}
           </Text>
         )}

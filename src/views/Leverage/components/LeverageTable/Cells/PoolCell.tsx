@@ -10,8 +10,7 @@ const StyledCell = styled(BaseCell)`
   padding-left: 12px;
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding-left: 32px;
-    flex: 1.5 0 150px;
+    flex: 1 0 150px;
     align-items: center;
   }
 `
@@ -24,10 +23,16 @@ const PoolCell = ({ pool, tokenData }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Grid gridTemplateColumns="24px 1fr" gridGap="1rem">
-          <TokenPairImage primaryToken={token} secondaryToken={quoteToken} width={24} height={24} mr="1rem" />
+        <Grid alignItems="center" gridTemplateColumns="24px 1fr" gridGap={isMobile || isTablet ? "8px" : "1rem"}>
+          <TokenPairImage
+            primaryToken={token}
+            secondaryToken={quoteToken}
+            width={24}
+            height={24}
+            mr="1rem"
+          />
           <Box>
-            <Text mt="-3px" bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
+            <Text bold={!isMobile} small={isMobile} style={{ whiteSpace: 'nowrap' }} color="text">
               {pool.toUpperCase().replace('WBNB', 'BNB')}
             </Text>
             <Text fontSize="12px" mt="5px" color="textSubtle">

@@ -14,7 +14,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -34,7 +34,7 @@ const EquityCell = ({ equity, name }) => {
       <CellContent>
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
+            <Text color="textSubtle" textAlign="left">
               {t('Equity')}
             </Text>
             {/* {tooltipVisible && tooltip}
@@ -44,7 +44,7 @@ const EquityCell = ({ equity, name }) => {
           </Flex>
         )}
         {equity ? (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+         <Text bold>
             {equity.toFixed(3)} {name}
           </Text>
         ) : (

@@ -208,16 +208,6 @@ const RangeInput = styled.input`
   }
 `
 
-const SBPage = styled(Page)`
-  overflow-x: hidden;
-  min-height: unset;
-  padding-top: 0px;
-  padding-bottom: 20px;
-  @media screen and (max-width: 450px) {
-    padding: 0;
-    margin: 0;
-  }
-`
 const Farm = () => {
   BigNumber.config({ EXPONENTIAL_AT: 1e9 }) // with this numbers from BigNumber won't be written in scientific notation (exponential)
   const { token } = useParams<RouteParams>()
@@ -889,17 +879,16 @@ const Farm = () => {
   }
 
   return (
-    <SBPage>
+    <Page>
       <Text
-        as="span"
-        fontWeight="bold"
+        bold
         fontSize="25px"
-        style={{ textAlign: 'center', marginBottom: '-40px', marginTop: '1rem' }}
+        textAlign="center"
       >
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="main">
+        <Section className="main" mr={isSmallScreen ? null : "2rem"}>
           <Flex alignItems="center" justifyContent="space-between" flexWrap="wrap">
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
@@ -1259,7 +1248,7 @@ const Farm = () => {
           </Section>
         </Flex>
       </SectionWrapper>
-    </SBPage>
+    </Page>
   )
 }
 

@@ -13,7 +13,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -63,26 +63,22 @@ const ApyCell = ({ apy, yieldFarming, tradingFees, huskyRewards, apyAtOne, borro
     <StyledCell role="cell">
       <CellContent>
         {isSmallScreen && (
-          <Text bold color="textSubtle" textAlign="left">
+          <Text color="textSubtle" textAlign="left">
             {t('APY')}
           </Text>
         )}
         {apy ? (
           <Flex alignItems="center">
-            <Text bold color="text">
-              {apyAtOne}%
-            </Text>
+            <Text bold={!isSmallScreen} color="text">{apyAtOne}%</Text>
             <ChevronRightIcon />
-            <Text bold fontSize="20px" color="#7B3FE4">
-              {apy}%
-            </Text>
+            <Text bold fontSize={isSmallScreen ? null : '20px'} color="#7B3FE4">{apy}%</Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
               <InfoIcon ml="7px" color="textSubtle" />
             </span>
           </Flex>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Skeleton width="80px" height="1rem" />
         )}
       </CellContent>
     </StyledCell>

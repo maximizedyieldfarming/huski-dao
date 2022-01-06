@@ -12,7 +12,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -68,7 +68,7 @@ export default function LeverageCell({
     <StyledCell role="cell">
       <CellContent>
         {isSmallScreen && (
-          <Text bold color="textSubtle" textAlign="left">
+          <Text color="textSubtle" textAlign="left">
             {t('Leverage')}
           </Text>
         )}

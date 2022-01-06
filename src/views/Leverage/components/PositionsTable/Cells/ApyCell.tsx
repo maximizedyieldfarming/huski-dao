@@ -17,7 +17,7 @@ import Tooltip from 'components/Tooltip'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -68,14 +68,14 @@ const ApyCell = ({ apy, huskyRewards, apr, dailyApr, borrowingInterest, yieldFar
       <CellContent>
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
+            <Text color="textSubtle" textAlign="left">
               {t('APY')}
             </Text>
           </Flex>
         )}
         {apy ? (
           <Flex alignItems="center">
-            <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+            <Text bold>
               {apy}%
             </Text>
             {tooltipVisible && tooltip}

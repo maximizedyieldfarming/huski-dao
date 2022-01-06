@@ -15,7 +15,7 @@ import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -81,23 +81,26 @@ const TvlCell = ({ tvl, tokenData, lpTokens, tokenNum, quoteTokenNum }) => {
     <StyledCell role="cell">
       <CellContent>
         {isSmallScreen && (
-          <Text bold color="textSubtle" textAlign="left">
+          <Text color="textSubtle" textAlign="left">
             {t('TVL')}
           </Text>
         )}
-        {tvl ? (
-          <Flex alignItems="center">
-            <Text bold color="text">
-              {nFormatter(tvl)}
-            </Text>
-            {tooltipVisible && tooltip}
-            <span ref={targetRef}>
-              <InfoIcon ml="7px" color="textSubtle" />
-            </span>
-          </Flex>
-        ) : (
-          <Skeleton width="80px" height="16px" />
-        )}
+        {/*         <Flex alignItems="center">{tvl ? showText : <Skeleton width="80px" height="16px" />}</Flex> */}
+        <Flex alignItems="center">
+          {tvl ? (
+            <>
+              <Text color="text" fontWeight="600">
+                {nFormatter(tvl)}
+              </Text>
+              {tooltipVisible && tooltip}
+              <span ref={targetRef}>
+                <InfoIcon ml="10px" />
+              </span>
+            </>
+          ) : (
+            <Skeleton width="80px" height="16px" />
+          )}
+        </Flex>
       </CellContent>
     </StyledCell>
   )

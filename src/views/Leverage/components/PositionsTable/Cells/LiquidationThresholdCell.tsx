@@ -21,7 +21,7 @@ interface Props {
 }
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 50px;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 120px;
   }
@@ -41,11 +41,11 @@ const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDeb
       <StyledCell role="cell">
         <CellContent>
           {(isMobile || isTablet) && (
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
-              {t('Liquidation Threshold')}
-            </Text>
+              <Text color="textSubtle" textAlign="left">
+                {t('Liquidation Threshold')}
+              </Text>
           )}
-          <Text>{t('No Debt')}</Text>
+          <Text bold>{t('No Debt')}</Text>
         </CellContent>
       </StyledCell>
     )
@@ -55,7 +55,7 @@ const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDeb
       <CellContent>
         {(isMobile || isTablet) && (
           <Flex alignItems="center">
-            <Text fontSize="12px" color="textSubtle" textAlign="left">
+            <Text color="textSubtle" textAlign="left">
               {t('Liquidation Threshold')}
             </Text>
             {/*  {tooltipVisible && tooltip}
@@ -65,7 +65,7 @@ const LiquidationThresholdCell: React.FC<Props> = ({ liquidationThreshold, noDeb
           </Flex>
         )}
         {liquidationThreshold ? (
-          <Text color="text" fontWeight="600" fontSize="16px" mt="8px">
+          <Text bold>
             {liquidationThreshold}%
           </Text>
         ) : (
