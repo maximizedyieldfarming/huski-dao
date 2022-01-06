@@ -102,17 +102,19 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   let secondaryTokenImage
   let tokenSymbol
   let quoteTokenSymbol
+  // let borrowingAsset // = singleData.TokenInfo?.token?.symbol
   if (singleData?.TokenInfo?.quoteToken?.symbol === 'CAKE' && singleData?.singleFlag === 0) {
     primaryTokenImage = singleData?.TokenInfo?.quoteToken
     secondaryTokenImage = singleData?.TokenInfo?.token
     tokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
     quoteTokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
-
+    // borrowingAsset = singleData.TokenInfo?.quoteToken?.symbol
   } else {
     primaryTokenImage = singleData?.TokenInfo?.token
     secondaryTokenImage = singleData?.TokenInfo?.quoteToken
     tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     quoteTokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    // borrowingAsset = singleData.TokenInfo?.token?.symbol
   }
 
 
@@ -223,19 +225,23 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
     const selOptions = []
     data.singleArray.forEach((single) => {
       strategies.forEach((strat) => {
-        // let lpSymbolName  // = single?.TokenInfo?.name
-        // if (single?.TokenInfo?.quoteToken?.symbol === 'CAKE' && single?.singleFlag === 0) {
-        //   lpSymbolName = single?.QuoteTokenInfo?.name
-        // } else {
-        //   lpSymbolName = single?.TokenInfo?.name
-        // }
-        // console.info('lpSymbolName',lpSymbolName)
 
-        selOptions.push({
-          // label: `${strat.name} + ${lpSymbolName}`,
-          label: `${strat.name} + ${single?.lpSymbol}`,
-          value: strat.value,
-        })
+        const lpSymbolName = single?.QuoteTokenInfo?.name.toUpperCase().replace('WBNB', 'BNB')
+        if (single?.TokenInfo?.quoteToken?.symbol === 'CAKE' && single?.singleFlag === 0) {
+          if (strat.value.includes('bull')) {
+            selOptions.push({
+              label: `${strat.name} + ${lpSymbolName}`,
+              value: strat.value,
+            })
+          }
+        } else {
+          selOptions.push({
+            label: `${strat.name} + ${lpSymbolName}`,
+            // label: `${strat.name} + ${single?.lpSymbol}`,
+            value: strat.value,
+          })
+        }
+
       })
     })
 
@@ -253,8 +259,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const apyOne = getDisplayApr(getApy(1))
   const dailyEarnings = getDailyEarnings(singleLeverage)
 
-  const avgApy = Number(apy) - Number(apyOne)
-  const apyPercentageDiff = new BigNumber(avgApy).div(apyOne).times(100).toFixed(2, 1)
+  const avgApy = (Number(apy) - Number(apyOne)).toFixed(2)
+  // const apyPercentageDiff = new BigNumber(avgApy).minus(apyOne).toFixed(2, 1) // times(100).toFixed(2, 1)
 
   const getOption = () => {
     const option = {
@@ -327,7 +333,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   // const [selectedoption, setSelectedOption] = useState(soption)
   const handleSelectChange = (option) => {
     const lpSymbol = option.label.split('+ ').pop()
-    setSingleData(data.singleArray.find((single) => single.lpSymbol === lpSymbol))
+    setSingleData(data.singleArray.find((single) => single?.QuoteTokenInfo?.name === lpSymbol))
     setSelectedStrategy(option.value)
     // setSelectedOption(option.label.split(' +')[0])
   }
@@ -341,13 +347,12 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
       }
     })
   }, [isselect])
-  // console.log('singleData', singleData, "selectedStrategy", selectedStrategy);
+
   let prevpair
 
   // because of useState for setting which token pair and strategy is being used,
   // the data inside the card gets stale (doesn't update) this forces it to update
   // if theres not apy data,
-  // console.log("data", {data})
   useEffect(() => {
     if (!apy) {
       setSingleData((prev) => data?.singleArray.find((item) => item?.pid === prev?.pid))
@@ -375,8 +380,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               >
                 <Flex alignItems="center" width="calc(100% - 20px)">
                   <TokenPairImage
-                    primaryToken={primaryTokenImage}
-                    secondaryToken={secondaryTokenImage}
+                    primaryToken={secondaryTokenImage}
+                    secondaryToken={primaryTokenImage}
                     width={44}
                     height={44}
                     primaryImageProps={{ style: { marginLeft: '20px' } }}
@@ -386,10 +391,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     <Text fontSize={isSmallScreen ? '1rem' : '18px'} fontWeight="600" textTransform="capitalize">
                       {strategyName}
                     </Text>
-                    <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.lpSymbol.replace(
-                      ' LP',
-                      '',
-                    )} ${singleData?.lpExchange}`}</Text>
+                    <Text color="#6F767E" fontSize="12px" fontWeight="500">{`${singleData?.QuoteTokenInfo?.name.toUpperCase().replace('WBNB', 'BNB')} ${singleData?.lpExchange}`}</Text>
                   </Flex>
                 </Flex>
                 <Flex marginRight="5px">
@@ -411,10 +413,16 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                           <TokenPairImage
                             variant="inverted"
                             primaryToken={
-                              data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.token
+                              symbol.includes('CAKE') ?
+                                data.singleArray.find((single) => single?.QuoteTokenInfo?.name === symbol)?.QuoteTokenInfo?.quoteToken
+                                :
+                                data.singleArray.find((single) => single?.QuoteTokenInfo?.name === symbol)?.QuoteTokenInfo?.token
                             }
                             secondaryToken={
-                              data.singleArray.find((single) => single.lpSymbol === symbol).QuoteTokenInfo.quoteToken
+                              symbol.includes('CAKE') ?
+                                data.singleArray.find((single) => single?.QuoteTokenInfo?.name === symbol)?.QuoteTokenInfo?.token
+                                :
+                                data.singleArray.find((single) => single?.QuoteTokenInfo?.name === symbol)?.QuoteTokenInfo?.quoteToken
                             }
                             width={28}
                             height={28}
@@ -422,7 +430,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                             ml="20px"
                           />
                           <Text color="#6F767E" fontWeight="600" ml="10px">
-                            {symbol.replace(' LP', '')}
+                            {symbol}
                           </Text>
                         </Flex>
                       )}
@@ -466,13 +474,11 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     {apy}%
                   </Text>
                   <Flex alignItems="center" my="5px">
-                    {/*                     <Text color="#27C73F">{apyPercentageDiff}</Text>
-                    <ArrowUpIcon color="#27C73F" /> */}
                     <Text>
                       {t(
-                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%avgApy% ${Number(avgApy) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
-                        { apyPercentageDiff },
+                        { avgApy },
                       )}
                     </Text>
                   </Flex>

@@ -32,8 +32,7 @@ export const getTradingfeesfunc = async (pairAddress) => {
 
 export const useTradingFees7days = (farm) => {
   const [tradingFees7Days, setTradingFees7Days] = useState([])
-
-  const LPAddresses = getAddress(farm.lpAddresses)
+  const LPAddresses = getAddress(farm?.lpAddresses)
   const pairAddress = LPAddresses.toLowerCase()
 
   useEffect(() => {

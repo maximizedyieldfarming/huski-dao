@@ -5,7 +5,7 @@ const leverageFarms: LeverageFarmConfig[] = [
 
   {
     pid: 251,
-    lpSymbol: 'CAKE-WBNB',
+    lpSymbol: 'CAKE-BNB',
     lpAddresses: {
       97: '',
       56: '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0',
@@ -97,7 +97,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 255,
-    lpSymbol: 'DOT-WBNB',
+    lpSymbol: 'DOT-BNB',
     lpAddresses: {
       97: '',
       56: '0xDd5bAd8f8b360d76d12FdA230F8BAF42fe0022CF',
@@ -142,7 +142,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 268,
-    lpSymbol: 'UNI-WBNB',
+    lpSymbol: 'UNI-BNB',
     lpAddresses: {
       97: '',
       56: '0x014608E87AF97a054C9a49f81E1473076D51d9a3',
@@ -187,7 +187,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 257,
-    lpSymbol: 'LINK-WBNB',
+    lpSymbol: 'LINK-BNB',
     lpAddresses: {
       97: '',
       56: '0x824eb9faDFb377394430d2744fa7C42916DE3eCe',
@@ -232,7 +232,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 260,
-    lpSymbol: 'XVS-WBNB',
+    lpSymbol: 'XVS-BNB',
     lpAddresses: {
       97: '',
       56: '0x7EB5D86FD78f3852a3e0e064f2842d45a3dB6EA2',
@@ -277,7 +277,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 305,
-    lpSymbol: 'DODO-WBNB',
+    lpSymbol: 'DODO-BNB',
     lpAddresses: {
       97: '',
       56: '0xA9986Fcbdb23c2E8B11AB40102990a08f8E58f06',
@@ -322,7 +322,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 264,
-    lpSymbol: 'USDT-WBNB',
+    lpSymbol: 'USDT-BNB',
     lpAddresses: {
       97: '',
       56: '0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE',
@@ -368,7 +368,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 261,
-    lpSymbol: 'ETH-WBNB',
+    lpSymbol: 'ETH-BNB',
     lpAddresses: {
       97: '',
       56: '0x74E4716E431f45807DCF19f284c7aA99F18a4fbc',
@@ -413,7 +413,7 @@ const leverageFarms: LeverageFarmConfig[] = [
   },
   {
     pid: 262,
-    lpSymbol: 'BTCB-WBNB',
+    lpSymbol: 'BTCB-BNB',
     lpAddresses: {
       97: '',
       56: '0x61EB789d75A95CAa3fF50ed7E47b96c132fEc082',
@@ -698,7 +698,7 @@ const leverageFarms: LeverageFarmConfig[] = [
       quoteToken: tokens.btcb,
       vaultAddress: "0x5E33c3D92310135973A70cb02E24e8a116a20052",
       pId: 365,
-      name: "BUSD-BTCB",
+      name: "BTCB-BUSD",
       address: "0xd23825DbEA329a398E0100db9903C10530B33654",
       config: "0x814009F444570ed2915a223e2cAcf955266048c9",
       strategies: {
