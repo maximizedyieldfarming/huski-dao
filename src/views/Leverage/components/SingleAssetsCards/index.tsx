@@ -97,8 +97,24 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
 
   const { tradingFees7Days } = useTradingFees7days(singleData)
   const { tokenAmountTotal, quoteTokenAmountTotal } = singleData
-  const tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
-  const quoteTokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+
+  let primaryTokenImage
+  let secondaryTokenImage
+  let tokenSymbol
+  let quoteTokenSymbol
+  if (singleData?.TokenInfo?.quoteToken?.symbol === 'CAKE' && singleData?.singleFlag === 0) {
+    primaryTokenImage = singleData?.TokenInfo?.quoteToken
+    secondaryTokenImage = singleData?.TokenInfo?.token
+    tokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    quoteTokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+
+  } else {
+    primaryTokenImage = singleData?.TokenInfo?.token
+    secondaryTokenImage = singleData?.TokenInfo?.quoteToken
+    tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+    quoteTokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+  }
+
 
   const getDisplayApr = (cakeRewardsApr?: number) => {
     if (cakeRewardsApr) {
@@ -200,14 +216,23 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   }
 
   const [selectedStrategy, setSelectedStrategy] = useState(
-    singleData?.TokenInfo?.token?.symbol.toUpperCase() === 'ALPACA' ? 'neutral' : 'bull2x',
+    singleData?.TokenInfo?.token?.symbol.toUpperCase() === 'HUSKI' ? 'neutral' : 'bull2x',
   )
 
   const getSelectOptions = React.useCallback(() => {
     const selOptions = []
     data.singleArray.forEach((single) => {
       strategies.forEach((strat) => {
+        // let lpSymbolName  // = single?.TokenInfo?.name
+        // if (single?.TokenInfo?.quoteToken?.symbol === 'CAKE' && single?.singleFlag === 0) {
+        //   lpSymbolName = single?.QuoteTokenInfo?.name
+        // } else {
+        //   lpSymbolName = single?.TokenInfo?.name
+        // }
+        // console.info('lpSymbolName',lpSymbolName)
+
         selOptions.push({
+          // label: `${strat.name} + ${lpSymbolName}`,
           label: `${strat.name} + ${single?.lpSymbol}`,
           value: strat.value,
         })
@@ -350,8 +375,8 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
               >
                 <Flex alignItems="center" width="calc(100% - 20px)">
                   <TokenPairImage
-                    primaryToken={singleData.QuoteTokenInfo.quoteToken}
-                    secondaryToken={singleData.QuoteTokenInfo.token}
+                    primaryToken={primaryTokenImage}
+                    secondaryToken={secondaryTokenImage}
                     width={44}
                     height={44}
                     primaryImageProps={{ style: { marginLeft: '20px' } }}
@@ -445,8 +470,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                     <ArrowUpIcon color="#27C73F" /> */}
                     <Text>
                       {t(
-                        `%apyPercentageDiff% ${
-                          Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%apyPercentageDiff% ${Number(apyPercentageDiff) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
                         { apyPercentageDiff },
                       )}

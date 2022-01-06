@@ -16,13 +16,23 @@ const Wrapper = styled(UiKitCardHeader) <{ isDark: boolean }>`
 
 const CardHeader = ({ data }) => {
   const { isDark } = useTheme()
+  let tokenImage
+  let tokenName
+  if (data?.TokenInfo?.quoteToken?.symbol === 'CAKE' && data?.singleFlag === 0) {
+    tokenImage = data?.TokenInfo?.quoteToken
+    tokenName = data?.TokenInfo?.quoteToken?.symbol
+  } else {
+    tokenImage = data?.TokenInfo?.token
+    tokenName = data?.TokenInfo?.token?.symbol
+  }
+
   return (
     <Wrapper isDark={isDark}>
       <Flex alignItems="center" className="marketWrapper">
         <Grid gridTemplateColumns="40px 1fr" alignItems="center">
-          <TokenImage token={data?.TokenInfo?.token} width={40} height={40} />
+          <TokenImage token={tokenImage} width={40} height={40} />
           <Heading color="text" scale="lg" paddingLeft="10px" fontWeight="bold">
-            {data?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+            {tokenName.replace('wBNB', 'BNB')}
           </Heading>
         </Grid>
       </Flex>

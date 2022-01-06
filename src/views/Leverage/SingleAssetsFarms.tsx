@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, Grid, CardsLayout } from '@huskifinance/huski-frontend-uikit'
+import { Box, Button, Flex, Text, CardsLayout } from '@huskifinance/huski-frontend-uikit'
 import { PancakeSwapIcon } from 'assets'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -202,7 +202,7 @@ const SingleAssetsFarms: React.FC = () => {
   const btcbArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'BTCB')
   const ethArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'ETH')
   const huskiArray = singleData.filter((f) => f.TokenInfo.token.symbol === 'HUSKI')
-  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'CAKE' && f.singleFlag ===0 )
+  const cakeArray = singleData.filter((f) => f.TokenInfo.quoteToken.symbol === 'CAKE' && f.singleFlag === 0)
 
   let singlesData = []
 
@@ -293,7 +293,7 @@ const SingleAssetsFarms: React.FC = () => {
   if (dexFilter !== 'all') {
     singlesData = singlesData.filter((pool) => pool?.singleArray[0]?.lpExchange === dexFilter)
   }
-console.info('singlesData',singlesData)
+  console.info('singlesData', singlesData)
   return (
     <Page>
       <Section>
@@ -389,7 +389,7 @@ console.info('singlesData',singlesData)
         </Flex>
         <Flex className="strategyFilter" alignItems="left" borderRight="none!important">
           <Text bold lineHeight="1.9">{t('Strategy:')}</Text>
-          <Flex overflowX="auto"  pl="10px" alignItems="left">
+          <Flex overflowX="auto" pl="10px" alignItems="left">
             <FilterOption
               style={{ height: '30px' }}
               variant="tertiary"
