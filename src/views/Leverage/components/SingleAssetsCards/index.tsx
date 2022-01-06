@@ -409,7 +409,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                       {f === 1 && (
                         <Flex height="50px" background={isDark ? '#070707' : '#F8F8F8'} alignItems="center" pl="12px">
                           <TokenPairImage
-                            variant="inverted"
+                            // variant="inverted"
                             primaryToken={
                               symbol.includes('CAKE') ?
                                 data.singleArray.find((single) => single?.QuoteTokenInfo?.name === symbol)?.QuoteTokenInfo?.quoteToken
