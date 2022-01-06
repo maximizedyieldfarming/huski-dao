@@ -362,17 +362,7 @@ const FarmSA = () => {
     tokenName,
   )
   const farmData = farmingData ? farmingData[1] : []
-  // console.log('values for farmData', {singleFarm, singleLeverage, tokenInputValue, quoteTokenInputValue, tokenName, farmData})
-  // console.log('farmData', farmData)
   const apy = getApy(singleLeverage)
-
-  // const selectOptions = []
-  // data.farmData?.forEach((item, index) => {
-  //     selectOptions.push({
-  //         label: item.lpSymbol.replace(' LP', ''),
-  //         value: index,
-  //     })
-  // })
 
   const balanceBigNumber = new BigNumber(userTokenBalance)
   let balanceNumber
@@ -632,10 +622,15 @@ const FarmSA = () => {
   const getPriceOption = () => {
     const option = {
       tooltip: {
+        // formatter: (params) => {
+        //   return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker} ${
+        //     params[1].seriesName
+        //   }: ${params[1].data.toFixed(2)}`
+        // },
         formatter: (params) => {
-          return `${params[0].marker} ${params[0].seriesName}: ${params[0].data.toFixed(2)}<br />${params[1].marker} ${
-            params[1].seriesName
-          }: ${params[1].data.toFixed(2)}`
+          return `${params[1].name}<br />
+                            ${params[0].marker} ${params[0].seriesName}: ${(params[0].data * 100).toFixed(2)}%<br />
+                            ${params[1].marker} ${params[1].seriesName}: ${(params[1].data * 100).toFixed(2)}%`
         },
         trigger: 'axis',
       },
@@ -652,6 +647,11 @@ const FarmSA = () => {
       },
       yAxis: {
         type: 'value',
+        axisLabel: {
+          formatter: (value) => {
+            return `${value * 100}%`
+          },
+        },
       },
       series: [
         {
@@ -670,7 +670,6 @@ const FarmSA = () => {
         {
           name: t('Coin Value'),
           type: 'line',
-          // stack: '总量',
           symbol: 'none',
           symbolSize: 8,
           color: ['#7B3FE4'],
