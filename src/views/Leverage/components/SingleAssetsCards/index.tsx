@@ -102,19 +102,17 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   let secondaryTokenImage
   let tokenSymbol
   let quoteTokenSymbol
-  // let borrowingAsset // = singleData.TokenInfo?.token?.symbol
+
   if (singleData?.TokenInfo?.quoteToken?.symbol === 'CAKE' && singleData?.singleFlag === 0) {
     primaryTokenImage = singleData?.TokenInfo?.quoteToken
     secondaryTokenImage = singleData?.TokenInfo?.token
     tokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
     quoteTokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
-    // borrowingAsset = singleData.TokenInfo?.quoteToken?.symbol
   } else {
     primaryTokenImage = singleData?.TokenInfo?.token
     secondaryTokenImage = singleData?.TokenInfo?.quoteToken
     tokenSymbol = singleData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
     quoteTokenSymbol = singleData?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
-    // borrowingAsset = singleData.TokenInfo?.token?.symbol
   }
 
 

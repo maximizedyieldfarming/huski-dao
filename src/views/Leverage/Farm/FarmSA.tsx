@@ -49,7 +49,7 @@ interface LocationParams {
   marketStrategy?: string
 }
 
-const Section = styled(Box)<{ isDark?: boolean }>`
+const Section = styled(Box) <{ isDark?: boolean }>`
   &.gray {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
@@ -129,12 +129,6 @@ const BalanceInputWrapper = styled(Flex)`
     }
   }
 `
-const SBPage = styled(Page)`
-  @media screen and (max-width: 450px) {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-  }
-`
 
 const FarmSA = () => {
   const { t } = useTranslation()
@@ -148,8 +142,20 @@ const FarmSA = () => {
   const history = useHistory()
 
   const singleFarm = data
-  const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
-  const quoteTokenCoingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
+  // const coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+  // const quoteTokenCoingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
+
+  let coingeckoId
+  let quoteTokenCoingeckoId
+  if (singleFarm?.TokenInfo?.quoteToken?.symbol === 'CAKE' && singleFarm?.singleFlag === 0) {
+    coingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
+    quoteTokenCoingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+  } else {
+    coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
+    quoteTokenCoingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
+  }
+
+
   const { isDark } = useTheme()
   const { priceList: basetokenPriceList, dateList } = usePriceList(coingeckoId)
   const { priceList: quoteTokenPriceList } = usePriceList(quoteTokenCoingeckoId)
@@ -172,17 +178,24 @@ const FarmSA = () => {
     if (selStrat.includes('bull')) {
       return 'QuoteTokenInfo'
     }
+    // && singleFarm?.TokenInfo?.quoteToken?.symbol !== 'CAKE'
+
     return 'TokenInfo'
   }
   const tokenInfoToUse = getDefaultTokenInfo(marketStrategy)
-
   const [selectedToken, setSelectedToken] = useState(singleFarm?.[tokenInfoToUse]?.token)
 
   if (marketStrategy.includes('bull')) {
     // bull === 2x long
-    tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
-    quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
-    riskKillThreshold = singleFarm?.quoteTokenLiquidationThreshold
+    if (singleFarm?.TokenInfo?.quoteToken?.symbol === 'CAKE' && singleFarm?.singleFlag === 0) {
+      tokenName = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+      quoteTokenName = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+      riskKillThreshold = singleFarm?.liquidationThreshold
+    } else {
+      tokenName = singleFarm?.QuoteTokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
+      quoteTokenName = singleFarm?.QuoteTokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
+      riskKillThreshold = singleFarm?.quoteTokenLiquidationThreshold
+    }
   } else {
     // 2x short || 3x short
     tokenName = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -204,7 +217,6 @@ const FarmSA = () => {
   )
   // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenUserQuoteTokenAllowances : tokenUserTokenAllowances
 
-  // console.log("allowances",{quoteTokenUserQuoteTokenAllowances: quoteTokenUserQuoteTokenAllowances.toString(), tokenUserTokenAllowances: tokenUserTokenAllowances.toString()}, "data", {singleFarm, selectedToken})
   let allowance = '0'
   if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
     allowance =
@@ -302,9 +314,9 @@ const FarmSA = () => {
   const { tradingFees: tradeFee } = useTradingFees(singleFarm)
 
   const getApr = (lvg: number) => {
+    // Number(huskyRewards) === 0 ||
     if (
       Number(tradeFee) === 0 ||
-      Number(huskyRewards) === 0 ||
       Number(borrowingInterest) === 0 ||
       Number(yieldFarmData) === 0 ||
       Number.isNaN(tradeFee) ||
@@ -343,6 +355,17 @@ const FarmSA = () => {
       tokenInputValue = 0
       quoteTokenInputValue = inputValue || 0
     }
+
+    if (singleFarm?.TokenInfo?.quoteToken?.symbol === 'CAKE' && singleFarm?.singleFlag === 0) {
+      if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
+        tokenInputValue = 0
+        quoteTokenInputValue = inputValue || 0
+      } else {
+        tokenInputValue = inputValue || 0
+        quoteTokenInputValue = 0
+      }
+    }
+
   } else {
     // eslint-disable-next-line no-lonely-if
     if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
@@ -353,7 +376,13 @@ const FarmSA = () => {
       quoteTokenInputValue = 0
     }
   }
-
+  console.log({
+    singleFarm,
+    singleLeverage,
+    tokenInputValue,
+    quoteTokenInputValue,
+    tokenName,
+  })
   const farmingData = getLeverageFarmingData(
     singleFarm,
     singleLeverage,
@@ -714,7 +743,7 @@ const FarmSA = () => {
             text: 'All',
           },
         ],
-        selected: 4, // 默认选中的范围，值为上面 buttons 数组的下标（从 0 开始）
+        selected: 4,
       },
       chart: {
         backgroundColor: 'transparent',
@@ -732,14 +761,10 @@ const FarmSA = () => {
         shared: true,
       },
       credits: {
-        enabled: false, // 去掉highcharts网站url
+        enabled: false,
       },
-      // navigator : { // 下部导航条
-      //     enabled : false  // 取消下部导航条，与scrollbar配合使用
-      // },
       scrollbar: {
-        // 下部滚动条
-        enabled: false, // 取消下部滚动条  不写就是默认，要显示的
+        enabled: false,
       },
       series: [
         {
@@ -853,6 +878,37 @@ const FarmSA = () => {
       },
     ]
   }
+
+  const getSelectOptionsCake = (): Array<{ icon: string; value: string; label: string }> => {
+
+    if (selectedStrategy === 'bull2x') {
+      return [
+        {
+          icon: 'bull',
+          value: 'bull2x',
+          label: 'Bull Strategy 2x',
+        },
+        {
+          icon: 'bull',
+          value: 'bull3x',
+          label: 'Bull Strategy 3x',
+        },
+      ]
+    }
+    return [
+      {
+        icon: 'bull',
+        value: 'bull3x',
+        label: 'Bull Strategy 3x',
+      },
+      {
+        icon: 'bull',
+        value: 'bull2x',
+        label: 'Bull Strategy 2x',
+      },
+    ]
+  }
+
 
   const getTokenSelectOptions = React.useCallback(() => {
     return [
@@ -1005,7 +1061,7 @@ const FarmSA = () => {
           <Section isDark={isDark}>
             <Flex>
               <SingleFarmSelect
-                options={getSelectOptions()}
+                options={singleFarm?.TokenInfo?.quoteToken?.symbol === 'CAKE' ? getSelectOptionsCake() : getSelectOptions()}
                 onChange={(option) => {
                   setMarketStrategy(option.value)
                   setInputValue('')
@@ -1140,9 +1196,9 @@ const FarmSA = () => {
                 <Text mx="auto" color="red">
                   {new BigNumber(farmData[3]).lt(minimumDebt)
                     ? t('Minimum Debt Size: %minimumDebt% %tokenName%', {
-                        minimumDebt: minimumDebt.toNumber(),
-                        tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB'),
-                      })
+                      minimumDebt: minimumDebt.toNumber(),
+                      tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB'),
+                    })
                     : null}
                 </Text>
               ) : null}
