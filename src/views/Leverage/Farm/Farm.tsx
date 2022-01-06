@@ -86,7 +86,7 @@ const SectionWrapper = styled(Page)`
   }
 `
 
-const InputArea = styled(Flex)<{ isDark: boolean }>`
+const InputArea = styled(Flex) <{ isDark: boolean }>`
   background-color: ${({ isDark }) => (isDark ? '#111315' : '#F7F7F8')};
   border-radius: '12px';
   height: 80px;
@@ -102,7 +102,7 @@ const customBotton = styled(Button)`
   margin-top: 4px;
   margin-bottom: 4px;
 `
-const StyledButton = styled(customBotton)<{ isDark: boolean }>`
+const StyledButton = styled(customBotton) <{ isDark: boolean }>`
   &:focus {
     width: 25%;
     border-color: transparent !important;
@@ -112,9 +112,9 @@ const StyledButton = styled(customBotton)<{ isDark: boolean }>`
     border-radius: 12px;
     color: #ff6a55 !important;
     box-shadow: ${({ isDark }) =>
-      isDark
-        ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)'
-        : '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'};
+    isDark
+      ? '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06)'
+      : '0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)'};
   }
   &:visited {
     width: 25%;
@@ -132,13 +132,13 @@ interface MoveProps {
   move: number
 }
 
-const MoveBox = styled(Box)<MoveProps>`
+const MoveBox = styled(Box) <MoveProps>`
   margin-left: ${({ move }) => move}px;
   margin-top: -20px;
   margin-bottom: 10px;
   color: #7b3fe4;
 `
-const ButtonArea = styled(Flex)<{ isDark: boolean }>`
+const ButtonArea = styled(Flex) <{ isDark: boolean }>`
   background-color: ${({ isDark }) => (isDark ? '#111315' : '#F7F7F8')};
   border-radius: 12px;
   padding-left: 4px;
@@ -226,7 +226,6 @@ const Farm = () => {
   const [radio, setRadio] = useState(selectedBorrowing)
   const { leverage } = tokenData
   const [leverageValue, setLeverageValue] = useState(selectedLeverage)
-  const [testvalues, setTestValues] = useState([50])
 
   const { isDark } = useTheme()
   const handleSliderChange = (e) => {
@@ -300,10 +299,6 @@ const Farm = () => {
     [userQuoteTokenBalance],
   )
 
-  // const handleChange = (e) => {
-  //   const { value } = e.target
-  //   setRadio(value)
-  // }
 
   const setQuoteTokenInputToFraction = (e: any) => {
     if (e.target.innerText === '25%') {
@@ -433,7 +428,7 @@ const Farm = () => {
 
   const bnbVaultAddress = getWbnbAddress()
   const depositContract = useVault(bnbVaultAddress)
-  const handleDeposit = async (bnbMsgValue) => {
+  const handleDeposit = async (bnbMsgValue, contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptionsBNB = {
       gasLimit: 380000,
       value: bnbMsgValue,
@@ -445,6 +440,18 @@ const Farm = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+        console.info('caozuo chenggongla deposit')
+
+
+        const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
+        console.info('wbnb  allowance ', allowance)
+        if (Number(allowance) === 0) {
+          handleApproveBnb(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+          console.info('app rove---bnb')
+        } else {
+          console.info(' no app rove---bnb')
+          handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+        }
       }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
@@ -453,15 +460,15 @@ const Farm = () => {
     }
   }
 
-  const approveContractbnb = useERC20(bnbVaultAddress)
-  const handleApproveBnb = async () => {
+  const handleApproveBnb = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     toastInfo(t('Approving...'), t('Please Wait!'))
     // setIsApproving(true)
     try {
-      const tx = await approveContractbnb.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await approveContract.approve(quoteTokenVaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
+        handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
       } else {
         toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       }
@@ -624,15 +631,12 @@ const Farm = () => {
         .replace(/\.(.*?\d*)/g, '')
 
       console.info('wrap bnb')
-      handleDeposit(bnbMsgValue)
+      handleDeposit(bnbMsgValue, contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
 
-      const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
-      console.info('wbnb  allowance ', allowance)
-      if (Number(allowance) === 0) {
-        handleApproveBnb()
-      }
+    } else {
+      handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
-    handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+
   }
 
   let tradingFeesfarm = farmData?.[5] * 100
@@ -712,8 +716,8 @@ const Farm = () => {
             ? tokenData.userData?.quoteTokenUserTokenAllowances
             : quoteTokenUserTokenAllowances.toString()
           : Number(tokenData.userData?.tokenUserTokenAllowances) > 0
-          ? tokenData.userData?.tokenUserTokenAllowances
-          : tokenUserTokenAllowances.toString()
+            ? tokenData.userData?.tokenUserTokenAllowances
+            : tokenUserTokenAllowances.toString()
     } else {
       console.info('token all === 0 ')
       allowance = '1'
@@ -752,7 +756,7 @@ const Farm = () => {
   const approveContract = useERC20(tokenAddress)
   const quoteTokenApproveContract = useERC20(quoteTokenAddress)
   const [isApproving, setIsApproving] = useState<boolean>(false)
-  console.log({ 'approve===': tokenData, isApproved })
+
   const handleApprove = async () => {
     let contract
     let approveAddress
@@ -1129,9 +1133,9 @@ const Farm = () => {
             <Text mx="auto" color="red" textAlign="center">
               {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
                 ? t('Minimum Debt Size: %minimumDebt% %radio%', {
-                    minimumDebt: minimumDebt.toNumber(),
-                    radio: radio.toUpperCase().replace('WBNB', 'BNB'),
-                  })
+                  minimumDebt: minimumDebt.toNumber(),
+                  radio: radio.toUpperCase().replace('WBNB', 'BNB'),
+                })
                 : null}
             </Text>
           ) : null}
