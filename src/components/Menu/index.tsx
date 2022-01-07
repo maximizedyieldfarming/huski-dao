@@ -5,34 +5,16 @@ import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import BigNumber from 'bignumber.js'
-import { useProfile } from 'state/profile/hooks'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
 import { useHuskiPrice } from 'hooks/api'
 import config from './config'
 import UserMenu from './UserMenu'
 import GlobalSettings from './GlobalSettings'
-import huskiLogo from './logo.png'
-import huskiLogo1 from './HomeLogo.png'
-import certikLogo from './certik.png'
-import certikLogo1 from './certik_dark.svg'
-import metamask from './metamask.svg'
-
-const Logo = () => <img src={huskiLogo} height="100%" width="50px" alt="HUSKI Logo" />
-const Logo1 = () => <img src={huskiLogo1} height="100%" width="50px" alt="HUSKI Logo" />
-
-const CertikLogo = () => (
-  <img src={certikLogo} style={{ paddingLeft: '30px' }} height="62px" width="175px" alt="HUSKI Logo" />
-)
-const CertikLogo1 = () => (
-  <img src={certikLogo1} style={{ paddingLeft: '30px' }} height="62px" width="175px" alt="HUSKI Logo" />
-)
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
-  // const cakePriceUsd = usePriceCakeBusd()
   const huskyPrice = useHuskiPrice()
-  const { profile } = useProfile()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
   const { pathname } = useLocation()
@@ -40,7 +22,6 @@ const Menu = (props) => {
 
   return (
     <UikitMenu
-      certikLogo={isDark ? <CertikLogo /> : <CertikLogo1 />}
       userMenu={<UserMenu />}
       account={account}
       globalMenu={!isHome ? <GlobalSettings /> : null}
@@ -49,18 +30,8 @@ const Menu = (props) => {
       currentLang={currentLanguage.code}
       langs={languageList}
       setLang={setLanguage}
-      cakePriceUsd={null}
       links={config(t)}
-      logo={isHome ? <Logo1 /> : <Logo />}
-      metamask={metamask}
       huskiPriceUsd={new BigNumber(huskyPrice || 0).toFixed(3, 1)}
-      /*  profile={{
-         username: profile?.username,
-         image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
-         profileLink: '/profile',
-         noProfileLink: '/profile',
-         showPip: !profile?.username,
-       }} */
       {...props}
     />
   )

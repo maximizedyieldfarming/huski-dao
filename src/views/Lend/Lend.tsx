@@ -76,17 +76,6 @@ const ValueBox = styled(Box)`
   border-radius: ${({ theme }) => theme.radii.default};
 `
 
-const SBPage = styled(Page)`
-  @media screen and (max-width: 425px) {
-    padding-left: 5px;
-    padding-right: 5px;
-    margin-left: 2%;
-    margin-right: 2%;
-  }
-  margin-left: 12px;
-  margin-right: 32px;
-  padding-left: 40px;
-`
 const Lend: React.FC = () => {
   const { t } = useTranslation()
   const { data: farmsData } = useLeverageFarms()
@@ -128,7 +117,7 @@ const Lend: React.FC = () => {
   const volume24h = volume24hnum
 
   return (
-    <SBPage>
+    <Page>
       <Section>
         <SBBox
           className="block"
@@ -210,7 +199,7 @@ const Lend: React.FC = () => {
       </Section>
 
       <LendTable lendData={lendData} />
-    </SBPage>
+    </Page>
   )
 }
 
