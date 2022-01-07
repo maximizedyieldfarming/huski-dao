@@ -450,7 +450,7 @@ const FarmSA = () => {
       gasLimit: 380000,
       value: bnbMsgValue,
     }
-    // setIsPending(true)
+    setIsPending(true)
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(depositContract, 'deposit', [bnbMsgValue], callOptionsBNB)
@@ -470,7 +470,7 @@ const FarmSA = () => {
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
-      // setIsPending(false)
+      setIsPending(false)
     }
   }
 
