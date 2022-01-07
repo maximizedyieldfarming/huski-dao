@@ -433,7 +433,7 @@ const Farm = () => {
       gasLimit: 380000,
       value: bnbMsgValue,
     }
-    // setIsPending(true)
+    setIsPending(true)
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(depositContract, 'deposit', [bnbMsgValue], callOptionsBNB)
@@ -456,13 +456,13 @@ const Farm = () => {
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
-      // setIsPending(false)
+      setIsPending(false)
     }
   }
 
   const handleApproveBnb = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     toastInfo(t('Approving...'), t('Please Wait!'))
-    // setIsApproving(true)
+    setIsApproving(true)
     try {
       const tx = await approveContract.approve(quoteTokenVaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
@@ -475,7 +475,7 @@ const Farm = () => {
     } catch (error: any) {
       toastWarning(t('Error'), error.message)
     } finally {
-      // setIsApproving(false)
+      setIsApproving(false)
     }
   }
 
@@ -884,15 +884,11 @@ const Farm = () => {
 
   return (
     <Page>
-      <Text
-        bold
-        fontSize="25px"
-        textAlign="center"
-      >
+      <Text bold fontSize="25px" textAlign="center">
         {t(`Farming ${token.toUpperCase().replace('WBNB', 'BNB')} Pools`)}
       </Text>
       <SectionWrapper>
-        <Section className="main" mr={isSmallScreen ? null : "2rem"}>
+        <Section className="main" mr={isSmallScreen ? null : '2rem'}>
           <Flex alignItems="center" justifyContent="space-between" flexWrap="wrap">
             <Text bold fontSize="18px" color="textFarm" as="span">
               {t('Collateral')}
