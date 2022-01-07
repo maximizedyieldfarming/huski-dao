@@ -227,7 +227,7 @@ const LeverageTable = ({ leverageData }) => {
                 alignItems={isSmallScreen ? null : 'center'}
                 flexDirection={isSmallScreen ? 'column' : null}
                 className="tokenFilter"
-                ml={isSmallScreen ? '0' : '5px'}
+                // ml={isSmallScreen ? '0' : '5px'}
               >
                 <Text bold>{t('Paired Assets:')}</Text>
                 <Flex padding="4px 0">
@@ -247,7 +247,7 @@ const LeverageTable = ({ leverageData }) => {
                     small
                     onClick={() => setPairFilter('huski')}
                   >
-                    Huski
+                    HUSKI
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"

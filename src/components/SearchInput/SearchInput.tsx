@@ -45,7 +45,7 @@ const SearchInput: React.FC<Props> = ({ onChange: onChangeCallback, placeholder 
   return (
     <InputWrapper>
       <StyledInput value={searchText} onChange={onChange} placeholder={t(placeholder)} isDark={isDark} />
-      <SearchIcon style={{ position: 'absolute', top: 10, left: 5, width: '19px', height: '19px' }} />
+      <SearchIcon style={{ position: 'absolute', top: 12, left: 10, width: '19px', height: '19px' }} />
     </InputWrapper>
   )
 }
