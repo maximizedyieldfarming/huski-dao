@@ -59,6 +59,7 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       headerBackground="gradients.cardHeader"
       onDismiss={onDismiss}
       style={{ maxWidth: '420px', overflowY: 'auto' }}
+      isDark={isDark}
     >
       <Flex flexDirection="column">
         <Flex flexDirection="column">
