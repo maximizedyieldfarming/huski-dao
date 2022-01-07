@@ -437,22 +437,16 @@ const Farm = () => {
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(depositContract, 'deposit', [bnbMsgValue], callOptionsBNB)
-      const receipt = await tx.wait()
-      if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
-        console.info('caozuo chenggongla deposit')
-
-
+      // const receipt = await tx.wait()
+      // if (receipt.status) {
+        // toastSuccess(t('Successful!'), t('Your deposit was successfull'))
         const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
-        console.info('wbnb  allowance ', allowance)
         if (Number(allowance) === 0) {
           handleApproveBnb(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
-          console.info('app rove---bnb')
         } else {
-          console.info(' no app rove---bnb')
           handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
         }
-      }
+      // }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
@@ -465,13 +459,13 @@ const Farm = () => {
     setIsApproving(true)
     try {
       const tx = await approveContract.approve(quoteTokenVaultAddress, ethers.constants.MaxUint256)
-      const receipt = await tx.wait()
-      if (receipt.status) {
-        toastSuccess(t('Approved!'), t('Your request has been approved'))
+      // const receipt = await tx.wait()
+      // if (receipt.status) {
+      //   toastSuccess(t('Approved!'), t('Your request has been approved'))
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
-      } else {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-      }
+      // } else {
+      //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      // }
     } catch (error: any) {
       toastWarning(t('Error'), error.message)
     } finally {
@@ -788,8 +782,6 @@ const Farm = () => {
         approveAddress = quoteTokenVaultAddress
       }
     }
-
-    console.log({ contract, approveAddress })
 
     toastInfo(t('Approving...'), t('Please Wait!'))
     setIsApproving(true)
