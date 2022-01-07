@@ -130,6 +130,32 @@ const BalanceInputWrapper = styled(Flex)`
   }
 `
 
+function areEqual(prevProps, nextProps) {
+ // dont re-render if the data is the same
+  /*  Basically, this function is shouldComponentUpdate, except you return true if you want it to not render. */
+// https://stackoverflow.com/questions/54946933/how-can-i-prevent-my-functional-component-from-re-rendering-with-react-memo-or-r
+ return prevProps.options.series[0].data === nextProps.options.series[0].data
+}
+
+const HighchartsReactWrapper: React.FC<{ options: Record<string, any> }> = React.memo((props) => {
+  const chartComponent = React.useRef(null)
+  React.useEffect(() => {
+    const { chart } = chartComponent.current
+    chart.update(props.options, true, true, true)
+    console.log('render triggerred')
+  }, [props.options])
+
+  return (
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={props.options}
+      constructorType="stockChart"
+      style={{ height: '500px' }}
+      ref={chartComponent}
+    />
+  )
+}, areEqual)
+
 const FarmSA = () => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
@@ -820,8 +846,19 @@ const FarmSA = () => {
           },
         },
       ],
+      // not sure if react-highcharts support this
+      // if yes, it will display a message if theres no data for the chart (for example, if data is taking too long to load)
+      lang: {
+        noData: 'Loading data, please wait',
+      },
+      noData: {
+        style: {
+          fontWeight: 'bold',
+          fontSize: '15px',
+          color: '#303030',
+        },
+      },
     }
-
     return option
   }
 
@@ -1034,14 +1071,9 @@ const FarmSA = () => {
         )}
       </Text>
       <SectionWrapper>
-        <Flex className="graphSide" flex="2" mr={isSmallScreen ? null : "2rem"}>
+        <Flex className="graphSide" flex="2" mr={isSmallScreen ? null : '2rem'}>
           <Section isDark={isDark} style={{ height: '500px' }}>
-            <HighchartsReact
-              highcharts={Highcharts}
-              options={getStockChartOption()}
-              constructorType="stockChart"
-              style={{ height: '500px' }}
-            />
+            <HighchartsReactWrapper options={getStockChartOption()} />
           </Section>
 
           <Section isDark={isDark}>
@@ -1086,11 +1118,13 @@ const FarmSA = () => {
                   </Box>
                   <Text>{t('Coin Value')}</Text>
                 </Flex>
-                <Text
+                <Flex
+                  alignItems="center"
                   style={{ border: '0.5px #C3C1C1 solid', height: '30px', padding: '0px 20px', borderRadius: '12px' }}
                 >
-                  APY : {apy ? apy?.toFixed(2) : <Skeleton width="25px" height="1rem" />}%
-                </Text>
+                  <Text mr="5px">APY :</Text>
+                  {apy ? <Text>{`${apy?.toFixed(2)}%`}</Text> : <Skeleton width="55px" height="1rem" />}
+                </Flex>
               </Flex>
             </Flex>
             {chartype === 0 ? (
@@ -1104,7 +1138,9 @@ const FarmSA = () => {
           <Section isDark={isDark}>
             <Flex>
               <SingleFarmSelect
-                options={singleFarm?.TokenInfo?.quoteToken?.symbol === 'CAKE' ? getSelectOptionsCake() : getSelectOptions()}
+                options={
+                  singleFarm?.TokenInfo?.quoteToken?.symbol === 'CAKE' ? getSelectOptionsCake() : getSelectOptions()
+                }
                 onChange={(option) => {
                   setMarketStrategy(option.value)
                   setInputValue('')
@@ -1239,9 +1275,9 @@ const FarmSA = () => {
                 <Text mx="auto" color="red">
                   {new BigNumber(farmData[3]).lt(minimumDebt)
                     ? t('Minimum Debt Size: %minimumDebt% %tokenName%', {
-                      minimumDebt: minimumDebt.toNumber(),
-                      tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB'),
-                    })
+                        minimumDebt: minimumDebt.toNumber(),
+                        tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB'),
+                      })
                     : null}
                 </Text>
               ) : null}
@@ -1258,3 +1294,8 @@ export default FarmSA
 // NOTE: javascript Number function and BigNumber.js toNumber() function might return a different value than the actual value
 // if that value is bigger than MAX_SAFE_INTEGER. so needs to be careful when doing number operations.
 // https://stackoverflow.com/questions/35727608/why-does-number-return-wrong-values-with-very-large-integers
+
+// NOTE 2: the reason highcharts keeps re-rendering is a bit unclear, maybe because of tokenPriceList or something else in the page
+// but wrapping it in a React.memo() function and giving it the areEqual function, which tells it to re-render only when the
+// tokenPriceList (props.options.series[0].data) changes, seems to work. 
+// https://stackoverflow.com/questions/54946933/how-can-i-prevent-my-functional-component-from-re-rendering-with-react-memo-or-r
