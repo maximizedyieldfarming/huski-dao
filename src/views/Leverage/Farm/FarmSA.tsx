@@ -274,7 +274,6 @@ const FarmSA = () => {
   const approveContract = useERC20(tokenAddress)
   const quoteTokenApproveContract = useERC20(quoteTokenAddress)
   const vaultContract = useVault(vaultAddress)
-
   const quoteTokenVaultAddress = singleFarm?.QuoteTokenInfo?.vaultAddress
   const quoteTokenVaultContract = useVault(quoteTokenVaultAddress)
 
@@ -283,16 +282,29 @@ const FarmSA = () => {
 
   const handleApprove = async () => {
     let contract
+    let approveAddress
     if (marketStrategy.includes('bull')) {
-      contract = approveContract
-    } else {
-      contract = quoteTokenApproveContract //  approveContract
+      if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
+        contract = approveContract
+        approveAddress = quoteTokenVaultAddress
+      } else {
+        contract = quoteTokenApproveContract
+        approveAddress = quoteTokenVaultAddress
+      }
+    } else if (!marketStrategy.includes('bull')) {
+      if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
+        contract = quoteTokenApproveContract
+        approveAddress = vaultAddress
+      } else {
+        contract = approveContract
+        approveAddress = vaultAddress
+      }
     }
 
     setIsApproving(true)
     try {
       toastInfo(t('Approving...'), t('Please Wait!'))
-      const tx = await contract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const tx = await contract.approve(approveAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
@@ -407,7 +419,7 @@ const FarmSA = () => {
 
   const bnbVaultAddress = getWbnbAddress()
   const depositContract = useVault(bnbVaultAddress)
-  const handleDeposit = async (bnbMsgValue) => {
+  const handleDeposit = async (bnbMsgValue, contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
     const callOptionsBNB = {
       gasLimit: 380000,
       value: bnbMsgValue,
@@ -416,14 +428,43 @@ const FarmSA = () => {
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(depositContract, 'deposit', [bnbMsgValue], callOptionsBNB)
-      const receipt = await tx.wait()
-      if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+
+      const allowance1 = singleFarm?.userData?.tokenUserQuoteTokenAllowances
+      if (Number(allowance1) === 0) {
+        handleApproveBnb(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+      } else {
+        handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
       }
+
+
+      // const receipt = await tx.wait()
+      // if (receipt.status) {
+      // toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      // }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       // setIsPending(false)
+    }
+  }
+
+  const handleApproveBnb = async (contract, id, workerAddress, amount, loan, maxReturn, dataWorker) => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    setIsApproving(true)
+    try {
+      const tx = await approveContract.approve(quoteTokenVaultAddress, ethers.constants.MaxUint256)
+      handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+      // const receipt = await tx.wait()
+      // if (receipt.status) {
+      //   toastSuccess(t('Approved!'), t('Your request has been approved'))
+
+      // } else {
+      //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      // }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      setIsApproving(false)
     }
   }
 
@@ -556,11 +597,13 @@ const FarmSA = () => {
       const bnbMsgValue = getDecimalAmount(new BigNumber(farmingTokenAmount || 0), 18)
         .toString()
         .replace(/\.(.*?\d*)/g, '')
-      // getDecimalAmount(new BigNumber(farmingTokenAmount), 18).toString()
-      handleDeposit(bnbMsgValue)
+
+      handleDeposit(bnbMsgValue, contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+    } else {
+      handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
 
-    handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+
   }
 
   const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(
