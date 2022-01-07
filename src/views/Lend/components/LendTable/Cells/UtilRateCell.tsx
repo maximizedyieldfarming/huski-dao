@@ -7,11 +7,9 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  // flex: 1 0 50px;
-  flex: 1;
-  min-width: 80px;
-  ${({ theme }) => theme.mediaQueries.lg} {
-    // flex: 1 0 120px;
+  flex: 1 0 auto;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex: 1 0 120px;
   }
 `
 

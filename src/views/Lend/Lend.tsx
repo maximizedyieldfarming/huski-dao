@@ -15,22 +15,21 @@ const Section = styled(Flex)`
   background-color: 'transparent';
   font-family: inter;
   padding: 0.5rem 0;
-  gap: 0.5rem;
-  // border-radius: ${({ theme }) => theme.radii.default};
-  // height: 224px;
-  flex-flow: row wrap;
-
-  .container {
-    // background-color: ${({ theme }) => theme.colors.background};
-    // padding: 1rem;
-    overflow: auto;
-    gap: 2rem;
-    flex-wrap: wrap;
+  flex-direction: column;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    height: 8px;
   }
-  .block {
-    background-color: ${({ theme }) => theme.colors.background};
-    flex: 1;
-    border-radius: ${({ theme }) => theme.radii.default};
+  > div:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-direction: row;
+    justify-content: space-between;
+    > div:not(:last-child) {
+      margin-right: 1rem;
+      margin-bottom: 0;
+    }
   }
 `
 const SBBox = styled(Box)`
@@ -47,7 +46,6 @@ const SBBox = styled(Box)`
   min-width: 520px;
   @media screen and (max-width: 1480px) {
     padding: 30px 0px;
-    margin-right: 0px !important;
   }
   @media screen and (max-width: 600px) {
     min-width: unset;
@@ -58,21 +56,13 @@ const SBBox = styled(Box)`
   }
 `
 const VolumeBox = styled(Box)`
-  padding: 30px;
   flex-direction: column;
   justify-content: space-evenly;
-  // background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
-  // width: 20%;
-  margin-right: 25px;
-  border-radius: ${({ theme }) => theme.radii.default};
+  border-radius: 15px !important;
 `
 const ValueBox = styled(Box)`
-  padding: 30px;
-  margin-left: -30px;
   flex-direction: column;
   justify-content: space-evenly;
-  // background: isDark ? 'rgb(44,30,73)' : '#D6C7F0';
-  // width: 20%;
   border-radius: ${({ theme }) => theme.radii.default};
 `
 
@@ -112,6 +102,7 @@ const Lend: React.FC = () => {
   usePollLeverageFarmsWithUserData()
 
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
 
   const volume24hnum = useVolume24h()
   const volume24h = volume24hnum
@@ -121,7 +112,13 @@ const Lend: React.FC = () => {
       <Section>
         <SBBox
           className="block"
-          style={{ position: 'relative', marginRight: '25px', display: 'flex', alignItems: 'center' }}
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            // width: isSmallScreen ? '100%' : '888px',
+            flex: isSmallScreen ? '1' : '5',
+          }}
         >
           <h2
             style={{
@@ -135,67 +132,110 @@ const Lend: React.FC = () => {
             Huski Finance
           </h2>
         </SBBox>
-        <Flex className="container">
-          <VolumeBox
-            // className="container"
-            style={{
-              // padding: '30px',
-              // flexDirection: 'column',
-              // justifyContent: 'space-evenly',
-              background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
-              // borderRadius: '15px',
-              // width: '20%',
-              // marginRight: '25px',
-            }}
-          >
-            <img src="/images/8825.svg" width="70px" height="70px" alt="" />
-            <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
-              {t(`Total Volume 24H:`)}
-            </Text>
-            {volume24h ? (
-              <Text
-                fontSize="28px"
-                color="textFarm"
-                style={{ letterSpacing: '-0.01em' }}
-                fontFamily="LexendDeca"
-                fontWeight="400"
-                lineHeight="48px"
-              >
-                {volume24h}
+        <VolumeBox
+          p={isSmallScreen ? '10px' : '30px'}
+          style={{
+            background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+            // width: isSmallScreen ? '100%' : '316px',
+            flex: isSmallScreen ? '1' : '1',
+          }}
+        >
+          {isSmallScreen ? (
+            <Flex alignItems="center" justifyContent="space-evenly">
+              <img src="/images/8825.svg" width="50px" height="50px" alt="" />
+              <Box>
+                <Text fontWeight="600" color="textFarm" fontSize="13px">
+                  {t(`Total Volume 24H:`)}
+                </Text>
+                {volume24h ? (
+                  <Text
+                    fontSize="28px"
+                    color="textFarm"
+                    style={{
+                      letterSpacing: '-0.01em',
+                      width: '100%',
+                    }}
+                    fontFamily="LexendDeca"
+                    fontWeight="400"
+                  >
+                    {volume24h}
+                  </Text>
+                ) : (
+                  <Skeleton width="100%" height="30px" />
+                )}
+              </Box>
+            </Flex>
+          ) : (
+            <>
+              <img src="/images/8825.svg" width="70px" height="70px" alt="" />
+              <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
+                {t(`Total Volume 24H:`)}
               </Text>
-            ) : (
-              <Skeleton width="180px" height="30px" />
-            )}
-          </VolumeBox>
-          <ValueBox
-            // className="container"
-            style={{
-              // padding: '30px',
-              // flexDirection: 'column',
-              // justifyContent: 'space-evenly',
-              background: isDark ? 'rgb(44,30,73)' : '#D6C7F0',
-              // borderRadius: '15px',
-              // width: '20%',
-            }}
-          >
-            <img src="/images/8826.svg" width="70px" height="70px" alt="" />
-            <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600">
-              {t('Total Value Locked:')}
-            </Text>
-            {totalValueLocked ? (
-              <Text
-                fontSize="28px"
-                style={{ letterSpacing: '-0.01em' }}
-                color="textFarm"
-                fontFamily="LexendDeca"
-                fontWeight="400"
-                lineHeight="48px"
-              >{`${totalValueLockedValue}`}</Text>
-            ) : (
-              <Skeleton width="180px" height="30px" />
-            )}
-          </ValueBox>
-        </Flex>
+              {volume24h ? (
+                <Text
+                  fontSize="28px"
+                  color="textFarm"
+                  style={{
+                    letterSpacing: '-0.01em',
+                    width: '100%',
+                  }}
+                  fontFamily="LexendDeca"
+                  fontWeight="400"
+                >
+                  {volume24h}
+                </Text>
+              ) : (
+                <Skeleton width="100%" height="30px" my="6px" />
+              )}
+            </>
+          )}
+        </VolumeBox>
+        <ValueBox
+          p={isSmallScreen ? '10px' : '30px'}
+          style={{
+            background: isDark ? 'rgb(44,30,73)' : '#D6C7F0',
+            // width: isSmallScreen ? '100%' : '316px',
+            flex: isSmallScreen ? '1' : '1',
+          }}
+        >
+          {isSmallScreen ? (
+            <Flex alignItems="center" justifyContent="space-evenly">
+              <img src="/images/8826.svg" width="50px" height="50px" alt="" />
+              <Box>
+                <Text color="textFarm" fontSize="13px" fontWeight="600" style={{ width: '100%' }}>
+                  {t('Total Value Locked:')}
+                </Text>
+                {totalValueLocked ? (
+                  <Text
+                    fontSize="28px"
+                    style={{ letterSpacing: '-0.01em' }}
+                    color="textFarm"
+                    fontFamily="LexendDeca"
+                  >{`${totalValueLockedValue}`}</Text>
+                ) : (
+                  <Skeleton width="100%" height="30px" />
+                )}
+              </Box>
+            </Flex>
+          ) : (
+            <>
+              <img src="/images/8826.svg" width="70px" height="70px" alt="" />
+              <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600" style={{ width: '100%' }}>
+                {t('Total Value Locked:')}
+              </Text>
+              {totalValueLocked ? (
+                <Text
+                  fontSize="28px"
+                  style={{ letterSpacing: '-0.01em' }}
+                  color="textFarm"
+                  fontFamily="LexendDeca"
+                >{`${totalValueLockedValue}`}</Text>
+              ) : (
+                <Skeleton width="100%" height="30px" my="6px" />
+              )}
+            </>
+          )}
+        </ValueBox>
       </Section>
 
       <LendTable lendData={lendData} />

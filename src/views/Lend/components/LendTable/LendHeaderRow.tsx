@@ -16,22 +16,15 @@ const StyledRow = styled.div`
 `
 
 const NameCell = styled(BaseCell)`
-  min-width: 220px;
-  flex: 2;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: start;
+  flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    // flex: 1 0 350;
-    //  padding-left: 32px;
+    flex: 2 0 250px;
   }
 `
 const StyledCell = styled(BaseCell)`
-  // flex: 1 0 50px;
-  flex: 1;
-  min-width: 10px;
-  ${({ theme }) => theme.mediaQueries.lg} {
-    // flex: 1 0 120px;
+  flex: 1 0 auto;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex: 1 0 120px;
   }
 `
 
