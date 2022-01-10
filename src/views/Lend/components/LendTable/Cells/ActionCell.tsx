@@ -49,13 +49,13 @@ const ActionCell = ({ token, apyReady }) => {
             width: '140px',
             height: '40px',
           }}
-          // as={Link}
-          // to={{
-          //   pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
-          //   state: { token },
-          // }}
-          // disabled={!apyReady || !account}
-          // onClick={(e) => !account || (!apyReady && e.preventDefault())}
+          as={Link}
+          to={{
+            pathname: `/lend/deposit/${name.replace('wBNB', 'BNB')}`,
+            state: { token },
+          }}
+          disabled={!apyReady || !account}
+          onClick={(e) => !account || (!apyReady && e.preventDefault())}
         >
           {t('Deposit')}
         </Button>
@@ -64,10 +64,10 @@ const ActionCell = ({ token, apyReady }) => {
             width: '140px',
             height: '40px',
           }}
-          // as={Link}
-          // to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { token } }}
-          // disabled={!apyReady || !account}
-          // onClick={(e) => !account || (!apyReady && e.preventDefault())}
+          as={Link}
+          to={{ pathname: `/lend/withdraw/${name.replace('wBNB', 'BNB')}`, state: { token } }}
+          disabled={!apyReady || !account}
+          onClick={(e) => !account || (!apyReady && e.preventDefault())}
         >
           {t('Withdraw')}
         </Button>
