@@ -258,7 +258,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const dailyEarnings = getDailyEarnings(singleLeverage)
 
   const avgApy = (Number(apy) - Number(apyOne)).toFixed(2)
-  // const apyPercentageDiff = new BigNumber(avgApy).minus(apyOne).toFixed(2, 1) // times(100).toFixed(2, 1)
 
   const getOption = () => {
     const option = {
@@ -474,7 +473,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                   <Flex alignItems="center" my="5px">
                     <Text>
                       {t(
-                        `%avgApy% ${Number(avgApy) > Number(apyOne) ? '\u2191' : '\u2193'
+                        `%avgApy%% ${Number(avgApy) > Number(apyOne) ? '\u2191' : '\u2193'
                         } than 1x yield farm`,
                         { avgApy },
                       )}

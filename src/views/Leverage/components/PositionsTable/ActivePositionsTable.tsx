@@ -76,7 +76,7 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
       ) : isLoading ? (
         loader
       ) : (
-        <Box padding="100px">
+        <Box padding="70px">
           <Text textAlign="center">{t('No Active Positions')}</Text>
         </Box>
       )}
