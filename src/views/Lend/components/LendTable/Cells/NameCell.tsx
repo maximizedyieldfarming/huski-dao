@@ -19,11 +19,11 @@ const NameCell = ({ token }) => {
     <StyledCell role="cell">
       <CellContent>
         <Flex alignItems="left">
-          <Box width={40} height={40} mr="5px">
-            <TokenImage token={token?.TokenInfo.token} width={40} height={40} mr="8px" />
+          <Box width={40} height={40} >
+            <TokenImage token={token?.TokenInfo.token} width={40} height={40} />
           </Box>
           <Box>
-            <Text bold={!isMobile} small={isMobile} mb="8px" ml="5px" mt="3px" color="text">
+            <Text bold={!isMobile} small={isMobile} mb="8px" ml="12px" mt="3px" color="text">
               {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
             </Text>
             {exchangeRate ? (
@@ -32,14 +32,14 @@ const NameCell = ({ token }) => {
                 color="textSubtle"
                 fontWeight="500"
                 fontSize="12px"
-                marginLeft="5px"
+                ml="12px"
                 style={{ whiteSpace: 'nowrap' }}
               >
                 1 ib{token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')} = {exchangeRate.toFixed(4)}&nbsp;
                 {token?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
               </Text>
             ) : (
-              <Skeleton width="80px" height="16px" />
+              <Skeleton width="80px" ml="12px" height="16px" />
             )}
           </Box>
         </Flex>

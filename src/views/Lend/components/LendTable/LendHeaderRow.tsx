@@ -8,6 +8,7 @@ const StyledRow = styled.div`
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.lvgBorder};
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -34,51 +35,51 @@ const LendHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" color="textSubtle">
-            {t('POOL Name')}
+          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+            {t('POOL')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" color="textSubtle">
+          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" color="textSubtle">
+          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('Total Supply')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" color="textSubtle">
+          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('Total Borrowed')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" color="textSubtle">
+          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('Utilization')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" color="textSubtle">
+          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('My Balance')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell style={{ flex: 'none', width: '300px' }}>
         <CellContent>
-          <Text fontWeight="600" fontSize="16px" style={{ textAlign: 'right' }} color="textSubtle">
+          {/* <Text fontWeight="400" fontSize="13px" lineHeight="16px" style={{ textAlign: 'right' }} color="textSubtle">
             {t('Action')}
-          </Text>
+          </Text> */}
         </CellContent>
       </StyledCell>
     </StyledRow>

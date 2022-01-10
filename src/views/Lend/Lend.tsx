@@ -144,7 +144,7 @@ const Lend: React.FC = () => {
             <Flex alignItems="center" justifyContent="space-evenly">
               <img src="/images/8825.svg" width="50px" height="50px" alt="" />
               <Box>
-                <Text fontWeight="600" color="textFarm" fontSize="13px">
+                <Text fontWeight="700" color="textFarm" fontSize="16px" lineHeight="16px">
                   {t(`Total Volume 24H:`)}
                 </Text>
                 {volume24h ? (
@@ -168,7 +168,7 @@ const Lend: React.FC = () => {
           ) : (
             <>
               <img src="/images/8825.svg" width="70px" height="70px" alt="" />
-              <Text fontWeight="600" color="textFarm" mt="30px" fontSize="13px">
+              <Text fontWeight="700" color="textFarm" mt="30px" fontSize="16px" lineHeight="16px">
                 {t(`Total Volume 24H:`)}
               </Text>
               {volume24h ? (
@@ -202,7 +202,7 @@ const Lend: React.FC = () => {
             <Flex alignItems="center" justifyContent="space-evenly">
               <img src="/images/8826.svg" width="50px" height="50px" alt="" />
               <Box>
-                <Text color="textFarm" fontSize="13px" fontWeight="600" style={{ width: '100%' }}>
+                <Text color="textFarm" fontSize="16px" lineHeight="16px" fontWeight="700" style={{ width: '100%' }}>
                   {t('Total Value Locked:')}
                 </Text>
                 {totalValueLocked ? (
@@ -220,7 +220,7 @@ const Lend: React.FC = () => {
           ) : (
             <>
               <img src="/images/8826.svg" width="70px" height="70px" alt="" />
-              <Text color="textFarm" mt="30px" fontSize="13px" fontWeight="600" style={{ width: '100%' }}>
+              <Text color="textFarm" mt="30px" fontSize="16px" lineHeight="16px" fontWeight="700" style={{ width: '100%' }}>
                 {t('Total Value Locked:')}
               </Text>
               {totalValueLocked ? (

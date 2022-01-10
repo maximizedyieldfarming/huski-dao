@@ -12,13 +12,14 @@ const StyledCell = styled(BaseCell)`
     flex: 1 0 120px;
   }
   ${CellContent} {
+    gap: 10px;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row !important;
     }
   }
-  > div {
-    gap: 5px;
-  }
+  // > div {
+  //   gap: 5px;
+  // }
   a {
     padding: 0.75rem;
     font-size: 14px;
