@@ -52,8 +52,8 @@ const LendRow = ({ tokenData }) => {
     <StyledRow role="row">
       <NameCell token={tokenData} />
       <ApyCell getApyData={getAprData(tokenData, huskyPrice, borrowingInterest)} token={tokenData} />
-      <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} />
-      <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} />
+      <TotalSupplyCell supply={Number(totalToken)} supplyUSD={totalSupplyUSD} name={tokenName} />
+      <TotalBorrowedCell borrowed={Number(vaultDebtVal)} borrowedUSD={totalBorrowedUSD} name={tokenName} />
       <UtilRateCell utilRate={totalToken > 0 ? vaultDebtVal / totalToken : 0} />
       <BalanceCell
         balance={userTokenBalance}

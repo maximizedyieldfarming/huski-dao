@@ -15,7 +15,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalSupplyCell = ({ supply, supplyUSD }) => {
+const TotalSupplyCell = ({ supply, supplyUSD, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const formatedSupply = supply && Number(formatBigNumber(supply).replace(/,/g, ''))
@@ -33,7 +33,7 @@ const TotalSupplyCell = ({ supply, supplyUSD }) => {
         {supply ? (
           <Box>
             <Text fontSize="16px" bold color="text" style={{ marginBottom: '9px' }}>
-              {nFormatter(formatedSupply)}
+              {nFormatter(formatedSupply)} {name}
             </Text>
             <Text fontSize="12px" color="textSubtle">{`$${nFormatter(formatedSupplyUSD)}`}</Text>
           </Box>
