@@ -12,7 +12,7 @@ const StyledRow = styled.div`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  //cursor: pointer;
+  // cursor: pointer;
   margin-bottom: 10px;
 `
 

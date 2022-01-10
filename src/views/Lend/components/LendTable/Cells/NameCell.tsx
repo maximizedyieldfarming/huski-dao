@@ -19,7 +19,7 @@ const NameCell = ({ token }) => {
     <StyledCell role="cell">
       <CellContent>
         <Flex alignItems="left">
-          <Box width={40} height={40} >
+          <Box width={40} height={40} pt="2px">
             <TokenImage token={token?.TokenInfo.token} width={40} height={40} />
           </Box>
           <Box>

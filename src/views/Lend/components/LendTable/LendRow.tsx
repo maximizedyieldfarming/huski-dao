@@ -18,6 +18,7 @@ const StyledRow = styled.div`
   display: flex;
   flex-direction: column;
   // width: 100%;
+  margin-top: 10px;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }

@@ -14,7 +14,7 @@ import headerBg from './BG.png'
 const Section = styled(Flex)`
   background-color: 'transparent';
   font-family: inter;
-  padding: 0.5rem 0;
+  // padding: 0.5rem 0;
   flex-direction: column;
   overflow: auto;
   ::-webkit-scrollbar {

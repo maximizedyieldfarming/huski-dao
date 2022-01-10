@@ -13,22 +13,20 @@ const StyledPage = styled(Container)`
   display: flex;
   // gap: 2rem;
   >div {
-    margin-bottom: 2rem;
+    margin-bottom: 30px;
   }
   flex-direction: column;
- // margin-left: 2%;
- // margin-right: 2%;
   max-width: none;
+  padding: 30px 38px;
+  // ${({ theme }) => theme.mediaQueries.sm} {
+  //   padding-top: 24px;
+  //   padding-bottom: 24px;
+  // }
 
-  ${({ theme }) => theme.mediaQueries.sm} {
-    padding-top: 24px;
-    padding-bottom: 24px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.lg} {
-    padding-top: 32px;
-    padding-bottom: 32px;
-  }
+  // ${({ theme }) => theme.mediaQueries.lg} {
+  //   padding-top: 32px;
+  //   padding-bottom: 32px;
+  // }
 `
 
 const PageMeta = () => {
