@@ -17,10 +17,19 @@ import ActionCell from './Cells/ActionCell'
 const StyledRow = styled.div`
   display: flex;
   flex-direction: column;
-  // width: 100%;
+  height: 90px;
+  border-radius: 12px;
   margin-top: 10px;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.background};
+  }
+
+  &:active {
+    background: ${({ theme }) => theme.colors.background};
   }
 `
 

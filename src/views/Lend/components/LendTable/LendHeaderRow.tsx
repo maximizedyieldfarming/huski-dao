@@ -19,7 +19,13 @@ const StyledRow = styled.div`
 const NameCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 250px;
+    flex: 2 0 210px;
+  }
+`
+const ActionCell = styled(BaseCell)`
+  flex: 1 0 auto;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex: 2 0 200px;
   }
 `
 const StyledCell = styled(BaseCell)`
@@ -35,35 +41,35 @@ const LendHeaderRow = () => {
     <StyledRow>
       <NameCell>
         <CellContent>
-          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+          <Text fontWeight="400" fontFamily="GenJyuuGothic" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('POOL')}
           </Text>
         </CellContent>
       </NameCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+          <Text fontWeight="400" fontFamily="GenJyuuGothic" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('APY')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+          <Text fontWeight="400" fontFamily="GenJyuuGothic" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('Total Supply')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+          <Text fontWeight="400" fontFamily="GenJyuuGothic" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('Total Borrowed')}
           </Text>
         </CellContent>
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+          <Text fontWeight="400" fontFamily="GenJyuuGothic" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('Utilization')}
           </Text>
         </CellContent>
@@ -75,13 +81,13 @@ const LendHeaderRow = () => {
           </Text>
         </CellContent>
       </StyledCell>
-      <NameCell >
+      <ActionCell >
         <CellContent>
           {/* <Text fontWeight="400" fontSize="13px" lineHeight="16px"  color="textSubtle">
             {t('Action')}
           </Text> */}
         </CellContent>
-      </NameCell>
+      </ActionCell>
     </StyledRow>
   )
 }

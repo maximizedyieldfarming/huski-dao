@@ -7,25 +7,17 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-  // flex: 1 0 auto;
-  // ${({ theme }) => theme.mediaQueries.md} {
-  //   flex: 1 0 120px;
-  // }
 
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 250px;
+    flex: 2 0 200px;
   }
   ${CellContent} {
     gap: 10px;
-    // padding-left:10px;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row !important;
     }
   }
-  // > div {
-  //   gap: 5px;
-  // }
   a {
     padding: 0.75rem;
     font-size: 14px;
