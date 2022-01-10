@@ -25,7 +25,7 @@ const NameCell = styled(BaseCell)`
 const ActionCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 180px;
+    flex: 2 0 280px;
   }
 `
 const StyledCell = styled(BaseCell)`
@@ -76,7 +76,7 @@ const LendHeaderRow = () => {
       </StyledCell>
       <StyledCell>
         <CellContent>
-          <Text fontWeight="400" fontSize="13px" lineHeight="16px" color="textSubtle">
+          <Text fontWeight="400" fontFamily="GenJyuuGothic" fontSize="13px" lineHeight="16px" color="textSubtle">
             {t('My Balance')}
           </Text>
         </CellContent>

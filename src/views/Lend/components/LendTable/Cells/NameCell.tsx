@@ -20,7 +20,7 @@ const NameCell = ({ token }) => {
       <CellContent>
         <Flex alignItems="left">
           <Box width={44} height={44} pt="2px" ml="8px">
-            <TokenImage token={token?.TokenInfo.token} width={40} height={40} />
+            <TokenImage token={token?.TokenInfo.token} width={44} height={44} />
           </Box>
           <Box>
             <Text bold={!isMobile} small={isMobile} mb="8px" ml="12px" mt="3px" color="text">
