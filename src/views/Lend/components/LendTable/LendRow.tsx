@@ -51,7 +51,7 @@ const LendRow = ({ tokenData }) => {
         name={TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
         decimals={TokenInfo?.token?.decimalsDigits}
       />
-      <ActionCell token={tokenData} apyReady={!!apy} />
+      <ActionCell token={tokenData} apyReady={!!totalToken} />
     </StyledRow>
   )
 }
