@@ -75,13 +75,13 @@ const LendHeaderRow = () => {
           </Text>
         </CellContent>
       </StyledCell>
-      <StyledCell style={{ flex: 'none', width: '300px' }}>
+      <NameCell >
         <CellContent>
-          {/* <Text fontWeight="400" fontSize="13px" lineHeight="16px" style={{ textAlign: 'right' }} color="textSubtle">
+          {/* <Text fontWeight="400" fontSize="13px" lineHeight="16px"  color="textSubtle">
             {t('Action')}
           </Text> */}
         </CellContent>
-      </StyledCell>
+      </NameCell>
     </StyledRow>
   )
 }

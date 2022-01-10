@@ -17,7 +17,7 @@ import ActionCell from './Cells/ActionCell'
 const StyledRow = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  // width: 100%;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
