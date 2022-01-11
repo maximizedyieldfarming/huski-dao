@@ -16,14 +16,14 @@ const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 1rem 1.5rem;
   background-color: ${({ theme }) => theme.card.background};
-  > ${Box}>div:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
-  }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    > ${Box}>div:not(:last-child) {
-      border-bottom: none;
-    }
-  }
+  // > ${Box}>div:not(:last-child) {
+  //   border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
+  // }
+  // ${({ theme }) => theme.mediaQueries.lg} {
+  //   > ${Box}>div:not(:last-child) {
+  //     border-bottom: none;
+  //   }
+  // }
   > ${Box} {
     overflow: auto;
     ::-webkit-scrollbar {
