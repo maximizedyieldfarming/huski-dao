@@ -199,7 +199,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
                   }}
                   onClick={setAmountToMax}
                 >
-                  <Text>{t('MAX')}</Text>
+                  <Text fontSize="16px" fontWeight="500" lineHeight="20px">{t('MAX')}</Text>
                 </button>
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
