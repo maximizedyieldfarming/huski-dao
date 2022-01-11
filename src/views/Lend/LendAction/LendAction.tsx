@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
-import { Box, Flex, Text } from '@huskifinance/huski-frontend-uikit'
+import { Box, Flex, Text, Skeleton } from '@huskifinance/huski-frontend-uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -271,7 +271,7 @@ const LendAction = () => {
       </TabPanel>
       <Balance>
         <Text style={{ fontWeight: 800 }}>{t('Deposit APY')}</Text>
-        <Text style={{ fontWeight: 800 }}>{apyCell(apy)}</Text>
+        {apy ? <Text style={{ fontWeight: 800 }}>{apyCell(apy)}</Text> : <Skeleton width="80px" height="1rem" />}
       </Balance>
       <Box>
         <Text mt="30px" mb="120px">

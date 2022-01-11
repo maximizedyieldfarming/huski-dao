@@ -7,6 +7,7 @@ import {
   AutoRenewIcon,
   Grid,
   useMatchBreakpoints,
+  Skeleton,
 } from '@huskifinance/huski-frontend-uikit'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -190,10 +191,14 @@ const Deposit: React.FC<DepositProps> = ({
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
-              userTokenBalance,
-              tokenData.TokenInfo?.token?.decimalsDigits,
-            )} ${name}`}</span>
+            {userTokenBalance ? (
+              <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+                userTokenBalance,
+                tokenData.TokenInfo?.token?.decimalsDigits,
+              )} ${name}`}</span>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Text>
         </Flex>
         <Section
@@ -255,10 +260,14 @@ const Deposit: React.FC<DepositProps> = ({
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
-              userTokenBalanceIb,
-              tokenData.TokenInfo?.token?.decimalsDigits,
-            )} ib${name}`}</span>
+            {userTokenBalanceIb ? (
+              <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+                userTokenBalanceIb,
+                tokenData.TokenInfo?.token?.decimalsDigits,
+              )} ib${name}`}</span>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Text>
         </Flex>
         <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>

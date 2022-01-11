@@ -8,6 +8,7 @@ import {
   Input,
   Grid,
   useMatchBreakpoints,
+  Skeleton,
 } from '@huskifinance/huski-frontend-uikit'
 import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
@@ -156,9 +157,13 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <Text color="textSubtle" fontSize="12px">
               {t('Balance')}:
             </Text>
-            <Text fontSize="12px" fontWeight="bold" ml="5px">
-              {`${balance} ib${name}`}
-            </Text>
+            {userTokenBalanceIb ? (
+              <Text fontSize="12px" fontWeight="bold" ml="5px">
+                {`${balance} ib${name}`}
+              </Text>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Flex>
         </Flex>
         <Section
@@ -223,9 +228,13 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <Text color="textSubtle" fontSize="12px">
               {t('Balance')}:{' '}
             </Text>
-            <Text fontSize="12px" fontWeight="bold" ml="5px">
-              {`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}
-            </Text>
+            {userTokenBalance ? (
+              <Text fontSize="12px" fontWeight="bold" ml="5px">
+                {`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}
+              </Text>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Flex>
         </Flex>
         <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
