@@ -193,7 +193,6 @@ const Leverage: React.FC = () => {
               fontFamily: 'Baloo Bhaijaan',
               color: '#FFFFFF',
               fontSize: '50px',
-              lineHeight: '48px',
               marginLeft: '80px',
               fontWeight: 800,
             }}>
