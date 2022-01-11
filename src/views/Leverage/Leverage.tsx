@@ -30,13 +30,14 @@ const ActionButton = styled(Button)`
 `
 const PositionsButton = styled(ActionButton)`
   background-color: unset;
-  border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.secondary : theme.colors.textSubtle)};
-  font-size: 12px;
+  border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.positions}` : 'unset')};
+  color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.positions : theme.colors.textSubtle)};
+  font-size: 16px;
   ${({ theme }) => theme.mediaQueries.lg} {
     font-size: 1rem;
   }
-  font-weight: bold;
+  font-weight: 700;
+  line-height: 19.36px;
   border-radius: unset;
   padding: unset;
   padding-bottom: 10px;
@@ -116,7 +117,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   overflow: hidden;
-  padding: 1rem 1.5rem;
+  padding: 24px 24px;
 `
 const Leverage: React.FC = () => {
   const { t } = useTranslation()
@@ -186,7 +187,16 @@ const Leverage: React.FC = () => {
     <Page>
       <Section>
         <SBBox>
-          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
+          {/* <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}> */}
+          <h2
+            style={{
+              fontFamily: 'Baloo Bhaijaan',
+              color: '#FFFFFF',
+              fontSize: '50px',
+              lineHeight: '48px',
+              marginLeft: '80px',
+              fontWeight: 800,
+            }}>
             Huski Finance
           </h2>
         </SBBox>

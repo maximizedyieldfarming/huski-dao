@@ -151,7 +151,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling} isDark={isDark}>
           {options[selectedOptionIndex]?.icon ? options[selectedOptionIndex]?.icon : null}
-          <Text>{options[selectedOptionIndex]?.label}</Text>
+          <Text color="#6F767E">{options[selectedOptionIndex]?.label}</Text>
         </DropDownHeader>
       )}
       <ArrowDropDownIcon color="text" onClick={toggling} style={{ position: 'absolute', right: '0' }} />
@@ -161,7 +161,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
                 {option.icon ? option.icon : null}
-                <Text>{option.label}</Text>
+                <Text color="#6F767E">{option.label}</Text>
               </ListItem>
             ) : null,
           )}

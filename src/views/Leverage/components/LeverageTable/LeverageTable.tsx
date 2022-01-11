@@ -14,7 +14,7 @@ import LeverageHeaderRow from './LeverageHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem 1.5rem;
+  padding: 24px 24px;
   background-color: ${({ theme }) => theme.card.background};
   // > ${Box}>div:not(:last-child) {
   //   border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
@@ -165,9 +165,6 @@ const LeverageTable = ({ leverageData }) => {
       case 'tvl':
         return orderBy(dataToSort, (pool) => (pool.totalToken ? getTvl(pool).totalTvl.toNumber() : 0), 'desc')
 
-      // case 'leverage':
-      //   return orderBy(dataToSort, (pool) => (pool.leverage ? pool.leverage : 0), 'desc')
-
       default:
         return dataToSort
     }
@@ -227,7 +224,6 @@ const LeverageTable = ({ leverageData }) => {
                 alignItems={isSmallScreen ? null : 'center'}
                 flexDirection={isSmallScreen ? 'column' : null}
                 className="tokenFilter"
-                // ml={isSmallScreen ? '0' : '5px'}
               >
                 <Text bold>{t('Paired Assets :')}</Text>
                 <Flex padding="4px 0">
@@ -237,7 +233,8 @@ const LeverageTable = ({ leverageData }) => {
                     isActive={pairFilter === 'all'}
                     onClick={() => setPairFilter('all')}
                   >
-                    {t('All')}
+                    All
+                    {/* <Text fontWeight="600" fontSize="13px" lineHeight="16px" color="inputSecondary" >{t('All')}</Text> */}
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
@@ -248,6 +245,7 @@ const LeverageTable = ({ leverageData }) => {
                     onClick={() => setPairFilter('huski')}
                   >
                     HUSKI
+                    {/* <Text fontWeight="600" fontSize="13px" lineHeight="16px" color="inputSecondary" >{t('HUSKI')}</Text> */}
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
@@ -257,6 +255,7 @@ const LeverageTable = ({ leverageData }) => {
                     onClick={() => setPairFilter('wbnb')}
                   >
                     BNB
+                    {/* <Text fontWeight="600" fontSize="13px" lineHeight="16px" color="inputSecondary" >{t('BNB')}</Text> */}
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
@@ -266,6 +265,7 @@ const LeverageTable = ({ leverageData }) => {
                     onClick={() => setPairFilter('busd')}
                   >
                     BUSD
+                    {/* <Text fontWeight="600" fontSize="13px" lineHeight="16px" color="inputSecondary" >{t('BUSD')}</Text> */}
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
@@ -275,6 +275,7 @@ const LeverageTable = ({ leverageData }) => {
                     onClick={() => setPairFilter('btcb')}
                   >
                     BTCB
+                    {/* <Text fontWeight="600" fontSize="13px" lineHeight="16px" color="inputSecondary" >{t('BTCB')}</Text> */}
                   </FilterOption>
                   <FilterOption
                     variant="tertiary"
@@ -284,6 +285,7 @@ const LeverageTable = ({ leverageData }) => {
                     onClick={() => setPairFilter('eth')}
                   >
                     ETH
+                    {/* <Text fontWeight="600" fontSize="13px" lineHeight="16px" color="inputSecondary" >{t('ETH')}</Text> */}
                   </FilterOption>
                 </Flex>
               </Flex>
@@ -304,10 +306,6 @@ const LeverageTable = ({ leverageData }) => {
                         label: `${t('TVL')}`,
                         value: 'tvl',
                       },
-                      // {
-                      //   label: `${t('Leverage')}`,
-                      //   value: 'leverage',
-                      // },
                     ]}
                     onChange={handleSortOptionChange}
                   />

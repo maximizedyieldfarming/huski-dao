@@ -115,7 +115,6 @@ const Lend: React.FC = () => {
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
-            // width: isSmallScreen ? '100%' : '888px',
             flex: isSmallScreen ? '1' : '5',
           }}
         >

@@ -7,6 +7,7 @@ import useTheme from 'hooks/useTheme'
 
 const StyledInput = styled(Input)<{ isDark: boolean }>`
   border: none;
+  font-size: 15px;
   background: ${({ isDark }) => (isDark ? '#272B30' : '#F4F4F4')};
   margin-left: auto;
   padding-left: 30px;

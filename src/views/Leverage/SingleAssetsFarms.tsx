@@ -28,9 +28,14 @@ const ActionButton = styled(Button)`
 `
 const PositionsButton = styled(ActionButton)`
   background-color: unset;
-  border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.secondary : theme.colors.textSubtle)};
-  font-weight: bold;
+  border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.positions}` : 'unset')};
+  color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.positions : theme.colors.textSubtle)};
+  font-size: 16px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    font-size: 1rem;
+  }
+  font-weight: 700;
+  line-height: 19.36px;
   border-radius: unset;
   padding: unset;
   padding-bottom: 10px;
@@ -52,7 +57,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   overflow: hidden;
-  padding: 1rem 1.5rem;
+  padding: 24px 24px;
 `
 
 const FilterOption = styled(Button)`
@@ -357,7 +362,7 @@ const SingleAssetsFarms: React.FC = () => {
 
       <FiltersWrapper>
         <Flex alignItems="left" className="dexFilter">
-          <Text bold lineHeight="1.9">DEX:</Text>
+          <Text bold lineHeight="1.9">DEX :</Text>
           <Flex overflowX="auto" pl="10px">
             <FilterOption
               variant="tertiary"
@@ -388,7 +393,7 @@ const SingleAssetsFarms: React.FC = () => {
           </Flex>
         </Flex>
         <Flex className="strategyFilter" alignItems="left" borderRight="none!important">
-          <Text bold lineHeight="1.9">{t('Strategy:')}</Text>
+          <Text bold lineHeight="1.9">{t('Strategy :')}</Text>
           <Flex overflowX="auto" pl="10px" alignItems="left">
             <FilterOption
               style={{ height: '30px' }}

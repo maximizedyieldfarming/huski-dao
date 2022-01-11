@@ -6,7 +6,7 @@ import LendHeaderRow from './LendHeaderRow'
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  padding: 1rem 1.5rem;
+  padding: 24px 24px;
   background-color: ${({ theme }) => theme.card.background};
 
   > ${Box} {

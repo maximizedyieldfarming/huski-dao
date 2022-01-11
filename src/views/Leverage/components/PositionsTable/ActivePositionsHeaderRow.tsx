@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, useTooltip, InfoIcon, Flex } from '@huskifinance/huski-frontend-uikit'
+import { Text, useTooltip, Flex } from '@huskifinance/huski-frontend-uikit'
 import useTheme from 'hooks/useTheme'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -14,7 +14,6 @@ const StyledRow = styled.div<{ isDark: boolean }>`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  //cursor: pointer;
 `
 
 const NameCell = styled(BaseCell)`
