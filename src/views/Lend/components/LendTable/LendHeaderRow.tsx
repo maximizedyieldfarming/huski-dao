@@ -25,7 +25,7 @@ const NameCell = styled(BaseCell)`
 const ActionCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 280px;
+    flex: 2 0 240px;
   }
 `
 const StyledCell = styled(BaseCell)`

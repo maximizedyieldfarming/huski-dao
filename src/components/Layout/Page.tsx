@@ -11,22 +11,12 @@ const StyledPage = styled(Container)`
   padding-top: 16px;
   padding-bottom: 16px;
   display: flex;
-  // gap: 2rem;
   >div {
     margin-bottom: 30px;
   }
   flex-direction: column;
   max-width: none;
   padding: 30px 38px;
-  // ${({ theme }) => theme.mediaQueries.sm} {
-  //   padding-top: 24px;
-  //   padding-bottom: 24px;
-  // }
-
-  // ${({ theme }) => theme.mediaQueries.lg} {
-  //   padding-top: 32px;
-  //   padding-bottom: 32px;
-  // }
 `
 
 const PageMeta = () => {
