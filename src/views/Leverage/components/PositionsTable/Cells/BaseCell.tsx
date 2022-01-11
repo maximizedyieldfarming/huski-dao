@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const BaseCell = styled.div`
   color: black;
-  padding: 10px 8px;
+  padding: 12px 0px;
   display: flex;
   flex-direction: column;
   justify-content: center;
