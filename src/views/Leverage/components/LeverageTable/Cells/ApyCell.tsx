@@ -13,6 +13,7 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
+padding: 0px 0px;
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 280px;

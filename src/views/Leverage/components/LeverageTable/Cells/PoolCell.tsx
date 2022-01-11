@@ -6,6 +6,7 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 5;
+  padding: 0px 0px;
   flex-direction: row;
   padding-left: 12px;
   justify-content: flex-start;

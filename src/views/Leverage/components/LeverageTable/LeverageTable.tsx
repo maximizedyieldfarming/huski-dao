@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Button, Flex, Box, Text, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import SearchInput from 'components/SearchInput'
-import Select from 'components/Select/Select'
+import Select from 'components/Select/SelectSort'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
 import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
@@ -165,8 +165,8 @@ const LeverageTable = ({ leverageData }) => {
       case 'tvl':
         return orderBy(dataToSort, (pool) => (pool.totalToken ? getTvl(pool).totalTvl.toNumber() : 0), 'desc')
 
-      case 'leverage':
-        return orderBy(dataToSort, (pool) => (pool.leverage ? pool.leverage : 0), 'desc')
+      // case 'leverage':
+      //   return orderBy(dataToSort, (pool) => (pool.leverage ? pool.leverage : 0), 'desc')
 
       default:
         return dataToSort
@@ -202,7 +202,7 @@ const LeverageTable = ({ leverageData }) => {
                 className="dexFilter"
                 width={300}
               >
-                <Text bold>DEX:</Text>
+                <Text bold>DEX :</Text>
                 <Flex>
                   <FilterOption
                     variant="tertiary"
@@ -229,7 +229,7 @@ const LeverageTable = ({ leverageData }) => {
                 className="tokenFilter"
                 // ml={isSmallScreen ? '0' : '5px'}
               >
-                <Text bold>{t('Paired Assets:')}</Text>
+                <Text bold>{t('Paired Assets :')}</Text>
                 <Flex padding="4px 0">
                   <FilterOption
                     variant="tertiary"
@@ -288,7 +288,7 @@ const LeverageTable = ({ leverageData }) => {
                 </Flex>
               </Flex>
               <Flex className="searchSortContainer">
-                <Text bold>{t('Sort by:')}</Text>
+                <Text bold>{t('Sort by :')}</Text>
                 <Box mr={isSmallScreen ? null : '10px'} mb={isSmallScreen ? '1rem!important' : null}>
                   <Select
                     options={[
@@ -304,10 +304,10 @@ const LeverageTable = ({ leverageData }) => {
                         label: `${t('TVL')}`,
                         value: 'tvl',
                       },
-                      {
-                        label: `${t('Leverage')}`,
-                        value: 'leverage',
-                      },
+                      // {
+                      //   label: `${t('Leverage')}`,
+                      //   value: 'leverage',
+                      // },
                     ]}
                     onChange={handleSortOptionChange}
                   />
