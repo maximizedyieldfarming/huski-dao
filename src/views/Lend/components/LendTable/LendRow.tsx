@@ -17,20 +17,22 @@ import ActionCell from './Cells/ActionCell'
 const StyledRow = styled.div`
   display: flex;
   flex-direction: column;
-  height: 90px;
-  border-radius: 12px;
-  margin-top: 10px;
+  width: 100%;
+
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
+    height: 90px;
+    border-radius: 12px;
+    margin-top: 10px;
+    &:hover {
+        background: ${({ theme }) => theme.colors.background};
+      }
+    
+      &:active {
+        background: ${({ theme }) => theme.colors.background};
+      }
   }
 
-  &:hover {
-    background: ${({ theme }) => theme.colors.background};
-  }
-
-  &:active {
-    background: ${({ theme }) => theme.colors.background};
-  }
 `
 
 const LendRow = ({ tokenData }) => {
