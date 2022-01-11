@@ -35,6 +35,7 @@ const StyledPage = styled(Page)`
   gap: 2rem;
   > div {
     flex: 1 1 0;
+    margin-bottom: -15px;
   }
 `
 const TabPanel = styled(Box)`
@@ -147,8 +148,8 @@ const LendAction = () => {
   return (
     <StyledPage>
       <div style={{ textAlign: 'center' }}>
-        <img src="/images/HuskiPaw.png" alt="" width="48px" />
-        <Text fontSize="25px" fontWeight="600" textTransform="capitalize">
+        <img src="/images/HuskiPaw.png" alt="" width="48px" height="48px" />
+        <Text fontSize="25px" fontWeight="700" fontFamily="GenJyuuGothic" lineHeight="48px" textTransform="capitalize">
           {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
@@ -273,7 +274,7 @@ const LendAction = () => {
         <Text style={{ fontWeight: 800 }}>{apyCell(apy)}</Text>
       </Balance>
       <Box>
-        <Text>
+        <Text mt="30px" mb="120px">
           {t(
             'Reminder: After receiving ibTokens from depositing in the lending pools, you can stake ibTokens for more yields.',
           )}

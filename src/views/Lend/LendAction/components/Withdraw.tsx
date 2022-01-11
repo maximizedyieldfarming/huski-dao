@@ -204,7 +204,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40} ml="20px">
                   ib{name}
                 </Text>
               </Grid>
@@ -238,7 +238,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text style={{ fontWeight: 700 }} width={40}>
+                <Text style={{ fontWeight: 700 }} width={40} ml="20px">
                   {name}
                 </Text>
               </Grid>
