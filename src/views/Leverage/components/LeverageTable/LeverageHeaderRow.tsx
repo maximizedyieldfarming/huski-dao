@@ -20,7 +20,7 @@ const NameCell = styled(BaseCell)`
   flex-direction: row;
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 1 0 180px;
     align-items: center;
   }
 `
@@ -34,7 +34,7 @@ const StyledCell = styled(BaseCell)`
 const ApyCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 240px;
+    flex: 1 0 280px;
   }
   align-items: start;
 `
