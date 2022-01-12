@@ -76,8 +76,8 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
       ) : isLoading ? (
         loader
       ) : (
-        <Box padding="58px">
-          <Text textAlign="center" fontSize="28px" fontWeight="500" lineHeight="48px" color="inputSecondary" >{t('No Active Positions')}</Text>
+        <Box padding="25px">
+          <Text textAlign="center" fontSize="18px" fontWeight="500" lineHeight="48px" color="inputSecondary" >{t('No Active Positions')}</Text>
         </Box>
       )}
     </StyledTable>
