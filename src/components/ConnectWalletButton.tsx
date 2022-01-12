@@ -19,7 +19,8 @@ const ConnectWalletButton = (props) => {
   const { t } = useTranslation()
   const { login, logout } = useAuth()
   const { account } = useWeb3React()
-  const { onPresentConnectModal } = useWalletModal(login, logout)
+  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
+  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
     <StyledButton size="lg" onClick={onPresentConnectModal} {...props}>

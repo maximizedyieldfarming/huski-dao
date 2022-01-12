@@ -49,7 +49,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ initialView = WalletView.WALL
   }
 
   return (
-    <ModalContainer title={t('Welcome!')} minWidth="350px" isDark={isDark}>
+    <ModalContainer title={t('Welcome!')} minWidth="350px">
       <ModalHeader>
         <ModalTitle>
           <Heading>{t('Your Wallet')}</Heading>
