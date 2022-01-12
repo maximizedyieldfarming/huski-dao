@@ -30,7 +30,7 @@ const TotalValueCell = ({ valueStaked }) => {
             {nFormatter(formatedSupply)}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Skeleton width="80px" height="16px" mt="10px"/>
         )}
       </CellContent>
     </StyledCell>

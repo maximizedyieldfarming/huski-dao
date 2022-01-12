@@ -1,11 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Skeleton, Flex } from '@huskifinance/huski-frontend-uikit'
+import { Text, useMatchBreakpoints, Skeleton } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
-import { formatBigNumber } from 'state/utils'
-import nFormatter from 'utils/nFormatter'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
@@ -32,7 +29,7 @@ const MyPosCell = ({ staked }) => {
             {new BigNumber(staked).toFixed(3, 1)}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Skeleton width="80px" height="16px" mt="10px"/>
         )}
       </CellContent>
     </StyledCell>

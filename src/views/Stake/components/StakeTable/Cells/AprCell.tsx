@@ -54,7 +54,7 @@ const AprCell = ({ getApyData }) => {
             </span>
           </Flex>
         ) : (
-          <Skeleton width="80px" height="16px" />
+          <Skeleton width="80px" height="16px" mt="10px"/>
         )}
       </CellContent>
     </StyledCell>

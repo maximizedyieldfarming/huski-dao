@@ -33,10 +33,6 @@ const StyledButton = styled(Button)`
   height: 32px;
 `
 const RewardsSummarySection = styled(Flex)`
-  // flex-direction: column;
-  // ${({ theme }) => theme.mediaQueries.md} {
-  //   flex-direction: row;
-  // }
   min-width: 600px !important;
   gap: 2rem;
   overflow: hidden;
