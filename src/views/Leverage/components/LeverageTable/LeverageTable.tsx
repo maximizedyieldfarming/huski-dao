@@ -43,7 +43,7 @@ const FilterOption = styled(Button)`
   padding: 5px;
   font-size: 13px;
   background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
-  color: ${({ isActive }) => (isActive ? 'white' : '#6F767E')};
+  color: ${({ isActive, theme }) => (isActive ? 'white' : theme.isDark ? '#6F767E' : '#9D9D9D')};
   border-radius: 10px;
   margin: 0 5px;
   > svg {
