@@ -15,7 +15,6 @@ import { ToastListener } from './contexts/ToastsContext'
 import PageLoader from './components/Loader/PageLoader'
 import EasterEgg from './components/EasterEgg'
 import history from './routerHistory'
-
 // Route-based code splitting
 // Only pool is included in the main bundle because of it's the most visited page
 const Home = lazy(() => import('./views/Home'))
@@ -34,6 +33,8 @@ const FarmSA = lazy(() => import('./views/Leverage/Farm/FarmSA'))
 const AdjustPositionSA = lazy(() => import('./views/Leverage/AdjustPosition/AdjustPositionSA'))
 const ClosePositionSA = lazy(() => import('./views/Leverage/ClosePosition/ClosePositionSA'))
 const Claim = lazy(() => import('views/Leverage/Claim'))
+const PrivacyPolicy = lazy(() => import('views/PrivacyPolicy'))
+const TermsConditions = lazy(() => import('views/TermsConditions'))
 
 // This config is required for number formatting
 BigNumber.config({
@@ -86,6 +87,12 @@ const App: React.FC = () => {
             <Route exact path="/single-assets/farm/:token" component={FarmSA} />
             <Route exact path="/single-assets/adjust-position/:token" component={AdjustPositionSA} />
             <Route exact path="/single-assets/close-position/:token" component={ClosePositionSA} />
+            <Route exact path="/privacy-policy">
+              <PrivacyPolicy />
+            </Route>
+            <Route exact path="/terms-conditions">
+              <TermsConditions />
+            </Route>
             {/*             <Route component={NotFound} /> */}
             <Route path="*">
               <Redirect to="/lend" />
