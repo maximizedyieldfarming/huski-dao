@@ -52,14 +52,7 @@ const collapseAnimation = keyframes`
 `
 
 const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
-  animation: ${({ expanded }) =>
-    expanded
-      ? css`
-          ${expandAnimation} 300ms linear forwards
-        `
-      : css`
-          ${collapseAnimation} 300ms linear forwards
-        `};
+
   .expandedArea {
     ::-webkit-scrollbar {
       height: 8px;
@@ -80,14 +73,14 @@ const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
   }
 `
 const StakeContainer = styled(Flex)`
-  &:not(:last-child) {
-    margin-bottom: 1rem;
-  }
+  // &:not(:last-child) {
+  //   margin-bottom: 1rem;
+  // }
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex: 1 0 300px;
-    &:not(:last-child) {
-      margin-bottom: none;
-    }
+    flex: 1 0 10rem;
+    // &:not(:last-child) {
+    //   margin-bottom: none;
+    // }
   }
 `
 
@@ -96,7 +89,7 @@ const StyledButton = styled(Button)`
   border-radius: 10px;
   color: ${({ disabled }) => (!disabled ? 'white' : '#6F767E')};
   text-align: center;
-  width: 140px;
+  width: 5rem;
   height: 48px;
   border: ${({ disabled }) => (disabled ? '1px solid #EFEFEF' : 'none')};
 `
@@ -128,6 +121,7 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
     flex-direction: column;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row;
+      padding: 23px 20px 23px 20px
     }
   }
   // > ${Flex}:first-child {
@@ -417,8 +411,8 @@ const StakeRow = ({ tokenData }) => {
               </StakeContainer>
               <StakeContainer
                 flexDirection="column"
-                mr={isSmallScreen ? '0' : '60px'}
-                ml={isSmallScreen ? '0' : '30px'}
+                mr={isSmallScreen ? '0' : '3rem'}
+                ml={isSmallScreen ? '0' : '4rem'}
               >
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
@@ -480,7 +474,7 @@ const StakeRow = ({ tokenData }) => {
               </StakeContainer>
               <StakeContainer
                 flexDirection="column"
-                pl={isSmallScreen ? '0' : '60px'}
+                pl={isSmallScreen ? '0' : '3rem'}
                 style={isSmallScreen ? null : { borderLeft: '2px solid #EFEFEF' }}
               >
                 <Flex alignItems="center" justifyContent="space-between">
@@ -506,7 +500,6 @@ const StakeRow = ({ tokenData }) => {
                 </MaxContainer>
               </StakeContainer>
             </Flex>
-            /
           </>
         ) : null}
       </StyledActionPanel>
