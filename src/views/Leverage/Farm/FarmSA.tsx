@@ -49,7 +49,7 @@ interface LocationParams {
   marketStrategy?: string
 }
 
-const Section = styled(Box) <{ isDark?: boolean }>`
+const Section = styled(Box)`
   &.gray {
     background-color: ${({ theme }) => theme.colors.disabled};
   }
@@ -60,7 +60,7 @@ const Section = styled(Box) <{ isDark?: boolean }>`
 
   > ${Flex} {
     padding: 20px 0;
-    border-bottom: ${({ isDark }) => (isDark ? '2px solid #272B30' : '2px solid #EFEFEF')};
+    border-bottom: ${({ theme }) => (theme.isDark ? '2px solid #272B30' : '2px solid #EFEFEF')};
   }
 
   input[type='range'] {
@@ -131,10 +131,10 @@ const BalanceInputWrapper = styled(Flex)`
 `
 
 function areEqual(prevProps, nextProps) {
- // dont re-render if the data is the same
+  // dont re-render if the data is the same
   /*  Basically, this function is shouldComponentUpdate, except you return true if you want it to not render. */
-// https://stackoverflow.com/questions/54946933/how-can-i-prevent-my-functional-component-from-re-rendering-with-react-memo-or-r
- return prevProps.options.series[0].data === nextProps.options.series[0].data
+  // https://stackoverflow.com/questions/54946933/how-can-i-prevent-my-functional-component-from-re-rendering-with-react-memo-or-r
+  return prevProps.options.series[0].data === nextProps.options.series[0].data
 }
 
 const HighchartsReactWrapper: React.FC<{ options: Record<string, any> }> = React.memo((props) => {
@@ -180,7 +180,6 @@ const FarmSA = () => {
     coingeckoId = singleFarm?.TokenInfo?.token?.coingeckoId
     quoteTokenCoingeckoId = singleFarm?.TokenInfo?.quoteToken?.coingeckoId
   }
-
 
   const { isDark } = useTheme()
   const { priceList: basetokenPriceList, dateList } = usePriceList(coingeckoId)
@@ -403,7 +402,6 @@ const FarmSA = () => {
         quoteTokenInputValue = 0
       }
     }
-
   } else {
     // eslint-disable-next-line no-lonely-if
     if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName) {
@@ -461,7 +459,6 @@ const FarmSA = () => {
       } else {
         handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
       }
-
 
       // const receipt = await tx.wait()
       // if (receipt.status) {
@@ -628,8 +625,6 @@ const FarmSA = () => {
     } else {
       handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
     }
-
-
   }
 
   const { priceRiseFall, profitLossRatioSheet1Token0, profitLossRatioSheet1Token1 } = getRunLogic(
@@ -812,7 +807,7 @@ const FarmSA = () => {
             text: 'All',
           },
         ],
-        selected: 4,
+        selected: 1,
       },
       chart: {
         backgroundColor: 'transparent',
@@ -960,7 +955,6 @@ const FarmSA = () => {
   }
 
   const getSelectOptionsCake = (): Array<{ icon: string; value: string; label: string }> => {
-
     if (selectedStrategy === 'bull2x') {
       return [
         {
@@ -988,7 +982,6 @@ const FarmSA = () => {
       },
     ]
   }
-
 
   const getTokenSelectOptions = React.useCallback(() => {
     return [
@@ -1072,11 +1065,11 @@ const FarmSA = () => {
       </Text>
       <SectionWrapper>
         <Flex className="graphSide" flex="2" mr={isSmallScreen ? null : '2rem'}>
-          <Section isDark={isDark} style={{ height: '500px' }}>
+          <Section style={{ height: '500px' }}>
             <HighchartsReactWrapper options={getStockChartOption()} />
           </Section>
 
-          <Section isDark={isDark}>
+          <Section >
             <Flex justifyContent="space-between" style={{ flexFlow: 'row wrap' }}>
               <Flex mb="20px">
                 <Text
@@ -1135,7 +1128,7 @@ const FarmSA = () => {
           </Section>
         </Flex>
         <Flex className="infoSide" flex="1">
-          <Section isDark={isDark}>
+          <Section >
             <Flex>
               <SingleFarmSelect
                 options={
@@ -1297,5 +1290,5 @@ export default FarmSA
 
 // NOTE 2: the reason highcharts keeps re-rendering is a bit unclear, maybe because of tokenPriceList or something else in the page
 // but wrapping it in a React.memo() function and giving it the areEqual function, which tells it to re-render only when the
-// tokenPriceList (props.options.series[0].data) changes, seems to work. 
+// tokenPriceList (props.options.series[0].data) changes, seems to work.
 // https://stackoverflow.com/questions/54946933/how-can-i-prevent-my-functional-component-from-re-rendering-with-react-memo-or-r
