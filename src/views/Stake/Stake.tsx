@@ -31,7 +31,6 @@ const StyledButton = styled(Button)`
   box-shadow: none;
   width: 114px;
   height: 32px;
-  // margin-left: 75px;
 `
 const RewardsSummarySection = styled(Flex)`
   // flex-direction: column;
