@@ -7,7 +7,7 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 6rem;
   }
 `
 
@@ -16,7 +16,6 @@ const AprCell = ({ getApyData }) => {
   const { t } = useTranslation()
 
   const { stakeApr, apy } = getApyData
-  // console.log('AprCell', getApyData)
 
   const apyCell = (e) => {
     const value = e * 100
