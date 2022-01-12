@@ -20,30 +20,19 @@ import roadmap from './assets/Group 29974.png'
 import certikLogo from './assets/certikLogo@2x.png'
 import ourPartner from './assets/OurPartner.png'
 import joinUs from './assets/Linebg.svg'
-import Telegram from './assets/Telegram.svg'
-import GitHub from './assets/Github.svg'
-import Twitter from './assets/Twitter.svg'
-import Medium from './assets/MediumIcon'
-import YouTube from './assets/Youtube.svg'
-import Discord from './assets/Discord.svg'
 import dog from './assets/Dog.png'
-
-import peckshield from './assets/peckShieldLogo@2x.png'
-import slowmist from './assets/slowMistLogo@2x.png'
-import inspect from './assets/inspexLogo@2x.png'
-import ItemBox from './ItemBox'
-import hand from './assets/Group 8802.png'
+import { ReactComponent as TelegramIcon } from './assets/Telegram.svg'
+import { ReactComponent as GitHubIcon } from './assets/Github.svg'
+import { ReactComponent as TwitterIcon } from './assets/Twitter.svg'
+import { ReactComponent as MediumIcon } from './assets/medium.svg'
+import { ReactComponent as YouTubeIcon } from './assets/Youtube.svg'
+import { ReactComponent as DiscordIcon } from './assets/Discord.svg'
+import HomeMobile from './HomeMobile'
 
 const StyledHeroSection = styled(Box)`
   padding: 160px;
   text-align: center;
-  &:nth-child(even) {
-    background-color: ${({ theme }) => theme.colors.background};
-  }
-  &:nth-child(odd),
-  &:nth-child(2) {
-    background-color: ${({ theme }) => theme.colors.backgroundAlt};
-  }
+
   @media screen and (max-width: 1200px) {
     padding: 80px;
   }
@@ -180,19 +169,18 @@ const Card = styled(Flex)`
     justify-content: space-between;
   }
   &.auditedBy {
-    background: ${({ theme }) => theme.colors.backgroundAlt};
+    background: #fff;
     border: 1px solid #7b7a7b;
     box-shadow: 0px 0px 10px 0px rgba(123, 122, 123, 0.14);
   }
   &.community {
-    background: ${({ theme }) => theme.colors.backgroundAlt};
     padding: 1rem 2rem;
     border: 2px solid transparent;
-    &:hover {
-      background: ${({ theme }) => theme.colors.backgroundAlt};
-      border: 2px solid #9615e7;
-      box-shadow: 0px 0px 37px 1px rgba(123, 122, 123, 0.32);
-    }
+    // &:hover {
+    //   background: ${({ theme }) => theme.colors.backgroundAlt};
+    //   border: 2px solid #9615e7;
+    //   box-shadow: 0px 0px 37px 1px rgba(123, 122, 123, 0.32);
+    // }
     > * {
       margin: 1rem 0;
       flex: 1;
@@ -208,14 +196,10 @@ const TradeText = styled(Box)`
   width: 60%;
   font-size: 24px;
   max-width: 700px;
-  color: #1a1a1f;
+  color: #3E3C46;
   margin-top: 70px;
   line-height: 39px;
-  font-weight: 400;
-  @media screen and (max-width: 768px) {
-    font-size: 12px;
-    line-height: 20px;
-  }
+  font-family: 'GenJyuuGothic' !important;
 `
 
 const BackedImage = styled(Box)`
@@ -269,10 +253,12 @@ const GlowSpot = styled(Box)`
 `
 const Home: React.FC = () => {
   const { theme } = useTheme()
-  const HomeSectionContainerStyles = { margin: '0', width: '100%', maxWidth: '968px' }
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
+  if (isMobile) {
+    return <HomeMobile />
+  }
 
   return (
     <>
@@ -282,9 +268,8 @@ const Home: React.FC = () => {
 
         <Box>
           <img src={slogan} alt="slogan" style={{ position: 'relative', width: '65%', maxWidth: '700px' }} />
-          <TradeText style={{}}>
-            {t('Trade, earn, and win crypto on the most popular decentralized platform in the galaxy.')}
-          </TradeText>
+          <Text color="#3E3C46" fontFamily="'GenJyuuGothic' !important" fontSize="20px" lineHeight="29px" mt="70px">{t('Community-owned Leveraged Yield Farming')}</Text>
+          <Text color="#3E3C46" fontFamily="'GenJyuuGothic' !important" fontSize="20px" lineHeight="29px">{t('Liquidity as a Service')}</Text>
         </Box>
 
         <Flex style={{ marginTop: '20px', maxWidth: '320px', position: 'relative' }} justifyContent="space-between">
@@ -333,7 +318,7 @@ const Home: React.FC = () => {
         <GlowSpot />
       </SectionWithBgImg>
 
-      <StyledHeroSection>
+      <StyledHeroSection background="white">
         <p style={{ marginBottom: '20px' }}>{t('FEATURES')}</p>
         <h1 style={{ fontSize: '56px', marginTop: '15px', marginBottom: '40px' }}>{t('Why Huski')}</h1>
         <div style={{ textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', maxWidth: '1120px' }}>
@@ -342,25 +327,25 @@ const Home: React.FC = () => {
               <Card>
                 <img src={securityFirst} alt="" />
               </Card>
-              <Text>{t('Security First')}</Text>
+              <Text color="#1A1A1F">{t('Security First')}</Text>
             </Flex>
             <Flex flexDirection="column" width={145} mb={30}>
               <Card>
                 <img src={communityImg} alt="" />
               </Card>
-              <Text>{t('Community Owned')}</Text>
+              <Text color="#1A1A1F">{t('Community Owned')}</Text>
             </Flex>
             <Flex flexDirection="column" width={145} mb={30}>
               <Card>
                 <img src={noInvestorsImg} alt="" />
               </Card>
-              <Text>{t('No Investors')}</Text>
+              <Text color="#1A1A1F">{t('No Investors')}</Text>
             </Flex>
             <Flex flexDirection="column" width={145} mb={30}>
               <Card>
                 <img src={fairLaunchImg} alt="" />
               </Card>
-              <Text>{t('Fair Launch')}</Text>
+              <Text color="#1A1A1F">{t('Fair Launch')}</Text>
             </Flex>
           </Flex>
         </div>
@@ -475,7 +460,7 @@ const Home: React.FC = () => {
             </h3>
             <Text
               style={{ fontSize: '18px', paddingRight: '10%', textAlign: 'left', marginTop: '30px' }}
-              color="textSubtle"
+              color="#1A1A1F"
             >
               {t('Our Contract have been audited by best audit auditing in this field')}
             </Text>
@@ -732,7 +717,7 @@ const Home: React.FC = () => {
         </div> */}
       </StyledHeroSection>
 
-      <SBStyledContainer>
+      <SBStyledContainer background="white">
         {/*         <SBJoin > */}
         <div style={{ width: '100%', top: 0, left: 0 }}>
           <Flex
@@ -747,6 +732,7 @@ const Home: React.FC = () => {
             <Box>
               <div>
                 <Heading
+                  color="#1A1A1F"
                   style={{
                     marginTop: '40px',
                     fontWeight: 700,
@@ -758,6 +744,7 @@ const Home: React.FC = () => {
                   {t('Join us')}
                 </Heading>
                 <Text
+                  color="#1A1A1F"
                   style={{
                     fontSize: '18px',
                     paddingRight: '10%',
@@ -783,8 +770,10 @@ const Home: React.FC = () => {
                   to={{ pathname: 'https://t.me/HuskiFinance' }}
                 >
                   <SocialIcon>
-                    <img src={Telegram} style={{ margin: 0 }} alt="" width="48px" height="48px" />
-                    <Text ml="1rem">Telegram</Text>
+                    <TelegramIcon width="48px" height="48px" />
+                    <Text color="#1A1A1F" ml="1rem">
+                      Telegram
+                    </Text>
                   </SocialIcon>
                 </Card>
                 <Card
@@ -801,8 +790,10 @@ const Home: React.FC = () => {
                   to={{ pathname: '/' }}
                 >
                   <SocialIcon>
-                    <img src={GitHub} style={{ margin: 0 }} alt="" width="48px" height="48px" />
-                    <Text ml="1rem">GitHub</Text>
+                    <GitHubIcon width="48px" height="48px" />
+                    <Text color="#1A1A1F" ml="1rem">
+                      GitHub
+                    </Text>
                   </SocialIcon>
                 </Card>
               </Flex>
@@ -820,8 +811,10 @@ const Home: React.FC = () => {
                   to={{ pathname: 'https://twitter.com/HuskiFinance' }}
                 >
                   <SocialIcon>
-                    <img src={Twitter} style={{ margin: 0 }} alt="" width="48px" height="48px" />
-                    <Text ml="1rem">Twitter</Text>
+                    <TwitterIcon width="48px" height="48px" />
+                    <Text color="#1A1A1F" ml="1rem">
+                      Twitter
+                    </Text>
                   </SocialIcon>
                 </Card>
                 <Card
@@ -838,8 +831,12 @@ const Home: React.FC = () => {
                   to={{ pathname: 'https://medium.com/@huskifinance' }}
                 >
                   <SocialIcon>
-                    <Medium height="48px" width="48px" />
-                    <Text ml="1rem">Medium</Text>
+                    <Box borderRadius="100%" border="1px solid #696969" height="48px" width="48px" p="4px">
+                      <MediumIcon height="100%" width="100%" />
+                    </Box>
+                    <Text color="#1A1A1F" ml="1rem">
+                      Medium
+                    </Text>
                   </SocialIcon>
                 </Card>
               </Flex>
@@ -857,8 +854,10 @@ const Home: React.FC = () => {
                   to={{ pathname: '/' }}
                 >
                   <SocialIcon>
-                    <img src={YouTube} style={{ margin: 0 }} alt="" width="48px" height="48px" />
-                    <Text ml="1rem">YouTube</Text>
+                    <YouTubeIcon width="48px" height="48px" />
+                    <Text color="#1A1A1F" ml="1rem">
+                      YouTube
+                    </Text>
                   </SocialIcon>
                 </Card>
                 <Card
@@ -875,18 +874,31 @@ const Home: React.FC = () => {
                   to={{ pathname: 'https://discord.com/channels/869829725365870592/869829725365870595' }}
                 >
                   <SocialIcon>
-                    <img src={Discord} style={{ margin: 0 }} alt="" width="48px" height="48px" />
-                    <Text ml="1rem">Discord</Text>
+                    <DiscordIcon width="48px" height="48px" />
+                    <Text color="#1A1A1F" ml="1rem">
+                      Discord
+                    </Text>
                   </SocialIcon>
                 </Card>
               </Flex>
-              <div style={{ marginTop: '75px', marginBottom: '80px' }}>
-                <Text>Copyright&copy; 2021, HuskiFinance</Text>
-              </div>
+              <Flex mt="75px" mb="80px">
+                <Text color="#1A1A1F">Copyright&copy; 2021, HuskiFinance</Text>
+                <Text
+                  color="#1A1A1F"
+                  mx="1rem"
+                  as={Link}
+                  to="/terms-conditions"
+                  style={{ textDecoration: 'underline' }}
+                >
+                  {t('Terms & Conditions')}
+                </Text>
+                <Text color="#1A1A1F" as={Link} to="/privacy-policy" style={{ textDecoration: 'underline' }}>
+                  {t('Privacy Policy')}
+                </Text>
+              </Flex>
             </Box>
           </Flex>
         </div>
-        {/*       </SBJoin > */}
       </SBStyledContainer>
     </>
   )
