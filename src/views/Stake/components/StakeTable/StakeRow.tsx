@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
-import styled, { keyframes, css } from 'styled-components'
+import styled from 'styled-components'
 import {
   useMatchBreakpoints,
   Flex,
@@ -33,26 +33,7 @@ import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
-const expandAnimation = keyframes`
-  from {
-    max-height: 20px;
-  }
-  to {
-    max-height: 700px;
-  }
-`
-
-const collapseAnimation = keyframes`
-  from {
-    max-height: 700px;
-  }
-  to {
-    max-height: 20px;
-  }
-`
-
 const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
-
   .expandedArea {
     ::-webkit-scrollbar {
       height: 8px;

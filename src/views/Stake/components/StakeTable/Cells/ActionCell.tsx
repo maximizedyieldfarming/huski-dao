@@ -2,9 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { BIG_ZERO } from 'utils/bigNumber'
-import { Text, useMatchBreakpoints, Button } from '@huskifinance/huski-frontend-uikit'
-import BigNumber from 'bignumber.js'
+import { useMatchBreakpoints, Button } from '@huskifinance/huski-frontend-uikit'
 
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
@@ -27,7 +25,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 const ActionCell = ({ token }) => {
-  const { isMobile } = useMatchBreakpoints()
+  // const { isMobile } = useMatchBreakpoints()
   const { account } = useWeb3React()
   const { t } = useTranslation()
 
