@@ -84,6 +84,7 @@ const MaxContainer = styled(Flex)`
   background: ${({ theme }) => theme.colors.background};
   border-radius: 12px;
   padding: 6px;
+  margin-top: 8px;
   ${Box} {
     padding: 0 5px;
   }
@@ -117,6 +118,7 @@ const MaxButton = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+  border: 1px solid #DDDFE0;
   // background: isDark ? '#272B30' : '#FFFFFF';
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `
@@ -133,6 +135,7 @@ const StakeRow = ({ tokenData }) => {
   }
   const isSmallScreen = isMobile || isTablet
   const { totalToken, totalSupply, totalValueStaked } = tokenData
+  const tokenName = tokenData?.symbol.replace('WBNB', 'BNB') 
   const { isDark } = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance)
   const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance))
@@ -312,7 +315,7 @@ const StakeRow = ({ tokenData }) => {
       <Flex onClick={toggleExpanded}>
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
-        <MyPosCell staked={userStakedBalance} />
+        <MyPosCell staked={userStakedBalance} name={tokenName}/>
         <TotalValueCell valueStaked={totalValueStaked} />
         <TotalVolumeCell volumeLocked={totalVolLocked} />
         {shouldRenderActionPanel ? <ChevronUpIcon mr="10px" /> : <ChevronDownIcon mr="10px" />}
@@ -320,14 +323,15 @@ const StakeRow = ({ tokenData }) => {
       <StyledActionPanel flexDirection="column" expanded={expanded}>
         {shouldRenderActionPanel ? (
           <>
-            <Flex className="expandedArea" style={{ overflow: 'auto' }}>
+            <Flex className="expandedArea" style={{ overflow: 'auto', borderTop: '2px solid #EFEFEF' }}>
+           
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
                     {t('I Want to Stake')}
                   </Text>
                   <Text color="textSubtle" fontSize="12px">
-                    {t('Available %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
+                    {t('Available %tokenName% balance:', { tokenName })}
                     <span style={{ fontSize: '12px', fontWeight: 700 }}>
                       {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
                     </span>
@@ -358,7 +362,7 @@ const StakeRow = ({ tokenData }) => {
                         onClick={setStakeAmountToMax}
                         disabled={Number(userTokenBalance) === 0 || Number(allowance) === 0}
                       >
-                        <Text>{t('MAX')}</Text>
+                        <Text fontSize="14px">{t('MAX')}</Text>
                       </MaxButton>
                     </Box>
                     {Number(allowance) !== 0 ? (
@@ -433,7 +437,7 @@ const StakeRow = ({ tokenData }) => {
                         onClick={setUnstakeAmountToMax}
                         disabled={Number(userStakedBalance) === 0}
                       >
-                        <Text>{t('MAX')}</Text>
+                        <Text fontSize="14px">{t('MAX')}</Text>
                       </MaxButton>
                     </Box>
                     <StyledButton

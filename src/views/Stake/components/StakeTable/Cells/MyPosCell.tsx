@@ -12,7 +12,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const MyPosCell = ({ staked }) => {
+const MyPosCell = ({ staked, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
@@ -26,7 +26,7 @@ const MyPosCell = ({ staked }) => {
         </Text>
         {staked ? (
           <Text mt="10px" fontSize="18px" fontWeight="700" color="secondary">
-            {new BigNumber(staked).toFixed(3, 1)}
+            {new BigNumber(staked).toFixed(3, 1)} {name}
           </Text>
         ) : (
           <Skeleton width="80px" height="16px" mt="10px"/>

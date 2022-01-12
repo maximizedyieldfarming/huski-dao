@@ -17,17 +17,20 @@ const TotalVolumeCell = ({ volumeLocked }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
-  const formatedSupply = volumeLocked && parseFloat(formatBigNumber(Number(volumeLocked)).replace(/,/g, ''))
+  // const formatedSupply = volumeLocked && parseFloat(formatBigNumber(Number(volumeLocked)).replace(/,/g, ''))
+  const formatedSupply = Number(volumeLocked).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 
   return (
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left">
-          {t('Total Volume Locked')}
+          {/* {t('Total Volume Locked')} */}
+            {t('Total Value Locked (USD)')}
         </Text>
         {volumeLocked ? (
           <Text fontWeight="500" mt="10px">
-            {nFormatter(formatedSupply) || '0.00'}
+            {/* {nFormatter(formatedSupply) || '0.00'} */}
+            {formatedSupply}
           </Text>
         ) : (
           <Skeleton width="80px" height="16px" mt="10px"/>
