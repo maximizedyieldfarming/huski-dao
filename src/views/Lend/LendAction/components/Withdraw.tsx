@@ -8,6 +8,7 @@ import {
   Input,
   Grid,
   useMatchBreakpoints,
+  Skeleton,
 } from '@huskifinance/huski-frontend-uikit'
 import { useHistory } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
@@ -156,9 +157,13 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <Text color="textSubtle" fontSize="12px">
               {t('Balance')}:
             </Text>
-            <Text fontSize="12px" fontWeight="bold" ml="5px">
-              {`${balance} ib${name}`}
-            </Text>
+            {userTokenBalanceIb ? (
+              <Text fontSize="12px" fontWeight="bold" ml="5px">
+                {`${balance} ib${name}`}
+              </Text>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Flex>
         </Flex>
         <Section
@@ -199,12 +204,12 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
                   }}
                   onClick={setAmountToMax}
                 >
-                  <Text>{t('MAX')}</Text>
+                  <Text fontSize="16px" fontWeight="500" lineHeight="20px">{t('MAX')}</Text>
                 </button>
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40} ml="20px">
                   ib{name}
                 </Text>
               </Grid>
@@ -223,9 +228,13 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <Text color="textSubtle" fontSize="12px">
               {t('Balance')}:{' '}
             </Text>
-            <Text fontSize="12px" fontWeight="bold" ml="5px">
-              {`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}
-            </Text>
+            {userTokenBalance ? (
+              <Text fontSize="12px" fontWeight="bold" ml="5px">
+                {`${formatDisplayedBalance(userTokenBalance, tokenData.TokenInfo?.token?.decimalsDigits)} ${name}`}
+              </Text>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Flex>
         </Flex>
         <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
@@ -238,7 +247,7 @@ const Withdraw = ({ name, exchangeRate, account, tokenData, allowance, userToken
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text style={{ fontWeight: 700 }} width={40}>
+                <Text style={{ fontWeight: 700 }} width={40} ml="20px">
                   {name}
                 </Text>
               </Grid>

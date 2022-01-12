@@ -6,11 +6,12 @@ import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
   flex: 5;
+  padding: 10px 0px;
   flex-direction: row;
-  padding-left: 12px;
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
+    flex: 1 0 9rem;
+    padding: 0px 0px 0px 10px;
     align-items: center;
   }
 `

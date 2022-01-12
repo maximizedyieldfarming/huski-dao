@@ -10,7 +10,7 @@ const StyledCell = styled(BaseCell)`
 
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 0 0 290px;
+    flex: 0 0 12rem;
   }
   ${CellContent} {
     gap: 10px;
@@ -38,7 +38,7 @@ const ActionCell = ({ token, apyReady }) => {
       <CellContent>
         <Button
           style={{
-            width: '140px',
+            width: '50%',
             height: '40px',
           }}
           as={Link}
@@ -53,7 +53,7 @@ const ActionCell = ({ token, apyReady }) => {
         </Button>
         <Button
           style={{
-            width: '140px',
+            width: '50%',
             height: '40px',
           }}
           as={Link}

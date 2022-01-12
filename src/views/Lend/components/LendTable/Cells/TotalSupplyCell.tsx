@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { Text, useMatchBreakpoints, Skeleton, Box } from '@huskifinance/huski-frontend-uikit'
-import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import nFormatter from 'utils/nFormatter'
 import { formatBigNumber } from 'state/utils'
@@ -11,7 +9,7 @@ import BaseCell, { CellContent } from './BaseCell'
 const StyledCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 5rem;
   }
 `
 

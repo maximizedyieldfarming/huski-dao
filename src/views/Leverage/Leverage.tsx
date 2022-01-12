@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
@@ -30,13 +29,14 @@ const ActionButton = styled(Button)`
 `
 const PositionsButton = styled(ActionButton)`
   background-color: unset;
-  border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.secondary}` : 'unset')};
-  color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.secondary : theme.colors.textSubtle)};
-  font-size: 12px;
+  border-bottom: ${({ isActive, theme }) => (isActive === 'true' ? `2px solid ${theme.colors.positions}` : 'unset')};
+  color: ${({ isActive, theme }) => (isActive === 'true' ? theme.colors.positions : theme.colors.textSubtle)};
+  font-size: 16px;
   ${({ theme }) => theme.mediaQueries.lg} {
     font-size: 1rem;
   }
-  font-weight: bold;
+  font-weight: 700;
+  line-height: 19.36px;
   border-radius: unset;
   padding: unset;
   padding-bottom: 10px;
@@ -89,7 +89,7 @@ const SBBox = styled(Box)`
   }
   @media screen and (max-width: 1480px) {
     padding: 30px 0px;
-    margin-right: 0px !important;
+   //  margin-right: 0px !important;
   }
   @media screen and (max-width: 600px) {
     min-width: unset;
@@ -116,7 +116,7 @@ const StyledTableBorder = styled.div`
   background-size: 400% 400%;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   overflow: hidden;
-  padding: 1rem 1.5rem;
+  padding: 24px 24px;
 `
 const Leverage: React.FC = () => {
   const { t } = useTranslation()
@@ -199,6 +199,7 @@ const Leverage: React.FC = () => {
             justifyContent: 'space-between',
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+            maxWidth: '316px',
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />

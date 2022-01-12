@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router'
-import { Box, Flex, Text } from '@huskifinance/huski-frontend-uikit'
+import { Box, Flex, Text, Skeleton } from '@huskifinance/huski-frontend-uikit'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -35,6 +35,7 @@ const StyledPage = styled(Page)`
   gap: 2rem;
   > div {
     flex: 1 1 0;
+    margin-bottom: -15px;
   }
 `
 const TabPanel = styled(Box)`
@@ -147,8 +148,8 @@ const LendAction = () => {
   return (
     <StyledPage>
       <div style={{ textAlign: 'center' }}>
-        <img src="/images/HuskiPaw.png" alt="" width="48px" />
-        <Text fontSize="25px" fontWeight="600" textTransform="capitalize">
+        <img src="/images/HuskiPaw.png" alt="" width="48px" height="48px" />
+        <Text fontSize="25px" fontWeight="700" fontFamily="GenJyuuGothic" lineHeight="48px" textTransform="capitalize">
           {t(`${action}`)} {action.toLowerCase() === 'withdraw' ? `ib${tokenName}` : tokenName}
         </Text>
       </div>
@@ -270,10 +271,10 @@ const LendAction = () => {
       </TabPanel>
       <Balance>
         <Text style={{ fontWeight: 800 }}>{t('Deposit APY')}</Text>
-        <Text style={{ fontWeight: 800 }}>{apyCell(apy)}</Text>
+        {apy ? <Text style={{ fontWeight: 800 }}>{apyCell(apy)}</Text> : <Skeleton width="80px" height="1rem" />}
       </Balance>
       <Box>
-        <Text>
+        <Text mt="30px" mb="120px">
           {t(
             'Reminder: After receiving ibTokens from depositing in the lending pools, you can stake ibTokens for more yields.',
           )}

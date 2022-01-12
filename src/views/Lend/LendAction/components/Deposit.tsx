@@ -5,9 +5,9 @@ import {
   Flex,
   Text,
   AutoRenewIcon,
-  Input,
   Grid,
   useMatchBreakpoints,
+  Skeleton,
 } from '@huskifinance/huski-frontend-uikit'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -191,10 +191,14 @@ const Deposit: React.FC<DepositProps> = ({
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
-              userTokenBalance,
-              tokenData.TokenInfo?.token?.decimalsDigits,
-            )} ${name}`}</span>
+            {userTokenBalance ? (
+              <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+                userTokenBalance,
+                tokenData.TokenInfo?.token?.decimalsDigits,
+              )} ${name}`}</span>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Text>
         </Flex>
         <Section
@@ -235,12 +239,12 @@ const Deposit: React.FC<DepositProps> = ({
                   }}
                   onClick={setAmountToMax}
                 >
-                  <Text>{t('MAX')}</Text>
+                  <Text fontSize="16px" fontWeight="500" lineHeight="20px">{t('MAX')}</Text>
                 </button>
               </Box>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40} ml="20px">
                   {name}
                 </Text>
               </Grid>
@@ -250,17 +254,20 @@ const Deposit: React.FC<DepositProps> = ({
       </Flex>
       <Flex flexDirection="column">
         <StyledArrowDown style={{ marginLeft: 'auto', marginRight: 'auto' }} />
-
         <Flex justifyContent="space-between" mb="10px">
           <Text fontWeight="700" color="textFarm" fontSize="14px">
             {t('Recieve (Estimated)')}
           </Text>
           <Text color="textSubtle" fontSize="12px">
             {t('Balance')}:{' '}
-            <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
-              userTokenBalanceIb,
-              tokenData.TokenInfo?.token?.decimalsDigits,
-            )} ib${name}`}</span>
+            {userTokenBalanceIb ? (
+              <span style={{ color: isDark ? 'white' : '#1A1D1F', fontWeight: 700 }}>{`${formatDisplayedBalance(
+                userTokenBalanceIb,
+                tokenData.TokenInfo?.token?.decimalsDigits,
+              )} ib${name}`}</span>
+            ) : (
+              <Skeleton width="80px" height="1rem" />
+            )}
           </Text>
         </Flex>
         <Section justifyContent="space-between" style={{ background: isDark ? '#111315' : '#F7F7F8' }}>
@@ -273,7 +280,7 @@ const Deposit: React.FC<DepositProps> = ({
             <MaxContainer>
               <Grid gridGap="5px" alignItems="center" gridTemplateRows="1fr" gridTemplateColumns="40px 1fr">
                 <TokenImage token={tokenData?.TokenInfo.token} width={40} height={40} />
-                <Text color="textFarm" style={{ fontWeight: 700 }} width={40}>
+                <Text color="textFarm" style={{ fontWeight: 700 }} width={40} ml="20px">
                   ib{name}
                 </Text>
               </Grid>
@@ -284,7 +291,7 @@ const Deposit: React.FC<DepositProps> = ({
       <ButtonGroup flexDirection="row" justifyContent="space-between" mb="20px" mt="30px">
         <Flex style={{ alignItems: 'center', cursor: 'pointer' }}>
           <img src="/images/Cheveron.svg" alt="" />
-          <Text fontWeight="bold" fontSize="16px" style={{ height: '100%' }} onClick={() => history.push('/lend')}>
+          <Text color="textSubtle" fontWeight="bold" fontSize="16px" style={{ height: '100%' }} onClick={() => history.push('/lend')}>
             {t('Back')}
           </Text>
         </Flex>

@@ -19,7 +19,17 @@ const StyledRow = styled.div`
   padding: 10px 0;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
-    padding: 0;
+    height: 90px;
+    border-radius: 12px;
+    margin-top: 10px;
+    &:hover {
+        background: ${({ theme }) => theme.colors.background};
+      }
+    
+      &:active {
+        background: ${({ theme }) => theme.colors.background};
+      }
+  }
   }
 `
 

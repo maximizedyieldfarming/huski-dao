@@ -12,26 +12,25 @@ const StyledRow = styled.div`
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
-  // cursor: pointer;
   margin-bottom: 10px;
 `
 
 const NameCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 210px;
+    flex: 2 0 12rem;
   }
 `
 const ActionCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 0 0 290px;
+    flex: 0 0 12rem;
   }
 `
 const StyledCell = styled(BaseCell)`
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 5rem;
   }
 `
 
