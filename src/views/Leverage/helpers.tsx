@@ -574,12 +574,11 @@ export const getSingle7Days = (farm: LeverageFarm, cakePrice, tradefee) => {
   let apy
   if (tradefee.length === 0 || cakePrice.length === 0) {
     singleApy = [0, 0, 0, 0, 0, 0, 0]
-
   } else {
     const priceLen = cakePrice.length
-    for (let i = 1; i < tradefee.length; i++) {
+    for (let i = 0; i < tradefee.length; i++) {
       tradefeeapr = tradefee[i] * 365 / 100
-      yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice[priceLen - i]).div(poolLiquidityUsd)
+      yieldFarmingApr = yearlyCakeRewardAllocation.times(cakePrice[priceLen - (i + 1)]).div(poolLiquidityUsd)
       apr = Number(tradefeeapr) + Number(yieldFarmingApr)
       apy = ((Math.pow(1 + apr / 365, 365) - 1) * 100).toFixed(2)
       singleApy.push(apy)
