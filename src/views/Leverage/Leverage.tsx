@@ -89,7 +89,7 @@ const SBBox = styled(Box)`
   }
   @media screen and (max-width: 1480px) {
     padding: 30px 0px;
-    margin-right: 0px !important;
+   //  margin-right: 0px !important;
   }
   @media screen and (max-width: 600px) {
     min-width: unset;
