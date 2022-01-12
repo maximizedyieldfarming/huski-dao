@@ -66,7 +66,7 @@ const FilterOption = styled(Button)`
   background-color: ${({ isActive }) => (isActive ? '#7B3FE4' : 'transparent')};
   // border-bottom: ${({ theme, isActive }) => (isActive ? `1px solid ${theme.colors.secondary}` : 'unset')};
   color: ${({ isActive }) => (isActive ? '#FFFFFF!important' : '#9D9D9D!important')};
-  border-radius: 12px;
+  border-radius: 8px;
   color: #9d9d9d;
   > img {
     height: 26px;
@@ -94,7 +94,7 @@ const FiltersWrapper = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
-  padding: 18px 0px;
+  padding: 33px 0px;
   border-radius: 12px;
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   *::-webkit-scrollbar {
@@ -307,7 +307,6 @@ const SingleAssetsFarms: React.FC = () => {
             Huski Finance
           </h2>
         </SBBox>
-
         <Flex
           flex="1"
           style={{
@@ -362,7 +361,7 @@ const SingleAssetsFarms: React.FC = () => {
 
       <FiltersWrapper>
         <Flex alignItems="left" className="dexFilter">
-          <Text bold lineHeight="1.9">DEX :</Text>
+        <Text bold lineHeight="1.9">DEX :</Text>
           <Flex overflowX="auto" pl="10px">
             <FilterOption
               variant="tertiary"
@@ -393,7 +392,7 @@ const SingleAssetsFarms: React.FC = () => {
           </Flex>
         </Flex>
         <Flex className="strategyFilter" alignItems="left" borderRight="none!important">
-          <Text bold lineHeight="1.9">{t('Strategy :')}</Text>
+        <Text bold lineHeight="1.9">{t('Strategy :')}</Text>
           <Flex overflowX="auto" pl="10px" alignItems="left">
             <FilterOption
               style={{ height: '30px' }}

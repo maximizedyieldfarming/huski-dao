@@ -1,5 +1,5 @@
 import React from 'react'
-import { CardHeader as UiKitCardHeader, Heading, Flex, Grid } from '@huskifinance/huski-frontend-uikit'
+import { CardHeader as UiKitCardHeader, Heading,Text, Flex, Grid } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import { TokenImage } from 'components/TokenImage'
@@ -10,7 +10,7 @@ const Wrapper = styled(UiKitCardHeader) <{ isDark: boolean }>`
   padding-bottom: 0;
   .marketWrapper {
     border-bottom: ${({ isDark }) => (isDark ? '2px solid #272B30' : '2px solid #EFEFEF')};
-    padding-bottom: 0.7rem;
+    padding-bottom: 20px;
   }
 `
 
@@ -29,11 +29,11 @@ const CardHeader = ({ data }) => {
   return (
     <Wrapper isDark={isDark}>
       <Flex alignItems="center" className="marketWrapper">
-        <Grid gridTemplateColumns="40px 1fr" alignItems="center">
-          <TokenImage token={tokenImage} width={40} height={40} />
-          <Heading color="text" scale="lg" paddingLeft="10px" fontWeight="bold">
+        <Grid gridTemplateColumns="44px 1fr" alignItems="center">
+          <TokenImage token={tokenImage} width={44} height={44} />
+          <Text color="text" fontSize="28px"  pl="16px" fontWeight="700">
             {tokenName.replace('wBNB', 'BNB')}
-          </Heading>
+          </Text>
         </Grid>
       </Flex>
     </Wrapper>
