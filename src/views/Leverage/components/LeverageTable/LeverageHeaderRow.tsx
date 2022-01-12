@@ -20,28 +20,28 @@ const NameCell = styled(BaseCell)`
   flex-direction: row;
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 180px;
+    flex: 1 0 9rem;
     align-items: center;
   }
 `
 const StyledCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 120px;
+    flex: 1 0 5rem;
   }
   align-items: start;
 `
 const ApyCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 1 0 280px;
+    flex: 1 0 12rem;
   }
   align-items: start;
 `
 const ActionCell = styled(BaseCell)`
   flex: 1 0 50px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 0.25 0 100px;
+    flex: 0.25 0 6rem;
   }
   align-items: start;
 `

@@ -11,7 +11,7 @@ const StyledCell = styled(BaseCell)`
   padding: 10px 0px;
   ${({ theme }) => theme.mediaQueries.md} {
     padding: 0px 0px;
-    flex: 1 0 120px;
+    flex: 1 0 5rem;
   }
 `
 

@@ -10,7 +10,7 @@ const StyledCell = styled(BaseCell)`
   flex: 1 0 auto;
   padding: 10px 0px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 0.25 0 100px;
+    flex: 0.25 0 6rem;
     padding: 0px 0px;
   }
 `
@@ -18,7 +18,7 @@ const StyledButton = styled(Button)`
   background-color: ${({ disabled }) => (disabled ? '#D3D3D3' : '#7B3FE4')};
   box-sizing: border-box;
   border-radius: 10px;
-  width: 114px;
+  width: 6rem;
   height: 40px;
   display: flex;
   align-items: center;

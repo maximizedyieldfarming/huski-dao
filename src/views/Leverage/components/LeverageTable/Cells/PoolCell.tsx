@@ -10,7 +10,7 @@ const StyledCell = styled(BaseCell)`
   flex-direction: row;
   justify-content: flex-start;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 180px;
+    flex: 1 0 9rem;
     padding: 0px 0px 0px 10px;
     align-items: center;
   }

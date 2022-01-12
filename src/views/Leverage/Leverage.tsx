@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
@@ -187,15 +186,7 @@ const Leverage: React.FC = () => {
     <Page>
       <Section>
         <SBBox>
-          {/* <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}> */}
-          <h2
-            style={{
-              fontFamily: 'Baloo Bhaijaan',
-              color: '#FFFFFF',
-              fontSize: '50px',
-              marginLeft: '80px',
-              fontWeight: 800,
-            }}>
+          <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
             Huski Finance
           </h2>
         </SBBox>
@@ -208,6 +199,7 @@ const Leverage: React.FC = () => {
             justifyContent: 'space-between',
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
+            maxWidth: '316px',
           }}
         >
           <img src="/images/crown.png" width="48px" height="48px" alt="" />
