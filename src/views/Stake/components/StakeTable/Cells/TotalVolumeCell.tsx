@@ -17,8 +17,8 @@ const TotalVolumeCell = ({ volumeLocked }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
-  // const formatedSupply = volumeLocked && parseFloat(formatBigNumber(Number(volumeLocked)).replace(/,/g, ''))
-  const formatedSupply = Number(volumeLocked).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+  const formatedSupply1 = volumeLocked && parseFloat(formatBigNumber(Number(volumeLocked)).replace(/,/g, ''))
+  const formatedSupply = formatedSupply1.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 
   return (
     <StyledCell role="cell">
