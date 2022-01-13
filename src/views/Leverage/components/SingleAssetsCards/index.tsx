@@ -470,7 +470,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                   <Text bold fontSize="3">
                     {apy}%
                   </Text>
-                  {/* <Flex alignItems="center" my="5px"> */}
                   {Number(avgApy) > Number(apyOne) ?
                     <Text color="#83BF6E">
                       {t(
@@ -490,7 +489,6 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                   <Text>
                     {t('than 1x yield farm')}
                   </Text>
-                  {/* </Flex> */}
                 </>
               ) : (
                 <>
@@ -519,7 +517,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
             </Text>
           </Flex>
           <Flex justifyContent="space-between" my="12px">
-            <Text color="#6F767E">{t('Daily Earn')}</Text>
+            <Text color="#6F767E">{t('Daily Earnings')}</Text>
             {dailyEarnings ? (
               <Text>
                 {t('%dailyEarnings% %quoteTokenSymbol% per %tokenSymbol%', {
