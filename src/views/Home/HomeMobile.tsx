@@ -68,7 +68,7 @@ const Card = styled(Flex)`
     justify-content: unset;
     border: 1px solid #eaeaea;
     border-radius: 25px;
-    padding: 1rem 1.25rem;
+    padding: 0.5rem 1.25rem;
     width: 160px;
     &:not(:nth-last-child(-n + 2)) {
       margin-bottom: 0.5rem;

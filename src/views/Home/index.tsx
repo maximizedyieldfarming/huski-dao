@@ -27,6 +27,7 @@ import { ReactComponent as TwitterIcon } from './assets/Twitter.svg'
 import { ReactComponent as MediumIcon } from './assets/medium.svg'
 import { ReactComponent as YouTubeIcon } from './assets/Youtube.svg'
 import { ReactComponent as DiscordIcon } from './assets/Discord.svg'
+// import { ReactComponent as MouseIcon } from './assets/MouseScroll.svg'
 import HomeMobile from './HomeMobile'
 
 const StyledHeroSection = styled(Box)`
@@ -272,7 +273,10 @@ const Home: React.FC = () => {
           <Text color="#3E3C46" fontFamily="'GenJyuuGothic' !important" fontSize="20px" lineHeight="29px">{t('Liquidity as a Service')}</Text>
         </Box>
 
-        <Flex style={{ marginTop: '20px', maxWidth: '320px', position: 'relative' }} justifyContent="space-between">
+        <Flex
+          style={{ marginTop: '20px', maxWidth: '320px', position: 'relative', zIndex: 999 }}
+          justifyContent="space-between"
+        >
           <ConnectWalletButton scale="sm" width={167} height={56} style={{ margin: '0' }} />
           <Button
             style={{
@@ -293,6 +297,7 @@ const Home: React.FC = () => {
             {t('Trade Now')}
           </Button>
         </Flex>
+        {/* TODO: change this to svg and fix middlee alingment */}
         <div
           style={{
             display: 'flex',

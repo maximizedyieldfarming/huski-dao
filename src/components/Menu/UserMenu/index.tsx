@@ -35,9 +35,9 @@ const UserMenu = () => {
   if (pathname === '/') {
     return (
       <>
-        <Button mr="10px" variant="secondary" style={{ border: 'none', background: 'transparent', color: 'white' }}>
+       {/*  <Button mr="10px" variant="secondary" style={{ border: 'none', background: 'transparent', color: 'white' }}>
           Buy HUSKI
-        </Button>
+        </Button> */}
         <Button as={Link} to="/lend" style={{ background: 'white', color: 'black', border: 'none' }}>
           Launch App
         </Button>
