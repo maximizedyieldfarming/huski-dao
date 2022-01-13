@@ -744,7 +744,7 @@ const Farm = () => {
     }
   }
 
-  const isApproved = Number(allowance) > 0
+  const [isApproved, setIsApproved] = useState(Number(allowance) > 0)
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const quoteTokenAddress = getAddress(tokenData.TokenInfo.quoteToken.address)
   const approveContract = useERC20(tokenAddress)
@@ -790,6 +790,7 @@ const Farm = () => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
+        setIsApproved(true)
       } else {
         toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       }

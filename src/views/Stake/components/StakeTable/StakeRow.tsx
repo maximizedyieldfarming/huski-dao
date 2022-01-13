@@ -160,6 +160,7 @@ const StakeRow = ({ tokenData }) => {
   )
   const allowance =
     Number(tokenData?.userData?.allowance) > 0 ? tokenData?.userData?.allowance : tokenAllowance.toString()
+    const [isApproved, setIsApproved] = useState(Number(allowance) > 0)
 
   // stake operations
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -300,6 +301,7 @@ const StakeRow = ({ tokenData }) => {
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
+        setIsApproved(true)
       } else {
         toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       }
@@ -364,7 +366,7 @@ const StakeRow = ({ tokenData }) => {
                         <Text fontSize="14px">{t('MAX')}</Text>
                       </MaxButton>
                     </Box>
-                    {Number(allowance) !== 0 ? (
+                    {isApproved ? (
                       <StyledButton
                         onClick={handleStakeConfirm}
                         disabled={
