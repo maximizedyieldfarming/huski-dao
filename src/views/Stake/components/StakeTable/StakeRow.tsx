@@ -135,7 +135,7 @@ const StakeRow = ({ tokenData }) => {
   }
   const isSmallScreen = isMobile || isTablet
   const { totalToken, totalSupply, totalValueStaked } = tokenData
-  const tokenName = tokenData?.symbol.replace('WBNB', 'BNB') 
+  const tokenName = tokenData?.symbol.replace('WBNB', 'BNB')
   const { isDark } = useTheme()
   const userTokenBalance = getBalanceAmount(useTokenBalance(getAddress(tokenData?.vaultAddress)).balance)
   const userStakedBalance = getBalanceAmount(new BigNumber(useStakedibTokenBalance(tokenData?.pid).balance))
@@ -315,7 +315,7 @@ const StakeRow = ({ tokenData }) => {
       <Flex onClick={toggleExpanded}>
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
-        <MyPosCell staked={userStakedBalance} name={tokenName}/>
+        <MyPosCell staked={userStakedBalance} name={tokenName} />
         <TotalValueCell valueStaked={totalValueStaked} />
         <TotalVolumeCell volumeLocked={totalVolLocked} />
         {shouldRenderActionPanel ? <ChevronUpIcon mr="10px" /> : <ChevronDownIcon mr="10px" />}
@@ -324,16 +324,18 @@ const StakeRow = ({ tokenData }) => {
         {shouldRenderActionPanel ? (
           <>
             <Flex className="expandedArea" style={{ overflow: 'auto', borderTop: '2px solid #EFEFEF' }}>
-           
+
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
                     {t('I Want to Stake')}
                   </Text>
-                  <Text color="textSubtle" fontSize="12px">
-                    {t('Available %tokenName% balance:', { tokenName })}
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>
-                      {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)}
+                  <Text>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#6F767E' }}>
+                      {t('Balance:')}
+                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#1A1D1F' }}>
+                      {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)} {tokenName}
                     </span>
                   </Text>
                 </Flex>
@@ -403,10 +405,12 @@ const StakeRow = ({ tokenData }) => {
                   <Text color="text" fontSize="14px" fontWeight="700">
                     {t('I Want to Unstake')}
                   </Text>
-                  <Text color="textSubtle" fontSize="12px">
-                    {t('Staked %tokenName% balance:', { tokenName: tokenData?.symbol.replace('WBNB', 'BNB') })}
-                    <span style={{ fontSize: '12px', fontWeight: 700 }}>
-                      {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)}
+                  <Text>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#6F767E' }}>
+                      {t('Balance:')}
+                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#1A1D1F' }}>
+                      {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)} {tokenName}
                     </span>
                   </Text>
                 </Flex>
