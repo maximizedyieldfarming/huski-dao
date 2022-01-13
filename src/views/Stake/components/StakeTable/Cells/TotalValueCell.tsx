@@ -13,7 +13,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalValueCell = ({ valueStaked }) => {
+const TotalValueCell = ({ valueStaked, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
@@ -23,14 +23,14 @@ const TotalValueCell = ({ valueStaked }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left">
-          {t('Total Value Staked')}
+          {t('Total %name% Staked', { name })}
         </Text>
         {valueStaked ? (
           <Text fontWeight="500" mt="10px">
             {nFormatter(formatedSupply)}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" mt="10px"/>
+          <Skeleton width="80px" height="16px" mt="10px" />
         )}
       </CellContent>
     </StyledCell>

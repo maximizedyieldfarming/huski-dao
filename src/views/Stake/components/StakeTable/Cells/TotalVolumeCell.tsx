@@ -13,7 +13,7 @@ const StyledCell = styled(BaseCell)`
   }
 `
 
-const TotalVolumeCell = ({ volumeLocked }) => {
+const TotalVolumeCell = ({ volumeLocked, name }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
 
   const { t } = useTranslation()
@@ -25,7 +25,7 @@ const TotalVolumeCell = ({ volumeLocked }) => {
       <CellContent>
         <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left">
           {/* {t('Total Volume Locked')} */}
-            {t('Total Value Locked (USD)')}
+          {t('Total %name% Locked', {name})}
         </Text>
         {volumeLocked ? (
           <Text fontWeight="500" mt="10px">
@@ -33,7 +33,7 @@ const TotalVolumeCell = ({ volumeLocked }) => {
             {formatedSupply}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" mt="10px"/>
+          <Skeleton width="80px" height="16px" mt="10px" />
         )}
       </CellContent>
     </StyledCell>

@@ -33,7 +33,7 @@ import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
-const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
   .expandedArea {
     ::-webkit-scrollbar {
       height: 8px;
@@ -103,7 +103,7 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
     flex-direction: column;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row;
-      padding: 23px 20px 23px 20px
+      padding: 23px 20px 23px 20px;
     }
   }
   // > ${Flex}:first-child {
@@ -118,7 +118,7 @@ const MaxButton = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  border: 1px solid #DDDFE0;
+  border: 1px solid #dddfe0;
   // background: isDark ? '#272B30' : '#FFFFFF';
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `
@@ -316,24 +316,21 @@ const StakeRow = ({ tokenData }) => {
         <NameCell token={tokenData} />
         <AprCell getApyData={getStakeApy(tokenData, huskyPrice)} />
         <MyPosCell staked={userStakedBalance} name={tokenName} />
-        <TotalValueCell valueStaked={totalValueStaked} />
-        <TotalVolumeCell volumeLocked={totalVolLocked} />
+        <TotalValueCell valueStaked={totalValueStaked} name={tokenName} />
+        <TotalVolumeCell volumeLocked={totalVolLocked} name={tokenName} />
         {shouldRenderActionPanel ? <ChevronUpIcon mr="10px" /> : <ChevronDownIcon mr="10px" />}
       </Flex>
       <StyledActionPanel flexDirection="column" expanded={expanded}>
         {shouldRenderActionPanel ? (
           <>
             <Flex className="expandedArea" style={{ overflow: 'auto', borderTop: '2px solid #EFEFEF' }}>
-
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">
                     {t('I Want to Stake')}
                   </Text>
                   <Text>
-                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#6F767E' }}>
-                      {t('Balance:')}
-                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#6F767E' }}>{t('Balance:')}</span>
                     <span style={{ fontSize: '12px', fontWeight: 500, color: '#1A1D1F' }}>
                       {formatDisplayedBalance(userTokenBalance, tokenData?.token?.decimalsDigits)} {tokenName}
                     </span>
@@ -406,9 +403,7 @@ const StakeRow = ({ tokenData }) => {
                     {t('I Want to Unstake')}
                   </Text>
                   <Text>
-                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#6F767E' }}>
-                      {t('Balance:')}
-                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#6F767E' }}>{t('Balance:')}</span>
                     <span style={{ fontSize: '12px', fontWeight: 500, color: '#1A1D1F' }}>
                       {formatDisplayedBalance(userStakedBalance, tokenData?.token?.decimalsDigits)} {tokenName}
                     </span>
@@ -472,7 +467,7 @@ const StakeRow = ({ tokenData }) => {
                   </Text>
                 </Flex>
                 <MaxContainer>
-                  <Text color="textFarm" fontSize="28px" fontWeight="700">
+                  <Text color="textFarm" fontSize="28px" fontWeight="700" pl="20px">
                     {reward.gt(0) ? (reward.lt(0.01) ? reward.toFixed(4, 1) : reward.toFixed(2, 1)) : '0.00'}
                   </Text>
                   <Flex alignItems="center">
