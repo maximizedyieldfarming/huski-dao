@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
-import styled from 'styled-components'
-import { useMatchBreakpoints, Grid, Skeleton, Flex, Box, Text } from '@huskifinance/huski-frontend-uikit'
+import styled, {css} from 'styled-components'
+import { useMatchBreakpoints, Grid, Skeleton, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useLocation } from 'react-router-dom'
 import ActivePositionsRow from './ActivePositionsRow'
@@ -37,7 +37,7 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
     }, 8000)
   })
 
-  const loader = (() => {
+  const Loader = () => {
     if (isSmallScreen) {
       return (
         <>
@@ -53,20 +53,19 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
     }
     return (
       <>
-        <Grid
-          gridTemplateColumns={pathname === 'farms' ? 'repeat(10, 1fr)' : 'repeat(8, 1fr)'}
+        <Flex
           justifyContent="space-between"
           padding="1rem 0"
         >
           {[...Array(pathname === 'farms' ? 10 : 8)].map((_, i) => (
-            <Skeleton key={_} width="80px" height="1rem" />
+            <Skeleton key={_} width="80px" />
           ))}
-        </Grid>
+        </Flex>
         <Skeleton width="100%" height="3rem" marginBottom="1rem" />
         <Skeleton width="100%" height="3rem" />
       </>
     )
-  })()
+  }
 
   return (
     <StyledTable role="table">
@@ -74,11 +73,11 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
       {positionFarmsData?.length ? (
         positionFarmsData.map((pd) => <ActivePositionsRow data={pd} key={pd?.positionId} />)
       ) : isLoading ? (
-        loader
+        <Loader />
       ) : (
-        <Box padding="25px">
-          <Text textAlign="center" fontSize="18px" fontWeight="500" lineHeight="48px" color="inputSecondary" >{t('No Active Positions')}</Text>
-        </Box>
+        <Flex height="calc(9rem + 20px)" alignItems="center" justifyContent="center">
+          <Text textAlign="center" fontSize="18px" fontWeight="500" lineHeight="48px" color="inputSecondary">{t('No Active Positions')}</Text>
+        </Flex>
       )}
     </StyledTable>
   )
