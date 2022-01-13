@@ -470,15 +470,27 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                   <Text bold fontSize="3">
                     {apy}%
                   </Text>
-                  <Flex alignItems="center" my="5px">
-                    <Text>
+                  {/* <Flex alignItems="center" my="5px"> */}
+                  {Number(avgApy) > Number(apyOne) ?
+                    <Text color="#83BF6E">
                       {t(
-                        `%avgApy%% ${Number(avgApy) > Number(apyOne) ? '\u2191' : '\u2193'
-                        } than 1x yield farm`,
+                        `${'\u2191'} %avgApy%% `,
                         { avgApy },
                       )}
                     </Text>
-                  </Flex>
+                    :
+                    <Text color="#FF6A55">
+
+                      {t(
+                        `${'\u2193'} %avgApy%% `,
+                        { avgApy },
+                      )}
+                    </Text>
+                  }
+                  <Text>
+                    {t('than 1x yield farm')}
+                  </Text>
+                  {/* </Flex> */}
                 </>
               ) : (
                 <>

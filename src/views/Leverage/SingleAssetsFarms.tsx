@@ -94,7 +94,7 @@ const FiltersWrapper = styled(Flex)`
   flex-direction: column;
   gap: 1rem;
   box-shadow: ${({ theme }) => theme.card.boxShadow};
-  padding: 33px 0px;
+  padding: 18px 0px;
   border-radius: 12px;
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   *::-webkit-scrollbar {
@@ -108,7 +108,6 @@ const FiltersWrapper = styled(Flex)`
     padding-left: 24px;
     padding-right: 1rem;
     font-size: 16px;
-    // flex: 1;
   }
   .strategyFilter {
     ${({ theme }) => theme.mediaQueries.lg} {
