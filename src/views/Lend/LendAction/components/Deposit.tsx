@@ -14,7 +14,7 @@ import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import NumberInput from 'components/NumberInput'
-import { getDecimalAmount, getBalanceAmount } from 'utils/formatBalance'
+import { getDecimalAmount } from 'utils/formatBalance'
 import useTheme from 'hooks/useTheme'
 import { usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import { getAddress } from 'utils/addressHelpers'
@@ -23,7 +23,6 @@ import { useVault, useERC20 } from 'hooks/useContract'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { ArrowDownIcon } from 'assets'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
 import { formatDisplayedBalance } from 'utils/formatDisplayedBalance'
 import { TokenImage } from 'components/TokenImage'
 import Page from '../../../../components/Layout/Page'
@@ -103,7 +102,8 @@ const Deposit: React.FC<DepositProps> = ({
   const approveContract = useERC20(tokenAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-  const isApproved: boolean = Number(allowance) > 0
+  // const isApproved: boolean = Number(allowance) > 0
+  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const [isPending, setIsPending] = useState<boolean>(false)
   const [isApproving, setIsApproving] = useState<boolean>(false)
   const { isDark } = useTheme()
@@ -137,6 +137,7 @@ const Deposit: React.FC<DepositProps> = ({
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Approved!'), t('Your request has been approved'))
+        setIsApproved(true)
       } else {
         toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       }
@@ -181,7 +182,15 @@ const Deposit: React.FC<DepositProps> = ({
     handleDeposit(convertedStakeAmount)
   }
   const assetsReceived = new BigNumber(amount).div(exchangeRate).toFixed(tokenData?.TokenInfo?.token?.decimalsDigits, 1)
-
+  console.log({
+    allowance,
+    exchangeRate,
+    account,
+    tokenData,
+    name,
+    userTokenBalance,
+    userTokenBalanceIb,
+  })
   return (
     <Page style={{ padding: 0 }}>
       <Flex flexDirection="column">
@@ -295,17 +304,6 @@ const Deposit: React.FC<DepositProps> = ({
             {t('Back')}
           </Text>
         </Flex>
-        {/* {isApproved ? null : (
-          <Button
-            style={{ width: '160px', height: '57px', borderRadius: '16px' }}
-            onClick={handleApprove}
-            disabled
-            isLoading={isApproving}
-            endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-          >
-            {isPending ? t('Approving') : t('Approve')}
-          </Button>
-        )} */}
         <Flex flexWrap="wrap" justifyContent="right">
           {isApproved ? null : (
             <Button
