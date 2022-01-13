@@ -185,7 +185,7 @@ const Leverage: React.FC = () => {
   return (
     <Page>
       <Section>
-        <SBBox>
+        <SBBox style={{ height: '180px' }}>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
             Huski Finance
           </h2>
@@ -200,14 +200,15 @@ const Leverage: React.FC = () => {
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
             maxWidth: '316px',
+            height: '180px',
           }}
         >
-          <img src="/images/crown.png" width="48px" height="48px" alt="" />
-          <Text mt="10px" fontSize="13px" fontWeight="600">
+          {/* <img src="/images/crown.png" width="48px" height="48px" alt="" /> */}
+          <Text mt="10px" fontSize="16px" fontWeight="700">
             {t('HUSKI Rewards')}
           </Text>
           <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
-            <Text mb="5px" color="textFarm" fontWeight="700" fontSize="28px">
+            <Text mb="5px" color="textFarm" fontWeight="600" fontSize="36px">
               {new BigNumber(reward || 0).toFixed(3, 1)}
             </Text>
             <StyledButton
