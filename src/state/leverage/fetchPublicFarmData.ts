@@ -32,6 +32,8 @@ type PublicFarmData = {
   poolWeight: SerializedBigNumber
   liquidationThreshold: SerializedBigNumber
   quoteTokenLiquidationThreshold: SerializedBigNumber
+  isStableToken: boolean
+  isStableQuoteToken: boolean
   tokenMinDebtSize: SerializedBigNumber
   quoteTokenMinDebtSize: SerializedBigNumber
   tokenReserveFund: SerializedBigNumber
@@ -71,14 +73,33 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   //     }
   //   ])
 
-  // const [quoteTokenLiquidationThreshold] =
-  //   await multicall(WorkerConfigABI, [
-  //     {
-  //       address: QuoteTokenInfo.config,
-  //       name: 'killFactor',
-  //       params: [QuoteTokenInfo.address, 0],
-  //     }
-  //   ])
+
+  let isStableToken = false
+  let isStableQuoteToken = false
+  try {
+
+    const [isStableToken1, isStableQuoteToken1] =
+      await multicall(WorkerConfigABI, [
+        {
+          address: TokenInfo.config,
+          name: 'isStable',
+          params: [TokenInfo.address],
+        },
+        {
+          address: TokenInfo.config,
+          name: 'isStable',
+          params: [TokenInfo.address],
+        },
+      ])
+
+    isStableToken = true // isStableToken1
+    isStableQuoteToken = true // isStableQuoteToken1
+  } catch (error) {
+    // oracle machine do not work
+    isStableToken = false
+    isStableQuoteToken = false
+  }
+
 
   const [tokenMinDebtSize, quoteTokenMinDebtSize, tokenReserveFund] =
     await multicall(SimpleVaultConfigABI, [
@@ -319,6 +340,8 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
     quoteTokenBalanceLP: quoteTokenBalanceLP[0]._hex,
     liquidationThreshold: "0x208d", // liquidationThreshold[0]._hex,
     quoteTokenLiquidationThreshold: "0x208d", // quoteTokenLiquidationThreshold[0]._hex,
+    isStableToken,
+    isStableQuoteToken,
     tokenMinDebtSize: tokenMinDebtSize[0]._hex,
     quoteTokenMinDebtSize: quoteTokenMinDebtSize[0]._hex,
     tokenReserveFund: tokenReserveFund[0]._hex,
