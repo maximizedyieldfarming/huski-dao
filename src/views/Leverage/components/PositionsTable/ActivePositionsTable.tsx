@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import styled, {css} from 'styled-components'
+import styled, {css, useTheme} from 'styled-components'
 import { useMatchBreakpoints, Grid, Skeleton, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useLocation } from 'react-router-dom'
@@ -25,6 +25,7 @@ const StyledTable = styled.div`
 const ActivePositionsTable = ({ positionFarmsData }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
+  const {isDark} = useTheme()
   const isSmallScreen = isMobile || isTablet
   const { pathname } = useLocation()
 
@@ -61,8 +62,8 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
             <Skeleton key={_} width="80px" />
           ))}
         </Flex>
-        <Skeleton width="100%" height="3rem" marginBottom="1rem" />
-        <Skeleton width="100%" height="3rem" />
+        <Skeleton width="100%" height="1.5rem" />
+{/*         <Skeleton width="100%" height="3rem" /> */}
       </>
     )
   }
@@ -75,8 +76,8 @@ const ActivePositionsTable = ({ positionFarmsData }) => {
       ) : isLoading ? (
         <Loader />
       ) : (
-        <Flex height="calc(9rem + 20px)" alignItems="center" justifyContent="center">
-          <Text textAlign="center" fontSize="18px" fontWeight="500" lineHeight="48px" color="inputSecondary">{t('No Active Positions')}</Text>
+        <Flex height="calc(3.5rem + 20px)" alignItems="center" justifyContent="center">
+          <Text textAlign="center" fontSize="18px" fontWeight="500" lineHeight="48px" color={isDark ? '#fff' : "#9d9d9d"}>{t('No Active Positions')}</Text>
         </Flex>
       )}
     </StyledTable>
