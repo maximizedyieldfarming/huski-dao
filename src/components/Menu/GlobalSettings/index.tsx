@@ -22,7 +22,7 @@ const GlobalSettings = () => {
         scale="sm"
         mr="8px"
       >
-        <NotificationIcon height={45} width={45} color="textSubtle" />
+{/*         <NotificationIcon height={45} width={45} color="textSubtle" /> */}
       </IconButton>
     </Flex>
   )
