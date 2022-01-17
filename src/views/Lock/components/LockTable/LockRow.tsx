@@ -42,6 +42,7 @@ const StyledRow = styled.div`
       flex-direction: row;
     }
     &:not(:last-child) {
+      border-left: 2px solid ${({ theme }) => theme.colors.secondary};
       border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
     }
   }

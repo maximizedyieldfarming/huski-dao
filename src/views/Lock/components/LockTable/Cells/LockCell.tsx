@@ -14,7 +14,7 @@ const StyledCell = styled(BaseCell)`
   }
   a {
     padding: 0.75rem;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     height: auto;
     box-shadow: none;
