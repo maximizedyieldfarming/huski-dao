@@ -19,10 +19,12 @@ const Section = styled(Flex)`
   ::-webkit-scrollbar {
     height: 8px;
   }
+  height: 135px;
   > div:not(:last-child) {
     margin-bottom: 1rem;
   }
   ${({ theme }) => theme.mediaQueries.lg} {
+    height: 135px;
     flex-direction: row;
     justify-content: space-between;
     > div:not(:last-child) {
@@ -134,15 +136,15 @@ const Lend: React.FC = () => {
           p={isSmallScreen ? '10px' : '30px'}
           style={{
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
-            // width: isSmallScreen ? '100%' : '316px',
-            flex: isSmallScreen ? '1' : '1',
+            flex: isSmallScreen ? '1 1 10%' : '1 1 10%',
+            padding: '18px 30px 30px 30px',
           }}
         >
           {isSmallScreen ? (
             <Flex alignItems="center" justifyContent="space-evenly">
-              <img src="/images/8825.svg" width="50px" height="50px" alt="" />
+              <img src="/images/8825.svg" width="37.5px" height="37.5px" alt="" />
               <Box>
-                <Text fontWeight="700" color="textFarm" fontSize="16px" lineHeight="16px">
+                <Text fontWeight="700" fontSize="12px" color="textFarm" lineHeight="16px">
                   {t(`Total Volume 24H:`)}
                 </Text>
                 {volume24h ? (
@@ -165,10 +167,16 @@ const Lend: React.FC = () => {
             </Flex>
           ) : (
             <>
-              <img src="/images/8825.svg" width="70px" height="70px" alt="" />
-              <Text fontWeight="700" color="textFarm" mt="30px" fontSize="16px" lineHeight="16px">
-                {t(`Total Volume 24H:`)}
-              </Text>
+              <div style={{ width: '100%' }}>
+                <div style={{ display: 'inline-block', width: '75%' }}>
+                  <Text fontWeight="700" color="textFarm" fontSize="12px" mt="30px" lineHeight="16px">
+                    {t(`Total Volume 24H:`)}
+                  </Text>
+                </div>
+                <div style={{ display: 'inline-block', verticalAlign: 'middle', width: '22%' }}>
+                  <img src="/images/8825.svg" width="37.5px" height="37.5px" alt="" />
+                </div>
+              </div>
               {volume24h ? (
                 <Text
                   fontSize="28px"
@@ -192,15 +200,15 @@ const Lend: React.FC = () => {
           p={isSmallScreen ? '10px' : '30px'}
           style={{
             background: isDark ? 'rgb(44,30,73)' : '#D6C7F0',
-            // width: isSmallScreen ? '100%' : '316px',
-            flex: isSmallScreen ? '1' : '1',
+            flex: isSmallScreen ? '1 1 10%' : '1 1 10%',
+            padding: '18px 30px 30px 30px',
           }}
         >
           {isSmallScreen ? (
             <Flex alignItems="center" justifyContent="space-evenly">
-              <img src="/images/8826.svg" width="50px" height="50px" alt="" />
+              <img src="/images/8826.svg" width="37.5px" height="37.5px" alt="" />
               <Box>
-                <Text color="textFarm" fontSize="16px" lineHeight="16px" fontWeight="700" style={{ width: '100%' }}>
+                <Text color="textFarm" lineHeight="16px" fontSize="12px" fontWeight="700" style={{ width: '100%' }}>
                   {t('Total Value Locked:')}
                 </Text>
                 {totalValueLocked ? (
@@ -217,10 +225,16 @@ const Lend: React.FC = () => {
             </Flex>
           ) : (
             <>
-              <img src="/images/8826.svg" width="70px" height="70px" alt="" />
-              <Text color="textFarm" mt="30px" fontSize="16px" lineHeight="16px" fontWeight="700" style={{ width: '100%' }}>
-                {t('Total Value Locked:')}
-              </Text>
+              <div style={{ width: '100%' }}>
+                <div style={{ display: 'inline-block', width: '75%' }}>
+                  <Text color="textFarm" mt="30px" lineHeight="16px" fontSize="12px" fontWeight="700" style={{ width: '100%' }}>
+                    {t('Total Value Locked:')}
+                  </Text>
+                </div>
+                <div style={{ display: 'inline-block', verticalAlign: 'middle', width: '22%' }}>
+                  <img src="/images/8826.svg" width="37.5px" height="37.5px" alt="" />
+                </div>
+              </div>
               {totalValueLocked ? (
                 <Text
                   fontSize="28px"
@@ -234,6 +248,7 @@ const Lend: React.FC = () => {
             </>
           )}
         </ValueBox>
+
       </Section>
 
       <LendTable lendData={lendData} />

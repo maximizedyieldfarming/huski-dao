@@ -55,7 +55,7 @@ const StyledButton = styled(Button)`
   border: 1px solid #efefef;
   box-sizing: border-box;
   border-radius: 10px;
-  width: 114px;
+  width: 5rem;
   height: 32px;
   text-align: center;
   display: flex;
@@ -232,7 +232,7 @@ const Leverage: React.FC = () => {
   return (
     <Page>
       <Section>
-        <SBBox style={{ height: '180px' }}>
+        <SBBox style={{ height: '135px' }}>
           <h2 style={{ color: 'white', fontSize: '60px', marginLeft: '80px', fontWeight: 800 }}>
             Huski Finance
           </h2>
@@ -247,26 +247,37 @@ const Leverage: React.FC = () => {
             borderRadius: '15px',
             background: isDark ? 'rgb(57,71,79)' : '#E3F0F6',
             maxWidth: '316px',
-            height: '180px',
+            height: '135px',
           }}
         >
-          {/* <img src="/images/crown.png" width="48px" height="48px" alt="" /> */}
-          <Text mt="10px" fontSize="16px" fontWeight="700">
-            {t('HUSKI Rewards')}
-          </Text>
-          <Flex justifyContent="space-between" flexDirection="column" alignItems="flex-start">
-            <Text mb="5px" color="textFarm" fontWeight="600" fontSize="36px">
-              {new BigNumber(reward || 0).toFixed(3, 1)}
-            </Text>
-            <StyledButton
-              as={Link}
-              to={(location) => ({ pathname: `${location.pathname}/claim`, state: { farmsData } })}
-              disabled={!account}
-              scale="sm"
-            >
-              <Text color="textSubtle">{t('Claim')}</Text>
-            </StyledButton>
-          </Flex>
+          <div style={{ width: '100%' }}>
+            <div style={{ display: 'inline-block', width: '75%' }}>
+              <Text mt="10px" fontSize="12px" fontWeight="700">
+                {t('HUSKI Rewards')}
+              </Text>
+            </div>
+            <div style={{ display: 'inline-block', verticalAlign: 'middle', width: '22%' }}>
+              <img src="/images/crown.png" width="37.5px" height="37.5px" alt="" />
+            </div>
+          </div>
+          <div style={{ width: '100%' }}>
+            <div style={{ display: 'inline-block', width: '66%' }}>
+              <Text mb="5px" color="textFarm" fontWeight="600" fontSize="28px">
+                {new BigNumber(reward || 0).toFixed(3, 1)}
+              </Text>
+            </div>
+            <div style={{ display: 'inline-block', width: '30%' }}>
+              <StyledButton
+                sty
+                as={Link}
+                to={(location) => ({ pathname: `${location.pathname}/claim`, state: { farmsData } })}
+                disabled={!account}
+                scale="sm"
+              >
+                <Text color="textSubtle">{t('Claim')}</Text>
+              </StyledButton>
+            </div>
+          </div>
         </Flex>
       </Section>
 

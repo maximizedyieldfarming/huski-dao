@@ -94,6 +94,7 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
   border-left: ${({ theme, huski }) => (huski ? `2px solid  ${theme.colors.secondary}` : 'unset')};
   display: flex;
   flex-direction: column;
+  padding: 23px 20px 23px 20px;
   border-radius: ${({ theme }) => theme.radii.card};
   box-shadow: ${({ theme }) => theme.card.boxShadow};
   &:not(:last-child) {
