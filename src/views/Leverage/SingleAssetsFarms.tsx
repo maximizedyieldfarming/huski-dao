@@ -292,12 +292,16 @@ const SingleAssetsFarms: React.FC = () => {
   })
 
   const [dexFilter, setDexFilter] = useState('all')
-  const [strategyFilter, setStrategyFilter] = useState<string>()
+  const [strategyFilter, setStrategyFilter] = useState<string>('')
 
   if (dexFilter !== 'all') {
     singlesData = singlesData.filter((pool) => pool?.singleArray[0]?.lpExchange === dexFilter)
   }
   console.info('singlesData', singlesData)
+
+  if (!strategyFilter.includes('bull') && strategyFilter !== '') {
+    singlesData = singlesData.filter((pool) => pool?.name !== 'CAKE')
+  }
   return (
     <Page>
       <Section>
