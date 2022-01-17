@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
-import styled from 'styled-components'
-import { useMatchBreakpoints, Grid, Skeleton, Flex, Box, Text } from '@huskifinance/huski-frontend-uikit'
+import styled, { useTheme } from 'styled-components'
+import { useMatchBreakpoints, Skeleton, Flex, Box, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useLocation } from 'react-router-dom'
 import LiquidatedPositionsRow from './LiquidatedPositionsRow'
@@ -26,19 +26,20 @@ const LiquidatedPositionsTable = ({ data }) => {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
 
+  const { isDark } = useTheme()
   const isSmallScreen = isMobile || isTablet
   const { pathname } = useLocation()
 
   const [isLoading, setIsLoading] = React.useState(true)
   React.useEffect(() => {
     setTimeout(() => {
-      if (data && data.length === 0) {
+      if (!data || data?.length === 0) {
         setIsLoading(false)
       }
     }, 8000)
   })
 
-  const loader = (() => {
+  const Loader = () => {
     if (isSmallScreen) {
       return (
         <>
@@ -54,31 +55,36 @@ const LiquidatedPositionsTable = ({ data }) => {
     }
     return (
       <>
-        <Grid
-          gridTemplateColumns={pathname === 'farms' ? 'repeat(10, 1fr)' : 'repeat(8, 1fr)'}
-          justifyContent="space-between"
-          padding="1rem 0"
-        >
+        <Flex justifyContent="space-between" padding="1rem 0">
           {[...Array(pathname === 'farms' ? 10 : 8)].map((_, i) => (
-            <Skeleton key={_} width="80px" height="1rem" />
+            <Skeleton key={_} width="80px" />
           ))}
-        </Grid>
-        <Skeleton width="100%" height="3rem" marginBottom="1rem" />
-        <Skeleton width="100%" height="3rem" />
+        </Flex>
+        <Skeleton width="100%" height="1.5rem" />
+        {/*         <Skeleton width="100%" height="3rem" /> */}
       </>
     )
-  })()
+  }
+
   return (
     <StyledTable role="table">
       {!(isMobile || isTablet) && data && <LiquidatedPositionsHeaderRow />}
       {data ? (
         <LiquidatedPositionsRow data={data} />
       ) : isLoading ? (
-        loader
+        <Loader />
       ) : (
-        <Box padding="100px">
-          <Text textAlign="center">{t('No Liquidated Positions')}</Text>
-        </Box>
+        <Flex height="calc(3.5rem + 20px)" alignItems="center" justifyContent="center">
+          <Text
+            textAlign="center"
+            fontSize="18px"
+            fontWeight="500"
+            lineHeight="48px"
+            color={isDark ? '#fff' : '#9d9d9d'}
+          >
+            {t('No Liquidated Positions')}
+          </Text>
+        </Flex>
       )}
     </StyledTable>
   )
