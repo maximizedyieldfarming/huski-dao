@@ -27,7 +27,7 @@ import { ReactComponent as TwitterIcon } from './assets/Twitter.svg'
 import { ReactComponent as MediumIcon } from './assets/medium.svg'
 import { ReactComponent as YouTubeIcon } from './assets/Youtube.svg'
 import { ReactComponent as DiscordIcon } from './assets/Discord.svg'
-// import { ReactComponent as MouseIcon } from './assets/MouseScroll.svg'
+import { ReactComponent as MouseIcon } from './assets/MouseScroll.svg'
 import HomeMobile from './HomeMobile'
 
 const StyledHeroSection = styled(Box)`
@@ -298,28 +298,12 @@ const Home: React.FC = () => {
           </Button>
         </Flex>
         {/* TODO: change this to svg and fix middlee alingment */}
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            textAlign: 'center',
-            position: 'absolute',
-            bottom: '30px',
-            marginLeft: isSmallScreen ? '-20px' : 'calc(560px - 50%)',
-          }}
-        >
+        
           <Box
-            /* role="button"  onMouseDown={()  => window.scrollBy(0, 100 * window.innerHeight/100)} tabIndex={0} */ margin="30px auto 0"
+             role="button" width="fit-content" onClick={()  => window.scrollBy(0,window.innerHeight)} tabIndex={0}  margin="30px auto 0" zIndex={99}
           >
-            <img
-              // style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: '30px' }}
-              alt="alet"
-              src="images/mouse.svg"
-              width="54px"
-              height="52px"
-            />
+          <MouseIcon onClick={() => window.scrollBy(0, window.innerHeight)} style={{cursor: "pointer"}} />
           </Box>
-        </div>
         <GlowSpot />
       </SectionWithBgImg>
 

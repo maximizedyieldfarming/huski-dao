@@ -209,41 +209,7 @@ const Home: React.FC = () => {
         >
           {t('Leverage Yield Farming')}
         </Text>
-        <Text color="white" fontSize="25px" my={4} fontFamily="BalooBhaijaan !important" letterSpacing="0.018em">
-          &#38;{/* ampersand (&) code */}
-        </Text>
-        <Text
-          color="white"
-          fontSize="25px"
-          my={4}
-          fontFamily="BalooBhaijaan !important"
-          letterSpacing="0.018em"
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          {t('Liquidity as a Service')}
-        </Text>
-        <Wave width="100%" />
-        <Text
-          color="white"
-          fontSize="25px"
-          my={4}
-          fontFamily="BalooBhaijaan !important"
-          letterSpacing="0.018em"
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          {t('Treat your Huskies')}
-        </Text>
-        <Text
-          color="white"
-          fontSize="25px"
-          my={4}
-          fontFamily="BalooBhaijaan !important"
-          letterSpacing="0.018em"
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          {t('and they will treat you more')}
-        </Text>
-        <Flex justifyContent="space-around" alignItems="center" mt={5}>
+        <Flex justifyContent="space-around" alignItems="center" my={5}>
           <StyledButton
             as={Link}
             to={{ pathname: 'https://docs.huski.finance/' }}
@@ -257,6 +223,27 @@ const Home: React.FC = () => {
             {t('Launch App')}
           </StyledButton>
         </Flex>
+        <Wave width="100%" style={{ marginBottom: '2rem'}} />
+        <Text
+          color="white"
+          fontSize="25px"
+          fontFamily="BalooBhaijaan !important"
+          letterSpacing="0.018em"
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          {t('Treat your Huskies')}
+        </Text>
+        <Text
+          color="white"
+          fontSize="25px"
+          mt={4}
+          fontFamily="BalooBhaijaan !important"
+          letterSpacing="0.018em"
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          {t('and they will treat you more')}
+        </Text>
+        <Wave width="100%" style={{ margin: '2rem 0' }} />
       </StyledHeroSection>
 
       <StyledHeroSection height="100vh" className="second" background="white">
@@ -491,7 +478,7 @@ const Home: React.FC = () => {
       </StyledHeroSection>
       <StyledHeroSection background="white">
         <Box mb={3}>
-          <Text bold fontSize="3" color='#1A1A1F'>
+          <Text bold fontSize="3" color="#1A1A1F">
             {t('Join us')}
           </Text>
           <Text color="#1A1A1F" small>
