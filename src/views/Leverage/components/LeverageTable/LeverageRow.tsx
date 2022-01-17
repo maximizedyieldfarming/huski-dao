@@ -30,7 +30,7 @@ const StyledRow = styled.div`
         background: ${({ theme }) => theme.colors.background};
       }
   }
-  }
+  
 `
 
 const LeverageRow = ({ tokenData }) => {
@@ -134,7 +134,7 @@ const LeverageRow = ({ tokenData }) => {
         />
         <Borrowing tokenData={tokenData} onBorrowingAssetChange={onBorrowingAssetChange} />
         <LeverageCell leverage={leverage} onChange={onChildValueChange} childLeverage={childLeverage} />
-        <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} />
+        <ActionCell token={tokenData} selectedLeverage={childLeverage} selectedBorrowing={borrowingAsset} isStableToken={tokenData?.isStableToken} isStableQuoteToken={tokenData?.isStableQuoteToken} />
       </StyledRow>
     </>
   )

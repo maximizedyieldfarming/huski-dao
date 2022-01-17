@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { useMatchBreakpoints, Button } from '@huskifinance/huski-frontend-uikit'
+import { useMatchBreakpoints, Button, useTooltip, Text } from '@huskifinance/huski-frontend-uikit'
 import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -27,22 +27,33 @@ const StyledButton = styled(Button)`
   color: ${({ disabled }) => (disabled ? '#6F767E' : 'white')};
 `
 
-const ActionCell = ({ token, selectedLeverage, selectedBorrowing }) => {
+const ActionCell = ({ token, selectedLeverage, selectedBorrowing, isStableToken, isStableQuoteToken }) => {
   const { isMobile, isTablet } = useMatchBreakpoints()
   const { account } = useWeb3React()
   const { t } = useTranslation()
 
+  const selectedTokenShouldDisable = ((): boolean => {
+    if (selectedBorrowing.toLowerCase() === token?.TokenInfo?.quoteToken?.symbol.toLowerCase()) {
+      return isStableQuoteToken
+    }
+    return isStableToken
+  })()
+
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(<Text>{t('Disabled')}</Text>, { placement: 'top-start' })
+
   return (
     <StyledCell role="cell" style={{ alignItems: isMobile || isTablet ? 'center' : null }}>
       <CellContent>
+        {tooltipVisible && tooltip && selectedTokenShouldDisable}
         <StyledButton
           as={Link}
           to={(location) => ({
             pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
             state: { tokenData: token, selectedLeverage, selectedBorrowing },
           })}
-          disabled={!token?.totalSupply || !account}
+          disabled={!token?.totalSupply || !account || selectedTokenShouldDisable}
           onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
+          ref={targetRef}
         >
           {t('Farm')}
         </StyledButton>
