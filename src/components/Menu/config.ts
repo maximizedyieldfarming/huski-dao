@@ -5,31 +5,32 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
 
   {
     label: t('Lend'),
-    icon: 'PoolIcon',
+    icon: 'LendIcon',
     href: '/lend',
   },
   {
     label: t('Farms'),
-    icon: 'NftIcon',
+    icon: 'FarmIcon',
     initialOpenState: true,
+    jumpTo: '/farms',
     items: [
       {
-        label: t('Single Assets'),
+        label: t('Single\u00A0Assets'), // \u00A0 - unicode code for Non-breakable space, this will make lock up always be in the same line
         href: '/single-assets'
       },
       {
-        label: t('Advanced Farm'),
+        label: t('Advanced\u00A0Farm'),
         href: '/farms'
       },]
 
   },
   {
     label: t('Stake'),
-    icon: 'TicketIcon',
+    icon: 'StakeIcon',
     href: '/stake',
   },
   {
-    label: t('HODL & Lock Up'),
+    label: t('HODL & Lock\u00A0Up'),
     icon: 'LockIcon',
     href: '/lock',
   },

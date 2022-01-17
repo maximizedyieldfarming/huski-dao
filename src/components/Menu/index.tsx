@@ -31,7 +31,7 @@ const Menu = (props) => {
       langs={languageList}
       setLang={setLanguage}
       links={config(t)}
-      huskiPriceUsd={new BigNumber(huskyPrice || 0).toFixed(3, 1)}
+      huskiPriceUsd={new BigNumber(huskyPrice || 0).toFixed(2, 1)}
       {...props}
     />
   )
