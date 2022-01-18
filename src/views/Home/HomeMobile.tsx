@@ -207,7 +207,7 @@ const Home: React.FC = () => {
           letterSpacing="0.018em"
           style={{ whiteSpace: 'nowrap' }}
         >
-          {t('Leverage Yield Farming')}
+          {t('Leveraged Yield Farming')}
         </Text>
         <Flex justifyContent="space-around" alignItems="center" my={5}>
           <StyledButton
