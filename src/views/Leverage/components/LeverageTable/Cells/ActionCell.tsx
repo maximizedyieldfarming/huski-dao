@@ -34,9 +34,9 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing, isStableToken,
 
   const selectedTokenShouldDisable = ((): boolean => {
     if (selectedBorrowing.toLowerCase() === token?.TokenInfo?.quoteToken?.symbol.toLowerCase()) {
-      return isStableQuoteToken
+      return isStableQuoteToken === false
     }
-    return isStableToken
+    return isStableToken === false
   })()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(<Text>{t('Disabled')}</Text>, { placement: 'top-start' })
@@ -44,19 +44,21 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing, isStableToken,
   return (
     <StyledCell role="cell" style={{ alignItems: isMobile || isTablet ? 'center' : null }}>
       <CellContent>
-        {tooltipVisible && tooltip && selectedTokenShouldDisable}
-        <StyledButton
-          as={Link}
-          to={(location) => ({
-            pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
-            state: { tokenData: token, selectedLeverage, selectedBorrowing },
-          })}
-          disabled={!token?.totalSupply || !account || selectedTokenShouldDisable}
-          onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
-          ref={targetRef}
-        >
-          {t('Farm')}
-        </StyledButton>
+        {selectedTokenShouldDisable ? tooltipVisible && tooltip : null}
+        <span ref={targetRef}>
+          <StyledButton
+            as={Link}
+            to={(location) => ({
+              pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
+              state: { tokenData: token, selectedLeverage, selectedBorrowing },
+            })}
+            disabled={!token?.totalSupply || !account || selectedTokenShouldDisable}
+            onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
+            ref={targetRef}
+          >
+            {t('Farm')}
+          </StyledButton>
+        </span>
       </CellContent>
     </StyledCell>
   )
