@@ -74,14 +74,14 @@ const SectionWrapper = styled(Page)`
   }
   > .main {
     ${({ theme }) => theme.mediaQueries.lg} {
-      width: 850px;
+      width: 36rem;
     }
   }
   > .sideSection {
     flex-direction: column;
     gap: 1rem;
     ${({ theme }) => theme.mediaQueries.lg} {
-      width: 500px;
+      width: 28rem;
     }
   }
 `
