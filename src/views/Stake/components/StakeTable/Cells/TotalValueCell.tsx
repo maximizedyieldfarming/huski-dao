@@ -26,11 +26,11 @@ const TotalValueCell = ({ valueStaked, name }) => {
           {t('Total %name% Staked', { name })}
         </Text>
         {valueStaked ? (
-          <Text fontWeight="500" mt="10px">
+          <Text fontWeight="500" marginTop={isMobile || isTablet ? '0px' : '10px'}>
             {nFormatter(formatedSupply)}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" mt="10px" />
+          <Skeleton width="80px" height="16px" marginTop={isMobile || isTablet ? '0px' : '10px'} />
         )}
       </CellContent>
     </StyledCell>

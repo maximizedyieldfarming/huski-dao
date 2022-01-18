@@ -25,11 +25,11 @@ const MyPosCell = ({ staked, name }) => {
           {t('My Position')}
         </Text>
         {staked ? (
-          <Text mt="10px" fontSize="18px" fontWeight="700" color="secondary">
+          <Text marginTop={isMobile || isTablet ? '0px' : '10px'} fontSize="18px" fontWeight="700" color="secondary">
             {new BigNumber(staked).toFixed(3, 1)} {name}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" mt="10px"/>
+          <Skeleton width="80px" height="16px" marginTop={isMobile || isTablet ? '0px' : '10px'}/>
         )}
       </CellContent>
     </StyledCell>

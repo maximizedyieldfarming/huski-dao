@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Text, useMatchBreakpoints, Box } from '@huskifinance/huski-frontend-uikit'
-import { useTranslation } from 'contexts/Localization'
 import { TokenImage } from 'components/TokenImage'
 import BaseCell, { CellContent } from './BaseCell'
 
@@ -17,7 +16,6 @@ const StyledCell = styled(BaseCell)`
 `
 
 const NameCell = ({ token }) => {
-  const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
   return (
     <StyledCell role="cell">

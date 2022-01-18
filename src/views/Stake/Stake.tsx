@@ -23,49 +23,74 @@ import useTokenBalance from 'hooks/useTokenBalance'
 import { DEFAULT_TOKEN_DECIMAL } from 'utils/config'
 import { FlexingHuski } from 'assets'
 import StakeTable from './components/StakeTable/StakeTable'
+import headerBg from './BG.png'
+
+const Section = styled(Flex)`
+  background-color: 'transparent';
+  font-family: inter;
+  flex-direction: column;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    height: 8px;
+  }
+  height: 135px;
+  > div:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+  ${({ theme }) => theme.mediaQueries.lg} {
+    height: 135px;
+    flex-direction: row;
+    justify-content: space-between;
+    > div:not(:last-child) {
+      margin-right: 1rem;
+      margin-bottom: 0;
+    }
+  }
+`
+
+const SBBox = styled(Box)`
+  > h2 {
+    font-family: 'BalooBhaijaan';
+  }
+  align-items: center;
+  display: flex;
+  border-radius: 15px !important;
+  background-image: url(${headerBg});
+  background-position: right;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-width: 520px;
+  @media screen and (max-width: 1480px) {
+    padding: 30px 0px;
+  }
+  @media screen and (max-width: 600px) {
+    min-width: unset;
+    > h2 {
+      margin-left: 20px !important;
+      font-size: 35px !important;
+    }
+  }
+`
+
+const VolumeBox = styled(Box)`
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-radius: 15px !important;
+`
+
+const ValueBox = styled(Box)`
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-radius: ${({ theme }) => theme.radii.default};
+`
 
 const StyledButton = styled(Button)`
   padding: 0.75rem;
   font-size: 14px;
   font-weight: 400;
   box-shadow: none;
-  width: 114px;
+  width: 5rem;
   height: 32px;
-`
-const RewardsSummarySection = styled(Flex)`
-  min-width: 600px !important;
-  gap: 2rem;
-  overflow: hidden;
-  height: 220px;
-  border-radius: ${({ theme }) => theme.radii.card};
-  background: url('/images/stake/header_bg.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  figure {
-    height: 100%;
-    padding: 1.5rem 1.5rem 0;
-    img {
-      height: 100%;
-      box-sizing: border-box;
-      max-width: 100%;
-      max-height: 100%;
-      width: 100%;
-      filter: drop-shadow(-6px 0px 0px white);
-    }
-  }
-  @media screen and (max-width: 950px) {
-    min-width: unset !important;
-  }
-`
-
-const AdvertisementContainer = styled(Flex)`
-  background: url('/images/stake/withdog.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  border-radius: 12px;
-  min-height: 200px;
 `
 
 const Stake: React.FC = () => {
@@ -124,95 +149,106 @@ const Stake: React.FC = () => {
 
   return (
     <Page>
-      <Flex flexDirection={isSmallScreen ? 'column' : 'row'} flexWrap="wrap" style={{ gap: '3rem' }}>
-        <RewardsSummarySection flex="1.5">
-          {isSmallScreen ? null : (
-            <figure>
-              <img width="210px" height="190px" src={FlexingHuski} alt="" />
-            </figure>
-          )}
-          <Flex padding="1.5rem">
-            <Flex
-              flexDirection="column"
-              justifyContent="space-between"
-              style={{ borderRight: '2px solid white' }}
-              pr="1.5rem"
+      <Section>
+        <SBBox
+          className="block"
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            flex: isSmallScreen ? '1' : '5',
+          }}
+        >
+          <div>
+            <Text color="#FFFFFF" fontSize="16px" fontWeight="700">
+              {t('HUSKI earned:')}
+            </Text>
+          </div>
+          <div>
+            {reward ? (
+              <Text fontSize="28px" color="white" bold>
+                {new BigNumber(reward).toFixed(3, 1)}
+              </Text>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
+          </div>
+        </SBBox>
+        <VolumeBox
+          p={isSmallScreen ? '10px' : '30px'}
+          style={{
+            background: '#E3F0F6',
+            flex: '1 1 10%',
+            padding: '18px 30px 30px 30px',
+          }}
+        >
+          <div style={{ width: '100%' }}>
+            <div style={{ display: 'inline-block', width: '75%' }}>
+              <Text fontWeight="700" color="textFarm" fontSize="12px" mt="30px" lineHeight="16px">
+                {t('My HUSKI Wallet')}
+              </Text>
+            </div>
+            <div style={{ display: 'inline-block', verticalAlign: 'middle', width: '22%' }}>
+              <img src="/images/8825.svg" width="37.5px" height="37.5px" alt="" />
+            </div>
+          </div>
+          {alpacaBalance ? (
+            <Text
+              fontSize="28px"
+              color="textFarm"
+              style={{
+                letterSpacing: '-0.01em',
+                width: '100%',
+              }}
+              fontFamily="LexendDeca"
+              fontWeight="400"
             >
-              <Flex
-                alignItems={isSmallScreen ? 'flex-start' : 'center'}
-                flexDirection={isSmallScreen ? 'column' : 'row'}
-              >
-                <Box height="3rem" width="3rem">
-                  <img src="/images/stake/BNB.svg" alt="" />
-                </Box>
-                <Box ml={isSmallScreen ? '0px' : '25px'} mb={isSmallScreen ? '8px' : '0px'}>
-                  <Text color="white" fontSize="13px">
-                    {t('HUSKI earned:')}
+              {alpacaBalance.toNumber().toPrecision(3)}
+            </Text>
+          ) : (
+            <Skeleton width="100%" height="30px" my="6px" />
+          )}
+
+        </VolumeBox>
+        <ValueBox
+          p={isSmallScreen ? '10px' : '30px'}
+          style={{
+            background: '#D6C7F0',
+            flex: '1 1 15%',
+            padding: '18px 30px 30px 30px',
+          }}
+        >
+            <Text color="textFarm" mt="30px" lineHeight="16px" fontSize="12px" fontWeight="700" style={{ width: '100%' }}>
+              {t('Unstaked Rewards')}
+            </Text>
+          <div style={{ width: '100%' }}>
+            <div style={{ display: 'inline-block', width: '66%' }}>
+              {!unlockedRewards ? (
+                <Text
+                  fontSize="28px"
+                  style={{ letterSpacing: '-0.01em' }}
+                  color="textFarm"
+                  fontFamily="LexendDeca"
+                >
+                  {new BigNumber(unlockedRewards).toFixed(3, 1)}
                   </Text>
-                  {reward ? (
-                    <Text fontSize="28px" color="white" bold>
-                      {new BigNumber(reward).toFixed(3, 1)}
-                    </Text>
-                  ) : (
-                    <Skeleton width="80px" height="16px" />
-                  )}
-                </Box>
-              </Flex>
-              <Flex
-                alignItems={isSmallScreen ? 'flex-start' : 'center'}
-                flexDirection={isSmallScreen ? 'column' : 'row'}
-              >
-                <Box height="3rem" width="3rem">
-                  <img src="/images/stake/Wallet.svg" alt="" />
-                </Box>
-                <Box ml={isSmallScreen ? '0px' : '25px'}>
-                  <Text color="white" fontSize="13px">
-                    {t('My HUSKI Wallet Balance')}
-                  </Text>
-                  {alpacaBalance ? (
-                    <Text fontSize="28px" color="white" bold>
-                      {alpacaBalance.toNumber().toPrecision(3)}
-                    </Text>
-                  ) : (
-                    <Skeleton width="80px" height="16px" />
-                  )}
-                </Box>
-              </Flex>
-            </Flex>
-            <Flex flexDirection="column" justifyContent="space-between" pl="1.5rem">
-              <Flex
-                alignItems={isSmallScreen ? 'flex-start' : 'center'}
-                flexDirection={isSmallScreen ? 'column' : 'row'}
-              >
-                <Box height="3rem" width="3rem">
-                  <img src="/images/stake/Lock.svg" alt="" />
-                </Box>
-                <Box ml={isSmallScreen ? '0px' : '25px'}>
-                  <Text color="white" fontSize="13px">
-                    {t('Unstaked Rewards')}
-                  </Text>
-                  <Text fontSize="28px" color="white" bold>
-                    {new BigNumber(unlockedRewards).toFixed(3, 1)}
-                  </Text>
-                </Box>
-              </Flex>
+              ) : (
+                <Skeleton width="65%" height="30px" my="6px" />
+              )}
+            </div>
+            <div style={{ display: 'inline-block', width: '30%' }}>
               <StyledButton
                 onClick={handleConfirmClick}
                 isLoading={isPending}
                 disabled={!account || Number(unlockedRewards) === 0}
                 endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
               >
-                {isPending ? t('Claiming') : t('Claim')}
+                <Text color="textSubtle">{isPending ? t('Claiming') : t('Claim')}</Text>
               </StyledButton>
-            </Flex>
-          </Flex>
-        </RewardsSummarySection>
-        <AdvertisementContainer flexDirection="row" alignItems="center" flex="1">
-          <Text fontWeight="800" width="50%" ml="24px" fontSize="30px" lineHeight="38px" color="#000000">
-            {t('Huski Finance Advertisement')}
-          </Text>
-        </AdvertisementContainer>
-      </Flex>
+            </div>
+          </div>
+        </ValueBox>
+      </Section>
 
       <StakeTable stakeData={farmsData} />
     </Page>
