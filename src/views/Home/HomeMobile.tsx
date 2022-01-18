@@ -368,7 +368,7 @@ const Home: React.FC = () => {
               {t('Our Partners')}
             </Text>
             <Text color="white" small>
-              {t('Here are Husky Finace Partners')}
+              {t('Here are Huski Finance Partners')}
             </Text>
           </Box>
           <Flex justifyContent="space-between">
