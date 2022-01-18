@@ -19,7 +19,7 @@ const Section = styled(Flex)`
   ::-webkit-scrollbar {
     height: 8px;
   }
-  height: 135px;
+  // height: 135px;
   > div:not(:last-child) {
     margin-bottom: 1rem;
   }
