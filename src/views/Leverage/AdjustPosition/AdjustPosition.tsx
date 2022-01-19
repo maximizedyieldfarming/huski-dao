@@ -1397,7 +1397,7 @@ const AdjustPosition = () => {
                             fill: '#7B3FE4',
                             left:
                               ((Math.min(currentPositionLeverage, leverage) - 1) / (leverage - 1)) *
-                              (moveVal.width - 14) -
+                                (moveVal.width - 14) -
                               10,
                           }}
                         />
@@ -1480,12 +1480,12 @@ const AdjustPosition = () => {
                     <Text color="red">
                       {showNotice
                         ? t(
-                          'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
-                          {
-                            minimumDebt: minimumDebt.toNumber(),
-                            name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
-                          },
-                        )
+                            'Your updated Debt Value is less than the minimum required debt which is %minimumDebt% %name%',
+                            {
+                              minimumDebt: minimumDebt.toNumber(),
+                              name: tokenValueSymbol.toUpperCase().replace('WBNB', 'BNB'),
+                            },
+                          )
                         : null}
                     </Text>
                   </Flex>
@@ -1672,46 +1672,6 @@ const AdjustPosition = () => {
                       max={maxValue * 100}
                     />
                   </Flex>
-                  <Flex mx="auto" display="flex" justifyContent="center" paddingTop="0px!important">
-                    {isAddCollateral && (
-                      <Button
-                        style={{ border: !isDark && '1px solid lightgray' }}
-                        onClick={handleConfirm}
-                        disabled={isAddCollateralConfirmDisabled || !account || isPending}
-                        isLoading={isPending}
-                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
-                        width={260}
-                        height={50}
-                      >
-                        {isPending ? t('Confirming') : t('Confirm')}
-                      </Button>
-                    )}
-                    {!isAddCollateral && isConvertTo && (
-                      <Button
-                        style={{ border: !isDark && '1px solid lightgray' }}
-                        onClick={handleConfirmConvertTo}
-                        disabled={iscConvertToConfirmDisabled || !account || isPending}
-                        isLoading={isPending}
-                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
-                        width={260}
-                        height={50}
-                      >
-                        {isPending ? t('Confirming') : t('Confirm')}
-                      </Button>
-                    )}
-                    {!isAddCollateral && !isConvertTo && (
-                      <Button
-                        onClick={handleConfirmMinimize}
-                        disabled={isMinimizeTradingConfirmDisabled || !account || isPending}
-                        isLoading={isPending}
-                        endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
-                        width={260}
-                        height={50}
-                      >
-                        {isPending ? t('Confirming') : t('Confirm')}
-                      </Button>
-                    )}
-                  </Flex>
                 </Section>
               </Box>
               <Box
@@ -1808,6 +1768,46 @@ const AdjustPosition = () => {
 
                 {lastSection}
               </Box>
+            </Flex>
+            <Flex mx="auto" display="flex" justifyContent="center" paddingTop="0px!important">
+              {isAddCollateral && (
+                <Button
+                  style={{ border: !isDark && '1px solid lightgray' }}
+                  onClick={handleConfirm}
+                  disabled={isAddCollateralConfirmDisabled || !account || isPending}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                  width={260}
+                  height={50}
+                >
+                  {isPending ? t('Confirming') : t('Confirm')}
+                </Button>
+              )}
+              {!isAddCollateral && isConvertTo && (
+                <Button
+                  style={{ border: !isDark && '1px solid lightgray' }}
+                  onClick={handleConfirmConvertTo}
+                  disabled={iscConvertToConfirmDisabled || !account || isPending}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                  width={260}
+                  height={50}
+                >
+                  {isPending ? t('Confirming') : t('Confirm')}
+                </Button>
+              )}
+              {!isAddCollateral && !isConvertTo && (
+                <Button
+                  onClick={handleConfirmMinimize}
+                  disabled={isMinimizeTradingConfirmDisabled || !account || isPending}
+                  isLoading={isPending}
+                  endIcon={isPending ? <AutoRenewIcon spin color="primary" /> : null}
+                  width={260}
+                  height={50}
+                >
+                  {isPending ? t('Confirming') : t('Confirm')}
+                </Button>
+              )}
             </Flex>
           </Page>
         </PercentageToCloseContext.Provider>

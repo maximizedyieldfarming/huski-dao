@@ -69,6 +69,7 @@ const SectionWrapper = styled(Page)`
   min-height: unset;
   flex-direction: column;
   padding-bottom: 0;
+  margin-bottom: 0 !important;
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
   }
@@ -1074,50 +1075,6 @@ const Farm = () => {
               <Select options={options()} onChange={(option) => setRadio(option.value)} />
             </Flex>
           </Box>
-          <Flex justifyContent="center" paddingBottom="20px!important">
-            {
-              isApproved ?
-                (
-                  <Button
-                    style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-                    onClick={handleConfirm}
-                    isLoading={isPending}
-                    endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                    disabled={
-                      !account ||
-                      (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
-                      (tokenInput === undefined && quoteTokenInput === undefined) ||
-                      (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
-                      isPending
-                    }
-                  >
-                    {isPending ? t('Confirming') : getWrapText()}
-                  </Button>
-                ) :
-                (
-                  <Button
-                    style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-                    onClick={handleApprove}
-                    disabled={isApproving}
-                    isLoading={isApproving}
-                    endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                  >
-                    {isApproving ? t('Approving') : t('Approve')}
-                  </Button>
-                )
-            }
-
-          </Flex>
-          {tokenInput || quoteTokenInput ? (
-            <Text mx="auto" color="red" textAlign="center">
-              {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
-                ? t('Minimum Debt Size: %minimumDebt% %radio%', {
-                  minimumDebt: minimumDebt.toNumber(),
-                  radio: radio.toUpperCase().replace('WBNB', 'BNB'),
-                })
-                : null}
-            </Text>
-          ) : null}
         </Section>
 
         <Flex className="sideSection">
@@ -1231,6 +1188,47 @@ const Farm = () => {
           </Section>
         </Flex>
       </SectionWrapper>
+      <Box>
+        <Flex justifyContent="center" paddingBottom="20px!important">
+          {isApproved ? (
+            <Button
+              style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+              onClick={handleConfirm}
+              isLoading={isPending}
+              endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+              disabled={
+                !account ||
+                (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+                (tokenInput === undefined && quoteTokenInput === undefined) ||
+                (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
+                isPending
+              }
+            >
+              {isPending ? t('Confirming') : getWrapText()}
+            </Button>
+          ) : (
+            <Button
+              style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+              onClick={handleApprove}
+              disabled={isApproving}
+              isLoading={isApproving}
+              endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+            >
+              {isApproving ? t('Approving') : t('Approve')}
+            </Button>
+          )}
+        </Flex>
+        {tokenInput || quoteTokenInput ? (
+          <Text mx="auto" color="red" textAlign="center">
+            {Number(leverageValue) !== 1 && new BigNumber(farmData[3]).lt(minimumDebt)
+              ? t('Minimum Debt Size: %minimumDebt% %radio%', {
+                  minimumDebt: minimumDebt.toNumber(),
+                  radio: radio.toUpperCase().replace('WBNB', 'BNB'),
+                })
+              : null}
+          </Text>
+        ) : null}
+      </Box>
     </Page>
   )
 }
