@@ -1,5 +1,4 @@
 import React from 'react'
-import { useLocation } from 'react-router'
 import { Menu as UikitMenu } from '@huskifinance/huski-frontend-uikit'
 import { languageList } from 'config/localization/languages'
 import { useTranslation } from 'contexts/Localization'
@@ -17,14 +16,12 @@ const Menu = (props) => {
   const huskyPrice = useHuskiPrice()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
-  const { pathname } = useLocation()
-  const isHome = pathname === '/'
 
   return (
     <UikitMenu
       userMenu={<UserMenu />}
       account={account}
-      globalMenu={!isHome ? <GlobalSettings /> : null}
+      globalMenu={<GlobalSettings />}
       isDark={isDark}
       toggleTheme={toggleTheme}
       currentLang={currentLanguage.code}

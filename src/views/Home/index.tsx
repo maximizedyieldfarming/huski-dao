@@ -28,6 +28,7 @@ import { ReactComponent as MediumIcon } from './assets/medium.svg'
 import { ReactComponent as YouTubeIcon } from './assets/Youtube.svg'
 import { ReactComponent as DiscordIcon } from './assets/Discord.svg'
 import { ReactComponent as MouseIcon } from './assets/MouseScroll.svg'
+import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
 import HomeMobile from './HomeMobile'
 
 const StyledHeroSection = styled(Box)`
@@ -197,7 +198,7 @@ const TradeText = styled(Box)`
   width: 60%;
   font-size: 24px;
   max-width: 700px;
-  color: #3E3C46;
+  color: #3e3c46;
   margin-top: 70px;
   line-height: 39px;
   font-family: 'GenJyuuGothic' !important;
@@ -264,6 +265,24 @@ const Home: React.FC = () => {
   return (
     <>
       <SectionWithBgImg>
+        <Flex
+          as="nav"
+          justifyContent="space-between"
+          alignItems="end"
+          style={{ position: 'absolute', width: '100vw', zIndex: 100, background: 'transparent', paddingTop: '50px' }}
+          top="0"
+          left="0"
+          px="10vw"
+        >
+          <Box borderRadius="100%" background="white" width="50px" height="50px" border="2px solid white">
+            <HuskiLogo width="100%" height="100%" style={{ boxSizing: 'unset' }} />
+          </Box>
+          <Flex justifyContent="flex-end" alignItems="center">
+            <Button as={Link} to="/lend" style={{ background: 'white', color: 'black', border: 'none' }}>
+              Launch App
+            </Button>
+          </Flex>
+        </Flex>
         <StyledCorner />
         <StyledHuski />
 

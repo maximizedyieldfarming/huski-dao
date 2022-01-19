@@ -8,15 +8,13 @@ import { DEFAULT_META, getCustomMeta } from 'config/constants/meta'
 import Container from './Container'
 
 const StyledPage = styled(Container)`
-  padding-top: 16px;
-  padding-bottom: 16px;
   display: flex;
-  >div {
+  > div {
     margin-bottom: 30px;
   }
   flex-direction: column;
   max-width: none;
-  padding: 30px 38px;
+  padding: 20px 33px;
 `
 
 const PageMeta = () => {

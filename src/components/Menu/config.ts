@@ -15,11 +15,11 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     jumpTo: '/farms',
     items: [
       {
-        label: t('Single\u00A0Assets'), // \u00A0 - unicode code for Non-breakable space, this will make lock up always be in the same line
+        label: t('Single Assets'), // \u00A0 - unicode code for Non-breakable space, this will make lock up always be in the same line
         href: '/single-assets'
       },
       {
-        label: t('Advanced\u00A0Farm'),
+        label: t('Advanced Farm'),
         href: '/farms'
       },]
 
@@ -30,7 +30,7 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     href: '/stake',
   },
   {
-    label: t('HODL & Lock\u00A0Up'),
+    label: t('HODL & Lockup'),
     icon: 'LockIcon',
     href: '/lock',
   },
