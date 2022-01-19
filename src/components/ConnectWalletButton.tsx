@@ -7,7 +7,6 @@ import styled from 'styled-components'
 
 const StyledButton = styled(Button)`
   background-color: #7b3fe4;
-  height: 36px;
   padding: 6px 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -27,7 +26,7 @@ const ConnectWalletButton = (props) => {
   const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
-    <StyledButton onClick={onPresentConnectModal} {...props}>
+    <StyledButton onClick={onPresentConnectModal} {...props} heigth="36px">
       {t('Connect Wallet')}
     </StyledButton>
   )

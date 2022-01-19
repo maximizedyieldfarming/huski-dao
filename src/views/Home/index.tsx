@@ -296,7 +296,7 @@ const Home: React.FC = () => {
           style={{ marginTop: '20px', maxWidth: '320px', position: 'relative', zIndex: 999 }}
           justifyContent="space-between"
         >
-          <ConnectWalletButton scale="sm" width={167} height={56} style={{ margin: '0' }} />
+          <ConnectWalletButton width={167} height="56px" style={{ margin: '0' }} />
           <Button
             style={{
               background: 'transparent',
