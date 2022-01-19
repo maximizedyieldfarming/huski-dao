@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useLocation, useHistory } from 'react-router'
 import Page from 'components/Layout/Page'
 import {
@@ -232,31 +232,81 @@ const FarmSA = () => {
   const Token0Name = singleFarm?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
   const Token1Name = singleFarm?.TokenInfo?.quoteToken?.symbol.toUpperCase().replace('WBNB', 'BNB')
 
-  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
-    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
-    singleFarm?.TokenInfo?.vaultAddress,
-  )
   const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
     getAddress(singleFarm?.TokenInfo?.token?.address),
     singleFarm?.TokenInfo?.vaultAddress,
   )
-  // const allowance = selectedToken === singleFarm?.TokenInfo?.quoteToken?.symbol ? quoteTokenUserQuoteTokenAllowances : tokenUserTokenAllowances
+  const { allowance: quoteTokenUserTokenAllowances } = useTokenAllowance(
+    getAddress(singleFarm?.TokenInfo?.quoteToken?.address),
+    singleFarm?.TokenInfo?.vaultAddress,
+  )
+  const { allowance: tokenUserQuoteTokenAllowances } = useTokenAllowance(
+    getAddress(singleFarm?.TokenInfo?.token?.address),
+    singleFarm?.QuoteTokenInfo?.vaultAddress,
+  )
+  const { allowance: quoteTokenUserQuoteTokenAllowances } = useTokenAllowance(
+    getAddress(singleFarm?.QuoteTokenInfo?.token?.address),
+    singleFarm?.TokenInfo?.vaultAddress,
+  )
 
   let allowance = '0'
-  if (selectedToken?.symbol === singleFarm?.TokenInfo?.quoteToken?.symbol) {
-    allowance =
-      Number(singleFarm.userData?.quoteTokenUserQuoteTokenAllowances) > 0
-        ? singleFarm.userData?.quoteTokenUserQuoteTokenAllowances
-        : quoteTokenUserQuoteTokenAllowances.toString()
-  } else {
-    allowance =
-      Number(singleFarm.userData?.tokenUserTokenAllowances) > 0
-        ? singleFarm.userData?.tokenUserTokenAllowances
-        : tokenUserTokenAllowances.toString()
+  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
+
+  if (marketStrategy.includes('bull')) {
+    if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
+      allowance =
+        Number(singleFarm?.userData?.quoteTokenUserQuoteTokenAllowances) > 0
+          ? singleFarm?.userData?.quoteTokenUserQuoteTokenAllowances
+          : quoteTokenUserQuoteTokenAllowances.toString()
+      // console.info('quotetoken quotetoken')
+    } else {
+      allowance =
+        Number(singleFarm?.userData?.tokenUserQuoteTokenAllowances) > 0
+          ? singleFarm?.userData?.tokenUserQuoteTokenAllowances
+          : tokenUserQuoteTokenAllowances.toString()
+      // console.info('quotetoken token')
+      // contract = quoteTokenApproveContract
+      // approveAddress = quoteTokenVaultAddress
+      if (selectedToken?.symbol === 'wBNB') {
+        allowance = '1'
+      }
+    }
+  } else if (!marketStrategy.includes('bull')) {
+    if (selectedToken?.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
+      // contract = quoteTokenApproveContract
+      // approveAddress = vaultAddress
+      allowance =
+        Number(singleFarm?.userData?.tokenUserTokenAllowances) > 0
+          ? singleFarm?.userData?.tokenUserTokenAllowances
+          : tokenUserTokenAllowances.toString()
+      // console.info('token token')
+    } else {
+      // console.info('token quotetoken')
+      allowance =
+        Number(singleFarm?.userData?.quoteTokenUserTokenAllowances) > 0
+          ? singleFarm?.userData?.quoteTokenUserTokenAllowances
+          : quoteTokenUserTokenAllowances.toString()
+      // contract = approveContract
+      // approveAddress = vaultAddress
+    }
+  }
+
+  useEffect(() => {
+    setIsApproved(Number(allowance) > 0)
+  }, [allowance])
+
+  const getWrapText = (): string => {
+    if (
+      singleFarm?.lpSymbol.toUpperCase().includes('BNB') &&
+      marketStrategy.includes('bull') &&
+      selectedToken?.symbol.toUpperCase().replace('WBNB', 'BNB') !== tokenName
+    ) {
+      return t(`Wrap BNB & ${singleLeverage}x Farm`)
+    }
+    return t(`${singleLeverage}x Farm`)
   }
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
-  const [isApproved, setIsApproved] = useState<boolean>(Number(allowance) > 0)
   const [isPending, setIsPending] = useState(false)
 
   const { balance: bnbBalance } = useGetBnbBalance()
@@ -310,18 +360,18 @@ const FarmSA = () => {
     let approveAddress
     if (marketStrategy.includes('bull')) {
       if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
-        contract = approveContract
+        contract = quoteTokenApproveContract
         approveAddress = quoteTokenVaultAddress
       } else {
-        contract = quoteTokenApproveContract
+        contract = approveContract
         approveAddress = quoteTokenVaultAddress
       }
     } else if (!marketStrategy.includes('bull')) {
       if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
-        contract = quoteTokenApproveContract
+        contract = approveContract
         approveAddress = vaultAddress
       } else {
-        contract = approveContract
+        contract = quoteTokenApproveContract
         approveAddress = vaultAddress
       }
     }
@@ -546,7 +596,6 @@ const FarmSA = () => {
 
     if (marketStrategy.includes('bull')) {
       // bull === 2x long
-      console.info('1111bull')
       if (selectedToken.symbol.toUpperCase().replace('WBNB', 'BNB') === tokenName) {
         // token is farm token
         tokenInputValue = inputValue || 0
@@ -555,7 +604,7 @@ const FarmSA = () => {
         dataStrategy = ethers.utils.defaultAbiCoder.encode(['uint256'], ['1'])
         dataWorker = ethers.utils.defaultAbiCoder.encode(['address', 'bytes'], [strategiesAddress, dataStrategy])
       } else {
-        console.info('!== tokenName')
+        // console.info('!== tokenName')
         tokenInputValue = 0
         quoteTokenInputValue = inputValue || 0
         farmingTokenAmount = quoteTokenInputValue?.toString()
@@ -1248,7 +1297,7 @@ const FarmSA = () => {
                     !account || !isApproved || Number(inputValue) === 0 || inputValue === undefined || isPending
                   }
                 >
-                  {isPending ? t('Confirming') : t('Confirm')}
+                  {isPending ? t('Confirming') : getWrapText()}
                 </Button>
               ) : (
                 <Button
@@ -1269,9 +1318,9 @@ const FarmSA = () => {
                 <Text mx="auto" color="red">
                   {new BigNumber(farmData[3]).lt(minimumDebt)
                     ? t('Minimum Debt Size: %minimumDebt% %tokenName%', {
-                        minimumDebt: minimumDebt.toNumber(),
-                        tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB'),
-                      })
+                      minimumDebt: minimumDebt.toNumber(),
+                      tokenName: tokenName.toUpperCase().replace('WBNB', 'BNB'),
+                    })
                     : null}
                 </Text>
               ) : null}
