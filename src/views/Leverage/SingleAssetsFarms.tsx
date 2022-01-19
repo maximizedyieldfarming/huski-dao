@@ -352,7 +352,7 @@ const SingleAssetsFarms: React.FC = () => {
               <StyledButton
                 as={Link}
                 to={(location) => ({
-                  pathname: `${location.pathname.replace('singleAssets', 'farms')}/claim`,
+                  pathname: `${location.pathname}/claim`,
                   state: { farmsData },
                 })}
                 disabled={!account}

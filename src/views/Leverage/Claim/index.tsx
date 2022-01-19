@@ -20,7 +20,7 @@ interface RewardsProps {
 }
 
 interface LocationState {
-  farmsData: any
+  farmsData: Record<string, any>
 }
 
 const Wrapper = styled(Flex)`
@@ -105,17 +105,28 @@ const Claim: React.FC = () => {
   const { t } = useTranslation()
   const history = useHistory()
   const {
+    pathname,
     state: { farmsData },
   } = useLocation<LocationState>()
 
   const hash = {}
-  const positionsWithEarnings = farmsData.reduce((cur, next) => {
-    hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
-    return cur
-  }, [])
+  const positionsWithEarnings = (() => {
+    if (pathname.includes('single-assets')) {
+      return farmsData
+        .filter((f) => f.singleFlag === 0)
+        ?.reduce((cur, next) => {
+          hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+          return cur
+        }, [])
+    }
+    return farmsData?.reduce((cur, next) => {
+      hash[next.TokenInfo.token.poolId] ? '' : (hash[next.TokenInfo.token.poolId] = true && cur.push(next))
+      return cur
+    }, [])
+  })()
 
   const rewards = []
-  positionsWithEarnings.forEach((pool, index) => {
+  positionsWithEarnings?.forEach((pool, index) => {
     if (pool?.TokenInfo?.token?.symbol === positionsWithEarnings[index + 1]?.TokenInfo?.token?.symbol) {
       const sum =
         Number(pool?.userData?.farmEarnings) + Number(positionsWithEarnings[index + 1]?.userData?.farmEarnings)
@@ -126,7 +137,47 @@ const Claim: React.FC = () => {
       })
     }
   })
+  console.log('positions with earnings', { positionsWithEarnings }, '\nfarmsdata', { farmsData })
 
+  if (pathname.includes('single-assets')) {
+    return (
+      <Page>
+        <Flex justifyContent="center">
+          <img src="/images/harvest.png" alt="haverst" width="193px" height="75px" />
+        </Flex>
+        <Text bold mx="auto" fontSize="25px" mt="-30px">
+          {t('Harvest')}
+        </Text>
+        <Wrapper>
+          {positionsWithEarnings?.map((pool) => (
+            <Rewards
+              name={pool?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')}
+              debtPoolId={pool?.TokenInfo?.token?.debtPoolId}
+              earnings={Number(pool?.userData?.farmEarnings)}
+              key={pool?.TokenInfo?.token?.debtPoolId}
+              token={pool?.TokenInfo?.token}
+            />
+          ))}
+          <Flex style={{ alignItems: 'center', cursor: 'pointer' }} width="100%" mt="20px">
+            <img src="/images/Cheveron.svg" alt="" />
+            <Text
+              color="textSubtle"
+              fontWeight="bold"
+              fontSize="16px"
+              style={{ height: '100%' }}
+              onClick={() => history.goBack()}
+            >
+              {t('Back')}
+            </Text>
+          </Flex>
+        </Wrapper>
+
+        <Box position="absolute" right="0px" bottom="0px">
+          <img src="/images/haverstdog.png" alt="havestdog" width="300px" height="300px" />
+        </Box>
+      </Page>
+    )
+  }
   return (
     <Page>
       <Flex justifyContent="center">

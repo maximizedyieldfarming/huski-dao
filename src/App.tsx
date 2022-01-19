@@ -83,7 +83,7 @@ const App: React.FC = () => {
             <Route exact path="/farms/close-position/:token" component={ClosePosition} />
             <Route exact path="/farms/adjust-position/:token" component={AdjustPosition} />
             <Route exact path="/farms/farm/:token" component={Farm} />
-            <Route exact path="/farms/claim" component={Claim} />
+            <Route exact path="/*/claim" component={Claim} /> {/* wildcard used to send single-assets/claim and farms/claim to same page/component */}
             <Route exact path="/single-assets/farm/:token" component={FarmSA} />
             <Route exact path="/single-assets/adjust-position/:token" component={AdjustPositionSA} />
             <Route exact path="/single-assets/close-position/:token" component={ClosePositionSA} />
