@@ -268,7 +268,6 @@ const Leverage: React.FC = () => {
             </div>
             <div style={{ display: 'inline-block', width: '30%' }}>
               <StyledButton
-                sty
                 as={Link}
                 to={(location) => ({ pathname: `${location.pathname}/claim`, state: { farmsData } })}
                 disabled={!account}
