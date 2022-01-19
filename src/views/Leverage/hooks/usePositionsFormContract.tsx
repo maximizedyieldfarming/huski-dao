@@ -103,13 +103,14 @@ export const fetchPositionsFormContract = async (account) => {
         }
         positionsList.push(tokenObject)
     }
-    for (let i = 0; i < huskiPositions.length; i++) {
-        const tokenObject = {
-            positionId: parseInt(huskiPositions[i]._hex),
-            vaultContractAddress: HUSKI_VAULT_ADDRESS,
-        }
-        positionsList.push(tokenObject)
-    }
+    // no HUSKI_VAULT_ADDRESS, so disable
+    // for (let i = 0; i < huskiPositions.length; i++) {
+    //     const tokenObject = {
+    //         positionId: parseInt(huskiPositions[i]._hex),
+    //         vaultContractAddress: HUSKI_VAULT_ADDRESS,
+    //     }
+    //     positionsList.push(tokenObject)
+    // }
 
     console.log({ positionsList })
 
@@ -210,6 +211,7 @@ export const usePositionsFormContract = (account) => {
             const debtShares = await fetchDebtShares(positionsWorker);
             const lpAmount = await fetchLpAmount(positionsWorker, debtShares);
             const positionInfo = await fetchPositionsInfo(positionsWorker);
+            console.log({ positionsOwner, positionsWorker,debtShares, lpAmount, positionInfo  })
             const positionsData = positionsWorker.map((worker, index) => {
 
                 return {
@@ -225,6 +227,7 @@ export const usePositionsFormContract = (account) => {
                 }
             });
             const positionsDataFilter = positionsData.filter((position) => position.debtShares !== '0')
+            console.info('positionsDataFilter',positionsDataFilter)
             setPositionData(positionsDataFilter)
             return positionsDataFilter
         };
