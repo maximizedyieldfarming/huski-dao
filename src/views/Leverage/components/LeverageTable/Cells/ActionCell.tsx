@@ -52,8 +52,9 @@ const ActionCell = ({ token, selectedLeverage, selectedBorrowing, isStableToken,
               pathname: `${location.pathname}/farm/${token?.lpSymbol}`,
               state: { tokenData: token, selectedLeverage, selectedBorrowing },
             })}
-            disabled={!token?.totalSupply || !account || selectedTokenShouldDisable}
-            onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
+            // disabled={!token?.totalSupply || !account || selectedTokenShouldDisable}
+            // onClick={(e) => (!token?.totalSupply || !account) && e.preventDefault()}
+            onClick={(e) => e}
             ref={targetRef}
           >
             {t('Farm')}

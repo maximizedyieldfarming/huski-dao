@@ -24,16 +24,15 @@ const TotalVolumeCell = ({ volumeLocked, name }) => {
     <StyledCell role="cell">
       <CellContent>
         <Text fontSize={isMobile || isTablet ? '1rem' : '12px'} color="textSubtle" textAlign="left">
-          {/* {t('Total Volume Locked')} */}
           {t('Total %name% Locked', {name})}
         </Text>
         {volumeLocked ? (
-          <Text fontWeight="500" mt="10px">
+          <Text fontWeight="500" marginTop={isMobile || isTablet ? '0px' : '10px'}>
             {/* {nFormatter(formatedSupply) || '0.00'} */}
             {formatedSupply}
           </Text>
         ) : (
-          <Skeleton width="80px" height="16px" mt="10px" />
+          <Skeleton width="80px" height="16px" marginTop={isMobile || isTablet ? '0px' : '10px'} />
         )}
       </CellContent>
     </StyledCell>

@@ -33,13 +33,13 @@ import MyPosCell from './Cells/MyPosCell'
 import NameCell from './Cells/NameCell'
 import TotalValueCell from './Cells/TotalValueCell'
 
-const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
+const StyledActionPanel = styled(Flex) <{ expanded: boolean }>`
   .expandedArea {
     ::-webkit-scrollbar {
       height: 8px;
     }
     flex-direction: column;
-    padding: 30px 20px;
+    // padding: 30px 20px;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row;
       align-items: center;
@@ -54,15 +54,7 @@ const StyledActionPanel = styled(Flex)<{ expanded: boolean }>`
   }
 `
 const StakeContainer = styled(Flex)`
-  // &:not(:last-child) {
-  //   margin-bottom: 1rem;
-  // }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    flex: 1 0 10rem;
-    // &:not(:last-child) {
-    //   margin-bottom: none;
-    // }
-  }
+  margin-top: 10px;
 `
 
 const StyledButton = styled(Button)`
@@ -104,7 +96,7 @@ const StyledRow = styled.div<{ huski?: boolean; expanded?: boolean }>`
     flex-direction: column;
     ${({ theme }) => theme.mediaQueries.lg} {
       flex-direction: row;
-      padding: 23px 20px 23px 20px;
+      // padding: 23px 20px 23px 20px;
     }
   }
   // > ${Flex}:first-child {
@@ -161,7 +153,7 @@ const StakeRow = ({ tokenData }) => {
   )
   const allowance =
     Number(tokenData?.userData?.allowance) > 0 ? tokenData?.userData?.allowance : tokenAllowance.toString()
-    const [isApproved, setIsApproved] = useState(Number(allowance) > 0)
+  const [isApproved, setIsApproved] = useState(Number(allowance) > 0)
 
   // stake operations
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -326,7 +318,7 @@ const StakeRow = ({ tokenData }) => {
       <StyledActionPanel flexDirection="column" expanded={expanded}>
         {shouldRenderActionPanel ? (
           <>
-            <Flex className="expandedArea" style={{ overflow: 'auto', borderTop: '2px solid #EFEFEF' }}>
+            <Flex className="expandedArea" style={{ overflow: 'auto', marginTop: '18px', borderTop: '2px solid #EFEFEF' }}>
               <StakeContainer flexDirection="column">
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text color="text" fontSize="14px" fontWeight="700">

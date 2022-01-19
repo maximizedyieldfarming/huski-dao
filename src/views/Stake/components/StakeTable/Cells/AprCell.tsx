@@ -47,14 +47,14 @@ const AprCell = ({ getApyData }) => {
         </Text>
         {apy ? (
           <Flex alignItems="center">
-            <Text>{apyCell(apy)}</Text>
+            <Text marginTop={isMobile || isTablet ? '0px' : '8px'}>{apyCell(apy)}</Text>
             {tooltipVisible && tooltip}
             <span ref={targetRef}>
-              <InfoIcon ml="10px" />
+              <InfoIcon marginTop={isMobile || isTablet ? '0px' : '8px'} ml="10px" />
             </span>
           </Flex>
         ) : (
-          <Skeleton width="80px" height="16px" mt="10px"/>
+          <Skeleton width="80px" height="16px" marginTop={isMobile || isTablet ? '0px' : '10px'} />
         )}
       </CellContent>
     </StyledCell>
