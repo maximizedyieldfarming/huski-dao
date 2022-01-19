@@ -439,13 +439,13 @@ const Farm = () => {
       const tx = await callWithGasPrice(depositContract, 'deposit', [bnbMsgValue], callOptionsBNB)
       // const receipt = await tx.wait()
       // if (receipt.status) {
-        // toastSuccess(t('Successful!'), t('Your deposit was successfull'))
-        const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
-        if (Number(allowance) === 0) {
-          handleApproveBnb(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
-        } else {
-          handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
-        }
+      // toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      const allowance = tokenData?.userData?.tokenUserQuoteTokenAllowances // tokenUserTokenAllowances // ? tokenData?.userData?.allowance : token?.userData?.allowance
+      if (Number(allowance) === 0) {
+        handleApproveBnb(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+      } else {
+        handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+      }
       // }
     } catch (error) {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
@@ -462,7 +462,7 @@ const Farm = () => {
       // const receipt = await tx.wait()
       // if (receipt.status) {
       //   toastSuccess(t('Approved!'), t('Your request has been approved'))
-        handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
+      handleFarm(contract, id, workerAddress, amount, loan, maxReturn, dataWorker)
       // } else {
       //   toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
       // }
@@ -668,6 +668,19 @@ const Farm = () => {
     { placement: 'top-start' },
   )
 
+  const bnbInput =
+    tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
+  const getWrapText = (): string => {
+    if (
+      tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
+      radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
+      bnbInput
+    ) {
+      return t(`Wrap BNB & ${leverageValue}x Farm`)
+    }
+    return t(`${leverageValue}x Farm`)
+  }
+
   const { allowance: tokenUserTokenAllowances } = useTokenAllowance(
     getAddress(tokenData?.TokenInfo?.token?.address),
     tokenData?.TokenInfo?.vaultAddress,
@@ -686,6 +699,8 @@ const Farm = () => {
   )
 
   let allowance = '0'
+  const [isApproved, setIsApproved] = useState(Number(allowance) > 0)
+
   if (
     radio?.toUpperCase().replace('WBNB', 'BNB') ===
     tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB')
@@ -725,13 +740,13 @@ const Farm = () => {
         Number(tokenData.userData?.quoteTokenUserQuoteTokenAllowances) > 0
           ? tokenData.userData?.quoteTokenUserQuoteTokenAllowances
           : quoteTokenUserQuoteTokenAllowances.toString()
-      console.info('quotetoken token ')
+      console.info('quotetoken quotetoken ')
     } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) === 0) {
       allowance =
         Number(tokenData.userData?.tokenUserQuoteTokenAllowances) > 0
           ? tokenData.userData?.tokenUserQuoteTokenAllowances
           : tokenUserQuoteTokenAllowances.toString()
-      console.info('quotetoken quotetoken ')
+      console.info('quotetoken token ')
     } else if (Number(tokenInput || 0) !== 0 && Number(quoteTokenInput || 0) !== 0) {
       console.info('quotetoken all !== 0  youdianwenti xuyao yanzheng shifou qufen')
       allowance =
@@ -742,9 +757,19 @@ const Farm = () => {
       console.info('quotetoken all === 0 ')
       allowance = '1'
     }
+
+    if (tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
+      radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
+      bnbInput) {
+      allowance = '1'
+      console.info('wrap')
+    }
   }
 
-  const [isApproved, setIsApproved] = useState(Number(allowance) > 0)
+  useEffect(() => {
+    setIsApproved(Number(allowance) > 0)
+  }, [allowance])
+
   const tokenAddress = getAddress(tokenData.TokenInfo.token.address)
   const quoteTokenAddress = getAddress(tokenData.TokenInfo.quoteToken.address)
   const approveContract = useERC20(tokenAddress)
@@ -830,32 +855,11 @@ const Farm = () => {
     }
   }, [leverageValue, moveVal.width])
 
-  const getSelectedToken = (name: string) => {
-    let selectedToken
-    if (tokenData?.TokenInfo?.token?.symbol.toUpperCase() === name.toUpperCase()) {
-      selectedToken = tokenData?.TokenInfo?.token
-    } else {
-      selectedToken = tokenData?.TokenInfo?.quoteToken
-    }
-    return { selectedToken }
-  }
+
   const minimumDebt =
     radio === tokenData?.TokenInfo?.token?.symbol
       ? new BigNumber(tokenData?.tokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
       : new BigNumber(tokenData?.quoteTokenMinDebtSize).div(new BigNumber(BIG_TEN).pow(18))
-
-  const bnbInput =
-    tokenData?.TokenInfo?.token?.symbol.toUpperCase().replace('WBNB', 'BNB') === 'BNB' ? tokenInput : quoteTokenInput
-  const getWrapText = (): string => {
-    if (
-      tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
-      radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
-      bnbInput
-    ) {
-      return t(`Wrap BNB & ${leverageValue}x Farm`)
-    }
-    return t(`${leverageValue}x Farm`)
-  }
 
   const getDots = (): React.ReactNode => {
     const dot = []
@@ -1071,52 +1075,38 @@ const Farm = () => {
             </Flex>
           </Box>
           <Flex justifyContent="center" paddingBottom="20px!important">
-            {isApproved ? null : tokenData?.lpSymbol.toUpperCase().includes('BNB') &&
-              radio.toUpperCase().replace('WBNB', 'BNB') !== 'BNB' &&
-              bnbInput ? (
-              <Button
-                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-                onClick={handleConfirm}
-                isLoading={isPending}
-                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                disabled={
-                  !account ||
-                  (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
-                  (tokenInput === undefined && quoteTokenInput === undefined) ||
-                  (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
-                  isPending
-                }
-              >
-                {isPending ? t('Confirming') : getWrapText()}
-              </Button>
-            ) : (
-              <Button
-                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-                onClick={handleApprove}
-                disabled={isApproving}
-                isLoading={isApproving}
-                endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-              >
-                {isApproving ? t('Approving') : t('Approve')}
-              </Button>
-            )}
-            {isApproved ? (
-              <Button
-                style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
-                onClick={handleConfirm}
-                isLoading={isPending}
-                endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
-                disabled={
-                  !account ||
-                  (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
-                  (tokenInput === undefined && quoteTokenInput === undefined) ||
-                  (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
-                  isPending
-                }
-              >
-                {isPending ? t('Confirming') : getWrapText()}
-              </Button>
-            ) : null}
+            {
+              isApproved ?
+                (
+                  <Button
+                    style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+                    onClick={handleConfirm}
+                    isLoading={isPending}
+                    endIcon={isPending ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                    disabled={
+                      !account ||
+                      (Number(tokenInput) === 0 && Number(quoteTokenInput) === 0) ||
+                      (tokenInput === undefined && quoteTokenInput === undefined) ||
+                      (Number(leverageValue) !== 1 ? new BigNumber(farmData[3]).lt(minimumDebt) : false) ||
+                      isPending
+                    }
+                  >
+                    {isPending ? t('Confirming') : getWrapText()}
+                  </Button>
+                ) :
+                (
+                  <Button
+                    style={{ border: !isDark && '1px solid lightgrey', width: 290, height: 50 }}
+                    onClick={handleApprove}
+                    disabled={isApproving}
+                    isLoading={isApproving}
+                    endIcon={isApproving ? <AutoRenewIcon spin color="backgroundAlt" /> : null}
+                  >
+                    {isApproving ? t('Approving') : t('Approve')}
+                  </Button>
+                )
+            }
+
           </Flex>
           {tokenInput || quoteTokenInput ? (
             <Text mx="auto" color="red" textAlign="center">
