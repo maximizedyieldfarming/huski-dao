@@ -3,13 +3,13 @@
   src: url('./GenJyuuGothic-P-Regular.woff2') format('woff2'), url('./GenJyuuGothic-P-Regular.woff') format('woff');
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: 'inter';
   src: url('./Inter/Inter-VariableFont_slnt\,wght.ttf')
-}
+} */
 @font-face {
   font-family: 'BalooBhaijaan';
-  src: url('./BalooBhaijaan-Regular.ttf');
+  src: url('./BalooBhaijaan-Regular.ttf') format('truetype');
   font-display: swap;
 }
 
@@ -18,10 +18,11 @@
   src: url('./LexendDeca-Regular.ttf');
   font-display: swap;
 }
-* {
+/* * {
   font-family: 'inter';
 }
 
 table {
   font-family:  'inter';
 }
+ */
