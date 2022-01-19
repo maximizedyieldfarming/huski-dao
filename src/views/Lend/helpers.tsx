@@ -9,7 +9,7 @@ export const getAprData = (farm: LeverageFarm, huskyPriceBusd, borrowingInterest
   const busdTokenPrice: any = tokenPriceUsd
   const huskyPrice: any = huskyPriceBusd;
   const poolHuskyPerBlock = poolLendPerBlock;
-  const utilization = parseInt(totalToken) > 0 ? parseInt(vaultDebtVal) / parseInt(totalToken) : 0;
+  const utilization: any = parseInt(totalToken) > 0 ?  new BigNumber(vaultDebtVal).div(new BigNumber(totalToken)) : BIG_ZERO;
   const reserveFund = parseInt(tokenReserveFund) / 10000;
 
   const lendApr = borrowingInterest * utilization * (1 - reserveFund)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
+import { BIG_TEN, BIG_ZERO, PER_YEAR } from 'utils/config';
 import multicall from 'utils/multicall'
 import { LeverageFarm } from 'state/types'
 import { getAddress } from 'utils/addressHelpers'
@@ -9,7 +9,6 @@ import useRefresh from 'hooks/useRefresh'
 
 export const useFarmsWithToken = (farm: LeverageFarm, tokenName?: string) => {
   const [borrowingInterest, setBorrowingInterest] = useState(0)
-
 
   const { totalToken, vaultDebtVal, TokenInfo, quoteTokenTotal, quoteTokenVaultDebtVal } = farm
   const { token, quoteToken } = TokenInfo
@@ -30,11 +29,10 @@ export const useFarmsWithToken = (farm: LeverageFarm, tokenName?: string) => {
   useEffect(() => {
     const fetchBorrowingInterest = async () => {
       const configAddress = getAddress(configAddressValue)
-      const vaultDebtValBigNumber = vaultDebtValue ? new BigNumber(parseInt(vaultDebtValue)).div(BIG_TEN.pow(18)) : BIG_ZERO
-      const totalTokenBigNumber = totalTokenValue ? new BigNumber(parseInt(totalTokenValue)).div(BIG_TEN.pow(18)) : BIG_ZERO
-      const vaultDebtValData = Math.round(vaultDebtValBigNumber.toNumber())
-      const totalTokenData = Math.round(totalTokenBigNumber.toNumber())
-
+      const vaultDebtValBigNumber = vaultDebtValue ? new BigNumber(vaultDebtValue).div(BIG_TEN.pow(18)) : BIG_ZERO
+      const totalTokenBigNumber = totalTokenValue ? new BigNumber(totalTokenValue).div(BIG_TEN.pow(18)) : BIG_ZERO
+      const vaultDebtValData = Math.ceil(vaultDebtValBigNumber.toNumber())
+      const totalTokenData = Math.ceil(totalTokenBigNumber.toNumber())
       const [borrowInterest] =
         await multicall(ConfigurableInterestVaultConfigABI, [
           {
@@ -44,10 +42,12 @@ export const useFarmsWithToken = (farm: LeverageFarm, tokenName?: string) => {
           }
         ])
 
-      // console.info('borrowingInterest', borrowInterest)
-      // console.info(token)
-      const borrowingInterestData = parseInt(borrowInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 ** 18)
-      // console.info(borrowingInterestData)
+      // const borrowingInterestData = parseInt(borrowInterest[0]._hex) * 365 * 24 * 60 * 60 / (10 ** 18)
+
+      const borrowInterestBigNumber = new BigNumber(borrowInterest[0]._hex).times(PER_YEAR)
+      const borrowingInterestPow = new BigNumber(borrowInterestBigNumber).div(BIG_TEN.pow(18))
+      const borrowingInterestData = Number(borrowingInterestPow)
+
       setBorrowingInterest(borrowingInterestData)
     }
 
