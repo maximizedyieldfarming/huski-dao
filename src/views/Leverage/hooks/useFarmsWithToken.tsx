@@ -5,6 +5,7 @@ import multicall from 'utils/multicall'
 import { LeverageFarm } from 'state/types'
 import { getAddress } from 'utils/addressHelpers'
 import ConfigurableInterestVaultConfigABI from 'config/abi/ConfigurableInterestVaultConfig.json'
+import { getDecimalAmount } from 'utils/formatBalance'
 import useRefresh from 'hooks/useRefresh'
 
 export const useFarmsWithToken = (farm: LeverageFarm, tokenName?: string) => {
@@ -29,16 +30,24 @@ export const useFarmsWithToken = (farm: LeverageFarm, tokenName?: string) => {
   useEffect(() => {
     const fetchBorrowingInterest = async () => {
       const configAddress = getAddress(configAddressValue)
-      const vaultDebtValBigNumber = vaultDebtValue ? new BigNumber(vaultDebtValue).div(BIG_TEN.pow(18)) : BIG_ZERO
-      const totalTokenBigNumber = totalTokenValue ? new BigNumber(totalTokenValue).div(BIG_TEN.pow(18)) : BIG_ZERO
+      const vaultDebtValBigNumber = vaultDebtValue ? new BigNumber(vaultDebtValue) : BIG_ZERO
+      const totalTokenBigNumber = totalTokenValue ? new BigNumber(totalTokenValue) : BIG_ZERO
       const vaultDebtValData = Math.ceil(vaultDebtValBigNumber.toNumber())
       const totalTokenData = Math.ceil(totalTokenBigNumber.toNumber())
+      const vdd = getDecimalAmount(new BigNumber(vaultDebtValData || 0), 0)
+        .toString()
+        .replace(/\.(.*?\d*)/g, '')
+      const ttdMinusVdd = new BigNumber(totalTokenData).minus(new BigNumber(vaultDebtValData))
+      const minusData = getDecimalAmount(new BigNumber(ttdMinusVdd || 0), 0)
+        .toString()
+        .replace(/\.(.*?\d*)/g, '')
+
       const [borrowInterest] =
         await multicall(ConfigurableInterestVaultConfigABI, [
           {
             address: configAddress,
             name: 'getInterestRate',
-            params: [vaultDebtValData, totalTokenData - vaultDebtValData],
+            params: [vdd, minusData],
           }
         ])
 
