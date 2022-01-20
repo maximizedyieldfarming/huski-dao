@@ -60,20 +60,20 @@ const LeverageRow = ({ tokenData }) => {
   const { borrowingInterest } = useFarmsWithToken(tokenData, borrowingAsset)
   const { tradingFees: tradeFee } = useTradingFees(tokenData)
   // const { borrowingInterest } = getBorrowingInterest(tokenData, borrowingAsset)
-
+  console.log({ tradeFee, borrowingInterest, huskyRewards, yieldFarmData })
   const getApr = (lvg) => {
     // Number(huskyRewards) === 0 ||
     // Number(borrowingInterest) === 0 ||
-    if (
-      Number(tradeFee) === 0 ||
-      Number(yieldFarmData) === 0 ||
-      Number.isNaN(tradeFee) ||
-      Number.isNaN(huskyRewards) ||
-      Number.isNaN(borrowingInterest) ||
-      Number.isNaN(yieldFarmData)
-    ) {
-      return null
-    }
+    // if (
+    //   Number(tradeFee) === 0 ||
+    //   Number(yieldFarmData) === 0 ||
+    //   Number.isNaN(tradeFee) ||
+    //   Number.isNaN(huskyRewards) ||
+    //   Number.isNaN(borrowingInterest) ||
+    //   Number.isNaN(yieldFarmData)
+    // ) {
+    //   return null
+    // }
     const apr =
       Number((yieldFarmData / 100) * lvg) +
       Number(((tradeFee * 365) / 100) * lvg) +
