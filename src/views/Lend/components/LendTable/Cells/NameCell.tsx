@@ -9,6 +9,9 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 2 0 12rem;
   }
+  ${Text} {
+    font-family: 'GenJyuuGothic';
+  }
 `
 
 const NameCell = ({ token }) => {
