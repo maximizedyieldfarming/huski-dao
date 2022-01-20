@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { useLeverageFarms, usePollLeverageFarmsWithUserData } from 'state/leverage/hooks'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, ArrowBackIcon, ArrowForwardIcon } from '@huskifinance/huski-frontend-uikit'
+import { Box, Button, Flex, Text } from '@huskifinance/huski-frontend-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'utils/config'
@@ -15,16 +15,11 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useTheme from 'hooks/useTheme'
 // import { useGetPositions } from 'hooks/api'
 // import { usePositions } from './hooks/usePositions'
-import { LeverageFarm } from 'state/types'
-import { Arrow, PageButtons } from './components/PaginationButtons'
 import { usePositionsFormContract } from './hooks/usePositionsFormContract'
 import LeverageTable from './components/LeverageTable/LeverageTable'
 import ActivePositionsTable from './components/PositionsTable/ActivePositionsTable'
 import LiquidatedPositionsTable from './components/PositionsTable/LiquidatedPositionsTable'
 
-const MAX_PER_PAGE = 8
-
-const MAX_PER_QUERY = 100
 
 const ActionButton = styled(Button)`
   padding: 0.75rem 2rem;
@@ -175,60 +170,6 @@ const Leverage: React.FC = () => {
     return reward
   })
 
-  // const { theme } = useTheme()
-  // const [queryPage, setQueryPage] = useState(1)
-  // const [isLoading, setIsLoading] = useState(true)
-  // const [activitiesSlice, setActivitiesSlice] = useState<LeverageFarm[]>([])
-  // const [paginationData, setPaginationData] = useState<{
-  //   activity: LeverageFarm[]
-  //   currentPage: number
-  //   maxPage: number
-  // }>({
-  //   activity: [],
-  //   currentPage: 1,
-  //   maxPage: 1,
-  // })
-
-
-  // useEffect(() => {
-  //   const fetchCollectionActivity = async () => {
-  //     try {
-  //       setIsLoading(true)
-  //       // const nftActivityFiltersParsed = JSON.parse(nftActivityFiltersString)
-  //       // const collectionActivity = await getCollectionActivity(
-  //       //   collectionAddress.toLowerCase(),
-  //       //   nftActivityFiltersParsed,
-  //       //   MAX_PER_QUERY,
-  //       // )
-  //       const activity = farmsData // sortActivity(collectionActivity)
-  //       setPaginationData({
-  //         activity,
-  //         currentPage: 1,
-  //         maxPage: Math.ceil(activity.length / MAX_PER_PAGE) || 1,
-  //       })
-  //       setIsLoading(false)
-  //       // setIsInitialized(true)
-  //     } catch (error) {
-  //       console.error('Failed to fetch collection activity', error)
-  //     }
-  //   }
-
-  //   // if ((collectionAddress && isAddress(collectionAddress)) || collectionAddress === '') {
-  //   fetchCollectionActivity()
-  //   // }
-  // }, [farmsData])
-
-
-
-  // useEffect(() => {
-  //   const slice = paginationData.activity.slice(
-  //     MAX_PER_PAGE * (paginationData.currentPage - 1),
-  //     MAX_PER_PAGE * paginationData.currentPage,
-  //   )
-  //   setActivitiesSlice(slice)
-  // }, [paginationData])
-
-
   return (
     <Page>
       <Section>
@@ -298,77 +239,6 @@ const Leverage: React.FC = () => {
         )}
       </StyledTableBorder>
       <LeverageTable leverageData={farmsData} />
-      {/* <LeverageTable leverageData={activitiesSlice} /> */}
-
-      {/* <Flex
-        borderTop={`1px ${theme.colors.cardBorder} solid`}
-        pt="24px"
-        flexDirection="column"
-        justifyContent="space-between"
-        height="100%"
-      >
-        <PageButtons>
-          <Arrow
-            onClick={() => {
-              if (paginationData.currentPage !== 1) {
-                setPaginationData((prevState) => ({
-                  ...prevState,
-                  currentPage: prevState.currentPage - 1,
-                }))
-              }
-            }}
-          >
-            <ArrowBackIcon color={paginationData.currentPage === 1 ? 'textDisabled' : 'primary'} />
-          </Arrow>
-          <Text>
-            {t('Page %page% of %maxPage%', {
-              page: paginationData.currentPage,
-              maxPage: paginationData.maxPage,
-            })}
-          </Text>
-          <Arrow
-            onClick={async () => {
-              if (paginationData.currentPage !== paginationData.maxPage) {
-                setPaginationData((prevState) => ({
-                  ...prevState,
-                  currentPage: prevState.currentPage + 1,
-                }))
-
-                if (
-                  paginationData.maxPage - paginationData.currentPage === 1 &&
-                  paginationData.activity.length === MAX_PER_QUERY * queryPage
-                ) {
-                  try {
-                    // setIsLoading(true)
-                    // const nftActivityFiltersParsed = JSON.parse(nftActivityFiltersString)
-                    // const collectionActivity = await getCollectionActivity(
-                    //   collectionAddress.toLowerCase(),
-                    //   nftActivityFiltersParsed,
-                    //   MAX_PER_QUERY * (queryPage + 1),
-                    // )
-                    const activity = farmsData // sortActivity(collectionActivity)
-                    setPaginationData((prevState) => {
-                      return {
-                        ...prevState,
-                        activity,
-                        maxPage: Math.ceil(activity.length / MAX_PER_PAGE) || 1,
-                      }
-                    })
-                    // setIsLoading(false)
-                    // setQueryPage((prevState) => prevState + 1)
-                  } catch (error) {
-                    console.error('Failed to fetch collection activity', error)
-                  }
-                }
-              }
-            }}
-          >
-            <ArrowForwardIcon
-              color={paginationData.currentPage === paginationData.maxPage ? 'textDisabled' : 'primary'}
-            />
-          </Arrow>
-        </PageButtons>
-      </Flex> */}
     </Page>
   )
 }

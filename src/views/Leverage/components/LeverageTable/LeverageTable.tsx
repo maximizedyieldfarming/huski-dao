@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import { Button, Flex, Box, Text, useMatchBreakpoints, ArrowBackIcon, ArrowForwardIcon } from '@huskifinance/huski-frontend-uikit'
+import { Button, Flex, Box, Text, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import SearchInput from 'components/SearchInput'
 import Select from 'components/Select/SelectSort'
 import { useCakePrice, useHuskiPrice } from 'hooks/api'
@@ -9,31 +9,16 @@ import { useTranslation } from 'contexts/Localization'
 import { latinise } from 'utils/latinise'
 import { orderBy } from 'lodash'
 import { BnbIcon, BtcbIcon, BusdIcon, EthIcon, PancakeSwapIcon, HuskiIcon } from 'assets'
-import useTheme from 'hooks/useTheme'
-import { LeverageFarm } from 'state/types'
 import { getHuskyRewards, getYieldFarming, getTvl, getBorrowingInterest } from '../../helpers'
-import { Arrow, PageButtons } from '../PaginationButtons'
-import LeverageRow from './LeverageRow'
 import DisplayTable from './DisplayTable'
-import LeverageHeaderRow from './LeverageHeaderRow'
 
-const MAX_PER_PAGE = 8
-const MAX_PER_QUERY = 100
 
-const NUMBER_OF_FARMS_VISIBLE = 4
+const NUMBER_OF_FARMS_VISIBLE = 5
 
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 24px 24px;
   background-color: ${({ theme }) => theme.card.background};
-  // > ${Box}>div:not(:last-child) {
-  //   border-bottom: 1px solid ${({ theme }) => theme.colors.disabled};
-  // }
-  // ${({ theme }) => theme.mediaQueries.lg} {
-  //   > ${Box}>div:not(:last-child) {
-  //     border-bottom: none;
-  //   }
-  // }
   > ${Box} {
     overflow: auto;
     ::-webkit-scrollbar {
@@ -191,70 +176,12 @@ const LeverageTable = ({ leverageData }) => {
         pool?.TokenInfo?.quoteToken?.symbol.toLowerCase() === pairFilter ||
         pool?.TokenInfo?.token?.symbol.toLowerCase() === pairFilter,
     )
-    console.info('farmsData', farmsData)
   }
   if (dexFilter !== 'all') {
     farmsData = farmsData.filter((pool) => pool?.lpExchange === dexFilter)
   }
 
   const { t } = useTranslation()
-
-
-  //   const { theme } = useTheme()
-  //   const [queryPage, setQueryPage] = useState(1)
-  //   const [isLoading, setIsLoading] = useState(true)
-  //   const [activitiesSlice, setActivitiesSlice] = useState<LeverageFarm[]>([])
-  //   const [paginationData, setPaginationData] = useState<{
-  //     activity: LeverageFarm[]
-  //     currentPage: number
-  //     maxPage: number
-  //   }>({
-  //     activity: [],
-  //     currentPage: 1,
-  //     maxPage: 1,
-  //   })
-
-
-  //   useEffect(() => {
-  //     const fetchCollectionActivity = async () => {
-  //       try {
-  //         setIsLoading(true)
-  //         // const nftActivityFiltersParsed = JSON.parse(nftActivityFiltersString)
-  //         // const collectionActivity = await getCollectionActivity(
-  //         //   collectionAddress.toLowerCase(),
-  //         //   nftActivityFiltersParsed,
-  //         //   MAX_PER_QUERY,
-  //         // )
-  //         const activity = farmsData // sortActivity(collectionActivity)
-  //         setPaginationData({
-  //           activity,
-  //           currentPage: 1,
-  //           maxPage: Math.ceil(activity.length / MAX_PER_PAGE) || 1,
-  //         })
-  //         setIsLoading(false)
-  //         // setIsInitialized(true)
-  //       } catch (error) {
-  //         console.error('Failed to fetch collection activity', error)
-  //       }
-  //     }
-
-  //     // if ((collectionAddress && isAddress(collectionAddress)) || collectionAddress === '') {
-  //     fetchCollectionActivity()
-  //     // }
-  //   }, [farmsData])
-
-  //   useEffect(() => {
-  //     const slice = paginationData.activity.slice(
-  //       MAX_PER_PAGE * (paginationData.currentPage - 1),
-  //       MAX_PER_PAGE * paginationData.currentPage,
-  //     )
-  //     console.info('slice',slice)
-  //     setActivitiesSlice(slice)
-  //   }, [paginationData])
-
-
-  // console.info('activitiesSlice=========',activitiesSlice)
-
   const { observerRef, isIntersecting } = useIntersectionObserver()
   const chosenFarmsLength = useRef(0)
   const farmsList = useCallback(
@@ -289,16 +216,13 @@ const LeverageTable = ({ leverageData }) => {
   const chosenFarmsMemoized = useMemo(() => {
     let chosenFarms = []
     chosenFarms = farmsList(farmsData)
-    console.info('------- numberOfFarmsVisible', numberOfFarmsVisible)
 
     return (chosenFarms).slice(0, numberOfFarmsVisible)
   }, [farmsData, farmsList, numberOfFarmsVisible])
 
   chosenFarmsLength.current = chosenFarmsMemoized.length
-  console.info('chosenFarmsMemoized', chosenFarmsMemoized)
-  console.info('isIntersecting', isIntersecting)
+
   useEffect(() => {
-    console.info('888888')
     if (isIntersecting) {
       setNumberOfFarmsVisible((farmsCurrentlyVisible) => {
         if (farmsCurrentlyVisible <= chosenFarmsLength.current) {
@@ -308,8 +232,6 @@ const LeverageTable = ({ leverageData }) => {
       })
     }
   }, [isIntersecting])
-
-
 
 
   return (
@@ -438,10 +360,6 @@ const LeverageTable = ({ leverageData }) => {
                 <SearchInput onChange={handleChangeQuery} placeholder={t('Search farms')} />
               </Flex>
             </FiltersWrapper>
-            {/* {!(isMobile || isTablet) && <LeverageHeaderRow />}
-            {farmsData.map((token) => (
-              <LeverageRow tokenData={token} key={token?.pid} />
-            ))} */}
             <DisplayTable leverageData={chosenFarmsMemoized} />
           </Box>
           <div ref={observerRef} />
