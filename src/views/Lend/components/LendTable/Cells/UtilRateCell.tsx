@@ -10,6 +10,9 @@ const StyledCell = styled(BaseCell)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1 0 5rem;
   }
+  ${Text} {
+    font-family: 'GenJyuuGothic';
+  }
 `
 
 const UtilRateCell = ({ utilRate }) => {

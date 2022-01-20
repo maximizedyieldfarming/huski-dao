@@ -7,7 +7,6 @@ import { useTranslation } from 'contexts/Localization'
 import BaseCell, { CellContent } from './BaseCell'
 
 const StyledCell = styled(BaseCell)`
-
   flex: 1 0 auto;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 0 0 12rem;
@@ -18,13 +17,24 @@ const StyledCell = styled(BaseCell)`
       flex-direction: row !important;
     }
   }
-  a {
-    padding: 0.75rem;
-    font-size: 14px;
-    font-weight: 400;
-    height: auto;
-    box-shadow: none;
-    word-break: initial;
+`
+const StyledButton = styled(Button)`
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: 'GenJyuuGothic';
+  box-shadow: none;
+  word-break: initial;
+  border-radius: 10px;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  color: ${({ disabled, theme }) => (disabled ? '#6F767E' : theme.isDark ? 'white' : '#7b3fe4')};
+  background-color: ${({theme}) => theme.isDark ? '#1A1D1F' : 'white' };
+  border: 1px solid ${({ theme, disabled }) => (disabled ? '#6F767E' : theme.isDark ? '#272B30' : '#7B3FE4')};
+  &:hover {
+    background-color: ${({ disabled }) => (disabled ? 'transparent' : '#7b3fe4')};
+    border: 1px solid ${({ disabled }) => (disabled ? '#6F767E' : '#7b3fe4')};
+    color: ${({ disabled }) => (disabled ? '#6F767E' : 'white')};
   }
 `
 
@@ -36,7 +46,7 @@ const ActionCell = ({ token, apyReady }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Button
+        <StyledButton
           style={{
             width: '50%',
             height: '40px',
@@ -50,8 +60,8 @@ const ActionCell = ({ token, apyReady }) => {
           onClick={(e) => !account || (!apyReady && e.preventDefault())}
         >
           {t('Deposit')}
-        </Button>
-        <Button
+        </StyledButton>
+        <StyledButton
           style={{
             width: '50%',
             height: '40px',
@@ -62,7 +72,7 @@ const ActionCell = ({ token, apyReady }) => {
           onClick={(e) => !account || (!apyReady && e.preventDefault())}
         >
           {t('Withdraw')}
-        </Button>
+        </StyledButton>
       </CellContent>
     </StyledCell>
   )

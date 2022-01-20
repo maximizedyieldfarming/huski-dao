@@ -25,19 +25,17 @@ const StyledRow = styled.div`
     border-radius: 12px;
     margin-top: 10px;
     &:hover {
-        background: ${({ theme }) => theme.colors.background};
-      }
-    
-      &:active {
-        background: ${({ theme }) => theme.colors.background};
-      }
+      background: ${({ theme }) => (theme.isDark ? '#272B30' : '#F7F7F8')};
+    }
+    &:active {
+      background: ${({ theme }) => (theme.isDark ? '#272B30' : '#F7F7F8')};
+    }
   }
-
 `
 
 const LendRow = ({ tokenData }) => {
   const huskyPrice = useHuskiPrice()
-  const tokenName = tokenData?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB');
+  const tokenName = tokenData?.TokenInfo?.token?.symbol.replace('wBNB', 'BNB')
   const { borrowingInterest } = useFarmsWithToken(tokenData, tokenName)
   const { totalToken, vaultDebtVal, TokenInfo, tokenPriceUsd } = tokenData
   const totalSupplyUSD = Number(totalToken) * Number(tokenPriceUsd)
