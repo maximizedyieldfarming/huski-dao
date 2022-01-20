@@ -135,16 +135,16 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
   const getApr = (lvg) => {
     // Number(huskyRewards) === 0 ||
     // Number(borrowingInterest) === 0 ||
-    if (
-      Number(tradeFee) === 0 ||
-      Number(yieldFarmData) === 0 ||
-      Number.isNaN(tradeFee) ||
-      Number.isNaN(huskyRewards) ||
-      Number.isNaN(borrowingInterest) ||
-      Number.isNaN(yieldFarmData)
-    ) {
-      return null
-    }
+    // if (
+    //   Number(tradeFee) === 0 ||
+    //   Number(yieldFarmData) === 0 ||
+    //   Number.isNaN(tradeFee) ||
+    //   Number.isNaN(huskyRewards) ||
+    //   Number.isNaN(borrowingInterest) ||
+    //   Number.isNaN(yieldFarmData)
+    // ) {
+    //   return null
+    // }
     const apr =
       Number((yieldFarmData / 100) * lvg) +
       Number(((tradeFee * 365) / 100) * lvg) +
