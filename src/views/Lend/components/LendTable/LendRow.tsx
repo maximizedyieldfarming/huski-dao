@@ -48,7 +48,7 @@ const LendRow = ({ tokenData }) => {
     TokenInfo.token.symbol.toLowerCase() === 'wbnb' ? bnbBalance : tokenBalance,
   ).toJSON()
   const userTokenBalanceIb = getBalanceAmount(useTokenBalance(tokenData?.TokenInfo.vaultAddress).balance).toJSON()
-  const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
+  // const { apy } = getAprData(tokenData, huskyPrice, borrowingInterest)
 
   return (
     <StyledRow role="row">

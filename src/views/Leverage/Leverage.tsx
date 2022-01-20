@@ -175,58 +175,58 @@ const Leverage: React.FC = () => {
     return reward
   })
 
-  const { theme } = useTheme()
-  const [queryPage, setQueryPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(true)
-  const [activitiesSlice, setActivitiesSlice] = useState<LeverageFarm[]>([])
-  const [paginationData, setPaginationData] = useState<{
-    activity: LeverageFarm[]
-    currentPage: number
-    maxPage: number
-  }>({
-    activity: [],
-    currentPage: 1,
-    maxPage: 1,
-  })
+  // const { theme } = useTheme()
+  // const [queryPage, setQueryPage] = useState(1)
+  // const [isLoading, setIsLoading] = useState(true)
+  // const [activitiesSlice, setActivitiesSlice] = useState<LeverageFarm[]>([])
+  // const [paginationData, setPaginationData] = useState<{
+  //   activity: LeverageFarm[]
+  //   currentPage: number
+  //   maxPage: number
+  // }>({
+  //   activity: [],
+  //   currentPage: 1,
+  //   maxPage: 1,
+  // })
 
 
-  useEffect(() => {
-    const fetchCollectionActivity = async () => {
-      try {
-        setIsLoading(true)
-        // const nftActivityFiltersParsed = JSON.parse(nftActivityFiltersString)
-        // const collectionActivity = await getCollectionActivity(
-        //   collectionAddress.toLowerCase(),
-        //   nftActivityFiltersParsed,
-        //   MAX_PER_QUERY,
-        // )
-        const activity = farmsData // sortActivity(collectionActivity)
-        setPaginationData({
-          activity,
-          currentPage: 1,
-          maxPage: Math.ceil(activity.length / MAX_PER_PAGE) || 1,
-        })
-        setIsLoading(false)
-        // setIsInitialized(true)
-      } catch (error) {
-        console.error('Failed to fetch collection activity', error)
-      }
-    }
+  // useEffect(() => {
+  //   const fetchCollectionActivity = async () => {
+  //     try {
+  //       setIsLoading(true)
+  //       // const nftActivityFiltersParsed = JSON.parse(nftActivityFiltersString)
+  //       // const collectionActivity = await getCollectionActivity(
+  //       //   collectionAddress.toLowerCase(),
+  //       //   nftActivityFiltersParsed,
+  //       //   MAX_PER_QUERY,
+  //       // )
+  //       const activity = farmsData // sortActivity(collectionActivity)
+  //       setPaginationData({
+  //         activity,
+  //         currentPage: 1,
+  //         maxPage: Math.ceil(activity.length / MAX_PER_PAGE) || 1,
+  //       })
+  //       setIsLoading(false)
+  //       // setIsInitialized(true)
+  //     } catch (error) {
+  //       console.error('Failed to fetch collection activity', error)
+  //     }
+  //   }
 
-    // if ((collectionAddress && isAddress(collectionAddress)) || collectionAddress === '') {
-    fetchCollectionActivity()
-    // }
-  }, [farmsData])
+  //   // if ((collectionAddress && isAddress(collectionAddress)) || collectionAddress === '') {
+  //   fetchCollectionActivity()
+  //   // }
+  // }, [farmsData])
 
 
 
-  useEffect(() => {
-    const slice = paginationData.activity.slice(
-      MAX_PER_PAGE * (paginationData.currentPage - 1),
-      MAX_PER_PAGE * paginationData.currentPage,
-    )
-    setActivitiesSlice(slice)
-  }, [paginationData])
+  // useEffect(() => {
+  //   const slice = paginationData.activity.slice(
+  //     MAX_PER_PAGE * (paginationData.currentPage - 1),
+  //     MAX_PER_PAGE * paginationData.currentPage,
+  //   )
+  //   setActivitiesSlice(slice)
+  // }, [paginationData])
 
 
   return (
@@ -297,10 +297,10 @@ const Leverage: React.FC = () => {
           <LiquidatedPositionsTable data={null} />
         )}
       </StyledTableBorder>
+      <LeverageTable leverageData={farmsData} />
+      {/* <LeverageTable leverageData={activitiesSlice} /> */}
 
-      <LeverageTable leverageData={activitiesSlice} />
-
-      <Flex
+      {/* <Flex
         borderTop={`1px ${theme.colors.cardBorder} solid`}
         pt="24px"
         flexDirection="column"
@@ -368,7 +368,7 @@ const Leverage: React.FC = () => {
             />
           </Arrow>
         </PageButtons>
-      </Flex>
+      </Flex> */}
     </Page>
   )
 }
