@@ -470,7 +470,7 @@ const SingleAssetsCard: React.FC<Props> = ({ data, strategyFilter }) => {
                   <Text bold fontSize="3">
                     {apy}%
                   </Text>
-                  {Number(avgApy) > Number(apyOne) ?
+                  {Number(apy) > Number(apyOne) ?
                     <Text color="#83BF6E">
                       {t(
                         `${'\u2191'} %avgApy%% `,
