@@ -12,7 +12,7 @@ const GasSettings = () => {
   return (
     <Flex flexDirection="column">
       <Flex mb="12px" alignItems="center">
-        <Text fontSize="14px" bold>
+        <Text fontSize="14px" fontWeight="700">
           {t('Default Transaction Speed (GWEI)')}
         </Text>
         <QuestionHelper
@@ -32,8 +32,14 @@ const GasSettings = () => {
           onClick={() => {
             setGasPrice(GAS_PRICE_GWEI.default)
           }}
-          variant={gasPrice === GAS_PRICE_GWEI.default ? 'primary' : 'tertiary'}
-          style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
+          style={{
+            fontSize: '14px',
+            fontWeight: 'normal',
+            padding: 0,
+            color: gasPrice === GAS_PRICE_GWEI.default ? '#FFFFFF' : '#6F767E',
+            background: gasPrice === GAS_PRICE_GWEI.default ? '#7B3FE4' : '#F4F4F4',
+            boxShadow: 'none',
+          }}
         >
           {t('Standard (%gasPrice%)', { gasPrice: GAS_PRICE.default })}
         </Button>
@@ -45,8 +51,14 @@ const GasSettings = () => {
           onClick={() => {
             setGasPrice(GAS_PRICE_GWEI.fast)
           }}
-          variant={gasPrice === GAS_PRICE_GWEI.fast ? 'primary' : 'tertiary'}
-          style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
+          style={{
+            fontSize: '14px',
+            fontWeight: 'normal',
+            padding: 0,
+            color: gasPrice === GAS_PRICE_GWEI.fast ? '#FFFFFF' : '#6F767E',
+            background: gasPrice === GAS_PRICE_GWEI.fast ? '#7B3FE4' : '#F4F4F4',
+            boxShadow: 'none',
+          }}
         >
           {t('Fast (%gasPrice%)', { gasPrice: GAS_PRICE.fast })}
         </Button>
@@ -58,8 +70,14 @@ const GasSettings = () => {
           onClick={() => {
             setGasPrice(GAS_PRICE_GWEI.instant)
           }}
-          variant={gasPrice === GAS_PRICE_GWEI.instant ? 'primary' : 'tertiary'}
-          style={{ fontSize: '14px', fontWeight: 'normal', padding: 0 }}
+          style={{
+            fontSize: '14px',
+            fontWeight: 'normal',
+            padding: 0,
+            color: gasPrice === GAS_PRICE_GWEI.instant ? '#FFFFFF' : '#6F767E',
+            background: gasPrice === GAS_PRICE_GWEI.instant ? '#7B3FE4' : '#F4F4F4',
+            boxShadow: 'none',
+          }}
         >
           {t('Instant (%gasPrice%)', { gasPrice: GAS_PRICE.instant })}
         </Button>
