@@ -85,7 +85,30 @@ export const useTokenPriceList = (coingeckoId) => {
     const fetchData = async () => {
       try {
         const start = moment().format('YYYY-MM-DD 00:00:00');
-        const end = moment().subtract(500, 'days').format('YYYY-MM-DD 00:00:00');
+        let end;
+        switch (coingeckoId) {
+          case 'binancecoin': {
+            end = moment().format('2017-09-16 00:00:00');
+            break;
+          }
+          case 'binance-bitcoin': {
+            end = moment().format('2013-04-28 00:00:00');
+            break;
+          }
+          case 'pancakeswap-token': {
+            end = moment().format('2020-09-29 00:00:00');
+            break;
+          }
+          case 'binance-eth': {
+            end = moment().format('2015-08-07 00:00:00');
+            break;
+          }
+          default: {
+            end = moment().subtract(500, 'days').format('YYYY-MM-DD 00:00:00');
+            break;
+          }
+        }
+
         const startDate = moment(start).unix()
         const endDate = moment(end).unix()
 
