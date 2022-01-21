@@ -8,7 +8,8 @@ export const SNAPSHOT_HUB_API = `${SNAPSHOT_BASE_URL}/api/message`
 export const BITQUERY_API = 'https://graphql.bitquery.io'
 
 export const TRADING_FEE_URL =  'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2'
-export const VOLUME_24H ='http://66.42.51.70:8000/subgraphs/name/huskyfarm/Vault'
+export const VOLUME_24H = 'http://thegraph.huski.finance/subgraphs/name/huskifinance/Vault'
+// 'http://66.42.51.70:8000/subgraphs/name/huskyfarm/Vault'
 
 
 /**
