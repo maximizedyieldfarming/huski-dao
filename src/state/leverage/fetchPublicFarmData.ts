@@ -117,13 +117,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       }
     ])
 
-  // const [quoteTokenMinDebtSize] =
-  //   await multicall(SimpleVaultConfigABI, [
-  //     {
-  //       address: getAddress(QuoteTokenInfo.token.config),
-  //       name: 'minDebtSize',
-  //     }
-  //   ])
 
   const [totalSupply, totalToken, vaultDebtVal, quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
     await multicall(VaultABI, [
@@ -153,21 +146,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       },
     ])
 
-  // const [quoteTokenTotalSupply, quoteTokenTotal, quoteTokenVaultDebtVal] =
-  //   await multicall(VaultABI, [
-  //     {
-  //       address: quoteTokenVaultAddresses,
-  //       name: 'totalSupply',
-  //     },
-  //     {
-  //       address: quoteTokenVaultAddresses,
-  //       name: 'totalToken',
-  //     },
-  //     {
-  //       address: quoteTokenVaultAddresses,
-  //       name: 'vaultDebtVal',
-  //     },
-  //   ])
 
   const calls = [
     // Balance of token in the LP contract
@@ -221,7 +199,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   // Total staked in LP, in quote token value
   const lpTotalInQuoteToken = quoteTokenAmountMc.times(new BigNumber(2))
 
-  const [infoLend, huskiPerBlockLend, totalAllocPointLend] =
+  const [infoLend, huskiPerBlockLend, totalAllocPointLend, infoFL, huskyPerBlock, totalAllocPointFL, quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
     TokenInfo.token?.poolId || TokenInfo.token?.poolId === 0
       ? await multicall(fairLaunchABI, [
         {
@@ -237,13 +215,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
           address: getFairLaunch(),
           name: 'totalAllocPoint',
         },
-      ])
-      : [null, null]
-
-
-  const [infoFL, huskyPerBlock, totalAllocPointFL] =
-    TokenInfo.token?.debtPoolId || TokenInfo.token?.debtPoolId === 0
-      ? await multicall(fairLaunchABI, [
         {
           address: getFairLaunch(),
           name: 'poolInfo',
@@ -257,13 +228,6 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
           address: getFairLaunch(),
           name: 'totalAllocPoint',
         },
-      ])
-      : [null, null]
-
-
-  const [quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
-    TokenInfo.quoteToken?.debtPoolId || TokenInfo.quoteToken?.debtPoolId === 0
-      ? await multicall(fairLaunchABI, [
         {
           address: getFairLaunch(),
           name: 'poolInfo',
@@ -280,18 +244,54 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
       ])
       : [null, null]
 
+console.log({infoLend, huskiPerBlockLend, totalAllocPointLend, infoFL, huskyPerBlock, totalAllocPointFL, quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint})
+  // const [infoFL, huskyPerBlock, totalAllocPointFL] =
+  //   TokenInfo.token?.debtPoolId || TokenInfo.token?.debtPoolId === 0
+  //     ? await multicall(fairLaunchABI, [
+  //       {
+  //         address: getFairLaunch(),
+  //         name: 'poolInfo',
+  //         params: [TokenInfo.token?.debtPoolId],
+  //       },
+  //       {
+  //         address: getFairLaunch(),
+  //         name: 'huskyPerBlock',
+  //       },
+  //       {
+  //         address: getFairLaunch(),
+  //         name: 'totalAllocPoint',
+  //       },
+  //     ])
+  //     : [null, null]
+
+
+  // const [quoteTokenInfo, quoteTokenAlpacaPerBlock, quoteTokenTotalAllocPoint] =
+  //   TokenInfo.quoteToken?.debtPoolId || TokenInfo.quoteToken?.debtPoolId === 0
+  //     ? await multicall(fairLaunchABI, [
+  //       {
+  //         address: getFairLaunch(),
+  //         name: 'poolInfo',
+  //         params: [TokenInfo.quoteToken?.debtPoolId],
+  //       },
+  //       {
+  //         address: getFairLaunch(),
+  //         name: 'huskyPerBlock',
+  //       },
+  //       {
+  //         address: getFairLaunch(),
+  //         name: 'totalAllocPoint',
+  //       },
+  //     ])
+  //     : [null, null]
+
   const masterChefAddress = getMasterChefAddress()
-  const [info, cakePerBlock, totalAllocPoint, tokenUserInfo, quoteTokenUserInfo] =
+  const [info, totalAllocPoint, tokenUserInfo, quoteTokenUserInfo] =
     pid || pid === 0
       ? await multicall(masterchefABI, [
         {
           address: masterChefAddress,
           name: 'poolInfo',
           params: [pid],
-        },
-        {
-          address: masterChefAddress,
-          name: 'cakePerBlock',
         },
         {
           address: masterChefAddress,
@@ -315,7 +315,7 @@ const fetchFarm = async (farm: LeverageFarm): Promise<PublicFarmData> => {
   const pooPerBlock = huskyPerBlock * infoFL.allocPoint / totalAllocPointFL;
   const quoteTokenPoolPerBlock = quoteTokenAlpacaPerBlock * quoteTokenInfo.allocPoint / quoteTokenTotalAllocPoint;
   const poolLendPerBlock = huskiPerBlockLend * infoLend.allocPoint / totalAllocPointLend;
-
+console.log({quoteTokenAlpacaPerBlock,quoteTokenInfo, quoteTokenTotalAllocPoint ,'TokenInfo.quoteToken':TokenInfo.quoteToken, 'TokenInfo.quoteToken?.debtPoolId': TokenInfo.quoteToken?.debtPoolId  })
 
   return {
     lptotalSupply: lptotalSupply[0]._hex,
