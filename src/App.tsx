@@ -34,7 +34,7 @@ const App: React.FC = () => {
   useFetchProfile()
   // usePollCoreFarmData()
   const { account } = useWeb3React()
-  // console.info('account=====test=====',account)
+
   return (
     <Router history={history}>
       <ResetCSS />
@@ -44,7 +44,6 @@ const App: React.FC = () => {
         {/* <SuspenseWithChunkError fallback={<PageLoader />}> */}
           <Switch>
             <Route path="/" exact>
-              {/* <Home /> */}
               <Dao />
             </Route>
           </Switch>

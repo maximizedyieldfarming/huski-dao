@@ -106,12 +106,6 @@ export interface LeverageFarmsState {
 }
 
 
-export interface StakeState {
-  data: Stake[]
-  loadArchivedFarmsData: boolean
-  userDataLoaded: boolean
-}
-
 export interface VaultFees {
   performanceFee: number
   callFee: number
@@ -434,17 +428,6 @@ export enum VotingStateLoadingStatus {
   ERROR = 'error',
 }
 
-export interface VotingState {
-  proposalLoadingStatus: VotingStateLoadingStatus
-  proposals: {
-    [key: string]: Proposal
-  }
-  voteLoadingStatus: VotingStateLoadingStatus
-  votes: {
-    [key: string]: Vote[]
-  }
-}
-
 export interface LotteryRoundUserTickets {
   isLoading?: boolean
   tickets?: LotteryTicket[]
@@ -527,11 +510,10 @@ export interface State {
   block: BlockState
   farms: FarmsState
   leverage: LeverageFarmsState
-  stake: StakeState
   predictions: PredictionsState
   profile: ProfileState
   teams: TeamsState
   collectibles: CollectiblesState
-  voting: VotingState
+  // voting: VotingState
   // lottery: LotteryState
 }
