@@ -1,0 +1,1 @@
+export { ReactComponent as HuskiDao } from './huskiDao.svg'

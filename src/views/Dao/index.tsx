@@ -1,143 +1,154 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import useTheme from 'hooks/useTheme'
-import { Text, Flex, Box, Button, Grid, Heading, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
-import { useTranslation } from 'contexts/Localization'
-import ConnectWalletButton from 'components/ConnectWalletButton'
+import React from 'react'
 import Page from 'components/Layout/Page'
-// import CurrencyInputHeader from 'components/CurrencyInputHeader'
-import { AppBody } from 'components/App'
+import styled, { css } from 'styled-components'
+// import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
+import { Box, Text, Flex, LogoIcon, useWalletModal, Input } from '@huskifinance/huski-frontend-uikit'
+import useAuth from 'hooks/useAuth'
+import { HuskiDao } from './assets'
 
-import { StyledInputCurrencyWrapper, StyledSwapContainer } from './styles'
-
-const Section = styled(Flex)`
-  background-color: 'transparent';
-  font-family: inter;
-  flex-direction: column;
-  overflow: auto;
-  ::-webkit-scrollbar {
-    height: 8px;
+const StyledPage = styled(Page)`
+  min-height: 100vh;
+  background: #16131e;
+  ${Text} {
+    color: #fff;
   }
-  > div:not(:last-child) {
-    margin-bottom: 1rem;
-  }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    height: 135px;
-    flex-direction: row;
-    justify-content: space-between;
-    > div:not(:last-child) {
-      margin-right: 1rem;
-      margin-bottom: 0;
-    }
-  }
+  padding: 30px 65px;
 `
-const SBBox = styled(Box)`
-  > h2 {
-    font-family: 'BalooBhaijaan';
-  }
-  align-items: center;
+const StyledNav = styled.nav`
   display: flex;
-  border-radius: 15px !important;
-  backdrop-filter: blur(200px);
-  min-width: 520px;
-  @media screen and (max-width: 1480px) {
-    padding: 30px 0px;
+  justify-content: space-between;
+  padding: 0 125px;
+`
+const Body = styled(Flex)`
+  width: 100%;
+  // height: 100vh;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    padding: 0 125px;
+    flex-direction: row;
+    // justify-content: space-between;
   }
-  @media screen and (max-width: 600px) {
-    min-width: unset;
-    > h2 {
-      margin-left: 20px !important;
-      font-size: 35px !important;
-    }
+  > * {
+    flex: 1 0 50%;
   }
 `
+const Main = styled(Box)`
+  height: 100%;
+`
+const Aside = styled(Box)`
+  height: 100%;
+`
+const Container = styled(Box)`
+  background: linear-gradient(167.86deg, #1d1723 4.99%, #1d1727 92.76%);
+  border: 2px solid #282627;
+  border-radius: 15px;
+  padding: 20px;
+  width: 100%;
+  max-width: 513px;
+`
+const Footer = styled(Box)``
+const gradientBorder = css`
+  display: flex;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+  max-width: 22em;
 
-const Dao: React.FC = () => {
-  const { theme } = useTheme()
-  const { t } = useTranslation()
+  position: relative;
+  padding: 1rem;
+  // box-sizing: border-box;
 
-  const [isChartExpanded, setIsChartExpanded] = useState(false)
-  const { isMobile, isTablet } = useMatchBreakpoints()
-  const isSmallScreen = isMobile || isTablet
+  background-clip: padding-box; /* !importanté */
+  border: 2px solid transparent; /* !importanté */
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    margin: -2px; /* !importanté */
+    border-radius: inherit; /* !importanté */
+    background: linear-gradient(to right, red, orange);
+  }
+`
+const StyledButton = styled.button<{ filled?: boolean }>`
+  background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
+  border: 1px solid white;
+  border-radius: 14px;
+  color: #fff;
+  cursor: pointer;
+`
+
+const StyledConnectWallet = (props) => {
+  const { login, logout } = useAuth()
+  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
+  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
-    <>
-      <Page>
-        <Flex>
-          <Text>how to xxx</Text>
-          <Button >
-            Launch App
-          </Button>
-          <Button >
-            Launch App
-          </Button>
-        </Flex>
-        <Section>
-          <SBBox
-            className="block"
-            style={{
-              position: 'relative',
-              display: 'flex',
-              background: 'red',
-              alignItems: 'center',
-              flex: isSmallScreen ? '1' : '5',
-            }}
-          >
-            Huski Finance
-          </SBBox>
-          <SBBox
-            className="block"
-            style={{
-              position: 'relative',
-              display: 'flex',
-              background: 'red',
-              alignItems: 'center',
-              flex: isSmallScreen ? '1' : '5',
-            }}
-          >
-            Huski Finance
-          </SBBox>
-
-        </Section>
-        <Section>
-          <Button >
-            Launch App
-          </Button>
-          <br />
-          <Button >
-            Launch App
-          </Button>
-        </Section>
-
-
-
-        <Flex width="100%" justifyContent="center" position="relative">
-          <Flex flexDirection="column">
-            <StyledSwapContainer $isChartExpanded={isChartExpanded}>
-              <StyledInputCurrencyWrapper mt={isChartExpanded ? '24px' : '0'}>
-
-                <AppBody>
-                  <Flex flexDirection="column" alignItems="center">
-                    <Heading as="h2" mb="8px">
-                      aaaaa
-                    </Heading>
-                    <Flex alignItems="center">
-                      <Text color="textSubtle" fontSize="14px">
-                        sssss
-                      </Text>
-                    </Flex>
-                  </Flex>
-
-                </AppBody>
-              </StyledInputCurrencyWrapper>
-            </StyledSwapContainer>
-          </Flex>
-        </Flex>
-      </Page>
-
-    </>
+    <StyledButton onClick={onPresentConnectModal} {...props} heigth="36px">
+      Connect Wallet
+    </StyledButton>
   )
 }
 
-export default Dao
+const LaunchCampaign = () => {
+  return (
+    <StyledPage>
+      <StyledNav>
+        <Flex alignItems="center">
+          <Box background="#fff" p="1px" borderRadius="100%" width="65px" height="65px" mr="18px">
+            <LogoIcon width="100%" />
+          </Box>
+          <Text>HUSKI DAO Launch Campaign</Text>
+        </Flex>
+        <Flex>
+          <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
+        </Flex>
+      </StyledNav>
+      <Container width="100%" maxWidth="748px" mx="auto">
+        <Text>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium architecto sapiente sed ea beatae placeat
+          delectus. Velit sunt quis, labore, cum repellendus sapiente rerum dolorum voluptatem, obcaecati aliquid vitae
+          quo ratione? Praesentium perspiciatis dolorum sunt vel ratione beatae excepturi numquam dicta ex dignissimos
+          a, optio deleniti harum at quos voluptatem.
+        </Text>
+      </Container>
+      <Body>
+        <Main as="main">
+          <Container>
+            <HuskiDao />
+            <Text>Main</Text>
+          </Container>
+          <Container>
+            <Text>Main</Text>
+          </Container>
+          <Container>
+            <Text>Main</Text>
+          </Container>
+        </Main>
+        <Aside as="aside">
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+        </Aside>
+      </Body>
+      <Footer>
+        <Text>Funded by</Text>
+        <Text>Launch Timeline</Text>
+        <Text>Want to connect with us?</Text>
+      </Footer>
+    </StyledPage>
+  )
+}
+
+export default LaunchCampaign
