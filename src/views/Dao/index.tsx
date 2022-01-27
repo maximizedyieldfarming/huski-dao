@@ -1,6 +1,7 @@
 import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 // import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
 import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
@@ -8,12 +9,20 @@ import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/Menu/UserMenu'
 import { StyledButton, StyledNav, Main, Aside, Container, Footer, Body } from './styles'
 import MainContent from './MainContent'
+import AsideContent from './AsideContent'
 
 const StyledPage = styled(Page)`
   min-height: 100vh;
   background: #16131e;
   ${Text} {
     color: #fff;
+    &.title {
+      font-size: 20px;
+      background: linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
   padding: 30px 65px;
 `
@@ -50,10 +59,8 @@ const LaunchCampaign = () => {
       </StyledNav>
       <Container width="100%" maxWidth="748px" mx="auto">
         <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium architecto sapiente sed ea beatae placeat
-          delectus. Velit sunt quis, labore, cum repellendus sapiente rerum dolorum voluptatem, obcaecati aliquid vitae
-          quo ratione? Praesentium perspiciatis dolorum sunt vel ratione beatae excepturi numquam dicta ex dignissimos
-          a, optio deleniti harum at quos voluptatem.
+          We believe the fate of humanity will be decided at the frontier of technological innovation, financial
+          revolution, and human collaboration.
         </Text>
       </Container>
       <Body>
@@ -61,22 +68,30 @@ const LaunchCampaign = () => {
           <MainContent />
         </Main>
         <Aside as="aside">
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
-          <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, quasi?</Text>
+          <AsideContent />
         </Aside>
       </Body>
       <Footer>
-        <Text>Funded by</Text>
-        <Text>Launch Timeline</Text>
-        <Text>Want to connect with us?</Text>
+        <Flex justifyContent="center">
+          <Text fontSize="48px">Funded by</Text>
+        </Flex>
+        <Flex flexWrap="wrap" justifyContent="center">
+          <Box width="185px" mr="39px" height="85px" background="#fff" />
+          <Box width="185px" mr="39px" height="85px" background="#fff" />
+          <Box width="185px" mr="39px" height="85px" background="#fff" />
+        </Flex>
+        <Flex justifyContent="center">
+          <Text fontSize="48px">Launch Timeline</Text>
+        </Flex>
+        <Box width="100%" height="50px" background="#fff" />
+        <Flex justifyContent="center">
+          <Text fontSize="48px">Want to connect with us?</Text>
+        </Flex>
+        <Flex justifyContent="center">
+          <StyledButton filled as={Link} to="#">
+            Get In Touch
+          </StyledButton>
+        </Flex>
       </Footer>
     </StyledPage>
   )

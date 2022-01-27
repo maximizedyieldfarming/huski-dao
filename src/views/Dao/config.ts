@@ -3,19 +3,12 @@ interface Funders {
     image: string,
     description: string,
 }
-interface Dates {
-    phase1: string,
-    phase2: string,
-    phase3: string,
-}
 export const funders: Array<Funders> = [{
     name: 'mike',
     image: 'https://avatars2.githubusercontent.com/u/12097?s=460&v=4',
     description: 'mike is a founder of the company'
 }]
 
-export const dates = {
-    phase1: '2018-01-01',
-    phase2: '2018-02-01',
-    phase3: '2018-03-01',
-}
+export const NFT_SPONSORS_TARGET = 100 // NFTs to be distributed to sponsors who have donated more than 50,000 USD
+export const FUNDING_AMOUNT_TARGET = 1000000 // funding amount to be reached is 1,000,000 USD (1 million), and can go over this target
+export const FUNDING_PERIOD_TARGET = '2022-03-31T23:59:59.000Z' // Date in ISO-8601 format 

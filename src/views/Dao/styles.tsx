@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Flex } from '@huskifinance/huski-frontend-uikit'
 import styled, { css } from 'styled-components'
 
@@ -63,8 +64,57 @@ const gradientBorder = css`
 `
 export const StyledButton = styled.button<{ filled?: boolean }>`
   background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
-  border: 1px solid white;
+  border: ${({ filled }) => (filled ? 'none' : '1px solid white')};
   border-radius: 14px;
   color: #fff;
   cursor: pointer;
 `
+export const InputContainer = styled(Flex)`
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 0 10px;
+  align-items: center;
+  > input {
+    background: none;
+    border-radius: 0;
+    border: none;
+  }
+`
+export const Banner = styled(Flex)`
+  align-items: center;
+  background: #261f30;
+  border-radius: 8px;
+  width: fit-content;
+`
+// Button group
+const StyledButtonGroup = styled(Flex)<{ amount?: boolean; disabled?: boolean }>`
+  width: 100%;
+  background: #261f30;
+  border-radius: ${({ amount }) => (amount ? '12px' : '0')};
+  > button {
+    flex: 1;
+    &:nth-child(2) {
+      margin: ${({ amount }) => (amount ? '0 5px' : '0')};
+    }
+  }
+`
+export const ButtonGroupItem = styled.button`
+  cursor: pointer;
+`
+
+export const ButtonGroup = ({ activeIndex = 0, onItemClick, disabled, children, ...props }) => {
+  return (
+    <StyledButtonGroup {...props} disabled={disabled}>
+      {React.Children.map(children, (child: React.ReactElement, index) => {
+        return React.cloneElement(child, {
+          isActive: activeIndex === index,
+          onClick: onItemClick ? () => onItemClick(index) : undefined,
+          disabled,
+        })
+      })}
+    </StyledButtonGroup>
+  )
+}
+
+export const ProgressBar = styled.div<{ currentProgress: number }>``
