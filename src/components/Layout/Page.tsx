@@ -4,7 +4,6 @@ import { useTranslation } from 'contexts/Localization'
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router'
 import { DEFAULT_META, getCustomMeta } from 'config/constants/meta'
-// import { usePriceCakeBusd } from 'hooks/api'
 import Container from './Container'
 
 const StyledPage = styled(Container)`

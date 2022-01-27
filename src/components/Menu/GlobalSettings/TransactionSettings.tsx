@@ -3,7 +3,7 @@ import { Text, Button, Input, Flex, Box } from '@huskifinance/huski-frontend-uik
 import { useTranslation } from 'contexts/Localization'
 import { useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
 import { useTheme } from 'styled-components'
-import QuestionHelper from '../../QuestionHelper'
+// import QuestionHelper from '../../QuestionHelper'
 
 enum SlippageError {
   InvalidInput = 'InvalidInput',
@@ -78,13 +78,13 @@ const SlippageTabs = () => {
         <Text fontSize="14px" fontWeight="700">
           {t('Slippage Tolerance')}
         </Text>
-        <QuestionHelper
+        {/* <QuestionHelper
           text={t(
             'Setting a high slippage tolerance can help transactions succeed, but you may not get such a good price. Use with caution.',
           )}
           placement="top-start"
           ml="4px"
-        />
+        /> */}
       </Flex>
       <Flex flexWrap="wrap">
         <Button

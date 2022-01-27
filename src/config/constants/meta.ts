@@ -14,19 +14,6 @@ export const getCustomMeta = (path: string, t: ContextApi['t']): PageMeta => {
       return {
         title: `${t('Home')} | ${t('Huski')}`,
       }
-    case '/competition':
-      return {
-        title: `${t('Trading Battle')} | ${t('Huski')}`,
-      }
-
-    case '/farms':
-      return {
-        title: `${t('Farms')} | ${t('Huski')}`,
-      }
-    case '/leverage':
-      return {
-        title: `${t('Leverage')} | ${t('Huski')}`,
-      }
 
     default:
       return null

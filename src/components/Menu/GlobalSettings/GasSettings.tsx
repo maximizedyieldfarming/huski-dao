@@ -1,6 +1,6 @@
 import React from 'react'
 import { Flex, Button, Text } from '@huskifinance/huski-frontend-uikit'
-import QuestionHelper from 'components/QuestionHelper'
+// import QuestionHelper from 'components/QuestionHelper'
 import { useTranslation } from 'contexts/Localization'
 import { GAS_PRICE_GWEI, GAS_PRICE } from 'state/user/hooks/helpers'
 import { useGasPriceManager } from 'state/user/hooks'
@@ -15,13 +15,6 @@ const GasSettings = () => {
         <Text fontSize="14px" fontWeight="700">
           {t('Default Transaction Speed (GWEI)')}
         </Text>
-        <QuestionHelper
-          text={t(
-            'Adjusts the gas price (transaction fee) for your transaction. Higher GWEI = higher speed = higher fees',
-          )}
-          placement="top-start"
-          ml="4px"
-        />
       </Flex>
       <Flex flexWrap="wrap">
         <Button

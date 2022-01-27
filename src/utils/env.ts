@@ -1,6 +1,5 @@
 
 import mainnet from '../mainnet.json';
-import testnet from '../testnet.json';
 
 const DevRPC = 'http://localhost:6699';
 const TestRPC = 'https://data-seed-prebsc-1-s3.binance.org:8545'; // test net
@@ -29,7 +28,7 @@ export function getFairLaunch() {
             address = mainnet.FairLaunch.address;
             break;
         case '97':
-            address = testnet.FairLaunch.address;
+            address = mainnet.FairLaunch.address;
             break;
         default:
             address = mainnet.FairLaunch.address;

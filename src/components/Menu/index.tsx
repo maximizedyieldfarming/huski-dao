@@ -6,14 +6,14 @@ import useTheme from 'hooks/useTheme'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
-import { useHuskiPrice } from 'hooks/api'
+// import { useHuskiPrice } from 'hooks/api'
 import config from './config'
 import UserMenu from './UserMenu'
 import GlobalSettings from './GlobalSettings'
 
 const Menu = (props) => {
   const { isDark, toggleTheme } = useTheme()
-  const huskyPrice = useHuskiPrice()
+  // const huskyPrice = useHuskiPrice()
   const { currentLanguage, setLanguage, t } = useTranslation()
   const { account } = useWeb3React()
 
@@ -28,7 +28,7 @@ const Menu = (props) => {
       langs={languageList}
       setLang={setLanguage}
       links={config(t)}
-      huskiPriceUsd={new BigNumber(huskyPrice || 0).toFixed(2, 1)}
+      huskiPriceUsd={new BigNumber( 0).toFixed(2, 1)}
       {...props}
     />
   )

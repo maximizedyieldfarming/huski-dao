@@ -19,42 +19,6 @@ export interface Token {
   coingeckoId?: string
 }
 
-export enum PoolIds {
-  poolBasic = 'poolBasic',
-  poolUnlimited = 'poolUnlimited',
-}
-
-export type IfoStatus = 'idle' | 'coming_soon' | 'live' | 'finished'
-
-interface IfoPoolInfo {
-  saleAmount: string
-  raiseAmount: string
-  cakeToBurn: string
-  distributionRatio: number // Range [0-1]
-}
-
-export interface Ifo {
-  id: string
-  isActive: boolean
-  address: string
-  name: string
-  currency: Token
-  token: Token
-  releaseBlockNumber: number
-  articleUrl: string
-  campaignId: string
-  tokenOfferingPrice: number
-  version: number
-  [PoolIds.poolBasic]?: IfoPoolInfo
-  [PoolIds.poolUnlimited]: IfoPoolInfo
-}
-
-export enum PoolCategory {
-  'COMMUNITY' = 'Community',
-  'CORE' = 'Core',
-  'BINANCE' = 'Binance', // Pools using native BNB behave differently than pools using a token
-  'AUTO' = 'Auto',
-}
 
 export interface FarmConfig {
   pid: number
@@ -70,18 +34,6 @@ export interface FarmConfig {
     endBlock: number
   }
 }
-
-export interface StakeConfig {
-  name: string
-  symbol: string
-  pid: number
-  debtPid?: number
-  token?: Token
-  vaultAddress?: Address
-  debtVaultAddress?: Address
-  fairLaunchAddress?: Address
-}
-
 
 
 export interface LeverageFarmConfig {
@@ -275,12 +227,6 @@ export interface Auction {
   initialBidAmount: number
   topLeaderboard: number
   leaderboardThreshold: BigNumber
-}
-
-export interface BidderAuction {
-  id: number
-  amount: BigNumber
-  claimed: boolean
 }
 
 export interface Bidder extends FarmAuctionBidderConfig {
