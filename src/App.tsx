@@ -9,7 +9,7 @@ import { useFetchProfile } from 'state/profile/hooks'
 // import { DatePickerPortal } from 'components/DatePicker'
 import GlobalStyle from './style/Global'
 import Menu from './components/Menu'
-// import SuspenseWithChunkError from './components/SuspenseWithChunkError'
+import SuspenseWithChunkError from './components/SuspenseWithChunkError'
 import { ToastListener } from './contexts/ToastsContext'
 import PageLoader from './components/Loader/PageLoader'
 // import EasterEgg from './components/EasterEgg'
@@ -20,7 +20,6 @@ import history from './routerHistory'
 const Dao = lazy(() => import('./views/Dao'))
 
 const NotFound = lazy(() => import('./views/NotFound'))
-
 
 // This config is required for number formatting
 BigNumber.config({
@@ -41,13 +40,13 @@ const App: React.FC = () => {
       <GlobalStyle />
       {/* <GlobalCheckClaimStatus excludeLocations={['/collectibles']} /> */}
       <Menu>
-        {/* <SuspenseWithChunkError fallback={<PageLoader />}> */}
+        <SuspenseWithChunkError fallback={<PageLoader />}>
           <Switch>
             <Route path="/" exact>
               <Dao />
             </Route>
           </Switch>
-        {/* </SuspenseWithChunkError> */}
+        </SuspenseWithChunkError>
       </Menu>
       {/* <EasterEgg iterations={2} /> */}
       <ToastListener />
