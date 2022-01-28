@@ -7,9 +7,21 @@ import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-f
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
-import { StyledButton, StyledNav, Main, Aside, Container, Footer, Body } from './styles'
+import {
+  StyledButton,
+  StyledNav,
+  Main,
+  Aside,
+  Container,
+  Footer,
+  Body,
+  FoundersWrapper,
+  FoundersContainer,
+  Timeline,
+} from './styles'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
+import { founders } from './config'
 
 const StyledPage = styled(Page)`
   min-height: 100vh;
@@ -64,7 +76,7 @@ const LaunchCampaign = () => {
         </Flex>
       </StyledNav>
       <Container width="100%" maxWidth="748px !important" mx="auto" p="17px 24px">
-        <Text fontFamily={`'M PLUS 2'`} fontWeight={900} textAlign="center">
+        <Text fontFamily={`'M PLUS 2'`} fontWeight={900} textAlign="center" fontSize="17px">
           We believe the fate of humanity will be decided at the frontier of technological innovation, financial
           revolution, and human collaboration.
         </Text>
@@ -87,15 +99,18 @@ const LaunchCampaign = () => {
         <Flex justifyContent="center">
           <Text fontSize="48px">Founded by</Text>
         </Flex>
-        <Flex flexWrap="wrap" justifyContent="center">
-          <Box width="185px" mr="39px" height="85px" background="#fff" />
-          <Box width="185px" mr="39px" height="85px" background="#fff" />
-          <Box width="185px" mr="39px" height="85px" background="#fff" />
-        </Flex>
+        <FoundersWrapper>
+          {founders.map((founder) => (
+            <FoundersContainer key={founder.name}>
+              {/* img here */}
+              <Text>{founder.name}</Text>
+            </FoundersContainer>
+          ))}
+        </FoundersWrapper>
         <Flex justifyContent="center">
           <Text fontSize="48px">Launch Timeline</Text>
         </Flex>
-        <Box width="100%" height="50px" background="#fff" />
+        <Timeline />
         <Flex justifyContent="center">
           <Text fontSize="48px">Contact us</Text>
         </Flex>

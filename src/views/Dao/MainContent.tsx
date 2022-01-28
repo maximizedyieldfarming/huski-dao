@@ -125,13 +125,8 @@ const MainContent = () => {
   //     setIsApproving(false)
   //   }
   // }
-
-  const { login, logout } = useAuth()
-  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
-
-  return (
-    <>
+  const walletReady = () => {
+    return (
       <Container mb="13px" p="14px 21px 29px">
         <HuskiDao />
         <Text fontSize="24px" fontWeight={800}>
@@ -163,18 +158,12 @@ const MainContent = () => {
           </Text>
         ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
-          {!account ? (
-            <StyledButton onClick={onPresentConnectModal} heigth="36px">
-              Connect Wallet
-            </StyledButton>
-          ) : (
-            <StyledButton
-              filled
-              disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
-            >
-              Approve &amp; Confirm
-            </StyledButton>
-          )}
+          <StyledButton
+            filled
+            disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
+          >
+            Approve &amp; Confirm
+          </StyledButton>
         </Box>
         <Box width="100%">
           <Text fontSize="12px">Referral Link:</Text>
@@ -183,6 +172,87 @@ const MainContent = () => {
           </Text>
         </Box>
       </Container>
+    )
+  }
+  const walletNotReady = () => {
+    return (
+      <Container mb="13px" p="87px 21px 19px">
+        <Text fontSize="24px" fontWeight={800} mb="25px">
+          Support Huski DAO
+        </Text>
+        <Flex width="100%" justifyContent="space-between" mb="28px">
+          <Text>Token:</Text>
+          <Text>Huski DAO (HIDAO)</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" mb="28px">
+          <Text>Type:</Text>
+          <Text>ERC - 20 (Ethereum)</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" mb="28px">
+          <Text>Price:</Text>
+          <Text>2 HIDAO per $1000</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" mb="28px">
+          <Text>Goal:</Text>
+          <Text>
+            {FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" mb="28px">
+          <Text>Distribution：</Text>
+          <Text>Claim on HuskiDAO Landing Page</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" mb="28px">
+          <Text>Accepted Payments:</Text>
+          <Flex>
+            <Flex>
+              <ETHIcon />
+              <Text>ETH</Text>
+            </Flex>
+            <Flex mx="15px">
+              <USDTIcon />
+              <Text>USDT</Text>
+            </Flex>
+            <Flex>
+              <USDCIcon />
+              <Text>USDC</Text>
+            </Flex>
+          </Flex>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between">
+          <Text>Deadline:</Text>
+          <Text>March 31, 2022 (UTC)</Text>
+        </Flex>
+
+        <Box mx="auto" width="fit-content" mt="23px">
+          <StyledButton onClick={onPresentConnectModal} heigth="36px">
+            Connect Wallet
+          </StyledButton>
+        </Box>
+      </Container>
+    )
+  }
+  // using this function because theres a third condition, so its easier to read like this
+  // insted of using ternary inside jsx
+  const getFirstContainer = () => {
+    if (account) {
+      return walletReady()
+    }
+    return walletNotReady()
+  }
+
+  const { login, logout } = useAuth()
+  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
+  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
+
+  return (
+    <>
+      {getFirstContainer()}
 
       <Container mb="13px" p="31px 21px 24px">
         <Text fontSize="20px" fontWeight={800}>

@@ -6,6 +6,7 @@ import {
   ButtonMenu as UikitButtonMenu,
   ButtonMenuItemProps,
   BaseButtonProps,
+  Text,
 } from '@huskifinance/huski-frontend-uikit'
 import styled, { css } from 'styled-components'
 
@@ -99,6 +100,34 @@ export const Separator = styled(Box)`
   height: 1px;
   background: #fff;
 `
+export const FoundersWrapper = styled(Flex)`
+  width: 100%;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  // align-content: space-between;
+  row-gap: 10px;
+  // column-gap: 6px;
+  > ${Flex} {
+    flex: 1 0 170px;
+    // &:not(:last-child) {
+    //   margin-right: 8px;
+    // }
+  }
+`
+export const FoundersContainer = styled(Flex)`
+  width: 170px;
+  max-width: 170px;
+  height: 60px;
+  background: #28273066;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 19px 14px;
+  * {
+    font-size: 12px;
+  }
+`
+
 // CUSTOM (COMPLEX) COMPONENTS
 // Button group
 // Re-doing these buttons because styling from uikit is different from what's on the desigin
@@ -220,5 +249,105 @@ export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProg
     <ProgressBarContainer>
       <Progress currentProgress={getResettingProgress()?.toString() || '0'} color={getCurrentColor()} />
     </ProgressBarContainer>
+  )
+}
+
+// TIMELINE
+const TimelineContainer = styled.div`
+  width: 100%;
+`
+const TimelineTrack = styled(Box)`
+  width: 100%;
+  height: 4px;
+  background: white;
+  position: relative;
+`
+const TimelineProgress = styled.div`
+  background: #d953e9;
+  width: 25%;
+  height: 100%;
+`
+const TimelineStep = styled.div`
+  width: 6px;
+  height: 18px;
+  position: absolute;
+  transform: translateY(-50%);
+  background: #d953e9;
+  border-radius: 6px;
+  &:first-child {
+    left: 0;
+  }
+  &:nth-child(2) {
+    left: 25%;
+  }
+  &:nth-child(3) {
+    left: 75%;
+  }
+  &:nth-child(4) {
+    left: 100%;
+  }
+`
+
+export const Timeline = () => {
+  return (
+    <TimelineContainer>
+      <Flex width="100%" position="relative">
+        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" left="0" bottom="0">
+          2021 Q4
+        </Box>
+        <Box
+          maxWidth="137px"
+          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
+          position="absolute"
+          left="25%"
+          bottom="0"
+        >
+          2022 Q1
+        </Box>
+        <Box
+          maxWidth="137px"
+          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
+          position="absolute"
+          left="75%"
+          bottom="0"
+        >
+          2022 Q2
+        </Box>
+        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" right="0" bottom="0">
+          <Text textAlign="right">2022 Q3</Text>
+        </Box>
+      </Flex>
+      <TimelineTrack my="15px">
+        <TimelineStep />
+        <TimelineStep />
+        <TimelineStep />
+        <TimelineStep />
+        <TimelineProgress />
+      </TimelineTrack>
+      <Flex width="100%" position="relative">
+        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" left="0">
+          Beta Test Huski Finance
+        </Box>
+        <Box
+          maxWidth="137px"
+          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
+          position="absolute"
+          left="25%"
+        >
+          DAO Launching Campaing
+        </Box>
+        <Box
+          maxWidth="137px"
+          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
+          position="absolute"
+          left="75%"
+        >
+          DAO Launch
+        </Box>
+        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" right="0">
+          <Text textAlign="right">Fair Launch Huski Finance</Text>
+        </Box>
+      </Flex>
+    </TimelineContainer>
   )
 }
