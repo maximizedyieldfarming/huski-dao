@@ -1,13 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ProfileState } from 'state/types'
-import type { AppDispatch } from 'state'
-import getProfile, { GetProfileResponse } from './getProfile'
+import { ProfileState, Profile } from 'state/types'
+// import type { AppDispatch } from 'state'
 
 const initialState: ProfileState = {
   isInitialized: false,
   isLoading: true,
   hasRegistered: false,
   data: null,
+}
+
+export interface GetProfileResponse {
+  hasRegistered: boolean
+  profile?: Profile
 }
 
 export const profileSlice = createSlice({
@@ -45,16 +49,5 @@ export const profileSlice = createSlice({
 export const { profileFetchStart, profileFetchSucceeded, profileFetchFailed, profileClear, addPoints } =
   profileSlice.actions
 
-// Thunks
-// TODO: this should be an AsyncThunk
-export const fetchProfile = (address: string) => async (dispatch: AppDispatch) => {
-  try {
-    dispatch(profileFetchStart())
-    const response = await getProfile(address)
-    dispatch(profileFetchSucceeded(response))
-  } catch (error) {
-    dispatch(profileFetchFailed())
-  }
-}
 
 export default profileSlice.reducer

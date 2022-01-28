@@ -3,7 +3,6 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import {
   getVaultContract,
   getBep20Contract,
-  getClaimFairLaunchContract,
   getProfileContract,
   getErc721Contract,
 } from 'utils/contractHelpers'
@@ -42,17 +41,10 @@ export const useERC721 = (address: string) => {
   return useMemo(() => getErc721Contract(address, library.getSigner()), [address, library])
 }
 
-
-export const useClaimFairLaunch = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getClaimFairLaunchContract(library.getSigner()), [library])
-}
-
 export const useProfile = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getProfileContract(library.getSigner()), [library])
 }
-
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
