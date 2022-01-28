@@ -29,18 +29,16 @@ const StyledPage = styled(Page)`
 const StyledConnectWallet = (props) => {
   const { login, logout } = useAuth()
   const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  
-  console.info('hasProvider',hasProvider )
-  console.info('!!window.ethereum',!!window.ethereum )
-  console.info('!!window.BinanceChain', window )
+
+  console.info('hasProvider', hasProvider)
+  console.info('!!window.ethereum', !!window.ethereum)
+  console.info('!!window.BinanceChain', window)
   const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
   const { account } = useWeb3React()
 
-
-  if( window.BinanceChain ){
+  if (window.BinanceChain) {
     alert('qinghuan wangluo')
-
-     }
+  }
   if (!account) {
     return (
       <StyledButton onClick={onPresentConnectModal} {...props} heigth="36px">
