@@ -1,5 +1,11 @@
 import React from 'react'
-import { Box, Flex } from '@huskifinance/huski-frontend-uikit'
+import {
+  Box,
+  Flex,
+  Button,
+  ButtonMenu as UikitButtonMenu,
+  ButtonMenuItem as UikitButtonMenuItem,
+} from '@huskifinance/huski-frontend-uikit'
 import styled, { css } from 'styled-components'
 
 export const StyledNav = styled.nav`
@@ -26,13 +32,15 @@ export const Main = styled(Box)`
 export const Aside = styled(Box)`
   height: 100%;
 `
-export const Container = styled(Box)`
+export const Container = styled(Flex)`
   background: linear-gradient(167.86deg, #1d1723 4.99%, #1d1727 92.76%);
   border: 2px solid #282627;
   border-radius: 15px;
-  padding: 20px;
+  // padding: 20px;
   width: 100%;
   max-width: 513px;
+  flex-direction: column;
+  align-items: center;
 `
 export const Footer = styled(Box)``
 const gradientBorder = css`
@@ -62,12 +70,13 @@ const gradientBorder = css`
     background: linear-gradient(to right, red, orange);
   }
 `
-export const StyledButton = styled.button<{ filled?: boolean }>`
+export const StyledButton = styled(Button)<{ filled?: boolean }>`
   background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
   border: ${({ filled }) => (filled ? 'none' : '1px solid white')};
   border-radius: 14px;
   color: #fff;
-  cursor: pointer;
+  font-weight: 700;
+  box-shadow: none;
 `
 export const InputContainer = styled(Flex)`
   width: 100%;
@@ -87,20 +96,38 @@ export const Banner = styled(Flex)`
   border-radius: 8px;
   width: fit-content;
 `
+export const Separator = styled(Box)`
+  width: 100%;
+  height: 1px;
+  background: #fff;
+`
 // Button group
 const StyledButtonGroup = styled(Flex)<{ amount?: boolean; disabled?: boolean }>`
   width: 100%;
-  background: #261f30;
+  background: ${({ amount }) => (amount ? ' #312B39' : 'transparent')};
+  height: ${({ amount }) => (amount ? ' 54px' : '50px')};
   border-radius: ${({ amount }) => (amount ? '12px' : '0')};
-  > button {
+  padding: ${({ amount }) => (amount ? '4px' : '0')};
+  > ${StyledButton} {
     flex: 1;
-    &:nth-child(2) {
-      margin: ${({ amount }) => (amount ? '0 5px' : '0')};
+    &:not(:last-child) {
+      margin-right: ${({ amount }) => (amount ? '0' : '5px')};
     }
+    background: ${({ amount }) => (amount ? 'transparent' : null)};
+    border-radius: ${({ amount }) => (amount ? '12px' : '0')};
   }
 `
-export const ButtonGroupItem = styled.button`
+export const ButtonGroupItem = styled(StyledButton)`
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #261f30;
+  border: none;
+  border-radius: 0px;
+  > * {
+    font-weight: 600;
+  }
 `
 
 export const ButtonGroup = ({ activeIndex = 0, onItemClick, disabled, children, ...props }) => {

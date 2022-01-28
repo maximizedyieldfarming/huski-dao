@@ -16,15 +16,14 @@ const StyledPage = styled(Page)`
   background: #16131e;
   ${Text} {
     color: #fff;
-    &.title {
-      font-size: 20px;
-      background: linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
   }
-  padding: 30px 65px;
+  * {
+    font-family: 'M PLUS 2', sans-serif;
+    font-weight: 600;
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 30px 65px;
+  }
 `
 
 const StyledConnectWallet = (props) => {
@@ -66,12 +65,18 @@ const LaunchCampaign = () => {
           <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
         </Flex>
       </StyledNav>
-      <Container width="100%" maxWidth="748px" mx="auto">
-        <Text>
+      <Container width="100%" maxWidth="748px !important" mx="auto" p="17px 24px">
+        <Text fontFamily={`'M PLUS 2'`} fontWeight={900} textAlign="center">
           We believe the fate of humanity will be decided at the frontier of technological innovation, financial
           revolution, and human collaboration.
         </Text>
       </Container>
+      <Flex justifyContent="center">
+        <StyledButton filled mr="28px">
+          View One Pager
+        </StyledButton>
+        <StyledButton filled>Huski Finance</StyledButton>
+      </Flex>
       <Body>
         <Main as="main">
           <MainContent />
@@ -82,7 +87,7 @@ const LaunchCampaign = () => {
       </Body>
       <Footer>
         <Flex justifyContent="center">
-          <Text fontSize="48px">Funded by</Text>
+          <Text fontSize="48px">Founded by</Text>
         </Flex>
         <Flex flexWrap="wrap" justifyContent="center">
           <Box width="185px" mr="39px" height="85px" background="#fff" />
@@ -97,9 +102,7 @@ const LaunchCampaign = () => {
           <Text fontSize="48px">Want to connect with us?</Text>
         </Flex>
         <Flex justifyContent="center">
-          <StyledButton filled as={Link} to="#">
-            Get In Touch
-          </StyledButton>
+          <StyledButton filled>Fill in Google Form</StyledButton>
         </Flex>
       </Footer>
     </StyledPage>

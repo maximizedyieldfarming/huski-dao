@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { Box, Text, Flex, Input, LogoIcon } from '@huskifinance/huski-frontend-uikit'
 import { ButtonGroup, Container, InputContainer, StyledButton, ButtonGroupItem, Banner } from './styles'
-import { HuskiDao } from './assets'
+import { HuskiDao, USDCIcon, ETHIcon } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 
 const MainContent = () => {
@@ -77,6 +77,15 @@ const MainContent = () => {
   }) // to get from some API ???
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
+  const getSelectedTokenIcon = () => {
+    if (selectedToken === 'ETH') {
+      return <ETHIcon />
+    }
+    /* if (selectedToken === 'USDT') {
+      return <USDCIcon />
+    } */
+    return <USDCIcon />
+  }
 
 
   // const { allowance: tokenAllowance } = useTokenAllowance(
@@ -107,33 +116,40 @@ const MainContent = () => {
 
   return (
     <>
-      <Container mb="13px">
-        <Box mx="auto" width="fit-content">
-          <HuskiDao />
-        </Box>
+      <Container mb="13px" p="14px 21px 29px">
+        <HuskiDao />
+        <Text fontSize="24px" fontWeight={800}>
+          Fund Huski DAO
+        </Text>
         <ButtonGroup onItemClick={handleTokenButton} activeIndex={null} disabled={null}>
-          <ButtonGroupItem>ETH</ButtonGroupItem>
-          <ButtonGroupItem>USDT</ButtonGroupItem>
-          <ButtonGroupItem>USDC</ButtonGroupItem>
+          <ButtonGroupItem>
+            <ETHIcon style={{ marginRight: '5px' }} />
+            <Text color="black">ETH</Text>
+          </ButtonGroupItem>
+          <ButtonGroupItem>
+            <Text>USDT</Text>
+          </ButtonGroupItem>
+          <ButtonGroupItem>
+            <USDCIcon style={{ marginRight: '5px' }} />
+            <Text color="black">USDC</Text>
+          </ButtonGroupItem>
         </ButtonGroup>
-        <InputContainer>
-          <Flex>
-            <Text color="black !important">{selectedToken}</Text>
-          </Flex>
+        <InputContainer my="25px">
+          <Box>{getSelectedTokenIcon()}</Box>
           <Input
             placeholder="0.00"
             value={amountInToken}
             onChange={handleInputChange}
             pattern="^[0-9]*[.,]?[0-9]{0,18}$"
           />
-          <Text color="black !important" width="70px">{`≈ ${convertTokenToUsd(amountInToken || '0')}`}</Text>
+          <Text color="#00000082 !important" width="70px">{`≈${convertTokenToUsd(amountInToken || '0')}USD`}</Text>
         </InputContainer>
-        <ButtonGroup onItemClick={handleAmountButton} activeIndex={null} disabled={null}>
+        <ButtonGroup onItemClick={handleAmountButton} activeIndex={null} disabled={null} amount>
           <ButtonGroupItem>$1,000</ButtonGroupItem>
-          <ButtonGroupItem>$1,0000</ButtonGroupItem>
+          <ButtonGroupItem>$10,000</ButtonGroupItem>
           <ButtonGroupItem>$50,000</ButtonGroupItem>
         </ButtonGroup>
-        <Box mx="auto" width="fit-content">
+        <Box mx="auto" width="fit-content" mt="38px" mb="19px">
           <StyledButton filled>Confirm</StyledButton>
         </Box>
         <Flex justifyContent="center">
@@ -143,8 +159,10 @@ const MainContent = () => {
         </Flex>
       </Container>
 
-      <Container mb="13px">
-        <Text>You&apos;ll receive</Text>
+      <Container mb="13px" p="31px 21px 24px">
+        <Text fontSize="20px" fontWeight={800}>
+          You&apos;ll receive
+        </Text>
         <Flex mb="15px">
           <Banner padding="12px 39px" flex="1 0 50%" mr="15px">
             <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
@@ -168,24 +186,27 @@ const MainContent = () => {
           </Banner>
         ) : null}
       </Container>
-      <Container>
-        <Text>More Rewards After Fair Launch</Text>
-        <Banner padding="12px 60px" mx="auto">
+
+      <Container p="40px 21px 30px">
+        <Text fontSize="20px" fontWeight={800} mb="42px">
+          More rewards after Protocols Fair Launch
+        </Text>
+        <Banner padding="12px 60px" mx="auto" mb="32px">
           <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
             <LogoIcon width="100%" />
           </Box>
-          <Text>{convertTokenToUsd(amountInToken || '0')} HUSKI</Text>
+          <Text fontSize="14px">{convertTokenToUsd(amountInToken || '0')} HUSKI Token</Text>
         </Banner>
-        <Box>
-          <Text>{timeRemaining()}</Text>
-          <Flex justifyContent="space-between">
-            <Text>{`${raisedAmount}/${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+        <Box width="100%">
+          <Text fontSize="14px">{timeRemaining()}</Text>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text fontSize="14px">{`${raisedAmount} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             })}`}</Text>
-            <Text>{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
+            <Text fontSize="12px">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
           </Flex>
         </Box>
       </Container>
@@ -194,3 +215,5 @@ const MainContent = () => {
 }
 
 export default MainContent
+
+// TODO: replace empty links

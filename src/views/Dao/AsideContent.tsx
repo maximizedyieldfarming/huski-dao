@@ -1,24 +1,51 @@
 import React from 'react'
 import { Box, Text } from '@huskifinance/huski-frontend-uikit'
-import { Container } from './styles'
+import styled from 'styled-components'
+import { Container as BaseContainer, Separator } from './styles'
+
+const Container = styled(BaseContainer)`
+  ${Text} {
+    font-size: 16px;
+    font-weight: 900;
+    &.title {
+      font-size: 20px;
+      background: linear-gradient(90deg, #5156e3 0.68%, #e253e9 32.95%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 28px;
+    }
+  }
+  > ${Box} {
+    width: 100%;
+    margin-bottom: 46px;
+  }
+`
 
 const AsideContent = () => {
   return (
     <>
-      <Container>
-        <Text>What is HUSKI DAO ?</Text>
+      <Container p="22px 22px 29px">
+        <Text fontSize="24px" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
+          What is Huski DAO ?
+        </Text>
+        <Separator mt="21px" mb="26px" />
         <Box>
-          <Text className="title">Here are HUSKI DAO&apos;s missions</Text>
-          <Text>
-            open, free, and fair financial markets optimize earnings, lower risk, higher returns. governing the protocol
-            with more fairness, transparency and democracy. expanding the boundary of the crypto funds.
+          <Text className="title">Here are Huski DAO&apos;s missions</Text>
+          <Text as="ul">
+            <Text as="li">Open, free, and fair financial markets.</Text>
+            <Text as="li">Optimize earnings, lower risk, higher returns.</Text>
+            <Text as="li">Governing the protocol with more fairness, transparency and democracy.</Text>
+            <Text as="li">Expanding the boundary of the crypto funds.</Text>
           </Text>
         </Box>
         <Box>
           <Text className="title">Why be our co-branded partners</Text>
-          <Text>
-            Priority to list token pairs. Discount on the protocol to reduce fees. Priority to seek support for projects
-            liquidity. Providing strategies to the protocol and making a profit.
+          <Text as="ul">
+            <Text as="li">Priority to list token pairs.</Text>
+            <Text as="li">Discount on the protocol to reduce fees.</Text>
+            <Text as="li">Priority to seek support for projects liquidity.</Text>
+            <Text as="li">Providing strategies to the protocol and making a profit.</Text>
           </Text>
         </Box>
         <Box width="100%" height="228px" background="#fff">
@@ -26,25 +53,34 @@ const AsideContent = () => {
         </Box>
         <Box>
           <Text className="title">What are the funds for</Text>
-          <Text>
-            Community building, marketing, DAO operation, and DAO management, auditing, listing, protocol improvements.
+          <Text as="ul">
+            <Text as="li">Community building.</Text>
+            <Text as="li">Marketing. DAO operation, and DAO management.</Text>
+            <Text as="li">Auditing, listing, protocol improvements.</Text>
           </Text>
         </Box>
-        <Box>
+        {/*         <Box>
           <Text className="title">What the protocol provides</Text>
           <Text>part of the collected fees as DAO operation cost. part of the tokens to incentive DAO members.</Text>
-        </Box>
+        </Box> */}
         <Box>
-          <Text className="title">Here are what HUSKI DAO wants</Text>
-          <Text>
-            Funding partners. Web3 artists. Marketing partners. Developers both frontend and smart contract. Product
-            thinkers. Community operators.
+          <Text className="title">Here are what Huski DAO wants</Text>
+          <Text as="ul">
+            <Text as="li">Funding partners.</Text>
+            <Text as="li">Web3 artists.</Text>
+            <Text as="li">Marketing partners.</Text>
+            <Text as="li">Developers both frontend and smart contract.</Text>
+            <Text as="li">Product thinkers.</Text>
+            <Text as="li">Community operators.</Text>
           </Text>
         </Box>
         <Box>
           <Text className="title">What we do</Text>
-          <Text>
-            Vote on core parameters. Vote to improve efficiencies. Vote to utilize new features. Vote to list pairs.
+          <Text as="ul">
+            <Text as="li">Vote on core parameters.</Text>
+            <Text as="li">Vote to improve efficiencies.</Text>
+            <Text as="li">Vote to utilize new features.</Text>
+            <Text as="li">Vote to list pairs.</Text>
           </Text>
         </Box>
       </Container>
