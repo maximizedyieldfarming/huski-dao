@@ -13,62 +13,9 @@ export interface PredictionsLedgerResponse {
 
 export type PredictionsRefundableResponse = boolean
 
-export interface PredictionsRoundsResponse {
-  epoch: ethers.BigNumber
-  startTimestamp: ethers.BigNumber
-  lockTimestamp: ethers.BigNumber
-  closeTimestamp: ethers.BigNumber
-  lockPrice: ethers.BigNumber
-  closePrice: ethers.BigNumber
-  lockOracleId: ethers.BigNumber
-  closeOracleId: ethers.BigNumber
-  totalAmount: ethers.BigNumber
-  bullAmount: ethers.BigNumber
-  bearAmount: ethers.BigNumber
-  rewardBaseCalAmount: ethers.BigNumber
-  rewardAmount: ethers.BigNumber
-  oracleCalled: boolean
-}
-
-export interface PredictionsContract extends Contract {
-  claimable: ContractFunction<PredictionsClaimableResponse>
-  ledger: ContractFunction<PredictionsLedgerResponse>
-  refundable: ContractFunction<PredictionsRefundableResponse>
-  rounds: ContractFunction<PredictionsRoundsResponse>
-}
-
 // Chainlink Orance
 export type ChainLinkOracleLatestAnswerResponse = ethers.BigNumber
 
 export interface ChainLinkOracleContract extends Contract {
   latestAnswer: ContractFunction<ChainLinkOracleLatestAnswerResponse>
 }
-
-
-// Note: slightly different from AuctionStatus used throughout UI
-export enum FarmAuctionContractStatus {
-  Pending,
-  Open,
-  Close,
-}
-
-export interface AuctionsResponse {
-  status: FarmAuctionContractStatus
-  startBlock: ethers.BigNumber
-  endBlock: ethers.BigNumber
-  initialBidAmount: ethers.BigNumber
-  leaderboard: ethers.BigNumber
-  leaderboardThreshold: ethers.BigNumber
-}
-
-export interface BidsPerAuction {
-  account: string
-  amount: ethers.BigNumber
-}
-
-export type ViewBidsPerAuctionResponse = [BidsPerAuction[], ethers.BigNumber]
-
-// [auctionId, bids, claimed, nextCursor]
-export type ViewBidderAuctionsResponse = [ethers.BigNumber[], ethers.BigNumber[], boolean[], ethers.BigNumber]
-
-
