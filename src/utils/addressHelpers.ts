@@ -8,9 +8,7 @@ export const getAddress = (address: Address): string => {
   return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
 }
 
-export const getCakeAddress = () => {
-  return getAddress(tokens.cake.address)
-}
+
 export const getFairLaunchAddress = () => {
   return getAddress(addresses.fairLaunch)
 }

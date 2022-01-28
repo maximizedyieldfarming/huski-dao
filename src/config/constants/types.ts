@@ -36,6 +36,13 @@ export interface FarmConfig {
 }
 
 
+export interface DaoConfig {
+  pid: number
+  name: string
+  vaultAddress: Address
+  token: Token
+}
+
 export interface LeverageFarmConfig {
   pid: number
   lpSymbol: string

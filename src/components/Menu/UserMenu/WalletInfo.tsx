@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, Flex, InjectedModalProps, LinkExternal, Message, Text } from '@huskifinance/huski-frontend-uikit'
 import { useWeb3React } from '@web3-react/core'
 import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getCakeAddress } from 'utils/addressHelpers'
+
 import useAuth from 'hooks/useAuth'
 import { useTranslation } from 'contexts/Localization'
 import { getBscScanLink } from 'utils'
@@ -18,7 +18,6 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { balance } = useGetBnbBalance()
-  const { balance: cakeBalance } = useTokenBalance(getCakeAddress())
   const { logout } = useAuth()
 
   const handleLogout = () => {
@@ -46,7 +45,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" mb="24px" mt="10px">
         <Text>{t('CAKE Balance')}</Text>
-        <Text bold>{getFullDisplayBalance(cakeBalance, 18, 3)} HUSKI</Text>
+        <Text bold>{getFullDisplayBalance(balance, 18, 3)} HUSKI</Text>
       </Flex>
       <Flex alignItems="center" mb="24px" justifyContent="space-between">
         <Text color="#7B3FE4" bold>

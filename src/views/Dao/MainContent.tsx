@@ -2,7 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
-import { Box, Text, Flex, Input, LogoIcon } from '@huskifinance/huski-frontend-uikit'
+import { useWeb3React } from '@web3-react/core'
+import useAuth from 'hooks/useAuth'
+import { Box, Text, Flex, Input, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
 import { ButtonGroup, Container, InputContainer, StyledButton, ButtonGroupItem, Banner } from './styles'
 import { HuskiDao, USDCIcon, ETHIcon } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
@@ -12,7 +14,7 @@ const MainContent = () => {
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>('')
-
+  const { account } = useWeb3React()
   const convertUsdToToken = (amountInUSD: string): string => {
     return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
   }
@@ -113,6 +115,9 @@ const MainContent = () => {
   // }
 
 
+  const { login, logout } = useAuth()
+  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
+  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
     <>
@@ -150,7 +155,15 @@ const MainContent = () => {
           <ButtonGroupItem>$50,000</ButtonGroupItem>
         </ButtonGroup>
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
-          <StyledButton filled>Confirm</StyledButton>
+          {
+            !account ?
+              <StyledButton onClick={onPresentConnectModal}  heigth="36px">
+                Connect Wallet
+              </StyledButton>
+              :
+              <StyledButton filled>Confirm</StyledButton>
+          }
+          
         </Box>
         <Flex justifyContent="center">
           <Text as={Link} to="#" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
