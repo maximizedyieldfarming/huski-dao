@@ -1,26 +1,23 @@
-import React from 'react'
+import React, { ComponentProps, ElementType, ReactElement } from 'react'
 import {
   Box,
   Flex,
   Button,
   ButtonMenu as UikitButtonMenu,
-  ButtonMenuItem as UikitButtonMenuItem,
+  ButtonMenuItemProps,
+  BaseButtonProps,
 } from '@huskifinance/huski-frontend-uikit'
 import styled, { css } from 'styled-components'
 
 export const StyledNav = styled.nav`
   display: flex;
   justify-content: space-between;
-  padding: 0 125px;
 `
 export const Body = styled(Flex)`
   width: 100%;
-  // height: 100vh;
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.lg} {
-    padding: 0 125px;
     flex-direction: row;
-    // justify-content: space-between;
   }
   > * {
     flex: 1 0 50%;
@@ -36,14 +33,14 @@ export const Container = styled(Flex)`
   background: linear-gradient(167.86deg, #1d1723 4.99%, #1d1727 92.76%);
   border: 2px solid #282627;
   border-radius: 15px;
-  // padding: 20px;
   width: 100%;
   max-width: 513px;
   flex-direction: column;
   align-items: center;
 `
 export const Footer = styled(Box)``
-const gradientBorder = css`
+
+/* const gradientBorder = css`
   display: flex;
   align-items: center;
   width: 90%;
@@ -52,10 +49,10 @@ const gradientBorder = css`
 
   position: relative;
   padding: 1rem;
-  // box-sizing: border-box;
+  box-sizing: border-box;
 
-  background-clip: padding-box; /* !importanté */
-  border: 2px solid transparent; /* !importanté */
+  background-clip: padding-box;
+  border: 2px solid transparent; 
 
   &:before {
     content: '';
@@ -65,11 +62,12 @@ const gradientBorder = css`
     bottom: 0;
     left: 0;
     z-index: -1;
-    margin: -2px; /* !importanté */
-    border-radius: inherit; /* !importanté */
+    margin: -2px;
+    border-radius: inherit;
     background: linear-gradient(to right, red, orange);
   }
-`
+` */
+
 export const StyledButton = styled(Button)<{ filled?: boolean }>`
   background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
   border: ${({ filled }) => (filled ? 'none' : '1px solid white')};
@@ -101,47 +99,126 @@ export const Separator = styled(Box)`
   height: 1px;
   background: #fff;
 `
+// CUSTOM (COMPLEX) COMPONENTS
 // Button group
-const StyledButtonGroup = styled(Flex)<{ amount?: boolean; disabled?: boolean }>`
+// Re-doing these buttons because styling from uikit is different from what's on the desigin
+export const ButtonMenuRounded = styled(UikitButtonMenu)`
   width: 100%;
-  background: ${({ amount }) => (amount ? ' #312B39' : 'transparent')};
-  height: ${({ amount }) => (amount ? ' 54px' : '50px')};
-  border-radius: ${({ amount }) => (amount ? '12px' : '0')};
-  padding: ${({ amount }) => (amount ? '4px' : '0')};
-  > ${StyledButton} {
-    flex: 1;
-    &:not(:last-child) {
-      margin-right: ${({ amount }) => (amount ? '0' : '5px')};
-    }
-    background: ${({ amount }) => (amount ? 'transparent' : null)};
-    border-radius: ${({ amount }) => (amount ? '12px' : '0')};
-  }
+  background: #312b39;
 `
-export const ButtonGroupItem = styled(StyledButton)`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+export const ButtonMenuItemRounded = styled(Button)`
+  background: #1d1725;
+  box-shadow: none !important;
+  color: #d953e9;
+`
+export const ButtonMenuSquared = styled(UikitButtonMenu)`
+  width: 100%;
+  background: none;
+`
+export const ButtonMenuItemSquared = styled(Button)`
   background: #261f30;
-  border: none;
-  border-radius: 0px;
-  > * {
-    font-weight: 600;
-  }
+  border-radius: 0;
+  box-shadow: none !important;
+
+  border-bottom: 2px solid #d953e9;
 `
 
-export const ButtonGroup = ({ activeIndex = 0, onItemClick, disabled, children, ...props }) => {
-  return (
-    <StyledButtonGroup {...props} disabled={disabled}>
-      {React.Children.map(children, (child: React.ReactElement, index) => {
-        return React.cloneElement(child, {
-          isActive: activeIndex === index,
-          onClick: onItemClick ? () => onItemClick(index) : undefined,
-          disabled,
-        })
-      })}
-    </StyledButtonGroup>
-  )
+/**
+ * @see https://www.benmvp.com/blog/polymorphic-react-components-typescript/
+ */
+export type AsProps<E extends ElementType = ElementType> = {
+  as?: E
 }
 
-export const ProgressBar = styled.div<{ currentProgress: number }>``
+export type MergeProps<E extends ElementType> = AsProps<E> & Omit<ComponentProps<E>, keyof AsProps>
+
+export type PolymorphicComponentProps<E extends ElementType, P> = P & MergeProps<E>
+
+export type PolymorphicComponent<P, D extends ElementType = 'button'> = <E extends ElementType = D>(
+  props: PolymorphicComponentProps<E, P>,
+) => ReactElement | null
+
+interface InactiveButtonProps extends BaseButtonProps {
+  forwardedAs: BaseButtonProps['as']
+}
+
+const InactiveButtonMenuItemSquared: PolymorphicComponent<InactiveButtonProps, 'button'> = styled(
+  ButtonMenuItemSquared,
+)<InactiveButtonProps>`
+  border-bottom: none;
+  &:hover:not(:disabled):not(:active) {
+    background: #261f30;
+  }
+`
+const InactiveButtonMenuItemRounded: PolymorphicComponent<InactiveButtonProps, 'button'> = styled(
+  ButtonMenuItemRounded,
+)<InactiveButtonProps>`
+  background: none;
+  color: #6f767e;
+  &:hover:not(:disabled):not(:active) {
+    background: #1d1725;
+  }
+`
+export const CustomButtonMenuItemSquared: PolymorphicComponent<ButtonMenuItemProps, 'button'> = ({
+  isActive = false,
+  variant = 'primary',
+  as,
+  ...props
+}: ButtonMenuItemProps) => {
+  if (!isActive) {
+    return <InactiveButtonMenuItemSquared forwardedAs={as} variant={variant} {...props} />
+  }
+
+  return <ButtonMenuItemSquared as={as} variant={variant} {...props} />
+}
+
+export const CustomButtonMenuItemRounded: PolymorphicComponent<ButtonMenuItemProps, 'button'> = ({
+  isActive = false,
+  variant = 'primary',
+  as,
+  ...props
+}: ButtonMenuItemProps) => {
+  if (!isActive) {
+    return <InactiveButtonMenuItemRounded forwardedAs={as} variant={variant} {...props} />
+  }
+
+  return <ButtonMenuItemRounded as={as} variant={variant} {...props} />
+}
+
+// PROGRESS BAR
+const Progress = styled.div<{ currentProgress: string; color: string }>`
+  width: ${({ currentProgress }) => `${currentProgress}%`};
+  background: ${({ color }) => color};
+  height: 100%;
+  border-radius: 14px;
+`
+const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 10px;
+  background: white;
+  padding: 2px;
+  border-radius: 14px;
+`
+export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProgress }) => {
+  const getResettingProgress = () => {
+    if (Number(currentProgress) > 100) {
+      return Number(currentProgress) - Math.floor(Number(currentProgress) / 100) * 100
+    }
+    return currentProgress
+  }
+  const getCurrentColor = () => {
+    if (Number(currentProgress) > 500) {
+      return 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)'
+    }
+    if (Number(currentProgress) > 100) {
+      return '#404adb'
+    }
+    return '#d953e9'
+  }
+
+  return (
+    <ProgressBarContainer>
+      <Progress currentProgress={getResettingProgress()?.toString() || '0'} color={getCurrentColor()} />
+    </ProgressBarContainer>
+  )
+}

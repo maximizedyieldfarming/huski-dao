@@ -5,15 +5,25 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
 import { Box, Text, Flex, Input, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
-import { ButtonGroup, Container, InputContainer, StyledButton, ButtonGroupItem, Banner } from './styles'
-import { HuskiDao, USDCIcon, ETHIcon } from './assets'
+import {
+  ButtonMenuRounded,
+  Container,
+  InputContainer,
+  StyledButton,
+  Banner,
+  ButtonMenuSquared,
+  CustomButtonMenuItemSquared,
+  CustomButtonMenuItemRounded,
+  ProgressBar,
+} from './styles'
+import { HuskiDao, USDCIcon, ETHIcon, USDTIcon } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 
 const MainContent = () => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
-  const [amountInToken, setAmountInToken] = React.useState<string>('')
+  const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
   const convertUsdToToken = (amountInUSD: string): string => {
     return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
@@ -49,6 +59,8 @@ const MainContent = () => {
   const handleInputChange = (e) => {
     setAmountInToken(e.target.value)
   }
+  // TODO: if input is less than $1,000 then not allow to confirm and show a warning
+  // TODO: add referral link and a tooltip
 
   const timeRemaining = () => {
     const now = new Date()
@@ -71,24 +83,24 @@ const MainContent = () => {
 
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
   }
-  const raisedAmount = (0).toLocaleString('en-US', {
+  const raisedAmount = 0 // to get from some API ???
+  const raisedAmountString = raisedAmount.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }) // to get from some API ???
+  })
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
   const getSelectedTokenIcon = () => {
     if (selectedToken === 'ETH') {
       return <ETHIcon />
     }
-    /* if (selectedToken === 'USDT') {
-      return <USDCIcon />
-    } */
+    if (selectedToken === 'USDT') {
+      return <USDTIcon />
+    }
     return <USDCIcon />
   }
-
 
   // const { allowance: tokenAllowance } = useTokenAllowance(
   //   getAddress(tokenData?.TokenInfo?.token?.address),
@@ -114,7 +126,6 @@ const MainContent = () => {
   //   }
   // }
 
-
   const { login, logout } = useAuth()
   const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
   const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
@@ -126,19 +137,11 @@ const MainContent = () => {
         <Text fontSize="24px" fontWeight={800}>
           Fund Huski DAO
         </Text>
-        <ButtonGroup onItemClick={handleTokenButton} activeIndex={null} disabled={null}>
-          <ButtonGroupItem>
-            <ETHIcon style={{ marginRight: '5px' }} />
-            <Text color="black">ETH</Text>
-          </ButtonGroupItem>
-          <ButtonGroupItem>
-            <Text>USDT</Text>
-          </ButtonGroupItem>
-          <ButtonGroupItem>
-            <USDCIcon style={{ marginRight: '5px' }} />
-            <Text color="black">USDC</Text>
-          </ButtonGroupItem>
-        </ButtonGroup>
+        <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
+          <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
+          <CustomButtonMenuItemSquared>USDT</CustomButtonMenuItemSquared>
+          <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
+        </ButtonMenuSquared>
         <InputContainer my="25px">
           <Box>{getSelectedTokenIcon()}</Box>
           <Input
@@ -149,27 +152,36 @@ const MainContent = () => {
           />
           <Text color="#00000082 !important" width="70px">{`≈${convertTokenToUsd(amountInToken || '0')}USD`}</Text>
         </InputContainer>
-        <ButtonGroup onItemClick={handleAmountButton} activeIndex={null} disabled={null} amount>
-          <ButtonGroupItem>$1,000</ButtonGroupItem>
-          <ButtonGroupItem>$10,000</ButtonGroupItem>
-          <ButtonGroupItem>$50,000</ButtonGroupItem>
-        </ButtonGroup>
-        <Box mx="auto" width="fit-content" mt="38px" mb="19px">
-          {
-            !account ?
-              <StyledButton onClick={onPresentConnectModal}  heigth="36px">
-                Connect Wallet
-              </StyledButton>
-              :
-              <StyledButton filled>Confirm</StyledButton>
-          }
-          
-        </Box>
-        <Flex justifyContent="center">
-          <Text as={Link} to="#" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
-            How to participate
+        <ButtonMenuRounded onItemClick={handleAmountButton} activeIndex={amountButtonIndex}>
+          <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
+          <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
+          <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
+        </ButtonMenuRounded>
+        {Number(convertTokenToUsd(amountInToken)) < 1000 ? (
+          <Text color="red !important" fontSize="12px">
+            Minimum investment amount is $1,000 (one thousand USD)
           </Text>
-        </Flex>
+        ) : null}
+        <Box mx="auto" width="fit-content" mt="38px" mb="19px">
+          {!account ? (
+            <StyledButton onClick={onPresentConnectModal} heigth="36px">
+              Connect Wallet
+            </StyledButton>
+          ) : (
+            <StyledButton
+              filled
+              disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
+            >
+              Approve &amp; Confirm
+            </StyledButton>
+          )}
+        </Box>
+        <Box width="100%">
+          <Text fontSize="12px">Referral Link:</Text>
+          <Text as={Link} to="#" style={{ textDecoration: 'underline', cursor: 'pointer' }} fontSize="12px">
+            https://dao.huski.finance?code=example%code%1234567{/* TODO: change later */}
+          </Text>
+        </Box>
       </Container>
 
       <Container mb="13px" p="31px 21px 24px">
@@ -211,9 +223,13 @@ const MainContent = () => {
           <Text fontSize="14px">{convertTokenToUsd(amountInToken || '0')} HUSKI Token</Text>
         </Banner>
         <Box width="100%">
-          <Text fontSize="14px">{timeRemaining()}</Text>
+          <Flex justifyContent="space-between">
+            <Text fontSize="14px">{timeRemaining()}</Text>
+            <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()}%</Text>
+          </Flex>
+          <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
           <Flex justifyContent="space-between" alignItems="center">
-            <Text fontSize="14px">{`${raisedAmount} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+            <Text fontSize="14px">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
               minimumFractionDigits: 0,

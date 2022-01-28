@@ -18,11 +18,10 @@ const StyledPage = styled(Page)`
     color: #fff;
   }
   * {
-    font-family: 'M PLUS 2', sans-serif;
     font-weight: 600;
   }
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding: 30px 65px;
+    padding: 30px 190px;
   }
 `
 
@@ -30,15 +29,16 @@ const StyledConnectWallet = (props) => {
   const { login, logout } = useAuth()
   const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
 
-  console.info('hasProvider', hasProvider)
-  console.info('!!window.ethereum', !!window.ethereum)
-  console.info('!!window.BinanceChain', window)
+  // console.info('hasProvider', hasProvider)
+  // console.info('!!window.ethereum', !!window.ethereum)
+  // console.info('!!window.BinanceChain', window)
   const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
   const { account } = useWeb3React()
 
-  if (window.BinanceChain) {
-    alert('qinghuan wangluo')
-  }
+  // if( window.BinanceChain ){
+  //   alert('qinghuan wangluo')
+  //
+  //    }
   if (!account) {
     return (
       <StyledButton onClick={onPresentConnectModal} {...props} heigth="36px">
@@ -97,7 +97,7 @@ const LaunchCampaign = () => {
         </Flex>
         <Box width="100%" height="50px" background="#fff" />
         <Flex justifyContent="center">
-          <Text fontSize="48px">Want to connect with us?</Text>
+          <Text fontSize="48px">Contact us</Text>
         </Flex>
         <Flex justifyContent="center">
           <StyledButton filled>Fill in Google Form</StyledButton>
