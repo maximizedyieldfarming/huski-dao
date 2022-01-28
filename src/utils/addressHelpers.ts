@@ -1,6 +1,5 @@
 import { ChainId } from '@pancakeswap/sdk'
 import addresses from 'config/constants/contracts'
-import tokens from 'config/constants/tokens'
 import { Address } from 'config/constants/types'
 
 export const getAddress = (address: Address): string => {
@@ -8,14 +7,6 @@ export const getAddress = (address: Address): string => {
   return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
 }
 
-
-export const getFairLaunchAddress = () => {
-  return getAddress(addresses.fairLaunch)
-}
-
-export const getMasterChefAddress = () => {
-  return getAddress(addresses.masterChef)
-}
 export const getMulticallAddress = () => {
   return getAddress(addresses.multiCall)
 }
@@ -23,12 +14,3 @@ export const getMulticallAddress = () => {
 export const getPancakeProfileAddress = () => {
   return getAddress(addresses.pancakeProfile)
 }
-
-export const getCakeVaultAddress = () => {
-  return getAddress(addresses.cakeVault)
-}
-export const getPredictionsAddress = () => {
-  return getAddress(addresses.predictions)
-}
-
-

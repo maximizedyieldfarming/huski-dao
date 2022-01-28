@@ -3,16 +3,16 @@ import { useWeb3React } from '@web3-react/core'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'state'
 import { State, ProfileState } from '../types'
-import { fetchProfile } from '.'
+// import { fetchProfile } from '.'
 
-export const useFetchProfile = () => {
-  const { account } = useWeb3React()
-  const dispatch = useAppDispatch()
+// export const useFetchProfile = () => {
+//   const { account } = useWeb3React()
+//   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    dispatch(fetchProfile(account))
-  }, [account, dispatch])
-}
+//   useEffect(() => {
+//     dispatch(fetchProfile(account))
+//   }, [account, dispatch])
+// }
 
 export const useProfile = () => {
   const { isInitialized, isLoading, data, hasRegistered }: ProfileState = useSelector((state: State) => state.profile)
