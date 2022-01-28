@@ -15,7 +15,7 @@ const StyledButton = styled(Button)`
   margin-left: 20px;
   align-items: center;
   &:hover {
-    opacity: 0.65;
+    opacity: 1;
   }
 `
 
