@@ -57,20 +57,3 @@ export enum LotteryStatus {
   CLAIMABLE = 'claimable',
 }
 
-export interface LotteryTicket {
-  id: string
-  number: string
-  status: boolean
-  rewardBracket?: number
-  roundId?: string
-  cakeReward?: SerializedBigNumber
-}
-
-export interface LotteryTicketClaimData {
-  ticketsWithUnclaimedRewards: LotteryTicket[]
-  allWinningTickets: LotteryTicket[]
-  cakeTotal: BigNumber
-  roundId: string
-}
-
-

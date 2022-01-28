@@ -11,7 +11,6 @@ import { getMulticallAddress } from 'utils/addressHelpers'
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, WETH } from '@pancakeswap/sdk'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import ERC20_ABI from '../config/abi/erc20.json'
 import multiCallAbi from '../config/abi/Multicall.json'
 import { getContract } from '../utils'
