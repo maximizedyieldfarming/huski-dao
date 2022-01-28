@@ -78,6 +78,33 @@ const MainContent = () => {
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
 
+
+  // const { allowance: tokenAllowance } = useTokenAllowance(
+  //   getAddress(tokenData?.TokenInfo?.token?.address),
+  //   tokenData?.TokenInfo?.vaultAddress,
+  // )
+
+  // const handleApprove = async () => {
+  //   toastInfo(t('Approving...'), t('Please Wait!'))
+  //   setIsApproving(true)
+  //   try {
+  //     const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+  //     const receipt = await tx.wait()
+  //     if (receipt.status) {
+  //       toastSuccess(t('Approved!'), t('Your request has been approved'))
+  //       setIsApproved(true)
+  //     } else {
+  //       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+  //     }
+  //   } catch (error: any) {
+  //     toastWarning(t('Error'), error.message)
+  //   } finally {
+  //     setIsApproving(false)
+  //   }
+  // }
+
+
+
   return (
     <>
       <Container mb="13px">

@@ -7,9 +7,6 @@ import {
   getPancakeProfileAddress,
   getCakeAddress,
   getFairLaunchAddress,
-  getMasterChefAddress,
-  getCakeVaultAddress,
-  getPredictionsAddress,
   getMulticallAddress,
 } from 'utils/addressHelpers'
 
@@ -21,9 +18,6 @@ import vaultAbi from 'config/abi/vault.json'
 import erc721Abi from 'config/abi/erc721.json'
 import lpTokenAbi from 'config/abi/lpToken.json'
 import cakeAbi from 'config/abi/cake.json'
-import masterChef from 'config/abi/masterchef.json'
-import cakeVaultAbi from 'config/abi/cakeVault.json'
-import predictionsAbi from 'config/abi/predictions.json'
 import MultiCallAbi from 'config/abi/Multicall.json'
 
 import { ChainLinkOracleContract,  PredictionsContract } from './types'
@@ -54,16 +48,6 @@ export const getClaimFairLaunchContract = (signer?: ethers.Signer | ethers.provi
 }
 export const getProfileContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(profileABI, getPancakeProfileAddress(), signer)
-}
-export const getMasterchefContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(masterChef, getMasterChefAddress(), signer)
-}
-
-export const getCakeVaultContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(cakeVaultAbi, getCakeVaultAddress(), signer)
-}
-export const getPredictionsContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(predictionsAbi, getPredictionsAddress(), signer) as PredictionsContract
 }
 
 export const getMulticallContract = (signer?: ethers.Signer | ethers.providers.Provider) => {

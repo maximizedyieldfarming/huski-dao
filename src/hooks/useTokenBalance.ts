@@ -4,7 +4,6 @@ import { useWeb3React } from '@web3-react/core'
 import { getBep20Contract, getCakeContract, getClaimFairLaunchContract } from 'utils/contractHelpers'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { simpleRpcProvider } from 'utils/providers'
-import { getFairLaunch } from 'utils/env'
 import useRefresh from './useRefresh'
 import useLastUpdated from './useLastUpdated'
 
@@ -59,7 +58,6 @@ export const useStakedibTokenBalance = (pid: number) => {
   })
   const { account } = useWeb3React()
   const { fastRefresh } = useRefresh()
-  const fairLaunchAddress = getFairLaunch() // getFairLaunchAddress() // 
 
   useEffect(() => {
     const fetchBalance = async () => {

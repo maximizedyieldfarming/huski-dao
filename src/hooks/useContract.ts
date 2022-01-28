@@ -3,13 +3,9 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import {
   getVaultContract,
   getBep20Contract,
-  getCakeContract,
   getClaimFairLaunchContract,
   getProfileContract,
-  getMasterchefContract,
   getErc721Contract,
-  getCakeVaultContract,
-  getPredictionsContract,
 } from 'utils/contractHelpers'
 import { getMulticallAddress } from 'utils/addressHelpers'
 
@@ -46,10 +42,7 @@ export const useERC721 = (address: string) => {
   return useMemo(() => getErc721Contract(address, library.getSigner()), [address, library])
 }
 
-export const useCake = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getCakeContract(library.getSigner()), [library])
-}
+
 export const useClaimFairLaunch = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getClaimFairLaunchContract(library.getSigner()), [library])
@@ -60,23 +53,6 @@ export const useProfile = () => {
   return useMemo(() => getProfileContract(library.getSigner()), [library])
 }
 
-export const useMasterchef = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getMasterchefContract(library.getSigner()), [library])
-}
-
-export const useCakeVaultContract = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getCakeVaultContract(library.getSigner()), [library])
-}
-
-export const usePredictionsContract = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getPredictionsContract(library.getSigner()), [library])
-}
-
-
-// Code below migrated from Exchange useContract.ts
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {

@@ -3,7 +3,8 @@ import { Router, Redirect, Route, Switch } from 'react-router-dom'
 import { ResetCSS } from '@huskifinance/huski-frontend-uikit'
 import { useWeb3React } from '@web3-react/core'
 import BigNumber from 'bignumber.js'
-import useEagerConnect from 'hooks/useEagerConnect'
+// import useEagerConnect from 'hooks/useEagerConnect'
+// import useEagerConnect from 'hooks/useEagerConnectEth'
 import { usePollBlockNumber } from 'state/block/hooks'
 import { useFetchProfile } from 'state/profile/hooks'
 // import { DatePickerPortal } from 'components/DatePicker'
@@ -28,11 +29,11 @@ BigNumber.config({
 })
 
 const App: React.FC = () => {
-  usePollBlockNumber()
-  useEagerConnect()
-  useFetchProfile()
+  // usePollBlockNumber()
+  // useEagerConnect()
+  // useFetchProfile()
   // usePollCoreFarmData()
-  const { account } = useWeb3React()
+  // const { account } = useWeb3React()
 
   return (
     <Router history={history}>
