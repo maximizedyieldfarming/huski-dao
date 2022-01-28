@@ -8,15 +8,6 @@ export interface BigNumberToJson {
   hex: string
 }
 
-export type TranslatableText =
-  | string
-  | {
-    key: string
-    data?: {
-      [key: string]: string | number
-    }
-  }
-
 export type SerializedBigNumber = string
 
 

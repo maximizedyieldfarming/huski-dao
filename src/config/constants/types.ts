@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { SerializedBigNumber, TranslatableText } from 'state/types'
+import { SerializedBigNumber } from 'state/types'
 
 export interface Address {
   97?: string
@@ -34,15 +34,6 @@ export type Images = {
   ipfs?: string
 }
 
-export type CampaignType = 'ifo' | 'teambattle' | 'participation'
-
-export type Campaign = {
-  id: string
-  type: CampaignType
-  title?: TranslatableText
-  description?: TranslatableText
-  badge?: string
-}
 
 export type PageMeta = {
   title: string
@@ -50,10 +41,4 @@ export type PageMeta = {
   image?: string
 }
 
-export enum LotteryStatus {
-  PENDING = 'pending',
-  OPEN = 'open',
-  CLOSE = 'close',
-  CLAIMABLE = 'claimable',
-}
 
