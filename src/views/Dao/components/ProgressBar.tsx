@@ -27,7 +27,7 @@ export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProg
       return 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)'
     }
     if (Number(currentProgress) > 100) {
-      return '#404adb'
+      return '#E95353'
     }
     return '#d953e9'
   }
