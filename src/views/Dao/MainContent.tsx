@@ -20,7 +20,7 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { HuskiDao, USDCIcon, ETHIcon, USDTIcon } from './assets'
+import { HuskiDao, USDCIcon, ETHIcon, USDTIcon, Nft, DaoToken, DaoVer } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 
 const MainContent = () => {
@@ -188,20 +188,20 @@ const MainContent = () => {
           Support Huski DAO
         </Text>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text>Token:</Text>
-          <Text>Huski DAO (HIDAO)</Text>
+          <Text textAlign="left">Token:</Text>
+          <Text textAlign="right">Huski DAO (HIDAO)</Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text>Type:</Text>
-          <Text>ERC - 20 (Ethereum)</Text>
+          <Text textAlign="left">Type:</Text>
+          <Text textAlign="right">ERC - 20 (Ethereum)</Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text>Price:</Text>
-          <Text>2 HIDAO per $1000</Text>
+          <Text textAlign="left">Price:</Text>
+          <Text textAlign="right">2 HIDAO per $1000</Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text>Goal:</Text>
-          <Text>
+          <Text textAlign="left">Goal:</Text>
+          <Text textAlign="right">
             {FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
@@ -211,11 +211,11 @@ const MainContent = () => {
           </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text>Distribution：</Text>
-          <Text>Claim on HuskiDAO Landing Page</Text>
+          <Text textAlign="left">Distribution：</Text>
+          <Text textAlign="right">Claim on HuskiDAO Landing Page</Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
-          <Text>Accepted Payments:</Text>
+          <Text textAlign="left">Accepted Payments:</Text>
           <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between">
             <Flex alignItems="center">
               <ETHIcon />
@@ -232,8 +232,8 @@ const MainContent = () => {
           </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center">
-          <Text>Deadline:</Text>
-          <Text>March 31, 2022 (UTC)</Text>
+          <Text textAlign="left">Deadline:</Text>
+          <Text textAlign="right">March 31, 2022 (UTC)</Text>
         </Flex>
 
         <Box mx="auto" width="fit-content" mt="23px">
@@ -262,29 +262,23 @@ const MainContent = () => {
       {getFirstContainer()}
 
       <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight={800}>
+        <Text fontSize="20px" fontWeight={800} mb="27px">
           You&apos;ll receive
         </Text>
-        <Flex mb="15px" flexDirection={isMobile ? 'column' : 'row'}>
-          <Banner mr={isMobile ? '0' : '15px'}>
-            <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
-              <LogoIcon width="100%" />
-            </Box>
-            <Text>Huski DAO</Text>
+        <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
+          <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
+            <img src={DaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
+            <Text fontSize="14px">Huski DAO Token</Text>
           </Banner>
           <Banner>
-            <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
-              <LogoIcon width="100%" />
-            </Box>
-            <Text>DAO Verified Account</Text>
+            <img src={DaoVer} alt="DAO Verification" style={{ maxWidth: '37px' }} />
+            <Text fontSize="14px">DAO Verification</Text>
           </Banner>
         </Flex>
         {new BigNumber(convertTokenToUsd(amountInToken)).gte(50000) ? (
-          <Banner>
-            <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
-              <LogoIcon width="100%" />
-            </Box>
-            <Text>NFT co-branded sponsors </Text>
+          <Banner mt="15px">
+            <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
+            <Text fontSize="14px">NFT co-branded sponsors </Text>
           </Banner>
         ) : null}
       </Container>
@@ -293,19 +287,20 @@ const MainContent = () => {
         <Text fontSize="20px" fontWeight={800} mb="42px">
           More rewards after Protocols Fair Launch
         </Text>
-        <Banner padding="12px 60px" mx="auto" mb="32px">
-          <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
+        {/* TODO: add tooltip */}
+        <Banner mx="auto" mb="32px" maxWidth="268px !important">
+          <Box background="#fff" p="1px" borderRadius="100%" width="37px" maxHeight="37px" mr="18px">
             <LogoIcon width="100%" />
           </Box>
           <Text fontSize="14px">{convertTokenToUsd(amountInToken || '0')} HUSKI Token</Text>
         </Banner>
         <Box width="100%">
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
             <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()}%</Text>
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
-          <Flex justifyContent="space-between" alignItems="center">
+          <Flex justifyContent="space-between" alignItems="center" mt="9px">
             <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
               'en-US',
               {

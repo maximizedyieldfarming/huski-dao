@@ -14,7 +14,9 @@ export const Body = styled(Flex)`
 `
 export const Main = styled(Box)`
   height: 100%;
+  margin-bottom: 14px;
   ${({ theme }) => theme.mediaQueries.sm} {
+    margin-bottom: 0px;
     margin-right: 14px;
   }
 `
@@ -81,19 +83,21 @@ export const InputContainer = styled(Flex)`
 `
 export const Banner = styled(Flex)`
   align-items: center;
+  justify-content: center;
   background: #261f30;
   border-radius: 8px;
   width: 100%;
-  padding: 6px 15px;
-  &:not(:last-child) {
+  height: 60px;
+  // padding: 6px 15px;
+  /*  &:not(:last-child) {
     margin-bottom: 10px;
-  }
+  } */
 
   ${({ theme }) => theme.mediaQueries.sm} {
     max-width: 202px;
-    &:not(:last-child) {
+    /*     &:not(:last-child) {
       margin-bottom: 0;
-    }
+    } */
   }
 `
 export const Separator = styled(Box)`

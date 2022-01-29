@@ -67,7 +67,7 @@ const LaunchCampaign = () => {
     <StyledPage>
       <StyledNav as="nav" mb="98px">
         <Flex alignItems="center">
-          <Box background="#fff" p="1px" borderRadius="100%" width="65px" height="65px" mr="18px">
+          <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
             <LogoIcon width="100%" />
           </Box>
           <Text>HUSKI DAO Launch Campaign</Text>
