@@ -13,7 +13,22 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     background-color: ${({ theme }) => theme.colors.background};
+overflow: overlay;
   
+    // custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: unset;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #292233;
+  }
 
     img {
       height: auto;

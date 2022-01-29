@@ -8,9 +8,6 @@ import Container from './Container'
 
 const StyledPage = styled(Container)`
   display: flex;
-  > div {
-    margin-bottom: 30px;
-  }
   flex-direction: column;
   max-width: none;
   padding: 20px 33px;
@@ -33,7 +30,7 @@ const PageMeta = () => {
 
   return (
     <Helmet>
-{/*       <title>{pageTitle}</title> */}
+      {/*       <title>{pageTitle}</title> */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />

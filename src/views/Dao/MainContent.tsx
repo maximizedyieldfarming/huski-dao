@@ -1,22 +1,26 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
-import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
-import { Box, Text, Flex, Input, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
+import {
+  Box,
+  Text,
+  Flex,
+  Input,
+  LogoIcon,
+  useWalletModal,
+  useMatchBreakpoints,
+} from '@huskifinance/huski-frontend-uikit'
+import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
-  Container,
-  InputContainer,
-  StyledButton,
-  Banner,
   ButtonMenuSquared,
   CustomButtonMenuItemSquared,
   CustomButtonMenuItemRounded,
   ProgressBar,
-} from './styles'
-import { HuskiDao, USDCIcon, ETHIcon, USDTIcon } from './assets'
+} from './components'
+import { HuskiDao, USDCIcon, ETHIcon, USDTIcon, Nft, DaoToken, DaoVer } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 
 const MainContent = () => {
@@ -25,6 +29,9 @@ const MainContent = () => {
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
+  const { isMobile, isTablet } = useMatchBreakpoints()
+
+  // const isSmallScreen = isMobile || isTablet
   const convertUsdToToken = (amountInUSD: string): string => {
     return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
   }
@@ -125,14 +132,9 @@ const MainContent = () => {
   //     setIsApproving(false)
   //   }
   // }
-
-  const { login, logout } = useAuth()
-  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
-
-  return (
-    <>
-      <Container mb="13px" p="14px 21px 29px">
+  const walletReady = () => {
+    return (
+      <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
         <HuskiDao />
         <Text fontSize="24px" fontWeight={800}>
           Fund Huski DAO
@@ -163,18 +165,12 @@ const MainContent = () => {
           </Text>
         ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
-          {!account ? (
-            <StyledButton onClick={onPresentConnectModal} heigth="36px">
-              Connect Wallet
-            </StyledButton>
-          ) : (
-            <StyledButton
-              filled
-              disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
-            >
-              Approve &amp; Confirm
-            </StyledButton>
-          )}
+          <StyledButton
+            filled
+            disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
+          >
+            Approve &amp; Confirm
+          </StyledButton>
         </Box>
         <Box width="100%">
           <Text fontSize="12px">Referral Link:</Text>
@@ -183,59 +179,138 @@ const MainContent = () => {
           </Text>
         </Box>
       </Container>
+    )
+  }
+  const walletNotReady = () => {
+    return (
+      <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
+        <Text fontSize="24px" fontWeight={800} mb="25px">
+          Support Huski DAO
+        </Text>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+          <Text textAlign="left">Token:</Text>
+          <Text textAlign="right">Huski DAO (HIDAO)</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+          <Text textAlign="left">Type:</Text>
+          <Text textAlign="right">ERC - 20 (Ethereum)</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+          <Text textAlign="left">Price:</Text>
+          <Text textAlign="right">2 HIDAO per $1000</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+          <Text textAlign="left">Goal:</Text>
+          <Text textAlign="right">
+            {FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+          <Text textAlign="left">Distribution：</Text>
+          <Text textAlign="right">Claim on HuskiDAO Landing Page</Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
+          <Text textAlign="left">Accepted Payments:</Text>
+          <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between">
+            <Flex alignItems="center">
+              <ETHIcon />
+              <Text>ETH</Text>
+            </Flex>
+            <Flex alignItems="center">
+              <USDTIcon />
+              <Text>USDT</Text>
+            </Flex>
+            <Flex alignItems="center">
+              <USDCIcon />
+              <Text>USDC</Text>
+            </Flex>
+          </Flex>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center">
+          <Text textAlign="left">Deadline:</Text>
+          <Text textAlign="right">March 31, 2022 (UTC)</Text>
+        </Flex>
 
-      <Container mb="13px" p="31px 21px 24px">
-        <Text fontSize="20px" fontWeight={800}>
+        <Box mx="auto" width="fit-content" mt="23px">
+          <StyledButton onClick={onPresentConnectModal} heigth="36px">
+            Connect Wallet
+          </StyledButton>
+        </Box>
+      </Container>
+    )
+  }
+  // using this function because theres a third condition, so its easier to read like this
+  // insted of using ternary inside jsx
+  const getFirstContainer = () => {
+    if (account) {
+      return walletReady()
+    }
+    return walletNotReady()
+  }
+
+  const { login, logout } = useAuth()
+  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
+  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
+
+  return (
+    <>
+      {getFirstContainer()}
+
+      <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
+        <Text fontSize="20px" fontWeight={800} mb="27px">
           You&apos;ll receive
         </Text>
-        <Flex mb="15px">
-          <Banner padding="12px 39px" flex="1 0 50%" mr="15px">
-            <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
-              <LogoIcon width="100%" />
-            </Box>
-            <Text>Huski DAO</Text>
+        <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
+          <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
+            <img src={DaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
+            <Text fontSize="14px">Huski DAO Token</Text>
           </Banner>
-          <Banner padding="12px 20px" flex="1 0 50%">
-            <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
-              <LogoIcon width="100%" />
-            </Box>
-            <Text>DAO Verified Account</Text>
+          <Banner>
+            <img src={DaoVer} alt="DAO Verification" style={{ maxWidth: '37px' }} />
+            <Text fontSize="14px">DAO Verification</Text>
           </Banner>
         </Flex>
         {new BigNumber(convertTokenToUsd(amountInToken)).gte(50000) ? (
-          <Banner padding="12px 90px" width="100% !important">
-            <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
-              <LogoIcon width="100%" />
-            </Box>
-            <Text>NFT co-branded sponsors </Text>
+          <Banner mt="15px">
+            <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
+            <Text fontSize="14px">NFT co-branded sponsors </Text>
           </Banner>
         ) : null}
       </Container>
 
-      <Container p="40px 21px 30px">
+      <Container p="40px 21px 30px" maxWidth="460px">
         <Text fontSize="20px" fontWeight={800} mb="42px">
           More rewards after Protocols Fair Launch
         </Text>
-        <Banner padding="12px 60px" mx="auto" mb="32px">
-          <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
+        {/* TODO: add tooltip */}
+        <Banner mx="auto" mb="32px" maxWidth="268px !important">
+          <Box background="#fff" p="1px" borderRadius="100%" width="37px" maxHeight="37px" mr="18px">
             <LogoIcon width="100%" />
           </Box>
           <Text fontSize="14px">{convertTokenToUsd(amountInToken || '0')} HUSKI Token</Text>
         </Banner>
         <Box width="100%">
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
             <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()}%</Text>
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text fontSize="14px">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            })}`}</Text>
-            <Text fontSize="12px">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
+          <Flex justifyContent="space-between" alignItems="center" mt="9px">
+            <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
+              'en-US',
+              {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              },
+            )}`}</Text>
+            <Text fontSize="12px" textAlign="right">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
           </Flex>
         </Box>
       </Container>

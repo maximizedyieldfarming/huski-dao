@@ -1,12 +1,15 @@
 import React from 'react'
-import { Box, Text } from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { Container as BaseContainer, Separator } from './styles'
+import { Container as BaseContainer, Separator, Banner } from './styles'
+import { AragonIcon, CommonwealthIcon, Banner as BannerImg } from './assets'
 
 const Container = styled(BaseContainer)`
+  padding: 22px 21px 20px;
   ${Text} {
     font-size: 16px;
     font-weight: 900;
+    max-width: 586px;
     &.title {
       font-size: 20px;
       background: linear-gradient(90deg, #5156e3 0.68%, #e253e9 32.95%);
@@ -18,15 +21,19 @@ const Container = styled(BaseContainer)`
   }
   > ${Box} {
     width: 100%;
-    margin-bottom: 46px;
+    &:not(:last-child) {
+      margin-bottom: 46px;
+    }
   }
 `
 
 const AsideContent = () => {
+  const { isMobile, isTablet } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isTablet
   return (
     <>
-      <Container p="22px 22px 29px">
-        <Text fontSize="24px" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
+      <Container>
+        <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
           What is Huski DAO ?
         </Text>
         <Separator mt="21px" mb="26px" />
@@ -40,7 +47,7 @@ const AsideContent = () => {
           </Text>
         </Box>
         <Box>
-          <Text className="title">Why be our co-branded partners</Text>
+          <Text className="title">Why be our DAO founders</Text>
           <Text as="ul">
             <Text as="li">Priority to list token pairs.</Text>
             <Text as="li">Discount on the protocol to reduce fees.</Text>
@@ -48,8 +55,8 @@ const AsideContent = () => {
             <Text as="li">Providing strategies to the protocol and making a profit.</Text>
           </Text>
         </Box>
-        <Box width="100%" height="228px" background="#fff">
-          img here
+        <Box maxWidth="544px !important">
+          <img src={BannerImg} alt="huski-banner" width="100%" />
         </Box>
         <Box>
           <Text className="title">What are the funds for</Text>
@@ -58,6 +65,19 @@ const AsideContent = () => {
             <Text as="li">Marketing. DAO operation, and DAO management.</Text>
             <Text as="li">Auditing, listing, protocol improvements.</Text>
           </Text>
+        </Box>
+        <Box>
+          <Text className="title">Find us in</Text>
+          <Flex alignItems="center" flexWrap="wrap" justifyContent="space-between">
+            <Banner maxWidth="260px !important" mb={isSmallScreen ? '10px' : '0'}>
+              <AragonIcon />
+              <Text ml="9px">Aragon</Text>
+            </Banner>
+            <Banner maxWidth="260px !important">
+              <CommonwealthIcon />
+              <Text ml="9px">Commonwealth</Text>
+            </Banner>
+          </Flex>
         </Box>
         {/*         <Box>
           <Text className="title">What the protocol provides</Text>

@@ -1,13 +1,19 @@
-interface Funders {
+interface Founders {
     name: string,
     image: string,
-    description: string,
 }
-export const funders: Array<Funders> = [{
-    name: 'mike',
-    image: 'https://avatars2.githubusercontent.com/u/12097?s=460&v=4',
-    description: 'mike is a founder of the company'
-}]
+export const founders: Array<Founders> = [{
+    name: 'Binance Smart Chain',
+    image: '%PUBLIC_FOLDER/images/founders/BSC.svg%',
+}, {
+    name: 'PancakeSwap',
+    image: '%PUBLIC_FOLDER/images/founders/BC.svg%',
+},
+{
+    name: 'Ethereum',
+    image: '%PUBLIC_FOLDER/images/founders/BNB.svg%',
+},
+]
 
 export const NFT_SPONSORS_TARGET = 100 // NFTs to be distributed to sponsors who have donated more than 50,000 USD
 export const FUNDING_AMOUNT_TARGET = 1000000 // funding amount to be reached is 1,000,000 USD (1 million), and can go over this target
