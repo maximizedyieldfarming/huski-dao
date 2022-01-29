@@ -32,10 +32,9 @@ const StyledPage = styled(Page)`
   * {
     font-weight: 600;
   }
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.xl} {
     padding: 30px 190px;
   }
-  // custom scroll bar
 `
 
 const StyledConnectWallet = (props) => {
