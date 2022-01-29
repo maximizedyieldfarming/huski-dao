@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
-import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
 import {
@@ -13,17 +12,14 @@ import {
   useWalletModal,
   useMatchBreakpoints,
 } from '@huskifinance/huski-frontend-uikit'
+import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
-  Container,
-  InputContainer,
-  StyledButton,
-  Banner,
   ButtonMenuSquared,
   CustomButtonMenuItemSquared,
   CustomButtonMenuItemRounded,
   ProgressBar,
-} from './styles'
+} from './components'
 import { HuskiDao, USDCIcon, ETHIcon, USDTIcon } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 
@@ -35,7 +31,7 @@ const MainContent = () => {
   const { account } = useWeb3React()
   const { isMobile, isTablet } = useMatchBreakpoints()
 
-  const isSmallScreen = isMobile || isTablet
+  // const isSmallScreen = isMobile || isTablet
   const convertUsdToToken = (amountInUSD: string): string => {
     return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
   }

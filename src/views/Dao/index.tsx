@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 // import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
 import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
@@ -17,8 +17,8 @@ import {
   Body,
   FoundersWrapper,
   FoundersContainer,
-  Timeline,
 } from './styles'
+import { Timeline } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { founders } from './config'
