@@ -12,7 +12,6 @@ import {
 import profileABI from 'config/abi/pancakeProfile.json'
 import bep20Abi from 'config/abi/erc20.json'
 import vaultAbi from 'config/abi/vault.json'
-import erc721Abi from 'config/abi/erc721.json'
 import MultiCallAbi from 'config/abi/Multicall.json'
 
 
@@ -27,11 +26,6 @@ export const getBep20Contract = (address: string, signer?: ethers.Signer | ether
 export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(vaultAbi, address, signer)
 }
-
-export const getErc721Contract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(erc721Abi, address, signer)
-}
-
 
 export const getProfileContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(profileABI, getPancakeProfileAddress(), signer)

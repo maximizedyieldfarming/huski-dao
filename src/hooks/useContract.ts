@@ -4,7 +4,6 @@ import {
   getVaultContract,
   getBep20Contract,
   getProfileContract,
-  getErc721Contract,
 } from 'utils/contractHelpers'
 import { getMulticallAddress } from 'utils/addressHelpers'
 
@@ -29,13 +28,6 @@ export const useVault = (address: string) => {
   return useMemo(() => getVaultContract(address, library.getSigner()), [address, library])
 }
 
-/**
- * @see https://docs.openzeppelin.com/contracts/3.x/api/token/erc721
- */
-export const useERC721 = (address: string) => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getErc721Contract(address, library.getSigner()), [address, library])
-}
 
 export const useProfile = () => {
   const { library } = useActiveWeb3React()
