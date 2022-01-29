@@ -7,6 +7,7 @@ import {
   ButtonMenuItemProps,
   BaseButtonProps,
   Text,
+  useMatchBreakpoints,
 } from '@huskifinance/huski-frontend-uikit'
 import styled, { css } from 'styled-components'
 
@@ -17,15 +18,16 @@ export const StyledNav = styled.nav`
 export const Body = styled(Flex)`
   width: 100%;
   flex-direction: column;
-  ${({ theme }) => theme.mediaQueries.lg} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
-  }
-  > * {
-    flex: 1 0 50%;
+    justify-content: center;
   }
 `
 export const Main = styled(Box)`
   height: 100%;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-right: 14px;
+  }
 `
 export const Aside = styled(Box)`
   height: 100%;
@@ -35,7 +37,6 @@ export const Container = styled(Flex)`
   border: 2px solid #282627;
   border-radius: 15px;
   width: 100%;
-  max-width: 513px;
   flex-direction: column;
   align-items: center;
 `
@@ -93,7 +94,18 @@ export const Banner = styled(Flex)`
   align-items: center;
   background: #261f30;
   border-radius: 8px;
-  width: fit-content;
+  width: 100%;
+  padding: 6px 15px;
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    max-width: 202px;
+    &:not(:last-child) {
+      margin-bottom: 0;
+    }
+  }
 `
 export const Separator = styled(Box)`
   width: 100%;
@@ -102,17 +114,25 @@ export const Separator = styled(Box)`
 `
 export const FoundersWrapper = styled(Flex)`
   width: 100%;
-  flex-flow: row wrap;
   justify-content: space-between;
   // align-content: space-between;
   row-gap: 10px;
-  // column-gap: 6px;
-  > ${Flex} {
-    flex: 1 0 170px;
-    // &:not(:last-child) {
-    //   margin-right: 8px;
-    // }
+  column-gap: 6px;
+  max-height: 150px;
+  flex-flow: column wrap;
+  max-width: 100%;
+  overflow: auto;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    max-height: unset;
+    flex-flow: row wrap;
   }
+
+  // hide scrollbar on mobile
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `
 export const FoundersContainer = styled(Flex)`
   width: 170px;
@@ -253,101 +273,171 @@ export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProg
 }
 
 // TIMELINE
-const TimelineContainer = styled.div`
-  width: 100%;
+const TimelineContainer = styled(Flex)`
+  height: 320px;
+  flex-direction: row-reverse;
+  margin: 30px 0;
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+  }
 `
 const TimelineTrack = styled(Box)`
-  width: 100%;
-  height: 4px;
   background: white;
   position: relative;
+  width: 4px;
+  height: 100%;
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 100%;
+    height: 4px;
+  }
 `
 const TimelineProgress = styled.div`
   background: #d953e9;
-  width: 25%;
-  height: 100%;
+  height: 25%;
+  width: 100%;
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 25%;
+    height: 100%;
+  }
 `
 const TimelineStep = styled.div`
-  width: 6px;
-  height: 18px;
+  height: 6px;
+  width: 18px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 6px;
+    height: 18px;
+  }
   position: absolute;
   transform: translateY(-50%);
   background: #d953e9;
   border-radius: 6px;
   &:first-child {
-    left: 0;
+    top: 0;
+    ${({ theme }) => theme.mediaQueries.md} {
+      left: 0;
+    }
   }
   &:nth-child(2) {
-    left: 25%;
+    top: 25%;
+    ${({ theme }) => theme.mediaQueries.md} {
+      left: 25%;
+    }
   }
   &:nth-child(3) {
-    left: 75%;
+    top: 75%;
+    ${({ theme }) => theme.mediaQueries.md} {
+      left: 75%;
+    }
   }
   &:nth-child(4) {
-    left: 100%;
+    top: 100%;
+    ${({ theme }) => theme.mediaQueries.md} {
+      left: 100%;
+    }
   }
 `
 
 export const Timeline = () => {
+  const { isMobile } = useMatchBreakpoints()
   return (
     <TimelineContainer>
-      <Flex width="100%" position="relative">
-        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" left="0" bottom="0">
-          2021 Q4
-        </Box>
-        <Box
+      <Flex width="100%" position="relative" flexDirection={isMobile ? 'column' : 'row'} ml={isMobile ? '18px' : '0'}>
+        <Text
           maxWidth="137px"
-          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
-          position="absolute"
-          left="25%"
-          bottom="0"
+          maxHeight="fit-content"
+          style={{
+            color: 'white',
+            transform: isMobile ? 'translate(0, -50%)' : 'translate(-50%)',
+            position: 'absolute',
+            left: '0',
+            bottom: '0',
+            top: isMobile ? '0' : null,
+          }}
+        >
+          2021 Q4
+          {isMobile ? <Text>Beta Test Huski Finance</Text> : null}
+        </Text>
+        <Text
+          maxWidth="137px"
+          maxHeight="fit-content"
+          style={{
+            color: 'white',
+            transform: isMobile ? 'translate(0, -50%)' : 'translate(-50%)',
+            position: 'absolute',
+            left: isMobile ? '0' : '25%',
+            bottom: '0',
+            top: isMobile ? '25%' : null,
+          }}
         >
           2022 Q1
-        </Box>
-        <Box
+          {isMobile ? <Text>DAO Launching Campaing</Text> : null}
+        </Text>
+        <Text
           maxWidth="137px"
-          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
-          position="absolute"
-          left="75%"
-          bottom="0"
+          maxHeight="fit-content"
+          style={{
+            color: 'white',
+            transform: isMobile ? 'translate(0, -50%)' : 'translate(-50%)',
+            position: 'absolute',
+            left: isMobile ? '0' : '75%',
+            bottom: '0',
+            top: isMobile ? '75%' : null,
+          }}
         >
           2022 Q2
-        </Box>
-        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" right="0" bottom="0">
-          <Text textAlign="right">2022 Q3</Text>
-        </Box>
+          {isMobile ? <Text>DAO Launch</Text> : null}
+        </Text>
+        <Text
+          maxWidth="137px"
+          maxHeight="fit-content"
+          style={{
+            color: 'white',
+            transform: isMobile ? 'translate(0, 50%)' : 'translate(-50%)',
+            position: 'absolute',
+            right: isMobile ? null : '0',
+            left: isMobile ? '0' : null,
+            bottom: '0',
+          }}
+        >
+          2022 Q3
+          {isMobile ? <Text>Fair Launch Huski Finance</Text> : null}
+        </Text>
       </Flex>
-      <TimelineTrack my="15px">
+      <TimelineTrack>
         <TimelineStep />
         <TimelineStep />
         <TimelineStep />
         <TimelineStep />
         <TimelineProgress />
       </TimelineTrack>
-      <Flex width="100%" position="relative">
-        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" left="0">
-          Beta Test Huski Finance
-        </Box>
-        <Box
-          maxWidth="137px"
-          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
-          position="absolute"
-          left="25%"
-        >
-          DAO Launching Campaing
-        </Box>
-        <Box
-          maxWidth="137px"
-          style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
-          position="absolute"
-          left="75%"
-        >
-          DAO Launch
-        </Box>
-        <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" right="0">
-          <Text textAlign="right">Fair Launch Huski Finance</Text>
-        </Box>
-      </Flex>
+      {isMobile ? null : (
+        <Flex width="100%" position="relative">
+          <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" left="0">
+            Beta Test Huski Finance
+          </Box>
+          <Box
+            maxWidth="137px"
+            style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
+            position="absolute"
+            left="25%"
+          >
+            DAO Launching Campaing
+          </Box>
+          <Box
+            maxWidth="137px"
+            style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
+            position="absolute"
+            left="75%"
+          >
+            DAO Launch
+          </Box>
+          <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" right="0">
+            <Text textAlign="right">Fair Launch Huski Finance</Text>
+          </Box>
+        </Flex>
+      )}
     </TimelineContainer>
   )
 }

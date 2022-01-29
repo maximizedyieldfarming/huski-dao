@@ -4,7 +4,15 @@ import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
-import { Box, Text, Flex, Input, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
+import {
+  Box,
+  Text,
+  Flex,
+  Input,
+  LogoIcon,
+  useWalletModal,
+  useMatchBreakpoints,
+} from '@huskifinance/huski-frontend-uikit'
 import {
   ButtonMenuRounded,
   Container,
@@ -25,6 +33,9 @@ const MainContent = () => {
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
+  const { isMobile, isTablet } = useMatchBreakpoints()
+
+  const isSmallScreen = isMobile || isTablet
   const convertUsdToToken = (amountInUSD: string): string => {
     return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
   }
@@ -127,7 +138,7 @@ const MainContent = () => {
   // }
   const walletReady = () => {
     return (
-      <Container mb="13px" p="14px 21px 29px">
+      <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
         <HuskiDao />
         <Text fontSize="24px" fontWeight={800}>
           Fund Huski DAO
@@ -176,23 +187,23 @@ const MainContent = () => {
   }
   const walletNotReady = () => {
     return (
-      <Container mb="13px" p="87px 21px 19px">
+      <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
         <Text fontSize="24px" fontWeight={800} mb="25px">
           Support Huski DAO
         </Text>
-        <Flex width="100%" justifyContent="space-between" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text>Token:</Text>
           <Text>Huski DAO (HIDAO)</Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text>Type:</Text>
           <Text>ERC - 20 (Ethereum)</Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text>Price:</Text>
           <Text>2 HIDAO per $1000</Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text>Goal:</Text>
           <Text>
             {FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
@@ -203,28 +214,28 @@ const MainContent = () => {
             })}
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text>Distribution：</Text>
           <Text>Claim on HuskiDAO Landing Page</Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px">
+        <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
           <Text>Accepted Payments:</Text>
-          <Flex>
-            <Flex>
+          <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between">
+            <Flex alignItems="center">
               <ETHIcon />
               <Text>ETH</Text>
             </Flex>
-            <Flex mx="15px">
+            <Flex alignItems="center">
               <USDTIcon />
               <Text>USDT</Text>
             </Flex>
-            <Flex>
+            <Flex alignItems="center">
               <USDCIcon />
               <Text>USDC</Text>
             </Flex>
           </Flex>
         </Flex>
-        <Flex width="100%" justifyContent="space-between">
+        <Flex width="100%" justifyContent="space-between" alignItems="center">
           <Text>Deadline:</Text>
           <Text>March 31, 2022 (UTC)</Text>
         </Flex>
@@ -254,18 +265,18 @@ const MainContent = () => {
     <>
       {getFirstContainer()}
 
-      <Container mb="13px" p="31px 21px 24px">
+      <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
         <Text fontSize="20px" fontWeight={800}>
           You&apos;ll receive
         </Text>
-        <Flex mb="15px">
-          <Banner padding="12px 39px" flex="1 0 50%" mr="15px">
+        <Flex mb="15px" flexDirection={isMobile ? 'column' : 'row'}>
+          <Banner mr={isMobile ? '0' : '15px'}>
             <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
               <LogoIcon width="100%" />
             </Box>
             <Text>Huski DAO</Text>
           </Banner>
-          <Banner padding="12px 20px" flex="1 0 50%">
+          <Banner>
             <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
               <LogoIcon width="100%" />
             </Box>
@@ -273,7 +284,7 @@ const MainContent = () => {
           </Banner>
         </Flex>
         {new BigNumber(convertTokenToUsd(amountInToken)).gte(50000) ? (
-          <Banner padding="12px 90px" width="100% !important">
+          <Banner>
             <Box background="#fff" p="1px" borderRadius="100%" width="37px" height="37px" mr="18px">
               <LogoIcon width="100%" />
             </Box>
@@ -282,7 +293,7 @@ const MainContent = () => {
         ) : null}
       </Container>
 
-      <Container p="40px 21px 30px">
+      <Container p="40px 21px 30px" maxWidth="460px">
         <Text fontSize="20px" fontWeight={800} mb="42px">
           More rewards after Protocols Fair Launch
         </Text>
@@ -299,13 +310,16 @@ const MainContent = () => {
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
           <Flex justifyContent="space-between" alignItems="center">
-            <Text fontSize="14px">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            })}`}</Text>
-            <Text fontSize="12px">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
+            <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
+              'en-US',
+              {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              },
+            )}`}</Text>
+            <Text fontSize="12px" textAlign="right">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
           </Flex>
         </Box>
       </Container>

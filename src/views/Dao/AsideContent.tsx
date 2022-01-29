@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Text } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { Container as BaseContainer, Separator } from './styles'
+import banner from './assets/banner.png'
 
 const Container = styled(BaseContainer)`
   ${Text} {
@@ -25,7 +26,7 @@ const Container = styled(BaseContainer)`
 const AsideContent = () => {
   return (
     <>
-      <Container p="22px 22px 29px">
+      <Container p="22px 21px 29px" maxWidth="586px">
         <Text fontSize="24px" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
           What is Huski DAO ?
         </Text>
@@ -48,8 +49,8 @@ const AsideContent = () => {
             <Text as="li">Providing strategies to the protocol and making a profit.</Text>
           </Text>
         </Box>
-        <Box width="100%" height="228px" background="#fff">
-          img here
+        <Box maxWidth="544px !important">
+          <img src={banner} alt="huski-banner" width="100%" />
         </Box>
         <Box>
           <Text className="title">What are the funds for</Text>
