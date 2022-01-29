@@ -1,6 +1,6 @@
 // Set of helper functions to facilitate wallet setup
 
-import { BASE_BSC_SCAN_URL, BASE_URL } from 'config'
+import { BASE_BSC_SCAN_URL } from 'config'
 import { nodes } from './getRpcUrl'
 
 /**
@@ -37,28 +37,4 @@ export const setupNetwork = async () => {
     console.error("Can't setup the BSC network on metamask because window.ethereum is undefined")
     return false
   }
-}
-
-/**
- * Prompt the user to add a custom token to metamask
- * @param tokenAddress
- * @param tokenSymbol
- * @param tokenDecimals
- * @returns {boolean} true if the token has been added, false otherwise
- */
-export const registerToken = async (tokenAddress: string, tokenSymbol: string, tokenDecimals: number) => {
-  const tokenAdded = await window.ethereum.request({
-    method: 'wallet_watchAsset',
-    params: {
-      type: 'ERC20',
-      options: {
-        address: tokenAddress,
-        symbol: tokenSymbol,
-        decimals: tokenDecimals,
-        image: `${BASE_URL}/images/tokens/${tokenAddress}.png`,
-      },
-    },
-  })
-
-  return tokenAdded
 }
