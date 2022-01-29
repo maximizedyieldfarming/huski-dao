@@ -11,8 +11,7 @@ import {
 } from '@huskifinance/huski-frontend-uikit'
 import styled, { css } from 'styled-components'
 
-export const StyledNav = styled.nav`
-  display: flex;
+export const StyledNav = styled(Flex)`
   justify-content: space-between;
 `
 export const Body = styled(Flex)`
@@ -274,10 +273,21 @@ export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProg
 
 // TIMELINE
 const TimelineContainer = styled(Flex)`
-  height: 320px;
+  height: 360px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    height: 120px;
+    padding: 0 21px;
+  }
   flex-direction: row-reverse;
-  margin: 30px 0;
-  ${({ theme }) => theme.mediaQueries.md} {
+  margin: 54px 0 105px;
+  ${Text} {
+    font-size: 14px;
+    font-weight: 700;
+    ${({ theme }) => theme.mediaQueries.sm} {
+      font-size: 18px;
+    }
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
     width: 100%;
     flex-direction: column;
     justify-content: center;
@@ -288,7 +298,7 @@ const TimelineTrack = styled(Box)`
   position: relative;
   width: 4px;
   height: 100%;
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     width: 100%;
     height: 4px;
   }
@@ -297,7 +307,7 @@ const TimelineProgress = styled.div`
   background: #d953e9;
   height: 25%;
   width: 100%;
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     width: 25%;
     height: 100%;
   }
@@ -305,35 +315,37 @@ const TimelineProgress = styled.div`
 const TimelineStep = styled.div`
   height: 6px;
   width: 18px;
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     width: 6px;
     height: 18px;
   }
   position: absolute;
   transform: translateY(-50%);
-  background: #d953e9;
+  background: white;
   border-radius: 6px;
   &:first-child {
+    background: #d953e9;
     top: 0;
-    ${({ theme }) => theme.mediaQueries.md} {
+    ${({ theme }) => theme.mediaQueries.sm} {
       left: 0;
     }
   }
   &:nth-child(2) {
+    background: #d953e9;
     top: 25%;
-    ${({ theme }) => theme.mediaQueries.md} {
+    ${({ theme }) => theme.mediaQueries.sm} {
       left: 25%;
     }
   }
   &:nth-child(3) {
     top: 75%;
-    ${({ theme }) => theme.mediaQueries.md} {
+    ${({ theme }) => theme.mediaQueries.sm} {
       left: 75%;
     }
   }
   &:nth-child(4) {
     top: 100%;
-    ${({ theme }) => theme.mediaQueries.md} {
+    ${({ theme }) => theme.mediaQueries.sm} {
       left: 100%;
     }
   }
@@ -343,13 +355,19 @@ export const Timeline = () => {
   const { isMobile } = useMatchBreakpoints()
   return (
     <TimelineContainer>
-      <Flex width="100%" position="relative" flexDirection={isMobile ? 'column' : 'row'} ml={isMobile ? '18px' : '0'}>
+      <Flex
+        width="100%"
+        position="relative"
+        flexDirection={isMobile ? 'column' : 'row'}
+        ml={isMobile ? '18px' : '0'}
+        mb={isMobile ? '0' : '20px'}
+      >
         <Text
           maxWidth="137px"
           maxHeight="fit-content"
           style={{
             color: 'white',
-            transform: isMobile ? 'translate(0, -50%)' : 'translate(-50%)',
+            transform: isMobile ? 'translate(0, -50%)' : null,
             position: 'absolute',
             left: '0',
             bottom: '0',
@@ -394,7 +412,7 @@ export const Timeline = () => {
           maxHeight="fit-content"
           style={{
             color: 'white',
-            transform: isMobile ? 'translate(0, 50%)' : 'translate(-50%)',
+            transform: isMobile ? 'translate(0, 50%)' : null,
             position: 'absolute',
             right: isMobile ? null : '0',
             left: isMobile ? '0' : null,
@@ -413,29 +431,60 @@ export const Timeline = () => {
         <TimelineProgress />
       </TimelineTrack>
       {isMobile ? null : (
-        <Flex width="100%" position="relative">
-          <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" left="0">
-            Beta Test Huski Finance
-          </Box>
-          <Box
+        <Flex width="100%" position="relative" mt="17px">
+          <Text
             maxWidth="137px"
-            style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
-            position="absolute"
-            left="25%"
+            maxHeight="fit-content"
+            style={{
+              color: 'white',
+              // transform: 'translate(-50%)',
+              position: 'absolute',
+              left: '0',
+              top: '0',
+            }}
+          >
+            Beta Test Huski Finance
+          </Text>
+          <Text
+            maxWidth="137px"
+            maxHeight="fit-content"
+            style={{
+              color: 'white',
+              transform: 'translate(-50%)',
+              position: 'absolute',
+              left: '25%',
+              top: '0',
+            }}
           >
             DAO Launching Campaing
-          </Box>
-          <Box
+          </Text>
+          <Text
             maxWidth="137px"
-            style={{ flex: '1', color: 'white', transform: 'translate(-50%)' }}
-            position="absolute"
-            left="75%"
+            maxHeight="fit-content"
+            style={{
+              color: 'white',
+              transform: 'translate(-50%)',
+              position: 'absolute',
+              left: '75%',
+              top: '0',
+            }}
           >
             DAO Launch
-          </Box>
-          <Box maxWidth="137px" style={{ flex: '1', color: 'white' }} position="absolute" right="0">
-            <Text textAlign="right">Fair Launch Huski Finance</Text>
-          </Box>
+          </Text>
+          <Text
+            maxWidth="137px"
+            maxHeight="fit-content"
+            textAlign="right"
+            style={{
+              color: 'white',
+              // transform: 'translate(-50%)',
+              position: 'absolute',
+              right: '0',
+              top: '0',
+            }}
+          >
+            Fair Launch Huski Finance
+          </Text>
         </Flex>
       )}
     </TimelineContainer>

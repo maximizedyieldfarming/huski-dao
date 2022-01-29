@@ -32,9 +32,10 @@ const StyledPage = styled(Page)`
   * {
     font-weight: 600;
   }
-  ${({ theme }) => theme.mediaQueries.sm} {
+  ${({ theme }) => theme.mediaQueries.md} {
     padding: 30px 190px;
   }
+  // custom scroll bar
 `
 
 const StyledConnectWallet = (props) => {
@@ -64,7 +65,7 @@ const StyledConnectWallet = (props) => {
 const LaunchCampaign = () => {
   return (
     <StyledPage>
-      <StyledNav>
+      <StyledNav as="nav" mb="98px">
         <Flex alignItems="center">
           <Box background="#fff" p="1px" borderRadius="100%" width="65px" height="65px" mr="18px">
             <LogoIcon width="100%" />
@@ -75,7 +76,7 @@ const LaunchCampaign = () => {
           <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
         </Flex>
       </StyledNav>
-      <Container width="100%" maxWidth="748px !important" mx="auto" p="17px 24px">
+      <Container width="100%" maxWidth="748px !important" mx="auto" p="17px 24px" mb="72px">
         <Text fontFamily={`'M PLUS 2'`} fontWeight={900} textAlign="center" fontSize="17px">
           We believe the fate of humanity will be decided at the frontier of technological innovation, financial
           revolution, and human collaboration.
@@ -87,7 +88,7 @@ const LaunchCampaign = () => {
         </StyledButton>
         <StyledButton filled>Huski Finance</StyledButton>
       </Flex>
-      <Body>
+      <Body mb="89px" mt="77px">
         <Main as="main">
           <MainContent />
         </Main>
@@ -96,27 +97,43 @@ const LaunchCampaign = () => {
         </Aside>
       </Body>
       <Footer>
-        <Flex justifyContent="center">
-          <Text fontSize="48px">Founded by</Text>
-        </Flex>
-        <FoundersWrapper>
-          {founders.map((founder) => (
-            <FoundersContainer key={founder.name}>
-              {/* img here */}
-              <Text>{founder.name}</Text>
-            </FoundersContainer>
-          ))}
-        </FoundersWrapper>
-        <Flex justifyContent="center">
-          <Text fontSize="48px">Launch Timeline</Text>
-        </Flex>
-        <Timeline />
-        <Flex justifyContent="center">
-          <Text fontSize="48px">Contact us</Text>
-        </Flex>
-        <Flex justifyContent="center">
+        <Box mb="97px">
+          <Text fontSize="48px" mx="auto" mb="63px" textAlign="center">
+            Founded by
+          </Text>
+          <FoundersWrapper>
+            {founders.map((founder) => (
+              <FoundersContainer key={founder.name}>
+                {/* img here */}
+                <Text>{founder.name}</Text>
+              </FoundersContainer>
+            ))}
+          </FoundersWrapper>
+        </Box>
+        <Box>
+          <Text fontSize="48px" textAlign="center">
+            Launch Timeline
+          </Text>
+          <Timeline />
+        </Box>
+        <Flex alignItems="center" flexDirection="column" mb="84px">
+          <Text fontSize="48px" mb="41px">
+            Contact us
+          </Text>
           <StyledButton filled>Fill in Google Form</StyledButton>
         </Flex>
+        <Box width="100%" borderRadius="15px" background="#1D1B25" p="17px 10px 20px">
+          <Text textAlign="center" fontSize="14px" fontWeight={700} mb="17px">
+            Participants/Citizens from the following countries are strictly excluded/not allowed to participate:
+          </Text>
+          <Text textAlign="center" fontSize="12px" fontWeight={700} mb="39px">
+            Bolivia, Cambodia, Iran, Iraq, Libya, Nepal, Zimbabwe, Liberia, Syria, Cuba, Myanmar, Sudan, North Korea,
+            USA, China mainland.
+          </Text>
+          <Text textAlign="center" fontSize="12px" fontWeight={700} style={{ textDecoration: 'underline' }}>
+            &copy; 2022 All rights reserved
+          </Text>
+        </Box>
       </Footer>
     </StyledPage>
   )
