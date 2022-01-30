@@ -135,8 +135,8 @@ const MainContent = () => {
   const walletReady = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
-        <Text fontSize="24px" fontWeight={800}>
-          Fund Huski DAO
+        <Text fontSize="24px" fontWeight={800} mt="87px">
+          Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>

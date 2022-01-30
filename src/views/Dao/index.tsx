@@ -76,7 +76,7 @@ const LaunchCampaign = () => {
           <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
             <LogoIcon width="100%" />
           </Box>
-          <Text>HUSKI DAO Launch Campaign</Text>
+          <Text>Huski DAO Launch Campaign</Text>
         </Flex>
         <Flex alignItems="center">
           <Select
@@ -112,10 +112,10 @@ const LaunchCampaign = () => {
         </Text>
       </Container>
       <Flex justifyContent="center">
-        <StyledLink style={{ width: '144px', marginRight: '28px' }} to={{ pathname: Links.onePager }}>
+        <StyledLink style={{ width: '144px', marginRight: '28px' }} to={{ pathname: Links.onePager }} target="_blank">
           View One Pager
         </StyledLink>
-        <StyledLink style={{ width: '144px' }} to={{ pathname: Links.huskiFinance }}>
+        <StyledLink style={{ width: '144px' }} to={{ pathname: Links.huskiFinance }} target="_blank">
           Huski Finance
         </StyledLink>
       </Flex>
@@ -154,7 +154,7 @@ const LaunchCampaign = () => {
           <Text fontSize="48px" mb="41px">
             Contact us
           </Text>
-          <StyledLink to={{ pathname: Links.googleForm }} style={{ width: '175px' }}>
+          <StyledLink to={{ pathname: Links.googleForm }} style={{ width: '175px' }} target="_blank">
             Fill in Google Form
           </StyledLink>
         </Flex>

@@ -23,9 +23,9 @@ export const Founders: Array<Founders> = [
 ]
 
 export const Links: Links = {
-    huskiFinance: 'https://www.huski.finance/',
-    onePager: '#',
-    googleForm: '#'
+    huskiFinance: 'https://test.huski.finance/',
+    onePager: 'https://drive.google.com/file/d/1Yne_5zSQuwGwM9_arE215pTSouyTj_XL/view?usp=sharing',
+    googleForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfQYEmLeC9fxtCHSB9lbcRO_3YcYvEUHSEZo6Xc9V9Lz1z5ag/viewform?usp=sf_link'
 }
 
 export const NFT_SPONSORS_TARGET = 100 // NFTs to be distributed to sponsors who have donated more than 50,000 USD
