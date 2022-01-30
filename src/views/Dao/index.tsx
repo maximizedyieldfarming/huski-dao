@@ -25,6 +25,7 @@ import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { Founders, Links } from './config'
 import { ETHIcon, BSCIcon } from './assets'
+import { useHover } from './helpers'
 
 const StyledPage = styled(Page)`
   min-height: 100vh;
@@ -54,16 +55,8 @@ const StyledConnectWallet = (props) => {
   //   alert('qinghuan wangluo')
   //
   //    }
-  function useHover() {
-    const [hovering, setHovering] = React.useState(false)
-    const onHoverProps = {
-      onMouseEnter: () => setHovering(true),
-      onMouseLeave: () => setHovering(false),
-    }
-    return [hovering, onHoverProps]
-  }
-  const [buttonIsHovering, buttonHoverProps] = useHover()
 
+  const [buttonIsHovering, buttonHoverProps] = useHover()
   // hide this to test normal wllet connect button
   if (!account) {
     return (
@@ -97,7 +90,7 @@ const StyledConnectWallet = (props) => {
 }
 
 const LaunchCampaign = () => {
-  const [selectedNetwork, setSelectedNetwork] = React.useState('binance')
+  const [selectedNetwork, setSelectedNetwork] = React.useState('ethereum')
 
   return (
     <StyledPage>
@@ -112,14 +105,14 @@ const LaunchCampaign = () => {
           <Select
             options={[
               {
-                value: 'binance',
-                label: 'BSC',
-                icon: <BSCIcon width="27px" height="27px" className="noPos" />,
-              },
-              {
                 value: 'ethereum',
                 label: 'ETH',
                 icon: <ETHIcon width="27px" height="27px" className="noPos" />,
+              },
+              {
+                value: 'binance',
+                label: 'BSC',
+                icon: <BSCIcon width="27px" height="27px" className="noPos" />,
               },
             ]}
             onChange={(option) => setSelectedNetwork(option.value)}

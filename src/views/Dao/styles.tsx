@@ -68,7 +68,7 @@ export const Footer = styled(Box)``
 
 export const StyledButton = styled(Button)<{ filled?: boolean }>`
   background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
-  border: ${({ filled }) => (filled ? 'none' : '1px solid white')};
+  border: none;
   border-radius: 14px;
   color: #fff;
   font-weight: 700;
@@ -77,7 +77,7 @@ export const StyledButton = styled(Button)<{ filled?: boolean }>`
   &.pancake-button--disabled {
     color: #fff;
     background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
-    border: ${({ filled }) => (filled ? 'none' : '1px solid white')};
+    border: none;
   }
 `
 export const InputContainer = styled(Flex)`
