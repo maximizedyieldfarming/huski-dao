@@ -7,6 +7,7 @@ import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-f
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
+import Select from 'components/Select/Select'
 import {
   StyledButton,
   StyledNav,
@@ -22,6 +23,7 @@ import { Timeline } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { founders } from './config'
+import { ETHIcon, BSCIcon } from './assets'
 
 const StyledPage = styled(Page)`
   min-height: 100vh;
@@ -53,7 +55,7 @@ const StyledConnectWallet = (props) => {
   //    }
   if (!account) {
     return (
-      <StyledButton onClick={onPresentConnectModal} {...props} heigth="36px">
+      <StyledButton onClick={onPresentConnectModal} {...props}>
         Connect Wallet
       </StyledButton>
     )
@@ -62,9 +64,11 @@ const StyledConnectWallet = (props) => {
 }
 
 const LaunchCampaign = () => {
+  const [selectedNetwork, setSelectedNetwork] = React.useState('binance')
+
   return (
     <StyledPage>
-      <StyledNav as="nav" mb="98px">
+      <StyledNav as="nav" mb="98px" mx="auto">
         <Flex alignItems="center">
           <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
             <LogoIcon width="100%" />
@@ -72,7 +76,24 @@ const LaunchCampaign = () => {
           <Text>HUSKI DAO Launch Campaign</Text>
         </Flex>
         <Flex>
-          <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
+          <Select
+            options={[
+              {
+                value: 'binance',
+                label: 'BSC',
+                icon: <BSCIcon width="27px" height="27px" className="noPos" />,
+              },
+              {
+                value: 'ethereum',
+                label: 'ETH',
+                icon: <ETHIcon width="27px" height="27px" className="noPos" />,
+              },
+            ]}
+            onChange={(option) => setSelectedNetwork(option.value)}
+          />
+          <Box ml="8px">
+            <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
+          </Box>
         </Flex>
       </StyledNav>
       <Container width="100%" maxWidth="748px !important" mx="auto" p="17px 24px" mb="72px">

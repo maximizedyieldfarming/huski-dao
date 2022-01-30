@@ -3,6 +3,8 @@ import styled from 'styled-components'
 
 export const StyledNav = styled(Flex)`
   justify-content: space-between;
+  width: 100%;
+  max-width: 1058px;
 `
 export const Body = styled(Flex)`
   width: 100%;
