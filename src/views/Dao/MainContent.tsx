@@ -20,8 +20,9 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { HuskiDao, USDCIcon, ETHIcon, USDTIcon, Nft, DaoToken, DaoVer } from './assets'
+import { USDCIcon, ETHIcon, USDTIcon, Nft, DaoToken, DaoVer } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
+import { useHover } from './helpers'
 
 const MainContent = () => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
@@ -132,6 +133,7 @@ const MainContent = () => {
   //     setIsApproving(false)
   //   }
   // }
+  const [buttonIsHovering, buttonHoverProps] = useHover()
   const walletReady = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
@@ -244,9 +246,28 @@ const MainContent = () => {
         </Flex>
 
         <Box mx="auto" width="fit-content" mt="23px">
-          <StyledButton onClick={onPresentConnectModal} heigth="36px">
+          {/*  <StyledButton onClick={onPresentConnectModal} heigth="36px">
             Connect Wallet
-          </StyledButton>
+          </StyledButton> */}
+          <Box
+            ml="8px"
+            borderRadius="14px"
+            background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
+            p="1px"
+            height="46px"
+          >
+            <StyledButton
+              onClick={(e) => e.preventDefault()}
+              maxWidth={146}
+              height="100%"
+              {...buttonHoverProps}
+              style={{ cursor: 'not-allowed' }}
+            >
+              <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
+                {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
+              </Text>
+            </StyledButton>
+          </Box>
         </Box>
       </Container>
     )
