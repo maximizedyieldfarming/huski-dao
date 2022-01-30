@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 // import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
 import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
@@ -18,11 +18,12 @@ import {
   Body,
   FoundersWrapper,
   FoundersContainer,
+  StyledLink,
 } from './styles'
 import { Timeline } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
-import { founders } from './config'
+import { Founders, Links } from './config'
 import { ETHIcon, BSCIcon } from './assets'
 
 const StyledPage = styled(Page)`
@@ -55,8 +56,10 @@ const StyledConnectWallet = (props) => {
   //    }
   if (!account) {
     return (
-      <StyledButton onClick={onPresentConnectModal} {...props}>
-        Connect Wallet
+      <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={146} height="100%">
+        <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
+          Connect Wallet
+        </Text>
       </StyledButton>
     )
   }
@@ -75,7 +78,7 @@ const LaunchCampaign = () => {
           </Box>
           <Text>HUSKI DAO Launch Campaign</Text>
         </Flex>
-        <Flex>
+        <Flex alignItems="center">
           <Select
             options={[
               {
@@ -91,7 +94,13 @@ const LaunchCampaign = () => {
             ]}
             onChange={(option) => setSelectedNetwork(option.value)}
           />
-          <Box ml="8px">
+          <Box
+            ml="8px"
+            borderRadius="14px"
+            background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
+            p="1px"
+            height="46px"
+          >
             <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
           </Box>
         </Flex>
@@ -103,10 +112,12 @@ const LaunchCampaign = () => {
         </Text>
       </Container>
       <Flex justifyContent="center">
-        <StyledButton filled mr="28px">
+        <StyledLink style={{ width: '144px', marginRight: '28px' }} to={{ pathname: Links.onePager }}>
           View One Pager
-        </StyledButton>
-        <StyledButton filled>Huski Finance</StyledButton>
+        </StyledLink>
+        <StyledLink style={{ width: '144px' }} to={{ pathname: Links.huskiFinance }}>
+          Huski Finance
+        </StyledLink>
       </Flex>
       <Body mb="89px" mt="77px">
         <Main as="main">
@@ -117,19 +128,22 @@ const LaunchCampaign = () => {
         </Aside>
       </Body>
       <Footer>
-        <Box mb="97px">
-          <Text fontSize="48px" mx="auto" mb="63px" textAlign="center">
-            Founded by
-          </Text>
-          <FoundersWrapper>
-            {founders.map((founder) => (
-              <FoundersContainer key={founder.name}>
-                {/* img here */}
-                <Text>{founder.name}</Text>
-              </FoundersContainer>
-            ))}
-          </FoundersWrapper>
-        </Box>
+        {Founders.length ? (
+          <Box mb="97px">
+            <Text fontSize="48px" mx="auto" mb="63px" textAlign="center">
+              Founded by
+            </Text>
+            <FoundersWrapper>
+              {Founders.map((founder) => (
+                <FoundersContainer key={founder.name}>
+                  {/* img here */}
+                  <img src={founder.image} alt={`Founder: ${founder.name}`} />
+                  <Text ml="19px">{founder.name}</Text>
+                </FoundersContainer>
+              ))}
+            </FoundersWrapper>
+          </Box>
+        ) : null}
         <Box>
           <Text fontSize="48px" textAlign="center">
             Launch Timeline
@@ -140,7 +154,9 @@ const LaunchCampaign = () => {
           <Text fontSize="48px" mb="41px">
             Contact us
           </Text>
-          <StyledButton filled>Fill in Google Form</StyledButton>
+          <StyledLink to={{ pathname: Links.googleForm }} style={{ width: '175px' }}>
+            Fill in Google Form
+          </StyledLink>
         </Flex>
         <Box width="100%" borderRadius="15px" background="#1D1B25" p="17px 10px 20px">
           <Text textAlign="center" fontSize="14px" fontWeight={700} mb="17px">

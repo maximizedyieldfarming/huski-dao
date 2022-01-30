@@ -2,18 +2,31 @@ interface Founders {
     name: string,
     image: string,
 }
-export const founders: Array<Founders> = [{
-    name: 'Binance Smart Chain',
-    image: '%PUBLIC_FOLDER/images/founders/BSC.svg%',
-}, {
-    name: 'PancakeSwap',
-    image: '%PUBLIC_FOLDER/images/founders/BC.svg%',
-},
-{
-    name: 'Ethereum',
-    image: '%PUBLIC_FOLDER/images/founders/BNB.svg%',
-},
+interface Links {
+    huskiFinance: string,
+    onePager: string,
+    googleForm: string,
+}
+export const Founders: Array<Founders> = [
+    // uncomment to see the founders section (for testing purposes)
+    // {
+    //     name: 'Binance Smart Chain',
+    //     image: '/images/founders/logo.png',
+    // }, {
+    //     name: 'PancakeSwap',
+    //     image: '/images/founders/logo.png',
+    // },
+    // {
+    //     name: 'Ethereum',
+    //     image: '/images/founders/logo.png',
+    // },
 ]
+
+export const Links: Links = {
+    huskiFinance: 'https://www.huski.finance/',
+    onePager: '#',
+    googleForm: '#'
+}
 
 export const NFT_SPONSORS_TARGET = 100 // NFTs to be distributed to sponsors who have donated more than 50,000 USD
 export const FUNDING_AMOUNT_TARGET = 1000000 // funding amount to be reached is 1,000,000 USD (1 million), and can go over this target

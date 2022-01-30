@@ -187,7 +187,7 @@ export const Timeline = () => {
               top: '0',
             }}
           >
-            DAO Launching Campaing
+            DAO Launching Campaign
           </Text>
           <Text
             maxWidth="137px"
