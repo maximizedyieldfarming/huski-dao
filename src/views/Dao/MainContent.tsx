@@ -223,7 +223,7 @@ const MainContent = () => {
         </Flex>
         <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
           <Text textAlign="left">Accepted Payments:</Text>
-          <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between" maxWidth={230}>
+          <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between" maxWidth={230} width="100%">
             <Flex alignItems="center">
               <ETHIcon />
               <Text>ETH</Text>

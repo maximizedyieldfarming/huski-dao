@@ -54,7 +54,37 @@ const StyledConnectWallet = (props) => {
   //   alert('qinghuan wangluo')
   //
   //    }
+  function useHover() {
+    const [hovering, setHovering] = React.useState(false)
+    const onHoverProps = {
+      onMouseEnter: () => setHovering(true),
+      onMouseLeave: () => setHovering(false),
+    }
+    return [hovering, onHoverProps]
+  }
+  const [buttonIsHovering, buttonHoverProps] = useHover()
+
+  // hide this to test normal wllet connect button
   if (!account) {
+    return (
+      <StyledButton
+        onClick={(e) => e.preventDefault()}
+        {...props}
+        maxWidth={146}
+        height="100%"
+        {...buttonHoverProps}
+        style={{ cursor: 'not-allowed' }}
+      >
+        <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
+          {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
+        </Text>
+      </StyledButton>
+    )
+  }
+
+  // uncomment this to enable normal button
+  // product manager asked to disable this button while we are working on functionality
+  /*   if (!account) {
     return (
       <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={146} height="100%">
         <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
@@ -62,7 +92,7 @@ const StyledConnectWallet = (props) => {
         </Text>
       </StyledButton>
     )
-  }
+  } */
   return <UserMenu />
 }
 
