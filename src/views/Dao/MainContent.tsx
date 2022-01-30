@@ -135,9 +135,8 @@ const MainContent = () => {
   const walletReady = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
-        <HuskiDao />
-        <Text fontSize="24px" fontWeight={800}>
-          Fund Huski DAO
+        <Text fontSize="24px" fontWeight={800} mt="87px">
+          Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
@@ -152,7 +151,15 @@ const MainContent = () => {
             onChange={handleInputChange}
             pattern="^[0-9]*[.,]?[0-9]{0,18}$"
           />
-          <Text color="#00000082 !important" width="70px">{`≈${convertTokenToUsd(amountInToken || '0')}USD`}</Text>
+          <Text color="#00000082 !important">{`≈${Number(convertTokenToUsd(amountInToken || '0'))?.toLocaleString(
+            'en-US',
+            {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            },
+          )}USD`}</Text>
         </InputContainer>
         <ButtonMenuRounded onItemClick={handleAmountButton} activeIndex={amountButtonIndex}>
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
@@ -216,7 +223,7 @@ const MainContent = () => {
         </Flex>
         <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
           <Text textAlign="left">Accepted Payments:</Text>
-          <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between">
+          <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between" maxWidth={230} width="100%">
             <Flex alignItems="center">
               <ETHIcon />
               <Text>ETH</Text>
@@ -276,7 +283,7 @@ const MainContent = () => {
           </Banner>
         </Flex>
         {new BigNumber(convertTokenToUsd(amountInToken)).gte(50000) ? (
-          <Banner mt="15px">
+          <Banner mt="15px" maxWidth="100% !important">
             <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
             <Text fontSize="14px">NFT co-branded sponsors </Text>
           </Banner>

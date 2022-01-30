@@ -11,7 +11,14 @@ import styled from 'styled-components'
 // Re-doing these buttons because styling from uikit is different from what's on the desigin
 export const ButtonMenuRounded = styled(UikitButtonMenu)`
   width: 100%;
+  max-width: 100%;
+  overflow: auto;
   background: #312b39;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `
 export const ButtonMenuItemRounded = styled(Button)`
   background: #1d1725;
@@ -20,8 +27,17 @@ export const ButtonMenuItemRounded = styled(Button)`
 `
 export const ButtonMenuSquared = styled(UikitButtonMenu)`
   width: 100%;
+  max-width: 100%;
+  overflow: auto;
   background: none;
+  // hide scrollbar on mobile
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `
+
 export const ButtonMenuItemSquared = styled(Button)`
   background: #261f30;
   border-radius: 0;

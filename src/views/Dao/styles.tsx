@@ -1,8 +1,13 @@
-import { Box, Flex, Button } from '@huskifinance/huski-frontend-uikit'
+import { Box, Flex, Button, Text } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 export const StyledNav = styled(Flex)`
   justify-content: space-between;
+  width: 100%;
+  max-width: 1058px;
+  flex-wrap: wrap;
+  row-gap: 10px;
 `
 export const Body = styled(Flex)`
   width: 100%;
@@ -68,6 +73,12 @@ export const StyledButton = styled(Button)<{ filled?: boolean }>`
   color: #fff;
   font-weight: 700;
   box-shadow: none;
+  &:disabled,
+  &.pancake-button--disabled {
+    color: #fff;
+    background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
+    border: ${({ filled }) => (filled ? 'none' : '1px solid white')};
+  }
 `
 export const InputContainer = styled(Flex)`
   width: 100%;
@@ -139,4 +150,18 @@ export const FoundersContainer = styled(Flex)`
   * {
     font-size: 12px;
   }
+  img {
+    width: 30px;
+    height: 30px;
+  }
+`
+export const StyledLink = styled(Link)`
+  background: linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%);
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 700;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
