@@ -29,6 +29,7 @@ import { ETHIcon, BSCIcon, LaughingHuski, PlanetPurple, PlanetYellow } from './a
 import { useHover } from './helpers'
 
 const PageWrapper = styled.div`
+  overflow: hidden;
   position: relative;
   background: url(${PlanetYellow}) no-repeat 158px 185px, url(${PlanetPurple}) no-repeat right 80px top 200px;
   background-size: 133px auto, 220px auto;
