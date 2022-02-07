@@ -24,7 +24,7 @@ import { Timeline } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { Founders, Links } from './config'
-import { ETHIcon, BSCIcon } from './assets'
+import { ETHIcon, BSCIcon, LaughingHuski } from './assets'
 import { useHover } from './helpers'
 
 const StyledPage = styled(Page)`
@@ -96,10 +96,11 @@ const LaunchCampaign = () => {
     <StyledPage>
       <StyledNav as="nav" mb="98px" mx="auto">
         <Flex alignItems="center">
-          <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
+          <img src={LaughingHuski} alt="Huski Finance" width="55px" />
+          {/*           <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
             <LogoIcon width="100%" />
-          </Box>
-          <Text fontSize="30px" fontWeight="700 !important">
+          </Box> */}
+          <Text fontSize="30px" fontWeight="900 !important" ml="20px">
             Huski DAO Launch Campaign
           </Text>
         </Flex>

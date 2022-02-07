@@ -20,7 +20,7 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { USDCIcon, ETHIcon, USDTIcon, Nft, DaoToken, DaoVer } from './assets'
+import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
 
@@ -137,6 +137,11 @@ const MainContent = () => {
   const walletReady = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
+        <Box>
+          <img src={LaughingHuski} alt="" style={{ zIndex: 2 }} />
+          <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} />
+          <img src={LaughingHuski} alt="" style={{ zIndex: 2 }} />
+        </Box>
         <Text fontSize="24px" fontWeight="800 !important" mt="87px">
           Support Huski DAO
         </Text>
@@ -193,6 +198,21 @@ const MainContent = () => {
   const walletNotReady = () => {
     return (
       <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
+        <Flex>
+          <img
+            src={LaughingHuski}
+            alt=""
+            style={{ zIndex: 2, marginRight: '-10px', height: '20px', alignSelf: 'center' }}
+            width="20px"
+          />
+          <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} width="50px" />
+          <img
+            src={LaughingHuski}
+            alt=""
+            style={{ zIndex: 2, marginLeft: '-10px', height: '20px', alignSelf: 'flex-end' }}
+            width="20px"
+          />
+        </Flex>
         <Text fontSize="24px" fontWeight="800 !important" mb="25px">
           Support Huski DAO
         </Text>
@@ -325,7 +345,7 @@ const MainContent = () => {
         </Text>
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
           <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
-            <img src={DaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
+            <img src={HuskiDaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
             <Text fontSize="14px">Huski DAO Token</Text>
           </Banner>
           <Banner>
@@ -347,10 +367,13 @@ const MainContent = () => {
         </Text>
         {/* TODO: add tooltip */}
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
-          <Box background="#fff" p="1px" borderRadius="100%" width="37px" maxHeight="37px" mr="18px">
+          <img src={LaughingHuski} alt="Huski Token" width="37px" />
+          {/*           <Box background="#fff" p="1px" borderRadius="100%" width="37px" maxHeight="37px" mr="18px">
             <LogoIcon width="100%" />
-          </Box>
-          <Text fontSize="14px">{convertTokenToUsd(amountInToken || '0')} HUSKI Token</Text>
+          </Box> */}
+          <Text fontSize="14px" ml="18px">
+            {convertTokenToUsd(amountInToken || '0')} HUSKI Token
+          </Text>
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
