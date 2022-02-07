@@ -8,10 +8,13 @@ import {
   Text,
   Flex,
   Input,
-  LogoIcon,
   useWalletModal,
   useMatchBreakpoints,
+  InfoIcon,
+  useTooltip,
 } from '@huskifinance/huski-frontend-uikit'
+import styled from 'styled-components'
+import useCopyToClipboard from 'utils/copyToClipboard'
 import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
@@ -20,9 +23,23 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski } from './assets'
+import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski, ClipboardIcon } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
+
+const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
+  display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
+  position: absolute;
+  padding: 8px;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  background-color: #261f30;
+  color: #ffffff;
+  border-radius: 16px;
+  width: 100px;
+`
 
 const MainContent = () => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
@@ -133,15 +150,48 @@ const MainContent = () => {
   //     setIsApproving(false)
   //   }
   // }
+
+  // const { targetRef, tooltip, tooltipVisible } = useTooltip(
+  //   <Container width="412px" height="393px">
+  //     as
+  //   </Container>,
+  //   { placement: 'top' },
+  // )
+
+  const referralLink = 'https://dao.huski.finance?code=example%code%1234567' /* TODO: change later */
+
+  const [hasReferralLink, setHasReferralLink] = React.useState<boolean>(!!referralLink)
   const [buttonIsHovering, buttonHoverProps] = useHover()
+  const handleGenerateReferralLink = () => {
+    setHasReferralLink(true)
+  }
+  const [value, copy] = useCopyToClipboard()
+  const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
+  function displayTooltip() {
+    setIsTooltipDisplayed(true)
+    setTimeout(() => {
+      setIsTooltipDisplayed(false)
+    }, 1000)
+  }
+
   const walletReady = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
-        <Box>
-          <img src={LaughingHuski} alt="" style={{ zIndex: 2 }} />
-          <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} />
-          <img src={LaughingHuski} alt="" style={{ zIndex: 2 }} />
-        </Box>
+        <Flex>
+          <img
+            src={LaughingHuski}
+            alt=""
+            style={{ zIndex: 2, marginRight: '-5px', height: '20px', alignSelf: 'center' }}
+            width="20px"
+          />
+          <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} width="50px" />
+          <img
+            src={LaughingHuski}
+            alt=""
+            style={{ zIndex: 2, marginLeft: '-5px', height: '20px', alignSelf: 'flex-end' }}
+            width="20px"
+          />
+        </Flex>
         <Text fontSize="24px" fontWeight="800 !important" mt="87px">
           Support Huski DAO
         </Text>
@@ -187,10 +237,71 @@ const MainContent = () => {
           </StyledButton>
         </Box>
         <Box width="100%">
-          <Text fontSize="12px">Referral Link:</Text>
-          <Text as={Link} to="#" style={{ textDecoration: 'underline', cursor: 'pointer' }} fontSize="12px">
-            https://dao.huski.finance?code=example%code%1234567{/* TODO: change later */}
-          </Text>
+          <Flex alignItems="center">
+            <Text fontSize="12px" mr="5px">
+              Referral Link:
+            </Text>
+            {/*             {tooltipVisible && tooltip} */}
+            <span /* ref={targetRef} */>
+              <InfoIcon color="#ffffff" width="9px" />
+            </span>
+          </Flex>
+          <Flex>
+            <Flex
+              background="#261F30"
+              borderRadius="8px"
+              height="40px"
+              alignItems="center"
+              justifyContent="center"
+              p="10px 10px"
+              width="100%"
+              maxWidth="333px"
+              mr="7px"
+            >
+              {hasReferralLink ? (
+                <Text
+                  onClick={() => copy(referralLink).then(displayTooltip)}
+                  style={{
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                  fontSize="12px"
+                  width="100%"
+                >
+                  {referralLink}
+                </Text>
+              ) : (
+                <Text fontSize="14px">Share your link to earn bonus rewards</Text>
+              )}
+            </Flex>
+            {hasReferralLink ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => copy(referralLink).then(displayTooltip)}
+                  style={{
+                    background: 'none',
+                    height: '40px',
+                    boxShadow: 'none',
+                    position: 'relative',
+                    border: 'none',
+                    cursor: 'pointer',
+                    margin: '0 auto',
+                  }}
+                >
+                  <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied!</Tooltip>
+                  <ClipboardIcon color="#ffffff" />
+                </button>
+              </>
+            ) : (
+              <StyledButton filled width="78px" height="40px" onClick={handleGenerateReferralLink}>
+                <Text fontSize="12px">Generate</Text>
+              </StyledButton>
+            )}
+          </Flex>
         </Box>
       </Container>
     )
@@ -202,14 +313,14 @@ const MainContent = () => {
           <img
             src={LaughingHuski}
             alt=""
-            style={{ zIndex: 2, marginRight: '-10px', height: '20px', alignSelf: 'center' }}
+            style={{ zIndex: 2, marginRight: '-5px', height: '20px', alignSelf: 'center' }}
             width="20px"
           />
           <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} width="50px" />
           <img
             src={LaughingHuski}
             alt=""
-            style={{ zIndex: 2, marginLeft: '-10px', height: '20px', alignSelf: 'flex-end' }}
+            style={{ zIndex: 2, marginLeft: '-5px', height: '20px', alignSelf: 'flex-end' }}
             width="20px"
           />
         </Flex>
