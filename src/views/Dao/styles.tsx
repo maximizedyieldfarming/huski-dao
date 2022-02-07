@@ -9,6 +9,9 @@ export const StyledNav = styled(Flex)`
   flex-wrap: wrap;
   row-gap: 10px;
 `
+export const Header = styled(Box)`
+  width: 100%;
+`
 export const Body = styled(Flex)`
   width: 100%;
   flex-direction: column;

@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'M PLUS 2', sans-serif;
   }
   body {
-    background-color: ${({ theme }) => theme.colors.background};
+  background: #16131e;
 overflow: overlay;
   
     // custom scrollbar
