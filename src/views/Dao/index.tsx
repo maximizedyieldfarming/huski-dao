@@ -99,7 +99,9 @@ const LaunchCampaign = () => {
           <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
             <LogoIcon width="100%" />
           </Box>
-          <Text>Huski DAO Launch Campaign</Text>
+          <Text fontSize="30px" fontWeight="700 !important">
+            Huski DAO Launch Campaign
+          </Text>
         </Flex>
         <Flex alignItems="center">
           <Select
@@ -128,12 +130,22 @@ const LaunchCampaign = () => {
           </Box>
         </Flex>
       </StyledNav>
-      <Container width="100%" maxWidth="748px !important" mx="auto" p="17px 24px" mb="72px">
-        <Text fontFamily={`'M PLUS 2'`} fontWeight={900} textAlign="center" fontSize="17px">
-          We believe the fate of humanity will be decided at the frontier of technological innovation, financial
-          revolution, and human collaboration.
-        </Text>
-      </Container>
+      <Box
+        width="100%"
+        maxWidth="748px !important"
+        mb="72px"
+        mx="auto"
+        background="linear-gradient(88.34deg, #463C72 22.17%, #5B2477 70.21%)"
+        p="1px"
+        borderRadius="14px"
+      >
+        <Container p="17px 24px" border="none !important" width="100%" height="100%">
+          <Text fontWeight="900 !important" textAlign="center" fontSize="17px">
+            We believe the fate of humanity will be decided at the frontier of technological innovation, financial
+            revolution, and human collaboration.
+          </Text>
+        </Container>
+      </Box>
       <Flex justifyContent="center">
         <StyledLink style={{ width: '144px', marginRight: '28px' }} to={{ pathname: Links.onePager }} target="_blank">
           View One Pager

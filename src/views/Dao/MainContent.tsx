@@ -137,7 +137,7 @@ const MainContent = () => {
   const walletReady = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
-        <Text fontSize="24px" fontWeight={800} mt="87px">
+        <Text fontSize="24px" fontWeight="800 !important" mt="87px">
           Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
@@ -193,24 +193,38 @@ const MainContent = () => {
   const walletNotReady = () => {
     return (
       <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
-        <Text fontSize="24px" fontWeight={800} mb="25px">
+        <Text fontSize="24px" fontWeight="800 !important" mb="25px">
           Support Huski DAO
         </Text>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Token:</Text>
-          <Text textAlign="right">Huski DAO (HIDAO)</Text>
+          <Text fontSize="14px" textAlign="left">
+            Token:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            Huski DAO (HIDAO)
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Type:</Text>
-          <Text textAlign="right">ERC - 20 (Ethereum)</Text>
+          <Text fontSize="14px" textAlign="left">
+            Type:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            ERC - 20 (Ethereum)
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Price:</Text>
-          <Text textAlign="right">2 HIDAO per $1000</Text>
+          <Text fontSize="14px" textAlign="left">
+            Price:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            2 HIDAO per $1000
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Goal:</Text>
-          <Text textAlign="right">
+          <Text fontSize="14px" textAlign="left">
+            Goal:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
             {FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
@@ -220,29 +234,45 @@ const MainContent = () => {
           </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Distribution：</Text>
-          <Text textAlign="right">Claim on HuskiDAO Landing Page</Text>
+          <Text fontSize="14px" textAlign="left">
+            Distribution：
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            Claim on HuskiDAO Landing Page
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
-          <Text textAlign="left">Accepted Payments:</Text>
+          <Text fontSize="14px" textAlign="left">
+            Accepted Payments:
+          </Text>
           <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between" maxWidth={230} width="100%">
             <Flex alignItems="center">
-              <ETHIcon />
-              <Text>ETH</Text>
+              <ETHIcon width="24px" height="24px" />
+              <Text fontSize="14px" ml="5px">
+                ETH
+              </Text>
             </Flex>
             <Flex alignItems="center">
-              <USDTIcon />
-              <Text>USDT</Text>
+              <USDTIcon width="24px" height="24px" />
+              <Text fontSize="14px" ml="5px">
+                USDT
+              </Text>
             </Flex>
             <Flex alignItems="center">
-              <USDCIcon />
-              <Text>USDC</Text>
+              <USDCIcon width="24px" height="24px" />
+              <Text fontSize="14px" ml="5px">
+                USDC
+              </Text>
             </Flex>
           </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center">
-          <Text textAlign="left">Deadline:</Text>
-          <Text textAlign="right">March 31, 2022 (UTC)</Text>
+          <Text fontSize="14px" textAlign="left">
+            Deadline:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            March 31, 2022 (UTC)
+          </Text>
         </Flex>
 
         <Box mx="auto" width="fit-content" mt="23px">
@@ -290,8 +320,8 @@ const MainContent = () => {
       {getFirstContainer()}
 
       <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight={800} mb="27px">
-          You&apos;ll receive
+        <Text fontSize="20px" fontWeight="800 !important" mb="27px">
+          You will receive
         </Text>
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
           <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
@@ -312,7 +342,7 @@ const MainContent = () => {
       </Container>
 
       <Container p="40px 21px 30px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight={800} mb="42px">
+        <Text fontSize="20px" fontWeight="800 !important" mb="42px">
           More rewards after Protocols Fair Launch
         </Text>
         {/* TODO: add tooltip */}

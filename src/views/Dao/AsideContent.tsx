@@ -25,6 +25,13 @@ const Container = styled(BaseContainer)`
       margin-bottom: 46px;
     }
   }
+  ul {
+    list-style-position: outside;
+    padding: 0 21px;
+    li {
+      line-height: 30px;
+    }
+  }
 `
 
 const AsideContent = () => {
