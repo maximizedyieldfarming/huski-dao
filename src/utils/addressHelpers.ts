@@ -11,6 +11,3 @@ export const getMulticallAddress = () => {
   return getAddress(addresses.multiCall)
 }
 
-export const getPancakeProfileAddress = () => {
-  return getAddress(addresses.pancakeProfile)
-}

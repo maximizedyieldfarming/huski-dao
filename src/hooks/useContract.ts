@@ -3,7 +3,7 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import {
   getVaultContract,
   getBep20Contract,
-  getProfileContract,
+
 } from 'utils/contractHelpers'
 import { getMulticallAddress } from 'utils/addressHelpers'
 
@@ -28,11 +28,6 @@ export const useVault = (address: string) => {
   return useMemo(() => getVaultContract(address, library.getSigner()), [address, library])
 }
 
-
-export const useProfile = () => {
-  const { library } = useActiveWeb3React()
-  return useMemo(() => getProfileContract(library.getSigner()), [library])
-}
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {

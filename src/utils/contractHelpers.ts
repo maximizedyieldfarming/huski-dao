@@ -4,12 +4,10 @@ import { simpleRpcProvider } from 'utils/providers'
 // Addresses
 import {
   getAddress,
-  getPancakeProfileAddress,
   getMulticallAddress,
 } from 'utils/addressHelpers'
 
 // ABI
-import profileABI from 'config/abi/pancakeProfile.json'
 import bep20Abi from 'config/abi/erc20.json'
 import vaultAbi from 'config/abi/vault.json'
 import MultiCallAbi from 'config/abi/Multicall.json'
@@ -25,10 +23,6 @@ export const getBep20Contract = (address: string, signer?: ethers.Signer | ether
 }
 export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(vaultAbi, address, signer)
-}
-
-export const getProfileContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(profileABI, getPancakeProfileAddress(), signer)
 }
 
 export const getMulticallContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
