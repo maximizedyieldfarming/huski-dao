@@ -1,7 +1,8 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { Container as BaseContainer, Separator, Banner } from './styles'
+import { Container as BaseContainer, Separator, Banner, StyledButton } from './styles'
 import { AragonIcon, CommonwealthIcon, Banner as BannerImg } from './assets'
 
 const Container = styled(BaseContainer)`
@@ -12,10 +13,42 @@ const Container = styled(BaseContainer)`
     max-width: 586px;
     &.title {
       font-size: 20px;
-      background: linear-gradient(90deg, #5156e3 0.68%, #e253e9 32.95%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      &--one {
+        background: linear-gradient(90.03deg, #5b56e3 5.08%, #d953e9 51.73%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &--two {
+        background: linear-gradient(90.07deg, #5956e3 1.1%, #c553e8 50.6%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &--three {
+        background: linear-gradient(90.05deg, #5956e3 5.08%, #d953e9 40.41%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &--four {
+        background: linear-gradient(90.05deg, #5956e3 5.08%, #d953e9 40.41%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &--five {
+        background: linear-gradient(90deg, #5456e3 2.35%, #d953e9 77.79%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &--six {
+        background: linear-gradient(90deg, #5156e3 0%, #d953e9 36.34%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
       margin-bottom: 28px;
     }
   }
@@ -32,6 +65,15 @@ const Container = styled(BaseContainer)`
       line-height: 30px;
     }
   }
+  ${StyledButton} {
+    font-size: 12px;
+    width: fit-content;
+    height: fit-content;
+    background: #2b2631;
+    border: 2px solid #484850;
+    padding: 7px 6px;
+    border-radius: 8px;
+  }
 `
 
 const AsideContent = () => {
@@ -40,12 +82,18 @@ const AsideContent = () => {
   return (
     <>
       <Container>
-        <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
-          What is Huski DAO ?
-        </Text>
-        <Separator mt="21px" mb="26px" />
+        <Flex alignItems="flex-end" justifyContent="space-between" mb="0 !important">
+          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
+            What is Huski DAO ?
+          </Text>
+          <Flex>
+            <StyledButton mr="8px">WHAT IS A DAO</StyledButton>
+            <StyledButton>HOW TO DAO</StyledButton>
+          </Flex>
+        </Flex>
+        <Separator mt="21px" mb="26px !important" />
         <Box>
-          <Text className="title">Here are Huski DAO&apos;s missions</Text>
+          <Text className="title title--one">Here are Huski DAO&apos;s missions</Text>
           <Text as="ul">
             <Text as="li">Open, free, and fair financial markets.</Text>
             <Text as="li">Optimize earnings, lower risk, higher returns.</Text>
@@ -54,7 +102,7 @@ const AsideContent = () => {
           </Text>
         </Box>
         <Box>
-          <Text className="title">Why be our DAO founders</Text>
+          <Text className="title title--two">Why be our DAO founders</Text>
           <Text as="ul">
             <Text as="li">Priority to list token pairs.</Text>
             <Text as="li">Discount on the protocol to reduce fees.</Text>
@@ -66,7 +114,7 @@ const AsideContent = () => {
           <img src={BannerImg} alt="huski-banner" width="100%" />
         </Box>
         <Box>
-          <Text className="title">What are the funds for</Text>
+          <Text className="title title--three">What are the funds for</Text>
           <Text as="ul">
             <Text as="li">Community building.</Text>
             <Text as="li">Marketing. DAO operation, and DAO management.</Text>
@@ -74,7 +122,7 @@ const AsideContent = () => {
           </Text>
         </Box>
         <Box>
-          <Text className="title">Find us in</Text>
+          <Text className="title title--four">Find us in</Text>
           <Flex alignItems="center" flexWrap="wrap" justifyContent="space-between">
             <Banner maxWidth="260px !important" mb={isSmallScreen ? '10px' : '0'}>
               <AragonIcon />
@@ -91,7 +139,7 @@ const AsideContent = () => {
           <Text>part of the collected fees as DAO operation cost. part of the tokens to incentive DAO members.</Text>
         </Box> */}
         <Box>
-          <Text className="title">Here are what Huski DAO wants</Text>
+          <Text className="title title--five">Here are what Huski DAO wants</Text>
           <Text as="ul">
             <Text as="li">Funding partners.</Text>
             <Text as="li">Web3 artists.</Text>
@@ -102,7 +150,7 @@ const AsideContent = () => {
           </Text>
         </Box>
         <Box>
-          <Text className="title">What we do</Text>
+          <Text className="title title--six">What we do</Text>
           <Text as="ul">
             <Text as="li">Vote on core parameters.</Text>
             <Text as="li">Vote to improve efficiencies.</Text>
