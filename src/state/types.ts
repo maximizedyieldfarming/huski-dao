@@ -24,9 +24,7 @@ export interface BlockState {
 export interface Dao extends DaoConfig {
   pid: number
   name: string
-  userData?: {
-    allowance: string
-  }
+  allowance?: string
   code?: SerializedBigNumber
   price?: string
   roundID?: string
