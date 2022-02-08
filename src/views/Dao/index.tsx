@@ -176,10 +176,7 @@ const LaunchCampaign = () => {
         <Header>
           <StyledNav as="nav" mb="98px" mx="auto">
             <Flex alignItems="center">
-              <img src={LaughingHuski} alt="Huski Finance" width="55px" />
-              {/*           <Box background="#fff" p="1px" borderRadius="100%" width="65px" maxHeight="65px" mr="18px">
-            <LogoIcon width="100%" />
-          </Box> */}
+              <LaughingHuski width="60px" />
               <Text fontSize="30px" fontWeight="900 !important" ml="20px">
                 Huski DAO Launch Campaign
               </Text>

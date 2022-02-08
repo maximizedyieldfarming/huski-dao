@@ -178,19 +178,9 @@ const MainContent = () => {
     return (
       <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
         <Flex>
-          <img
-            src={LaughingHuski}
-            alt=""
-            style={{ zIndex: 2, marginRight: '-5px', height: '20px', alignSelf: 'center' }}
-            width="20px"
-          />
-          <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} width="50px" />
-          <img
-            src={LaughingHuski}
-            alt=""
-            style={{ zIndex: 2, marginLeft: '-5px', height: '20px', alignSelf: 'flex-end' }}
-            width="20px"
-          />
+          <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
+          <LaughingHuski style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-6px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
         <Text fontSize="24px" fontWeight="800 !important" mt="87px">
           Support Huski DAO
@@ -310,19 +300,9 @@ const MainContent = () => {
     return (
       <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
         <Flex>
-          <img
-            src={LaughingHuski}
-            alt=""
-            style={{ zIndex: 2, marginRight: '-5px', height: '20px', alignSelf: 'center' }}
-            width="20px"
-          />
-          <img src={LaughingHuski} alt="" style={{ zIndex: 1 }} width="50px" />
-          <img
-            src={LaughingHuski}
-            alt=""
-            style={{ zIndex: 2, marginLeft: '-5px', height: '20px', alignSelf: 'flex-end' }}
-            width="20px"
-          />
+          <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
+          <LaughingHuski style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-6px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
         <Text fontSize="24px" fontWeight="800 !important" mb="25px">
           Support Huski DAO
@@ -476,12 +456,8 @@ const MainContent = () => {
         <Text fontSize="20px" fontWeight="800 !important" mb="42px">
           More rewards after Protocols Fair Launch
         </Text>
-        {/* TODO: add tooltip */}
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
-          <img src={LaughingHuski} alt="Huski Token" width="37px" />
-          {/*           <Box background="#fff" p="1px" borderRadius="100%" width="37px" maxHeight="37px" mr="18px">
-            <LogoIcon width="100%" />
-          </Box> */}
+          <LaughingHuski width="37px" />
           <Text fontSize="14px" ml="18px">
             {convertTokenToUsd(amountInToken || '0')} HUSKI Token
           </Text>
@@ -511,5 +487,3 @@ const MainContent = () => {
 }
 
 export default MainContent
-
-// TODO: replace empty links
