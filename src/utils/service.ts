@@ -1,4 +1,4 @@
-import { getWeb3VaultContract, getBep20Contract, getWeb3Erc20Contract } from './contractHelpers';
+import { getVaultContract, getBep20Contract } from './contractHelpers';
 import { getAddress } from './addressHelpers'
 
 export async function getPoolInfo(param: any) {
@@ -12,7 +12,7 @@ export async function getPoolInfo(param: any) {
   const res = await contract.balanceOf('0x55Fb836eaD6521009D2C9310770CE055E7041Cd8')
   console.info('contract', contract)
 
-  const vault = getWeb3VaultContract(vaultAddress);
+  const vault = getVaultContract(vaultAddress);
   const getCode = await vault.methods.getCode().call();
   const getPrice = await vault.methods.getPrice().call();
   //  await contract.name();
