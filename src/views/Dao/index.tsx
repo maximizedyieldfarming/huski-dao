@@ -156,21 +156,22 @@ const LaunchCampaign = () => {
 
   return (
     <PageWrapper>
-      <Background />
-      <GlowSpotPurple />
-      <GlowSpotBlue />
-      <GlowStar top="120px" left="127px" />
-      <GlowStar top="363px" left="81px" small />
-      <GlowStar top="318px" left="235px" small />
-      <GlowStar top="462px" left="310px" small />
-      <GlowStar top="129px" left="524px" small />
-      <GlowStar top="380px" left="521px" small />
-      <GlowStar top="200px" left="700px" small />
-      <GlowStar top="366px" left="852px" small />
-      <GlowStar top="465px" left="958px" />
-      <GlowStar top="175px" right="419px" small />
-      <GlowStar top="175px" right="419px" small />
-      <GlowStar top="293px" right="111px" small />
+      <Background>
+        <GlowSpotPurple />
+        <GlowSpotBlue />
+        <GlowStar top="120px" left="127px" />
+        <GlowStar top="363px" left="81px" small />
+        <GlowStar top="318px" left="235px" small />
+        <GlowStar top="462px" left="310px" small />
+        <GlowStar top="129px" left="524px" small />
+        <GlowStar top="380px" left="521px" small />
+        <GlowStar top="200px" left="700px" small />
+        <GlowStar top="366px" left="852px" small />
+        <GlowStar top="465px" left="958px" />
+        <GlowStar top="175px" right="419px" small />
+        <GlowStar top="175px" right="419px" small />
+        <GlowStar top="293px" right="111px" small />
+      </Background>
       <StyledPage>
         <Header>
           <StyledNav as="nav" mb="98px" mx="auto">
