@@ -447,7 +447,7 @@ const MainContent = () => {
   const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
-    <>
+    <Box>
       {getFirstContainer()}
 
       <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
@@ -506,7 +506,7 @@ const MainContent = () => {
           </Flex>
         </Box>
       </Container>
-    </>
+    </Box>
   )
 }
 
