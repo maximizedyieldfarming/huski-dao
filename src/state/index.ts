@@ -3,6 +3,7 @@ import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
 import profileReducer from './profile'
 import blockReducer from './block'
+import daoReducer from './dao'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
 import transactions from './transactions/reducer'
@@ -15,7 +16,7 @@ const store = configureStore({
   reducer: {
     block: blockReducer,
     profile: profileReducer,
-
+    dao: daoReducer,
     // Exchange
     user,
     transactions,

@@ -9,8 +9,13 @@ import {
 
 // ABI
 import bep20Abi from 'config/abi/erc20.json'
-import vaultAbi from 'config/abi/vault.json'
 import MultiCallAbi from 'config/abi/Multicall.json'
+import VaultABI from 'config/abi/PublicOffering.json'
+import Web3 from 'web3';
+import getDomain from './env';
+
+
+const web3 = new Web3(getDomain());
 
 
 const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
@@ -21,10 +26,23 @@ const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.
 export const getBep20Contract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(bep20Abi, address, signer)
 }
-export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(vaultAbi, address, signer)
-}
 
 export const getMulticallContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(MultiCallAbi, getMulticallAddress(), signer)
 }
+
+
+export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
+  // return getContract(VaultABI, address, provider.getSigner());
+  return getContract(VaultABI, address, signer)
+};
+
+export const getWeb3VaultContract = (address) => {
+  const vault = new web3.eth.Contract(VaultABI as any, address);
+  return vault;
+};
+
+export const getWeb3Erc20Contract = (address) => {
+  const vault = new web3.eth.Contract(bep20Abi as any, address);
+  return vault;
+};

@@ -62,4 +62,4 @@ export const ONE_HUNDRED_PERCENT = new Percent('1')
 
 // export { default as farmsConfig } from './farms'
 // export { default as leverageFarmsConfig } from './leverage'
-
+export { default as daoConfig } from './dao'

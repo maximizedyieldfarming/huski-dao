@@ -7,6 +7,7 @@ import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-f
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
+import { useDaos, useLendData, usePoolDaoWithUserData , usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
   StyledButton,
@@ -90,8 +91,8 @@ const GlowStar = styled(Box)<{ small?: boolean }>`
 
 const StyledConnectWallet = (props) => {
   const { login, logout } = useAuth()
-  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-
+  // const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
+  const hasProvider = !!window.ethereum 
   // console.info('hasProvider', hasProvider)
   // console.info('!!window.ethereum', !!window.ethereum)
   // console.info('!!window.BinanceChain', window)
@@ -105,26 +106,26 @@ const StyledConnectWallet = (props) => {
 
   const [buttonIsHovering, buttonHoverProps] = useHover()
   // hide this to test normal wllet connect button
-  if (!account) {
-    return (
-      <StyledButton
-        onClick={(e) => e.preventDefault()}
-        {...props}
-        maxWidth={146}
-        height="100%"
-        {...buttonHoverProps}
-        style={{ cursor: 'not-allowed' }}
-      >
-        <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
-          {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
-        </Text>
-      </StyledButton>
-    )
-  }
+  // if (!account) {
+  //   return (
+  //     <StyledButton
+  //       onClick={(e) => e.preventDefault()}
+  //       {...props}
+  //       maxWidth={146}
+  //       height="100%"
+  //       {...buttonHoverProps}
+  //       style={{ cursor: 'not-allowed' }}
+  //     >
+  //       <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
+  //         {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
+  //       </Text>
+  //     </StyledButton>
+  //   )
+  // }
 
   // uncomment this to enable normal button
   // product manager asked to disable this button while we are working on functionality
-  /*   if (!account) {
+ if (!account) {
     return (
       <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={146} height="100%">
         <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
@@ -132,12 +133,19 @@ const StyledConnectWallet = (props) => {
         </Text>
       </StyledButton>
     )
-  } */
+  }
   return <UserMenu />
 }
 
 const LaunchCampaign = () => {
   const [selectedNetwork, setSelectedNetwork] = React.useState('ethereum')
+
+  const { data: daoData } = useDaos()
+  console.info('aaaaaaa----dao', daoData)
+  usePoolDaoWithUserData()
+  // usePoolDaoPublicData()
+  // const { lendData } = useLendData()
+  // console.info('112333',lendData);
 
   return (
     <PageWrapper>
