@@ -26,7 +26,7 @@ import { Timeline } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { Founders, Links } from './config'
-import { ETHIcon, BSCIcon, LaughingHuski, PlanetPurple, PlanetYellow } from './assets'
+import { ETHIcon, BSCIcon, HuskiGoggles, PlanetPurple, PlanetYellow } from './assets'
 import { useHover } from './helpers'
 
 const PageWrapper = styled.div`
@@ -179,7 +179,7 @@ const LaunchCampaign = () => {
         <Header>
           <StyledNav as="nav" mb="98px" mx="auto">
             <Flex alignItems="center" justifyContent="space-between">
-              <LaughingHuski width={isMobile ? '30px' : '60px'} />
+              <HuskiGoggles width={isMobile ? '30px' : '60px'} />
               <Text fontSize={isMobile ? '20px' : '30px'} ml="20px" fontWeight="900 !important">
                 Huski DAO Launch&nbsp;Campaign
               </Text>
@@ -243,7 +243,7 @@ const LaunchCampaign = () => {
         </Header>
         <Body p="77px 0 89px">
           <Main as="main">
-            <MainContent />
+            <MainContent data={daoData} />
           </Main>
           <Aside as="aside">
             <AsideContent />

@@ -3,14 +3,14 @@ import { Dao } from 'state/types'
 import fetchPublicDaoData from './fetchPublicDaoData'
 
 const fetchDao = async (dao: Dao): Promise<Dao> => {
-  const farmPublicData = await fetchPublicDaoData(dao)
+  const daoPublicData = await fetchPublicDaoData(dao)
 
-  return { ...dao, ...farmPublicData }
+  return { ...dao, ...daoPublicData }
 }
 
-const fetchDaos = async (farmsToFetch: DaoConfig[]) => {
+const fetchDaos = async (daoToFetch: DaoConfig[]) => {
   const data = await Promise.all(
-    farmsToFetch.map(async (daoConfig) => {
+    daoToFetch.map(async (daoConfig) => {
       const dao = await fetchDao(daoConfig)
       return dao
     }),

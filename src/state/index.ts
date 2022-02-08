@@ -1,7 +1,6 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
-import profileReducer from './profile'
 import blockReducer from './block'
 import daoReducer from './dao'
 import { updateVersion } from './global/actions'
@@ -14,7 +13,6 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
   reducer: {
     block: blockReducer,
-    profile: profileReducer,
     dao: daoReducer,
     // Exchange
     user,

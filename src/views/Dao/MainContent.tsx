@@ -13,6 +13,7 @@ import {
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useCopyToClipboard from 'utils/copyToClipboard'
+import { BIG_ZERO } from 'utils/config'
 import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
@@ -21,9 +22,24 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski, ClipboardIcon, Trophy } from './assets'
+import {
+  USDCIcon,
+  ETHIcon,
+  USDTIcon,
+  Nft,
+  HuskiDaoToken,
+  DaoVer,
+  LaughingHuski,
+  ClipboardIcon,
+  Trophy,
+  HuskiGoggles,
+} from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
+
+interface Props {
+  data: Record<string, any>
+}
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
@@ -116,32 +132,57 @@ const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; 
   )
 }
 
-const MainContent = () => {
+const MainContent: React.FC<Props> = ({ data }) => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
   const { isMobile, isTablet } = useMatchBreakpoints()
-
   // const isSmallScreen = isMobile || isTablet
+
+  const getSelectedTokenData = (
+    token: string,
+  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode } => {
+    const selToken = data.find((t) => t.name === token)
+    const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
+    const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
+    const selTokenIcon = (() => {
+      if (selectedToken === 'ETH') {
+        return <ETHIcon />
+      }
+      if (selectedToken === 'USDT') {
+        return <USDTIcon />
+      }
+      return <USDCIcon />
+    })()
+    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon }
+  }
+  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon } = getSelectedTokenData(selectedToken)
+
   const convertUsdToToken = (amountInUSD: string): string => {
-    return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
+    return new BigNumber(amountInUSD).div(selTokenPrice).toFixed(selTokenDecimalPlaces, 1)
   }
   const convertTokenToUsd = (pAmountInToken: string): string => {
-    return new BigNumber(pAmountInToken).div(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
+    return new BigNumber(pAmountInToken).times(selTokenPrice).toFixed(selTokenDecimalPlaces, 1)
   }
 
   const handleTokenButton = (index) => {
     if (index === 0) {
       setSelectedToken('ETH')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     } else if (index === 1) {
       setSelectedToken('USDT')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     } else if (index === 2) {
       setSelectedToken('USDC')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     }
   }
   const handleAmountButton = (index) => {
@@ -190,15 +231,6 @@ const MainContent = () => {
   })
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
-  const getSelectedTokenIcon = () => {
-    if (selectedToken === 'ETH') {
-      return <ETHIcon />
-    }
-    if (selectedToken === 'USDT') {
-      return <USDTIcon />
-    }
-    return <USDCIcon />
-  }
 
   // const { allowance: tokenAllowance } = useTokenAllowance(
   //   getAddress(tokenData?.TokenInfo?.token?.address),
@@ -224,31 +256,15 @@ const MainContent = () => {
   //   }
   // }
 
-  // TODO: change varaibles and functions related to referral links
-  const referralLink = 'https://dao.huski.finance?code=example%code%1234567'
-  const [hasReferralLink, setHasReferralLink] = React.useState<boolean>(!!referralLink)
+  const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
+  const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
   const handleGenerateReferralLink = () => {
-    setHasReferralLink(true)
+    setShowReferralLink(true)
   }
 
   //  TODO: change values later // get from some API?
   const invitedByUser = 0
   const userInvitationBonus = 0
-
-  // TODO: change this function later
-  // const [generatingReferralLink, setGeneratingReferralLink] = React.useState<boolean>(false)
-  // const generateReferralLink = async () => {
-  //   setGeneratingReferralLink(true)
-  //   try {
-  //     // generate random letters and numbers
-  //     const referralCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-  //     const fullLink = `https://dao.huski.finance?code=${referralCode}`
-  //   } catch (error: any) {
-  //     console.log(error)
-  //   } finally {
-  //     setGeneratingReferralLink(false)
-  //   }
-  // }
 
   const [buttonIsHovering, buttonHoverProps] = useHover()
   const [value, copy] = useCopyToClipboard()
@@ -263,22 +279,22 @@ const MainContent = () => {
 
   const walletReady = () => {
     return (
-      <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
+      <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
         <Flex>
           <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
-          <LaughingHuski style={{ zIndex: 1 }} width="36px" />
-          <LaughingHuski style={{ zIndex: 2, marginLeft: '-6px', alignSelf: 'flex-end' }} width="16px" />
+          <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
-        <Text fontSize="24px" fontWeight="800 !important" mt="87px">
+        <Text fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
-          <CustomButtonMenuItemSquared>USDT</CustomButtonMenuItemSquared>
+          <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
         </ButtonMenuSquared>
         <InputContainer my="25px">
-          <Box>{getSelectedTokenIcon()}</Box>
+          <Box>{selTokenIcon}</Box>
           <Input
             placeholder="0.00"
             value={amountInToken}
@@ -300,15 +316,24 @@ const MainContent = () => {
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {Number(convertTokenToUsd(amountInToken)) < 1000 ? (
+        {new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ? (
           <Text color="red !important" fontSize="12px">
-            Minimum investment amount is $1,000 (one thousand USD)
+            Minimum investment amount is $1,000 (One Thousand USD)
+          </Text>
+        ) : null}
+        {new BigNumber(convertTokenToUsd(amountInToken)).gt(50000) ? (
+          <Text color="red !important" fontSize="12px">
+            You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
         ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
           <StyledButton
             filled
-            disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
+            disabled={
+              new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ||
+              amountInToken === undefined ||
+              new BigNumber(convertTokenToUsd(amountInToken)).gt(50000)
+            }
           >
             Approve &amp; Confirm
           </StyledButton>
@@ -339,7 +364,7 @@ const MainContent = () => {
               maxWidth="333px"
               mr="7px"
             >
-              {hasReferralLink ? (
+              {showReferralLink ? (
                 <Text
                   onClick={() => copy(referralLink).then(displayTooltip)}
                   style={{
@@ -358,7 +383,7 @@ const MainContent = () => {
                 <Text fontSize="14px">Share your link to earn bonus rewards</Text>
               )}
             </Flex>
-            {hasReferralLink ? (
+            {showReferralLink ? (
               <>
                 <button
                   type="button"
@@ -378,7 +403,13 @@ const MainContent = () => {
                 </button>
               </>
             ) : (
-              <StyledButton filled width="78px" height="40px" onClick={handleGenerateReferralLink}>
+              <StyledButton
+                filled
+                width="78px"
+                height="40px"
+                onClick={handleGenerateReferralLink}
+                disabled={!referralLink}
+              >
                 <Text fontSize="12px">Generate</Text>
               </StyledButton>
             )}
@@ -389,13 +420,13 @@ const MainContent = () => {
   }
   const walletNotReady = () => {
     return (
-      <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
+      <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
         <Flex>
           <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
-          <LaughingHuski style={{ zIndex: 1 }} width="36px" />
-          <LaughingHuski style={{ zIndex: 2, marginLeft: '-6px', alignSelf: 'flex-end' }} width="16px" />
+          <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
-        <Text fontSize="24px" fontWeight="800 !important" mb="25px">
+        <Text fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">

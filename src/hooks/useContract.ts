@@ -6,7 +6,6 @@ import {
 
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, WETH } from '@pancakeswap/sdk'
 import ERC20_ABI from '../config/abi/erc20.json'
 import { getContract } from '../utils'
 

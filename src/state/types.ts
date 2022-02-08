@@ -12,26 +12,8 @@ export interface BigNumberToJson {
 export type SerializedBigNumber = string
 
 
-export interface Profile {
-  userId: number
-  points: number
-  teamId: number
-  nftAddress: string
-  tokenId: number
-  isActive: boolean
-  username: string
-  // nft?: Nft
-  // team?: Team
-  hasRegistered: boolean
-}
-
 // Slices states
-export interface ProfileState {
-  isInitialized: boolean
-  isLoading: boolean
-  hasRegistered: boolean
-  data: Profile
-}
+
 export interface BlockState {
   currentBlock: number
   initialBlock: number
@@ -42,9 +24,7 @@ export interface BlockState {
 export interface Dao extends DaoConfig {
   pid: number
   name: string
-  userData?: {
-    allowance: string
-  }
+  allowance?: string
   code?: SerializedBigNumber
   price?: string
   roundID?: string
@@ -64,6 +44,5 @@ export interface DaoState {
 
 export interface State {
   block: BlockState
-  profile: ProfileState
   dao: DaoState
 }
