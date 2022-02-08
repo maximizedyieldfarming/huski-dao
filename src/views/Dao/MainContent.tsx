@@ -22,7 +22,18 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski, ClipboardIcon, Trophy } from './assets'
+import {
+  USDCIcon,
+  ETHIcon,
+  USDTIcon,
+  Nft,
+  HuskiDaoToken,
+  DaoVer,
+  LaughingHuski,
+  ClipboardIcon,
+  Trophy,
+  HuskiGoggles,
+} from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
 
@@ -268,13 +279,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
   const walletReady = () => {
     return (
-      <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
+      <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
         <Flex>
           <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
-          <LaughingHuski style={{ zIndex: 1 }} width="36px" />
-          <LaughingHuski style={{ zIndex: 2, marginLeft: '-6px', alignSelf: 'flex-end' }} width="16px" />
+          <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
-        <Text fontSize="24px" fontWeight="800 !important" mt="87px">
+        <Text fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
@@ -409,13 +420,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const walletNotReady = () => {
     return (
-      <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
+      <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
         <Flex>
           <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
-          <LaughingHuski style={{ zIndex: 1 }} width="36px" />
-          <LaughingHuski style={{ zIndex: 2, marginLeft: '-6px', alignSelf: 'flex-end' }} width="16px" />
+          <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
-        <Text fontSize="24px" fontWeight="800 !important" mb="25px">
+        <Text fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">

@@ -5,7 +5,7 @@ import { Box, Text, Flex, useWalletModal } from '@huskifinance/huski-frontend-ui
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
-import { useDaos, useLendData, usePoolDaoWithUserData , usePoolDaoPublicData } from 'state/dao/hooks'
+import { useDaos, useLendData, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
   StyledButton,
@@ -24,7 +24,7 @@ import { Timeline } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { Founders, Links } from './config'
-import { ETHIcon, BSCIcon, LaughingHuski, PlanetPurple, PlanetYellow } from './assets'
+import { ETHIcon, BSCIcon, HuskiGoggles, PlanetPurple, PlanetYellow } from './assets'
 import { useHover } from './helpers'
 
 const PageWrapper = styled.div`
@@ -97,7 +97,7 @@ const GlowStar = styled(Box)<{ small?: boolean }>`
 const StyledConnectWallet = (props) => {
   const { login, logout } = useAuth()
   // const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const hasProvider = !!window.ethereum 
+  const hasProvider = !!window.ethereum
   // console.info('hasProvider', hasProvider)
   // console.info('!!window.ethereum', !!window.ethereum)
   // console.info('!!window.BinanceChain', window)
@@ -130,7 +130,7 @@ const StyledConnectWallet = (props) => {
 
   // uncomment this to enable normal button
   // product manager asked to disable this button while we are working on functionality
- if (!account) {
+  if (!account) {
     return (
       <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={146} height="100%">
         <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
@@ -174,7 +174,7 @@ const LaunchCampaign = () => {
         <Header>
           <StyledNav as="nav" mb="98px" mx="auto">
             <Flex alignItems="center">
-              <LaughingHuski width="60px" />
+              <HuskiGoggles width="60px" />
               <Text fontSize="30px" fontWeight="900 !important" ml="20px">
                 Huski DAO Launch Campaign
               </Text>
