@@ -13,6 +13,7 @@ import {
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useCopyToClipboard from 'utils/copyToClipboard'
+import { BIG_ZERO } from 'utils/config'
 import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
@@ -127,25 +128,50 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
   const { isMobile, isTablet } = useMatchBreakpoints()
-
   // const isSmallScreen = isMobile || isTablet
+
+  const getSelectedTokenData = (
+    token: string,
+  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode } => {
+    const selToken = data.find((t) => t.name === token)
+    const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
+    const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
+    const selTokenIcon = (() => {
+      if (selectedToken === 'ETH') {
+        return <ETHIcon />
+      }
+      if (selectedToken === 'USDT') {
+        return <USDTIcon />
+      }
+      return <USDCIcon />
+    })()
+    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon }
+  }
+  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon } = getSelectedTokenData(selectedToken)
+
   const convertUsdToToken = (amountInUSD: string): string => {
-    return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
+    return new BigNumber(amountInUSD).div(selTokenPrice).toFixed(selTokenDecimalPlaces, 1)
   }
   const convertTokenToUsd = (pAmountInToken: string): string => {
-    return new BigNumber(pAmountInToken).div(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
+    return new BigNumber(pAmountInToken).times(selTokenPrice).toFixed(selTokenDecimalPlaces, 1)
   }
 
   const handleTokenButton = (index) => {
     if (index === 0) {
       setSelectedToken('ETH')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     } else if (index === 1) {
       setSelectedToken('USDT')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     } else if (index === 2) {
       setSelectedToken('USDC')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     }
   }
   const handleAmountButton = (index) => {
@@ -194,15 +220,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
   })
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
-  const getSelectedTokenIcon = () => {
-    if (selectedToken === 'ETH') {
-      return <ETHIcon />
-    }
-    if (selectedToken === 'USDT') {
-      return <USDTIcon />
-    }
-    return <USDCIcon />
-  }
 
   // const { allowance: tokenAllowance } = useTokenAllowance(
   //   getAddress(tokenData?.TokenInfo?.token?.address),
@@ -228,7 +245,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
   //   }
   // }
 
-  // TODO: change varaibles and functions related to referral links
   const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
   const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
   const handleGenerateReferralLink = () => {
@@ -263,11 +279,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
-          <CustomButtonMenuItemSquared>USDT</CustomButtonMenuItemSquared>
+          <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
         </ButtonMenuSquared>
         <InputContainer my="25px">
-          <Box>{getSelectedTokenIcon()}</Box>
+          <Box>{selTokenIcon}</Box>
           <Input
             placeholder="0.00"
             value={amountInToken}
@@ -289,15 +305,24 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {Number(convertTokenToUsd(amountInToken)) < 1000 ? (
+        {new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ? (
           <Text color="red !important" fontSize="12px">
-            Minimum investment amount is $1,000 (one thousand USD)
+            Minimum investment amount is $1,000 (One Thousand USD)
+          </Text>
+        ) : null}
+        {new BigNumber(convertTokenToUsd(amountInToken)).gt(50000) ? (
+          <Text color="red !important" fontSize="12px">
+            You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
         ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
           <StyledButton
             filled
-            disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
+            disabled={
+              new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ||
+              amountInToken === undefined ||
+              new BigNumber(convertTokenToUsd(amountInToken)).gt(50000)
+            }
           >
             Approve &amp; Confirm
           </StyledButton>
@@ -502,10 +527,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
   // using this function because theres a third condition, so its easier to read like this
   // insted of using ternary inside jsx
   const getFirstContainer = () => {
-    // if (account) {
-    return walletReady()
-    // }
-    // return walletNotReady()
+    if (account) {
+      return walletReady()
+    }
+    return walletNotReady()
   }
 
   const { login, logout } = useAuth()
