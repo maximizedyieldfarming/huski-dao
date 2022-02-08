@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
@@ -11,7 +10,6 @@ import {
   useWalletModal,
   useMatchBreakpoints,
   InfoIcon,
-  useTooltip,
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useCopyToClipboard from 'utils/copyToClipboard'
@@ -23,7 +21,7 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski, ClipboardIcon } from './assets'
+import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski, ClipboardIcon, Trophy } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
 
@@ -40,6 +38,83 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
+const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+  display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  padding: 20px 15px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 412px;
+    padding: 30px 21px;
+    left: 0;
+    transform: none;
+  }
+  ${Text} {
+    font-size: 12px;
+  }
+  z-index: 10;
+`
+const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; isHovering: boolean }> = ({
+  invitationBonus,
+  invitedByUser,
+  isHovering,
+}) => {
+  const { isMobile } = useMatchBreakpoints()
+
+  return (
+    <StyledTooltip isTooltipDisplayed={isHovering}>
+      <Flex justifyContent="space-between" p={isMobile ? '0 20px' : '0 50px'} alignItems="center">
+        <Box>
+          <Text textAlign="center" mb="17px">
+            Invited
+          </Text>
+          <Text textAlign="center" fontSize="24px !important">
+            {invitedByUser}
+          </Text>
+        </Box>
+        <Box background="#3D3049" height="43px" width="1px" mx={isMobile ? '50px' : '0'} />
+        <Box>
+          <Text textAlign="center" mb="17px">
+            Bonus (HUSKI)
+          </Text>
+          <Text textAlign="center" fontSize="24px !important">
+            {invitationBonus}
+          </Text>
+        </Box>
+      </Flex>
+      <Box mt="27px">
+        <Text mb="24px" pl="23px">
+          Share the referral link with your friends, and you will receive bonus rewards based on their contribution
+        </Text>
+        <Box mb="15px">
+          <Flex>
+            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <Text>Top 10:</Text>
+          </Flex>
+          <Text pl="23px">
+            An NFT as our Huski DAO Ambassador
+            <br />
+            Earn bonus reward by Airdrop(10% Bonus)
+          </Text>
+        </Box>
+        <Box mb="15px">
+          <Flex>
+            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <Text>Top 100:</Text>
+          </Flex>
+          <Text pl="23px">Earn bonus reward by Airdrop(4% Bonus)</Text>
+        </Box>
+        <Box pl="23px">
+          <Text>Others:</Text>
+          <Text>Earn bonus reward by Airdrop(2% Bonus)</Text>
+        </Box>
+      </Box>
+    </StyledTooltip>
+  )
+}
 
 const MainContent = () => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
@@ -84,8 +159,6 @@ const MainContent = () => {
   const handleInputChange = (e) => {
     setAmountInToken(e.target.value)
   }
-  // TODO: if input is less than $1,000 then not allow to confirm and show a warning
-  // TODO: add referral link and a tooltip
 
   const timeRemaining = () => {
     const now = new Date()
@@ -151,21 +224,35 @@ const MainContent = () => {
   //   }
   // }
 
-  // const { targetRef, tooltip, tooltipVisible } = useTooltip(
-  //   <Container width="412px" height="393px">
-  //     as
-  //   </Container>,
-  //   { placement: 'top' },
-  // )
-
-  const referralLink = 'https://dao.huski.finance?code=example%code%1234567' /* TODO: change later */
-
+  // TODO: change varaibles and functions related to referral links
+  const referralLink = 'https://dao.huski.finance?code=example%code%1234567'
   const [hasReferralLink, setHasReferralLink] = React.useState<boolean>(!!referralLink)
-  const [buttonIsHovering, buttonHoverProps] = useHover()
   const handleGenerateReferralLink = () => {
     setHasReferralLink(true)
   }
+
+  //  TODO: change values later // get from some API?
+  const invitedByUser = 0
+  const userInvitationBonus = 0
+
+  // TODO: change this function later
+  // const [generatingReferralLink, setGeneratingReferralLink] = React.useState<boolean>(false)
+  // const generateReferralLink = async () => {
+  //   setGeneratingReferralLink(true)
+  //   try {
+  //     // generate random letters and numbers
+  //     const referralCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  //     const fullLink = `https://dao.huski.finance?code=${referralCode}`
+  //   } catch (error: any) {
+  //     console.log(error)
+  //   } finally {
+  //     setGeneratingReferralLink(false)
+  //   }
+  // }
+
+  const [buttonIsHovering, buttonHoverProps] = useHover()
   const [value, copy] = useCopyToClipboard()
+  const [tooltipIsHovering, tooltipHoverProps] = useHover()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
   function displayTooltip() {
     setIsTooltipDisplayed(true)
@@ -231,9 +318,13 @@ const MainContent = () => {
             <Text fontSize="12px" mr="5px">
               Referral Link:
             </Text>
-            {/*             {tooltipVisible && tooltip} */}
-            <span /* ref={targetRef} */>
-              <InfoIcon color="#ffffff" width="9px" />
+            <span {...tooltipHoverProps} style={{ position: 'relative', cursor: 'pointer' }}>
+              <InfoIcon color="#ffffff" width="12px" />
+              <CustomTooltip
+                isHovering={!!tooltipIsHovering}
+                invitedByUser={invitedByUser.toString()}
+                invitationBonus={userInvitationBonus.toString()}
+              />
             </span>
           </Flex>
           <Flex>
@@ -244,7 +335,7 @@ const MainContent = () => {
               alignItems="center"
               justifyContent="center"
               p="10px 10px"
-              width="100%"
+              width="90%"
               maxWidth="333px"
               mr="7px"
             >
