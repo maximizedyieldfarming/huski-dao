@@ -286,7 +286,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
           <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
-        <Text fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
+        <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
@@ -427,7 +427,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
           <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
         </Flex>
-        <Text fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
+        <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
@@ -554,7 +554,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       {getFirstContainer()}
 
       <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight="800 !important" mb="27px">
+        <Text fontSize="20px" fontWeight="800 !important" mb="27px" textAlign="center">
           You will receive
         </Text>
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
@@ -576,7 +576,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       </Container>
 
       <Container p="40px 21px 30px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight="800 !important" mb="42px">
+        <Text fontSize="20px" fontWeight="800 !important" mb="42px" textAlign="center">
           More rewards after Protocols Fair Launch
         </Text>
         <Banner mx="auto" mb="32px" maxWidth="268px !important">

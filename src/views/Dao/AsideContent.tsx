@@ -81,9 +81,9 @@ const AsideContent = () => {
   const isSmallScreen = isMobile || isTablet
   return (
     <>
-      <Container>
+      <Container maxWidth={586}>
         <Flex alignItems="flex-end" justifyContent="space-between" mb="0 !important" flexWrap="wrap">
-          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start', whiteSpace: 'nowrap' }}>
+          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start', }}>
             What is Huski DAO ?
           </Text>
           <Flex>
