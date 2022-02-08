@@ -273,7 +273,7 @@ const LaunchCampaign = () => {
             <Timeline />
           </Box>
           <Flex alignItems="center" flexDirection="column" mb="84px">
-            <Text fontSize="48px" mb="41px">
+            <Text fontSize="48px" mb="41px" textAlign="center">
               Contact us
             </Text>
             <StyledLink to={{ pathname: Links.googleForm }} style={{ width: '175px' }} target="_blank">
