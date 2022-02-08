@@ -24,6 +24,7 @@ export interface DaoConfig {
   pid: number
   name: string
   vaultAddress: Address
+  configAddress: Address
   token: Token
 }
 

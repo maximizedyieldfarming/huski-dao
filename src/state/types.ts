@@ -31,6 +31,7 @@ export interface Dao extends DaoConfig {
   startedAt?: string
   timeStamp?: string
   answeredInRound?: string
+  raiseFund?: SerializedBigNumber
 }
 
 export interface DaoState {
