@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
@@ -52,34 +52,6 @@ export const useDaos = (): DaoState => {
   return farms
 }
 
-
-// export const loadBloackchainData =  () => {
-
-//   const lendingData = mainnet.Vaults.map((pool) => {
-//     const loadLendingData = async () => {
-//       const dataPool = await getPoolInfo(pool);
-//       dataPool.name = dataPool.name.replace('Interest Bearing ', '');
-//       return dataPool;
-//     };
-//     return loadLendingData();
-//   });
-//   Promise.all(lendingData)
-//     .then((values) => {
-//       console.info(values);
-//       return values;
-//     })
-//     .catch((error) => console.error('error', error));    
-
-//   // const loadLendingData = async () => {
-//   //     const dataPool = await getPoolInfo1(mainnet.Vaults);
-//   //     console.info('datapool',dataPool);
-//   //     return dataPool;
-//   //   };
-//   //   return loadLendingData();
-
-// }
-
-
 // use this  --no
 export const useLendData = () => {
   const [lendData, setLendData] = useState([])
@@ -100,42 +72,3 @@ export const useLendData = () => {
   }, [setLendData])
   return { lendData }
 }
-
-// export const useStakeData = () => {
-//   const [stakeData, setStakeData] = useState([])
-//   useEffect(() => {
-//     const data = mainnet.Vaults.map((pool) => {
-//       const sData = async () => {
-//         const { name } = pool;
-//         const stakeValue = await getStakeValue(pool);
-//         const stakeAPR = await getStakeApr(pool);
-//         return { name, stakeValue, stakeAPR };
-//       };
-//       return sData();
-//     });
-//     Promise.all(data)
-//       .then((values) => {
-//         setStakeData(values)
-//       })
-//       .catch((error) => console.error('error', error));
-//   }, [setStakeData])
-//   return { stakeData }
-// }
-
-
-
-// export const usesumLendingPoolData = async () => {
-//   const tokenData = mainnet.Vaults.map((pool) => {
-//     const totalTokenData = async () => {
-//       const totalToken = await getSumLendData(pool);
-//       return totalToken;
-//     };
-//     return totalTokenData();
-//   });
-//   Promise.all(tokenData)
-//     .then((values) => {
-//       // sumTokenData(values)
-//       return sumTokenData(values)
-//     })
-//     .catch((error) => console.error('error', error));
-// }
