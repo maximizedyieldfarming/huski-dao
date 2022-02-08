@@ -10,6 +10,7 @@ declare module 'styled-components' {
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'M PLUS 2', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
   body {
   background: #16131e;

@@ -27,6 +27,10 @@ export const Main = styled(Box)`
     margin-bottom: 0px;
     margin-right: 14px;
   }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    position: sticky;
+    top: 0.75rem;
+  }
 `
 export const Aside = styled(Box)`
   height: 100%;
