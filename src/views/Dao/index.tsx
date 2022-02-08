@@ -3,11 +3,11 @@ import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 // import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
-import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, LogoIcon, useWalletModal, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
-import { useDaos, useLendData, usePoolDaoWithUserData , usePoolDaoPublicData } from 'state/dao/hooks'
+import { useDaos, useLendData, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
   StyledButton,
@@ -99,7 +99,7 @@ const GlowStar = styled(Box)<{ small?: boolean }>`
 const StyledConnectWallet = (props) => {
   const { login, logout } = useAuth()
   // const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const hasProvider = !!window.ethereum 
+  const hasProvider = !!window.ethereum
   // console.info('hasProvider', hasProvider)
   // console.info('!!window.ethereum', !!window.ethereum)
   // console.info('!!window.BinanceChain', window)
@@ -130,11 +130,12 @@ const StyledConnectWallet = (props) => {
   //   )
   // }
 
+  const { isMobile } = useMatchBreakpoints()
   // uncomment this to enable normal button
   // product manager asked to disable this button while we are working on functionality
- if (!account) {
+  if (!account) {
     return (
-      <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={146} height="100%">
+      <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={isMobile ? '100%' : 146} height="100%">
         <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
           Connect Wallet
         </Text>
@@ -153,6 +154,8 @@ const LaunchCampaign = () => {
   // usePoolDaoPublicData()
   // const { lendData } = useLendData()
   // console.info('112333',lendData);
+
+  const { isMobile } = useMatchBreakpoints()
 
   return (
     <PageWrapper>
@@ -175,13 +178,13 @@ const LaunchCampaign = () => {
       <StyledPage>
         <Header>
           <StyledNav as="nav" mb="98px" mx="auto">
-            <Flex alignItems="center">
-              <LaughingHuski width="60px" />
-              <Text fontSize="30px" fontWeight="900 !important" ml="20px">
-                Huski DAO Launch Campaign
+            <Flex alignItems="center" justifyContent="space-between">
+              <LaughingHuski width={isMobile ? '30px' : '60px'} />
+              <Text fontSize={isMobile ? '20px' : '30px'} ml="20px" fontWeight="900 !important">
+                Huski DAO Launch&nbsp;Campaign
               </Text>
             </Flex>
-            <Flex alignItems="center">
+            <Flex alignItems="center" flexWrap="wrap">
               <Select
                 options={[
                   {
@@ -203,6 +206,7 @@ const LaunchCampaign = () => {
                 background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
                 p="1px"
                 height="46px"
+                maxWidth="100%"
               >
                 <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
               </Box>
