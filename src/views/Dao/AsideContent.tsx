@@ -82,8 +82,8 @@ const AsideContent = () => {
   return (
     <>
       <Container>
-        <Flex alignItems="flex-end" justifyContent="space-between" mb="0 !important">
-          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
+        <Flex alignItems="flex-end" justifyContent="space-between" mb="0 !important" flexWrap="wrap">
+          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start', whiteSpace: 'nowrap' }}>
             What is Huski DAO ?
           </Text>
           <Flex>
