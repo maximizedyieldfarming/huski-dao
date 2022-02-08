@@ -25,6 +25,10 @@ import { USDCIcon, ETHIcon, USDTIcon, Nft, HuskiDaoToken, DaoVer, LaughingHuski,
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
 
+interface Props {
+  data: Record<string, any>
+}
+
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
@@ -116,7 +120,7 @@ const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; 
   )
 }
 
-const MainContent = () => {
+const MainContent: React.FC<Props> = ({ data }) => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
@@ -225,30 +229,15 @@ const MainContent = () => {
   // }
 
   // TODO: change varaibles and functions related to referral links
-  const referralLink = 'https://dao.huski.finance?code=example%code%1234567'
-  const [hasReferralLink, setHasReferralLink] = React.useState<boolean>(!!referralLink)
+  const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
+  const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
   const handleGenerateReferralLink = () => {
-    setHasReferralLink(true)
+    setShowReferralLink(true)
   }
 
   //  TODO: change values later // get from some API?
   const invitedByUser = 0
   const userInvitationBonus = 0
-
-  // TODO: change this function later
-  // const [generatingReferralLink, setGeneratingReferralLink] = React.useState<boolean>(false)
-  // const generateReferralLink = async () => {
-  //   setGeneratingReferralLink(true)
-  //   try {
-  //     // generate random letters and numbers
-  //     const referralCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-  //     const fullLink = `https://dao.huski.finance?code=${referralCode}`
-  //   } catch (error: any) {
-  //     console.log(error)
-  //   } finally {
-  //     setGeneratingReferralLink(false)
-  //   }
-  // }
 
   const [buttonIsHovering, buttonHoverProps] = useHover()
   const [value, copy] = useCopyToClipboard()
@@ -339,7 +328,7 @@ const MainContent = () => {
               maxWidth="333px"
               mr="7px"
             >
-              {hasReferralLink ? (
+              {showReferralLink ? (
                 <Text
                   onClick={() => copy(referralLink).then(displayTooltip)}
                   style={{
@@ -358,7 +347,7 @@ const MainContent = () => {
                 <Text fontSize="14px">Share your link to earn bonus rewards</Text>
               )}
             </Flex>
-            {hasReferralLink ? (
+            {showReferralLink ? (
               <>
                 <button
                   type="button"
@@ -378,7 +367,13 @@ const MainContent = () => {
                 </button>
               </>
             ) : (
-              <StyledButton filled width="78px" height="40px" onClick={handleGenerateReferralLink}>
+              <StyledButton
+                filled
+                width="78px"
+                height="40px"
+                onClick={handleGenerateReferralLink}
+                disabled={!referralLink}
+              >
                 <Text fontSize="12px">Generate</Text>
               </StyledButton>
             )}
@@ -507,10 +502,10 @@ const MainContent = () => {
   // using this function because theres a third condition, so its easier to read like this
   // insted of using ternary inside jsx
   const getFirstContainer = () => {
-    if (account) {
-      return walletReady()
-    }
-    return walletNotReady()
+    // if (account) {
+    return walletReady()
+    // }
+    // return walletNotReady()
   }
 
   const { login, logout } = useAuth()

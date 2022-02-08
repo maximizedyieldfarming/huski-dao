@@ -1,9 +1,7 @@
 import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-// import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
-import { Box, Text, Flex, LogoIcon, useWalletModal } from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, useWalletModal } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
@@ -239,7 +237,7 @@ const LaunchCampaign = () => {
         </Header>
         <Body p="77px 0 89px">
           <Main as="main">
-            <MainContent />
+            <MainContent data={daoData} />
           </Main>
           <Aside as="aside">
             <AsideContent />
