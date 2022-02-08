@@ -7,7 +7,6 @@ import daoReducer from './dao'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
 import transactions from './transactions/reducer'
-import multicall from './multicall/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -20,7 +19,6 @@ const store = configureStore({
     // Exchange
     user,
     transactions,
-    multicall,
   },
   middleware: [...getDefaultMiddleware({ thunk: true }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),

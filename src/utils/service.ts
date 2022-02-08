@@ -1,123 +1,25 @@
-// import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js/bignumber';
-// import Web3 from 'web3';
-import { getVaultContract, getWeb3VaultContract,getBep20Contract, getWeb3Erc20Contract } from './contractHelpers';
+import { getWeb3VaultContract, getWeb3Erc20Contract } from './contractHelpers';
 import { getAddress } from './addressHelpers'
-// import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from './config';
-// import getDomain from './env'; // Between 90% and 100%
-// testing data dependencies
-// import getDomain from './env';
-const mathematics1 = 0.4; // Less than 50% utilization
-const mathematics2 = 0; // Between 50% and 90%
-const mathematics3 = 13;
-// const web3 = new Web3(getDomain());
-export async function getBalanceOf(param: any) {
-  const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
-  const balance = await vault.methods.balanceOf(param.userAddress).call();
-  return balance;
-}
-export async function getSumLendData(param: any) {
-  const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
-  const totalToken = parseInt(await vault.methods.totalToken().call());
-  return totalToken;
-}
-export async function getLandRate(param: any) {
-  const vault = getWeb3VaultContract(param.vaultAddress); // new web3.eth.Contract(VaultABI, param.address);
-  const totalToken = parseInt(await vault.methods.totalToken().call());
-  const vaultDebtVal = parseInt(await vault.methods.vaultDebtVal().call());
-  const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
-  let landRate = 0;
-  // Interest=m∗utilization+b
-  if (utilization < 0.5) {
-    landRate = mathematics1 * utilization;
-  } else if (utilization > 0.9) {
-    landRate = mathematics3 * utilization - 11.5;
-  } else {
-    landRate = mathematics2 * utilization + 0.2;
-  }
-  return landRate;
-}
-
-export async function getPoolInfo1(param: any) {
-  const poolAddresses = param.map((pool) => {
-    const vault =  getWeb3VaultContract(pool.address)
-    // const name = await vault.methods.name().call();
-    return vault;
-  });
-  return poolAddresses;
-}
 
 export async function getPoolInfo(param: any) {
-  const vault = getWeb3VaultContract(param.address); // new web3.eth.Contract(VaultABI, param.address);
-  const name = await vault.methods.name().call();
-  const symbol = await vault.methods.symbol().call();
-  const totalSupply = parseInt(await vault.methods.totalSupply().call());
-  const totalToken = parseInt(await vault.methods.totalToken().call());
-  const vaultDebtShare = parseInt(await vault.methods.vaultDebtShare().call());
-  const vaultDebtVal = parseInt(await vault.methods.vaultDebtVal().call());
-  const utilization = totalToken > 0 ? vaultDebtVal / totalToken : 0;
-  let landRate = 0;
-  // Interest=m∗utilization+b
-  if (utilization < 0.5) {
-    landRate = mathematics1 * utilization;
-  } else if (utilization > 0.9) {
-    landRate = mathematics3 * utilization - 11.5;
-  } else {
-    landRate = mathematics2 * utilization + 0.2;
-  }
-  const landApr = landRate * 0.9 * utilization;
-  const stakeApr = (
-    (param.baseTokenPrice * totalToken * totalToken) / totalSupply
-  );
-  //   const totalApr = landApr + stakeApr;
-  const totalApr = BigNumber.sum(landApr, stakeApr);
+
+  const address = '0x1484a6020a0f08400f6f56715016d2c80e26cdc1' //  getAddress(param.token.address)
+  const vaultAddress = getAddress(param.vaultAddress)
+  const vault11 = getWeb3Erc20Contract(address);
+  const name = await vault11.methods.name().call();
+  // const contract = getBep20Contract(address)
+  // const res = await contract.balanceOf('0x55Fb836eaD6521009D2C9310770CE055E7041Cd8')
+  const vault = getWeb3VaultContract(vaultAddress);
+  const getCode = await vault.methods.getCode().call();
+  const getPrice = await vault.methods.getPrice().call();
+  //  await contract.name();
   const data = {
     name,
-    symbol,
-    totalBorrowed: vaultDebtVal,
-    totalDeposit: totalToken,
-    capitalUtilizationRate: utilization,
-    landApr,
-    stakeApr,
-    totalApr,
-    // eslint-disable-next-line no-restricted-properties
-    apy: Math.pow(1 + totalApr.toNumber() / 365, 365) - 1,
-    exchangeRate: totalToken / totalSupply,
+    getCode,
+    getPrice
   };
-  // console.log('totalDeposit: ', parseInt(web3.utils.fromWei(BigInt(data.totalBorrowed).toString())).toLocaleString({
-  //   minimumFractionDigits: 2,
-  //   maximumFractionDigits: 2
-  // }));
   return data;
 }
-
-
-export async function getPoolInfo33(param: any) {
-    console.info('params---',param)
-    const address = '0x1484a6020a0f08400f6f56715016d2c80e26cdc1' //  getAddress(param.token.address)
-    const vaultAddress = getAddress(param.vaultAddress)
-    // getWeb3VaultContract
-    const vault11 = getWeb3Erc20Contract(address); // new web3.eth.Contract(VaultABI, param.address);
-    console.info('params',vault11)
-    const name11 = await vault11.methods.name().call();
-    // const contract = getBep20Contract(address)
-    // console.info('name11---',name11)
-    // const res = await contract.balanceOf('0x55Fb836eaD6521009D2C9310770CE055E7041Cd8')
-
-        const vault = getWeb3VaultContract(vaultAddress); // new web3.eth.Contract(VaultABI, param.address);
-    console.info('params',vault)
-    const getCode = await vault.methods.getCode().call();
-    const getPrice = await vault.methods.getPrice().call();
-    const name =1 //  await contract.name();
-    const data = {
-      name,
-      name11,
-      getCode,
-      getPrice
-    };
-    return data;
-  }
-
 
 
 // export const deposit = async (address, amount) => {
@@ -131,24 +33,6 @@ export async function getPoolInfo33(param: any) {
 //   const vault = getVaultContract(address);
 //   const value = new BigNumber(amount).times(DEFAULT_TOKEN_DECIMAL).toString();
 //   const tx = await vault.withdraw(value, options);
-//   const receipt = await tx.wait();
-//   return receipt.status;
-// };
-// export const farm = async (address, pid, worker, amount, loan, maxReturn, param: any) => {
-//   const vault = getVaultContract(address);
-//   const abiCoder = new ethers.utils.AbiCoder();
-//   const dataStrategy = abiCoder.encode(['uint256', 'uint256'], [param.farmingTokenAmount, param.minLPAmount]);
-//   const dataWorker = abiCoder.encode(['address', 'bytes'], [param.address, dataStrategy]);
-//   const tx = await vault.work(pid, worker, amount, loan, maxReturn, dataWorker, options);
-//   const receipt = await tx.wait();
-//   return receipt.status;
-// };
-// export const unfarm = async (address, pid, worker, amount, loan, maxReturn, param: any) => {
-//   const vault = getVaultContract(address);
-//   const abiCoder = new ethers.utils.AbiCoder();
-//   const dataStrategy = abiCoder.encode(['uint256'], [param.minFarmingToken]);
-//   const dataWorker = abiCoder.encode(['address', 'bytes'], [param.address, dataStrategy]);
-//   const tx = await vault.work(pid, worker, amount, loan, maxReturn, dataWorker, options);
 //   const receipt = await tx.wait();
 //   return receipt.status;
 // };

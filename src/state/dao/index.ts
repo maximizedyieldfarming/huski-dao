@@ -47,13 +47,13 @@ export const fetchDaoUserDataAsync =
     'dao/fetchDaoUserDataAsync',
     async ({ account, pids }) => {
       const daoToFetch = daoConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
-      const userFarmAllowances = await fetchFarmUserAllowances(account, daoToFetch)
+      // const userFarmAllowances = await fetchFarmUserAllowances(account, daoToFetch)
 
 
-      return userFarmAllowances.map((farmAllowance, index) => {
+      return daoToFetch.map((farmAllowance, index) => {
         return {
           pid: daoToFetch[index].pid,
-          allowance: userFarmAllowances[index],
+          allowance: '0',
 
         }
       })

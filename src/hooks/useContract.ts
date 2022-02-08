@@ -2,15 +2,12 @@ import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import {
   getBep20Contract,
-
 } from 'utils/contractHelpers'
-import { getMulticallAddress } from 'utils/addressHelpers'
 
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, WETH } from '@pancakeswap/sdk'
 import ERC20_ABI from '../config/abi/erc20.json'
-import multiCallAbi from '../config/abi/Multicall.json'
 import { getContract } from '../utils'
 
 /**
@@ -42,6 +39,4 @@ export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: b
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
 }
 
-export function useMulticallContract(): Contract | null {
-  return useContract(getMulticallAddress(), multiCallAbi, false)
-}
+

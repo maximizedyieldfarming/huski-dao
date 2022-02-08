@@ -4,7 +4,7 @@ import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
 import { daoConfig } from 'config/constants'
 import useRefresh from 'hooks/useRefresh'
-import { getPoolInfo, getPoolInfo33 } from 'utils/service'
+import { getPoolInfo } from 'utils/service'
 import { fetchDaoPublicDataAsync, fetchDaoUserDataAsync, nonArchivedFarms } from '.'
 import { State, DaoState } from '../types'
 
@@ -86,7 +86,7 @@ export const useLendData = () => {
   useEffect(() => {
     const lendingData = daoConfig.map((pool) => {
       const loadLendingData = async () => {
-        const dataPool = await getPoolInfo33(pool);
+        const dataPool = await getPoolInfo(pool);
         return dataPool;
       };
       return loadLendingData();

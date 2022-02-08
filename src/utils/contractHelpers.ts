@@ -1,15 +1,7 @@
 import { ethers } from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
-
-// Addresses
-import {
-  getAddress,
-  getMulticallAddress,
-} from 'utils/addressHelpers'
-
 // ABI
 import bep20Abi from 'config/abi/erc20.json'
-import MultiCallAbi from 'config/abi/Multicall.json'
 import VaultABI from 'config/abi/PublicOffering.json'
 import Web3 from 'web3';
 import getDomain from './env';
@@ -26,11 +18,6 @@ const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.
 export const getBep20Contract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(bep20Abi, address, signer)
 }
-
-export const getMulticallContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(MultiCallAbi, getMulticallAddress(), signer)
-}
-
 
 export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   // return getContract(VaultABI, address, provider.getSigner());
