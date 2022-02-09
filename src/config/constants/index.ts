@@ -1,27 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@pancakeswap/sdk'
-import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC } from './tokens'
-
-// export const ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-
-// a list of tokens by chain
-type ChainTokenList = {
-  readonly [chainId in ChainId]: Token[]
-}
-
-
-// used to construct the list of all pairs we consider by default in the frontend
-export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
-  [ChainId.MAINNET]: [WETH[ChainId.MAINNET], DAI, BUSD[ChainId.MAINNET], USDT],
-  [ChainId.TESTNET]: [WETH[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
-}
-
-export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-  [ChainId.MAINNET]: [
-    [CAKE[ChainId.MAINNET], WBNB],
-    [BUSD[ChainId.MAINNET], USDT],
-    [DAI, USDT],
-  ],
-}
+import { JSBI, Percent } from '@pancakeswap/sdk'
 
 export const NetworkContextName = 'NETWORK'
 
@@ -51,15 +28,4 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSB
 export const ZERO_PERCENT = new Percent('0')
 export const ONE_HUNDRED_PERCENT = new Percent('1')
 
-// SDN OFAC addresses
-// export const BLOCKED_ADDRESSES: string[] = [
-//   '0x7F367cC41522cE07553e823bf3be79A889DEbe1B',
-//   '0xd882cFc20F52f2599D84b8e8D58C7FB62cfE344b',
-//   '0x901bb9583b24D97e995513C6778dc6888AB6870e',
-//   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008',
-//   '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C',
-// ]
-
-// export { default as farmsConfig } from './farms'
-// export { default as leverageFarmsConfig } from './leverage'
 export { default as daoConfig } from './dao'
