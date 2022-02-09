@@ -1,7 +1,7 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon } from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { BIG_TEN, BIG_ZERO } from 'utils/config'
 import { ethers } from 'ethers'
@@ -348,6 +348,26 @@ const MainContent: React.FC<Props> = ({ data }) => {
       setIsTooltipDisplayed(false)
     }, 1000)
   }
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text fontSize="14px">Fundraising on ETH</Text>
+      <Text fontSize="14px">Distribution on ETH</Text>
+      <Text fontSize="14px">Claim HUSKI on BSC</Text>
+    </>,
+    { placement: 'bottom' },
+  )
+  const {
+    targetRef: targetRef2,
+    tooltip: tooltip2,
+    tooltipVisible: tooltipVisible2,
+  } = useTooltip(
+    <>
+      <Text fontSize="14px">
+        Each person has only one chance to support, and the amount is limited between $1,000 and $50,000
+      </Text>
+    </>,
+    { placement: 'bottom' },
+  )
 
   const walletReady = () => {
     return (
@@ -525,17 +545,29 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <Text fontSize="14px" textAlign="left">
             Type:
           </Text>
-          <Text fontSize="14px" textAlign="right">
-            ERC - 20 (Ethereum)
-          </Text>
+          <Flex alignItems="center" style={{ gap: '5px' }}>
+            <Text fontSize="14px" textAlign="right">
+              ERC - 20 (Ethereum)
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon color="#ffffff" width="12px" />
+            </span>
+          </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text fontSize="14px" textAlign="left">
             Price:
           </Text>
-          <Text fontSize="14px" textAlign="right">
-            2 HIDAO per $1000
-          </Text>
+          <Flex alignItems="center" style={{ gap: '5px' }}>
+            <Text fontSize="14px" textAlign="right">
+              2 HIDAO per $1000
+            </Text>
+            {tooltipVisible2 && tooltip2}
+            <span ref={targetRef2}>
+              <InfoIcon color="#ffffff" width="12px" />
+            </span>
+          </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text fontSize="14px" textAlign="left">
@@ -647,9 +679,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
-            <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toFixed(2, 1)}%</Text>
+            <Text fontSize="14px">
+              {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%
+            </Text>
           </Flex>
-          <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
+          <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toString()} />
           <Flex justifyContent="space-between" alignItems="center" mt="9px">
             <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
               'en-US',
