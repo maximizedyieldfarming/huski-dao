@@ -61,7 +61,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -168,14 +168,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
 
-  console.info('sjhahdh', selToken)
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
   const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log({'amount in usd': convertTokenToUsd(amountInToken).toNumber(), amountInToken})
+  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toNumber(), amountInToken })
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -269,7 +268,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
   }
 
-  const handleDeposit = async (depositAmount: BigNumber, name: string,  roundID, inviterCode) => {
+  const handleDeposit = async (depositAmount, name: string, roundID, inviterCode) => {
     const callOptions = {
       gasLimit: 380000,
     }
@@ -278,14 +277,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
       value: depositAmount.toString(),
     }
     // setIsPending(true)
-console.log({depositAmount, name,  roundID, inviterCode})
 
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
-        [depositAmount.toString(), roundID, inviterCode ],
+        [depositAmount.toString(), roundID, inviterCode],
         name === 'ETH' ? callOptionsETH : callOptions,
       )
       const receipt = await tx.wait()
@@ -293,6 +291,7 @@ console.log({depositAmount, name,  roundID, inviterCode})
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
       }
     } catch (error) {
+      console.info('error', error)
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       // setIsPending(false)
@@ -303,23 +302,25 @@ console.log({depositAmount, name,  roundID, inviterCode})
 
   const handleConfirm = async () => {
 
-    const {allowance,name, roundID, code  } = selToken
+    const { allowance, name, roundID, code } = selToken
 
-    if(Number(allowance)  === 0){
+    if (Number(allowance) === 0) {
       handleApprove()
-    }else{
+    } else {
       const url = window.location.href;
       const index = url.lastIndexOf('=')
-      let inviterCode = ''
-      if(index !== -1){
-         inviterCode = url.substring(index+1, url.length)
+      let inviterCode = code
+      if (index !== -1) {
+        inviterCode = url.substring(index + 1, url.length)
       }
-      
-      // console.info('inviterCode',inviterCode)
-      // console.info('index',index)
 
-      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
-      handleDeposit(depositAmount, name, roundID ,code)
+      // const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
+      //   .toString()
+      //   .replace(/\.(.*?\d*)/g, '')
+
+      const depositAmount = ethers.utils.parseEther(amountInToken)
+
+      handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
 
@@ -400,11 +401,11 @@ console.log({depositAmount, name,  roundID, inviterCode})
           <StyledButton
             filled
             onClick={handleConfirm}
-            // disabled={
-            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-            //   amountInToken === undefined ||
-            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
-            // }
+          // disabled={
+          //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+          //   amountInToken === undefined ||
+          //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+          // }
           >
             Approve &amp; Confirm
           </StyledButton>
