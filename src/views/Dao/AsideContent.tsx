@@ -83,12 +83,16 @@ const AsideContent = () => {
     <>
       <Container maxWidth={586}>
         <Flex alignItems="flex-end" justifyContent="space-between" mb="0 !important" flexWrap="wrap">
-          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start', }}>
+          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
             What is Huski DAO ?
           </Text>
-          <Flex>
-            <StyledButton mr="8px">WHAT IS A DAO</StyledButton>
-            <StyledButton>HOW TO DAO</StyledButton>
+          <Flex style={{ columnGap: '8px' }}>
+            <StyledButton mr="8px" as="a" href="https://blog.aragon.org/what-is-a-dao/" target="_blank">
+              WHAT IS A DAO
+            </StyledButton>
+            <StyledButton as="a" href="https://blog.aragon.org/how-to-dao-answers-for-beginners/" target="_blank">
+              HOW TO DAO
+            </StyledButton>
           </Flex>
         </Flex>
         <Separator mt="21px" mb="26px !important" />
