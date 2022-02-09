@@ -2,7 +2,7 @@ import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
-import { useDaos, useLendData, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
+import { useDaos, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
   Timeline,
