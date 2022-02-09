@@ -49,19 +49,19 @@ export const StyledButton = styled(Button)<{ filled?: boolean }>`
   background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
   border: none;
   border-radius: 14px;
-  color: #fff;
+  color: #ffffff;
   font-weight: 700;
   box-shadow: none;
   &:disabled,
   &.pancake-button--disabled {
-    color: #fff;
+    color: #ffffff;
     background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
     border: none;
   }
 `
 export const InputContainer = styled(Flex)`
   width: 100%;
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
   padding: 0 10px;
   align-items: center;
@@ -69,6 +69,9 @@ export const InputContainer = styled(Flex)`
     background: none;
     border-radius: 0;
     border: none;
+    &:disabled {
+      background-color: #ffffff;
+    }
   }
 `
 export const Banner = styled(Flex)`
@@ -86,7 +89,7 @@ export const Banner = styled(Flex)`
 export const Separator = styled(Box)`
   width: 100%;
   height: 1px;
-  background: #fff;
+  background: #ffffff;
 `
 export const FoundersWrapper = styled(Flex)`
   width: 100%;
@@ -129,7 +132,7 @@ export const FoundersContainer = styled(Flex)`
 export const StyledLink = styled(Link)`
   background: linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%);
   border-radius: 14px;
-  color: #fff;
+  color: #ffffff;
   font-weight: 700;
   height: 50px;
   display: flex;

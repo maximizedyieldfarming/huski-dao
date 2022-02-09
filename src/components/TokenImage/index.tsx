@@ -5,7 +5,6 @@ import {
   TokenImage as UIKitTokenImage,
   ImageProps,
 } from '@huskifinance/huski-frontend-uikit'
-import tokens from 'config/constants/tokens'
 import { Token } from 'config/constants/types'
 import { getAddress } from 'utils/addressHelpers'
 
@@ -14,13 +13,9 @@ interface TokenPairImageProps extends Omit<UIKitTokenPairImageProps, 'primarySrc
   secondaryToken: Token
 }
 
-/* const getImageUrlFromTokenPair = (token: Token) => {
-  const address = getAddress(token.symbol === 'BNB' ? tokens.wbnb.address : token.address)
-  return `/images/tokens/${address}.svg`
-} */
 
 const getImageUrlFromToken = (token) => {
-  const address = getAddress(token?.symbol === 'BNB' ? tokens.wbnb.address : token?.address)
+  const address = getAddress(token?.address)
   return `/images/tokens/${address}.svg`
 }
 

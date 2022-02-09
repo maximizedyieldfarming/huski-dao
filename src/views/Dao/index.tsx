@@ -1,16 +1,11 @@
 import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-// import { ReactComponent as HuskiLogo } from './assets/HuskiLogo.svg'
-import { Box, Text, Flex, LogoIcon, useWalletModal, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
-import useAuth from 'hooks/useAuth'
-import { useWeb3React } from '@web3-react/core'
-import UserMenu from 'components/UserMenu'
-import { useDaos, useLendData, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
+import { Box, Text, Flex, useMatchBreakpoints, ArrowForwardIcon } from '@huskifinance/huski-frontend-uikit'
+import { useDaos, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
-  StyledButton,
+  Timeline,
   StyledNav,
   Main,
   Aside,
@@ -21,13 +16,12 @@ import {
   FoundersContainer,
   StyledLink,
   Header,
-} from './styles'
-import { Timeline } from './components'
+  ConnectWalletButton,
+} from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
 import { Founders, Links } from './config'
 import { ETHIcon, BSCIcon, HuskiGoggles, PlanetPurple, PlanetYellow } from './assets'
-import { useHover } from './helpers'
 
 const PageWrapper = styled.div`
   position: relative;
@@ -84,7 +78,7 @@ const GlowSpotPurple = styled(Box)`
   filter: blur(192px);
   padding: 0 !important;
 `
-const GlowStar = styled(Box)<{ small?: boolean }>`
+const GlowStar = styled(Box) <{ small?: boolean }>`
   width: ${({ small }) => (small ? '3px' : '6px')};
   height: ${({ small }) => (small ? '3px' : '6px')};
   border-radius: 100%;
@@ -95,55 +89,6 @@ const GlowStar = styled(Box)<{ small?: boolean }>`
   filter: blur(2px);
   padding: 0 !important;
 `
-
-const StyledConnectWallet = (props) => {
-  const { login, logout } = useAuth()
-  // const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const hasProvider = !!window.ethereum
-  // console.info('hasProvider', hasProvider)
-  // console.info('!!window.ethereum', !!window.ethereum)
-  // console.info('!!window.BinanceChain', window)
-  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
-  const { account } = useWeb3React()
-
-  // if( window.BinanceChain ){
-  //   alert('qinghuan wangluo')
-  //
-  //    }
-
-  const [buttonIsHovering, buttonHoverProps] = useHover()
-  // hide this to test normal wllet connect button
-  // if (!account) {
-  //   return (
-  //     <StyledButton
-  //       onClick={(e) => e.preventDefault()}
-  //       {...props}
-  //       maxWidth={146}
-  //       height="100%"
-  //       {...buttonHoverProps}
-  //       style={{ cursor: 'not-allowed' }}
-  //     >
-  //       <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
-  //         {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
-  //       </Text>
-  //     </StyledButton>
-  //   )
-  // }
-
-  const { isMobile } = useMatchBreakpoints()
-  // uncomment this to enable normal button
-  // product manager asked to disable this button while we are working on functionality
-  if (!account) {
-    return (
-      <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={isMobile ? '100%' : 146} height="100%">
-        <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
-          Connect Wallet
-        </Text>
-      </StyledButton>
-    )
-  }
-  return <UserMenu />
-}
 
 const LaunchCampaign = () => {
   const [selectedNetwork, setSelectedNetwork] = React.useState('ethereum')
@@ -192,24 +137,15 @@ const LaunchCampaign = () => {
                     label: 'ETH',
                     icon: <ETHIcon width="27px" height="27px" className="noPos" />,
                   },
-                  {
+                /*   {
                     value: 'binance',
                     label: 'BSC',
                     icon: <BSCIcon width="27px" height="27px" className="noPos" />,
-                  },
+                  }, */
                 ]}
                 onChange={(option) => setSelectedNetwork(option.value)}
               />
-              <Box
-                ml="8px"
-                borderRadius="14px"
-                background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
-                p="1px"
-                height="46px"
-                maxWidth="100%"
-              >
-                <StyledConnectWallet>Connect Wallet</StyledConnectWallet>
-              </Box>
+              <ConnectWalletButton />
             </Flex>
           </StyledNav>
           <Box
@@ -234,10 +170,11 @@ const LaunchCampaign = () => {
               to={{ pathname: Links.onePager }}
               target="_blank"
             >
-              View One Pager
+              View One-Pager
             </StyledLink>
             <StyledLink style={{ width: '144px' }} to={{ pathname: Links.huskiFinance }} target="_blank">
               Huski Finance
+              <ArrowForwardIcon color="#ffffff" width="15px" />
             </StyledLink>
           </Flex>
         </Header>

@@ -22,14 +22,19 @@ export const ButtonMenuRounded = styled(UikitButtonMenu)`
 `
 export const ButtonMenuItemRounded = styled(Button)`
   background: #1d1725;
-  box-shadow: none !important;
   color: #d953e9;
+  max-width: calc(100% / 3);
+  font-size: 14px;
+  padding: 0;
+  box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px -1px 0px #534960 !important;
 `
 export const ButtonMenuSquared = styled(UikitButtonMenu)`
   width: 100%;
   max-width: 100%;
   overflow: auto;
   background: none;
+  border-radius: 0;
+  padding: 0;
   // hide scrollbar on mobile
   &::-webkit-scrollbar {
     display: none;
@@ -42,8 +47,15 @@ export const ButtonMenuItemSquared = styled(Button)`
   background: #261f30;
   border-radius: 0;
   box-shadow: none !important;
-
   border-bottom: 2px solid #d953e9;
+  max-width: calc(100% / 3);
+  font-size: 14px;
+  padding: 0;
+  svg {
+    ${({ theme }) => theme.mediaQueries.sm} {
+      width: 27px;
+    }
+  }
 `
 
 /**
@@ -81,6 +93,7 @@ const InactiveButtonMenuItemRounded: PolymorphicComponent<InactiveButtonProps, '
   &:hover:not(:disabled):not(:active) {
     background: #1d1725;
   }
+  box-shadow: none !important;
 `
 export const CustomButtonMenuItemSquared: PolymorphicComponent<ButtonMenuItemProps, 'button'> = ({
   isActive = false,

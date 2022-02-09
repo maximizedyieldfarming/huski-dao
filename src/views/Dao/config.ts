@@ -6,6 +6,9 @@ interface Links {
     huskiFinance: string,
     onePager: string,
     googleForm: string,
+    whatIsDao: string,
+    howToDao: string,
+    joinDao: string
 }
 export const Founders: Array<Founders> = [
     // uncomment to see the founders section (for testing purposes)
@@ -25,7 +28,10 @@ export const Founders: Array<Founders> = [
 export const Links: Links = {
     huskiFinance: 'https://test.huski.finance/',
     onePager: 'https://drive.google.com/file/d/1Yne_5zSQuwGwM9_arE215pTSouyTj_XL/view?usp=sharing',
-    googleForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfQYEmLeC9fxtCHSB9lbcRO_3YcYvEUHSEZo6Xc9V9Lz1z5ag/viewform?usp=sf_link'
+    googleForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfQYEmLeC9fxtCHSB9lbcRO_3YcYvEUHSEZo6Xc9V9Lz1z5ag/viewform?usp=sf_link',
+    whatIsDao: 'https://blog.aragon.org/what-is-a-dao/',
+    howToDao: 'https://blog.aragon.org/how-to-dao-answers-for-beginners/',
+    joinDao: null
 }
 
 export const NFT_SPONSORS_TARGET = 100 // NFTs to be distributed to sponsors who have donated more than 50,000 USD

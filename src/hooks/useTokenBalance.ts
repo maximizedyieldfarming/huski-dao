@@ -3,9 +3,7 @@ import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { getBep20Contract } from 'utils/contractHelpers'
 import { BIG_ZERO } from 'utils/config'
-import { simpleRpcProvider } from 'utils/providers'
 import useRefresh from './useRefresh'
-import useLastUpdated from './useLastUpdated'
 
 type UseTokenBalanceState = {
   balance: BigNumber
@@ -51,37 +49,11 @@ const useTokenBalance = (tokenAddress: string) => {
 }
 
 
-
-export const useGetBnbBalance = () => {
-  const [fetchStatus, setFetchStatus] = useState(FetchStatus.NOT_FETCHED)
-  const [balance, setBalance] = useState(BIG_ZERO)
-  const { account } = useWeb3React()
-  const { lastUpdated, setLastUpdated } = useLastUpdated()
-
-  useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const walletBalance = await simpleRpcProvider.getBalance(account)
-        setBalance(new BigNumber(walletBalance.toString()))
-        setFetchStatus(FetchStatus.SUCCESS)
-      } catch {
-        setFetchStatus(FetchStatus.FAILED)
-      }
-    }
-
-    if (account) {
-      fetchBalance()
-    }
-  }, [account, lastUpdated, setBalance, setFetchStatus])
-
-  return { balance, fetchStatus, refresh: setLastUpdated }
-}
-
 export default useTokenBalance
 
 export const useTokenAllowance = (tokenAddress: string, vaultAddress: string) => {
   const { NOT_FETCHED, SUCCESS, FAILED } = FetchStatus
-  const [allowanceState, setAllowanceState] = useState({allowance: BIG_ZERO, fetchStatus: NOT_FETCHED})
+  const [allowanceState, setAllowanceState] = useState({ allowance: BIG_ZERO, fetchStatus: NOT_FETCHED })
   const { account } = useWeb3React()
   const { fastRefresh } = useRefresh()
 
@@ -91,7 +63,7 @@ export const useTokenAllowance = (tokenAddress: string, vaultAddress: string) =>
       try {
         const res = await contract.allowance(account, vaultAddress)
         setAllowanceState({ allowance: new BigNumber(res.toString()), fetchStatus: SUCCESS })
-      }  catch (e) {
+      } catch (e) {
         console.error(e)
         setAllowanceState((prev) => ({
           ...prev,
@@ -105,5 +77,5 @@ export const useTokenAllowance = (tokenAddress: string, vaultAddress: string) =>
     }
   }, [account, fastRefresh, setAllowanceState, tokenAddress, vaultAddress, SUCCESS, FAILED])
 
-  return  allowanceState
+  return allowanceState
 }

@@ -3,7 +3,7 @@ import { Svg, SvgProps } from '@huskifinance/huski-frontend-uikit'
 
 const Icon: React.FC<SvgProps> = (props) => {
   return (
-    <Svg width="27" height="27" viewBox="0 0 27 27" fill="none" {...props}>
+    <Svg viewBox="0 0 27 27" fill="none" {...props}>
       <path
         d="M26.5 13.5C26.5 20.7052 20.7052 26.5 13.5 26.5C6.29485 26.5 0.5 20.7052 0.5 13.5C0.5 6.29485 6.29485 0.5 13.5 0.5C20.7052 0.5 26.5 6.29485 26.5 13.5Z"
         fill="#2775CA"

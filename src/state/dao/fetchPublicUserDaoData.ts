@@ -1,14 +1,15 @@
 import { getAddress } from 'utils/addressHelpers'
-import { getBep20Contract } from 'utils/contractHelpers';
+import { getBep20Contract, getConfigContract } from 'utils/contractHelpers';
 import BigNumber from 'bignumber.js'
 import { Dao } from '../types'
 
 type PublicDaoData = {
   allowance: string
+  investorStatus: boolean
 }
 
 const fetchUserDao = async (account: string, dao: Dao): Promise<PublicDaoData> => {
-  const { vaultAddress, token, name } = dao
+  const { vaultAddress, token, name, configAddress } = dao
 
   let allowanceJson = '1'
 
@@ -22,8 +23,14 @@ const fetchUserDao = async (account: string, dao: Dao): Promise<PublicDaoData> =
     allowanceJson = new BigNumber(allowance?._hex).toJSON()
   }
 
+  const configAddresses = getAddress(configAddress)
+  const config = getConfigContract(configAddresses);
+  const getInvestorStatus = await config.getInvestorStatus(account);
+
+
   return {
-    allowance: allowanceJson
+    allowance: allowanceJson,
+    investorStatus: getInvestorStatus,
   }
 }
 

@@ -1,19 +1,9 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import useAuth from 'hooks/useAuth'
-import {
-  Box,
-  Text,
-  Flex,
-  Input,
-  useWalletModal,
-  useMatchBreakpoints,
-  InfoIcon,
-} from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import useCopyToClipboard from 'utils/copyToClipboard'
-import { BIG_ZERO } from 'utils/config'
+import { BIG_TEN, BIG_ZERO } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getDecimalAmount } from 'utils/formatBalance'
@@ -21,13 +11,18 @@ import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
-import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
   ButtonMenuSquared,
   CustomButtonMenuItemSquared,
   CustomButtonMenuItemRounded,
   ProgressBar,
+  Container,
+  InputContainer,
+  StyledButton,
+  Banner,
+  ConnectWalletButton,
+  StyledLink,
 } from './components'
 import {
   USDCIcon,
@@ -41,11 +36,11 @@ import {
   Trophy,
   HuskiGoggles,
 } from './assets'
-import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
-import { useHover } from './helpers'
+import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
+import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
-  data: Record<string, any>
+  data: Record<string, any>[]
 }
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
@@ -151,47 +146,60 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
   const getSelectedTokenData = (
     token: string,
-  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode, selToken: any } => {
+  ): {
+    selTokenPrice: BigNumber
+    selTokenDecimalPlaces: number
+    selTokenIcon: React.ReactNode
+    selToken: Record<string, any>
+  } => {
     const selToken = data.find((d) => d.name === token)
     const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
     const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
     const selTokenIcon = (() => {
       if (selectedToken === 'ETH') {
-        return <ETHIcon />
+        return <ETHIcon width="27px" />
       }
       if (selectedToken === 'USDT') {
-        return <USDTIcon />
+        return <USDTIcon width="27px" />
       }
-      return <USDCIcon />
+      return <USDCIcon width="27px" />
     })()
     return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken }
   }
-  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
+  const { selTokenPrice, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
+  const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
+  console.log('has token price data', !tokenPriceDataNotLoaded)
 
-  console.info('sjhahdh', selToken)
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
+    if (!amountInUSD || tokenPriceDataNotLoaded) {
+      return BIG_ZERO
+    }
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
+
   const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
+    if (!pAmountInToken || tokenPriceDataNotLoaded) {
+      return BIG_ZERO
+    }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log({'amount in usd': convertTokenToUsd(amountInToken).toNumber(), amountInToken})
+  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
 
   const handleTokenButton = (index) => {
     if (index === 0) {
       setSelectedToken('ETH')
       setTokenButtonIndex(index)
-      setAmountInToken('0')
+      setAmountInToken('')
       setAmountButtonIndex(null)
     } else if (index === 1) {
       setSelectedToken('USDT')
       setTokenButtonIndex(index)
-      setAmountInToken('0')
+      setAmountInToken('')
       setAmountButtonIndex(null)
     } else if (index === 2) {
       setSelectedToken('USDC')
       setTokenButtonIndex(index)
-      setAmountInToken('0')
+      setAmountInToken('')
       setAmountButtonIndex(null)
     }
   }
@@ -232,14 +240,15 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
   }
-  const raisedAmount = 0 // to get from some API ???
-  const raisedAmountString = raisedAmount.toLocaleString('en-US', {
+
+  const raisedAmount = convertTokenToUsd(data[0].raiseFund).div(BIG_TEN.pow(18))
+  const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
-  const sponsorsAmount = 0 // to get from some API ???
+  const sponsorsAmount = 0 // TODO: to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -248,7 +257,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const vaultAddress = getAddress(selToken?.vaultAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
-
 
   const handleApprove = async () => {
     toastInfo(t('Approving...'), t('Please Wait!'))
@@ -269,7 +277,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
   }
 
-  const handleDeposit = async (depositAmount: BigNumber, name: string,  roundID, inviterCode) => {
+  const handleDeposit = async (depositAmount, name: string, roundID, inviterCode) => {
     const callOptions = {
       gasLimit: 380000,
     }
@@ -278,14 +286,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
       value: depositAmount.toString(),
     }
     // setIsPending(true)
-console.log({depositAmount, name,  roundID, inviterCode})
 
     try {
       toastInfo(t('Transaction Pending...'), t('Please Wait!'))
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
-        [depositAmount.toString(), roundID, inviterCode ],
+        [depositAmount.toString(), roundID, inviterCode],
         name === 'ETH' ? callOptionsETH : callOptions,
       )
       const receipt = await tx.wait()
@@ -293,38 +300,35 @@ console.log({depositAmount, name,  roundID, inviterCode})
         toastSuccess(t('Successful!'), t('Your deposit was successfull'))
       }
     } catch (error) {
+      console.info('error', error)
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       // setIsPending(false)
-
     }
   }
-
 
   const handleConfirm = async () => {
+    const { allowance, name, roundID, code } = selToken
 
-    const {allowance,name, roundID, code  } = selToken
-
-    if(Number(allowance)  === 0){
+    if (Number(allowance) === 0) {
       handleApprove()
-    }else{
-      const url = window.location.href;
+    } else {
+      const url = window.location.href
       const index = url.lastIndexOf('=')
-      let inviterCode = ''
-      if(index !== -1){
-         inviterCode = url.substring(index+1, url.length)
+      let inviterCode = code
+      if (index !== -1) {
+        inviterCode = url.substring(index + 1, url.length)
       }
-      
-      // console.info('inviterCode',inviterCode)
-      // console.info('index',index)
 
-      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
-      handleDeposit(depositAmount, name, roundID ,code)
+      // const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
+      //   .toString()
+      //   .replace(/\.(.*?\d*)/g, '')
+
+      const depositAmount = ethers.utils.parseEther(amountInToken)
+
+      handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
-
-
-
 
   const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
   const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
@@ -336,7 +340,6 @@ console.log({depositAmount, name,  roundID, inviterCode})
   const invitedByUser = 0
   const userInvitationBonus = 0
 
-  const [buttonIsHovering, buttonHoverProps] = useHover()
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
@@ -346,7 +349,28 @@ console.log({depositAmount, name,  roundID, inviterCode})
       setIsTooltipDisplayed(false)
     }, 1000)
   }
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <>
+      <Text fontSize="14px">Fundraising on ETH</Text>
+      <Text fontSize="14px">Distribution on ETH</Text>
+      <Text fontSize="14px">Claim HUSKI on BSC</Text>
+    </>,
+    { placement: 'bottom' },
+  )
+  const {
+    targetRef: targetRef2,
+    tooltip: tooltip2,
+    tooltipVisible: tooltipVisible2,
+  } = useTooltip(
+    <>
+      <Text fontSize="14px">
+        Each person has only one chance to support, and the amount is limited between $1,000 and $50,000
+      </Text>
+    </>,
+    { placement: 'bottom' },
+  )
 
+  const [isHoveringConfirm, confirmHoverProps] = useHover()
   const walletReady = () => {
     return (
       <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
@@ -358,7 +382,11 @@ console.log({depositAmount, name,  roundID, inviterCode})
         <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
-        <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
+        <ButtonMenuSquared
+          onItemClick={handleTokenButton}
+          activeIndex={tokenButtonIndex}
+          disabled={data[0]?.investorStatus === true}
+        >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
@@ -370,44 +398,67 @@ console.log({depositAmount, name,  roundID, inviterCode})
             value={amountInToken}
             onChange={handleInputChange}
             pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+            disabled={tokenPriceDataNotLoaded || data[0]?.investorStatus === true}
+            style={{ fontSize: '18px' }}
           />
-          <Text color="#00000082 !important">{`≈${Number(convertTokenToUsd(amountInToken || '0'))?.toLocaleString(
-            'en-US',
-            {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            },
-          )}USD`}</Text>
+          <Text color="#00000082 !important" fontSize="14px">{`≈${Number(
+            convertTokenToUsd(amountInToken || '0'),
+          )?.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}USD`}</Text>
         </InputContainer>
-        <ButtonMenuRounded onItemClick={handleAmountButton} activeIndex={amountButtonIndex}>
+        <ButtonMenuRounded
+          onItemClick={handleAmountButton}
+          activeIndex={amountButtonIndex}
+          disabled={tokenPriceDataNotLoaded || data[0]?.investorStatus === true}
+        >
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
-          <Text color="red !important" fontSize="12px">
+        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
+          <Text color="red !important" fontSize="12px" mt="10px">
             Minimum investment amount is $1,000 (One Thousand USD)
           </Text>
         ) : null}
-        {new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
-          <Text color="red !important" fontSize="12px">
+        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
+          <Text color="red !important" fontSize="12px" mt="10px">
             You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
         ) : null}
+        {data[0]?.investorStatus === true ? (
+          <Text fontSize="12px" mt="10px">
+            Everyone has only one chance to support;
+            <br />
+            Please invite more friends to grow Huski DAO!
+          </Text>
+        ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
-          <StyledButton
-            filled
-            onClick={handleConfirm}
-            // disabled={
-            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-            //   amountInToken === undefined ||
-            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
-            // }
-          >
-            Approve &amp; Confirm
-          </StyledButton>
+          {data[0]?.investorStatus === true ? (
+            <StyledLink
+              to={Links.joinDao}
+              onClick={(e) => e.preventDefault()} /* preventDefault bc this link is empty TODO: change later */
+              {...confirmHoverProps}
+              style={{ padding: '10px', cursor: 'not-allowed', opacity: isHoveringConfirm && '0.8' }}
+            >
+              {isHoveringConfirm ? `Coming Soon` : `Join our DAO`}
+            </StyledLink>
+          ) : (
+            <StyledButton
+              filled
+              onClick={handleConfirm}
+              disabled={
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+                amountInToken === undefined ||
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+              }
+            >
+              Approve &amp; Confirm
+            </StyledButton>
+          )}
         </Box>
         <Box width="100%">
           <Flex alignItems="center">
@@ -512,17 +563,29 @@ console.log({depositAmount, name,  roundID, inviterCode})
           <Text fontSize="14px" textAlign="left">
             Type:
           </Text>
-          <Text fontSize="14px" textAlign="right">
-            ERC - 20 (Ethereum)
-          </Text>
+          <Flex alignItems="center" style={{ gap: '5px' }}>
+            <Text fontSize="14px" textAlign="right">
+              ERC - 20 (Ethereum)
+            </Text>
+            {tooltipVisible && tooltip}
+            <span ref={targetRef}>
+              <InfoIcon color="#ffffff" width="12px" />
+            </span>
+          </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text fontSize="14px" textAlign="left">
             Price:
           </Text>
-          <Text fontSize="14px" textAlign="right">
-            2 HIDAO per $1000
-          </Text>
+          <Flex alignItems="center" style={{ gap: '5px' }}>
+            <Text fontSize="14px" textAlign="right">
+              2 HIDAO per $1000
+            </Text>
+            {tooltipVisible2 && tooltip2}
+            <span ref={targetRef2}>
+              <InfoIcon color="#ffffff" width="12px" />
+            </span>
+          </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
           <Text fontSize="14px" textAlign="left">
@@ -534,7 +597,8 @@ console.log({depositAmount, name,  roundID, inviterCode})
               currency: 'USD',
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            })}
+            })}{' '}
+            ~ $5,000,000
           </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
@@ -580,44 +644,18 @@ console.log({depositAmount, name,  roundID, inviterCode})
         </Flex>
 
         <Box mx="auto" width="fit-content" mt="23px">
-          {/*  <StyledButton onClick={onPresentConnectModal} heigth="36px">
-            Connect Wallet
-          </StyledButton> */}
-          <Box
-            ml="8px"
-            borderRadius="14px"
-            background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
-            p="1px"
-            height="46px"
-          >
-            <StyledButton
-              onClick={(e) => e.preventDefault()}
-              maxWidth={146}
-              height="100%"
-              {...buttonHoverProps}
-              style={{ cursor: 'not-allowed' }}
-            >
-              <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
-                {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
-              </Text>
-            </StyledButton>
-          </Box>
+          <ConnectWalletButton />
         </Box>
       </Container>
     )
   }
-  // using this function because theres a third condition, so its easier to read like this
-  // insted of using ternary inside jsx
+
   const getFirstContainer = () => {
     if (account) {
       return walletReady()
     }
     return walletNotReady()
   }
-
-  const { login, logout } = useAuth()
-  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
     <Box>
@@ -637,7 +675,7 @@ console.log({depositAmount, name,  roundID, inviterCode})
             <Text fontSize="14px">DAO Verification</Text>
           </Banner>
         </Flex>
-        {new BigNumber(convertTokenToUsd(amountInToken)).gte(50000) ? (
+        {new BigNumber(convertTokenToUsd(amountInToken).toFixed(0)).gte(50000) ? (
           <Banner mt="15px" maxWidth="100% !important">
             <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
             <Text fontSize="14px">NFT co-branded sponsors </Text>
@@ -652,15 +690,17 @@ console.log({depositAmount, name,  roundID, inviterCode})
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
           <LaughingHuski width="37px" />
           <Text fontSize="14px" ml="18px">
-            {account ? convertTokenToUsd(amountInToken || '0').toFixed(2) : null} HUSKI Token
+            {account ? convertTokenToUsd(amountInToken).toFixed(2) : null} HUSKI Token
           </Text>
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
-            <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()}%</Text>
+            <Text fontSize="14px">
+              {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%
+            </Text>
           </Flex>
-          <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
+          <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toString()} />
           <Flex justifyContent="space-between" alignItems="center" mt="9px">
             <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
               'en-US',

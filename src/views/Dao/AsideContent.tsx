@@ -1,9 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { Container as BaseContainer, Separator, Banner, StyledButton } from './styles'
+import { Container as BaseContainer, Separator, Banner, StyledButton } from './components'
 import { AragonIcon, CommonwealthIcon, Banner as BannerImg } from './assets'
+import { Links } from './config'
 
 const Container = styled(BaseContainer)`
   padding: 22px 21px 20px;
@@ -83,12 +83,16 @@ const AsideContent = () => {
     <>
       <Container maxWidth={586}>
         <Flex alignItems="flex-end" justifyContent="space-between" mb="0 !important" flexWrap="wrap">
-          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start', }}>
+          <Text fontSize="24px !important" fontWeight={900} style={{ alignSelf: 'flex-start' }}>
             What is Huski DAO ?
           </Text>
-          <Flex>
-            <StyledButton mr="8px">WHAT IS A DAO</StyledButton>
-            <StyledButton>HOW TO DAO</StyledButton>
+          <Flex style={{ columnGap: '8px' }}>
+            <StyledButton mr="8px" as="a" href={Links.whatIsDao} target="_blank">
+              WHAT IS A DAO
+            </StyledButton>
+            <StyledButton as="a" href={Links.howToDao} target="_blank">
+              HOW TO DAO
+            </StyledButton>
           </Flex>
         </Flex>
         <Separator mt="21px" mb="26px !important" />
