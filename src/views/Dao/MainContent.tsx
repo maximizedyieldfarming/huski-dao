@@ -308,6 +308,16 @@ console.log({depositAmount, name,  roundID, inviterCode})
     if(Number(allowance)  === 0){
       handleApprove()
     }else{
+      const url = window.location.href;
+      const index = url.lastIndexOf('=')
+      let inviterCode = ''
+      if(index !== -1){
+         inviterCode = url.substring(index+1, url.length)
+      }
+      
+      // console.info('inviterCode',inviterCode)
+      // console.info('index',index)
+
       const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
       handleDeposit(depositAmount, name, roundID ,code)
     }
