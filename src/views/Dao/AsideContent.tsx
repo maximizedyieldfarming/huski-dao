@@ -1,8 +1,7 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { Container as BaseContainer, Separator, Banner, StyledButton } from './styles'
+import { Container as BaseContainer, Separator, Banner, StyledButton } from './components'
 import { AragonIcon, CommonwealthIcon, Banner as BannerImg } from './assets'
 
 const Container = styled(BaseContainer)`

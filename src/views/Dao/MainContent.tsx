@@ -21,13 +21,17 @@ import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
-import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
   ButtonMenuSquared,
   CustomButtonMenuItemSquared,
   CustomButtonMenuItemRounded,
   ProgressBar,
+  Container,
+  InputContainer,
+  StyledButton,
+  Banner,
+  ConnectWalletButton,
 } from './components'
 import {
   USDCIcon,
@@ -248,7 +252,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
 
-
   const handleApprove = async () => {
     toastInfo(t('Approving...'), t('Please Wait!'))
     // setIsApproving(true)
@@ -295,10 +298,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
       toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
     } finally {
       // setIsPending(false)
-
     }
   }
-
 
   const handleConfirm = async () => {
 
@@ -323,9 +324,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
-
-
-
 
   const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
   const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
@@ -581,28 +579,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         </Flex>
 
         <Box mx="auto" width="fit-content" mt="23px">
-          {/*  <StyledButton onClick={onPresentConnectModal} heigth="36px">
-            Connect Wallet
-          </StyledButton> */}
-          <Box
-            ml="8px"
-            borderRadius="14px"
-            background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
-            p="1px"
-            height="46px"
-          >
-            <StyledButton
-              onClick={(e) => e.preventDefault()}
-              maxWidth={146}
-              height="100%"
-              {...buttonHoverProps}
-              style={{ cursor: 'not-allowed' }}
-            >
-              <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
-                {buttonIsHovering ? 'Coming Soon' : 'Connect Wallet'}
-              </Text>
-            </StyledButton>
-          </Box>
+          <ConnectWalletButton />
         </Box>
       </Container>
     )
