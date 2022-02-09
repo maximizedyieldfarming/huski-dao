@@ -157,12 +157,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
     const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
     const selTokenIcon = (() => {
       if (selectedToken === 'ETH') {
-        return <ETHIcon />
+        return <ETHIcon width="27px" />
       }
       if (selectedToken === 'USDT') {
-        return <USDTIcon />
+        return <USDTIcon width="27px" />
       }
-      return <USDCIcon />
+      return <USDCIcon width="27px" />
     })()
     return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken }
   }
@@ -370,16 +370,16 @@ console.log({depositAmount, name,  roundID, inviterCode})
             value={amountInToken}
             onChange={handleInputChange}
             pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+            style={{ fontSize: '18px' }}
           />
-          <Text color="#00000082 !important">{`≈${Number(convertTokenToUsd(amountInToken || '0'))?.toLocaleString(
-            'en-US',
-            {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            },
-          )}USD`}</Text>
+          <Text color="#00000082 !important" fontSize="14px">{`≈${Number(
+            convertTokenToUsd(amountInToken || '0'),
+          )?.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}USD`}</Text>
         </InputContainer>
         <ButtonMenuRounded onItemClick={handleAmountButton} activeIndex={amountButtonIndex}>
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
