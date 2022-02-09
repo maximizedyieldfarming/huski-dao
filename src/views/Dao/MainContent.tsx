@@ -22,6 +22,7 @@ import {
   StyledButton,
   Banner,
   ConnectWalletButton,
+  StyledLink,
 } from './components'
 import {
   USDCIcon,
@@ -35,7 +36,7 @@ import {
   Trophy,
   HuskiGoggles,
 } from './assets'
-import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
+import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
 import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
@@ -170,14 +171,14 @@ const MainContent: React.FC<Props> = ({ data }) => {
   console.log('has token price data', !tokenPriceDataNotLoaded)
 
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
-    if (!amountInUSD) {
+    if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
 
   const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
-    if (!pAmountInToken) {
+    if (!pAmountInToken || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
@@ -369,6 +370,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     { placement: 'bottom' },
   )
 
+  const [isHoveringConfirm, confirmHoverProps] = useHover()
   const walletReady = () => {
     return (
       <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
@@ -380,7 +382,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
-        <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
+        <ButtonMenuSquared
+          onItemClick={handleTokenButton}
+          activeIndex={tokenButtonIndex}
+          disabled={data[0]?.investorStatus === true}
+        >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
@@ -392,7 +398,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             value={amountInToken}
             onChange={handleInputChange}
             pattern="^[0-9]*[.,]?[0-9]{0,18}$"
-            disabled={tokenPriceDataNotLoaded}
+            disabled={tokenPriceDataNotLoaded || data[0]?.investorStatus === true}
             style={{ fontSize: '18px' }}
           />
           <Text color="#00000082 !important" fontSize="14px">{`≈${Number(
@@ -407,40 +413,52 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuRounded
           onItemClick={handleAmountButton}
           activeIndex={amountButtonIndex}
-          disabled={tokenPriceDataNotLoaded}
+          disabled={tokenPriceDataNotLoaded || data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
         {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
-          <Text color="red !important" fontSize="12px">
+          <Text color="red !important" fontSize="12px" mt="10px">
             Minimum investment amount is $1,000 (One Thousand USD)
           </Text>
         ) : null}
         {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
-          <Text color="red !important" fontSize="12px">
+          <Text color="red !important" fontSize="12px" mt="10px">
             You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
         ) : null}
+        {data[0]?.investorStatus === true ? (
+          <Text fontSize="12px" mt="10px">
+            Everyone has only one chance to support;
+            <br />
+            Please invite more friends to grow Huski DAO!
+          </Text>
+        ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
-          <StyledButton
-            filled
-            onClick={handleConfirm}
-            disabled={
-              new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-              amountInToken === undefined ||
-              new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
-              data[0]?.investorStatus === true
-            }
-          >
-            Approve &amp; Confirm
-          </StyledButton>
           {data[0]?.investorStatus === true ? (
-            <Text color="red !important" fontSize="12px">
-              You are already an investor in our DAO
-            </Text>
-          ) : null}
+            <StyledLink
+              to={Links.joinDao}
+              onClick={(e) => e.preventDefault()} /* preventDefault bc this link is empty TODO: change later */
+              {...confirmHoverProps}
+              style={{ padding: '10px', cursor: 'not-allowed', opacity: isHoveringConfirm && '0.8' }}
+            >
+              {isHoveringConfirm ? `Coming Soon` : `Join our DAO`}
+            </StyledLink>
+          ) : (
+            <StyledButton
+              filled
+              onClick={handleConfirm}
+              disabled={
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+                amountInToken === undefined ||
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+              }
+            >
+              Approve &amp; Confirm
+            </StyledButton>
+          )}
         </Box>
         <Box width="100%">
           <Flex alignItems="center">
@@ -631,8 +649,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       </Container>
     )
   }
-  // using this function because theres a third condition, so its easier to read like this
-  // insted of using ternary inside jsx
+
   const getFirstContainer = () => {
     if (account) {
       return walletReady()
