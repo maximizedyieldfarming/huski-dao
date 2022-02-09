@@ -64,7 +64,7 @@ const tokens = {
     symbol: 'USDT',
     address: {
       56: '0x55d398326f99059ff775485246999027b3197955',
-      97: '0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5',
+      42: '0x1484a6020a0f08400f6f56715016d2c80e26cdc1',
     },
     decimals: 18,
     decimalsDigits: 2,
@@ -75,7 +75,7 @@ const tokens = {
     symbol: 'USDC',
     address: {
       56: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
-      97: '',
+      42: '0x7079f3762805cff9c979a5bdc6f5648bcfee76c8',
     },
     decimals: 18,
     decimalsDigits: 2,
@@ -86,7 +86,7 @@ const tokens = {
     symbol: 'ETH',
     address: {
       56: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
-      97: '',
+      42: '0x0000000000000000000000000000000000000000',
     },
     decimals: 18,
     decimalsDigits: 5,
@@ -97,7 +97,7 @@ const tokens = {
     symbol: 'wBNB',
     address: {
       56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-      97: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
+      42: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
     },
     decimals: 18,
     decimalsDigits: 4,

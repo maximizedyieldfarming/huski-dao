@@ -22,7 +22,7 @@ const DropDownListContainer = styled.div`
   height: 0;
   position: absolute;
   overflow: hidden;
-  background: linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%);
+  background: #292434;
   z-index: ${({ theme }) => theme.zIndices.dropdown};
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);

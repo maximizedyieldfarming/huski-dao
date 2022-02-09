@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import useAuth from 'hooks/useAuth'
@@ -8,10 +7,20 @@ import {
   Text,
   Flex,
   Input,
-  LogoIcon,
   useWalletModal,
   useMatchBreakpoints,
+  InfoIcon,
 } from '@huskifinance/huski-frontend-uikit'
+import styled from 'styled-components'
+import useCopyToClipboard from 'utils/copyToClipboard'
+import { BIG_ZERO } from 'utils/config'
+import { ethers } from 'ethers'
+import { useVault, useERC20 } from 'hooks/useContract'
+import { getDecimalAmount } from 'utils/formatBalance'
+import { useTranslation } from 'contexts/Localization'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { getAddress } from 'utils/addressHelpers'
 import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
@@ -20,55 +29,187 @@ import {
   CustomButtonMenuItemRounded,
   ProgressBar,
 } from './components'
-import { USDCIcon, ETHIcon, USDTIcon, Nft, DaoToken, DaoVer } from './assets'
+import {
+  USDCIcon,
+  ETHIcon,
+  USDTIcon,
+  Nft,
+  HuskiDaoToken,
+  DaoVer,
+  LaughingHuski,
+  ClipboardIcon,
+  Trophy,
+  HuskiGoggles,
+} from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
 import { useHover } from './helpers'
 
-const MainContent = () => {
+interface Props {
+  data: Record<string, any>
+}
+
+const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
+  display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
+  position: absolute;
+  padding: 8px;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  background-color: #261f30;
+  color: #ffffff;
+  border-radius: 16px;
+  width: 100px;
+`
+const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+  display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  padding: 20px 15px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 412px;
+    padding: 30px 21px;
+    left: 0;
+    transform: none;
+  }
+  ${Text} {
+    font-size: 12px;
+  }
+  z-index: 10;
+`
+const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; isHovering: boolean }> = ({
+  invitationBonus,
+  invitedByUser,
+  isHovering,
+}) => {
+  const { isMobile } = useMatchBreakpoints()
+
+  return (
+    <StyledTooltip isTooltipDisplayed={isHovering}>
+      <Flex justifyContent="space-between" p={isMobile ? '0 20px' : '0 50px'} alignItems="center">
+        <Box>
+          <Text textAlign="center" mb="17px">
+            Invited
+          </Text>
+          <Text textAlign="center" fontSize="24px !important">
+            {invitedByUser}
+          </Text>
+        </Box>
+        <Box background="#3D3049" height="43px" width="1px" mx={isMobile ? '50px' : '0'} />
+        <Box>
+          <Text textAlign="center" mb="17px">
+            Bonus (HUSKI)
+          </Text>
+          <Text textAlign="center" fontSize="24px !important">
+            {invitationBonus}
+          </Text>
+        </Box>
+      </Flex>
+      <Box mt="27px">
+        <Text mb="24px" pl="23px">
+          Share the referral link with your friends, and you will receive bonus rewards based on their contribution
+        </Text>
+        <Box mb="15px">
+          <Flex>
+            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <Text>Top 10:</Text>
+          </Flex>
+          <Text pl="23px">
+            An NFT as our Huski DAO Ambassador
+            <br />
+            Earn bonus reward by Airdrop(10% Bonus)
+          </Text>
+        </Box>
+        <Box mb="15px">
+          <Flex>
+            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <Text>Top 100:</Text>
+          </Flex>
+          <Text pl="23px">Earn bonus reward by Airdrop(4% Bonus)</Text>
+        </Box>
+        <Box pl="23px">
+          <Text>Others:</Text>
+          <Text>Earn bonus reward by Airdrop(2% Bonus)</Text>
+        </Box>
+      </Box>
+    </StyledTooltip>
+  )
+}
+
+const MainContent: React.FC<Props> = ({ data }) => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
+  const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
-
   // const isSmallScreen = isMobile || isTablet
-  const convertUsdToToken = (amountInUSD: string): string => {
-    return new BigNumber(amountInUSD).times(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
+
+  const getSelectedTokenData = (
+    token: string,
+  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode, selToken: any } => {
+    const selToken = data.find((d) => d.name === token)
+    const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
+    const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
+    const selTokenIcon = (() => {
+      if (selectedToken === 'ETH') {
+        return <ETHIcon />
+      }
+      if (selectedToken === 'USDT') {
+        return <USDTIcon />
+      }
+      return <USDCIcon />
+    })()
+    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken }
   }
-  const convertTokenToUsd = (pAmountInToken: string): string => {
-    return new BigNumber(pAmountInToken).div(0.01).toString() // TODO: change later with proper conversion rate, 0.01 is for testing purposes
+  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
+
+  console.info('sjhahdh', selToken)
+  const convertUsdToToken = (amountInUSD: string): BigNumber => {
+    return new BigNumber(amountInUSD).div(selTokenPrice)
   }
+  const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
+    return new BigNumber(pAmountInToken).times(selTokenPrice)
+  }
+  console.log({'amount in usd': convertTokenToUsd(amountInToken).toNumber(), amountInToken})
 
   const handleTokenButton = (index) => {
     if (index === 0) {
       setSelectedToken('ETH')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     } else if (index === 1) {
       setSelectedToken('USDT')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     } else if (index === 2) {
       setSelectedToken('USDC')
       setTokenButtonIndex(index)
+      setAmountInToken('0')
+      setAmountButtonIndex(null)
     }
   }
   const handleAmountButton = (index) => {
     if (index === 0) {
-      setAmountInToken(convertUsdToToken('1000'))
+      setAmountInToken(convertUsdToToken('1000').toString())
       setAmountButtonIndex(index)
     } else if (index === 1) {
-      setAmountInToken(convertUsdToToken('10000'))
+      setAmountInToken(convertUsdToToken('10000').toString())
       setAmountButtonIndex(index)
     } else if (index === 2) {
-      setAmountInToken(convertUsdToToken('50000'))
+      setAmountInToken(convertUsdToToken('50000').toString())
       setAmountButtonIndex(index)
     }
   }
   const handleInputChange = (e) => {
     setAmountInToken(e.target.value)
   }
-  // TODO: if input is less than $1,000 then not allow to confirm and show a warning
-  // TODO: add referral link and a tooltip
 
   const timeRemaining = () => {
     const now = new Date()
@@ -100,53 +241,130 @@ const MainContent = () => {
   })
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
-  const getSelectedTokenIcon = () => {
-    if (selectedToken === 'ETH') {
-      return <ETHIcon />
+
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const tokenAddress = getAddress(selToken?.token.address)
+  const approveContract = useERC20(tokenAddress)
+  const vaultAddress = getAddress(selToken?.vaultAddress)
+  const depositContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
+
+
+  const handleApprove = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    // setIsApproving(true)
+    try {
+      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+        // setIsApproved(true)
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      // setIsApproving(false)
     }
-    if (selectedToken === 'USDT') {
-      return <USDTIcon />
-    }
-    return <USDCIcon />
   }
 
-  // const { allowance: tokenAllowance } = useTokenAllowance(
-  //   getAddress(tokenData?.TokenInfo?.token?.address),
-  //   tokenData?.TokenInfo?.vaultAddress,
-  // )
+  const handleDeposit = async (depositAmount: BigNumber, name: string,  roundID, inviterCode) => {
+    const callOptions = {
+      gasLimit: 380000,
+    }
+    const callOptionsETH = {
+      gasLimit: 380000,
+      value: depositAmount.toString(),
+    }
+    // setIsPending(true)
+console.log({depositAmount, name,  roundID, inviterCode})
 
-  // const handleApprove = async () => {
-  //   toastInfo(t('Approving...'), t('Please Wait!'))
-  //   setIsApproving(true)
-  //   try {
-  //     const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
-  //     const receipt = await tx.wait()
-  //     if (receipt.status) {
-  //       toastSuccess(t('Approved!'), t('Your request has been approved'))
-  //       setIsApproved(true)
-  //     } else {
-  //       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-  //     }
-  //   } catch (error: any) {
-  //     toastWarning(t('Error'), error.message)
-  //   } finally {
-  //     setIsApproving(false)
-  //   }
-  // }
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [depositAmount.toString(), roundID, inviterCode ],
+        name === 'ETH' ? callOptionsETH : callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+
+    }
+  }
+
+
+  const handleConfirm = async () => {
+
+    const {allowance,name, roundID, code  } = selToken
+
+    if(Number(allowance)  === 0){
+      handleApprove()
+    }else{
+      const url = window.location.href;
+      const index = url.lastIndexOf('=')
+      let inviterCode = ''
+      if(index !== -1){
+         inviterCode = url.substring(index+1, url.length)
+      }
+      
+      // console.info('inviterCode',inviterCode)
+      // console.info('index',index)
+
+      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
+      handleDeposit(depositAmount, name, roundID ,code)
+    }
+  }
+
+
+
+
+  const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
+  const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
+  const handleGenerateReferralLink = () => {
+    setShowReferralLink(true)
+  }
+
+  //  TODO: change values later // get from some API?
+  const invitedByUser = 0
+  const userInvitationBonus = 0
+
   const [buttonIsHovering, buttonHoverProps] = useHover()
+  const [value, copy] = useCopyToClipboard()
+  const [tooltipIsHovering, tooltipHoverProps] = useHover()
+  const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
+  function displayTooltip() {
+    setIsTooltipDisplayed(true)
+    setTimeout(() => {
+      setIsTooltipDisplayed(false)
+    }, 1000)
+  }
+
   const walletReady = () => {
     return (
-      <Container mb="13px" p="14px 21px 29px" maxWidth="460px">
-        <Text fontSize="24px" fontWeight={800} mt="87px">
+      <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
+        <Flex>
+          <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
+          <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
+        </Flex>
+        <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <ButtonMenuSquared onItemClick={handleTokenButton} activeIndex={tokenButtonIndex}>
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
-          <CustomButtonMenuItemSquared>USDT</CustomButtonMenuItemSquared>
+          <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
         </ButtonMenuSquared>
         <InputContainer my="25px">
-          <Box>{getSelectedTokenIcon()}</Box>
+          <Box>{selTokenIcon}</Box>
           <Input
             placeholder="0.00"
             value={amountInToken}
@@ -168,49 +386,149 @@ const MainContent = () => {
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {Number(convertTokenToUsd(amountInToken)) < 1000 ? (
+        {new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
           <Text color="red !important" fontSize="12px">
-            Minimum investment amount is $1,000 (one thousand USD)
+            Minimum investment amount is $1,000 (One Thousand USD)
+          </Text>
+        ) : null}
+        {new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
+          <Text color="red !important" fontSize="12px">
+            You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
         ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
           <StyledButton
             filled
-            disabled={Number(convertTokenToUsd(amountInToken)) < 1000 || amountInToken === undefined}
+            onClick={handleConfirm}
+            // disabled={
+            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+            //   amountInToken === undefined ||
+            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+            // }
           >
             Approve &amp; Confirm
           </StyledButton>
         </Box>
         <Box width="100%">
-          <Text fontSize="12px">Referral Link:</Text>
-          <Text as={Link} to="#" style={{ textDecoration: 'underline', cursor: 'pointer' }} fontSize="12px">
-            https://dao.huski.finance?code=example%code%1234567{/* TODO: change later */}
-          </Text>
+          <Flex alignItems="center">
+            <Text fontSize="12px" mr="5px">
+              Referral Link:
+            </Text>
+            <span {...tooltipHoverProps} style={{ position: 'relative', cursor: 'pointer' }}>
+              <InfoIcon color="#ffffff" width="12px" />
+              <CustomTooltip
+                isHovering={!!tooltipIsHovering}
+                invitedByUser={invitedByUser.toString()}
+                invitationBonus={userInvitationBonus.toString()}
+              />
+            </span>
+          </Flex>
+          <Flex>
+            <Flex
+              background="#261F30"
+              borderRadius="8px"
+              height="40px"
+              alignItems="center"
+              justifyContent="center"
+              p="10px 10px"
+              width="90%"
+              maxWidth="333px"
+              mr="7px"
+            >
+              {showReferralLink ? (
+                <Text
+                  onClick={() => copy(referralLink).then(displayTooltip)}
+                  style={{
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                  fontSize="12px"
+                  width="100%"
+                >
+                  {referralLink}
+                </Text>
+              ) : (
+                <Text fontSize="14px">Share your link to earn bonus rewards</Text>
+              )}
+            </Flex>
+            {showReferralLink ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => copy(referralLink).then(displayTooltip)}
+                  style={{
+                    background: 'none',
+                    height: '40px',
+                    boxShadow: 'none',
+                    position: 'relative',
+                    border: 'none',
+                    cursor: 'pointer',
+                    margin: '0 auto',
+                  }}
+                >
+                  <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied!</Tooltip>
+                  <ClipboardIcon color="#ffffff" />
+                </button>
+              </>
+            ) : (
+              <StyledButton
+                filled
+                width="78px"
+                height="40px"
+                onClick={handleGenerateReferralLink}
+                disabled={!referralLink}
+              >
+                <Text fontSize="12px">Generate</Text>
+              </StyledButton>
+            )}
+          </Flex>
         </Box>
       </Container>
     )
   }
   const walletNotReady = () => {
     return (
-      <Container mb="13px" p="87px 21px 19px" maxWidth="460px">
-        <Text fontSize="24px" fontWeight={800} mb="25px">
+      <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
+        <Flex>
+          <LaughingHuski style={{ zIndex: 2, marginRight: '-5px', alignSelf: 'center' }} width="16px" />
+          <HuskiGoggles style={{ zIndex: 1 }} width="36px" />
+          <LaughingHuski style={{ zIndex: 2, marginLeft: '-8px', alignSelf: 'flex-end' }} width="16px" />
+        </Flex>
+        <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Token:</Text>
-          <Text textAlign="right">Huski DAO (HIDAO)</Text>
+          <Text fontSize="14px" textAlign="left">
+            Token:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            Huski DAO (HIDAO)
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Type:</Text>
-          <Text textAlign="right">ERC - 20 (Ethereum)</Text>
+          <Text fontSize="14px" textAlign="left">
+            Type:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            ERC - 20 (Ethereum)
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Price:</Text>
-          <Text textAlign="right">2 HIDAO per $1000</Text>
+          <Text fontSize="14px" textAlign="left">
+            Price:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            2 HIDAO per $1000
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Goal:</Text>
-          <Text textAlign="right">
+          <Text fontSize="14px" textAlign="left">
+            Goal:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
             {FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
@@ -220,29 +538,45 @@ const MainContent = () => {
           </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
-          <Text textAlign="left">Distribution：</Text>
-          <Text textAlign="right">Claim on HuskiDAO Landing Page</Text>
+          <Text fontSize="14px" textAlign="left">
+            Distribution：
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            Claim on HuskiDAO Landing Page
+          </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
-          <Text textAlign="left">Accepted Payments:</Text>
+          <Text fontSize="14px" textAlign="left">
+            Accepted Payments:
+          </Text>
           <Flex flexWrap="wrap" alignItems="center" justifyContent="space-between" maxWidth={230} width="100%">
             <Flex alignItems="center">
-              <ETHIcon />
-              <Text>ETH</Text>
+              <ETHIcon width="24px" height="24px" />
+              <Text fontSize="14px" ml="5px">
+                ETH
+              </Text>
             </Flex>
             <Flex alignItems="center">
-              <USDTIcon />
-              <Text>USDT</Text>
+              <USDTIcon width="24px" height="24px" />
+              <Text fontSize="14px" ml="5px">
+                USDT
+              </Text>
             </Flex>
             <Flex alignItems="center">
-              <USDCIcon />
-              <Text>USDC</Text>
+              <USDCIcon width="24px" height="24px" />
+              <Text fontSize="14px" ml="5px">
+                USDC
+              </Text>
             </Flex>
           </Flex>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center">
-          <Text textAlign="left">Deadline:</Text>
-          <Text textAlign="right">March 31, 2022 (UTC)</Text>
+          <Text fontSize="14px" textAlign="left">
+            Deadline:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            March 31, 2022 (UTC)
+          </Text>
         </Flex>
 
         <Box mx="auto" width="fit-content" mt="23px">
@@ -286,16 +620,16 @@ const MainContent = () => {
   const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
 
   return (
-    <>
+    <Box>
       {getFirstContainer()}
 
       <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight={800} mb="27px">
-          You&apos;ll receive
+        <Text fontSize="20px" fontWeight="800 !important" mb="27px" textAlign="center">
+          You will receive
         </Text>
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
           <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
-            <img src={DaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
+            <img src={HuskiDaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
             <Text fontSize="14px">Huski DAO Token</Text>
           </Banner>
           <Banner>
@@ -312,15 +646,14 @@ const MainContent = () => {
       </Container>
 
       <Container p="40px 21px 30px" maxWidth="460px">
-        <Text fontSize="20px" fontWeight={800} mb="42px">
+        <Text fontSize="20px" fontWeight="800 !important" mb="42px" textAlign="center">
           More rewards after Protocols Fair Launch
         </Text>
-        {/* TODO: add tooltip */}
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
-          <Box background="#fff" p="1px" borderRadius="100%" width="37px" maxHeight="37px" mr="18px">
-            <LogoIcon width="100%" />
-          </Box>
-          <Text fontSize="14px">{convertTokenToUsd(amountInToken || '0')} HUSKI Token</Text>
+          <LaughingHuski width="37px" />
+          <Text fontSize="14px" ml="18px">
+            {account ? convertTokenToUsd(amountInToken || '0').toFixed(2) : null} HUSKI Token
+          </Text>
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
@@ -342,10 +675,8 @@ const MainContent = () => {
           </Flex>
         </Box>
       </Container>
-    </>
+    </Box>
   )
 }
 
 export default MainContent
-
-// TODO: replace empty links

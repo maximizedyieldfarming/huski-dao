@@ -1,19 +1,9 @@
 import { ethers } from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
-
-// Addresses
-import {
-  getAddress,
-  getPancakeProfileAddress,
-  getMulticallAddress,
-} from 'utils/addressHelpers'
-
 // ABI
-import profileABI from 'config/abi/pancakeProfile.json'
 import bep20Abi from 'config/abi/erc20.json'
-import vaultAbi from 'config/abi/vault.json'
-import MultiCallAbi from 'config/abi/Multicall.json'
-
+import VaultABI from 'config/abi/PublicOffering.json'
+import ConfigABI from 'config/abi/PublicOfferingConfig.json'
 
 const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   const signerOrProvider = signer ?? simpleRpcProvider
@@ -23,14 +13,11 @@ const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.
 export const getBep20Contract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(bep20Abi, address, signer)
 }
+
 export const getVaultContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(vaultAbi, address, signer)
+  return getContract(VaultABI, address, signer)
 }
 
-export const getProfileContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(profileABI, getPancakeProfileAddress(), signer)
-}
-
-export const getMulticallContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(MultiCallAbi, getMulticallAddress(), signer)
+export const getConfigContract = (address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
+  return getContract(ConfigABI, address, signer)
 }

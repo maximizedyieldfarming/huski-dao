@@ -10,9 +10,10 @@ declare module 'styled-components' {
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'M PLUS 2', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
   body {
-    background-color: ${({ theme }) => theme.colors.background};
+  background: #16131e;
 overflow: overlay;
   
     // custom scrollbar

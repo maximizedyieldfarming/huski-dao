@@ -1,12 +1,11 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
-import profileReducer from './profile'
 import blockReducer from './block'
+import daoReducer from './dao'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
 import transactions from './transactions/reducer'
-import multicall from './multicall/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -14,12 +13,10 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
   reducer: {
     block: blockReducer,
-    profile: profileReducer,
-
+    dao: daoReducer,
     // Exchange
     user,
     transactions,
-    multicall,
   },
   middleware: [...getDefaultMiddleware({ thunk: true }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),

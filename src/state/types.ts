@@ -1,5 +1,6 @@
 import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from '@reduxjs/toolkit'
+import { DaoConfig } from 'config/constants/types'
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>
 
@@ -11,35 +12,38 @@ export interface BigNumberToJson {
 export type SerializedBigNumber = string
 
 
-export interface Profile {
-  userId: number
-  points: number
-  teamId: number
-  nftAddress: string
-  tokenId: number
-  isActive: boolean
-  username: string
-  // nft?: Nft
-  // team?: Team
-  hasRegistered: boolean
-}
-
 // Slices states
-export interface ProfileState {
-  isInitialized: boolean
-  isLoading: boolean
-  hasRegistered: boolean
-  data: Profile
-}
+
 export interface BlockState {
   currentBlock: number
   initialBlock: number
 }
 
+// dao
+
+export interface Dao extends DaoConfig {
+  pid: number
+  name: string
+  allowance?: string
+  code?: SerializedBigNumber
+  price?: string
+  roundID?: string
+  startedAt?: string
+  timeStamp?: string
+  answeredInRound?: string
+  raiseFund?: SerializedBigNumber
+}
+
+export interface DaoState {
+  data: Dao[]
+  loadArchivedFarmsData: boolean
+  userDataLoaded: boolean
+  tradingDataLoaded: boolean
+}
 
 // Global state
 
 export interface State {
   block: BlockState
-  profile: ProfileState
+  dao: DaoState
 }

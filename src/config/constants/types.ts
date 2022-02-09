@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { SerializedBigNumber } from 'state/types'
 
 export interface Address {
-  97?: string
+  42?: string
   56?: string
 }
 
@@ -24,6 +24,7 @@ export interface DaoConfig {
   pid: number
   name: string
   vaultAddress: Address
+  configAddress: Address
   token: Token
 }
 

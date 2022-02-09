@@ -9,6 +9,9 @@ export const StyledNav = styled(Flex)`
   flex-wrap: wrap;
   row-gap: 10px;
 `
+export const Header = styled(Box)`
+  width: 100%;
+`
 export const Body = styled(Flex)`
   width: 100%;
   flex-direction: column;
@@ -24,6 +27,10 @@ export const Main = styled(Box)`
     margin-bottom: 0px;
     margin-right: 14px;
   }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    position: sticky;
+    top: 0.75rem;
+  }
 `
 export const Aside = styled(Box)`
   height: 100%;
@@ -37,34 +44,6 @@ export const Container = styled(Flex)`
   align-items: center;
 `
 export const Footer = styled(Box)``
-
-/* const gradientBorder = css`
-  display: flex;
-  align-items: center;
-  width: 90%;
-  margin: auto;
-  max-width: 22em;
-
-  position: relative;
-  padding: 1rem;
-  box-sizing: border-box;
-
-  background-clip: padding-box;
-  border: 2px solid transparent; 
-
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: -1;
-    margin: -2px;
-    border-radius: inherit;
-    background: linear-gradient(to right, red, orange);
-  }
-` */
 
 export const StyledButton = styled(Button)<{ filled?: boolean }>`
   background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
@@ -99,16 +78,9 @@ export const Banner = styled(Flex)`
   border-radius: 8px;
   width: 100%;
   height: 60px;
-  // padding: 6px 15px;
-  /*  &:not(:last-child) {
-    margin-bottom: 10px;
-  } */
 
   ${({ theme }) => theme.mediaQueries.sm} {
     max-width: 202px;
-    /*     &:not(:last-child) {
-      margin-bottom: 0;
-    } */
   }
 `
 export const Separator = styled(Box)`
@@ -119,7 +91,6 @@ export const Separator = styled(Box)`
 export const FoundersWrapper = styled(Flex)`
   width: 100%;
   justify-content: space-between;
-  // align-content: space-between;
   row-gap: 10px;
   column-gap: 6px;
   max-height: 150px;

@@ -8,34 +8,6 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-// used to construct intermediary pairs for trading
-export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
-  [ChainId.MAINNET]: [WETH[ChainId.MAINNET], CAKE[ChainId.MAINNET], BUSD[ChainId.MAINNET], USDT, BTCB, UST, ETH, USDC],
-  [ChainId.TESTNET]: [WETH[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
-}
-
-/**
- * Addittional bases for specific tokens
- * @example { [WBTC.address]: [renBTC], [renBTC.address]: [WBTC] }
- */
-export const ADDITIONAL_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
-  [ChainId.MAINNET]: {},
-}
-
-/**
- * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
- * tokens.
- * @example [AMPL.address]: [DAI, WETH[ChainId.MAINNET]]
- */
-export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
-  [ChainId.MAINNET]: {},
-}
-
-// used for display in the default list when adding liquidity
-export const SUGGESTED_BASES: ChainTokenList = {
-  [ChainId.MAINNET]: [BUSD[ChainId.MAINNET], CAKE[ChainId.MAINNET], BTCB],
-  [ChainId.TESTNET]: [WETH[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
-}
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
@@ -90,4 +62,4 @@ export const ONE_HUNDRED_PERCENT = new Percent('1')
 
 // export { default as farmsConfig } from './farms'
 // export { default as leverageFarmsConfig } from './leverage'
-
+export { default as daoConfig } from './dao'
