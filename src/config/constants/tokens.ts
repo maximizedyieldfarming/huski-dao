@@ -93,17 +93,7 @@ const tokens = {
     projectLink: 'https://ethereum.org/en/',
     coingeckoId: 'binance-eth',
   },
-  wbnb: {
-    symbol: 'wBNB',
-    address: {
-      56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-      42: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
-    },
-    decimals: 18,
-    decimalsDigits: 4,
-    projectLink: 'https://pancakeswap.finance/',
-    coingeckoId: 'binancecoin',
-  },
+
 }
 
 export default tokens
