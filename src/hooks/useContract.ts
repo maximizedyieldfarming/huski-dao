@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import {
   getBep20Contract,
+  getVaultContract,
 } from 'utils/contractHelpers'
 
 // Imports below migrated from Exchange useContract.ts
@@ -18,6 +19,10 @@ export const useERC20 = (address: string) => {
   return useMemo(() => getBep20Contract(address, library.getSigner()), [address, library])
 }
 
+export const useVault = (address: string) => {
+  const { library } = useActiveWeb3React()
+  return useMemo(() => getVaultContract(address, library.getSigner()), [address, library])
+}
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {

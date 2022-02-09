@@ -14,6 +14,13 @@ import {
 import styled from 'styled-components'
 import useCopyToClipboard from 'utils/copyToClipboard'
 import { BIG_ZERO } from 'utils/config'
+import { ethers } from 'ethers'
+import { useVault, useERC20 } from 'hooks/useContract'
+import { getDecimalAmount } from 'utils/formatBalance'
+import { useTranslation } from 'contexts/Localization'
+import useToast from 'hooks/useToast'
+import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
+import { getAddress } from 'utils/addressHelpers'
 import { Container, InputContainer, StyledButton, Banner } from './styles'
 import {
   ButtonMenuRounded,
@@ -138,13 +145,14 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
+  const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   // const isSmallScreen = isMobile || isTablet
 
   const getSelectedTokenData = (
     token: string,
-  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode } => {
-    const selToken = data.find((t) => t.name === token)
+  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode, selToken: any } => {
+    const selToken = data.find((d) => d.name === token)
     const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
     const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
     const selTokenIcon = (() => {
@@ -156,17 +164,18 @@ const MainContent: React.FC<Props> = ({ data }) => {
       }
       return <USDCIcon />
     })()
-    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon }
+    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken }
   }
-  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon } = getSelectedTokenData(selectedToken)
+  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
 
+  console.info('sjhahdh', selToken)
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
   const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log('amount in usd', convertTokenToUsd(amountInToken).toNumber())
+  console.log({'amount in usd': convertTokenToUsd(amountInToken).toNumber(), amountInToken})
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -233,29 +242,79 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const sponsorsAmount = 0 // to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
 
-  // const { allowance: tokenAllowance } = useTokenAllowance(
-  //   getAddress(tokenData?.TokenInfo?.token?.address),
-  //   tokenData?.TokenInfo?.vaultAddress,
-  // )
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
+  const tokenAddress = getAddress(selToken?.token.address)
+  const approveContract = useERC20(tokenAddress)
+  const vaultAddress = getAddress(selToken?.vaultAddress)
+  const depositContract = useVault(vaultAddress)
+  const { callWithGasPrice } = useCallWithGasPrice()
 
-  // const handleApprove = async () => {
-  //   toastInfo(t('Approving...'), t('Please Wait!'))
-  //   setIsApproving(true)
-  //   try {
-  //     const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
-  //     const receipt = await tx.wait()
-  //     if (receipt.status) {
-  //       toastSuccess(t('Approved!'), t('Your request has been approved'))
-  //       setIsApproved(true)
-  //     } else {
-  //       toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
-  //     }
-  //   } catch (error: any) {
-  //     toastWarning(t('Error'), error.message)
-  //   } finally {
-  //     setIsApproving(false)
-  //   }
-  // }
+
+  const handleApprove = async () => {
+    toastInfo(t('Approving...'), t('Please Wait!'))
+    // setIsApproving(true)
+    try {
+      const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Approved!'), t('Your request has been approved'))
+        // setIsApproved(true)
+      } else {
+        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+      }
+    } catch (error: any) {
+      toastWarning(t('Error'), error.message)
+    } finally {
+      // setIsApproving(false)
+    }
+  }
+
+  const handleDeposit = async (depositAmount: BigNumber, name: string,  roundID, inviterCode) => {
+    const callOptions = {
+      gasLimit: 380000,
+    }
+    const callOptionsETH = {
+      gasLimit: 380000,
+      value: depositAmount.toString(),
+    }
+    // setIsPending(true)
+console.log({depositAmount, name,  roundID, inviterCode})
+
+    try {
+      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      const tx = await callWithGasPrice(
+        depositContract,
+        'deposit',
+        [depositAmount.toString(), roundID, inviterCode ],
+        name === 'ETH' ? callOptionsETH : callOptions,
+      )
+      const receipt = await tx.wait()
+      if (receipt.status) {
+        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+      }
+    } catch (error) {
+      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+    } finally {
+      // setIsPending(false)
+
+    }
+  }
+
+
+  const handleConfirm = async () => {
+
+    const {allowance,name, roundID, code  } = selToken
+
+    if(Number(allowance)  === 0){
+      handleApprove()
+    }else{
+      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
+      handleDeposit(depositAmount, name, roundID ,code)
+    }
+  }
+
+
+
 
   const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
   const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
@@ -330,11 +389,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
           <StyledButton
             filled
-            disabled={
-              new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-              amountInToken === undefined ||
-              new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
-            }
+            onClick={handleConfirm}
+            // disabled={
+            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+            //   amountInToken === undefined ||
+            //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+            // }
           >
             Approve &amp; Confirm
           </StyledButton>
