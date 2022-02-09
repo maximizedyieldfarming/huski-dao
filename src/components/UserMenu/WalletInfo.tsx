@@ -1,12 +1,10 @@
 import React from 'react'
 import { Box, Button, Flex, InjectedModalProps, LinkExternal, Message, Text } from '@huskifinance/huski-frontend-uikit'
 import { useWeb3React } from '@web3-react/core'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-
 import useAuth from 'hooks/useAuth'
 import { useTranslation } from 'contexts/Localization'
 import { getBscScanLink } from 'utils'
-import { getFullDisplayBalance } from 'utils/formatBalance'
+
 import CopyAddress from './CopyAddress'
 
 interface WalletInfoProps {
@@ -17,7 +15,6 @@ interface WalletInfoProps {
 const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const { balance } = useGetBnbBalance()
   const { logout } = useAuth()
 
   const handleLogout = () => {
@@ -39,14 +36,6 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
           </Box>
         </Message>
       )}
-      <Flex alignItems="center" justifyContent="space-between">
-        <Text>{t('BNB Balance')}</Text>
-        <Text bold>{getFullDisplayBalance(balance, 18, 6)} BNB</Text>
-      </Flex>
-      <Flex alignItems="center" justifyContent="space-between" mb="24px" mt="10px">
-        <Text>{t('CAKE Balance')}</Text>
-        <Text bold>{getFullDisplayBalance(balance, 18, 3)} HUSKI</Text>
-      </Flex>
       <Flex alignItems="center" mb="24px" justifyContent="space-between">
         <Text color="#7B3FE4" bold>
           {t('View on BscScan')}
