@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
-import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, useMatchBreakpoints, ArrowForwardIcon } from '@huskifinance/huski-frontend-uikit'
 import { useDaos, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
@@ -170,10 +170,11 @@ const LaunchCampaign = () => {
               to={{ pathname: Links.onePager }}
               target="_blank"
             >
-              View One Pager
+              View One-Pager
             </StyledLink>
             <StyledLink style={{ width: '144px' }} to={{ pathname: Links.huskiFinance }} target="_blank">
               Huski Finance
+              <ArrowForwardIcon color="#ffffff" width="15px" />
             </StyledLink>
           </Flex>
         </Header>

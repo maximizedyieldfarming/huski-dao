@@ -3,6 +3,7 @@ import { Box, Text, Flex, useMatchBreakpoints } from '@huskifinance/huski-fronte
 import styled from 'styled-components'
 import { Container as BaseContainer, Separator, Banner, StyledButton } from './components'
 import { AragonIcon, CommonwealthIcon, Banner as BannerImg } from './assets'
+import { Links } from './config'
 
 const Container = styled(BaseContainer)`
   padding: 22px 21px 20px;
@@ -86,10 +87,10 @@ const AsideContent = () => {
             What is Huski DAO ?
           </Text>
           <Flex style={{ columnGap: '8px' }}>
-            <StyledButton mr="8px" as="a" href="https://blog.aragon.org/what-is-a-dao/" target="_blank">
+            <StyledButton mr="8px" as="a" href={Links.whatIsDao} target="_blank">
               WHAT IS A DAO
             </StyledButton>
-            <StyledButton as="a" href="https://blog.aragon.org/how-to-dao-answers-for-beginners/" target="_blank">
+            <StyledButton as="a" href={Links.howToDao} target="_blank">
               HOW TO DAO
             </StyledButton>
           </Flex>
