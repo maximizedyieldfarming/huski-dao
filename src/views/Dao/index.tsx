@@ -137,11 +137,11 @@ const LaunchCampaign = () => {
                     label: 'ETH',
                     icon: <ETHIcon width="27px" height="27px" className="noPos" />,
                   },
-                  {
+                /*   {
                     value: 'binance',
                     label: 'BSC',
                     icon: <BSCIcon width="27px" height="27px" className="noPos" />,
-                  },
+                  }, */
                 ]}
                 onChange={(option) => setSelectedNetwork(option.value)}
               />
