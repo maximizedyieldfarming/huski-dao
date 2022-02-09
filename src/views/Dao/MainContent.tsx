@@ -1,19 +1,9 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import useAuth from 'hooks/useAuth'
-import {
-  Box,
-  Text,
-  Flex,
-  Input,
-  useWalletModal,
-  useMatchBreakpoints,
-  InfoIcon,
-} from '@huskifinance/huski-frontend-uikit'
+import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import useCopyToClipboard from 'utils/copyToClipboard'
-import { BIG_ZERO } from 'utils/config'
+import { BIG_TEN, BIG_ZERO } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getDecimalAmount } from 'utils/formatBalance'
@@ -46,10 +36,10 @@ import {
   HuskiGoggles,
 } from './assets'
 import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET } from './config'
-import { useHover } from './helpers'
+import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
-  data: Record<string, any>
+  data: Record<string, any>[]
 }
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
@@ -65,7 +55,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -155,7 +145,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
   const getSelectedTokenData = (
     token: string,
-  ): { selTokenPrice: BigNumber; selTokenDecimalPlaces: number; selTokenIcon: React.ReactNode, selToken: any } => {
+  ): {
+    selTokenPrice: BigNumber
+    selTokenDecimalPlaces: number
+    selTokenIcon: React.ReactNode
+    selToken: Record<string, any>
+  } => {
     const selToken = data.find((d) => d.name === token)
     const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
     const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
@@ -170,31 +165,40 @@ const MainContent: React.FC<Props> = ({ data }) => {
     })()
     return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken }
   }
-  const { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
+  const { selTokenPrice, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
+  const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
+  console.log('has token price data', !tokenPriceDataNotLoaded)
 
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
+    if (!amountInUSD) {
+      return BIG_ZERO
+    }
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
+
   const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
+    if (!pAmountInToken) {
+      return BIG_ZERO
+    }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toNumber(), amountInToken })
+  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
 
   const handleTokenButton = (index) => {
     if (index === 0) {
       setSelectedToken('ETH')
       setTokenButtonIndex(index)
-      setAmountInToken('0')
+      setAmountInToken('')
       setAmountButtonIndex(null)
     } else if (index === 1) {
       setSelectedToken('USDT')
       setTokenButtonIndex(index)
-      setAmountInToken('0')
+      setAmountInToken('')
       setAmountButtonIndex(null)
     } else if (index === 2) {
       setSelectedToken('USDC')
       setTokenButtonIndex(index)
-      setAmountInToken('0')
+      setAmountInToken('')
       setAmountButtonIndex(null)
     }
   }
@@ -235,14 +239,15 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
   }
-  const raisedAmount = 0 // to get from some API ???
-  const raisedAmountString = raisedAmount.toLocaleString('en-US', {
+
+  const raisedAmount = convertTokenToUsd(data[0].raiseFund).div(BIG_TEN.pow(18))
+  const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
-  const sponsorsAmount = 0 // to get from some API ???
+  const sponsorsAmount = 0 // TODO: to get from some API ???
   const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
@@ -302,13 +307,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
 
   const handleConfirm = async () => {
-
     const { allowance, name, roundID, code } = selToken
 
     if (Number(allowance) === 0) {
       handleApprove()
     } else {
-      const url = window.location.href;
+      const url = window.location.href
       const index = url.lastIndexOf('=')
       let inviterCode = code
       if (index !== -1) {
@@ -335,7 +339,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const invitedByUser = 0
   const userInvitationBonus = 0
 
-  const [buttonIsHovering, buttonHoverProps] = useHover()
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
@@ -369,6 +372,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             value={amountInToken}
             onChange={handleInputChange}
             pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+            disabled={tokenPriceDataNotLoaded}
             style={{ fontSize: '18px' }}
           />
           <Text color="#00000082 !important" fontSize="14px">{`≈${Number(
@@ -380,17 +384,21 @@ const MainContent: React.FC<Props> = ({ data }) => {
             maximumFractionDigits: 0,
           })}USD`}</Text>
         </InputContainer>
-        <ButtonMenuRounded onItemClick={handleAmountButton} activeIndex={amountButtonIndex}>
+        <ButtonMenuRounded
+          onItemClick={handleAmountButton}
+          activeIndex={amountButtonIndex}
+          disabled={tokenPriceDataNotLoaded}
+        >
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
+        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
           <Text color="red !important" fontSize="12px">
             Minimum investment amount is $1,000 (One Thousand USD)
           </Text>
         ) : null}
-        {new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
+        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
           <Text color="red !important" fontSize="12px">
             You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
@@ -399,14 +407,20 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <StyledButton
             filled
             onClick={handleConfirm}
-          // disabled={
-          //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-          //   amountInToken === undefined ||
-          //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
-          // }
+            disabled={
+              new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+              amountInToken === undefined ||
+              new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
+              data[0]?.investorStatus === true
+            }
           >
             Approve &amp; Confirm
           </StyledButton>
+          {data[0]?.investorStatus === true ? (
+            <Text color="red !important" fontSize="12px">
+              You are already an investor in our DAO
+            </Text>
+          ) : null}
         </Box>
         <Box width="100%">
           <Flex alignItems="center">
@@ -533,7 +547,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
               currency: 'USD',
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            })}
+            })}{' '}
+            ~ $5,000,000
           </Text>
         </Flex>
         <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
@@ -593,10 +608,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return walletNotReady()
   }
 
-  const { login, logout } = useAuth()
-  const hasProvider: boolean = !!window.ethereum || !!window.BinanceChain
-  const { onPresentConnectModal } = useWalletModal(login, logout, hasProvider)
-
   return (
     <Box>
       {getFirstContainer()}
@@ -615,7 +626,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             <Text fontSize="14px">DAO Verification</Text>
           </Banner>
         </Flex>
-        {new BigNumber(convertTokenToUsd(amountInToken)).gte(50000) ? (
+        {new BigNumber(convertTokenToUsd(amountInToken).toFixed(0)).gte(50000) ? (
           <Banner mt="15px" maxWidth="100% !important">
             <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
             <Text fontSize="14px">NFT co-branded sponsors </Text>
@@ -630,13 +641,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
           <LaughingHuski width="37px" />
           <Text fontSize="14px" ml="18px">
-            {account ? convertTokenToUsd(amountInToken || '0').toFixed(2) : null} HUSKI Token
+            {account ? convertTokenToUsd(amountInToken).toFixed(2) : null} HUSKI Token
           </Text>
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
-            <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()}%</Text>
+            <Text fontSize="14px">{new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toFixed(2, 1)}%</Text>
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).toString()} />
           <Flex justifyContent="space-between" alignItems="center" mt="9px">
