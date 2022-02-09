@@ -7,7 +7,7 @@ import { Box, Text, Flex, LogoIcon, useWalletModal, useMatchBreakpoints } from '
 import useAuth from 'hooks/useAuth'
 import { useWeb3React } from '@web3-react/core'
 import UserMenu from 'components/UserMenu'
-import { useDaos, useLendData, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
+import { useDaos, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
   StyledButton,
@@ -84,7 +84,7 @@ const GlowSpotPurple = styled(Box)`
   filter: blur(192px);
   padding: 0 !important;
 `
-const GlowStar = styled(Box)<{ small?: boolean }>`
+const GlowStar = styled(Box) <{ small?: boolean }>`
   width: ${({ small }) => (small ? '3px' : '6px')};
   height: ${({ small }) => (small ? '3px' : '6px')};
   border-radius: 100%;

@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'state'
 import { useWeb3React } from '@web3-react/core'
 import { daoConfig } from 'config/constants'
 import useRefresh from 'hooks/useRefresh'
-import { getPoolInfo } from 'utils/service'
 import { fetchDaoPublicDataAsync, fetchDaoUserDataAsync, nonArchivedFarms } from '.'
 import { State, DaoState } from '../types'
 
@@ -52,23 +51,3 @@ export const useDaos = (): DaoState => {
   return farms
 }
 
-// use this  --no
-export const useLendData = () => {
-  const [lendData, setLendData] = useState([])
-  useEffect(() => {
-    const lendingData = daoConfig.map((pool) => {
-      const loadLendingData = async () => {
-        const dataPool = await getPoolInfo(pool);
-        return dataPool;
-      };
-      return loadLendingData();
-    });
-
-    Promise.all(lendingData)
-      .then((values) => {
-        setLendData(values)
-      })
-      .catch((error) => console.error('error', error));
-  }, [setLendData])
-  return { lendData }
-}

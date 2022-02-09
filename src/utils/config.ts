@@ -12,8 +12,6 @@ export const BIG_NINE = new BigNumber(9)
 export const BIG_TEN = new BigNumber(10)
 
 
-
-export const BASE_BSC_SCAN_URL = 'https://bscscan.com'
 export const LOTTERY_MAX_NUMBER_OF_TICKETS = 50
 export const LOTTERY_TICKET_PRICE = 1
 export const DEFAULT_TOKEN_DECIMAL = BIG_TEN.pow(18)
