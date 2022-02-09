@@ -34,12 +34,12 @@ const TimelineTrack = styled(Box)`
     height: 4px;
   }
 `
-const TimelineProgress = styled.div`
+const TimelineProgress = styled.div<{ progress: string }>`
   background: #d953e9;
-  height: 25%;
+  height: ${({ progress }) => `${progress}`};
   width: 100%;
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: 25%;
+    width: ${({ progress }) => `${progress}`};
     height: 100%;
   }
 `
@@ -63,15 +63,15 @@ const TimelineStep = styled.div`
   }
   &:nth-child(2) {
     background: #d953e9;
-    top: 25%;
+    top: calc(100% / 3);
     ${({ theme }) => theme.mediaQueries.sm} {
-      left: 25%;
+      left: calc(100% / 3);
     }
   }
   &:nth-child(3) {
-    top: 75%;
+    top: calc(2 / 3 * 100%) ;
     ${({ theme }) => theme.mediaQueries.sm} {
-      left: 75%;
+      left: calc(2 / 3 * 100%) ;
     }
   }
   &:nth-child(4) {
@@ -84,6 +84,22 @@ const TimelineStep = styled.div`
 
 export const Timeline = () => {
   const { isMobile } = useMatchBreakpoints()
+
+  const getCurrentQuarter = () => {
+    const today = new Date()
+    if (today > new Date('2022-01-01') && today < new Date('2022-04-01')) {
+      return `${100 / 3}%`
+    }
+    if (today > new Date('2022-04-01') && today < new Date('2022-07-01')) {
+      return `${(2 / 3) * 100}%`
+    }
+    if (today > new Date('2022-07-01') && today < new Date('2022-10-01')) {
+      return '100%'
+    }
+    return '0%'
+  }
+  const currentQuarter = getCurrentQuarter()
+
   return (
     <TimelineContainer>
       <Flex
@@ -115,9 +131,9 @@ export const Timeline = () => {
             color: 'white',
             transform: isMobile ? 'translate(0, -50%)' : 'translate(-50%)',
             position: 'absolute',
-            left: isMobile ? '0' : '25%',
+            left: isMobile ? '0' : 'calc(100% / 3)',
             bottom: '0',
-            top: isMobile ? '25%' : null,
+            top: isMobile ? 'calc(100% / 3)' : null,
           }}
         >
           2022 Q1
@@ -130,9 +146,9 @@ export const Timeline = () => {
             color: 'white',
             transform: isMobile ? 'translate(0, -50%)' : 'translate(-50%)',
             position: 'absolute',
-            left: isMobile ? '0' : '75%',
+            left: isMobile ? '0' : 'calc(2 / 3 * 100%)',
             bottom: '0',
-            top: isMobile ? '75%' : null,
+            top: isMobile ? 'calc(2 / 3 * 100%)' : null,
           }}
         >
           2022 Q2
@@ -159,7 +175,7 @@ export const Timeline = () => {
         <TimelineStep />
         <TimelineStep />
         <TimelineStep />
-        <TimelineProgress />
+        <TimelineProgress progress={currentQuarter} />
       </TimelineTrack>
       {isMobile ? null : (
         <Flex width="100%" position="relative" mt="17px">
@@ -183,7 +199,7 @@ export const Timeline = () => {
               color: 'white',
               transform: 'translate(-50%)',
               position: 'absolute',
-              left: '25%',
+              left: 'calc(100% / 3)',
               top: '0',
             }}
           >
@@ -196,7 +212,7 @@ export const Timeline = () => {
               color: 'white',
               transform: 'translate(-50%)',
               position: 'absolute',
-              left: '75%',
+              left: 'calc(2 / 3 * 100%)',
               top: '0',
             }}
           >
