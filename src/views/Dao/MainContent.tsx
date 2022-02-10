@@ -38,15 +38,15 @@ import {
   USDCIcon,
   ETHIcon,
   USDTIcon,
-  Nft,
-  HuskiDaoToken,
-  DaoVer,
+  DaoNft,
+  DaoVerification,
   LaughingHuski,
   ClipboardIcon,
   Trophy10,
   Trophy100,
   TrophyOthers,
   HuskiGoggles,
+  DaoToken,
 } from './assets'
 import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
 import { useHover, useCopyToClipboard } from './helpers'
@@ -747,18 +747,22 @@ const MainContent: React.FC<Props> = ({ data }) => {
         </Text>
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
           <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
-            <img src={HuskiDaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
+            <DaoToken />
             <Text fontSize="14px">Huski DAO Token</Text>
           </Banner>
           <Banner>
-            <img src={DaoVer} alt="DAO Verification" style={{ maxWidth: '37px' }} />
-            <Text fontSize="14px">DAO Verification</Text>
+            <DaoVerification />
+            <Text fontSize="14px" ml="10px">
+              DAO Verification
+            </Text>
           </Banner>
         </Flex>
         {new BigNumber(convertTokenToUsd(amountInToken).toFixed(0)).gte(50000) ? (
           <Banner mt="15px" maxWidth="100% !important">
-            <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
-            <Text fontSize="14px">NFT co-branded sponsors </Text>
+            <DaoNft />
+            <Text fontSize="14px" ml="10px">
+              NFT co-branded sponsors{' '}
+            </Text>
           </Banner>
         ) : null}
       </Container>
@@ -768,10 +772,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
           More rewards after Protocols Fair Launch
         </Text>
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
-          <LaughingHuski width="37px" />
-          <Text fontSize="14px" ml="18px">
-            {account ? convertTokenToUsd(amountInToken).toFixed(2) : null} HUSKI Token
-          </Text>
+          <DaoToken />
+          <Text fontSize="14px">{account ? convertTokenToUsd(amountInToken).toFixed(2) : null} HUSKI Token</Text>
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
