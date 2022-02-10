@@ -7,7 +7,6 @@ import { BIG_TEN, BIG_ZERO } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount } from 'utils/formatBalance'
-import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
@@ -142,7 +141,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
   const [amountInToken, setAmountInToken] = React.useState<string>('')
   const { account } = useWeb3React()
-  const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
   /**
@@ -286,19 +284,19 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const { callWithGasPrice } = useCallWithGasPrice()
 
   const handleApprove = async () => {
-    toastInfo(t('Approving...'), t('Please Wait!'))
+    toastInfo('Approving...', 'Please Wait!')
     // setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Approved!'), t('Your request has been approved'))
+        toastSuccess('Approved!', 'Your request has been approved')
         // setIsApproved(true)
       } else {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+        toastError('Error', 'Please try again. Confirm the transaction and make sure you are paying enough gas!')
       }
     } catch (error: any) {
-      toastWarning(t('Error'), error.message)
+      toastWarning('Error', error.message)
     } finally {
       // setIsApproving(false)
     }
@@ -315,7 +313,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     // setIsPending(true)
 
     try {
-      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      toastInfo('Transaction Pending...', 'Please Wait!')
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
@@ -324,11 +322,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
       )
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+        toastSuccess('Successful!', 'Your deposit was successfull')
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+      toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
     } finally {
       // setIsPending(false)
     }
