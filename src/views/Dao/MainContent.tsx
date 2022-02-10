@@ -58,7 +58,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -179,7 +179,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken, selTokenAddress }
   }
 
-  const { selTokenPrice, selTokenIcon, selToken, selTokenAddress } = getSelectedTokenData(selectedToken)
+  const { selTokenPrice, selTokenIcon, selToken, selTokenAddress, selTokenDecimalPlaces } =
+    getSelectedTokenData(selectedToken)
   const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
 
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
@@ -199,8 +200,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
 
-  const { balance: ethBalance } = useGetEthBalance()
-  console.log(ethBalance, selToken.name, 'addr', getAddress(selTokenAddress))
+  const ethBalance = getBalanceAmount(useGetEthBalance().balance)
+  console.log(ethBalance.toString(), selToken.name, 'addr', getAddress(selTokenAddress))
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -409,7 +410,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-        // disabled={data[0]?.investorStatus === true}
+          // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
@@ -420,7 +421,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <Text ml="auto" fontSize="12px" textAlign="right" color="#8B8787 !important" fontFamily={`'Baloo Bhai 2'`}>
             Balance:{' '}
             <Text as="span" fontSize="14px" fontFamily={`'Baloo Bhai 2'`}>
-              {`${balance.toFixed(0, 1)} ${selToken.name}`}
+              {`${
+                selToken.name.toLowerCase() === 'eth'
+                  ? ethBalance.toFixed(selTokenDecimalPlaces, 1)
+                  : balance.toFixed(selTokenDecimalPlaces, 1)
+              } ${selToken.name}`}
             </Text>
           </Text>
           <InputContainer>
