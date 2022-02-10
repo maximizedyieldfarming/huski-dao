@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { Text, ArrowDropDownIcon, Flex } from '@huskifinance/huski-frontend-uikit'
+import { Text } from '@huskifinance/huski-frontend-uikit'
 import DropdownArrow from './DropdownArrow'
 
 const DropDownHeader = styled.div`

@@ -6,11 +6,13 @@ import styled from 'styled-components'
 import { BIG_TEN, BIG_ZERO } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
-import { getDecimalAmount } from 'utils/formatBalance'
+import { getBalanceAmount } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
+import useTokenBalance from 'hooks/useTokenBalance'
+import { Address } from 'config/constants/types'
 import {
   ButtonMenuRounded,
   ButtonMenuSquared,
@@ -141,18 +143,26 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [amountInToken, setAmountInToken] = React.useState<string>()
   const { account } = useWeb3React()
   const { t } = useTranslation()
-  const { isMobile, isTablet } = useMatchBreakpoints()
-  // const isSmallScreen = isMobile || isTablet
+  const { isMobile } = useMatchBreakpoints()
 
+  /**
+   * pass the name of the current selected token or any other token
+   * to get the information other functions need from tha token
+   * more values can be added to the return object if needed
+   *
+   * @param {String} tokenName name of currently selected token
+   * @returns {Object} necessary information about that token
+   */
   const getSelectedTokenData = (
-    token: string,
+    tokenName: string,
   ): {
     selTokenPrice: BigNumber
     selTokenDecimalPlaces: number
     selTokenIcon: React.ReactNode
     selToken: Record<string, any>
+    selTokenAddress: Address
   } => {
-    const selToken = data.find((d) => d.name === token)
+    const selToken = data.find((d) => d.name === tokenName)
     const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
     const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
     const selTokenIcon = (() => {
@@ -164,11 +174,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
       }
       return <USDCIcon width="27px" />
     })()
-    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken }
+    const selTokenAddress = selToken?.token?.address
+
+    return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken, selTokenAddress }
   }
-  const { selTokenPrice, selTokenIcon, selToken } = getSelectedTokenData(selectedToken)
+
+  const { selTokenPrice, selTokenIcon, selToken, selTokenAddress } = getSelectedTokenData(selectedToken)
   const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
-  console.log('has token price data', !tokenPriceDataNotLoaded)
 
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
@@ -184,6 +196,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
   console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
+
+  const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
+  console.log('balance', balance.toString(), selToken.name, 'addr', getAddress(selTokenAddress))
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -248,8 +263,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
-  const sponsorsAmount = 0 // TODO: to get from some API ???
-  const nftSponsorsRemaining = NFT_SPONSORS_TARGET - sponsorsAmount
+
+  /**
+   * @todo get the number of users who have invested $50,000 (bigSponsors)
+   */
+  const numberOfBigSponsors = 0
+  const nftSponsorsRemaining = NFT_SPONSORS_TARGET - numberOfBigSponsors
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenAddress = getAddress(selToken?.token.address)
@@ -336,7 +355,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
     setShowReferralLink(true)
   }
 
-  //  TODO: change values later // get from some API?
+  /**
+   * @todo get the number of new users invited by the current user
+   */
   const invitedByUser = 0
   const userInvitationBonus = 0
 
@@ -371,6 +392,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   )
 
   const [isHoveringConfirm, confirmHoverProps] = useHover()
+
   const walletReady = () => {
     return (
       <Container mb="13px" p="33px 21px 19px" maxWidth="460px">
@@ -391,25 +413,34 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDCIcon />}>USDC</CustomButtonMenuItemSquared>
         </ButtonMenuSquared>
-        <InputContainer my="25px">
-          <Box>{selTokenIcon}</Box>
-          <Input
-            placeholder="0.00"
-            value={amountInToken}
-            onChange={handleInputChange}
-            pattern="^[0-9]*[.,]?[0-9]{0,18}$"
-            disabled={tokenPriceDataNotLoaded || data[0]?.investorStatus === true}
-            style={{ fontSize: '18px' }}
-          />
-          <Text color="#00000082 !important" fontSize="14px">{`≈${Number(
-            convertTokenToUsd(amountInToken || '0'),
-          )?.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}USD`}</Text>
-        </InputContainer>
+
+        <Box my="25px" width="100%">
+          <Text ml="auto" fontSize="12px" textAlign="right" color="#8B8787 !important" fontFamily={`'Baloo Bhai 2'`}>
+            Balance:{' '}
+            <Text as="span" fontSize="14px" fontFamily={`'Baloo Bhai 2'`}>
+              {`${balance.toFixed(0, 1)} ${selToken.name}`}
+            </Text>
+          </Text>
+          <InputContainer>
+            <Box>{selTokenIcon}</Box>
+            <Input
+              placeholder="0.00"
+              value={amountInToken}
+              onChange={handleInputChange}
+              pattern="^[0-9]*[.,]?[0-9]{0,18}$"
+              disabled={tokenPriceDataNotLoaded || data[0]?.investorStatus === true}
+              style={{ fontSize: '18px' }}
+            />
+            <Text color="#00000082 !important" fontSize="14px" fontFamily={`'Baloo Bhai 2'`}>{`≈${Number(
+              convertTokenToUsd(amountInToken || '0'),
+            )?.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}USD`}</Text>
+          </InputContainer>
+        </Box>
         <ButtonMenuRounded
           onItemClick={handleAmountButton}
           activeIndex={amountButtonIndex}
@@ -431,9 +462,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
         ) : null}
         {data[0]?.investorStatus === true ? (
           <Text fontSize="12px" mt="10px">
-            Everyone has only one chance to support;
+            Thank you for your support.
             <br />
-            Please invite more friends to grow Huski DAO!
+            Please claim rewards when campaign closes.
           </Text>
         ) : null}
         <Box mx="auto" width="fit-content" mt="38px" mb="19px">
