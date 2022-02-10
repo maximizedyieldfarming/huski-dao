@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { BIG_TEN, BIG_ZERO } from 'utils/config'
+import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount } from 'utils/formatBalance'
@@ -259,7 +259,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
   }
 
-  const raisedAmount = new BigNumber(data[0].raiseFund).div(BIG_TEN.pow(18))
+  const raisedAmount = new BigNumber(data[0].raiseFund).div(DEFAULT_TOKEN_DECIMAL)
   const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -295,10 +295,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
   const handleDeposit = async (depositAmount, name: string, roundID, inviterCode) => {
     const callOptions = {
-      gasLimit: 380000,
+      gasLimit: DEFAULT_GAS_LIMIT,
     }
     const callOptionsETH = {
-      gasLimit: 380000,
+      gasLimit: DEFAULT_GAS_LIMIT,
       value: depositAmount.toString(),
     }
     // setIsPending(true)

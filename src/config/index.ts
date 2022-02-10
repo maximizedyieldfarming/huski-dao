@@ -15,4 +15,4 @@ export const BASE_BSC_SCAN_URLS = {
 }
 
 export const BASE_BSC_SCAN_URL = BASE_BSC_SCAN_URLS[ChainId.MAINNET]
-export const DEFAULT_TOKEN_DECIMAL = BIG_TEN.pow(18)
+
