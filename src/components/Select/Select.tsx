@@ -31,7 +31,7 @@ const DropDownListContainer = styled.div`
   width: 100%;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-  min-width: 120px;
+    min-width: 120px;
   }
 `
 
@@ -46,7 +46,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   user-select: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-  min-width: 120px;
+    min-width: 120px;
   }
 
   ${(props) =>
@@ -94,7 +94,7 @@ const ListItem = styled.li`
   justify-content: flex-start;
   // gap: 8px;
   &:hover {
-   background: #ffffff1A;
+    background: #ffffff1a;
   }
 `
 
@@ -147,14 +147,19 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
   }, [])
 
   return (
-    <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
+    <DropDownContainer
+      isOpen={isOpen}
+      ref={containerRef}
+      {...containerSize}
+      style={{ cursor: options.length === 1 ? 'not-allowed' : null }}
+    >
       {containerSize.width !== 0 && (
-        <DropDownHeader onClick={toggling}>
+        <DropDownHeader onClick={options.length === 1 ? null : toggling}>
           {options[selectedOptionIndex]?.icon}
           <Text ml="11px">{options[selectedOptionIndex].label}</Text>
         </DropDownHeader>
       )}
-      <DropdownArrow color="text" onClick={toggling} />
+      {options.length === 1 ? null : <DropdownArrow color="text" onClick={toggling} />}
       <DropDownListContainer>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>

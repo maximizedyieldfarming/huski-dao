@@ -156,10 +156,11 @@ const AsideContent = () => {
         <Box>
           <Text className="title title--six">What we do</Text>
           <Text as="ul">
-            <Text as="li">Vote on core parameters.</Text>
-            <Text as="li">Vote to improve efficiencies.</Text>
-            <Text as="li">Vote to utilize new features.</Text>
-            <Text as="li">Vote to list pairs.</Text>
+            <Text as="li">Voting on core parameters.</Text>
+            <Text as="li">Voting to improve efficiencies.</Text>
+            <Text as="li">Voting to utilize new features.</Text>
+            <Text as="li">Voting to list pairs.</Text>
+            <Text>...</Text>
           </Text>
         </Box>
       </Container>

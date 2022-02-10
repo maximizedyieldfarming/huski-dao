@@ -71,7 +71,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
 const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
-  bottom: 0.75rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;
@@ -540,19 +540,17 @@ const MainContent: React.FC<Props> = ({ data }) => {
           )}
         </Box>
         <Box width="100%">
-          <Flex alignItems="center">
-            <Text fontSize="12px" mr="5px">
+          <Flex alignItems="center" {...tooltipHoverProps} style={{ position: 'relative', cursor: 'pointer' }}>
+            <Text fontSize="14px" mr="5px">
               Referral Link:
             </Text>
-            <span {...tooltipHoverProps} style={{ position: 'relative', cursor: 'pointer' }}>
-              <InfoIcon color="#ffffff" width="12px" />
-              <CustomTooltip
-                isHovering={!!tooltipIsHovering}
-                invitedByUser={invitedByUser.toString()}
-                invitationReward={userInvitationBonus.toString()}
-                leaderboardSpot={userLeaderboardSpot}
-              />
-            </span>
+            <InfoIcon color="#ffffff" width="14px" />
+            <CustomTooltip
+              isHovering={!!tooltipIsHovering}
+              invitedByUser={invitedByUser.toString()}
+              invitationReward={userInvitationBonus.toString()}
+              leaderboardSpot={userLeaderboardSpot}
+            />
           </Flex>
           <Flex>
             <Flex
