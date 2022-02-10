@@ -57,7 +57,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -268,7 +268,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
   }
 
-  const raisedAmount = convertTokenToUsd(data[0].raiseFund).div(BIG_TEN.pow(18))
+  const raisedAmount = new BigNumber(data[0].raiseFund).div(BIG_TEN.pow(18))
   const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -414,7 +414,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-          // disabled={data[0]?.investorStatus === true}
+        // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
