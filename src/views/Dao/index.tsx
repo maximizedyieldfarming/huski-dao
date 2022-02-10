@@ -2,7 +2,7 @@ import React from 'react'
 import Page from 'components/Layout/Page'
 import styled from 'styled-components'
 import { Box, Text, Flex, useMatchBreakpoints, ArrowForwardIcon } from '@huskifinance/huski-frontend-uikit'
-import { useDaos, usePoolDaoWithUserData, usePoolDaoPublicData } from 'state/dao/hooks'
+import { useDaos, usePoolDaoWithUserData } from 'state/dao/hooks'
 import Select from 'components/Select/Select'
 import {
   Timeline,
@@ -20,7 +20,7 @@ import {
 } from './components'
 import MainContent from './MainContent'
 import AsideContent from './AsideContent'
-import { Founders, Links } from './config'
+import { Founders, Links, SECOND_PHASE_START_DATE } from './config'
 import { ETHIcon, BSCIcon, HuskiGoggles, PlanetPurple, PlanetYellow } from './assets'
 
 const PageWrapper = styled.div`
@@ -91,16 +91,37 @@ const GlowStar = styled(Box) <{ small?: boolean }>`
 `
 
 const LaunchCampaign = () => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [selectedNetwork, setSelectedNetwork] = React.useState('ethereum')
 
   const { data: daoData } = useDaos()
-  console.info('aaaaaaa----dao', daoData)
   usePoolDaoWithUserData()
-  // usePoolDaoPublicData()
-  // const { lendData } = useLendData()
-  // console.info('112333',lendData);
 
   const { isMobile } = useMatchBreakpoints()
+
+  const networkOptions = (() => {
+    if (new Date() >= new Date(SECOND_PHASE_START_DATE)) {
+      return [
+        {
+          value: 'ethereum',
+          label: 'ETH',
+          icon: <ETHIcon width="27px" height="27px" className="noPos" />,
+        },
+        {
+          value: 'bsccoin',
+          label: 'BSC',
+          icon: <BSCIcon width="27px" height="27px" className="noPos" />,
+        },
+      ]
+    }
+    return [
+      {
+        value: 'ethereum',
+        label: 'ETH',
+        icon: <ETHIcon width="27px" height="27px" className="noPos" />,
+      },
+    ]
+  })()
 
   return (
     <PageWrapper>
@@ -130,21 +151,7 @@ const LaunchCampaign = () => {
               </Text>
             </Flex>
             <Flex alignItems="center" flexWrap="wrap">
-              <Select
-                options={[
-                  {
-                    value: 'ethereum',
-                    label: 'ETH',
-                    icon: <ETHIcon width="27px" height="27px" className="noPos" />,
-                  },
-                /*   {
-                    value: 'binance',
-                    label: 'BSC',
-                    icon: <BSCIcon width="27px" height="27px" className="noPos" />,
-                  }, */
-                ]}
-                onChange={(option) => setSelectedNetwork(option.value)}
-              />
+              <Select options={networkOptions} onChange={(option) => setSelectedNetwork(option.value)} />
               <ConnectWalletButton />
             </Flex>
           </StyledNav>

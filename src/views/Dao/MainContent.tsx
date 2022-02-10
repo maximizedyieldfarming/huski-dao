@@ -1,17 +1,25 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
+import {
+  Box,
+  Text,
+  Flex,
+  Input,
+  useMatchBreakpoints,
+  InfoIcon,
+  useTooltip,
+  Skeleton,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { BIG_TEN, BIG_ZERO } from 'utils/config'
+import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount } from 'utils/formatBalance'
-import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
-import useTokenBalance from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetEthBalance } from 'hooks/useTokenBalance'
 import { Address } from 'config/constants/types'
 import {
   ButtonMenuRounded,
@@ -30,15 +38,17 @@ import {
   USDCIcon,
   ETHIcon,
   USDTIcon,
-  Nft,
-  HuskiDaoToken,
-  DaoVer,
+  DaoNft,
+  DaoVerification,
   LaughingHuski,
   ClipboardIcon,
-  Trophy,
+  Trophy10,
+  Trophy100,
+  TrophyOthers,
   HuskiGoggles,
+  DaoToken,
 } from './assets'
-import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
+import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
 import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
@@ -74,44 +84,63 @@ const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   }
   ${Text} {
     font-size: 12px;
+    &.styledText {
+      background: linear-gradient(90deg, #5956e3 4.55%, #d953e9 60.72%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.03em;
+    }
   }
   z-index: 10;
 `
-const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; isHovering: boolean }> = ({
-  invitationBonus,
-  invitedByUser,
-  isHovering,
-}) => {
+const CustomTooltip: React.FC<{
+  invitedByUser: string
+  invitationReward: string
+  isHovering: boolean
+  leaderboardSpot: string
+}> = ({ invitationReward, invitedByUser, isHovering, leaderboardSpot }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledTooltip isTooltipDisplayed={isHovering}>
-      <Flex justifyContent="space-between" p={isMobile ? '0 20px' : '0 50px'} alignItems="center">
-        <Box>
-          <Text textAlign="center" mb="17px">
+      <Flex justifyContent="space-between" alignItems="center">
+        <Box style={{ flex: '1' }}>
+          <Text textAlign="center" mb="8px" fontSize="16px !important" fontWeight="700 !important">
             Invited
           </Text>
-          <Text textAlign="center" fontSize="24px !important">
+          <Text textAlign="center" fontSize="24px !important" lineHeight="38px">
             {invitedByUser}
           </Text>
+          <Text textAlign="center" fontSize="10px !important">
+            (10% Bonus)
+          </Text>
         </Box>
-        <Box background="#3D3049" height="43px" width="1px" mx={isMobile ? '50px' : '0'} />
-        <Box>
-          <Text textAlign="center" mb="17px">
-            Bonus (HUSKI)
+        <Box background="#C4C4C4" height="60px" width="1px" mx={isMobile ? '50px' : '0'} />
+        <Box style={{ flex: '1' }}>
+          <Text textAlign="center" mb="8px" fontSize="16px !important" fontWeight="700 !important">
+            Rewards{' '}
+            <Text as="span" fontSize="12px !important" fontWeight="700 !important">
+              (HUSKI)
+            </Text>
           </Text>
-          <Text textAlign="center" fontSize="24px !important">
-            {invitationBonus}
+          <Text textAlign="center" fontSize="24px !important" lineHeight="38px" mb={leaderboardSpot ? null : '15px'}>
+            {invitationReward}
           </Text>
+          {leaderboardSpot ? (
+            <Text textAlign="center" fontSize="10px !important">
+              {leaderboardSpot}
+            </Text>
+          ) : null}
         </Box>
       </Flex>
       <Box mt="27px">
-        <Text mb="24px" pl="23px">
+        <Text mb="24px" fontSize="14px !important" fontWeight="900 !important" className="styledText">
           Share the referral link with your friends, and you will receive bonus rewards based on their contribution
         </Text>
         <Box mb="15px">
           <Flex>
-            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <img src={Trophy10} width="23px" height="23px" alt="prize trophy" />
             <Text>Top 10:</Text>
           </Flex>
           <Text pl="23px">
@@ -122,16 +151,25 @@ const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; 
         </Box>
         <Box mb="15px">
           <Flex>
-            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <img src={Trophy100} width="23px" height="23px" alt="prize trophy" />
             <Text>Top 100:</Text>
           </Flex>
           <Text pl="23px">Earn bonus reward by Airdrop(4% Bonus)</Text>
         </Box>
-        <Box pl="23px">
-          <Text>Others:</Text>
-          <Text>Earn bonus reward by Airdrop(2% Bonus)</Text>
+        <Box>
+          <Flex>
+            <img src={TrophyOthers} width="23px" height="23px" alt="prize trophy" />
+            <Text>Others:</Text>
+          </Flex>
+          <Text pl="23px">Earn bonus reward by Airdrop(2% Bonus)</Text>
         </Box>
       </Box>
+      <Flex alignItems="center" mt="28px" style={{ gap: '13px' }}>
+        <InfoIcon color="#777373" />
+        <Text color="#777373 !important" fontSize="10px !important">
+          The ranking is sorted according to the investment amount, and the rewards will follow the ranking changes.
+        </Text>
+      </Flex>
     </StyledTooltip>
   )
 }
@@ -140,9 +178,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
-  const [amountInToken, setAmountInToken] = React.useState<string>()
+  const [amountInToken, setAmountInToken] = React.useState<string>('')
   const { account } = useWeb3React()
-  const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
   /**
@@ -179,13 +216,18 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return { selTokenPrice, selTokenDecimalPlaces, selTokenIcon, selToken, selTokenAddress }
   }
 
-  const { selTokenPrice, selTokenIcon, selToken, selTokenAddress } = getSelectedTokenData(selectedToken)
+  const { selTokenPrice, selTokenIcon, selToken, selTokenAddress, selTokenDecimalPlaces } =
+    getSelectedTokenData(selectedToken)
   const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
 
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
+    BigNumber.config({ DECIMAL_PLACES: 5 })
+    // config added to fix problem rounding input when user clicks amount button
+    // when that button is clicked the amount can sometimes have more than 18 decimal places
+    // so it needs to be limited to no more than that
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
 
@@ -195,10 +237,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
-  console.log('balance', balance.toString(), selToken.name, 'addr', getAddress(selTokenAddress))
+  const ethBalance = getBalanceAmount(useGetEthBalance().balance)
+  const userBalance = selToken?.name.toLowerCase() === 'eth' ? ethBalance : balance
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -230,9 +272,18 @@ const MainContent: React.FC<Props> = ({ data }) => {
       setAmountButtonIndex(index)
     }
   }
-  const handleInputChange = (e) => {
-    setAmountInToken(e.target.value)
-  }
+  const handleInputChange = React.useCallback(
+    (event) => {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = new BigNumber(input).gt(userBalance) ? userBalance.toString() : input
+        setAmountInToken(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userBalance, setAmountInToken],
+  )
 
   const timeRemaining = () => {
     const now = new Date()
@@ -256,19 +307,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
   }
 
-  const raisedAmount = convertTokenToUsd(data[0].raiseFund).div(BIG_TEN.pow(18))
+  const raisedAmount = new BigNumber(data[0].raiseFund).div(DEFAULT_TOKEN_DECIMAL)
   const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
-
-  /**
-   * @todo get the number of users who have invested $50,000 (bigSponsors)
-   */
-  const numberOfBigSponsors = 0
-  const nftSponsorsRemaining = NFT_SPONSORS_TARGET - numberOfBigSponsors
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenAddress = getAddress(selToken?.token.address)
@@ -278,19 +323,19 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const { callWithGasPrice } = useCallWithGasPrice()
 
   const handleApprove = async () => {
-    toastInfo(t('Approving...'), t('Please Wait!'))
+    toastInfo('Approving...', 'Please Wait!')
     // setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Approved!'), t('Your request has been approved'))
+        toastSuccess('Approved!', 'Your request has been approved')
         // setIsApproved(true)
       } else {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+        toastError('Error', 'Please try again. Confirm the transaction and make sure you are paying enough gas!')
       }
     } catch (error: any) {
-      toastWarning(t('Error'), error.message)
+      toastWarning('Error', error.message)
     } finally {
       // setIsApproving(false)
     }
@@ -298,16 +343,16 @@ const MainContent: React.FC<Props> = ({ data }) => {
 
   const handleDeposit = async (depositAmount, name: string, roundID, inviterCode) => {
     const callOptions = {
-      gasLimit: 380000,
+      gasLimit: DEFAULT_GAS_LIMIT,
     }
     const callOptionsETH = {
-      gasLimit: 380000,
+      gasLimit: DEFAULT_GAS_LIMIT,
       value: depositAmount.toString(),
     }
     // setIsPending(true)
 
     try {
-      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      toastInfo('Transaction Pending...', 'Please Wait!')
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
@@ -316,11 +361,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
       )
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+        toastSuccess('Successful!', 'Your deposit was successfull')
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+      toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
     } finally {
       // setIsPending(false)
     }
@@ -360,7 +405,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
    */
   const invitedByUser = 0
   const userInvitationBonus = 0
+  const userLeaderboardSpot: string = null // check if user is in the top 10 or top 100 investors
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
@@ -407,7 +454,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-          disabled={data[0]?.investorStatus === true}
+          // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
@@ -418,7 +465,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <Text ml="auto" fontSize="12px" textAlign="right" color="#8B8787 !important" fontFamily={`'Baloo Bhai 2'`}>
             Balance:{' '}
             <Text as="span" fontSize="14px" fontFamily={`'Baloo Bhai 2'`}>
-              {`${balance.toFixed(0, 1)} ${selToken.name}`}
+              {`${userBalance.toFixed(selTokenDecimalPlaces, 1)} ${selToken.name}`}
             </Text>
           </Text>
           <InputContainer>
@@ -484,7 +531,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
               disabled={
                 new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
                 amountInToken === undefined ||
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
+                new BigNumber(amountInToken).gt(userBalance)
               }
             >
               Approve &amp; Confirm
@@ -501,7 +549,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
               <CustomTooltip
                 isHovering={!!tooltipIsHovering}
                 invitedByUser={invitedByUser.toString()}
-                invitationBonus={userInvitationBonus.toString()}
+                invitationReward={userInvitationBonus.toString()}
+                leaderboardSpot={userLeaderboardSpot}
               />
             </span>
           </Flex>
@@ -698,18 +747,22 @@ const MainContent: React.FC<Props> = ({ data }) => {
         </Text>
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
           <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
-            <img src={HuskiDaoToken} alt="Huski DAO Token" style={{ maxWidth: '35px' }} />
+            <DaoToken />
             <Text fontSize="14px">Huski DAO Token</Text>
           </Banner>
           <Banner>
-            <img src={DaoVer} alt="DAO Verification" style={{ maxWidth: '37px' }} />
-            <Text fontSize="14px">DAO Verification</Text>
+            <DaoVerification />
+            <Text fontSize="14px" ml="10px">
+              DAO Verification
+            </Text>
           </Banner>
         </Flex>
         {new BigNumber(convertTokenToUsd(amountInToken).toFixed(0)).gte(50000) ? (
           <Banner mt="15px" maxWidth="100% !important">
-            <img src={Nft} alt="NFT Co-Branding Partnerships" style={{ maxWidth: '40px' }} />
-            <Text fontSize="14px">NFT co-branded sponsors </Text>
+            <DaoNft />
+            <Text fontSize="14px" ml="10px">
+              NFT co-branded sponsors{' '}
+            </Text>
           </Banner>
         ) : null}
       </Container>
@@ -719,31 +772,35 @@ const MainContent: React.FC<Props> = ({ data }) => {
           More rewards after Protocols Fair Launch
         </Text>
         <Banner mx="auto" mb="32px" maxWidth="268px !important">
-          <LaughingHuski width="37px" />
-          <Text fontSize="14px" ml="18px">
-            {account ? convertTokenToUsd(amountInToken).toFixed(2) : null} HUSKI Token
-          </Text>
+          <DaoToken />
+          <Text fontSize="14px">{account ? convertTokenToUsd(amountInToken).toFixed(2) : null} HUSKI Token</Text>
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
-            <Text fontSize="14px">
-              {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%
-            </Text>
+            {raisedAmount && !raisedAmount.isNaN() ? (
+              <Text fontSize="14px">
+                {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%
+              </Text>
+            ) : (
+              <Skeleton width="3rem" height="14px" />
+            )}
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toString()} />
-          <Flex justifyContent="space-between" alignItems="center" mt="9px">
-            <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
-              'en-US',
-              {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              },
-            )}`}</Text>
-            <Text fontSize="12px" textAlign="right">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
-          </Flex>
+          {raisedAmount && !raisedAmount.isNaN() ? (
+            <Text
+              fontSize="14px"
+              textAlign="left"
+              mt="9px"
+            >{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}`}</Text>
+          ) : (
+            <Skeleton width="10rem" height="14px" mt="9px" />
+          )}
         </Box>
       </Container>
     </Box>

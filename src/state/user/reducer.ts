@@ -46,9 +46,9 @@ export interface UserState {
   gasPrice: string
 }
 
-function pairKey(token0Address: string, token1Address: string) {
-  return `${token0Address};${token1Address}`
-}
+// function pairKey(token0Address: string, token1Address: string) {
+//   return `${token0Address};${token1Address}`
+// }
 
 export const initialState: UserState = {
   userExpertMode: false,

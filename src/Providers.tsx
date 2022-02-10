@@ -7,7 +7,6 @@ import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { useThemeManager } from 'state/user/hooks'
 import { getLibrary } from 'utils/web3React'
-import { LanguageProvider } from 'contexts/Localization'
 import { RefreshContextProvider } from 'contexts/RefreshContext'
 import { ToastsProvider } from 'contexts/ToastsContext'
 import store from 'state'
@@ -25,11 +24,9 @@ const Providers: React.FC = ({ children }) => {
         <ToastsProvider>
           <HelmetProvider>
             <ThemeProviderWrapper>
-              <LanguageProvider>
-                <RefreshContextProvider>
-                  <ModalProvider>{children}</ModalProvider>
-                </RefreshContextProvider>
-              </LanguageProvider>
+              <RefreshContextProvider>
+                <ModalProvider>{children}</ModalProvider>
+              </RefreshContextProvider>
             </ThemeProviderWrapper>
           </HelmetProvider>
         </ToastsProvider>

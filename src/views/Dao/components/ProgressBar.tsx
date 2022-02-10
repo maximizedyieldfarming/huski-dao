@@ -15,26 +15,36 @@ const ProgressBarContainer = styled.div`
   padding: 2px;
   border-radius: 14px;
 `
+const ProgressBarRail = styled.div<{ color: string }>`
+  width: 100%;
+  height: 100%;
+  background: ${({ color }) => color};
+  border-radius: 14px;
+`
+
 export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProgress }) => {
   const getResettingProgress = () => {
+    if (Number(currentProgress) > 500) {
+      return 100
+    }
     if (Number(currentProgress) > 100) {
       return Number(currentProgress) - Math.floor(Number(currentProgress) / 100) * 100
     }
     return currentProgress
   }
-  const getCurrentColor = () => {
-    if (Number(currentProgress) > 500) {
-      return 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)'
-    }
+  const getCurrentColor = (): { trackColor: string; containerColor: string } => {
     if (Number(currentProgress) > 100) {
-      return '#E95353'
+      return { trackColor: '#FF6B00', containerColor: '#9053DB' }
     }
-    return '#d953e9'
+
+    return { trackColor: '#d953e9', containerColor: '#ffffff' }
   }
 
   return (
     <ProgressBarContainer>
-      <Progress currentProgress={getResettingProgress()?.toString() || '0'} color={getCurrentColor()} />
+      <ProgressBarRail color={getCurrentColor().containerColor}>
+        <Progress currentProgress={getResettingProgress()?.toString() || '0'} color={getCurrentColor().trackColor} />
+      </ProgressBarRail>
     </ProgressBarContainer>
   )
 }
