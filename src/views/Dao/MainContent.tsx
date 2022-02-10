@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import {
@@ -10,6 +10,7 @@ import {
   InfoIcon,
   useTooltip,
   Skeleton,
+  AutoRenewIcon,
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config'
@@ -175,10 +176,10 @@ const CustomTooltip: React.FC<{
 }
 
 const MainContent: React.FC<Props> = ({ data }) => {
-  const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
-  const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
-  const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
-  const [amountInToken, setAmountInToken] = React.useState<string>('')
+  const [selectedToken, setSelectedToken] = useState<string>('ETH')
+  const [tokenButtonIndex, setTokenButtonIndex] = useState<number>(0)
+  const [amountButtonIndex, setAmountButtonIndex] = useState<number>(null)
+  const [amountInToken, setAmountInToken] = useState<string>('')
   const { account } = useWeb3React()
   const { isMobile } = useMatchBreakpoints()
 
@@ -321,23 +322,24 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const vaultAddress = getAddress(selToken?.vaultAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
+  const [isApproving, setIsApproving] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
-    // setIsApproving(true)
+    setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess('Approved!', 'Your request has been approved')
-        // setIsApproved(true)
       } else {
         toastError('Error', 'Please try again. Confirm the transaction and make sure you are paying enough gas!')
       }
     } catch (error: any) {
       toastWarning('Error', error.message)
     } finally {
-      // setIsApproving(false)
+      setIsApproving(false)
     }
   }
 
@@ -349,7 +351,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       gasLimit: DEFAULT_GAS_LIMIT,
       value: depositAmount.toString(),
     }
-    // setIsPending(true)
+    setIsPending(true)
 
     try {
       toastInfo('Transaction Pending...', 'Please Wait!')
@@ -367,7 +369,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
       console.info('error', error)
       toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
     } finally {
-      // setIsPending(false)
+      setIsPending(false)
+      setAmountInToken('')
     }
   }
 
@@ -395,7 +398,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
 
   const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
-  const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
+  const [showReferralLink, setShowReferralLink] = useState<boolean>(false)
   const handleGenerateReferralLink = () => {
     setShowReferralLink(true)
   }
@@ -410,7 +413,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
+  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   function displayTooltip() {
     setIsTooltipDisplayed(true)
     setTimeout(() => {
@@ -439,6 +442,19 @@ const MainContent: React.FC<Props> = ({ data }) => {
   )
 
   const [isHoveringConfirm, confirmHoverProps] = useHover()
+
+  const getConfirmBtnText = (() => {
+    if (isPending) {
+      return 'Processing...'
+    }
+    if (isApproving) {
+      return 'Approving...'
+    }
+    if (new BigNumber(selToken?.allowance).gt(0)) {
+      return 'Confirm'
+    }
+    return 'Approve & Confirm'
+  })()
 
   const walletReady = () => {
     return (
@@ -534,8 +550,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
                 new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
                 new BigNumber(amountInToken).gt(userBalance)
               }
+              isLoading={isPending || isApproving}
+              endIcon={isPending || isApproving ? <AutoRenewIcon spin color="white" /> : null}
             >
-              Approve &amp; Confirm
+              {getConfirmBtnText}
             </StyledButton>
           )}
         </Box>
