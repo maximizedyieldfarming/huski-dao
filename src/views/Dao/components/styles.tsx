@@ -1,4 +1,4 @@
-import { Box, Flex, Button, Text } from '@huskifinance/huski-frontend-uikit'
+import { Box, Flex, Button } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
