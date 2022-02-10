@@ -11,7 +11,7 @@ import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
-import useTokenBalance from 'hooks/useTokenBalance'
+import useTokenBalance, { useGetEthBalance } from 'hooks/useTokenBalance'
 import { Address } from 'config/constants/types'
 import {
   ButtonMenuRounded,
@@ -58,7 +58,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -198,7 +198,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
   console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
-  console.log('balance', balance.toString(), selToken.name, 'addr', getAddress(selTokenAddress))
+
+  const { balance: ethBalance } = useGetEthBalance()
+  console.log(ethBalance, selToken.name, 'addr', getAddress(selTokenAddress))
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -407,7 +409,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-          disabled={data[0]?.investorStatus === true}
+        // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
