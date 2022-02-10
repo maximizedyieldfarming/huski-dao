@@ -38,7 +38,7 @@ import {
   Trophy,
   HuskiGoggles,
 } from './assets'
-import { NFT_SPONSORS_TARGET, FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
+import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
 import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
@@ -266,12 +266,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
-
-  /**
-   * @todo get the number of users who have invested $50,000 (bigSponsors)
-   */
-  const numberOfBigSponsors = 0
-  const nftSponsorsRemaining = NFT_SPONSORS_TARGET - numberOfBigSponsors
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast()
   const tokenAddress = getAddress(selToken?.token.address)
@@ -738,18 +732,16 @@ const MainContent: React.FC<Props> = ({ data }) => {
             </Text>
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toString()} />
-          <Flex justifyContent="space-between" alignItems="center" mt="9px">
-            <Text fontSize="14px" textAlign="left">{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString(
-              'en-US',
-              {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              },
-            )}`}</Text>
-            <Text fontSize="12px" textAlign="right">{`${nftSponsorsRemaining} NFT co-branded sponsors left`}</Text>
-          </Flex>
+          <Text
+            fontSize="14px"
+            textAlign="left"
+            mt="9px"
+          >{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`}</Text>
         </Box>
       </Container>
     </Box>
