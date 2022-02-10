@@ -78,7 +78,7 @@ const GlowSpotPurple = styled(Box)`
   filter: blur(192px);
   padding: 0 !important;
 `
-const GlowStar = styled(Box) <{ small?: boolean }>`
+const GlowStar = styled(Box)<{ small?: boolean }>`
   width: ${({ small }) => (small ? '3px' : '6px')};
   height: ${({ small }) => (small ? '3px' : '6px')};
   border-radius: 100%;
@@ -137,7 +137,7 @@ const LaunchCampaign = () => {
                     label: 'ETH',
                     icon: <ETHIcon width="27px" height="27px" className="noPos" />,
                   },
-                /*   {
+                  /*   {
                     value: 'binance',
                     label: 'BSC',
                     icon: <BSCIcon width="27px" height="27px" className="noPos" />,
