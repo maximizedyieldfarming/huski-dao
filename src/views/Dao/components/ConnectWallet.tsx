@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useWalletModal, useMatchBreakpoints, Box, Text } from '@huskifinance/huski-frontend-uikit'
 import useAuth from 'hooks/useAuth'
 import UserMenu from 'components/UserMenu'
-import { useHover } from '../helpers'
+// import { useHover } from '../helpers'
 import { StyledButton } from './styles'
 
 const ConnectWallet = (props) => {
@@ -21,7 +21,7 @@ const ConnectWallet = (props) => {
   //
   //    }
 
-  const [buttonIsHovering, buttonHoverProps] = useHover()
+  // const [buttonIsHovering, buttonHoverProps] = useHover()
   // hide this to test normal wllet connect button
   // if (!account) {
   //   return (
