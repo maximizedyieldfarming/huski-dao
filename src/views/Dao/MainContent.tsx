@@ -1,7 +1,16 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Box, Text, Flex, Input, useMatchBreakpoints, InfoIcon, useTooltip } from '@huskifinance/huski-frontend-uikit'
+import {
+  Box,
+  Text,
+  Flex,
+  Input,
+  useMatchBreakpoints,
+  InfoIcon,
+  useTooltip,
+  Skeleton,
+} from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config'
 import { ethers } from 'ethers'
@@ -34,7 +43,9 @@ import {
   DaoVer,
   LaughingHuski,
   ClipboardIcon,
-  Trophy,
+  Trophy10,
+  Trophy100,
+  TrophyOthers,
   HuskiGoggles,
 } from './assets'
 import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
@@ -57,7 +68,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -73,44 +84,63 @@ const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
   }
   ${Text} {
     font-size: 12px;
+    &.styledText {
+      background: linear-gradient(90deg, #5956e3 4.55%, #d953e9 60.72%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.03em;
+    }
   }
   z-index: 10;
 `
-const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; isHovering: boolean }> = ({
-  invitationBonus,
-  invitedByUser,
-  isHovering,
-}) => {
+const CustomTooltip: React.FC<{
+  invitedByUser: string
+  invitationReward: string
+  isHovering: boolean
+  leaderboardSpot: string
+}> = ({ invitationReward, invitedByUser, isHovering, leaderboardSpot }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
     <StyledTooltip isTooltipDisplayed={isHovering}>
-      <Flex justifyContent="space-between" p={isMobile ? '0 20px' : '0 50px'} alignItems="center">
-        <Box>
-          <Text textAlign="center" mb="17px">
+      <Flex justifyContent="space-between" alignItems="center">
+        <Box style={{ flex: '1' }}>
+          <Text textAlign="center" mb="8px" fontSize="16px !important" fontWeight="700 !important">
             Invited
           </Text>
-          <Text textAlign="center" fontSize="24px !important">
+          <Text textAlign="center" fontSize="24px !important" lineHeight="38px">
             {invitedByUser}
           </Text>
+          <Text textAlign="center" fontSize="10px !important">
+            (10% Bonus)
+          </Text>
         </Box>
-        <Box background="#3D3049" height="43px" width="1px" mx={isMobile ? '50px' : '0'} />
-        <Box>
-          <Text textAlign="center" mb="17px">
-            Bonus (HUSKI)
+        <Box background="#C4C4C4" height="60px" width="1px" mx={isMobile ? '50px' : '0'} />
+        <Box style={{ flex: '1' }}>
+          <Text textAlign="center" mb="8px" fontSize="16px !important" fontWeight="700 !important">
+            Rewards{' '}
+            <Text as="span" fontSize="12px !important" fontWeight="700 !important">
+              (HUSKI)
+            </Text>
           </Text>
-          <Text textAlign="center" fontSize="24px !important">
-            {invitationBonus}
+          <Text textAlign="center" fontSize="24px !important" lineHeight="38px" mb={leaderboardSpot ? null : '15px'}>
+            {invitationReward}
           </Text>
+          {leaderboardSpot ? (
+            <Text textAlign="center" fontSize="10px !important">
+              {leaderboardSpot}
+            </Text>
+          ) : null}
         </Box>
       </Flex>
       <Box mt="27px">
-        <Text mb="24px" pl="23px">
+        <Text mb="24px" fontSize="14px !important" fontWeight="900 !important" className="styledText">
           Share the referral link with your friends, and you will receive bonus rewards based on their contribution
         </Text>
         <Box mb="15px">
           <Flex>
-            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <img src={Trophy10} width="23px" height="23px" alt="prize trophy" />
             <Text>Top 10:</Text>
           </Flex>
           <Text pl="23px">
@@ -121,16 +151,25 @@ const CustomTooltip: React.FC<{ invitedByUser: string; invitationBonus: string; 
         </Box>
         <Box mb="15px">
           <Flex>
-            <img src={Trophy} width="23px" height="23px" alt="prize trophy" />
+            <img src={Trophy100} width="23px" height="23px" alt="prize trophy" />
             <Text>Top 100:</Text>
           </Flex>
           <Text pl="23px">Earn bonus reward by Airdrop(4% Bonus)</Text>
         </Box>
-        <Box pl="23px">
-          <Text>Others:</Text>
-          <Text>Earn bonus reward by Airdrop(2% Bonus)</Text>
+        <Box>
+          <Flex>
+            <img src={TrophyOthers} width="23px" height="23px" alt="prize trophy" />
+            <Text>Others:</Text>
+          </Flex>
+          <Text pl="23px">Earn bonus reward by Airdrop(2% Bonus)</Text>
         </Box>
       </Box>
+      <Flex alignItems="center" mt="28px" style={{ gap: '13px' }}>
+        <InfoIcon color="#777373" />
+        <Text color="#777373 !important" fontSize="10px !important">
+          The ranking is sorted according to the investment amount, and the rewards will follow the ranking changes.
+        </Text>
+      </Flex>
     </StyledTooltip>
   )
 }
@@ -185,7 +224,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
-    BigNumber.config({ DECIMAL_PLACES: 18 })
+    BigNumber.config({ DECIMAL_PLACES: 5 })
     // config added to fix problem rounding input when user clicks amount button
     // when that button is clicked the amount can sometimes have more than 18 decimal places
     // so it needs to be limited to no more than that
@@ -366,6 +405,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
    */
   const invitedByUser = 0
   const userInvitationBonus = 0
+  const userLeaderboardSpot: string = null // check if user is in the top 10 or top 100 investors
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
@@ -414,7 +454,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-        // disabled={data[0]?.investorStatus === true}
+          // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
@@ -509,7 +549,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
               <CustomTooltip
                 isHovering={!!tooltipIsHovering}
                 invitedByUser={invitedByUser.toString()}
-                invitationBonus={userInvitationBonus.toString()}
+                invitationReward={userInvitationBonus.toString()}
+                leaderboardSpot={userLeaderboardSpot}
               />
             </span>
           </Flex>
@@ -735,21 +776,29 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
             <Text fontSize="14px">{timeRemaining()}</Text>
-            <Text fontSize="14px">
-              {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%
-            </Text>
+            {raisedAmount && !raisedAmount.isNaN() ? (
+              <Text fontSize="14px">
+                {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%
+              </Text>
+            ) : (
+              <Skeleton width="3rem" height="14px" />
+            )}
           </Flex>
           <ProgressBar currentProgress={new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toString()} />
-          <Text
-            fontSize="14px"
-            textAlign="left"
-            mt="9px"
-          >{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}`}</Text>
+          {raisedAmount && !raisedAmount.isNaN() ? (
+            <Text
+              fontSize="14px"
+              textAlign="left"
+              mt="9px"
+            >{`${raisedAmountString} / ${FUNDING_AMOUNT_TARGET.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}`}</Text>
+          ) : (
+            <Skeleton width="10rem" height="14px" mt="9px" />
+          )}
         </Box>
       </Container>
     </Box>
