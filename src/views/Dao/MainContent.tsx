@@ -140,7 +140,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
-  const [amountInToken, setAmountInToken] = React.useState<string>()
+  const [amountInToken, setAmountInToken] = React.useState<string>('')
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
@@ -187,6 +187,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
+    BigNumber.config({ DECIMAL_PLACES: 18 })
+    // config added to fix problem rounding input when user clicks amount button
+    // when that button is clicked the amount can sometimes have more than 18 decimal places
+    // so it needs to be limited to no more than that
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
 
@@ -196,12 +200,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
-
   const ethBalance = getBalanceAmount(useGetEthBalance().balance)
-  console.log(ethBalance.toString(), selToken.name, 'addr', getAddress(selTokenAddress))
+  const userBalance = selToken?.name.toLowerCase() === 'eth' ? ethBalance : balance
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -233,9 +235,18 @@ const MainContent: React.FC<Props> = ({ data }) => {
       setAmountButtonIndex(index)
     }
   }
-  const handleInputChange = (e) => {
-    setAmountInToken(e.target.value)
-  }
+  const handleInputChange = React.useCallback(
+    (event) => {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = new BigNumber(input).gt(userBalance) ? userBalance.toString() : input
+        setAmountInToken(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userBalance, setAmountInToken],
+  )
 
   const timeRemaining = () => {
     const now = new Date()
@@ -358,6 +369,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const invitedByUser = 0
   const userInvitationBonus = 0
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
@@ -415,11 +427,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <Text ml="auto" fontSize="12px" textAlign="right" color="#8B8787 !important" fontFamily={`'Baloo Bhai 2'`}>
             Balance:{' '}
             <Text as="span" fontSize="14px" fontFamily={`'Baloo Bhai 2'`}>
-              {`${
-                selToken.name.toLowerCase() === 'eth'
-                  ? ethBalance.toFixed(selTokenDecimalPlaces, 1)
-                  : balance.toFixed(selTokenDecimalPlaces, 1)
-              } ${selToken.name}`}
+              {`${userBalance.toFixed(selTokenDecimalPlaces, 1)} ${selToken.name}`}
             </Text>
           </Text>
           <InputContainer>
@@ -485,7 +493,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
               disabled={
                 new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
                 amountInToken === undefined ||
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
+                new BigNumber(amountInToken).gt(userBalance)
               }
             >
               Approve &amp; Confirm

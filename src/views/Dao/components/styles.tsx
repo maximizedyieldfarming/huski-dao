@@ -57,6 +57,7 @@ export const StyledButton = styled(Button)<{ filled?: boolean }>`
     color: #ffffff;
     background: ${({ filled }) => (filled ? 'linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)' : '#16131e')};
     border: none;
+    filter: grayscale(80%);
   }
 `
 export const InputContainer = styled(Flex)`
