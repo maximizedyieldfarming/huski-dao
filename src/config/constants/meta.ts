@@ -1,4 +1,3 @@
-import { ContextApi } from 'contexts/Localization/types'
 import { PageMeta } from './types'
 
 export const DEFAULT_META: PageMeta = {
@@ -7,11 +6,11 @@ export const DEFAULT_META: PageMeta = {
     'The most popular AMM on BSC by user count! Earn CAKE through yield farming or win it in the Lottery, then stake it in Syrup Pools to earn more tokens! Initial Farm Offerings (new token launch model pioneered by Huski), NFTs, and more, on a platform you can trust.',
 }
 
-export const getCustomMeta = (path: string, t: ContextApi['t']): PageMeta => {
+export const getCustomMeta = (path: string): PageMeta => {
   switch (path) {
     case '/':
       return {
-        title: `${t('Home')} | ${t('Huski')}`,
+        title: `${'Home'} | ${'Huski'}`,
       }
 
     default:

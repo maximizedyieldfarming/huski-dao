@@ -7,7 +7,6 @@ import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount } from 'utils/formatBalance'
-import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
@@ -140,9 +139,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
   const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
   const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
-  const [amountInToken, setAmountInToken] = React.useState<string>()
+  const [amountInToken, setAmountInToken] = React.useState<string>('')
   const { account } = useWeb3React()
-  const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
   /**
@@ -187,6 +185,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
+    BigNumber.config({ DECIMAL_PLACES: 18 })
+    // config added to fix problem rounding input when user clicks amount button
+    // when that button is clicked the amount can sometimes have more than 18 decimal places
+    // so it needs to be limited to no more than that
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
 
@@ -196,12 +198,10 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
   }
-  console.log({ 'amount in usd': convertTokenToUsd(amountInToken).toFixed(0), amountInToken })
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
-
   const ethBalance = getBalanceAmount(useGetEthBalance().balance)
-  console.log(ethBalance.toString(), selToken.name, 'addr', getAddress(selTokenAddress))
+  const userBalance = selToken?.name.toLowerCase() === 'eth' ? ethBalance : balance
 
   const handleTokenButton = (index) => {
     if (index === 0) {
@@ -233,9 +233,18 @@ const MainContent: React.FC<Props> = ({ data }) => {
       setAmountButtonIndex(index)
     }
   }
-  const handleInputChange = (e) => {
-    setAmountInToken(e.target.value)
-  }
+  const handleInputChange = React.useCallback(
+    (event) => {
+      if (event.target.value.match(/^[0-9]*[.,]?[0-9]{0,18}$/)) {
+        const input = event.target.value
+        const finalValue = new BigNumber(input).gt(userBalance) ? userBalance.toString() : input
+        setAmountInToken(finalValue)
+      } else {
+        event.preventDefault()
+      }
+    },
+    [userBalance, setAmountInToken],
+  )
 
   const timeRemaining = () => {
     const now = new Date()
@@ -275,19 +284,19 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const { callWithGasPrice } = useCallWithGasPrice()
 
   const handleApprove = async () => {
-    toastInfo(t('Approving...'), t('Please Wait!'))
+    toastInfo('Approving...', 'Please Wait!')
     // setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Approved!'), t('Your request has been approved'))
+        toastSuccess('Approved!', 'Your request has been approved')
         // setIsApproved(true)
       } else {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+        toastError('Error', 'Please try again. Confirm the transaction and make sure you are paying enough gas!')
       }
     } catch (error: any) {
-      toastWarning(t('Error'), error.message)
+      toastWarning('Error', error.message)
     } finally {
       // setIsApproving(false)
     }
@@ -304,7 +313,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     // setIsPending(true)
 
     try {
-      toastInfo(t('Transaction Pending...'), t('Please Wait!'))
+      toastInfo('Transaction Pending...', 'Please Wait!')
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
@@ -313,11 +322,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
       )
       const receipt = await tx.wait()
       if (receipt.status) {
-        toastSuccess(t('Successful!'), t('Your deposit was successfull'))
+        toastSuccess('Successful!', 'Your deposit was successfull')
       }
     } catch (error) {
       console.info('error', error)
-      toastError(t('Unsuccessful'), t('Something went wrong your deposit request. Please try again...'))
+      toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
     } finally {
       // setIsPending(false)
     }
@@ -358,6 +367,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const invitedByUser = 0
   const userInvitationBonus = 0
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
@@ -415,10 +425,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <Text ml="auto" fontSize="12px" textAlign="right" color="#8B8787 !important" fontFamily={`'Baloo Bhai 2'`}>
             Balance:{' '}
             <Text as="span" fontSize="14px" fontFamily={`'Baloo Bhai 2'`}>
-              {`${selToken.name.toLowerCase() === 'eth'
-                ? ethBalance.toFixed(selTokenDecimalPlaces, 1)
-                : balance.toFixed(selTokenDecimalPlaces, 1)
-                } ${selToken.name}`}
+              {`${userBalance.toFixed(selTokenDecimalPlaces, 1)} ${selToken.name}`}
             </Text>
           </Text>
           <InputContainer>
@@ -484,7 +491,8 @@ const MainContent: React.FC<Props> = ({ data }) => {
               disabled={
                 new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
                 amountInToken === undefined ||
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000)
+                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
+                new BigNumber(amountInToken).gt(userBalance)
               }
             >
               Approve &amp; Confirm

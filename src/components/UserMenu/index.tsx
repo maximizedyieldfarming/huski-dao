@@ -3,11 +3,9 @@ import { useWeb3React } from '@web3-react/core'
 import { Flex, LogoutIcon, UserMenu as UIKitUserMenu, UserMenuItem } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
 import useAuth from 'hooks/useAuth'
-import { useTranslation } from 'contexts/Localization'
 
 const StyledUserMenu = styled(UIKitUserMenu)`
   background: #16131e;
-  // border: 1px solid white;
   border-radius: 14px;
   color: #fff;
   font-weight: 700;
@@ -18,7 +16,6 @@ const StyledUserMenu = styled(UIKitUserMenu)`
 `
 
 const UserMenu = () => {
-  const { t } = useTranslation()
   const { account } = useWeb3React()
   const { logout } = useAuth()
 
@@ -26,7 +23,7 @@ const UserMenu = () => {
     <StyledUserMenu account={account}>
       <UserMenuItem as="button" onClick={logout}>
         <Flex alignItems="center" justifyContent="space-between" width="100%">
-          {t('Disconnect')}
+          Disconnect
           <LogoutIcon />
         </Flex>
       </UserMenuItem>
