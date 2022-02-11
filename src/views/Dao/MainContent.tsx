@@ -68,7 +68,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 0.75rem;
@@ -388,7 +388,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       //   .toString()
       //   .replace(/\.(.*?\d*)/g, '')
 
-      const depositAmount = ethers.utils.parseEther(amountInToken)
+      const depositAmount = ethers.utils.parseEther(amountInToken || '0')
 
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
@@ -454,7 +454,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-          // disabled={data[0]?.investorStatus === true}
+        // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
