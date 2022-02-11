@@ -19,7 +19,7 @@ const Dao: DaoConfig[] = [
     {
         name: "USDT",
         vaultAddress: {
-            42: '0xeAf4B2eFBBD8193543bc7B0CE01aE75c3a7D1b7d',
+            42: '0xEFc81d3Ca394De19162FBabd69aeE5e9D81438e4',
             56: "0xbD91429B7546AFe01c2CC4a4587bBB2E66302534",
         },
         configAddress: {

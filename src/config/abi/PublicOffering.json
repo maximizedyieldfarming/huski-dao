@@ -74,7 +74,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
     "name": "getCode",
     "outputs": [
       {
@@ -89,6 +95,42 @@
   {
     "inputs": [],
     "name": "getInvestors",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "investor",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4",
+            "name": "inviterCode",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PublicOffering.Investor[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getInvitees",
     "outputs": [
       {
         "components": [
@@ -208,13 +250,19 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "length",
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "name": "numberOfInvitations",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -248,7 +296,7 @@
         "type": "bool"
       }
     ],
-    "name": "setCrowdsaleState",
+    "name": "setPublicOfferingState",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -270,7 +318,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_amount",
+        "name": "amount",
         "type": "uint256"
       }
     ],

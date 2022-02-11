@@ -33,6 +33,8 @@ export interface Dao extends DaoConfig {
   answeredInRound?: string
   raiseFund?: SerializedBigNumber
   investorStatus?: boolean
+  invitees?: any
+  investors?: any
 }
 
 export interface DaoState {
