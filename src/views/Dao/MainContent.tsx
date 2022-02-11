@@ -415,7 +415,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
 
   const handleConfirm = async () => {
-    const { allowance, name, roundID, code } = selToken
+    const { allowance, name, roundID } = selToken
 
     if (Number(allowance) === 0) {
       handleApprove()
@@ -464,14 +464,16 @@ const MainContent: React.FC<Props> = ({ data }) => {
     const leaderboard = {}
     // add each unique investor code into leaderboard and count how many times it appears
     poolsWithInvestors.forEach((pool) => {
-      pool.investors.forEach((investor) => {
-        if (leaderboard[investor.inviterCode]) {
-          leaderboard[investor.inviterCode]++
-        } else {
-          leaderboard[investor.inviterCode] = 1
-        }
-        return null
-      })
+      pool.investors
+        .filter((investor) => investor.inviterCode !== DEFAULT_CODE)
+        .forEach((investor) => {
+          if (leaderboard[investor.inviterCode]) {
+            leaderboard[investor.inviterCode]++
+          } else {
+            leaderboard[investor.inviterCode] = 1
+          }
+          return null
+        })
       return null
     })
 
