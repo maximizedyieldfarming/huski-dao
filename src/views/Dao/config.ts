@@ -31,7 +31,7 @@ export const Links: Links = {
     googleForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfQYEmLeC9fxtCHSB9lbcRO_3YcYvEUHSEZo6Xc9V9Lz1z5ag/viewform?usp=sf_link',
     whatIsDao: 'https://blog.aragon.org/what-is-a-dao/',
     howToDao: 'https://blog.aragon.org/how-to-dao-answers-for-beginners/',
-    joinDao: null
+    joinDao: ""
 }
 
 export const FUNDING_AMOUNT_TARGET = 1000000 // funding amount to be reached is 1,000,000 USD (1 million), and can go over this target

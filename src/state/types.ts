@@ -33,13 +33,14 @@ export interface Dao extends DaoConfig {
   answeredInRound?: string
   raiseFund?: SerializedBigNumber
   investorStatus?: boolean
+  invitees?: any
+  investors?: any
 }
 
 export interface DaoState {
   data: Dao[]
-  loadArchivedFarmsData: boolean
+  loadArchivedData: boolean
   userDataLoaded: boolean
-  tradingDataLoaded: boolean
 }
 
 // Global state

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import {
@@ -10,9 +10,10 @@ import {
   InfoIcon,
   useTooltip,
   Skeleton,
+  AutoRenewIcon,
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config'
+import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT, DEFAULT_CODE } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount } from 'utils/formatBalance'
@@ -21,6 +22,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
 import useTokenBalance, { useGetEthBalance } from 'hooks/useTokenBalance'
 import { Address } from 'config/constants/types'
+import { Dao } from 'state/types'
 import {
   ButtonMenuRounded,
   ButtonMenuSquared,
@@ -52,7 +54,7 @@ import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
 import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
-  data: Record<string, any>[]
+  data: Dao[]
 }
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
@@ -71,7 +73,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
 const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
-  bottom: 0.75rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;
@@ -99,7 +101,8 @@ const CustomTooltip: React.FC<{
   invitationReward: string
   isHovering: boolean
   leaderboardSpot: string
-}> = ({ invitationReward, invitedByUser, isHovering, leaderboardSpot }) => {
+  bonus: number
+}> = ({ invitationReward, invitedByUser, isHovering, leaderboardSpot, bonus }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
@@ -113,7 +116,7 @@ const CustomTooltip: React.FC<{
             {invitedByUser}
           </Text>
           <Text textAlign="center" fontSize="10px !important">
-            (10% Bonus)
+            {`(${bonus}% Bonus)`}
           </Text>
         </Box>
         <Box background="#C4C4C4" height="60px" width="1px" mx={isMobile ? '50px' : '0'} />
@@ -175,10 +178,10 @@ const CustomTooltip: React.FC<{
 }
 
 const MainContent: React.FC<Props> = ({ data }) => {
-  const [selectedToken, setSelectedToken] = React.useState<string>('ETH')
-  const [tokenButtonIndex, setTokenButtonIndex] = React.useState<number>(0)
-  const [amountButtonIndex, setAmountButtonIndex] = React.useState<number>(null)
-  const [amountInToken, setAmountInToken] = React.useState<string>('')
+  const [selectedToken, setSelectedToken] = useState<string>('ETH')
+  const [tokenButtonIndex, setTokenButtonIndex] = useState<number>(0)
+  const [amountButtonIndex, setAmountButtonIndex] = useState<number>(null)
+  const [amountInToken, setAmountInToken] = useState<string>('')
   const { account } = useWeb3React()
   const { isMobile } = useMatchBreakpoints()
 
@@ -220,14 +223,21 @@ const MainContent: React.FC<Props> = ({ data }) => {
     getSelectedTokenData(selectedToken)
   const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
 
-  const convertUsdToToken = (amountInUSD: string): BigNumber => {
+  /**
+   *
+   * @param {String} amountInUSD the amount in USD
+   * @param {Boolen} shouldRoundMore if the result should be rounded with less decimal places,
+   *  because sometimes when rounding it will be lower than the desired amount,
+   * so we let it be a bit higher
+   * @returns {BigNumber} the amount in usd converted to the selected token
+   */
+  const convertUsdToToken = (amountInUSD: string, shouldRoundMore?: boolean): BigNumber => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
-    BigNumber.config({ DECIMAL_PLACES: 5 })
+    BigNumber.config({ DECIMAL_PLACES: shouldRoundMore ? 4 : 5 })
     // config added to fix problem rounding input when user clicks amount button
-    // when that button is clicked the amount can sometimes have more than 18 decimal places
-    // so it needs to be limited to no more than that
+
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
 
@@ -236,6 +246,25 @@ const MainContent: React.FC<Props> = ({ data }) => {
       return BIG_ZERO
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
+  }
+
+  /**
+   * for dealing with investment upper limit of 50,000 USD
+   * when the input is rounded  allow it to be a bit bigger than the given amount
+   *
+   * @param {BigNumber} inputValue
+   * @param {String} compareTo
+   * @returns {Boolean}
+   */
+  const isApproximateOrEqual = (inputValue: BigNumber, compareTo: string): boolean => {
+    const limit = 100
+    const diff = inputValue.minus(compareTo).absoluteValue()
+
+    if (inputValue.gt(compareTo)) {
+      return new BigNumber(diff).lt(limit)
+    }
+
+    return inputValue.lte(compareTo)
   }
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
@@ -262,13 +291,25 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const handleAmountButton = (index) => {
     if (index === 0) {
-      setAmountInToken(convertUsdToToken('1000').toString())
+      setAmountInToken(
+        convertUsdToToken('1000').lt('1000')
+          ? convertUsdToToken('1000', true).toString()
+          : convertUsdToToken('1000').toString(),
+      )
       setAmountButtonIndex(index)
     } else if (index === 1) {
-      setAmountInToken(convertUsdToToken('10000').toString())
+      setAmountInToken(
+        convertUsdToToken('10000').lt('10000')
+          ? convertUsdToToken('10000', true).toString()
+          : convertUsdToToken('10000').toString(),
+      )
       setAmountButtonIndex(index)
     } else if (index === 2) {
-      setAmountInToken(convertUsdToToken('50000').toString())
+      setAmountInToken(
+        convertUsdToToken('50000').lt('50000')
+          ? convertUsdToToken('50000', true).toString()
+          : convertUsdToToken('50000').toString(),
+      )
       setAmountButtonIndex(index)
     }
   }
@@ -321,23 +362,24 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const vaultAddress = getAddress(selToken?.vaultAddress)
   const depositContract = useVault(vaultAddress)
   const { callWithGasPrice } = useCallWithGasPrice()
+  const [isApproving, setIsApproving] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const handleApprove = async () => {
     toastInfo('Approving...', 'Please Wait!')
-    // setIsApproving(true)
+    setIsApproving(true)
     try {
       const tx = await approveContract.approve(vaultAddress, ethers.constants.MaxUint256)
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess('Approved!', 'Your request has been approved')
-        // setIsApproved(true)
       } else {
         toastError('Error', 'Please try again. Confirm the transaction and make sure you are paying enough gas!')
       }
     } catch (error: any) {
       toastWarning('Error', error.message)
     } finally {
-      // setIsApproving(false)
+      setIsApproving(false)
     }
   }
 
@@ -349,7 +391,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       gasLimit: DEFAULT_GAS_LIMIT,
       value: depositAmount.toString(),
     }
-    // setIsPending(true)
+    setIsPending(true)
 
     try {
       toastInfo('Transaction Pending...', 'Please Wait!')
@@ -367,19 +409,20 @@ const MainContent: React.FC<Props> = ({ data }) => {
       console.info('error', error)
       toastError('Unsuccessful', 'Something went wrong your deposit request. Please try again...')
     } finally {
-      // setIsPending(false)
+      setIsPending(false)
+      setAmountInToken('')
     }
   }
 
   const handleConfirm = async () => {
-    const { allowance, name, roundID, code } = selToken
+    const { allowance, name, roundID } = selToken
 
     if (Number(allowance) === 0) {
       handleApprove()
     } else {
       const url = window.location.href
       const index = url.lastIndexOf('=')
-      let inviterCode = code
+      let inviterCode = DEFAULT_CODE
       if (index !== -1) {
         inviterCode = url.substring(index + 1, url.length)
       }
@@ -388,29 +431,89 @@ const MainContent: React.FC<Props> = ({ data }) => {
       //   .toString()
       //   .replace(/\.(.*?\d*)/g, '')
 
-      const depositAmount = ethers.utils.parseEther(amountInToken)
-
+      const depositAmount = ethers.utils.parseEther(amountInToken || '0')
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
 
   const referralLink = data[0].code ? `https://dao.huski.finance?code=${data?.[0]?.code}` : null
-  const [showReferralLink, setShowReferralLink] = React.useState<boolean>(false)
+  const [showReferralLink, setShowReferralLink] = useState<boolean>(false)
   const handleGenerateReferralLink = () => {
     setShowReferralLink(true)
   }
 
-  /**
-   * @todo get the number of new users invited by the current user
-   */
-  const invitedByUser = 0
-  const userInvitationBonus = 0
-  const userLeaderboardSpot: string = null // check if user is in the top 10 or top 100 investors
+  const poolsWithInvitees = (() => {
+    return data.filter((pool) => pool?.invitees?.length)
+  })()
+
+  const inviteesAmount = (() => {
+    let sum = 0
+    poolsWithInvitees.forEach((pool) => {
+      sum += pool?.invitees?.length
+      return null
+    })
+    return sum?.toString()
+  })()
+
+  const poolsWithInvestors = (() => {
+    return data.filter((pool) => pool?.investors?.length)
+  })()
+
+  const getUserLeaderboardSpot = (): { text: string; position: number; bonus: number } => {
+    // find how many times the same investor code appears in pool with investors
+    const leaderboard = {}
+    // add each unique investor code into leaderboard and count how many times it appears
+    poolsWithInvestors.forEach((pool) => {
+      pool.investors
+        .filter((investor) => investor.inviterCode !== DEFAULT_CODE)
+        .forEach((investor) => {
+          if (leaderboard[investor.inviterCode]) {
+            leaderboard[investor.inviterCode]++
+          } else {
+            leaderboard[investor.inviterCode] = 1
+          }
+          return null
+        })
+      return null
+    })
+
+    // sort leaderboard by count
+    const sortedLeaderboard = Object.keys(leaderboard).sort((a, b) => leaderboard[b] - leaderboard[a])
+    const position = sortedLeaderboard.indexOf(data[0].code) + 1
+    let bonus = 2
+    let text = ''
+    if (position > 10 && position <= 100) {
+      text = '(Top 100)'
+      bonus = 4
+    }
+    if (position > 0 && position <= 10) {
+      text = '(Top 10)'
+      bonus = 10
+    }
+    return { text, position, bonus }
+  }
+
+  const userLeaderboardSpot = getUserLeaderboardSpot()
+
+  const getRewards = (): BigNumber => {
+    let rewardsSum = 0
+    poolsWithInvitees?.forEach((pool) => {
+      pool?.invitees?.forEach((inv) => {
+        rewardsSum += Number(inv?.amount)
+        return null
+      })
+      return null
+    })
+
+    const rewards = new BigNumber(rewardsSum).div(DEFAULT_TOKEN_DECIMAL).times(userLeaderboardSpot.bonus / 100)
+    return rewards
+  }
+  const userRewards = getRewards()
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
   const [tooltipIsHovering, tooltipHoverProps] = useHover()
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = React.useState(false)
+  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   function displayTooltip() {
     setIsTooltipDisplayed(true)
     setTimeout(() => {
@@ -439,6 +542,19 @@ const MainContent: React.FC<Props> = ({ data }) => {
   )
 
   const [isHoveringConfirm, confirmHoverProps] = useHover()
+
+  const getConfirmBtnText = (() => {
+    if (isPending) {
+      return 'Processing...'
+    }
+    if (isApproving) {
+      return 'Approving...'
+    }
+    if (new BigNumber(selToken?.allowance).gt(0)) {
+      return 'Confirm'
+    }
+    return 'Approve & Confirm'
+  })()
 
   const walletReady = () => {
     return (
@@ -497,12 +613,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
+        {amountInToken && convertTokenToUsd(amountInToken).lt(1000) ? (
           <Text color="red !important" fontSize="12px" mt="10px">
             Minimum investment amount is $1,000 (One Thousand USD)
           </Text>
         ) : null}
-        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
+        {amountInToken && !isApproximateOrEqual(convertTokenToUsd(amountInToken), '50000') ? (
           <Text color="red !important" fontSize="12px" mt="10px">
             You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
@@ -528,31 +644,37 @@ const MainContent: React.FC<Props> = ({ data }) => {
             <StyledButton
               filled
               onClick={handleConfirm}
-              disabled={
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-                amountInToken === undefined ||
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
-                new BigNumber(amountInToken).gt(userBalance)
-              }
+              // disabled={
+              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+              //   amountInToken === undefined ||
+              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
+              //   new BigNumber(amountInToken).gt(userBalance)
+              // }
+              isLoading={isPending || isApproving}
+              endIcon={isPending || isApproving ? <AutoRenewIcon spin color="white" /> : null}
             >
-              Approve &amp; Confirm
+              {getConfirmBtnText}
             </StyledButton>
           )}
         </Box>
         <Box width="100%">
-          <Flex alignItems="center">
-            <Text fontSize="12px" mr="5px">
+          <Flex
+            alignItems="center"
+            {...tooltipHoverProps}
+            style={{ position: 'relative', cursor: 'pointer' }}
+            width="fit-content"
+          >
+            <Text fontSize="14px" mr="5px">
               Referral Link:
             </Text>
-            <span {...tooltipHoverProps} style={{ position: 'relative', cursor: 'pointer' }}>
-              <InfoIcon color="#ffffff" width="12px" />
-              <CustomTooltip
-                isHovering={!!tooltipIsHovering}
-                invitedByUser={invitedByUser.toString()}
-                invitationReward={userInvitationBonus.toString()}
-                leaderboardSpot={userLeaderboardSpot}
-              />
-            </span>
+            <InfoIcon color="#ffffff" width="14px" />
+            <CustomTooltip
+              isHovering={!!tooltipIsHovering}
+              invitedByUser={inviteesAmount}
+              invitationReward={userRewards.toFixed(0)}
+              leaderboardSpot={userLeaderboardSpot.text}
+              bonus={userLeaderboardSpot.bonus}
+            />
           </Flex>
           <Flex>
             <Flex

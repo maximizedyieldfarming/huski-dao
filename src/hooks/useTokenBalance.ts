@@ -3,6 +3,8 @@ import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { getBep20Contract } from 'utils/contractHelpers'
 import { BIG_ZERO } from 'utils/config'
+import { getAddress } from 'utils/addressHelpers'
+import tokens from 'config/constants/tokens'
 import { simpleRpcProvider } from 'utils/providers'
 import useRefresh from './useRefresh'
 import useLastUpdated from './useLastUpdated'
@@ -31,7 +33,13 @@ const useTokenBalance = (tokenAddress: string) => {
     const fetchBalance = async () => {
       const contract = getBep20Contract(tokenAddress)
       try {
-        const res = await contract.balanceOf(account)
+        let res
+        if (tokenAddress === getAddress(tokens.eth.address)) {
+          res = '0'
+        } else {
+          res = await contract.balanceOf(account)
+        }
+
         setBalanceState({ balance: new BigNumber(res.toString()), fetchStatus: SUCCESS })
       } catch (e) {
         console.error(e)
