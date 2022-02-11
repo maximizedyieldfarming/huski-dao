@@ -39,9 +39,8 @@ export interface Dao extends DaoConfig {
 
 export interface DaoState {
   data: Dao[]
-  loadArchivedFarmsData: boolean
+  loadArchivedData: boolean
   userDataLoaded: boolean
-  tradingDataLoaded: boolean
 }
 
 // Global state

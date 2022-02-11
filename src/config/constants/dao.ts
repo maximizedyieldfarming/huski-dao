@@ -6,7 +6,7 @@ const Dao: DaoConfig[] = [
     {
         name: "ETH",
         vaultAddress: {
-            42: '0x66c8B5cBd5347B7b57F1dCdFEbEd04FB10DD3FA2',
+            42: '0xC6da14750475bb86fDB410C836121d6a7A8Cd2a5',
             56: "0x85549eac2c801dbd20964f7f6248f9ed32bd4efb",
         },
         configAddress: {
@@ -32,7 +32,7 @@ const Dao: DaoConfig[] = [
     {
         name: "USDC",
         vaultAddress: {
-            42: '0x6647b9a6eA6e949707ce468d7a21F732e91fb45c',
+            42: '0xD2758D89C3FE8113ab6741F042f521Abd192F527',
             56: "0xe363355790cfc313f5ab1939155356e72bf662fb",
         },
         configAddress: {
