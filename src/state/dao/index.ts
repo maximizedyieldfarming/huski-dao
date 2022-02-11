@@ -4,21 +4,20 @@ import fetchDaos from './fetchDaos'
 import fetchUserDaos from './fetchUserDaos'
 import { DaoState, Dao } from '../types'
 
-const noAccountFarmConfig = daoConfig.map((dao) => ({
+const noAccountDaoConfig = daoConfig.map((dao) => ({
   ...dao,
 }))
 
-const initialState: DaoState = { data: noAccountFarmConfig, loadArchivedFarmsData: false, userDataLoaded: false, tradingDataLoaded: false }
+const initialState: DaoState = { data: noAccountDaoConfig, loadArchivedData: false, userDataLoaded: false }
 export const nonArchivedFarms = daoConfig // .filter(({ pid }) => !isArchivedPid(pid))
 // Async thunks
 export const fetchDaoPublicDataAsync =
   createAsyncThunk<Dao[], number[]>(
     'dao/fetchDaoPublicDataAsync',
     async (pids) => {
-      const daoToFetch = daoConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
-      const farms = await fetchDaos(daoToFetch)
-
-      return farms
+      const daoToFetch = daoConfig.filter((daoCon) => pids.includes(daoCon.pid))
+      const daos = await fetchDaos(daoToFetch)
+      return daos
     }
   ,
   )
@@ -27,9 +26,9 @@ export const fetchDaoUserDataAsync =
   createAsyncThunk<Dao[], { account: string; pids: number[] }>(
     'dao/fetchDaoUserDataAsync',
     async ({ account, pids }) => {
-      const daoToFetch = daoConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
-      const userDaoAllowances = await fetchUserDaos(account, daoToFetch)
-      return userDaoAllowances
+      const daoToFetch = daoConfig.filter((daoCon) => pids.includes(daoCon.pid))
+      const userDaos = await fetchUserDaos(account, daoToFetch)
+      return userDaos
 
     }
   ,
@@ -40,24 +39,24 @@ export const daoSlice = createSlice({
   initialState,
   reducers: {
     setLoadArchivedFarmsData: (state, action) => {
-      const loadArchivedFarmsData = action.payload
-      state.loadArchivedFarmsData = loadArchivedFarmsData
+      const loadArchivedData = action.payload
+      state.loadArchivedData = loadArchivedData
     },
   },
   extraReducers: (builder) => {
-    // Update farms with live data
+    // Update daos with live data
     builder.addCase(fetchDaoPublicDataAsync.fulfilled, (state, action) => {
       state.data = state.data.map((dao) => {
-        const liveFarmData = action.payload.find((farmData) => farmData.pid === dao.pid)
-        return { ...dao, ...liveFarmData }
+        const liveData = action.payload.find((daoData) => daoData.pid === dao.pid)
+        return { ...dao, ...liveData }
       })
     })
 
-    // Update farms with user data
+    // Update daos with user data
     builder.addCase(fetchDaoUserDataAsync.fulfilled, (state, action) => {
       state.data = state.data.map((dao) => {
-        const liveFarmData = action.payload.find((farmData) => farmData.pid === dao.pid)
-        return { ...dao, ...liveFarmData }
+        const userData = action.payload.find((daoData) => daoData.pid === dao.pid)
+        return { ...dao, ...userData }
       })
     })
 
