@@ -70,7 +70,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 1.5rem;
@@ -101,7 +101,8 @@ const CustomTooltip: React.FC<{
   invitationReward: string
   isHovering: boolean
   leaderboardSpot: string
-}> = ({ invitationReward, invitedByUser, isHovering, leaderboardSpot }) => {
+  bonus: number
+}> = ({ invitationReward, invitedByUser, isHovering, leaderboardSpot, bonus }) => {
   const { isMobile } = useMatchBreakpoints()
 
   return (
@@ -115,7 +116,7 @@ const CustomTooltip: React.FC<{
             {invitedByUser}
           </Text>
           <Text textAlign="center" fontSize="10px !important">
-            (10% Bonus)
+            {`(${bonus}% Bonus)`}
           </Text>
         </Box>
         <Box background="#C4C4C4" height="60px" width="1px" mx={isMobile ? '50px' : '0'} />
@@ -442,12 +443,71 @@ const MainContent: React.FC<Props> = ({ data }) => {
     setShowReferralLink(true)
   }
 
-  /**
-   * @todo get the number of new users invited by the current user
-   */
-  const invitedByUser = 0
-  const userInvitationBonus = 0
-  const userLeaderboardSpot: string = null // check if user is in the top 10 or top 100 investors
+  const poolsWithInvitees = (() => {
+    return data.filter((pool) => pool?.invitees?.length)
+  })()
+
+  const inviteesAmount = (() => {
+    let sum = 0
+    poolsWithInvitees.forEach((pool) => {
+      sum += pool?.invitees?.length
+      return null
+    })
+    return sum?.toString()
+  })()
+
+  const poolsWithInvestors = (() => {
+    return data.filter((pool) => pool?.investors?.length)
+  })()
+
+  const getUserLeaderboardSpot = (): { text: string; position: number; bonus: number } => {
+    // find how many times the same investor code appears in pool with investors
+    const leaderboard = {}
+    // add each unique investor code into leaderboard and count how many times it appears
+    poolsWithInvestors.forEach((pool) => {
+      pool.investors.forEach((investor) => {
+        if (leaderboard[investor.inviterCode]) {
+          leaderboard[investor.inviterCode]++
+        } else {
+          leaderboard[investor.inviterCode] = 1
+        }
+        return null
+      })
+      return null
+    })
+
+    // sort leaderboard by count
+    const sortedLeaderboard = Object.keys(leaderboard).sort((a, b) => leaderboard[b] - leaderboard[a])
+    const position = sortedLeaderboard.indexOf(data[0].code) + 1
+    let bonus = 2
+    let text = ''
+    if (position > 10 && position <= 100) {
+      text = '(Top 100)'
+      bonus = 4
+    }
+    if (position > 0 && position <= 10) {
+      text = '(Top 10)'
+      bonus = 10
+    }
+    return { text, position, bonus }
+  }
+
+  const userLeaderboardSpot = getUserLeaderboardSpot()
+
+  const getRewards = (): BigNumber => {
+    let rewardsSum = 0
+    poolsWithInvitees?.forEach((pool) => {
+      pool?.invitees?.forEach((inv) => {
+        rewardsSum += Number(inv?.amount)
+        return null
+      })
+      return null
+    })
+
+    const rewards = new BigNumber(rewardsSum).div(DEFAULT_TOKEN_DECIMAL).times(userLeaderboardSpot.bonus / 100)
+    return rewards
+  }
+  const userRewards = getRewards()
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const [value, copy] = useCopyToClipboard()
@@ -509,7 +569,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-        // disabled={data[0]?.investorStatus === true}
+          // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
@@ -597,16 +657,22 @@ const MainContent: React.FC<Props> = ({ data }) => {
           )}
         </Box>
         <Box width="100%">
-          <Flex alignItems="center" {...tooltipHoverProps} style={{ position: 'relative', cursor: 'pointer' }}>
+          <Flex
+            alignItems="center"
+            {...tooltipHoverProps}
+            style={{ position: 'relative', cursor: 'pointer' }}
+            width="fit-content"
+          >
             <Text fontSize="14px" mr="5px">
               Referral Link:
             </Text>
             <InfoIcon color="#ffffff" width="14px" />
             <CustomTooltip
               isHovering={!!tooltipIsHovering}
-              invitedByUser={invitedByUser.toString()}
-              invitationReward={userInvitationBonus.toString()}
-              leaderboardSpot={userLeaderboardSpot}
+              invitedByUser={inviteesAmount}
+              invitationReward={userRewards.toFixed(0)}
+              leaderboardSpot={userLeaderboardSpot.text}
+              bonus={userLeaderboardSpot.bonus}
             />
           </Flex>
           <Flex>
