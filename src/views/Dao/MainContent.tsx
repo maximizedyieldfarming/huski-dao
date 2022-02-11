@@ -13,7 +13,7 @@ import {
   AutoRenewIcon,
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT } from 'utils/config'
+import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT, DEFAULT_CODE } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount } from 'utils/formatBalance'
@@ -421,7 +421,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     } else {
       const url = window.location.href
       const index = url.lastIndexOf('=')
-      let inviterCode = code
+      let inviterCode = DEFAULT_CODE
       if (index !== -1) {
         inviterCode = url.substring(index + 1, url.length)
       }
@@ -431,7 +431,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
       //   .replace(/\.(.*?\d*)/g, '')
 
       const depositAmount = ethers.utils.parseEther(amountInToken || '0')
-
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
@@ -583,12 +582,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
             <StyledButton
               filled
               onClick={handleConfirm}
-              disabled={
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-                amountInToken === undefined ||
-                new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
-                new BigNumber(amountInToken).gt(userBalance)
-              }
+              // disabled={
+              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
+              //   amountInToken === undefined ||
+              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
+              //   new BigNumber(amountInToken).gt(userBalance)
+              // }
               isLoading={isPending || isApproving}
               endIcon={isPending || isApproving ? <AutoRenewIcon spin color="white" /> : null}
             >
