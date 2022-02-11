@@ -22,6 +22,7 @@ import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
 import useTokenBalance, { useGetEthBalance } from 'hooks/useTokenBalance'
 import { Address } from 'config/constants/types'
+import { Dao } from 'state/types'
 import {
   ButtonMenuRounded,
   ButtonMenuSquared,
@@ -53,7 +54,7 @@ import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
 import { useHover, useCopyToClipboard } from './helpers'
 
 interface Props {
-  data: Record<string, any>[]
+  data: Dao[]
 }
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
@@ -221,14 +222,21 @@ const MainContent: React.FC<Props> = ({ data }) => {
     getSelectedTokenData(selectedToken)
   const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
 
-  const convertUsdToToken = (amountInUSD: string): BigNumber => {
+  /**
+   *
+   * @param {String} amountInUSD the amount in USD
+   * @param {Boolen} shouldRoundMore if the result should be rounded with less decimal places,
+   *  because sometimes when rounding it will be lower than the desired amount,
+   * so we let it be a bit higher
+   * @returns {BigNumber} the amount in usd converted to the selected token
+   */
+  const convertUsdToToken = (amountInUSD: string, shouldRoundMore?: boolean): BigNumber => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
-    BigNumber.config({ DECIMAL_PLACES: 5 })
+    BigNumber.config({ DECIMAL_PLACES: shouldRoundMore ? 4 : 5 })
     // config added to fix problem rounding input when user clicks amount button
-    // when that button is clicked the amount can sometimes have more than 18 decimal places
-    // so it needs to be limited to no more than that
+
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
 
@@ -237,6 +245,25 @@ const MainContent: React.FC<Props> = ({ data }) => {
       return BIG_ZERO
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
+  }
+
+  /**
+   * for dealing with investment upper limit of 50,000 USD
+   * when the input is rounded  allow it to be a bit bigger than the given amount
+   *
+   * @param {BigNumber} inputValue
+   * @param {String} compareTo
+   * @returns {Boolean}
+   */
+  const isApproximateOrEqual = (inputValue: BigNumber, compareTo: string): boolean => {
+    const limit = 100
+    const diff = inputValue.minus(compareTo).absoluteValue()
+
+    if (inputValue.gt(compareTo)) {
+      return new BigNumber(diff).lt(limit)
+    }
+
+    return inputValue.lte(compareTo)
   }
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
@@ -263,13 +290,25 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const handleAmountButton = (index) => {
     if (index === 0) {
-      setAmountInToken(convertUsdToToken('1000').toString())
+      setAmountInToken(
+        convertUsdToToken('1000').lt('1000')
+          ? convertUsdToToken('1000', true).toString()
+          : convertUsdToToken('1000').toString(),
+      )
       setAmountButtonIndex(index)
     } else if (index === 1) {
-      setAmountInToken(convertUsdToToken('10000').toString())
+      setAmountInToken(
+        convertUsdToToken('10000').lt('10000')
+          ? convertUsdToToken('10000', true).toString()
+          : convertUsdToToken('10000').toString(),
+      )
       setAmountButtonIndex(index)
     } else if (index === 2) {
-      setAmountInToken(convertUsdToToken('50000').toString())
+      setAmountInToken(
+        convertUsdToToken('50000').lt('50000')
+          ? convertUsdToToken('50000', true).toString()
+          : convertUsdToToken('50000').toString(),
+      )
       setAmountButtonIndex(index)
     }
   }
@@ -513,12 +552,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
-        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ? (
+        {amountInToken && convertTokenToUsd(amountInToken).lt(1000) ? (
           <Text color="red !important" fontSize="12px" mt="10px">
             Minimum investment amount is $1,000 (One Thousand USD)
           </Text>
         ) : null}
-        {amountInToken && new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ? (
+        {amountInToken && !isApproximateOrEqual(convertTokenToUsd(amountInToken), '50000') ? (
           <Text color="red !important" fontSize="12px" mt="10px">
             You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
