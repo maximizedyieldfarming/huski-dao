@@ -37,7 +37,7 @@ export const ProgressBar: React.FC<{ currentProgress: string }> = ({ currentProg
       return { trackColor: '#FF6B00', containerColor: '#9053DB' }
     }
 
-    return { trackColor: '#d953e9', containerColor: '#ffffff' }
+    return { trackColor: '#9053DB', containerColor: '#ffffff' }
   }
 
   return (

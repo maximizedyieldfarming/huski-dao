@@ -49,9 +49,10 @@ import {
   TrophyOthers,
   HuskiGoggles,
   DaoToken,
+  GiftIcon,
 } from './assets'
 import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
-import { useHover, useCopyToClipboard } from './helpers'
+import { useHover, useCopyToClipboard, useTimeRemaining } from './helpers'
 
 interface Props {
   data: Dao[]
@@ -142,8 +143,8 @@ const CustomTooltip: React.FC<{
           Share the referral link with your friends, and you will receive bonus rewards based on their contribution
         </Text>
         <Box mb="15px">
-          <Flex>
-            <img src={Trophy10} width="23px" height="23px" alt="prize trophy" />
+          <Flex alignItems="center">
+            <img src={Trophy10} width="23px" alt="prize trophy" />
             <Text>Top 10:</Text>
           </Flex>
           <Text pl="23px">
@@ -153,16 +154,16 @@ const CustomTooltip: React.FC<{
           </Text>
         </Box>
         <Box mb="15px">
-          <Flex>
-            <img src={Trophy100} width="23px" height="23px" alt="prize trophy" />
+          <Flex alignItems="center">
+            <img src={Trophy100} width="23px" alt="prize trophy" />
             <Text>Top 100:</Text>
           </Flex>
           <Text pl="23px">Earn bonus reward by Airdrop(4% Bonus)</Text>
         </Box>
         <Box>
-          <Flex>
-            <img src={TrophyOthers} width="23px" height="23px" alt="prize trophy" />
-            <Text>Others:</Text>
+          <Flex alignItems="center">
+            <img src={TrophyOthers} width="16px" alt="prize trophy" />
+            <Text ml="7px">Others:</Text>
           </Flex>
           <Text pl="23px">Earn bonus reward by Airdrop(2% Bonus)</Text>
         </Box>
@@ -326,27 +327,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     [userBalance, setAmountInToken],
   )
 
-  const timeRemaining = () => {
-    const now = new Date()
-    const end = new Date(FUNDING_PERIOD_TARGET)
-    const diff = end.getTime() - now.getTime()
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-    if (days === 0 && hours !== 0) {
-      return `Ends in ${hours} ${hours === 1 ? 'hour' : 'hours'}`
-    }
-    if (days === 0 && hours === 0 && minutes !== 0) {
-      return `Ends in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`
-    }
-    if (days === 0 && hours === 0 && minutes === 0) {
-      return `Ends in ${seconds} ${seconds === 1 ? 'second' : 'seconds'}`
-    }
-
-    return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
-  }
+  const { timeRemaining } = useTimeRemaining(FUNDING_PERIOD_TARGET)
 
   const raisedAmount = new BigNumber(data[0].raiseFund).div(DEFAULT_TOKEN_DECIMAL)
   const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
@@ -611,7 +592,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
         >
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
-          <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
+          <CustomButtonMenuItemRounded endIcon={<img src={GiftIcon} alt="" width="17px" />}>
+            $50,000
+          </CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
         {amountInToken && convertTokenToUsd(amountInToken).lt(1000) ? (
           <Text color="red !important" fontSize="12px" mt="10px">
@@ -899,7 +882,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
-            <Text fontSize="14px">{timeRemaining()}</Text>
+            <Text fontSize="14px">{timeRemaining}</Text>
             {raisedAmount && !raisedAmount.isNaN() ? (
               <Text fontSize="14px">
                 {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%

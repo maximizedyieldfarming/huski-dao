@@ -78,7 +78,7 @@ const GlowSpotPurple = styled(Box)`
   filter: blur(192px);
   padding: 0 !important;
 `
-const GlowStar = styled(Box) <{ small?: boolean }>`
+const GlowStar = styled(Box)<{ small?: boolean }>`
   width: ${({ small }) => (small ? '3px' : '6px')};
   height: ${({ small }) => (small ? '3px' : '6px')};
   border-radius: 100%;
@@ -143,14 +143,14 @@ const LaunchCampaign = () => {
       </Background>
       <StyledPage>
         <Header>
-          <StyledNav as="nav" mb="98px" mx="auto">
+          <StyledNav as="nav" mb={isMobile ? '50px' : '98px'} mx="auto">
             <Flex alignItems="center" justifyContent="space-between">
               <HuskiGoggles width={isMobile ? '30px' : '60px'} />
               <Text fontSize={isMobile ? '20px' : '30px'} ml="20px" fontWeight="900 !important">
                 Huski DAO Launch&nbsp;Campaign
               </Text>
             </Flex>
-            <Flex alignItems="center" flexWrap="wrap">
+            <Flex alignItems="center" flexWrap="wrap" mt={isMobile ? '50px' : null}>
               <Select options={networkOptions} onChange={(option) => setSelectedNetwork(option.value)} />
               <ConnectWalletButton />
             </Flex>
@@ -196,7 +196,7 @@ const LaunchCampaign = () => {
         <Footer>
           {Founders.length ? (
             <Box mb="97px">
-              <Text fontSize="48px" mx="auto" mb="63px" textAlign="center">
+              <Text fontSize="36px" mx="auto" mb="63px" textAlign="center" fontWeight="800 !important">
                 Founded by
               </Text>
               <FoundersWrapper>
@@ -211,13 +211,13 @@ const LaunchCampaign = () => {
             </Box>
           ) : null}
           <Box>
-            <Text fontSize="48px" textAlign="center">
+            <Text fontSize="36px" textAlign="center" fontWeight="800 !important">
               Launch Timeline
             </Text>
             <Timeline />
           </Box>
           <Flex alignItems="center" flexDirection="column" mb="84px">
-            <Text fontSize="48px" mb="41px" textAlign="center">
+            <Text fontSize="36px" mb="41px" textAlign="center" fontWeight="800 !important">
               Contact us
             </Text>
             <StyledLink to={{ pathname: Links.googleForm }} style={{ width: '175px' }} target="_blank">
