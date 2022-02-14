@@ -16,7 +16,7 @@ import styled from 'styled-components'
 import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT, DEFAULT_CODE } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
-import { getBalanceAmount } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
@@ -232,12 +232,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
    * so we let it be a bit higher
    * @returns {BigNumber} the amount in usd converted to the selected token
    */
-  const convertUsdToToken = (amountInUSD: string, shouldRoundMore?: boolean): BigNumber => {
+  const convertUsdToToken = (amountInUSD: string): BigNumber => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
-    BigNumber.config({ DECIMAL_PLACES: shouldRoundMore ? 4 : 5 })
-    // config added to fix problem rounding input when user clicks amount button
+    BigNumber.config({ DECIMAL_PLACES: selToken.token?.decimals })
 
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
@@ -292,25 +291,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const handleAmountButton = (index) => {
     if (index === 0) {
-      setAmountInToken(
-        convertUsdToToken('1000').lt('1000')
-          ? convertUsdToToken('1000', true).toString()
-          : convertUsdToToken('1000').toString(),
-      )
+      setAmountInToken(convertUsdToToken('1000').toString())
       setAmountButtonIndex(index)
     } else if (index === 1) {
-      setAmountInToken(
-        convertUsdToToken('10000').lt('10000')
-          ? convertUsdToToken('10000', true).toString()
-          : convertUsdToToken('10000').toString(),
-      )
+      setAmountInToken(convertUsdToToken('10000').toString())
       setAmountButtonIndex(index)
     } else if (index === 2) {
-      setAmountInToken(
-        convertUsdToToken('50000').lt('50000')
-          ? convertUsdToToken('50000', true).toString()
-          : convertUsdToToken('50000').toString(),
-      )
+      setAmountInToken(convertUsdToToken('50000').toString())
       setAmountButtonIndex(index)
     }
   }
@@ -364,7 +351,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
   }
 
-  const handleDeposit = async (depositAmount, name: string, roundID, inviterCode) => {
+  const handleDeposit = async (depositAmount: string, name: string, roundID, inviterCode) => {
     const callOptions = {
       gasLimit: DEFAULT_GAS_LIMIT,
     }
@@ -379,7 +366,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
-        [depositAmount.toString(), roundID, inviterCode],
+        [depositAmount, roundID, inviterCode],
         name === 'ETH' ? callOptionsETH : callOptions,
       )
       const receipt = await tx.wait()
@@ -408,11 +395,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
         inviterCode = url.substring(index + 1, url.length)
       }
 
-      // const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
-      //   .toString()
-      //   .replace(/\.(.*?\d*)/g, '')
+      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18).toString()
 
-      const depositAmount = ethers.utils.parseEther(amountInToken || '0')
+      // const depositAmount = ethers.utils.parseEther(amountInToken || '0')
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
@@ -627,12 +612,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
             <StyledButton
               filled
               onClick={handleConfirm}
-              // disabled={
-              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-              //   amountInToken === undefined ||
-              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
-              //   new BigNumber(amountInToken).gt(userBalance)
-              // }
+              disabled={
+                new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ||
+                amountInToken === undefined ||
+                !isApproximateOrEqual(convertTokenToUsd(amountInToken), '50000') ||
+                new BigNumber(amountInToken).gt(userBalance)
+              }
               isLoading={isPending || isApproving}
               endIcon={isPending || isApproving ? <AutoRenewIcon spin color="white" /> : null}
             >
