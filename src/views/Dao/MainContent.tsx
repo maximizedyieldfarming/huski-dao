@@ -721,7 +721,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Token:
           </Text>
@@ -729,7 +729,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             Huski DAO (HIDAO)
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Type:
           </Text>
@@ -743,9 +743,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
             </span>
           </Flex>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
-            Price:
+            You will get:
           </Text>
           <Flex alignItems="center" style={{ gap: '5px' }}>
             <Text fontSize="14px" textAlign="right">
@@ -757,7 +757,15 @@ const MainContent: React.FC<Props> = ({ data }) => {
             </span>
           </Flex>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
+          <Text fontSize="14px" textAlign="left">
+            Total Rewards:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            10,000 HIDAO
+          </Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Goal:
           </Text>
@@ -771,7 +779,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             ~ $5,000,000
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Distribution：
           </Text>
@@ -779,7 +787,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             Claim on HuskiDAO Landing Page
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Accepted Payments:
           </Text>
