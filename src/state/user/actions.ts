@@ -13,11 +13,6 @@ export interface SerializedPair {
   token1: SerializedToken
 }
 
-export enum FarmStakedOnly {
-  ON_FINISHED = 'onFinished',
-  TRUE = 'true',
-  FALSE = 'false',
-}
 
 export const toggleTheme = createAction<void>('user/toggleTheme')
 

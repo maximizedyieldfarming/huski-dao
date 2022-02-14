@@ -5,7 +5,6 @@ import {
   SerializedPair,
   SerializedToken,
   toggleTheme,
-  FarmStakedOnly,
 } from './actions'
 import { GAS_PRICE_GWEI } from './hooks/helpers'
 
@@ -16,9 +15,6 @@ export interface UserState {
   lastUpdateVersionTimestamp?: number
 
   userExpertMode: boolean
-
-  // only allow swaps on direct pairs
-  userSingleHopOnly: boolean
 
   // user defined slippage tolerance in bips, used in all txns
   userSlippageTolerance: number
@@ -42,7 +38,6 @@ export interface UserState {
   timestamp: number
   audioPlay: boolean
   isDark: boolean
-  userFarmStakedOnly: FarmStakedOnly
   gasPrice: string
 }
 
@@ -52,7 +47,6 @@ export interface UserState {
 
 export const initialState: UserState = {
   userExpertMode: false,
-  userSingleHopOnly: false,
   userSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
   userDeadline: DEFAULT_DEADLINE_FROM_NOW,
   tokens: {},
@@ -60,7 +54,6 @@ export const initialState: UserState = {
   timestamp: currentTimestamp(),
   audioPlay: true,
   isDark: false,
-  userFarmStakedOnly: FarmStakedOnly.ON_FINISHED,
   gasPrice: GAS_PRICE_GWEI.default,
 }
 
