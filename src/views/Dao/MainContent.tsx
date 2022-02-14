@@ -224,28 +224,29 @@ const MainContent: React.FC<Props> = ({ data }) => {
     getSelectedTokenData(selectedToken)
   const tokenPriceDataNotLoaded = selTokenPrice.isZero() || selTokenPrice.isNaN() || !selTokenPrice
 
-  /**
-   *
-   * @param {String} amountInUSD the amount in USD
-   * @param {Boolen} shouldRoundMore if the result should be rounded with less decimal places,
-   *  because sometimes when rounding it will be lower than the desired amount,
-   * so we let it be a bit higher
-   * @returns {BigNumber} the amount in usd converted to the selected token
-   */
-  const convertUsdToToken = (amountInUSD: string): BigNumber => {
-    if (!amountInUSD || tokenPriceDataNotLoaded) {
-      return BIG_ZERO
-    }
-    BigNumber.config({ DECIMAL_PLACES: selToken.token?.decimals })
-
-    return new BigNumber(amountInUSD).div(selTokenPrice)
-  }
-
   const convertTokenToUsd = (pAmountInToken: string): BigNumber => {
+    BigNumber.config({ DECIMAL_PLACES: selToken.token?.decimals })
     if (!pAmountInToken || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
     return new BigNumber(pAmountInToken).times(selTokenPrice)
+  }
+
+  const convertUsdToToken = (amountInUSD: string): BigNumber => {
+    BigNumber.config({ DECIMAL_PLACES: selToken.token?.decimals })
+    let convertedAmount = new BigNumber(amountInUSD).div(selTokenPrice)
+
+    if (!amountInUSD || tokenPriceDataNotLoaded) {
+      convertedAmount = BIG_ZERO
+    }
+
+    // add enough token to increase the amount by one usd until it's equal or greater than expected amount (amountInUSD)
+    const oneUsdInSelToken = new BigNumber(1).div(selTokenPrice)
+    if (convertTokenToUsd(convertedAmount.toString()).lt(amountInUSD)) {
+      convertedAmount = convertedAmount.plus(oneUsdInSelToken)
+    }
+
+    return convertedAmount
   }
 
   /**
@@ -487,24 +488,24 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }, 1000)
   }
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    <>
+    <Box p="6px">
       <Text fontSize="14px">Fundraising on ETH</Text>
       <Text fontSize="14px">Distribution on ETH</Text>
       <Text fontSize="14px">Claim HUSKI on BSC</Text>
-    </>,
-    { placement: 'bottom' },
+    </Box>,
+    { placement: 'top' },
   )
   const {
     targetRef: targetRef2,
     tooltip: tooltip2,
     tooltipVisible: tooltipVisible2,
   } = useTooltip(
-    <>
+    <Box p="6px">
       <Text fontSize="14px">
         Each person has only one chance to support, and the amount is limited between $1,000 and $50,000
       </Text>
-    </>,
-    { placement: 'bottom' },
+    </Box>,
+    { placement: 'top' },
   )
 
   const [isHoveringConfirm, confirmHoverProps] = useHover()
