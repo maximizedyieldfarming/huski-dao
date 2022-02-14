@@ -26,7 +26,7 @@ export const Founders: Array<Founders> = [
 ]
 
 export const Links: Links = {
-    huskiFinance: 'https://test.huski.finance/',
+    huskiFinance: 'https://dev.huski.finance/',
     onePager: 'https://drive.google.com/file/d/1RXp20mvkHFh-XdJX8oPKD6oTs19kjjJi/view?usp=sharing',
     googleForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfQYEmLeC9fxtCHSB9lbcRO_3YcYvEUHSEZo6Xc9V9Lz1z5ag/viewform?usp=sf_link',
     whatIsDao: 'https://blog.aragon.org/what-is-a-dao/',
