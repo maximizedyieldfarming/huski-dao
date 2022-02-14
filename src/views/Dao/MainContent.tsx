@@ -16,7 +16,7 @@ import styled from 'styled-components'
 import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT, DEFAULT_CODE } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
-import { getBalanceAmount } from 'utils/formatBalance'
+import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
 import useToast from 'hooks/useToast'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import { getAddress } from 'utils/addressHelpers'
@@ -49,9 +49,10 @@ import {
   TrophyOthers,
   HuskiGoggles,
   DaoToken,
+  GiftIcon,
 } from './assets'
 import { FUNDING_AMOUNT_TARGET, FUNDING_PERIOD_TARGET, Links } from './config'
-import { useHover, useCopyToClipboard } from './helpers'
+import { useHover, useCopyToClipboard, useTimeRemaining } from './helpers'
 
 interface Props {
   data: Dao[]
@@ -142,8 +143,8 @@ const CustomTooltip: React.FC<{
           Share the referral link with your friends, and you will receive bonus rewards based on their contribution
         </Text>
         <Box mb="15px">
-          <Flex>
-            <img src={Trophy10} width="23px" height="23px" alt="prize trophy" />
+          <Flex alignItems="center">
+            <img src={Trophy10} width="23px" alt="prize trophy" />
             <Text>Top 10:</Text>
           </Flex>
           <Text pl="23px">
@@ -153,16 +154,16 @@ const CustomTooltip: React.FC<{
           </Text>
         </Box>
         <Box mb="15px">
-          <Flex>
-            <img src={Trophy100} width="23px" height="23px" alt="prize trophy" />
+          <Flex alignItems="center">
+            <img src={Trophy100} width="23px" alt="prize trophy" />
             <Text>Top 100:</Text>
           </Flex>
           <Text pl="23px">Earn bonus reward by Airdrop(4% Bonus)</Text>
         </Box>
         <Box>
-          <Flex>
-            <img src={TrophyOthers} width="23px" height="23px" alt="prize trophy" />
-            <Text>Others:</Text>
+          <Flex alignItems="center">
+            <img src={TrophyOthers} width="16px" alt="prize trophy" />
+            <Text ml="7px">Others:</Text>
           </Flex>
           <Text pl="23px">Earn bonus reward by Airdrop(2% Bonus)</Text>
         </Box>
@@ -231,12 +232,11 @@ const MainContent: React.FC<Props> = ({ data }) => {
    * so we let it be a bit higher
    * @returns {BigNumber} the amount in usd converted to the selected token
    */
-  const convertUsdToToken = (amountInUSD: string, shouldRoundMore?: boolean): BigNumber => {
+  const convertUsdToToken = (amountInUSD: string): BigNumber => {
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       return BIG_ZERO
     }
-    BigNumber.config({ DECIMAL_PLACES: shouldRoundMore ? 4 : 5 })
-    // config added to fix problem rounding input when user clicks amount button
+    BigNumber.config({ DECIMAL_PLACES: selToken.token?.decimals })
 
     return new BigNumber(amountInUSD).div(selTokenPrice)
   }
@@ -291,25 +291,13 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const handleAmountButton = (index) => {
     if (index === 0) {
-      setAmountInToken(
-        convertUsdToToken('1000').lt('1000')
-          ? convertUsdToToken('1000', true).toString()
-          : convertUsdToToken('1000').toString(),
-      )
+      setAmountInToken(convertUsdToToken('1000').toString())
       setAmountButtonIndex(index)
     } else if (index === 1) {
-      setAmountInToken(
-        convertUsdToToken('10000').lt('10000')
-          ? convertUsdToToken('10000', true).toString()
-          : convertUsdToToken('10000').toString(),
-      )
+      setAmountInToken(convertUsdToToken('10000').toString())
       setAmountButtonIndex(index)
     } else if (index === 2) {
-      setAmountInToken(
-        convertUsdToToken('50000').lt('50000')
-          ? convertUsdToToken('50000', true).toString()
-          : convertUsdToToken('50000').toString(),
-      )
+      setAmountInToken(convertUsdToToken('50000').toString())
       setAmountButtonIndex(index)
     }
   }
@@ -326,27 +314,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     [userBalance, setAmountInToken],
   )
 
-  const timeRemaining = () => {
-    const now = new Date()
-    const end = new Date(FUNDING_PERIOD_TARGET)
-    const diff = end.getTime() - now.getTime()
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-    if (days === 0 && hours !== 0) {
-      return `Ends in ${hours} ${hours === 1 ? 'hour' : 'hours'}`
-    }
-    if (days === 0 && hours === 0 && minutes !== 0) {
-      return `Ends in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`
-    }
-    if (days === 0 && hours === 0 && minutes === 0) {
-      return `Ends in ${seconds} ${seconds === 1 ? 'second' : 'seconds'}`
-    }
-
-    return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`
-  }
+  const { timeRemaining } = useTimeRemaining(FUNDING_PERIOD_TARGET)
 
   const raisedAmount = new BigNumber(data[0].raiseFund).div(DEFAULT_TOKEN_DECIMAL)
   const raisedAmountString = raisedAmount.toNumber().toLocaleString('en-US', {
@@ -383,7 +351,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     }
   }
 
-  const handleDeposit = async (depositAmount, name: string, roundID, inviterCode) => {
+  const handleDeposit = async (depositAmount: string, name: string, roundID, inviterCode) => {
     const callOptions = {
       gasLimit: DEFAULT_GAS_LIMIT,
     }
@@ -398,7 +366,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
       const tx = await callWithGasPrice(
         depositContract,
         'deposit',
-        [depositAmount.toString(), roundID, inviterCode],
+        [depositAmount, roundID, inviterCode],
         name === 'ETH' ? callOptionsETH : callOptions,
       )
       const receipt = await tx.wait()
@@ -427,11 +395,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
         inviterCode = url.substring(index + 1, url.length)
       }
 
-      // const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18)
-      //   .toString()
-      //   .replace(/\.(.*?\d*)/g, '')
+      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18).toString()
 
-      const depositAmount = ethers.utils.parseEther(amountInToken || '0')
+      // const depositAmount = ethers.utils.parseEther(amountInToken || '0')
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
@@ -611,7 +577,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
         >
           <CustomButtonMenuItemRounded>$1,000</CustomButtonMenuItemRounded>
           <CustomButtonMenuItemRounded>$10,000</CustomButtonMenuItemRounded>
-          <CustomButtonMenuItemRounded>$50,000</CustomButtonMenuItemRounded>
+          <CustomButtonMenuItemRounded endIcon={<img src={GiftIcon} alt="" width="17px" />}>
+            $50,000
+          </CustomButtonMenuItemRounded>
         </ButtonMenuRounded>
         {amountInToken && convertTokenToUsd(amountInToken).lt(1000) ? (
           <Text color="red !important" fontSize="12px" mt="10px">
@@ -644,12 +612,12 @@ const MainContent: React.FC<Props> = ({ data }) => {
             <StyledButton
               filled
               onClick={handleConfirm}
-              // disabled={
-              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).lt(1000) ||
-              //   amountInToken === undefined ||
-              //   new BigNumber(convertTokenToUsd(amountInToken).toFixed()).gt(50000) ||
-              //   new BigNumber(amountInToken).gt(userBalance)
-              // }
+              disabled={
+                new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ||
+                amountInToken === undefined ||
+                !isApproximateOrEqual(convertTokenToUsd(amountInToken), '50000') ||
+                new BigNumber(amountInToken).gt(userBalance)
+              }
               isLoading={isPending || isApproving}
               endIcon={isPending || isApproving ? <AutoRenewIcon spin color="white" /> : null}
             >
@@ -753,7 +721,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <Text textAlign="center" fontSize="24px" fontWeight="800 !important" mb="25px" mt="16px">
           Support Huski DAO
         </Text>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Token:
           </Text>
@@ -761,7 +729,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             Huski DAO (HIDAO)
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Type:
           </Text>
@@ -775,9 +743,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
             </span>
           </Flex>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
-            Price:
+            You will get:
           </Text>
           <Flex alignItems="center" style={{ gap: '5px' }}>
             <Text fontSize="14px" textAlign="right">
@@ -789,7 +757,15 @@ const MainContent: React.FC<Props> = ({ data }) => {
             </span>
           </Flex>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
+          <Text fontSize="14px" textAlign="left">
+            Total Rewards:
+          </Text>
+          <Text fontSize="14px" textAlign="right">
+            10,000 HIDAO
+          </Text>
+        </Flex>
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Goal:
           </Text>
@@ -803,7 +779,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             ~ $5,000,000
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="28px">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Distribution：
           </Text>
@@ -811,7 +787,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             Claim on HuskiDAO Landing Page
           </Text>
         </Flex>
-        <Flex width="100%" justifyContent="space-between" mb="28px" alignItems="center">
+        <Flex width="100%" justifyContent="space-between" alignItems="center" mb="25px">
           <Text fontSize="14px" textAlign="left">
             Accepted Payments:
           </Text>
@@ -899,7 +875,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         </Banner>
         <Box width="100%">
           <Flex justifyContent="space-between" alignItems="center" mb="8px">
-            <Text fontSize="14px">{timeRemaining()}</Text>
+            <Text fontSize="14px">{timeRemaining}</Text>
             {raisedAmount && !raisedAmount.isNaN() ? (
               <Text fontSize="14px">
                 {new BigNumber(raisedAmount).div(FUNDING_AMOUNT_TARGET).times(100).toFixed(2, 1)}%

@@ -101,8 +101,8 @@ const AsideContent = () => {
           <Text as="ul">
             <Text as="li">Open, free, and fair financial markets.</Text>
             <Text as="li">Optimize earnings, lower risk, higher returns.</Text>
-            <Text as="li">Governing the protocol with more fairness, transparency and democracy.</Text>
-            <Text as="li">Expanding the boundary of the crypto funds.</Text>
+            <Text as="li">Governing the protocol with more fairness, transparency, and democracy.</Text>
+            <Text as="li">Expanding the boundary of crypto funds.</Text>
           </Text>
         </Box>
         <Box>

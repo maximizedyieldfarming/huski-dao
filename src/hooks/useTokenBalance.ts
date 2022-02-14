@@ -63,6 +63,7 @@ export const useGetEthBalance = () => {
   const [balance, setBalance] = useState(BIG_ZERO)
   const { account } = useWeb3React()
   const { lastUpdated, setLastUpdated } = useLastUpdated()
+  const { fastRefresh } = useRefresh()
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -78,7 +79,7 @@ export const useGetEthBalance = () => {
     if (account) {
       fetchBalance()
     }
-  }, [account, lastUpdated, setBalance, setFetchStatus])
+  }, [account, lastUpdated, setBalance, setFetchStatus, fastRefresh])
 
   return { balance, fetchStatus, refresh: setLastUpdated }
 }
