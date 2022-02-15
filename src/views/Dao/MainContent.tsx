@@ -240,12 +240,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
       convertedAmount = BIG_ZERO
     }
 
-    // add enough token to increase the amount by one usd until it's equal or greater than expected amount (amountInUSD)
-    const oneUsdInSelToken = new BigNumber(1).div(selTokenPrice)
-    if (convertTokenToUsd(convertedAmount.toString()).lt(amountInUSD)) {
-      convertedAmount = convertedAmount.plus(oneUsdInSelToken)
-    }
-
     return convertedAmount
   }
 
