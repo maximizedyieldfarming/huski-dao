@@ -13,7 +13,7 @@ import {
   AutoRenewIcon,
 } from '@huskifinance/huski-frontend-uikit'
 import styled from 'styled-components'
-import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT, DEFAULT_CODE } from 'utils/config'
+import { DEFAULT_TOKEN_DECIMAL, BIG_ZERO, DEFAULT_GAS_LIMIT, DEFAULT_CODE, CALCULATION_ACCURACY, PRICE_DECIMAL } from 'utils/config'
 import { ethers } from 'ethers'
 import { useVault, useERC20 } from 'hooks/useContract'
 import { getBalanceAmount, getDecimalAmount } from 'utils/formatBalance'
@@ -71,7 +71,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   border-radius: 16px;
   width: 100px;
 `
-const StyledTooltip = styled(Container)<{ isTooltipDisplayed: boolean }>`
+const StyledTooltip = styled(Container) <{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'inline-block' : 'none')};
   position: absolute;
   bottom: 1.5rem;
@@ -204,7 +204,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
     selTokenAddress: Address
   } => {
     const selToken = data.find((d) => d.name === tokenName)
-    const selTokenPrice = selToken ? new BigNumber(selToken.price).div(100000000) : BIG_ZERO
+    const selTokenPrice = selToken ? new BigNumber(selToken.price).div(PRICE_DECIMAL) : BIG_ZERO
     const selTokenDecimalPlaces = selToken ? selToken?.token?.decimalsDigits : 18
     const selTokenIcon = (() => {
       if (selectedToken === 'ETH') {
@@ -235,37 +235,29 @@ const MainContent: React.FC<Props> = ({ data }) => {
   const convertUsdToToken = (amountInUSD: string): BigNumber => {
     BigNumber.config({ DECIMAL_PLACES: selToken.token?.decimals })
     let convertedAmount = new BigNumber(amountInUSD).div(selTokenPrice)
-
     if (!amountInUSD || tokenPriceDataNotLoaded) {
       convertedAmount = BIG_ZERO
     }
 
-    // add enough token to increase the amount by one usd until it's equal or greater than expected amount (amountInUSD)
-    const oneUsdInSelToken = new BigNumber(1).div(selTokenPrice)
-    if (convertTokenToUsd(convertedAmount.toString()).lt(amountInUSD)) {
-      convertedAmount = convertedAmount.plus(oneUsdInSelToken)
-    }
+    const convertedAmountDeal = new BigNumber(convertedAmount).times(CALCULATION_ACCURACY)
+    const convertedAmountCeil = Math.floor(Number(convertedAmountDeal))
+    const amount = new BigNumber(convertedAmountCeil).div(CALCULATION_ACCURACY)
 
-    return convertedAmount
+    return amount
   }
 
-  /**
-   * for dealing with investment upper limit of 50,000 USD
-   * when the input is rounded  allow it to be a bit bigger than the given amount
-   *
-   * @param {BigNumber} inputValue
-   * @param {String} compareTo
-   * @returns {Boolean}
-   */
-  const isApproximateOrEqual = (inputValue: BigNumber, compareTo: string): boolean => {
-    const limit = 100
-    const diff = inputValue.minus(compareTo).absoluteValue()
+  const convertUsdToTokenCeil = (amountInUSD: string): BigNumber => {
+    BigNumber.config({ DECIMAL_PLACES: 18 })
+    let convertedAmount = new BigNumber(amountInUSD).div(selTokenPrice)
 
-    if (inputValue.gt(compareTo)) {
-      return new BigNumber(diff).lt(limit)
+    if (!amountInUSD || tokenPriceDataNotLoaded) {
+      convertedAmount = BIG_ZERO
     }
+    const convertedAmountDeal = new BigNumber(convertedAmount).times(CALCULATION_ACCURACY)
+    const convertedAmountCeil = Math.ceil(Number(convertedAmountDeal))
+    const amount = new BigNumber(convertedAmountCeil).div(CALCULATION_ACCURACY)
 
-    return inputValue.lte(compareTo)
+    return amount
   }
 
   const balance = getBalanceAmount(useTokenBalance(getAddress(selTokenAddress)).balance)
@@ -292,7 +284,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
   const handleAmountButton = (index) => {
     if (index === 0) {
-      setAmountInToken(convertUsdToToken('1000').toString())
+      setAmountInToken(convertUsdToTokenCeil('1000').toString())
       setAmountButtonIndex(index)
     } else if (index === 1) {
       setAmountInToken(convertUsdToToken('10000').toString())
@@ -395,10 +387,14 @@ const MainContent: React.FC<Props> = ({ data }) => {
       if (index !== -1) {
         inviterCode = url.substring(index + 1, url.length)
       }
+      const amountInTokenToNumber = Number(amountInToken)
+      let depositAmount
+      if (Number.isInteger(amountInTokenToNumber)) {
+        depositAmount = ethers.utils.parseEther(amountInToken || '0')
+      } else {
+        depositAmount = getDecimalAmount(new BigNumber(amountInToken || '0'), 18).toString()
+      }
 
-      const depositAmount = getDecimalAmount(new BigNumber(amountInToken), 18).toString()
-
-      // const depositAmount = ethers.utils.parseEther(amountInToken || '0')
       handleDeposit(depositAmount, name, roundID, inviterCode)
     }
   }
@@ -537,7 +533,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
         <ButtonMenuSquared
           onItemClick={handleTokenButton}
           activeIndex={tokenButtonIndex}
-          // disabled={data[0]?.investorStatus === true}
+        // disabled={data[0]?.investorStatus === true}
         >
           <CustomButtonMenuItemSquared startIcon={<ETHIcon />}>ETH</CustomButtonMenuItemSquared>
           <CustomButtonMenuItemSquared startIcon={<USDTIcon />}>USDT</CustomButtonMenuItemSquared>
@@ -587,7 +583,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
             Minimum investment amount is $1,000 (One Thousand USD)
           </Text>
         ) : null}
-        {amountInToken && !isApproximateOrEqual(convertTokenToUsd(amountInToken), '50000') ? (
+        {amountInToken && convertTokenToUsd(amountInToken).gt(50000) ? (
           <Text color="red !important" fontSize="12px" mt="10px">
             You cannot invest more than $50,000 (Fifty Thousand USD)
           </Text>
@@ -616,7 +612,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
               disabled={
                 new BigNumber(convertTokenToUsd(amountInToken)).lt(1000) ||
                 amountInToken === undefined ||
-                !isApproximateOrEqual(convertTokenToUsd(amountInToken), '50000') ||
+                new BigNumber(convertTokenToUsd(amountInToken)).gt(50000) ||
                 new BigNumber(amountInToken).gt(userBalance)
               }
               isLoading={isPending || isApproving}

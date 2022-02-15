@@ -16,14 +16,19 @@ const ConnectWallet = (props) => {
   if (!account) {
     return (
       <Box
-        ml="8px"
         borderRadius="14px"
         background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
         p="1px"
         height="46px"
         maxWidth="100%"
       >
-        <StyledButton onClick={onPresentConnectModal} {...props} maxWidth={isMobile ? '100%' : 146} height="100%">
+        <StyledButton
+          onClick={onPresentConnectModal}
+          {...props}
+          maxWidth={isMobile ? '100%' : 146}
+          height="100%"
+          px={isMobile ? '10px !important' : null}
+        >
           <Text fontWeight={700} style={{ whiteSpace: 'nowrap' }}>
             Connect Wallet
           </Text>
@@ -33,7 +38,6 @@ const ConnectWallet = (props) => {
   }
   return (
     <Box
-      ml="8px"
       borderRadius="14px"
       background="linear-gradient(68.76deg, #5156e3 32.68%, #e253e9 98.95%)"
       p="1px"
