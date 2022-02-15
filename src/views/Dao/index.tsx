@@ -150,7 +150,12 @@ const LaunchCampaign = () => {
                 Huski DAO Launch&nbsp;Campaign
               </Text>
             </Flex>
-            <Flex alignItems="center" flexWrap="wrap" mt={isMobile ? '50px' : null}>
+            <Flex
+              alignItems="center"
+              mt={isMobile ? '50px' : null}
+              style={{ gap: '8px' }}
+              mx={isMobile ? 'auto' : null}
+            >
               <Select options={networkOptions} onChange={(option) => setSelectedNetwork(option.value)} />
               <ConnectWalletButton />
             </Flex>
