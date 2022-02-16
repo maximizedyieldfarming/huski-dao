@@ -836,10 +836,18 @@ const MainContent: React.FC<Props> = ({ data }) => {
     <Box>
       {getFirstContainer()}
 
-      <Container mb="13px" p="31px 21px 24px" maxWidth="460px">
+      <Container mb="13px" p="31px 21px 24px" maxWidth="460px" style={{ transition: 'height 0.5s ease-in-out' }}>
         <Text fontSize="20px" fontWeight="800 !important" mb="27px" textAlign="center">
           You will receive
         </Text>
+        {new BigNumber(convertTokenToUsd(amountInToken).toFixed(0)).gte(50000) ? (
+          <Banner mb="15px" maxWidth="100% !important">
+            <DaoNft />
+            <Text fontSize="14px" ml="10px">
+              NFT co-branded sponsors{' '}
+            </Text>
+          </Banner>
+        ) : null}
         <Flex flexDirection={isMobile ? 'column' : 'row'} width="100%">
           <Banner mr={isMobile ? '0' : '15px'} mb={isMobile ? '15px' : '0'}>
             <DaoToken />
@@ -852,14 +860,6 @@ const MainContent: React.FC<Props> = ({ data }) => {
             </Text>
           </Banner>
         </Flex>
-        {new BigNumber(convertTokenToUsd(amountInToken).toFixed(0)).gte(50000) ? (
-          <Banner mt="15px" maxWidth="100% !important">
-            <DaoNft />
-            <Text fontSize="14px" ml="10px">
-              NFT co-branded sponsors{' '}
-            </Text>
-          </Banner>
-        ) : null}
       </Container>
 
       <Container p="40px 21px 30px" maxWidth="460px">
