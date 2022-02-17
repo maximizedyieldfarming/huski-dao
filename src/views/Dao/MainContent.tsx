@@ -376,7 +376,7 @@ const MainContent: React.FC<Props> = ({ data }) => {
   }
 
   const handleConfirm = async () => {
-    const { allowance, name, roundID } = selToken
+    const { allowance, name, roundID, code } = selToken
 
     if (Number(allowance) === 0) {
       handleApprove()
@@ -386,6 +386,9 @@ const MainContent: React.FC<Props> = ({ data }) => {
       let inviterCode = DEFAULT_CODE
       if (index !== -1) {
         inviterCode = url.substring(index + 1, url.length)
+      }
+      if (inviterCode === code) {
+        inviterCode = DEFAULT_CODE
       }
       const amountInTokenToNumber = Number(amountInToken)
       let depositAmount
